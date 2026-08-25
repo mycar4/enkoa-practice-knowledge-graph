@@ -1,0 +1,141 @@
+{
+  "nodes": {
+    "u1": {
+      "name": "민준",
+      "type": "사용자",
+      "region": "서울"
+    },
+    "u2": {
+      "name": "서연",
+      "type": "사용자",
+      "region": "서울"
+    },
+    "u3": {
+      "name": "지호",
+      "type": "사용자",
+      "region": "부산"
+    },
+    "u4": {
+      "name": "하윤",
+      "type": "사용자",
+      "region": "서울"
+    },
+    "u5": {
+      "name": "도윤",
+      "type": "사용자",
+      "region": "대구"
+    },
+    "u6": {
+      "name": "수아",
+      "type": "사용자",
+      "region": "부산"
+    },
+    "u7": {
+      "name": "예준",
+      "type": "사용자",
+      "region": "서울"
+    },
+    "u8": {
+      "name": "지아",
+      "type": "사용자",
+      "region": "부산"
+    },
+    "b1": {
+      "name": "데일리카페",
+      "type": "브랜드",
+      "region": "서울"
+    },
+    "b2": {
+      "name": "액티브짐",
+      "type": "브랜드",
+      "region": "부산"
+    }
+  },
+  "edges": [
+    {
+      "relation": "팔로우",
+      "source": "u1",
+      "target": "u2"
+    },
+    {
+      "relation": "팔로우",
+      "source": "u1",
+      "target": "u3"
+    },
+    {
+      "relation": "팔로우",
+      "source": "u1",
+      "target": "u4"
+    },
+    {
+      "relation": "팔로우",
+      "source": "u2",
+      "target": "u5"
+    },
+    {
+      "relation": "팔로우",
+      "source": "u2",
+      "target": "u6"
+    },
+    {
+      "relation": "팔로우",
+      "source": "u3",
+      "target": "u6"
+    },
+    {
+      "relation": "팔로우",
+      "source": "u3",
+      "target": "u7"
+    },
+    {
+      "relation": "팔로우",
+      "source": "u4",
+      "target": "u8"
+    },
+    {
+      "relation": "팔로우",
+      "source": "u5",
+      "target": "u7"
+    },
+    {
+      "relation": "팔로우",
+      "source": "u6",
+      "target": "u8"
+    },
+    {
+      "relation": "팔로우",
+      "source": "u7",
+      "target": "u1"
+    },
+    {
+      "relation": "팔로우",
+      "source": "u8",
+      "target": "u1"
+    },
+    {
+      "relation": "팔로우",
+      "source": "u8",
+      "target": "u2"
+    },
+    {
+      "relation": "관심",
+      "source": "u1",
+      "target": "b1"
+    },
+    {
+      "relation": "관심",
+      "source": "u3",
+      "target": "b1"
+    },
+    {
+      "relation": "관심",
+      "source": "u4",
+      "target": "b2"
+    },
+    {
+      "relation": "관심",
+      "source": "u7",
+      "target": "b2"
+    }
+  ]
+}

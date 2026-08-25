@@ -1,0 +1,156 @@
+{
+  "nodes": {
+    "u1": {
+      "name": "민서",
+      "type": "사용자"
+    },
+    "u2": {
+      "name": "준우",
+      "type": "사용자"
+    },
+    "u3": {
+      "name": "하은",
+      "type": "사용자"
+    },
+    "u4": {
+      "name": "시우",
+      "type": "사용자"
+    },
+    "s1": {
+      "name": "밤편지",
+      "type": "곡"
+    },
+    "s2": {
+      "name": "좋은 날",
+      "type": "곡"
+    },
+    "s3": {
+      "name": "Ditto",
+      "type": "곡"
+    },
+    "s4": {
+      "name": "OMG",
+      "type": "곡"
+    },
+    "s5": {
+      "name": "Dynamite",
+      "type": "곡"
+    },
+    "s6": {
+      "name": "Butter",
+      "type": "곡"
+    },
+    "s7": {
+      "name": "주저하는 연인들을 위해",
+      "type": "곡"
+    },
+    "a1": {
+      "name": "아이유",
+      "type": "아티스트"
+    },
+    "a2": {
+      "name": "뉴진스",
+      "type": "아티스트"
+    },
+    "a3": {
+      "name": "방탄소년단",
+      "type": "아티스트"
+    },
+    "a4": {
+      "name": "잔나비",
+      "type": "아티스트"
+    }
+  },
+  "edges": [
+    {
+      "relation": "들었다",
+      "source": "u1",
+      "target": "s1"
+    },
+    {
+      "relation": "들었다",
+      "source": "u1",
+      "target": "s2"
+    },
+    {
+      "relation": "들었다",
+      "source": "u1",
+      "target": "s3"
+    },
+    {
+      "relation": "들었다",
+      "source": "u2",
+      "target": "s2"
+    },
+    {
+      "relation": "들었다",
+      "source": "u2",
+      "target": "s3"
+    },
+    {
+      "relation": "들었다",
+      "source": "u2",
+      "target": "s4"
+    },
+    {
+      "relation": "들었다",
+      "source": "u3",
+      "target": "s5"
+    },
+    {
+      "relation": "들었다",
+      "source": "u3",
+      "target": "s6"
+    },
+    {
+      "relation": "들었다",
+      "source": "u4",
+      "target": "s1"
+    },
+    {
+      "relation": "들었다",
+      "source": "u4",
+      "target": "s5"
+    },
+    {
+      "relation": "들었다",
+      "source": "u4",
+      "target": "s7"
+    },
+    {
+      "relation": "부른가수",
+      "source": "s1",
+      "target": "a1"
+    },
+    {
+      "relation": "부른가수",
+      "source": "s2",
+      "target": "a1"
+    },
+    {
+      "relation": "부른가수",
+      "source": "s3",
+      "target": "a2"
+    },
+    {
+      "relation": "부른가수",
+      "source": "s4",
+      "target": "a2"
+    },
+    {
+      "relation": "부른가수",
+      "source": "s5",
+      "target": "a3"
+    },
+    {
+      "relation": "부른가수",
+      "source": "s6",
+      "target": "a3"
+    },
+    {
+      "relation": "부른가수",
+      "source": "s7",
+      "target": "a4"
+    }
+  ]
+}
