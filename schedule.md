@@ -10,44 +10,36 @@
 
 ## 📌 현재 진행 상태 및 이력 (Status Log)
 
-* **최근 업데이트 일시**: 2026-08-26 (수요일) 17:48 (Day 28 세션 최종 마감)
+* **최근 업데이트 일시**: 2026-08-27 (목요일) 09:15 (Day 29 세션 시작 및 마스터 키트 구축 완료)
 * **담당자 / 레포지토리**: `mycar4` / `https://github.com/mycar4/enkoa-practice-knowledge-graph.git`
-* **진행 완료 단원**: Day 28 (Neo4j Desktop 설치 및 연결, Movies 지식그래프 적재, Cypher 조회, LPG 모델 4대 요소 정복, 서점 모델링 과제 LV3 올 패스, 지식그래프 구축 5단계 마스터 가이드 완성, DART-Trace 20Page 슬라이드 마스터 명세서 완비)
+* **진행 완료 단원**: Day 29 (Cypher 그래프 질의 언어 GQL 기초, CREATE, MERGE 멱등 적재, SET/REMOVE/DETACH DELETE, WHERE 복합 조건, 2-Hop 공유 허브 순회, $params 파라미터 바인딩 마스터 키트 구축 완료)
 
 ---
 
 ## ✅ 완료된 핵심 성과 (Completed Tasks)
 
-1. **[마스터 가이드] 지식 그래프 구축의 전체 절차와 구조적 핵심 마스터 가이드 완성**
-   - 파일: `내작업폴더/00_지식그래프_구축_절차와_구조_핵심_마스터가이드.md`
-   - 내용: 5단계 구축 라이프사이클(목표정의 ➔ 온톨로지 헌법 ➔ 지식 구조화 ➔ 물리 적재 ➔ 2-Hop IFA 팩트 추론), LPG 4대 요소 기호 규칙, 2대 핵심 판정 공식, AI(LLM)와 순수 컴퓨터(Neo4j)의 명확한 역할 분담.
+1. **[마스터 보고서] Day 29 Cypher 기초 마스터 아키텍처 보고서 완비**
+   - 파일: `내작업폴더/day29_Cypher_기초/00_Day29_Cypher_기초_마스터_아키텍처_보고서.md`
+   - 내용: Cypher 아스키 아트 선언형 철학, CRUD 4대 기둥, `CREATE` vs `MERGE` (`ON CREATE/MATCH SET`), 2-Hop 체인/공유 허브 패턴, `WHERE` / `DISTINCT` / `ORDER BY` 및 `$params` 보안 바인딩 완벽 정리.
 
-2. **[실습 & 과제 올 패스] Day 28 교안 및 과제 LV3 100% 무결점 통과**
-   - 파일: `내작업폴더/day28_Neo4j_설치_Movies/`
-     - `교안_01_설치_첫연결.ipynb`: Neo4j 드라이버 연결, Movies 171개 노드 적재, 첫 Cypher 집계/조회 완료.
-     - `교안_02_노드_관계_속성.ipynb`: 노드/레이블(133 Person, 38 Movie), 관계 타입 및 방향(`ACTED_IN`, `DIRECTED` 등), 다중 관계, 노드 속성 vs 관계 속성(`roles`, `rating`), RDB 대비 모델링 헌법.
-     - `과제_LV3_통합.ipynb`: 온라인 서점 도메인 모델링(`book_model`), 2-Hop 질문 도달성 검증(`answers`), 후보 모델 5개 결함 분석(`caught`), 서술형 4번 답변까지 자가채점 100% 통과.
+2. **[골든 레퍼런스] Day 29 Cypher 실전 마스터 풀소스 완비**
+   - 파일: `내작업폴더/day29_Cypher_기초/00_Day29_Cypher_실전_마스터_풀소스.py`
+   - 내용: 스타트업 "노바랩스" 조직 도메인 기반 노드/관계 멱등 생성, 자료형(`date()`, 리스트), 승진(`SET :NovaLead`), 2-Hop 동료 순회, 파라미터 질의 및 `assert` 100% 자동 검증 통과 (`uv run` 호환).
 
-3. **[비즈니스 기획] DART-Trace 기업공시 지배구조 GraphRAG 사업기획서 완비**
-   - 파일: `내작업폴더/00_OpenDART_기업공시_지배구조_GraphRAG_사업기획서_및_아키텍처_구축안.md`
-   - 내용: 브랜드명 `DART-Trace (다트레이스)`, 타깃 도메인 `dartrace.co.kr`, Pydantic 스키마 가드레일, 3대 킬러 쿼리(CB 자금추적, 계약정정 탐지, 순환출자), 6주 구축 WBS 및 면접 디펜스 전략 수록.
+3. **[실전 워크북] Day 29 실전 Cypher 기초 핸즈온 워크북 완비**
+   - 파일: `내작업폴더/day29_Cypher_기초/01_Day29_실전_Cypher_기초_핸즈온_워크북.ipynb`
+   - 내용: 미션 1~6단계별 TODO 및 `assert` 자가채점 셀 완비 (100% 올 패스 검증 완료).
 
-4. **[발표 & 포트폴리오] DART-Trace 20Page Google Slides 마스터 블루프린트 완비**
-   - 파일: `내작업폴더/00_DART-Trace_20Page_슬라이드_마스터_명세서.md`
-   - 내용: 20장 전체 슬라이드 타이틀, 비주얼 레이아웃, Mermaid 다이어그램, 본문 표, 1분 발표 대본(🎙️ 스피커 노트) 완벽 구성.
-
-5. **[아키텍처 보고서] Day 28 Neo4j LPG 그래프 모델 마스터 아키텍처 보고서**
-   - 파일: `내작업폴더/day28_Neo4j_설치_Movies/00_Neo4j_LPG_그래프모델_마스터_아키텍처_보고서.md`
-   - 내용: 로컬 Desktop / Aura 클라우드 환경 설정, LPG 핵심 문법 레퍼런스, RDB vs GraphDB 비교 및 인덱스 프리 인접성(IFA) 원리.
+4. **[환경 패치] Day 29 교안 및 과제 전체 `.env` override=True 패치 완료**
+   - 파일: `내작업폴더/day29_Cypher_기초/*.ipynb` 전체 비밀번호 캐싱 방지 패치 적용 완료.
 
 ---
 
-## 🚀 다음 할 일 (Next To-Do / 내일 이어서 할 일)
+## 🚀 다음 할 일 (Next To-Do)
 
-- [ ] **[집/다음 세션] 동기화 및 점검**:
-  - `git pull origin main`으로 최신 커밋 동기화 확인
-- [ ] **[Day 29 예정] Cypher 쿼리 심화 & GraphRAG 파이프라인**:
-  - `MATCH`, `WHERE`, `WITH`, `OPTIONAL MATCH`, `UNWIND`, `collect()` 등 실전 Cypher 고급 문법 정복
-  - Text-to-Cypher 자동 생성 파이프라인 연동 실습
-- [ ] **[DART-Trace 프로젝트 실전]**:
-  - 기획된 `DART-Trace` 온톨로지 스키마를 기반으로 Open DART API 연동 및 실제 공시 데이터 Neo4j 적재 실습 준비
+- [ ] **[교안 실습 및 질문 해결]**:
+  - `내작업폴더/day29_Cypher_기초/교안_01_CREATE_MATCH_RETURN.ipynb` 및 `교안_02_WHERE_MERGE_패턴.ipynb` 순차 학습 및 실습
+- [ ] **[과제 도전]**:
+  - `과제_LV1_기초.ipynb`, `과제_LV2_응용.ipynb` 단계별 해결
+- [ ] **[DART-Trace 실전 연계]**:
+  - 학습한 Cypher `MERGE` 및 2-Hop 탐색 쿼리를 `DART-Trace` 공시 지배구조 분석 모델에 이식
