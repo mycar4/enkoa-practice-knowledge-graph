@@ -1,0 +1,60 @@
+[
+  {
+    "rcept_no": "20250731000339",
+    "corp_cls": "Y",
+    "corp_code": "00356361",
+    "corp_name": "LG화학",
+    "stock_knd": "보통주",
+    "nm": "(주)LG",
+    "relate": "최대주주 본인",
+    "bsis_posesn_stock_co": "23,534,211",
+    "bsis_posesn_stock_qota_rt": "30.06",
+    "trmend_posesn_stock_co": "24,028,090",
+    "trmend_posesn_stock_qota_rt": "30.69",
+    "rm": "-",
+    "stlm_dt": "2024-12-31"
+  },
+  {
+    "rcept_no": "20250731000339",
+    "corp_cls": "Y",
+    "corp_code": "00356361",
+    "corp_name": "LG화학",
+    "stock_knd": "보통주",
+    "nm": "LG연암문화재단",
+    "relate": "(주)LG의 최대주주의 특수관계법인",
+    "bsis_posesn_stock_co": "20,746",
+    "bsis_posesn_stock_qota_rt": "0.03",
+    "trmend_posesn_stock_co": "20,746",
+    "trmend_posesn_stock_qota_rt": "0.03",
+    "rm": "-",
+    "stlm_dt": "2024-12-31"
+  },
+  {
+    "rcept_no": "20250731000339",
+    "corp_cls": "Y",
+    "corp_code": "00356361",
+    "corp_name": "LG화학",
+    "stock_knd": "보통주",
+    "nm": "계",
+    "bsis_posesn_stock_co": "23,554,957",
+    "bsis_posesn_stock_qota_rt": "30.09",
+    "trmend_posesn_stock_co": "24,048,836",
+    "trmend_posesn_stock_qota_rt": "30.72",
+    "rm": "-",
+    "stlm_dt": "2024-12-31"
+  },
+  {
+    "rcept_no": "20250731000339",
+    "corp_cls": "Y",
+    "corp_code": "00356361",
+    "corp_name": "LG화학",
+    "stock_knd": "합계",
+    "nm": "계",
+    "bsis_posesn_stock_co": "23,554,957",
+    "bsis_posesn_stock_qota_rt": "30.09",
+    "trmend_posesn_stock_co": "24,048,836",
+    "trmend_posesn_stock_qota_rt": "30.72",
+    "rm": "-",
+    "stlm_dt": "2024-12-31"
+  }
+]

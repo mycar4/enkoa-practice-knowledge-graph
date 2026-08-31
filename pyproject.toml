@@ -33,4 +33,6 @@ dependencies = [
     "google-genai>=1.0",
     # day42 — 도메인 GraphRAG(Text2Cypher 체인)
     "langchain-neo4j>=0.10",
+    "streamlit>=1.62.0",
+    "pyvis>=0.3.2",
 ]

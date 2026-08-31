@@ -1,0 +1,32 @@
+[
+  {
+    "rcept_no": "20260115000242",
+    "rcept_dt": "2026-01-15",
+    "corp_code": "00645089",
+    "corp_name": "NHN벅스",
+    "report_tp": "일반",
+    "repror": "NHN",
+    "stkqy": "6,711,020",
+    "stkqy_irds": "-4,100",
+    "stkrt": "45.26",
+    "stkrt_irds": "-0.03",
+    "ctr_stkqy": "6,711,020",
+    "ctr_stkrt": "45.26",
+    "report_resn": "최대주주 변경을 수반하는 주식매매계약체결,\n특별관계 해소"
+  },
+  {
+    "rcept_no": "20260327001741",
+    "rcept_dt": "2026-03-27",
+    "corp_code": "00645089",
+    "corp_name": "NHN벅스",
+    "report_tp": "일반",
+    "repror": "NHN",
+    "stkqy": "6,711,020",
+    "stkqy_irds": "0",
+    "stkrt": "45.26",
+    "stkrt_irds": "0",
+    "ctr_stkqy": "-",
+    "ctr_stkrt": "-",
+    "report_resn": "주식매매계약 해제"
+  }
+]

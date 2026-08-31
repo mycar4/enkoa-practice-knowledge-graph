@@ -1,0 +1,60 @@
+[
+  {
+    "rcept_no": "20240319000885",
+    "corp_cls": "K",
+    "corp_code": "00645089",
+    "corp_name": "NHN벅스",
+    "stock_knd": "보통주",
+    "nm": "엔에이치엔㈜",
+    "relate": "본인",
+    "bsis_posesn_stock_co": "6,711,020",
+    "bsis_posesn_stock_qota_rt": "45.26",
+    "trmend_posesn_stock_co": "6,711,020",
+    "trmend_posesn_stock_qota_rt": "45.26",
+    "rm": "-",
+    "stlm_dt": "2023-12-31"
+  },
+  {
+    "rcept_no": "20240319000885",
+    "corp_cls": "K",
+    "corp_code": "00645089",
+    "corp_name": "NHN벅스",
+    "stock_knd": "보통주",
+    "nm": "남이천",
+    "relate": "계열회사 임원",
+    "bsis_posesn_stock_co": "1,000",
+    "bsis_posesn_stock_qota_rt": "0.01",
+    "trmend_posesn_stock_co": "1,000",
+    "trmend_posesn_stock_qota_rt": "0.01",
+    "rm": "-",
+    "stlm_dt": "2023-12-31"
+  },
+  {
+    "rcept_no": "20240319000885",
+    "corp_cls": "K",
+    "corp_code": "00645089",
+    "corp_name": "NHN벅스",
+    "stock_knd": "보통주",
+    "nm": "계",
+    "bsis_posesn_stock_co": "6,712,020",
+    "bsis_posesn_stock_qota_rt": "45.27",
+    "trmend_posesn_stock_co": "6,712,020",
+    "trmend_posesn_stock_qota_rt": "45.27",
+    "rm": "-",
+    "stlm_dt": "2023-12-31"
+  },
+  {
+    "rcept_no": "20240319000885",
+    "corp_cls": "K",
+    "corp_code": "00645089",
+    "corp_name": "NHN벅스",
+    "stock_knd": "합계",
+    "nm": "계",
+    "bsis_posesn_stock_co": "6,712,020",
+    "bsis_posesn_stock_qota_rt": "45.27",
+    "trmend_posesn_stock_co": "6,712,020",
+    "trmend_posesn_stock_qota_rt": "45.27",
+    "rm": "-",
+    "stlm_dt": "2023-12-31"
+  }
+]

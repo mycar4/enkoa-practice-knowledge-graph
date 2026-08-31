@@ -1,0 +1,60 @@
+[
+  {
+    "rcept_no": "20240320001960",
+    "corp_cls": "K",
+    "corp_code": "00128546",
+    "corp_name": "삼천당제약",
+    "stock_knd": "보통주",
+    "nm": "(주)소화",
+    "relate": "최대주주",
+    "bsis_posesn_stock_co": "7,199,495",
+    "bsis_posesn_stock_qota_rt": "31.60",
+    "trmend_posesn_stock_co": "7,199,495",
+    "trmend_posesn_stock_qota_rt": "30.70",
+    "rm": "-",
+    "stlm_dt": "2023-12-31"
+  },
+  {
+    "rcept_no": "20240320001960",
+    "corp_cls": "K",
+    "corp_code": "00128546",
+    "corp_name": "삼천당제약",
+    "stock_knd": "보통주",
+    "nm": "윤대인",
+    "relate": "최대주주의 특수관계인",
+    "bsis_posesn_stock_co": "1,622,400",
+    "bsis_posesn_stock_qota_rt": "7.10",
+    "trmend_posesn_stock_co": "1,622,400",
+    "trmend_posesn_stock_qota_rt": "6.90",
+    "rm": "-",
+    "stlm_dt": "2023-12-31"
+  },
+  {
+    "rcept_no": "20240320001960",
+    "corp_cls": "K",
+    "corp_code": "00128546",
+    "corp_name": "삼천당제약",
+    "stock_knd": "보통주",
+    "nm": "계",
+    "bsis_posesn_stock_co": "8,821,895",
+    "bsis_posesn_stock_qota_rt": "38.70",
+    "trmend_posesn_stock_co": "8,821,895",
+    "trmend_posesn_stock_qota_rt": "37.60",
+    "rm": "-",
+    "stlm_dt": "2023-12-31"
+  },
+  {
+    "rcept_no": "20240320001960",
+    "corp_cls": "K",
+    "corp_code": "00128546",
+    "corp_name": "삼천당제약",
+    "stock_knd": "기타",
+    "nm": "계",
+    "bsis_posesn_stock_co": "-",
+    "bsis_posesn_stock_qota_rt": "-",
+    "trmend_posesn_stock_co": "-",
+    "trmend_posesn_stock_qota_rt": "-",
+    "rm": "-",
+    "stlm_dt": "2023-12-31"
+  }
+]

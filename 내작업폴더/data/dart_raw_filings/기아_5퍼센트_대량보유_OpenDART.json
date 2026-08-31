@@ -1,0 +1,47 @@
+[
+  {
+    "rcept_no": "20260407002584",
+    "rcept_dt": "2026-04-07",
+    "corp_code": "00106641",
+    "corp_name": "기아",
+    "report_tp": "일반",
+    "repror": "현대자동차",
+    "stkqy": "144,411,595",
+    "stkqy_irds": "3,055",
+    "stkrt": "36.99",
+    "stkrt_irds": "1.37",
+    "ctr_stkqy": "213,466",
+    "ctr_stkrt": "0.05",
+    "report_resn": "특별관계자 추가, 자사주 상여금 취득 및 장내매수"
+  },
+  {
+    "rcept_no": "20260511000455",
+    "rcept_dt": "2026-05-11",
+    "corp_code": "00106641",
+    "corp_name": "기아",
+    "report_tp": "일반",
+    "repror": "현대자동차",
+    "stkqy": "144,405,098",
+    "stkqy_irds": "-6,497",
+    "stkrt": "36.99",
+    "stkrt_irds": "-0.00",
+    "ctr_stkqy": "213,466",
+    "ctr_stkrt": "0.05",
+    "report_resn": "특별관계자 보유주식 증여 및 특별관계자 제외"
+  },
+  {
+    "rcept_no": "20260709000467",
+    "rcept_dt": "2026-07-09",
+    "corp_code": "00106641",
+    "corp_name": "기아",
+    "report_tp": "일반",
+    "repror": "현대자동차",
+    "stkqy": "144,407,619",
+    "stkqy_irds": "2,521",
+    "stkrt": "36.99",
+    "stkrt_irds": "0.00",
+    "ctr_stkqy": "213,466",
+    "ctr_stkrt": "0.05",
+    "report_resn": "특별관계자 추가"
+  }
+]
