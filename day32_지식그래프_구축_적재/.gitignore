@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+output/
+.DS_Store
+.env
+.omc/
+# 노트북이 만드는 UTF-8 변환본(교안_02 1절·과제 준비 셀). 저장소에는 원본 CP949 만 둔다
+data/*_utf8.csv

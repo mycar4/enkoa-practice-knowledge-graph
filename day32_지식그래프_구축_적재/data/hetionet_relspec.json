@@ -1,0 +1,86 @@
+[
+  {
+    "rel": "TREATS",
+    "source_label": "Compound",
+    "target_label": "Disease",
+    "meaning": "약이 질병 자체를 조절한다",
+    "expected": 755
+  },
+  {
+    "rel": "PALLIATES",
+    "source_label": "Compound",
+    "target_label": "Disease",
+    "meaning": "약이 질병의 증상을 눅인다",
+    "expected": 390
+  },
+  {
+    "rel": "BINDS",
+    "source_label": "Compound",
+    "target_label": "Gene",
+    "meaning": "약이 그 유전자가 만드는 단백질에 결합한다",
+    "expected": 11571
+  },
+  {
+    "rel": "UPREGULATES_CG",
+    "source_label": "Compound",
+    "target_label": "Gene",
+    "meaning": "약이 그 유전자의 발현을 올린다",
+    "expected": 18756
+  },
+  {
+    "rel": "DOWNREGULATES_CG",
+    "source_label": "Compound",
+    "target_label": "Gene",
+    "meaning": "약이 그 유전자의 발현을 내린다",
+    "expected": 21102
+  },
+  {
+    "rel": "ASSOCIATES",
+    "source_label": "Disease",
+    "target_label": "Gene",
+    "meaning": "질병과 유전자가 함께 보고된다",
+    "expected": 12623
+  },
+  {
+    "rel": "UPREGULATES_DG",
+    "source_label": "Disease",
+    "target_label": "Gene",
+    "meaning": "질병에서 그 유전자의 발현이 올라가 있다",
+    "expected": 7731
+  },
+  {
+    "rel": "DOWNREGULATES_DG",
+    "source_label": "Disease",
+    "target_label": "Gene",
+    "meaning": "질병에서 그 유전자의 발현이 내려가 있다",
+    "expected": 7623
+  },
+  {
+    "rel": "RESEMBLES_CC",
+    "source_label": "Compound",
+    "target_label": "Compound",
+    "meaning": "두 약의 구조·성질이 닮았다",
+    "expected": 6486
+  },
+  {
+    "rel": "RESEMBLES_DD",
+    "source_label": "Disease",
+    "target_label": "Disease",
+    "meaning": "두 질병이 닮았다",
+    "expected": 543
+  },
+  {
+    "rel": "PRESENTS",
+    "source_label": "Disease",
+    "target_label": "Symptom",
+    "meaning": "질병이 그 증상으로 나타난다",
+    "expected": 3357
+  },
+  {
+    "rel": "INCLUDES",
+    "source_label": "PharmacologicClass",
+    "target_label": "Compound",
+    "meaning": "약효분류가 그 약을 포함한다",
+    "expected": 1029
+  }
+]
