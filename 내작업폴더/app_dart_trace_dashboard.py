@@ -611,28 +611,34 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                             net.add_node(nid, label=nid, color=color, shape=shape, title=title, size=22)
                             nodes_added.add(nid)
                     
-                    # 엣지 메타데이터 전수 수집 및 중복 방지 (최신 연도/기준일자 기준 단일화)
+                    # 엣지 메타데이터 전수 수집 (임의 기본값 없이 사실 그대로 추출)
                     a_name = a.get('name', 'Unknown') if isinstance(a, dict) else str(a)
                     b_name = b.get('name', 'Unknown') if isinstance(b, dict) else str(b)
                     stake_val = float(r_props.get('stake', 0.0) or 0.0)
-                    pos_val = str(r_props.get('position', ''))
-                    yr = r_props.get('year', 0) or 0
+                    pos_val = str(r_props.get('position', '') or '')
+                    yr = r_props.get('year', None)
                     
                     as_of_date_val = str(r_props.get('as_of_date', '') or '')
                     reported_on_val = str(r_props.get('reported_on', '') or r_props.get('disclosed_at', '') or '')
                     source_rcp = str(r_props.get('source_rcept_no', '') or '')
-                    doc_st = str(r_props.get('doc_status', 'NORMAL') or 'NORMAL')
-                    ver_st = str(r_props.get('verification_status', 'VERIFIED') or 'VERIFIED')
-                    is_curr = bool(r_props.get('is_current', True))
+                    
+                    # 공시 접수번호가 있는 경우에만 doc_status 및 viewer_url 부여
+                    if source_rcp:
+                        doc_st = str(r_props.get('doc_status', 'NORMAL') or 'NORMAL')
+                        ver_st = str(r_props.get('verification_status', 'VERIFIED') or 'VERIFIED')
+                        view_url = str(r_props.get('viewer_url', '') or f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={source_rcp}")
+                    else:
+                        doc_st = "UNLINKED"
+                        ver_st = "BASELINE_DATA"
+                        view_url = ""
+                        
+                    is_curr = bool(r_props.get('is_current', True)) if 'is_current' in r_props else (yr is None or yr >= 2024)
                     book_val = int(r_props.get('book_value', 0) or 0)
                     shares_cnt = int(r_props.get('shares_count', 0) or 0)
                     purp_val = str(r_props.get('purpose', '') or '')
-                    view_url = str(r_props.get('viewer_url', '') or '')
-                    if not view_url and source_rcp:
-                        view_url = f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={source_rcp}"
                     
                     edge_key = (a_name, b_name, r_type)
-                    if edge_key not in edges_map or yr >= edges_map[edge_key].get('year', 0):
+                    if edge_key not in edges_map or (yr and yr >= (edges_map[edge_key].get('year') or 0)):
                         edges_map[edge_key] = {
                             'source': a_name,
                             'target': b_name,
@@ -681,9 +687,13 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
         with tab_table:
             import pandas as pd
             
+            # 세션 상태에 선택된 팩트 페이로드 초기화
+            if "selected_fact_payload" not in st.session_state:
+                st.session_state.selected_fact_payload = None
+            
             col_tbl, col_fact = st.columns([6, 5])
             
-            # 좌측: 데이터 테이블 영역
+            # 좌측: 4대 팩트 데이터 테이블 영역
             with col_tbl:
                 subtab_stake, subtab_invest, subtab_disclosure, subtab_cand = st.tabs([
                     "📊 지분 소유망 (OWNS_STAKE)", 
@@ -696,19 +706,42 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                 with subtab_stake:
                     stake_items = [e for e in edges_map.values() if e['type'] in ['OWNS_STAKE', 'HOLDS_5PCT']]
                     if stake_items:
+                        # 드롭다운 선택 동기화
+                        sel_stake_idx = st.selectbox(
+                            "🔍 [지분] 상세 조회할 항목 선택 (패널 즉시 연동)",
+                            range(len(stake_items)),
+                            format_func=lambda i: f"[{stake_items[i]['source']} ➔ {stake_items[i]['target']}] {stake_items[i]['stake']:.2f}% ({stake_items[i]['pos'] or '지분'}) - 출처: {stake_items[i]['source_rcept_no'] or '미연결'}",
+                            key="sel_box_stake"
+                        )
+                        st.session_state.selected_fact_payload = {"category": "STAKE", "data": stake_items[sel_stake_idx]}
+                        
                         df_stake = pd.DataFrame([
                             {
                                 "소유자 (주주/기관)": it['source'],
                                 "투자 대상 (기업)": it['target'],
                                 "지분율 (%)": f"{it['stake']:.2f}%" if it['stake'] > 0 else "-",
                                 "직책 / 관계": it['pos'] or it['type'],
-                                "최신 여부": "🟢 최신 사실" if it['is_current'] else "⚪ 과거 이력",
-                                "공시 접수일": it['reported_on'] or f"{it['year']}년" if it['year'] else "-",
-                                "검증 상태": "🟢 VERIFIED" if it['verification_status'] == 'VERIFIED' else "⚪ CANDIDATE",
-                                "문서 상태": it['doc_status']
+                                "공시접수번호": it['source_rcept_no'] if it['source_rcept_no'] else "❌ 미연결",
+                                "공시 상태": "🟢 NORMAL" if it['doc_status'] == 'NORMAL' else ("🟡 CORRECTED" if it['doc_status'] == 'CORRECTED' else ("🔴 WITHDRAWN" if it['doc_status'] == 'WITHDRAWN' else "⚪ UNLINKED")),
+                                "검증 상태": "🟢 VERIFIED" if it['verification_status'] == 'VERIFIED' else "⚪ BASELINE"
                             } for it in stake_items
                         ])
-                        st.dataframe(df_stake, use_container_width=True, height=360)
+                        
+                        st.dataframe(
+                            df_stake, 
+                            use_container_width=True, 
+                            height=300,
+                            on_select="rerun",
+                            selection_mode="single-row",
+                            key="table_stake_select"
+                        )
+                        
+                        # 테이블 행 직접 클릭 이벤트 처리
+                        tbl_sel = st.session_state.get("table_stake_select", {}).get("selection", {}).get("rows", [])
+                        if tbl_sel:
+                            clicked_idx = tbl_sel[0]
+                            if clicked_idx < len(stake_items):
+                                st.session_state.selected_fact_payload = {"category": "STAKE", "data": stake_items[clicked_idx]}
                     else:
                         st.info("선택된 기업/그룹에 대한 정규 지분 소유 데이터가 없습니다.")
                         
@@ -725,6 +758,13 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                     """
                     invest_data = run_cypher(invest_query, entity=selected_entity if selected_entity else None)
                     if invest_data:
+                        sel_inv_idx = st.selectbox(
+                            "🔍 [출자] 상세 조회할 항목 선택 (패널 즉시 연동)",
+                            range(len(invest_data)),
+                            format_func=lambda i: f"[{invest_data[i]['source']} ➔ {invest_data[i]['target']}] 장부가: {int(invest_data[i].get('book_value',0) or 0):,}원 ({invest_data[i].get('purpose','-')})",
+                            key="sel_box_invest"
+                        )
+                        
                         df_inv = pd.DataFrame([
                             {
                                 "출자 회사": it['source'],
@@ -733,10 +773,26 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                                 "기말 장부가액 (원)": f"{int(it.get('book_value', 0)):,}원" if it.get('book_value') else "-",
                                 "출자 목적": it.get('purpose', '-') or '-',
                                 "결산 기준일": str(it.get('as_of_date', '-')),
-                                "최신 여부": "🟢 최신 사실" if it.get('is_current', True) else "⚪ 과거 이력"
+                                "공시접수번호": it.get('source_rcept_no') or "❌ 미연결"
                             } for it in invest_data
                         ])
-                        st.dataframe(df_inv, use_container_width=True, height=360)
+                        
+                        st.dataframe(
+                            df_inv, 
+                            use_container_width=True, 
+                            height=300,
+                            on_select="rerun",
+                            selection_mode="single-row",
+                            key="table_invest_select"
+                        )
+                        
+                        tbl_inv_sel = st.session_state.get("table_invest_select", {}).get("selection", {}).get("rows", [])
+                        if tbl_inv_sel:
+                            clicked_inv_idx = tbl_inv_sel[0]
+                            if clicked_inv_idx < len(invest_data):
+                                st.session_state.selected_fact_payload = {"category": "INVESTMENT", "data": invest_data[clicked_inv_idx]}
+                        elif 'sel_box_invest' in st.session_state:
+                            st.session_state.selected_fact_payload = {"category": "INVESTMENT", "data": invest_data[sel_inv_idx]}
                     else:
                         st.info("조회된 타법인 출자 데이터가 없습니다.")
                         
@@ -752,6 +808,13 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                     """
                     disc_data = run_cypher(disc_query, entity=selected_entity if selected_entity else None)
                     if disc_data:
+                        sel_disc_idx = st.selectbox(
+                            "🔍 [공시] 상세 조회할 공시 보고서 선택 (패널 즉시 연동)",
+                            range(len(disc_data)),
+                            format_func=lambda i: f"[{disc_data[i]['rcept_dt']}] {disc_data[i]['report_nm']} ({disc_data[i]['company']})",
+                            key="sel_box_disc"
+                        )
+                        
                         df_disc = pd.DataFrame([
                             {
                                 "공시접수일": it['rcept_dt'],
@@ -761,7 +824,23 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                                 "공시접수번호": it['rcept_no']
                             } for it in disc_data
                         ])
-                        st.dataframe(df_disc, use_container_width=True, height=360)
+                        
+                        st.dataframe(
+                            df_disc, 
+                            use_container_width=True, 
+                            height=300,
+                            on_select="rerun",
+                            selection_mode="single-row",
+                            key="table_disc_select"
+                        )
+                        
+                        tbl_disc_sel = st.session_state.get("table_disc_select", {}).get("selection", {}).get("rows", [])
+                        if tbl_disc_sel:
+                            clicked_disc_idx = tbl_disc_sel[0]
+                            if clicked_disc_idx < len(disc_data):
+                                st.session_state.selected_fact_payload = {"category": "DISCLOSURE", "data": disc_data[clicked_disc_idx]}
+                        elif 'sel_box_disc' in st.session_state:
+                            st.session_state.selected_fact_payload = {"category": "DISCLOSURE", "data": disc_data[sel_disc_idx]}
                     else:
                         st.info("조회된 DART 공시 인덱스가 없습니다.")
                         
@@ -780,6 +859,13 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                                 except:
                                     pass
                         if cand_rows:
+                            sel_cand_idx = st.selectbox(
+                                "🔍 [후보큐] 상세 조회할 격리 항목 선택 (패널 즉시 연동)",
+                                range(len(cand_rows)),
+                                format_func=lambda i: f"[{cand_rows[i].get('source_api','-')}] {cand_rows[i].get('person_or_group_name') or cand_rows[i].get('target_corp_name') or '-'} ({cand_rows[i].get('reason','-')})",
+                                key="sel_box_cand"
+                            )
+                            
                             df_cand = pd.DataFrame([
                                 {
                                     "출처 API": c.get('source_api', '-'),
@@ -789,104 +875,170 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                                     "공시접수일": c.get('reported_on', '-')
                                 } for c in cand_rows
                             ])
-                            st.dataframe(df_cand, use_container_width=True, height=360)
+                            
+                            st.dataframe(
+                                df_cand, 
+                                use_container_width=True, 
+                                height=300,
+                                on_select="rerun",
+                                selection_mode="single-row",
+                                key="table_cand_select"
+                            )
+                            
+                            tbl_cand_sel = st.session_state.get("table_cand_select", {}).get("selection", {}).get("rows", [])
+                            if tbl_cand_sel:
+                                clicked_cand_idx = tbl_cand_sel[0]
+                                if clicked_cand_idx < len(cand_rows):
+                                    st.session_state.selected_fact_payload = {"category": "CANDIDATE", "data": cand_rows[clicked_cand_idx]}
+                            elif 'sel_box_cand' in st.session_state:
+                                st.session_state.selected_fact_payload = {"category": "CANDIDATE", "data": cand_rows[sel_cand_idx]}
                     else:
                         st.info("후보 큐 파일이 존재하지 않습니다.")
 
             # 우측: [🏛️ 팩트 상세 패널 (Fact Detail Panel)]
             with col_fact:
-                st.markdown("""
-                <div style='background: linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, rgba(15, 23, 42, 0.05) 100%); 
-                            border: 1px solid rgba(2, 132, 199, 0.3); border-radius: 12px; padding: 14px; margin-bottom: 12px;'>
-                    <h4 style='margin: 0 0 6px 0; color: #0284c7;'>🏛️ 팩트 상세 패널 (Fact Detail Panel)</h4>
-                    <p style='margin: 0; font-size: 13px; color: #64748b;'>선택한 지분/출자 사실의 금감원 DART 출처 및 이중 상태 배지를 실시간 검증합니다.</p>
-                </div>
-                """, unsafe_allow_html=True)
+                payload = st.session_state.get("selected_fact_payload")
                 
-                # 선택 대상 리스트 구성
-                all_facts = list(edges_map.values())
-                if all_facts:
-                    selected_fact_idx = st.selectbox(
-                        "🔍 팩트 분석 대상 선택",
-                        range(len(all_facts)),
-                        format_func=lambda i: f"[{all_facts[i]['type']}] {all_facts[i]['source']} ➔ {all_facts[i]['target']} ({all_facts[i]['stake']:.2f}% / {all_facts[i]['pos'] or '지분보유'})"
-                    )
-                    fact = all_facts[selected_fact_idx]
+                # 기본 fallback: 지분 항목 첫번째
+                if not payload and 'stake_items' in locals() and stake_items:
+                    payload = {"category": "STAKE", "data": stake_items[0]}
+                
+                if payload:
+                    cat = payload.get("category")
+                    data = payload.get("data", {})
                     
-                    # 1. 상단 타이틀 & 메트릭
-                    st.markdown(f"### 🏢 `{fact['source']}` ➔ `{fact['target']}`")
+                    st.markdown("""
+                    <div style='background: linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, rgba(15, 23, 42, 0.05) 100%); 
+                                border: 1px solid rgba(2, 132, 199, 0.3); border-radius: 12px; padding: 14px; margin-bottom: 12px;'>
+                        <h4 style='margin: 0 0 6px 0; color: #0284c7;'>🏛️ 팩트 상세 패널 (Fact Detail Panel)</h4>
+                        <p style='margin: 0; font-size: 13px; color: #64748b;'>선택한 사실의 금감원 DART 공시 원문 출처 및 무결성 배지를 검증합니다.</p>
+                    </div>
+                    """, unsafe_allow_html=True)
                     
-                    m_c1, m_c2 = st.columns(2)
-                    with m_c1:
-                        if fact['stake'] > 0:
-                            st.metric("소유 지분율", f"{fact['stake']:.2f}%", help="OpenDART 정규 보고서 기말 지분율")
-                        elif fact['book_value'] > 0:
-                            st.metric("기말 장부가액", f"{fact['book_value']:,}원", help="타법인출자현황 기말 장부가액")
-                        else:
-                            st.metric("관계 유형", fact['type'])
-                    with m_c2:
-                        st.metric("직책 / 관계", fact['pos'] or fact['type'] or "주요출자자")
-                    
-                    st.markdown("---")
-                    
-                    # 2. 이중 상태 배지 영역
-                    st.markdown("##### 🏷️ 데이터 무결성 & 공시 상태 배지")
-                    b_col1, b_col2, b_col3 = st.columns(3)
-                    
-                    with b_col1:
-                        if fact['doc_status'] == 'NORMAL':
-                            st.markdown("📄 **공시 상태**<br><span style='background-color:#16a34a;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>🟢 정규 공시 (NORMAL)</span>", unsafe_allow_html=True)
-                        elif fact['doc_status'] == 'CORRECTED':
-                            st.markdown("📄 **공시 상태**<br><span style='background-color:#d97706;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>🟡 기재 정정 (CORRECTED)</span>", unsafe_allow_html=True)
-                        else:
-                            st.markdown("📄 **공시 상태**<br><span style='background-color:#dc2626;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>🔴 철회 (WITHDRAWN)</span>", unsafe_allow_html=True)
-                            
-                    with b_col2:
-                        if fact['verification_status'] == 'VERIFIED':
-                            st.markdown("🛡️ **검증 상태**<br><span style='background-color:#0284c7;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>🟢 검증 완료 (VERIFIED)</span>", unsafe_allow_html=True)
-                        else:
-                            st.markdown("🛡️ **검증 상태**<br><span style='background-color:#64748b;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>⚪ 후보 큐 (CANDIDATE)</span>", unsafe_allow_html=True)
-                            
-                    with b_col3:
-                        if fact['is_current']:
-                            st.markdown("⏱️ **최신성 여부**<br><span style='background-color:#16a34a;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>🟢 최신 유효 사실</span>", unsafe_allow_html=True)
-                        else:
-                            st.markdown("⏱️ **최신성 여부**<br><span style='background-color:#94a3b8;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>⚪ 과거 이력 사실</span>", unsafe_allow_html=True)
-                    
-                    st.markdown("---")
-                    
-                    # 3. 시계열 기준일 분리 표기
-                    st.markdown("##### 📅 시계열 기준일 분리")
-                    d_col1, d_col2 = st.columns(2)
-                    with d_col1:
-                        st.markdown(f"**결산 기준일 (`as_of_date`):**\n`{fact['as_of_date'] or (str(fact['year']) + '-12-31' if fact['year'] else '기준일 명시')}`")
-                    with d_col2:
-                        st.markdown(f"**공시 접수일 (`reported_on`):**\n`{fact['reported_on'] or (str(fact['year']) + '년 정기공시' if fact['year'] else '최신 공시')}`")
+                    # ── CASE 1 & 2: 지분 소유(STAKE) / 타법인 출자(INVESTMENT) ──
+                    if cat in ["STAKE", "INVESTMENT"]:
+                        src = data.get('source', 'Unknown')
+                        tgt = data.get('target', 'Unknown')
+                        st.markdown(f"### 🏢 `{src}` ➔ `{tgt}`")
                         
-                    # 4. 공시 접수번호 및 원문 검증 링크
-                    st.markdown("---")
-                    st.markdown("##### 🔗 금감원 DART 공시 원문 역추적")
+                        m_c1, m_c2 = st.columns(2)
+                        with m_c1:
+                            if float(data.get('stake', 0.0) or 0.0) > 0:
+                                st.metric("소유 지분율", f"{float(data['stake']):.2f}%", help="OpenDART 정규 보고서 기말 지분율")
+                            elif int(data.get('book_value', 0) or 0) > 0:
+                                st.metric("기말 장부가액", f"{int(data['book_value']):,}원", help="타법인출자현황 기말 장부가액")
+                            else:
+                                st.metric("관계 유형", data.get('type', 'OWNS_STAKE'))
+                        with m_c2:
+                            st.metric("직책 / 목적", data.get('pos') or data.get('purpose') or data.get('type') or "주요출자자")
+                        
+                        st.markdown("---")
+                        
+                        # 이중 상태 배지 (더미 기본값 배제)
+                        st.markdown("##### 🏷️ 데이터 무결성 & 공시 상태 배지")
+                        b_col1, b_col2, b_col3 = st.columns(3)
+                        
+                        doc_st = data.get('doc_status')
+                        ver_st = data.get('verification_status')
+                        is_curr = data.get('is_current')
+                        rcp_no = data.get('source_rcept_no')
+                        
+                        with b_col1:
+                            if doc_st == 'NORMAL':
+                                st.markdown("📄 **공시 상태**<br><span style='background-color:#16a34a;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>🟢 정규 공시 (NORMAL)</span>", unsafe_allow_html=True)
+                            elif doc_st == 'CORRECTED':
+                                st.markdown("📄 **공시 상태**<br><span style='background-color:#d97706;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>🟡 기재 정정 (CORRECTED)</span>", unsafe_allow_html=True)
+                            elif doc_st == 'WITHDRAWN':
+                                st.markdown("📄 **공시 상태**<br><span style='background-color:#dc2626;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>🔴 철회 (WITHDRAWN)</span>", unsafe_allow_html=True)
+                            else:
+                                st.markdown("📄 **공시 상태**<br><span style='background-color:#64748b;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>⚪ 미연결 (UNLINKED)</span>", unsafe_allow_html=True)
+                                
+                        with b_col2:
+                            if ver_st == 'VERIFIED':
+                                st.markdown("🛡️ **검증 상태**<br><span style='background-color:#0284c7;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>🟢 검증 완료 (VERIFIED)</span>", unsafe_allow_html=True)
+                            else:
+                                st.markdown("🛡️ **검증 상태**<br><span style='background-color:#94a3b8;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>⚪ 베이스라인 (BASELINE)</span>", unsafe_allow_html=True)
+                                
+                        with b_col3:
+                            if is_curr is True:
+                                st.markdown("⏱️ **최신성 여부**<br><span style='background-color:#16a34a;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>🟢 최신 유효 사실</span>", unsafe_allow_html=True)
+                            else:
+                                st.markdown("⏱️ **최신성 여부**<br><span style='background-color:#94a3b8;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>⚪ 과거 이력 사실</span>", unsafe_allow_html=True)
+                        
+                        st.markdown("---")
+                        
+                        # 시계열 분리
+                        st.markdown("##### 📅 시계열 기준일 분리")
+                        d_col1, d_col2 = st.columns(2)
+                        with d_col1:
+                            st.markdown(f"**결산 기준일 (`as_of_date`):**\n`{data.get('as_of_date') or (str(data.get('year')) + '-12-31' if data.get('year') else '기준일 미명시')}`")
+                        with d_col2:
+                            st.markdown(f"**공시 접수일 (`reported_on`):**\n`{data.get('reported_on') or (str(data.get('year')) + '년 정기공시' if data.get('year') else '미연결')}`")
+                            
+                        # DART 공시 원문 역추적 (임의 하드코딩 제거!)
+                        st.markdown("---")
+                        st.markdown("##### 🔗 금감원 DART 공시 원문 역추적")
+                        
+                        if rcp_no and len(str(rcp_no)) == 14:
+                            viewer_url = data.get('viewer_url') or f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={rcp_no}"
+                            st.code(f"고유 공시접수번호 (rcept_no): {rcp_no}", language="text")
+                            st.link_button("📑 금감원 DART 공시 원문 검증 바로가기 (새 창)", viewer_url, use_container_width=True, type="primary")
+                            krx_url = f"https://kind.krx.co.kr/common/disclsviewer.do?acptno={rcp_no}&method=search"
+                            st.link_button("🏛️ KRX 상장공시시스템(KIND) 교차 검증 (새 창)", krx_url, use_container_width=True)
+                        else:
+                            st.warning("⚠️ **근거 공시 미연결 (NO_DISCLOSURE)**\n\n본 관계는 초기 베이스라인 데이터이거나, DART 공시 인덱스와 아직 매핑되지 않은 상태입니다. (외부 뷰어 링크 숨김)")
                     
-                    rcp_no = fact['source_rcept_no'] or "20240314000958"
-                    viewer_url = fact['viewer_url'] or f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={rcp_no}"
-                    
-                    st.code(f"고유 공시접수번호 (rcept_no): {rcp_no}", language="text")
-                    
-                    st.link_button(
-                        "📑 금감원 DART 공시 원문 검증 바로가기 (새 창)", 
-                        viewer_url, 
-                        use_container_width=True,
-                        type="primary"
-                    )
-                    
-                    krx_url = f"https://kind.krx.co.kr/common/disclsviewer.do?acptno={rcp_no}&method=search"
-                    st.link_button(
-                        "🏛️ KRX 상장공시시스템(KIND) 교차 검증 (새 창)",
-                        krx_url,
-                        use_container_width=True
-                    )
+                    # ── CASE 3: 공시 인덱스 (DISCLOSURE) ──
+                    elif cat == "DISCLOSURE":
+                        st.markdown(f"### 📑 `{data.get('report_nm', '공시 보고서')}`")
+                        st.markdown(f"**🏢 대상 법인:** `{data.get('company', '-')}` | **👤 제출인:** `{data.get('flr_nm', '-')}`")
+                        
+                        st.markdown("---")
+                        st.markdown("##### 🏷️ 공시 문서 상태 배지")
+                        doc_st = data.get('doc_status', 'NORMAL')
+                        if doc_st == 'NORMAL':
+                            st.markdown("<span style='background-color:#16a34a;color:white;padding:4px 10px;border-radius:6px;font-size:13px;font-weight:bold;'>🟢 정규 공시 (NORMAL)</span>", unsafe_allow_html=True)
+                        elif doc_st == 'CORRECTED':
+                            st.markdown("<span style='background-color:#d97706;color:white;padding:4px 10px;border-radius:6px;font-size:13px;font-weight:bold;'>🟡 기재 정정 (CORRECTED)</span>", unsafe_allow_html=True)
+                        else:
+                            st.markdown("<span style='background-color:#dc2626;color:white;padding:4px 10px;border-radius:6px;font-size:13px;font-weight:bold;'>🔴 철회 공시 (WITHDRAWN)</span>", unsafe_allow_html=True)
+                            
+                        st.markdown("---")
+                        st.markdown(f"📅 **공시 접수일자:** `{data.get('rcept_dt', '-')}`")
+                        rcp_no = data.get('rcept_no', '')
+                        st.code(f"고유 공시접수번호 (rcept_no): {rcp_no}", language="text")
+                        
+                        viewer_url = data.get('viewer_url') or f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={rcp_no}"
+                        st.link_button("📑 금감원 DART 공시 원문 검증 바로가기 (새 창)", viewer_url, use_container_width=True, type="primary")
+                        krx_url = f"https://kind.krx.co.kr/common/disclsviewer.do?acptno={rcp_no}&method=search"
+                        st.link_button("🏛️ KRX 상장공시시스템(KIND) 교차 검증 (새 창)", krx_url, use_container_width=True)
+                        
+                    # ── CASE 4: 후보 큐 (CANDIDATE) ──
+                    elif cat == "CANDIDATE":
+                        cand_name = data.get('person_or_group_name') or data.get('target_corp_name') or '미식별 엔티티'
+                        st.markdown(f"### 🛡️ 후보 큐 격리 상세: `{cand_name}`")
+                        
+                        st.markdown("---")
+                        st.markdown("##### 🏷️ 데이터 거버넌스 상태 배지")
+                        st.markdown("""
+                        <span style='background-color:#64748b;color:white;padding:4px 10px;border-radius:6px;font-size:13px;font-weight:bold;'>⚪ 검증 보류 (CANDIDATE)</span>
+                        <span style='background-color:#ef4444;color:white;padding:4px 10px;border-radius:6px;font-size:13px;font-weight:bold;'>🚫 그래프 미승격 (ISOLATED)</span>
+                        """, unsafe_allow_html=True)
+                        
+                        st.markdown("---")
+                        st.error(f"⚠️ **격리 보류 사유:**\n\n`{data.get('reason', '동명이인 또는 미식별 법인 노이즈 방지')}`")
+                        
+                        st.markdown(f"• **출처 API 엔드포인트:** `{data.get('source_api', '-')}`")
+                        st.markdown(f"• **보고 대상 회사코드:** `{data.get('corp_code', '-')}`")
+                        st.markdown(f"• **공시 접수일:** `{data.get('reported_on', '-')}`")
+                        
+                        st.markdown("---")
+                        st.markdown("##### 📦 원본 JSON 레코드 (Raw Dump)")
+                        st.json(data)
+                        
+                        st.caption("💡 본 데이터는 무결성 거버넌스 원칙에 따라 Neo4j 지식그래프 노드로 승격되지 않고 candidate_queue.jsonl에 안전하게 격리 보관 중입니다.")
                 else:
-                    st.info("지식그래프에서 분석할 팩트 관계가 없습니다. 좌측에서 기업 또는 그룹을 선택하세요.")
+                    st.info("좌측 테이블에서 분석할 항목을 선택하세요.")
         
     # 리스크 진단 카드
     st.markdown("---")
