@@ -1694,12 +1694,12 @@ elif menu == "⚡ 4. DS005 기업 주요 자본 이벤트 (CB·BW·증자·M&A)"
         selected_corp = selected_corp_raw.split(" (")[0]
 
     # 3. 5대 탭 구성
-    tab_all, tab_cb, tab_pi, tab_mg, tab_illicit = st.tabs([
+    tab_all, tab_cb, tab_pi, tab_mg, tab_phase2 = st.tabs([
         "📑 1. 전체 이벤트 타임라인",
         "💳 2. 전환사채(CB) & BW",
         "📈 3. 유상증자 발행 분석",
         "🤝 4. 회사합병 & 주식 양수도",
-        "🚨 5. 이상 징후 분석 신호"
+        "🔗 5. 시간순 자본 연계 경로 (Phase 2 예정)"
     ])
 
     with tab_all:
@@ -1799,7 +1799,7 @@ elif menu == "⚡ 4. DS005 기업 주요 자본 이벤트 (CB·BW·증자·M&A)"
         else:
             st.info("합병 및 주식 양수도 공시 내역이 없습니다.")
 
-    with tab_illicit:
+    with tab_phase2:
         st.subheader("🔗 5. 시간순 자본 연계 경로 (Phase 2 예정)")
         st.info("ℹ️ 다단계 사모사채 인수자(SUBSCRIBED) 및 연계 출자 경로는 Phase 2에서 정식 적재될 예정입니다. (현재 데이터 미적재)")
 
