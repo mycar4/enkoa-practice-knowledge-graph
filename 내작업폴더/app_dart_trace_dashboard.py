@@ -611,7 +611,7 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                             net.add_node(nid, label=nid, color=color, shape=shape, title=title, size=22)
                             nodes_added.add(nid)
                     
-                    # 엣지 메타데이터 전수 수집 (임의 기본값 없이 사실 그대로 추출)
+                    # 엣지 메타데이터 전수 수집 (임의 추정/기본값 배제, 사실 그대로 추출)
                     a_name = a.get('name', 'Unknown') if isinstance(a, dict) else str(a)
                     b_name = b.get('name', 'Unknown') if isinstance(b, dict) else str(b)
                     stake_val = float(r_props.get('stake', 0.0) or 0.0)
@@ -622,17 +622,18 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                     reported_on_val = str(r_props.get('reported_on', '') or r_props.get('disclosed_at', '') or '')
                     source_rcp = str(r_props.get('source_rcept_no', '') or '')
                     
-                    # 공시 접수번호가 있는 경우에만 doc_status 및 viewer_url 부여
+                    # 출처 접수번호가 있는 경우와 없는 경우의 상태 엄밀 분리
                     if source_rcp:
-                        doc_st = str(r_props.get('doc_status', 'NORMAL') or 'NORMAL')
-                        ver_st = str(r_props.get('verification_status', 'VERIFIED') or 'VERIFIED')
-                        view_url = str(r_props.get('viewer_url', '') or f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={source_rcp}")
+                        doc_st = str(r_props.get('doc_status') or 'UNKNOWN')
+                        ver_st = str(r_props.get('verification_status') or 'VERIFIED')
+                        view_url = str(r_props.get('viewer_url') or f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={source_rcp}")
                     else:
                         doc_st = "UNLINKED"
                         ver_st = "BASELINE_DATA"
                         view_url = ""
                         
-                    is_curr = bool(r_props.get('is_current', True)) if 'is_current' in r_props else (yr is None or yr >= 2024)
+                    # is_current 추정 금지: 프로퍼티에 명시된 경우만 불리언, 없으면 None(UNKNOWN)
+                    is_curr = bool(r_props['is_current']) if 'is_current' in r_props and r_props['is_current'] is not None else None
                     book_val = int(r_props.get('book_value', 0) or 0)
                     shares_cnt = int(r_props.get('shares_count', 0) or 0)
                     purp_val = str(r_props.get('purpose', '') or '')
@@ -687,9 +688,73 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
         with tab_table:
             import pandas as pd
             
-            # 세션 상태에 선택된 팩트 페이로드 초기화
-            if "selected_fact_payload" not in st.session_state:
-                st.session_state.selected_fact_payload = None
+            # 1) 데이터 세트 선행 준비
+            stake_items = [e for e in edges_map.values() if e['type'] in ['OWNS_STAKE', 'HOLDS_5PCT']]
+            
+            invest_query = """
+            MATCH (a:DART_Company)-[r:INVESTED_IN]->(b:DART_Company)
+            WHERE ($entity IS NULL OR a.name = $entity OR b.name = $entity)
+            RETURN a.name AS source, b.name AS target, r.stake AS stake, r.book_value AS book_value,
+                   r.purpose AS purpose, r.as_of_date AS as_of_date, r.source_rcept_no AS source_rcept_no,
+                   r.doc_status AS doc_status, r.verification_status AS verification_status,
+                   r.is_current AS is_current, r.viewer_url AS viewer_url
+            ORDER BY r.book_value DESC LIMIT 50
+            """
+            invest_data = run_cypher(invest_query, entity=selected_entity if selected_entity else None)
+            
+            disc_query = """
+            MATCH (c:DART_Company)-[:FILED]->(d:DART_Disclosure)
+            WHERE ($entity IS NULL OR c.name = $entity)
+            RETURN c.name AS company, d.rcept_dt AS rcept_dt, d.report_nm AS report_nm,
+                   d.flr_nm AS flr_nm, d.doc_status AS doc_status, d.rcept_no AS rcept_no,
+                   d.viewer_url AS viewer_url
+            ORDER BY d.rcept_dt DESC LIMIT 30
+            """
+            disc_data = run_cypher(disc_query, entity=selected_entity if selected_entity else None)
+            
+            cand_rows = []
+            cand_path = "내작업폴더/candidate_queue.jsonl"
+            if os.path.exists(cand_path):
+                with open(cand_path, "r", encoding="utf-8") as f:
+                    for idx, line in enumerate(f):
+                        if idx >= 50:
+                            break
+                        try:
+                            cand_rows.append(json.loads(line.strip()))
+                        except:
+                            pass
+            
+            # 2) 최초 기본 선택 페이로드 (지분 ➔ 출자 ➔ 공시 ➔ 후보큐 순 단 1회만 초기화)
+            if "selected_fact_payload" not in st.session_state or st.session_state.selected_fact_payload is None:
+                if stake_items:
+                    st.session_state.selected_fact_payload = {"category": "STAKE", "data": stake_items[0]}
+                elif invest_data:
+                    st.session_state.selected_fact_payload = {"category": "INVESTMENT", "data": invest_data[0]}
+                elif disc_data:
+                    st.session_state.selected_fact_payload = {"category": "DISCLOSURE", "data": disc_data[0]}
+                elif cand_rows:
+                    st.session_state.selected_fact_payload = {"category": "CANDIDATE", "data": cand_rows[0]}
+            
+            # 3) 콜백 함수 정의 (드롭다운 이벤트 발생 시에만 실행되어 덮어쓰기 방지)
+            def on_change_stake_box():
+                sel_i = st.session_state.sel_box_stake
+                if sel_i < len(stake_items):
+                    st.session_state.selected_fact_payload = {"category": "STAKE", "data": stake_items[sel_i]}
+
+            def on_change_invest_box():
+                sel_i = st.session_state.sel_box_invest
+                if sel_i < len(invest_data):
+                    st.session_state.selected_fact_payload = {"category": "INVESTMENT", "data": invest_data[sel_i]}
+
+            def on_change_disc_box():
+                sel_i = st.session_state.sel_box_disc
+                if sel_i < len(disc_data):
+                    st.session_state.selected_fact_payload = {"category": "DISCLOSURE", "data": disc_data[sel_i]}
+
+            def on_change_cand_box():
+                sel_i = st.session_state.sel_box_cand
+                if sel_i < len(cand_rows):
+                    st.session_state.selected_fact_payload = {"category": "CANDIDATE", "data": cand_rows[sel_i]}
             
             col_tbl, col_fact = st.columns([6, 5])
             
@@ -704,16 +769,14 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                 
                 # 1) 지분 소유망 서브탭
                 with subtab_stake:
-                    stake_items = [e for e in edges_map.values() if e['type'] in ['OWNS_STAKE', 'HOLDS_5PCT']]
                     if stake_items:
-                        # 드롭다운 선택 동기화
-                        sel_stake_idx = st.selectbox(
-                            "🔍 [지분] 상세 조회할 항목 선택 (패널 즉시 연동)",
+                        st.selectbox(
+                            "🔍 [지분] 상세 조회 항목 선택",
                             range(len(stake_items)),
                             format_func=lambda i: f"[{stake_items[i]['source']} ➔ {stake_items[i]['target']}] {stake_items[i]['stake']:.2f}% ({stake_items[i]['pos'] or '지분'}) - 출처: {stake_items[i]['source_rcept_no'] or '미연결'}",
-                            key="sel_box_stake"
+                            key="sel_box_stake",
+                            on_change=on_change_stake_box
                         )
-                        st.session_state.selected_fact_payload = {"category": "STAKE", "data": stake_items[sel_stake_idx]}
                         
                         df_stake = pd.DataFrame([
                             {
@@ -722,12 +785,12 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                                 "지분율 (%)": f"{it['stake']:.2f}%" if it['stake'] > 0 else "-",
                                 "직책 / 관계": it['pos'] or it['type'],
                                 "공시접수번호": it['source_rcept_no'] if it['source_rcept_no'] else "❌ 미연결",
-                                "공시 상태": "🟢 NORMAL" if it['doc_status'] == 'NORMAL' else ("🟡 CORRECTED" if it['doc_status'] == 'CORRECTED' else ("🔴 WITHDRAWN" if it['doc_status'] == 'WITHDRAWN' else "⚪ UNLINKED")),
+                                "공시 상태": "🟢 NORMAL" if it['doc_status'] == 'NORMAL' else ("🟡 CORRECTED" if it['doc_status'] == 'CORRECTED' else ("🔴 WITHDRAWN" if it['doc_status'] == 'WITHDRAWN' else ("⚪ UNKNOWN" if it['doc_status'] == 'UNKNOWN' else "⚪ UNLINKED"))),
                                 "검증 상태": "🟢 VERIFIED" if it['verification_status'] == 'VERIFIED' else "⚪ BASELINE"
                             } for it in stake_items
                         ])
                         
-                        st.dataframe(
+                        tbl_stake_res = st.dataframe(
                             df_stake, 
                             use_container_width=True, 
                             height=300,
@@ -736,33 +799,25 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                             key="table_stake_select"
                         )
                         
-                        # 테이블 행 직접 클릭 이벤트 처리
-                        tbl_sel = st.session_state.get("table_stake_select", {}).get("selection", {}).get("rows", [])
-                        if tbl_sel:
-                            clicked_idx = tbl_sel[0]
-                            if clicked_idx < len(stake_items):
-                                st.session_state.selected_fact_payload = {"category": "STAKE", "data": stake_items[clicked_idx]}
+                        if tbl_stake_res and hasattr(tbl_stake_res, "selection") and tbl_stake_res.selection.rows:
+                            sel_r = tbl_stake_res.selection.rows[0]
+                            cur_tag = ("STAKE", sel_r)
+                            if st.session_state.get("_last_clicked_row") != cur_tag:
+                                st.session_state._last_clicked_row = cur_tag
+                                if sel_r < len(stake_items):
+                                    st.session_state.selected_fact_payload = {"category": "STAKE", "data": stake_items[sel_r]}
                     else:
                         st.info("선택된 기업/그룹에 대한 정규 지분 소유 데이터가 없습니다.")
                         
                 # 2) 타법인 출자현황 서브탭
                 with subtab_invest:
-                    invest_query = """
-                    MATCH (a:DART_Company)-[r:INVESTED_IN]->(b:DART_Company)
-                    WHERE ($entity IS NULL OR a.name = $entity OR b.name = $entity)
-                    RETURN a.name AS source, b.name AS target, r.stake AS stake, r.book_value AS book_value,
-                           r.purpose AS purpose, r.as_of_date AS as_of_date, r.source_rcept_no AS source_rcept_no,
-                           r.doc_status AS doc_status, r.verification_status AS verification_status,
-                           r.is_current AS is_current, r.viewer_url AS viewer_url
-                    ORDER BY r.book_value DESC LIMIT 50
-                    """
-                    invest_data = run_cypher(invest_query, entity=selected_entity if selected_entity else None)
                     if invest_data:
-                        sel_inv_idx = st.selectbox(
-                            "🔍 [출자] 상세 조회할 항목 선택 (패널 즉시 연동)",
+                        st.selectbox(
+                            "🔍 [출자] 상세 조회 항목 선택",
                             range(len(invest_data)),
                             format_func=lambda i: f"[{invest_data[i]['source']} ➔ {invest_data[i]['target']}] 장부가: {int(invest_data[i].get('book_value',0) or 0):,}원 ({invest_data[i].get('purpose','-')})",
-                            key="sel_box_invest"
+                            key="sel_box_invest",
+                            on_change=on_change_invest_box
                         )
                         
                         df_inv = pd.DataFrame([
@@ -777,7 +832,7 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                             } for it in invest_data
                         ])
                         
-                        st.dataframe(
+                        tbl_inv_res = st.dataframe(
                             df_inv, 
                             use_container_width=True, 
                             height=300,
@@ -786,33 +841,25 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                             key="table_invest_select"
                         )
                         
-                        tbl_inv_sel = st.session_state.get("table_invest_select", {}).get("selection", {}).get("rows", [])
-                        if tbl_inv_sel:
-                            clicked_inv_idx = tbl_inv_sel[0]
-                            if clicked_inv_idx < len(invest_data):
-                                st.session_state.selected_fact_payload = {"category": "INVESTMENT", "data": invest_data[clicked_inv_idx]}
-                        elif 'sel_box_invest' in st.session_state:
-                            st.session_state.selected_fact_payload = {"category": "INVESTMENT", "data": invest_data[sel_inv_idx]}
+                        if tbl_inv_res and hasattr(tbl_inv_res, "selection") and tbl_inv_res.selection.rows:
+                            sel_r = tbl_inv_res.selection.rows[0]
+                            cur_tag = ("INVEST", sel_r)
+                            if st.session_state.get("_last_clicked_row") != cur_tag:
+                                st.session_state._last_clicked_row = cur_tag
+                                if sel_r < len(invest_data):
+                                    st.session_state.selected_fact_payload = {"category": "INVESTMENT", "data": invest_data[sel_r]}
                     else:
                         st.info("조회된 타법인 출자 데이터가 없습니다.")
                         
                 # 3) 공시 인덱스 서브탭
                 with subtab_disclosure:
-                    disc_query = """
-                    MATCH (c:DART_Company)-[:FILED]->(d:DART_Disclosure)
-                    WHERE ($entity IS NULL OR c.name = $entity)
-                    RETURN c.name AS company, d.rcept_dt AS rcept_dt, d.report_nm AS report_nm,
-                           d.flr_nm AS flr_nm, d.doc_status AS doc_status, d.rcept_no AS rcept_no,
-                           d.viewer_url AS viewer_url
-                    ORDER BY d.rcept_dt DESC LIMIT 30
-                    """
-                    disc_data = run_cypher(disc_query, entity=selected_entity if selected_entity else None)
                     if disc_data:
-                        sel_disc_idx = st.selectbox(
-                            "🔍 [공시] 상세 조회할 공시 보고서 선택 (패널 즉시 연동)",
+                        st.selectbox(
+                            "🔍 [공시] 상세 조회 공시보고서 선택",
                             range(len(disc_data)),
                             format_func=lambda i: f"[{disc_data[i]['rcept_dt']}] {disc_data[i]['report_nm']} ({disc_data[i]['company']})",
-                            key="sel_box_disc"
+                            key="sel_box_disc",
+                            on_change=on_change_disc_box
                         )
                         
                         df_disc = pd.DataFrame([
@@ -820,12 +867,12 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                                 "공시접수일": it['rcept_dt'],
                                 "보고서명": it['report_nm'],
                                 "제출인 / 보고자": it['flr_nm'] or it['company'],
-                                "문서 상태": "🟢 NORMAL" if it['doc_status'] == 'NORMAL' else ("🟡 CORRECTED" if it['doc_status'] == 'CORRECTED' else "🔴 WITHDRAWN"),
+                                "문서 상태": "🟢 NORMAL" if it['doc_status'] == 'NORMAL' else ("🟡 CORRECTED" if it['doc_status'] == 'CORRECTED' else ("🔴 WITHDRAWN" if it['doc_status'] == 'WITHDRAWN' else "⚪ UNKNOWN")),
                                 "공시접수번호": it['rcept_no']
                             } for it in disc_data
                         ])
                         
-                        st.dataframe(
+                        tbl_disc_res = st.dataframe(
                             df_disc, 
                             use_container_width=True, 
                             height=300,
@@ -834,66 +881,56 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                             key="table_disc_select"
                         )
                         
-                        tbl_disc_sel = st.session_state.get("table_disc_select", {}).get("selection", {}).get("rows", [])
-                        if tbl_disc_sel:
-                            clicked_disc_idx = tbl_disc_sel[0]
-                            if clicked_disc_idx < len(disc_data):
-                                st.session_state.selected_fact_payload = {"category": "DISCLOSURE", "data": disc_data[clicked_disc_idx]}
-                        elif 'sel_box_disc' in st.session_state:
-                            st.session_state.selected_fact_payload = {"category": "DISCLOSURE", "data": disc_data[sel_disc_idx]}
+                        if tbl_disc_res and hasattr(tbl_disc_res, "selection") and tbl_disc_res.selection.rows:
+                            sel_r = tbl_disc_res.selection.rows[0]
+                            cur_tag = ("DISC", sel_r)
+                            if st.session_state.get("_last_clicked_row") != cur_tag:
+                                st.session_state._last_clicked_row = cur_tag
+                                if sel_r < len(disc_data):
+                                    st.session_state.selected_fact_payload = {"category": "DISCLOSURE", "data": disc_data[sel_r]}
                     else:
                         st.info("조회된 DART 공시 인덱스가 없습니다.")
                         
                 # 4) 후보 큐 (Candidate Queue) 서브탭
                 with subtab_cand:
                     st.caption("🛡️ 동명이인 방지 및 미식별 법인 격리 원칙에 따라 검증 보류된 데이터입니다.")
-                    cand_path = "내작업폴더/candidate_queue.jsonl"
-                    if os.path.exists(cand_path):
-                        cand_rows = []
-                        with open(cand_path, "r", encoding="utf-8") as f:
-                            for idx, line in enumerate(f):
-                                if idx >= 50:
-                                    break
-                                try:
-                                    cand_rows.append(json.loads(line.strip()))
-                                except:
-                                    pass
-                        if cand_rows:
-                            sel_cand_idx = st.selectbox(
-                                "🔍 [후보큐] 상세 조회할 격리 항목 선택 (패널 즉시 연동)",
-                                range(len(cand_rows)),
-                                format_func=lambda i: f"[{cand_rows[i].get('source_api','-')}] {cand_rows[i].get('person_or_group_name') or cand_rows[i].get('target_corp_name') or '-'} ({cand_rows[i].get('reason','-')})",
-                                key="sel_box_cand"
-                            )
-                            
-                            df_cand = pd.DataFrame([
-                                {
-                                    "출처 API": c.get('source_api', '-'),
-                                    "회사코드": c.get('corp_code', '-'),
-                                    "주주/피출자명": c.get('person_or_group_name') or c.get('target_corp_name') or '-',
-                                    "격리 사유": c.get('reason', '-'),
-                                    "공시접수일": c.get('reported_on', '-')
-                                } for c in cand_rows
-                            ])
-                            
-                            st.dataframe(
-                                df_cand, 
-                                use_container_width=True, 
-                                height=300,
-                                on_select="rerun",
-                                selection_mode="single-row",
-                                key="table_cand_select"
-                            )
-                            
-                            tbl_cand_sel = st.session_state.get("table_cand_select", {}).get("selection", {}).get("rows", [])
-                            if tbl_cand_sel:
-                                clicked_cand_idx = tbl_cand_sel[0]
-                                if clicked_cand_idx < len(cand_rows):
-                                    st.session_state.selected_fact_payload = {"category": "CANDIDATE", "data": cand_rows[clicked_cand_idx]}
-                            elif 'sel_box_cand' in st.session_state:
-                                st.session_state.selected_fact_payload = {"category": "CANDIDATE", "data": cand_rows[sel_cand_idx]}
+                    if cand_rows:
+                        st.selectbox(
+                            "🔍 [후보큐] 상세 조회 격리항목 선택",
+                            range(len(cand_rows)),
+                            format_func=lambda i: f"[{cand_rows[i].get('source_api','-')}] {cand_rows[i].get('person_or_group_name') or cand_rows[i].get('target_corp_name') or '-'} ({cand_rows[i].get('reason','-')})",
+                            key="sel_box_cand",
+                            on_change=on_change_cand_box
+                        )
+                        
+                        df_cand = pd.DataFrame([
+                            {
+                                "출처 API": c.get('source_api', '-'),
+                                "회사코드": c.get('corp_code', '-'),
+                                "주주/피출자명": c.get('person_or_group_name') or c.get('target_corp_name') or '-',
+                                "격리 사유": c.get('reason', '-'),
+                                "공시접수일": c.get('reported_on', '-')
+                            } for c in cand_rows
+                        ])
+                        
+                        tbl_cand_res = st.dataframe(
+                            df_cand, 
+                            use_container_width=True, 
+                            height=300,
+                            on_select="rerun",
+                            selection_mode="single-row",
+                            key="table_cand_select"
+                        )
+                        
+                        if tbl_cand_res and hasattr(tbl_cand_res, "selection") and tbl_cand_res.selection.rows:
+                            sel_r = tbl_cand_res.selection.rows[0]
+                            cur_tag = ("CAND", sel_r)
+                            if st.session_state.get("_last_clicked_row") != cur_tag:
+                                st.session_state._last_clicked_row = cur_tag
+                                if sel_r < len(cand_rows):
+                                    st.session_state.selected_fact_payload = {"category": "CANDIDATE", "data": cand_rows[sel_r]}
                     else:
-                        st.info("후보 큐 파일이 존재하지 않습니다.")
+                        st.info("후보 큐 파일이 비어 있거나 존재하지 않습니다.")
 
             # 우측: [🏛️ 팩트 상세 패널 (Fact Detail Panel)]
             with col_fact:
@@ -950,20 +987,26 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                                 st.markdown("📄 **공시 상태**<br><span style='background-color:#d97706;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>🟡 기재 정정 (CORRECTED)</span>", unsafe_allow_html=True)
                             elif doc_st == 'WITHDRAWN':
                                 st.markdown("📄 **공시 상태**<br><span style='background-color:#dc2626;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>🔴 철회 (WITHDRAWN)</span>", unsafe_allow_html=True)
+                            elif doc_st == 'UNKNOWN':
+                                st.markdown("📄 **공시 상태**<br><span style='background-color:#64748b;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>⚪ 상태 미확인 (UNKNOWN)</span>", unsafe_allow_html=True)
                             else:
-                                st.markdown("📄 **공시 상태**<br><span style='background-color:#64748b;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>⚪ 미연결 (UNLINKED)</span>", unsafe_allow_html=True)
+                                st.markdown("📄 **공시 상태**<br><span style='background-color:#94a3b8;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>⚪ 공시 미연결 (UNLINKED)</span>", unsafe_allow_html=True)
                                 
                         with b_col2:
                             if ver_st == 'VERIFIED':
                                 st.markdown("🛡️ **검증 상태**<br><span style='background-color:#0284c7;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>🟢 검증 완료 (VERIFIED)</span>", unsafe_allow_html=True)
+                            elif ver_st == 'CANDIDATE':
+                                st.markdown("🛡️ **검증 상태**<br><span style='background-color:#64748b;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>⚪ 후보 큐 (CANDIDATE)</span>", unsafe_allow_html=True)
                             else:
                                 st.markdown("🛡️ **검증 상태**<br><span style='background-color:#94a3b8;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>⚪ 베이스라인 (BASELINE)</span>", unsafe_allow_html=True)
                                 
                         with b_col3:
                             if is_curr is True:
                                 st.markdown("⏱️ **최신성 여부**<br><span style='background-color:#16a34a;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>🟢 최신 유효 사실</span>", unsafe_allow_html=True)
-                            else:
+                            elif is_curr is False:
                                 st.markdown("⏱️ **최신성 여부**<br><span style='background-color:#94a3b8;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>⚪ 과거 이력 사실</span>", unsafe_allow_html=True)
+                            else:
+                                st.markdown("⏱️ **최신성 여부**<br><span style='background-color:#64748b;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>⚪ 최신성 미판정 (UNKNOWN)</span>", unsafe_allow_html=True)
                         
                         st.markdown("---")
                         
