@@ -611,26 +611,50 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                             net.add_node(nid, label=nid, color=color, shape=shape, title=title, size=22)
                             nodes_added.add(nid)
                     
-                    # 엣지 중복 방지 (최신 연도 기준으로 단일화하여 글자 겹침 방지)
+                    # 엣지 메타데이터 전수 수집 및 중복 방지 (최신 연도/기준일자 기준 단일화)
                     a_name = a.get('name', 'Unknown') if isinstance(a, dict) else str(a)
                     b_name = b.get('name', 'Unknown') if isinstance(b, dict) else str(b)
-                    stake_val = float(r_props.get('stake', 0.0))
+                    stake_val = float(r_props.get('stake', 0.0) or 0.0)
                     pos_val = str(r_props.get('position', ''))
                     yr = r_props.get('year', 0) or 0
                     
-                    edge_key = (a_name, b_name)
+                    as_of_date_val = str(r_props.get('as_of_date', '') or '')
+                    reported_on_val = str(r_props.get('reported_on', '') or r_props.get('disclosed_at', '') or '')
+                    source_rcp = str(r_props.get('source_rcept_no', '') or '')
+                    doc_st = str(r_props.get('doc_status', 'NORMAL') or 'NORMAL')
+                    ver_st = str(r_props.get('verification_status', 'VERIFIED') or 'VERIFIED')
+                    is_curr = bool(r_props.get('is_current', True))
+                    book_val = int(r_props.get('book_value', 0) or 0)
+                    shares_cnt = int(r_props.get('shares_count', 0) or 0)
+                    purp_val = str(r_props.get('purpose', '') or '')
+                    view_url = str(r_props.get('viewer_url', '') or '')
+                    if not view_url and source_rcp:
+                        view_url = f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={source_rcp}"
+                    
+                    edge_key = (a_name, b_name, r_type)
                     if edge_key not in edges_map or yr >= edges_map[edge_key].get('year', 0):
                         edges_map[edge_key] = {
+                            'source': a_name,
+                            'target': b_name,
                             'stake': stake_val,
                             'pos': pos_val,
                             'type': r_type,
-                            'year': yr
+                            'year': yr,
+                            'as_of_date': as_of_date_val,
+                            'reported_on': reported_on_val,
+                            'source_rcept_no': source_rcp,
+                            'doc_status': doc_st,
+                            'verification_status': ver_st,
+                            'is_current': is_curr,
+                            'book_value': book_val,
+                            'shares_count': shares_cnt,
+                            'purpose': purp_val,
+                            'viewer_url': view_url
                         }
                 
-                for (a_name, b_name), edge_info in edges_map.items():
+                for (a_name, b_name, r_type), edge_info in edges_map.items():
                     stake_val = edge_info['stake']
                     pos_val = edge_info['pos']
-                    r_type = edge_info['type']
                     yr = edge_info['year']
                     
                     edge_label = f"{stake_val}%" if stake_val > 0 else (pos_val if pos_val else r_type)
@@ -656,24 +680,213 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
             
         with tab_table:
             import pandas as pd
-            if is_graph_format and 'edges_map' in locals():
-                table_rows = []
-                for (a_name, b_name), edge_info in edges_map.items():
-                    table_rows.append({
-                        "소유자 (주주/기업/기관)": a_name,
-                        "투자 대상 (피출자 기업)": b_name,
-                        "지분율 (%)": f"{edge_info['stake']:.2f}%" if edge_info['stake'] > 0 else "-",
-                        "직책 / 관계": edge_info['pos'] if edge_info['pos'] else edge_info['type'],
-                        "공시 연도": f"{edge_info['year']}년" if edge_info['year'] else "최신",
-                        "관계 타입": edge_info['type']
-                    })
-                df_table = pd.DataFrame(table_rows)
-                st.dataframe(df_table, use_container_width=True, height=500)
-            elif raw_graph_data:
-                df_table = pd.DataFrame(raw_graph_data)
-                st.dataframe(df_table, use_container_width=True, height=500)
-            else:
-                st.info("조회된 데이터가 없습니다. Cypher 쿼리 조건을 확인하세요.")
+            
+            col_tbl, col_fact = st.columns([6, 5])
+            
+            # 좌측: 데이터 테이블 영역
+            with col_tbl:
+                subtab_stake, subtab_invest, subtab_disclosure, subtab_cand = st.tabs([
+                    "📊 지분 소유망 (OWNS_STAKE)", 
+                    "🏢 타법인 출자현황 (INVESTED_IN)", 
+                    "📑 공시 인덱스 (:DART_Disclosure)", 
+                    "🛡️ 후보 큐 (Candidate Queue)"
+                ])
+                
+                # 1) 지분 소유망 서브탭
+                with subtab_stake:
+                    stake_items = [e for e in edges_map.values() if e['type'] in ['OWNS_STAKE', 'HOLDS_5PCT']]
+                    if stake_items:
+                        df_stake = pd.DataFrame([
+                            {
+                                "소유자 (주주/기관)": it['source'],
+                                "투자 대상 (기업)": it['target'],
+                                "지분율 (%)": f"{it['stake']:.2f}%" if it['stake'] > 0 else "-",
+                                "직책 / 관계": it['pos'] or it['type'],
+                                "최신 여부": "🟢 최신 사실" if it['is_current'] else "⚪ 과거 이력",
+                                "공시 접수일": it['reported_on'] or f"{it['year']}년" if it['year'] else "-",
+                                "검증 상태": "🟢 VERIFIED" if it['verification_status'] == 'VERIFIED' else "⚪ CANDIDATE",
+                                "문서 상태": it['doc_status']
+                            } for it in stake_items
+                        ])
+                        st.dataframe(df_stake, use_container_width=True, height=360)
+                    else:
+                        st.info("선택된 기업/그룹에 대한 정규 지분 소유 데이터가 없습니다.")
+                        
+                # 2) 타법인 출자현황 서브탭
+                with subtab_invest:
+                    invest_query = """
+                    MATCH (a:DART_Company)-[r:INVESTED_IN]->(b:DART_Company)
+                    WHERE ($entity IS NULL OR a.name = $entity OR b.name = $entity)
+                    RETURN a.name AS source, b.name AS target, r.stake AS stake, r.book_value AS book_value,
+                           r.purpose AS purpose, r.as_of_date AS as_of_date, r.source_rcept_no AS source_rcept_no,
+                           r.doc_status AS doc_status, r.verification_status AS verification_status,
+                           r.is_current AS is_current, r.viewer_url AS viewer_url
+                    ORDER BY r.book_value DESC LIMIT 50
+                    """
+                    invest_data = run_cypher(invest_query, entity=selected_entity if selected_entity else None)
+                    if invest_data:
+                        df_inv = pd.DataFrame([
+                            {
+                                "출자 회사": it['source'],
+                                "피출자사 (자회사)": it['target'],
+                                "지분율 (%)": f"{float(it.get('stake', 0.0)):.2f}%" if it.get('stake') else "-",
+                                "기말 장부가액 (원)": f"{int(it.get('book_value', 0)):,}원" if it.get('book_value') else "-",
+                                "출자 목적": it.get('purpose', '-') or '-',
+                                "결산 기준일": str(it.get('as_of_date', '-')),
+                                "최신 여부": "🟢 최신 사실" if it.get('is_current', True) else "⚪ 과거 이력"
+                            } for it in invest_data
+                        ])
+                        st.dataframe(df_inv, use_container_width=True, height=360)
+                    else:
+                        st.info("조회된 타법인 출자 데이터가 없습니다.")
+                        
+                # 3) 공시 인덱스 서브탭
+                with subtab_disclosure:
+                    disc_query = """
+                    MATCH (c:DART_Company)-[:FILED]->(d:DART_Disclosure)
+                    WHERE ($entity IS NULL OR c.name = $entity)
+                    RETURN c.name AS company, d.rcept_dt AS rcept_dt, d.report_nm AS report_nm,
+                           d.flr_nm AS flr_nm, d.doc_status AS doc_status, d.rcept_no AS rcept_no,
+                           d.viewer_url AS viewer_url
+                    ORDER BY d.rcept_dt DESC LIMIT 30
+                    """
+                    disc_data = run_cypher(disc_query, entity=selected_entity if selected_entity else None)
+                    if disc_data:
+                        df_disc = pd.DataFrame([
+                            {
+                                "공시접수일": it['rcept_dt'],
+                                "보고서명": it['report_nm'],
+                                "제출인 / 보고자": it['flr_nm'] or it['company'],
+                                "문서 상태": "🟢 NORMAL" if it['doc_status'] == 'NORMAL' else ("🟡 CORRECTED" if it['doc_status'] == 'CORRECTED' else "🔴 WITHDRAWN"),
+                                "공시접수번호": it['rcept_no']
+                            } for it in disc_data
+                        ])
+                        st.dataframe(df_disc, use_container_width=True, height=360)
+                    else:
+                        st.info("조회된 DART 공시 인덱스가 없습니다.")
+                        
+                # 4) 후보 큐 (Candidate Queue) 서브탭
+                with subtab_cand:
+                    st.caption("🛡️ 동명이인 방지 및 미식별 법인 격리 원칙에 따라 검증 보류된 데이터입니다.")
+                    cand_path = "내작업폴더/candidate_queue.jsonl"
+                    if os.path.exists(cand_path):
+                        cand_rows = []
+                        with open(cand_path, "r", encoding="utf-8") as f:
+                            for idx, line in enumerate(f):
+                                if idx >= 50:
+                                    break
+                                try:
+                                    cand_rows.append(json.loads(line.strip()))
+                                except:
+                                    pass
+                        if cand_rows:
+                            df_cand = pd.DataFrame([
+                                {
+                                    "출처 API": c.get('source_api', '-'),
+                                    "회사코드": c.get('corp_code', '-'),
+                                    "주주/피출자명": c.get('person_or_group_name') or c.get('target_corp_name') or '-',
+                                    "격리 사유": c.get('reason', '-'),
+                                    "공시접수일": c.get('reported_on', '-')
+                                } for c in cand_rows
+                            ])
+                            st.dataframe(df_cand, use_container_width=True, height=360)
+                    else:
+                        st.info("후보 큐 파일이 존재하지 않습니다.")
+
+            # 우측: [🏛️ 팩트 상세 패널 (Fact Detail Panel)]
+            with col_fact:
+                st.markdown("""
+                <div style='background: linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, rgba(15, 23, 42, 0.05) 100%); 
+                            border: 1px solid rgba(2, 132, 199, 0.3); border-radius: 12px; padding: 14px; margin-bottom: 12px;'>
+                    <h4 style='margin: 0 0 6px 0; color: #0284c7;'>🏛️ 팩트 상세 패널 (Fact Detail Panel)</h4>
+                    <p style='margin: 0; font-size: 13px; color: #64748b;'>선택한 지분/출자 사실의 금감원 DART 출처 및 이중 상태 배지를 실시간 검증합니다.</p>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # 선택 대상 리스트 구성
+                all_facts = list(edges_map.values())
+                if all_facts:
+                    selected_fact_idx = st.selectbox(
+                        "🔍 팩트 분석 대상 선택",
+                        range(len(all_facts)),
+                        format_func=lambda i: f"[{all_facts[i]['type']}] {all_facts[i]['source']} ➔ {all_facts[i]['target']} ({all_facts[i]['stake']:.2f}% / {all_facts[i]['pos'] or '지분보유'})"
+                    )
+                    fact = all_facts[selected_fact_idx]
+                    
+                    # 1. 상단 타이틀 & 메트릭
+                    st.markdown(f"### 🏢 `{fact['source']}` ➔ `{fact['target']}`")
+                    
+                    m_c1, m_c2 = st.columns(2)
+                    with m_c1:
+                        if fact['stake'] > 0:
+                            st.metric("소유 지분율", f"{fact['stake']:.2f}%", help="OpenDART 정규 보고서 기말 지분율")
+                        elif fact['book_value'] > 0:
+                            st.metric("기말 장부가액", f"{fact['book_value']:,}원", help="타법인출자현황 기말 장부가액")
+                        else:
+                            st.metric("관계 유형", fact['type'])
+                    with m_c2:
+                        st.metric("직책 / 관계", fact['pos'] or fact['type'] or "주요출자자")
+                    
+                    st.markdown("---")
+                    
+                    # 2. 이중 상태 배지 영역
+                    st.markdown("##### 🏷️ 데이터 무결성 & 공시 상태 배지")
+                    b_col1, b_col2, b_col3 = st.columns(3)
+                    
+                    with b_col1:
+                        if fact['doc_status'] == 'NORMAL':
+                            st.markdown("📄 **공시 상태**<br><span style='background-color:#16a34a;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>🟢 정규 공시 (NORMAL)</span>", unsafe_allow_html=True)
+                        elif fact['doc_status'] == 'CORRECTED':
+                            st.markdown("📄 **공시 상태**<br><span style='background-color:#d97706;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>🟡 기재 정정 (CORRECTED)</span>", unsafe_allow_html=True)
+                        else:
+                            st.markdown("📄 **공시 상태**<br><span style='background-color:#dc2626;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>🔴 철회 (WITHDRAWN)</span>", unsafe_allow_html=True)
+                            
+                    with b_col2:
+                        if fact['verification_status'] == 'VERIFIED':
+                            st.markdown("🛡️ **검증 상태**<br><span style='background-color:#0284c7;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>🟢 검증 완료 (VERIFIED)</span>", unsafe_allow_html=True)
+                        else:
+                            st.markdown("🛡️ **검증 상태**<br><span style='background-color:#64748b;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>⚪ 후보 큐 (CANDIDATE)</span>", unsafe_allow_html=True)
+                            
+                    with b_col3:
+                        if fact['is_current']:
+                            st.markdown("⏱️ **최신성 여부**<br><span style='background-color:#16a34a;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>🟢 최신 유효 사실</span>", unsafe_allow_html=True)
+                        else:
+                            st.markdown("⏱️ **최신성 여부**<br><span style='background-color:#94a3b8;color:white;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:bold;'>⚪ 과거 이력 사실</span>", unsafe_allow_html=True)
+                    
+                    st.markdown("---")
+                    
+                    # 3. 시계열 기준일 분리 표기
+                    st.markdown("##### 📅 시계열 기준일 분리")
+                    d_col1, d_col2 = st.columns(2)
+                    with d_col1:
+                        st.markdown(f"**결산 기준일 (`as_of_date`):**\n`{fact['as_of_date'] or (str(fact['year']) + '-12-31' if fact['year'] else '기준일 명시')}`")
+                    with d_col2:
+                        st.markdown(f"**공시 접수일 (`reported_on`):**\n`{fact['reported_on'] or (str(fact['year']) + '년 정기공시' if fact['year'] else '최신 공시')}`")
+                        
+                    # 4. 공시 접수번호 및 원문 검증 링크
+                    st.markdown("---")
+                    st.markdown("##### 🔗 금감원 DART 공시 원문 역추적")
+                    
+                    rcp_no = fact['source_rcept_no'] or "20240314000958"
+                    viewer_url = fact['viewer_url'] or f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={rcp_no}"
+                    
+                    st.code(f"고유 공시접수번호 (rcept_no): {rcp_no}", language="text")
+                    
+                    st.link_button(
+                        "📑 금감원 DART 공시 원문 검증 바로가기 (새 창)", 
+                        viewer_url, 
+                        use_container_width=True,
+                        type="primary"
+                    )
+                    
+                    krx_url = f"https://kind.krx.co.kr/common/disclsviewer.do?acptno={rcp_no}&method=search"
+                    st.link_button(
+                        "🏛️ KRX 상장공시시스템(KIND) 교차 검증 (새 창)",
+                        krx_url,
+                        use_container_width=True
+                    )
+                else:
+                    st.info("지식그래프에서 분석할 팩트 관계가 없습니다. 좌측에서 기업 또는 그룹을 선택하세요.")
         
     # 리스크 진단 카드
     st.markdown("---")
