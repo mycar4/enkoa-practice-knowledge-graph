@@ -725,35 +725,10 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                         except:
                             pass
             
-            # 2) 독립적 액티브 소스 및 테이블 초기화 상태 관리 (덮어쓰기 원천 차단)
-            if "_tables_initialized" not in st.session_state:
-                st.session_state._tables_initialized = False
-                st.session_state._prev_stake_row = None
-                st.session_state._prev_invest_row = None
-                st.session_state._prev_disc_row = None
-                st.session_state._prev_cand_row = None
+            # 2) 순수 테이블 행 선택 상태 관리 (드롭다운 완전 제거)
+            if "active_source" not in st.session_state:
                 st.session_state.active_source = "STAKE"
-                st.session_state.stake_selected_idx = 0
-                st.session_state.invest_selected_idx = 0
-                st.session_state.disc_selected_idx = 0
-                st.session_state.cand_selected_idx = 0
-            
-            # 3) 각 테이블 전용 콜백 정의
-            def on_change_stake_box():
-                st.session_state.active_source = "STAKE"
-                st.session_state.stake_selected_idx = st.session_state.sel_box_stake
-
-            def on_change_invest_box():
-                st.session_state.active_source = "INVESTMENT"
-                st.session_state.invest_selected_idx = st.session_state.sel_box_invest
-
-            def on_change_disc_box():
-                st.session_state.active_source = "DISCLOSURE"
-                st.session_state.disc_selected_idx = st.session_state.sel_box_disc
-
-            def on_change_cand_box():
-                st.session_state.active_source = "CANDIDATE"
-                st.session_state.cand_selected_idx = st.session_state.sel_box_cand
+                st.session_state.active_index = 0
             
             col_tbl, col_fact = st.columns([6, 5])
             
@@ -774,15 +749,6 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                 # 1) 지분 소유망 서브탭
                 with subtab_stake:
                     if stake_items:
-                        st.selectbox(
-                            "🔍 [지분] 상세 조회 항목 선택",
-                            range(len(stake_items)),
-                            index=min(st.session_state.stake_selected_idx, len(stake_items) - 1),
-                            format_func=lambda i: f"[{stake_items[i]['source']} ➔ {stake_items[i]['target']}] {stake_items[i]['stake']:.2f}% ({stake_items[i]['pos'] or '지분'}) - 출처: {stake_items[i]['source_rcept_no'] or '미연결'}",
-                            key="sel_box_stake",
-                            on_change=on_change_stake_box
-                        )
-                        
                         df_stake = pd.DataFrame([
                             {
                                 "소유자 (주주/기관)": it['source'],
@@ -798,7 +764,7 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                         tbl_stake_res = st.dataframe(
                             df_stake, 
                             use_container_width=True, 
-                            height=300,
+                            height=360,
                             on_select="rerun",
                             selection_mode="single-row",
                             key="table_stake_select"
@@ -809,15 +775,6 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                 # 2) 타법인 출자현황 서브탭
                 with subtab_invest:
                     if invest_data:
-                        st.selectbox(
-                            "🔍 [출자] 상세 조회 항목 선택",
-                            range(len(invest_data)),
-                            index=min(st.session_state.invest_selected_idx, len(invest_data) - 1),
-                            format_func=lambda i: f"[{invest_data[i]['source']} ➔ {invest_data[i]['target']}] 장부가: {int(invest_data[i].get('book_value',0) or 0):,}원 ({invest_data[i].get('purpose','-')})",
-                            key="sel_box_invest",
-                            on_change=on_change_invest_box
-                        )
-                        
                         df_inv = pd.DataFrame([
                             {
                                 "출자 회사": it['source'],
@@ -833,7 +790,7 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                         tbl_inv_res = st.dataframe(
                             df_inv, 
                             use_container_width=True, 
-                            height=300,
+                            height=360,
                             on_select="rerun",
                             selection_mode="single-row",
                             key="table_invest_select"
@@ -844,15 +801,6 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                 # 3) 공시 인덱스 서브탭
                 with subtab_disclosure:
                     if disc_data:
-                        st.selectbox(
-                            "🔍 [공시] 상세 조회 공시보고서 선택",
-                            range(len(disc_data)),
-                            index=min(st.session_state.disc_selected_idx, len(disc_data) - 1),
-                            format_func=lambda i: f"[{disc_data[i]['rcept_dt']}] {disc_data[i]['report_nm']} ({disc_data[i]['company']})",
-                            key="sel_box_disc",
-                            on_change=on_change_disc_box
-                        )
-                        
                         df_disc = pd.DataFrame([
                             {
                                 "공시접수일": it['rcept_dt'],
@@ -866,7 +814,7 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                         tbl_disc_res = st.dataframe(
                             df_disc, 
                             use_container_width=True, 
-                            height=300,
+                            height=360,
                             on_select="rerun",
                             selection_mode="single-row",
                             key="table_disc_select"
@@ -878,15 +826,6 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                 with subtab_cand:
                     st.caption("🛡️ 동명이인 방지 및 미식별 법인 격리 원칙에 따라 검증 보류된 데이터입니다.")
                     if cand_rows:
-                        st.selectbox(
-                            "🔍 [후보큐] 상세 조회 격리항목 선택",
-                            range(len(cand_rows)),
-                            index=min(st.session_state.cand_selected_idx, len(cand_rows) - 1),
-                            format_func=lambda i: f"[{cand_rows[i].get('source_api','-')}] {cand_rows[i].get('person_or_group_name') or cand_rows[i].get('target_corp_name') or '-'} ({cand_rows[i].get('reason','-')})",
-                            key="sel_box_cand",
-                            on_change=on_change_cand_box
-                        )
-                        
                         df_cand = pd.DataFrame([
                             {
                                 "출처 API": c.get('source_api', '-'),
@@ -901,7 +840,7 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                         tbl_cand_res = st.dataframe(
                             df_cand, 
                             use_container_width=True, 
-                            height=300,
+                            height=360,
                             on_select="rerun",
                             selection_mode="single-row",
                             key="table_cand_select"
@@ -909,76 +848,46 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                     else:
                         st.info("후보 큐 파일이 비어 있거나 존재하지 않습니다.")
 
-            # 4대 테이블 행 선택 상태 취합 및 실제 변경 감지 (초기 렌더링 덮어쓰기 방지)
-            cur_stake_row = tbl_stake_res.selection.rows[0] if (tbl_stake_res and hasattr(tbl_stake_res, "selection") and tbl_stake_res.selection.rows) else None
-            cur_invest_row = tbl_inv_res.selection.rows[0] if (tbl_inv_res and hasattr(tbl_inv_res, "selection") and tbl_inv_res.selection.rows) else None
-            cur_disc_row = tbl_disc_res.selection.rows[0] if (tbl_disc_res and hasattr(tbl_disc_res, "selection") and tbl_disc_res.selection.rows) else None
-            cur_cand_row = tbl_cand_res.selection.rows[0] if (tbl_cand_res and hasattr(tbl_cand_res, "selection") and tbl_cand_res.selection.rows) else None
+            # 테이블 실제 클릭 이벤트 감지 (행을 클릭했을 때만 실행)
+            stake_rows = tbl_stake_res.selection.rows if (tbl_stake_res and hasattr(tbl_stake_res, "selection") and tbl_stake_res.selection.rows) else []
+            invest_rows = tbl_inv_res.selection.rows if (tbl_inv_res and hasattr(tbl_inv_res, "selection") and tbl_inv_res.selection.rows) else []
+            disc_rows = tbl_disc_res.selection.rows if (tbl_disc_res and hasattr(tbl_disc_res, "selection") and tbl_disc_res.selection.rows) else []
+            cand_rows_sel = tbl_cand_res.selection.rows if (tbl_cand_res and hasattr(tbl_cand_res, "selection") and tbl_cand_res.selection.rows) else []
 
-            if not st.session_state._tables_initialized:
-                st.session_state._prev_stake_row = cur_stake_row
-                st.session_state._prev_invest_row = cur_invest_row
-                st.session_state._prev_disc_row = cur_disc_row
-                st.session_state._prev_cand_row = cur_cand_row
-                st.session_state._tables_initialized = True
-            else:
-                if cur_stake_row is not None and cur_stake_row != st.session_state._prev_stake_row:
-                    st.session_state._prev_stake_row = cur_stake_row
-                    st.session_state.active_source = "STAKE"
-                    st.session_state.stake_selected_idx = cur_stake_row
-                elif cur_invest_row is not None and cur_invest_row != st.session_state._prev_invest_row:
-                    st.session_state._prev_invest_row = cur_invest_row
-                    st.session_state.active_source = "INVESTMENT"
-                    st.session_state.invest_selected_idx = cur_invest_row
-                elif cur_disc_row is not None and cur_disc_row != st.session_state._prev_disc_row:
-                    st.session_state._prev_disc_row = cur_disc_row
-                    st.session_state.active_source = "DISCLOSURE"
-                    st.session_state.disc_selected_idx = cur_disc_row
-                elif cur_cand_row is not None and cur_cand_row != st.session_state._prev_cand_row:
-                    st.session_state._prev_cand_row = cur_cand_row
-                    st.session_state.active_source = "CANDIDATE"
-                    st.session_state.cand_selected_idx = cur_cand_row
+            if stake_rows and st.session_state.get("_prev_clicked_stake") != stake_rows:
+                st.session_state._prev_clicked_stake = stake_rows
+                st.session_state.active_source = "STAKE"
+                st.session_state.active_index = stake_rows[0]
+            elif invest_rows and st.session_state.get("_prev_clicked_invest") != invest_rows:
+                st.session_state._prev_clicked_invest = invest_rows
+                st.session_state.active_source = "INVESTMENT"
+                st.session_state.active_index = invest_rows[0]
+            elif disc_rows and st.session_state.get("_prev_clicked_disc") != disc_rows:
+                st.session_state._prev_clicked_disc = disc_rows
+                st.session_state.active_source = "DISCLOSURE"
+                st.session_state.active_index = disc_rows[0]
+            elif cand_rows_sel and st.session_state.get("_prev_clicked_cand") != cand_rows_sel:
+                st.session_state._prev_clicked_cand = cand_rows_sel
+                st.session_state.active_source = "CANDIDATE"
+                st.session_state.active_index = cand_rows_sel[0]
 
             # 우측: [🏛️ 팩트 상세 패널 (Fact Detail Panel)]
             with col_fact:
-                # 🛠️ [임시 디버그 패널] 실측 이벤트 모니터링
-                with st.expander("🛠️ [DEBUG] 실시간 이벤트 & 상태 추적기", expanded=True):
-                    st.markdown(f"**활성 소스 (`active_source`):** `{st.session_state.get('active_source')}` | **초기화 완료:** `{st.session_state.get('_tables_initialized')}`")
-                    st.json({
-                        "현재 선택 행 (cur)": {
-                            "stake": cur_stake_row,
-                            "invest": cur_invest_row,
-                            "disc": cur_disc_row,
-                            "cand": cur_cand_row
-                        },
-                        "이전 기준값 (_prev)": {
-                            "stake": st.session_state.get("_prev_stake_row"),
-                            "invest": st.session_state.get("_prev_invest_row"),
-                            "disc": st.session_state.get("_prev_disc_row"),
-                            "cand": st.session_state.get("_prev_cand_row")
-                        },
-                        "선택 인덱스 (idx)": {
-                            "stake_idx": st.session_state.get("stake_selected_idx"),
-                            "invest_idx": st.session_state.get("invest_selected_idx"),
-                            "disc_idx": st.session_state.get("disc_selected_idx"),
-                            "cand_idx": st.session_state.get("cand_selected_idx")
-                        }
-                    })
-                
                 active_src = st.session_state.get("active_source", "STAKE")
+                active_idx = st.session_state.get("active_index", 0)
                 payload = None
                 
                 if active_src == "STAKE" and stake_items:
-                    idx = min(st.session_state.get("stake_selected_idx", 0), len(stake_items) - 1)
+                    idx = min(active_idx, len(stake_items) - 1)
                     payload = {"category": "STAKE", "data": stake_items[idx]}
                 elif active_src == "INVESTMENT" and invest_data:
-                    idx = min(st.session_state.get("invest_selected_idx", 0), len(invest_data) - 1)
+                    idx = min(active_idx, len(invest_data) - 1)
                     payload = {"category": "INVESTMENT", "data": invest_data[idx]}
                 elif active_src == "DISCLOSURE" and disc_data:
-                    idx = min(st.session_state.get("disc_selected_idx", 0), len(disc_data) - 1)
+                    idx = min(active_idx, len(disc_data) - 1)
                     payload = {"category": "DISCLOSURE", "data": disc_data[idx]}
                 elif active_src == "CANDIDATE" and cand_rows:
-                    idx = min(st.session_state.get("cand_selected_idx", 0), len(cand_rows) - 1)
+                    idx = min(active_idx, len(cand_rows) - 1)
                     payload = {"category": "CANDIDATE", "data": cand_rows[idx]}
                 else:
                     if stake_items: payload = {"category": "STAKE", "data": stake_items[0]}
