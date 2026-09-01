@@ -3,7 +3,10 @@
 > **문서 버전**: `v1.0` (공식 품질보증 및 인수 검수 명세서)  
 > **작성 일자**: 2026-09-01  
 > **문서 목적**: 범용 LLM(Gemini, GPT-4o)의 환각(Hallucination) 및 시계열 왜곡 현상을 실증하고, 향후 DART-Trace 지식그래프 구축 완료 시 **100% 팩트 기반 정합성을 판정하는 공식 품질 검수 기준서(Acceptance Test Spec)**로 활용.  
-> **검수 대상 엔진**: `Claude 3.7 Sonnet / Gemini` vs `GPT-4o` vs `DART-Trace (Neo4j Graph RAG)`
+> **검수 대상 엔진**: 
+> 1. `Gemini 2.0 / Claude 3.7 (일반 LLM)`: 사전학습 지식 기반 응답 (실시간 공시 크롤링 미흡)
+> 2. `ChatGPT Deep Search (OpenAI 1분 50초 딥서치 / 5.6 Terra)`: 웹 검색·실시간 공시 크롤링 연동 모델
+> 3. `DART-Trace (Neo4j Graph RAG)`: 온톨로지 기반 100% 팩트 그래프 엔진
 
 ---
 
@@ -13,16 +16,16 @@
 
 ```mermaid
 flowchart LR
-    subgraph LLM_RISK ["기존 범용 LLM의 한계"]
-        G["Claude 3.7 / Gemini\n(학습 컷오프 갇힘 / 과거 수치 고착 환각)"]
-        GPT["GPT-4o\n(실시간 검색 가능하나 법적 개념 혼동 & 시계열 모순)"]
+    subgraph LLM_COMPARE ["비교 대상 AI 모델"]
+        M1["1. Gemini / Claude\n(2024년 컷오프 갇힘 / 과거 수치 고착 환각)"]
+        M2["2. ChatGPT Deep Search\n(1분 50초 딥서치로 2026년 공시 수치 인출 성공,\n단 법적 온톨로지 개념 혼동 & 시계열 기준 모순)"]
     end
 
     subgraph KG_SOLUTION ["DART-Trace 지식그래프 검증 솔루션"]
-        KG["Neo4j Graph RAG\n(온톨로지 + 14자리 rcept_no + 100% DART 원문 증빙)"]
+        KG["3. Neo4j Graph RAG\n(온톨로지 규격화 + 14자리 rcept_no + 100% DART 원문 증빙)"]
     end
 
-    LLM_RISK -->|품질 검수 & 비교 대조| KG
+    LLM_COMPARE -->|품질 검수 & 비교 대조| KG
 ```
 
 ---
@@ -40,7 +43,7 @@ flowchart LR
 * **❌ Claude 3.7 Sonnet / Gemini**:
   * 주주: 국민연금공단 / 지분율: **약 9.30%** (14,943,293주)
   * 공시: 사업보고서 (2023.12) / 접수일: 2024-03-14 / 접수번호: `20240314000958`
-* **⚠️ GPT-4o**:
+* **⚠️ ChatGPT Deep Search (1분 50초 딥서치 / 5.6 Terra)**:
   * 주주: 국민연금공단(최대주주라고 표기) / 지분율: **8.91%** (13,504,269주)
   * 공시: 반기보고서 (2026.06) / 접수일: 2026-08-14 / 접수번호: `20260814001700`
 * **🎯 DART-Trace (정답 Ground Truth)**:
@@ -64,7 +67,7 @@ flowchart LR
 * **❌ Claude 3.7 Sonnet / Gemini**:
   * 피투자법인: 주식회사 KB국민은행 / 지분율: 100.0%
   * 장부가액: **28,958,409,000,000원 (28조 9,584억 원)** / 출자목적: 경영 참여
-* **🟢 GPT-4o**:
+* **🟢 ChatGPT Deep Search (1분 50초 딥서치 / 5.6 Terra)**:
   * 피투자법인: KB국민은행 / 지분율: 100.00%
   * 장부가액: **14,821,721,000,000원 (14조 8,217억 2,100만 원, 백만원 단위 환산)**
   * 출자목적: 경영참여 / 근거공시: `20260814003647` (2026년 반기보고서)
@@ -89,7 +92,7 @@ flowchart LR
 * **❌ Claude 3.7 Sonnet / Gemini**:
   * KB금융: 8.21% (2024-04-05) / LG전자: 7.82% (2024-03-08) / NAVER: 9.30% (2024-01-05)
   * 가장 최근 공시 접수 기업: **`KB금융 (2024년 4월 5일)`** (완전 오답 💥)
-* **⚠️ GPT-4o**:
+* **⚠️ ChatGPT Deep Search (1분 50초 딥서치 / 5.6 Terra)**:
   * KB금융: 9.23% (32,734,500주) / NAVER: 8.91% / LG전자: 6.48% (10,608,602주)
   * 가장 최근 공시 접수 기업: **`NAVER (2026년 7월 1일 대량보유공시)`**
 * **🎯 DART-Trace (정답 Ground Truth)**:
@@ -105,7 +108,7 @@ flowchart LR
 
 ## 3. 📊 종합 벤치마크 성적표 (Scorecard)
 
-| 평가 지표 | Claude 3.7 / Gemini | GPT-4o | DART-Trace (지식그래프) |
+| 평가 지표 | Claude 3.7 / Gemini | ChatGPT Deep Search (1분 50초 딥서치) | DART-Trace (지식그래프) |
 |---|:---:|:---:|:---:|
 | **수치 정확도 (지분율/장부가액)** | ❌ 33.3% (과거 수치 왜곡) | 🟢 90.0% (수치 일치) | **💯 100.0% (DB 실측 팩트)** |
 | **공시 접수번호 (14자리) 유효성** | ❌ 2024년 낡은 번호 | 🟢 2026년 실제 번호 인출 | **💯 100.0% (OpenDART 직결)** |
