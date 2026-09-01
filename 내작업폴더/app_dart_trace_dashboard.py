@@ -154,7 +154,7 @@ def generate_graphrag_response(prompt: str, api_key_input: str = "") -> dict:
    - "CIRCULAR_LOOP" (순환출자, 고리, 루프 질문)
    - "COMPARISON" (2개 이상 기업 또는 특정 소유자-대상사 간의 지분/출자 비교)
    - "SUMMARY_STATS" (총수별 통계, 집계, 평균, 중앙값, 지배력순위)
-   - "ILLICIT_MA" (비정형 지배구조 이상 징후, 사모펀드, CB발행)
+   - "CAPITAL_EVENTS" (주요 자본 이벤트: CB/BW 발행, 유상증자, 회사합병, 주식양수도)
    - "SINGLE_ENTITY" (단일 기업이나 인물 지배구조 분석)
    - "GENERAL" (일반 질문)
 2. entities: 질문에서 언급된 기업/인물명을 표준 명칭으로 정규화하여 리스트로 반환 (예: "삼전" -> "삼성전자", "현대중공업" -> "HD현대중공업", "한국조선해양" -> "HD한국조선해양", "켄달스퀘어" -> "ESR켄달스퀘어리츠", "국민연금" -> "국민연금공단")
@@ -347,18 +347,7 @@ LIMIT 7
             else:
                 raw_facts_text = f"⚠️ **'{target_ent}'** 관련 사모CB 및 자본 이벤트 데이터는 **현재 적재된 공시 데이터에서 확인 불가**합니다."
         else:
-            cypher_executed = """
-            MATCH path = (hunter:DART_Person)-[:OWNS_STAKE]->(fund:DART_Group)-[:INVESTED_CB]->(shell:DART_Company)-[:ACQUIRED]->(target:DART_Company)<-[r:REPRESENTS]-(kin:DART_Person)
-            RETURN hunter.name AS hunter, fund.name AS fund, shell.name AS shell, target.name AS target, kin.name AS kin, r.relation AS relation
-            """
-            raids = run_cypher(cypher_executed)
-            raw_data_result = raids
-            if raids:
-                raw_facts_text = "### 🚨 [지배구조 이상 징후 감지] 사모사채 연계 지분 이동 분석 리포트\n\n"
-                for r in raids:
-                    raw_facts_text += f"- ⚠️ **{r['hunter']}** (출자자) ➔ **{r['fund']}** (투자조합) ➔ **{r['shell']}** (CB발행사) ➔ **{r['target']}** (비상장사) ➔ **{r['kin']}** ({r['relation']})\n"
-            else:
-                raw_facts_text = "⚠️ 사모CB 및 이상 징후 관련 공시 연계 데이터는 **현재 적재된 공시 데이터에서 확인 불가**합니다."
+            raw_facts_text = "ℹ️ 다단계 사모사채 인수자(SUBSCRIBED) 및 연계 출자 경로는 **Phase 2에서 정식 적재될 예정**입니다. (현재 데이터 미적재)"
 
     # E. 단일 엔티티 상세 지배구조 & 출자 현황 (SINGLE_ENTITY)
     elif detected_entities:
@@ -837,7 +826,6 @@ if menu == "🌐 1. 상장사 지배구조 & 순환출자 탐색기":
                     "포스코 & 롯데 (지배구조)",
                     "카카오 & 하이브 (플랫폼·엔터)",
                     "국민연금 (NPS 10대 대기업 지분망)",
-                    "🚨 비정형 지배구조 이상 징후 (5-Hop)",
                     "🌐 전체 상장사 통합 네트워크"
                 ]
             )
@@ -936,14 +924,6 @@ if menu == "🌐 1. 상장사 지배구조 & 순환출자 탐색기":
             query = """
             MATCH (a:DART_Group {name: '국민연금공단'})-[r]->(b)
             WHERE type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
-            RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
-            """
-        elif selected_group == "🚨 비정형 지배구조 이상 징후 (5-Hop)":
-            query = """
-            MATCH (a)-[r]->(b)
-            WHERE (a.name IN ['강철민', '골든홀딩스투자조합', '루미너스테크', '에이펙스바이오', '박성호', '조명훈', '블루스톤1호조합', '스타네트웍스', '메가리얼티부동산', '장동식', '아시아혁신투자조합', '넥스트젠바이오', '케이바이오랩']
-               OR b.name IN ['강철민', '골든홀딩스투자조합', '루미너스테크', '에이펙스바이오', '박성호', '조명훈', '블루스톤1호조합', '스타네트웍스', '메가리얼티부동산', '장동식', '아시아혁신투자조합', '넥스트젠바이오', '케이바이오랩'])
-              AND type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
             RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
             """
         else:
