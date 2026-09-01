@@ -145,14 +145,14 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
     
-    # 🎨 다크 / 화이트 모드 선택기
-    theme_mode = st.radio("🎨 화면 테마 선택", ["🌙 다크 모드 (Dark)", "☀️ 화이트 모드 (Light)"], horizontal=True)
+    # 🎨 다크 / 화이트 모드 선택기 (기본값: ☀️ 화이트 모드)
+    theme_mode = st.radio("🎨 화면 테마 선택", ["☀️ 화이트 모드 (Light)", "🌙 다크 모드 (Dark)"], index=0, horizontal=True)
     st.markdown("---")
     
     menu = st.radio(
         "📌 서비스 메뉴",
         [
-            "🌐 1. 대기업 지배구조 & 순환출자 탐색기",
+            "🌐 1. 상장사 지배구조 & 순환출자 탐색기",
             "🤖 2. GraphRAG AI 대화형 챗봇",
             "👑 3. GDS 재계 권력 랭킹 (PageRank)",
             "🚨 4. 비정형 지배구조 이상 징후 분석 신호",
@@ -163,8 +163,10 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("### 📊 인프라 연결 현황")
     if driver:
-        node_cnt = run_cypher("MATCH (n) WHERE any(l in labels(n) WHERE l STARTS WITH 'DART_') RETURN count(n) AS c")[0]['c']
-        rel_cnt = run_cypher("MATCH ()-[r]->() WHERE type(r) STARTS WITH 'OWNS' OR type(r) STARTS WITH 'INVESTED' OR type(r) STARTS WITH 'ACQUIRED' OR type(r) STARTS WITH 'REPRESENTS' RETURN count(r) AS c")[0]['c']
+        node_res = run_cypher("MATCH (n) WHERE any(l in labels(n) WHERE l STARTS WITH 'DART_') RETURN count(n) AS c")
+        rel_res = run_cypher("MATCH ()-[r]->() WHERE type(r) STARTS WITH 'OWNS' OR type(r) STARTS WITH 'INVESTED' OR type(r) STARTS WITH 'ACQUIRED' OR type(r) STARTS WITH 'REPRESENTS' RETURN count(r) AS c")
+        node_cnt = node_res[0]['c'] if node_res else 0
+        rel_cnt = rel_res[0]['c'] if rel_res else 0
         st.success(f"✅ Neo4j: {node_cnt}개 노드 / {rel_cnt}건 관계")
     if os.getenv("DART_API_KEY"):
         st.success("✅ OpenDART 실시간 API 활성화")
@@ -213,7 +215,8 @@ if "화이트" in theme_mode:
         div[data-baseweb="select"] *, div[data-baseweb="select"] span, div[data-baseweb="select"] div {
             color: #0f172a !important;
         }
-        div[data-baseweb="popover"], div[data-baseweb="popover"] > div, div[data-baseweb="menu"], ul[role="listbox"] {
+        div[data-baseweb="popover"], div[data-baseweb="popover"] > div, div[data-baseweb="menu"], ul[role="listbox"],
+        [data-baseweb="popover"] div, [data-baseweb="popover"] ul {
             background-color: #ffffff !important;
             border: 1px solid #cbd5e1 !important;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
@@ -222,12 +225,14 @@ if "화이트" in theme_mode:
             color: #0f172a !important;
             background-color: #ffffff !important;
         }
-        li[role="option"], li[role="option"] *, li[role="option"] span, li[role="option"] div {
+        li[role="option"], li[role="option"] *, li[role="option"] span, li[role="option"] div,
+        [data-baseweb="popover"] li, [data-baseweb="popover"] li * {
             background-color: #ffffff !important;
             color: #0f172a !important;
         }
         li[role="option"]:hover, li[role="option"]:hover *, li[role="option"]:hover span,
-        li[aria-selected="true"], li[aria-selected="true"] *, li[aria-selected="true"] span {
+        li[aria-selected="true"], li[aria-selected="true"] *, li[aria-selected="true"] span,
+        [data-highlighted="true"], [data-highlighted="true"] * {
             background-color: #e2e8f0 !important;
             color: #0284c7 !important;
         }
@@ -295,29 +300,56 @@ else:
         }
         
         /* 5. 드롭다운 (BaseWeb Select & Popover 팝업 목록) 다크 스타일 고대비 명확화 */
-        div[data-baseweb="select"] > div {
-            background-color: #1e293b !important;
-            border: 1px solid #334155 !important;
-            color: #f8fafc !important;
-        }
-        div[data-baseweb="select"] *, div[data-baseweb="select"] span, div[data-baseweb="select"] div {
-            color: #f8fafc !important;
-        }
-        div[data-baseweb="popover"], div[data-baseweb="popover"] > div, div[data-baseweb="menu"], ul[role="listbox"] {
+        div[data-baseweb="select"] > div,
+        div[data-baseweb="select"] input,
+        div[data-baseweb="select"] div {
             background-color: #1e293b !important;
             border: 1px solid #475569 !important;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.7) !important;
+            color: #f8fafc !important;
         }
-        div[data-baseweb="popover"] *, div[data-baseweb="menu"] *, ul[role="listbox"] * {
+        div[data-baseweb="select"] * {
+            color: #f8fafc !important;
+        }
+        
+        /* 팝업 컨테이너 및 리스트박스 전역 다크화 */
+        div[data-baseweb="popover"], 
+        div[data-baseweb="popover"] > div, 
+        div[data-baseweb="menu"], 
+        ul[role="listbox"],
+        [data-baseweb="popover"] div,
+        [data-baseweb="popover"] ul {
+            background-color: #1e293b !important;
+            border: 1px solid #475569 !important;
+            color: #f8fafc !important;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8) !important;
+        }
+        div[data-baseweb="popover"] *, 
+        div[data-baseweb="menu"] *, 
+        ul[role="listbox"] * {
             color: #f8fafc !important;
             background-color: #1e293b !important;
         }
-        li[role="option"], li[role="option"] *, li[role="option"] span, li[role="option"] div {
+        
+        /* 옵션 항목 텍스트 및 배경 */
+        li[role="option"], 
+        li[role="option"] > div,
+        li[role="option"] span,
+        [data-baseweb="popover"] li,
+        [data-baseweb="popover"] li * {
             background-color: #1e293b !important;
             color: #f8fafc !important;
+            font-size: 14px !important;
         }
-        li[role="option"]:hover, li[role="option"]:hover *, li[role="option"]:hover span,
-        li[aria-selected="true"], li[aria-selected="true"] *, li[aria-selected="true"] span {
+        
+        /* 호버 및 선택된 옵션 */
+        li[role="option"]:hover, 
+        li[role="option"]:hover *, 
+        li[role="option"]:hover span,
+        li[aria-selected="true"], 
+        li[aria-selected="true"] *, 
+        li[aria-selected="true"] span,
+        [data-highlighted="true"],
+        [data-highlighted="true"] * {
             background-color: #0284c7 !important;
             color: #ffffff !important;
         }
@@ -362,9 +394,9 @@ else:
     canvas_font = "#ffffff"
 
 
-# ── 메뉴 1: 대기업 지배구조 & 순환출자 탐색기 ──
-if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
-    st.header("🌐 대한민국 100대 기업 지배구조 네트워크 탐색기")
+# ── 메뉴 1: 상장사 지배구조 & 순환출자 탐색기 ──
+if menu == "🌐 1. 상장사 지배구조 & 순환출자 탐색기":
+    st.header("🌐 상장사 지배구조 네트워크 탐색기")
     st.caption("Neo4j 지식그래프에 적재된 지분율(%)과 순환출자 관계를 3D 물리 엔진 그래프로 직관적으로 시각화합니다.")
     
     col1, col2 = st.columns([1, 3])
@@ -464,7 +496,7 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                     "카카오 & 하이브 (플랫폼·엔터)",
                     "국민연금 (NPS 10대 대기업 지분망)",
                     "🚨 비정형 지배구조 이상 징후 (5-Hop)",
-                    "🌐 전체 100대 기업 통합 네트워크"
+                    "🌐 전체 상장사 통합 네트워크"
                 ]
             )
         
@@ -475,6 +507,7 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
         )
         year_filter_num = int(selected_year[:4]) if "전체" not in selected_year else None
         
+        include_history = st.checkbox("과거 이력 관계 포함 (동시 표시)", value=False, help="기본적으로 최신 유효 사실(is_current=True) 및 베이스라인만 표시하며, 체크 시 과거 변동 이력까지 3D 그래프에 그립니다.")
         show_physics = st.checkbox("물리 엔진 활성화 (노드 자동 정렬)", value=True)
         st.markdown("---")
         st.markdown("""
@@ -493,11 +526,12 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
             # 아직 지분 데이터가 없는 상장사인 경우 OpenDART에서 실시간 온디맨드 자동 수집
             ensure_company_ownership_data(selected_entity)
             
-            # 개별 기업/인물 맞춤 중심 네트워크 (Ego-network)
+            # 개별 기업/인물 맞춤 중심 지배구조 네트워크 (Ego-network, 공시제출 FILED 제외)
             query = f"""
             MATCH (a)-[r]->(b)
-            WHERE a.name = '{selected_entity}' OR b.name = '{selected_entity}'
-            RETURN a, b, properties(r) AS r_props, type(r) AS r_type
+            WHERE (a.name = '{selected_entity}' OR b.name = '{selected_entity}')
+              AND type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
+            RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
             LIMIT 40
             """
         elif selected_group == "현대자동차그룹 (순환출자)":
@@ -505,102 +539,160 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
             MATCH (a)-[r]->(b)
             WHERE a.name IN ['정의선', '정몽구', '현대모비스', '현대자동차', '기아', '현대글로비스', '현대제철', '보스턴다이내믹스']
               AND b.name IN ['정의선', '정몽구', '현대모비스', '현대자동차', '기아', '현대글로비스', '현대제철', '보스턴다이내믹스']
-            RETURN a, b, properties(r) AS r_props, type(r) AS r_type
+              AND type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
+            RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
             """
         elif selected_group == "삼성그룹 (삼각 지배구조)":
             query = """
             MATCH (a)-[r]->(b)
             WHERE (a.name STARTS WITH '삼성' OR a.name IN ['이재용', '이부진', '이서현'])
               AND (b.name STARTS WITH '삼성' OR b.name IN ['이재용', '이부진', '이서현'])
-            RETURN a, b, properties(r) AS r_props, type(r) AS r_type
+              AND type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
+            RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
             """
         elif selected_group == "SK그룹 (지주사 체제)":
             query = """
             MATCH (a)-[r]->(b)
             WHERE (a.name STARTS WITH 'SK' OR a.name IN ['최태원', '노소영'])
               AND (b.name STARTS WITH 'SK' OR b.name IN ['최태원', '노소영'])
-            RETURN a, b, properties(r) AS r_props, type(r) AS r_type
+              AND type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
+            RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
             """
         elif selected_group == "LG그룹 (지주사 체제)":
             query = """
             MATCH (a)-[r]->(b)
             WHERE (a.name STARTS WITH 'LG' OR a.name IN ['구광모', '(주)LG'])
               AND (b.name STARTS WITH 'LG' OR b.name IN ['구광모', '(주)LG'])
-            RETURN a, b, properties(r) AS r_props, type(r) AS r_type
+              AND type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
+            RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
             """
         elif selected_group == "한화그룹 (방산·우주 3세 승계)":
             query = """
             MATCH (a)-[r]->(b)
             WHERE (a.name STARTS WITH '한화' OR a.name IN ['김승연', '김동관', '(주)한화', '쎄트렉아이'])
               AND (b.name STARTS WITH '한화' OR b.name IN ['김승연', '김동관', '(주)한화', '쎄트렉아이'])
-            RETURN a, b, properties(r) AS r_props, type(r) AS r_type
+              AND type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
+            RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
             """
         elif selected_group == "포스코 & 롯데 (지배구조)":
             query = """
             MATCH (a)-[r]->(b)
             WHERE (a.name STARTS WITH '포스코' OR a.name STARTS WITH '롯데' OR a.name IN ['신동빈'])
               AND (b.name STARTS WITH '포스코' OR b.name STARTS WITH '롯데' OR b.name IN ['신동빈'])
-            RETURN a, b, properties(r) AS r_props, type(r) AS r_type
+              AND type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
+            RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
             """
         elif selected_group == "카카오 & 하이브 (플랫폼·엔터)":
             query = """
             MATCH (a)-[r]->(b)
             WHERE (a.name STARTS WITH '카카오' OR a.name STARTS WITH '하이브' OR a.name IN ['김범수', '방시혁', 'SM엔터테인먼트', '어도어'])
               AND (b.name STARTS WITH '카카오' OR b.name STARTS WITH '하이브' OR b.name IN ['김범수', '방시혁', 'SM엔터테인먼트', '어도어'])
-            RETURN a, b, properties(r) AS r_props, type(r) AS r_type
+              AND type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
+            RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
             """
         elif selected_group == "국민연금 (NPS 10대 대기업 지분망)":
             query = """
             MATCH (a:DART_Group {name: '국민연금공단'})-[r]->(b)
-            RETURN a, b, properties(r) AS r_props, type(r) AS r_type
+            WHERE type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
+            RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
             """
         elif selected_group == "🚨 비정형 지배구조 이상 징후 (5-Hop)":
             query = """
             MATCH (a)-[r]->(b)
-            WHERE a.name IN ['강철민', '골든홀딩스투자조합', '루미너스테크', '에이펙스바이오', '박성호', '조명훈', '블루스톤1호조합', '스타네트웍스', '메가리얼티부동산', '장동식', '아시아혁신투자조합', '넥스트젠바이오', '케이바이오랩']
-               OR b.name IN ['강철민', '골든홀딩스투자조합', '루미너스테크', '에이펙스바이오', '박성호', '조명훈', '블루스톤1호조합', '스타네트웍스', '메가리얼티부동산', '장동식', '아시아혁신투자조합', '넥스트젠바이오', '케이바이오랩']
-            RETURN a, b, properties(r) AS r_props, type(r) AS r_type
+            WHERE (a.name IN ['강철민', '골든홀딩스투자조합', '루미너스테크', '에이펙스바이오', '박성호', '조명훈', '블루스톤1호조합', '스타네트웍스', '메가리얼티부동산', '장동식', '아시아혁신투자조합', '넥스트젠바이오', '케이바이오랩']
+               OR b.name IN ['강철민', '골든홀딩스투자조합', '루미너스테크', '에이펙스바이오', '박성호', '조명훈', '블루스톤1호조합', '스타네트웍스', '메가리얼티부동산', '장동식', '아시아혁신투자조합', '넥스트젠바이오', '케이바이오랩'])
+              AND type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
+            RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
             """
         else:
             query = """
             MATCH (a)-[r]->(b)
-            WHERE type(r) STARTS WITH 'OWNS' OR type(r) STARTS WITH 'INVESTED' OR type(r) STARTS WITH 'ACQUIRED' OR type(r) STARTS WITH 'REPRESENTS'
-            RETURN a, b, properties(r) AS r_props, type(r) AS r_type
+            WHERE type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
+            RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
             LIMIT 70
             """
             
         raw_graph_data = run_cypher(query)
         
-        # 연도별 필터링 적용 (시계열 지분 스냅샷)
-        if year_filter_num:
-            graph_data = [
-                row for row in raw_graph_data
-                if row.get('r_props', {}).get('year') is None or row.get('r_props', {}).get('year') == year_filter_num
-            ]
-        else:
-            graph_data = raw_graph_data
+        # 1. 공통 전체 이력 엣지 맵 생성 (테이블/팩트 패널은 3D 토글과 무관하게 100% 전체 이력 유지)
+        edges_map = {}
+        for idx, row in enumerate(raw_graph_data):
+            a = row['a']
+            b = row['b']
+            r_props = row.get('r_props', {})
+            r_type = row.get('r_type', 'OWNS_STAKE')
+            
+            a_name = a.get('name') or a.get('corp_code') or a.get('rcept_no') or str(a) if isinstance(a, dict) else str(a)
+            b_name = b.get('name') or b.get('corp_code') or b.get('rcept_no') or str(b) if isinstance(b, dict) else str(b)
+            stake_val = float(r_props.get('stake', 0.0) or 0.0)
+            pos_val = str(r_props.get('position', '') or '')
+            yr = r_props.get('year', None)
+            
+            as_of_date_val = str(r_props.get('as_of_date', '') or '')
+            reported_on_val = str(r_props.get('reported_on', '') or r_props.get('disclosed_at', '') or '')
+            source_rcp = str(r_props.get('source_rcept_no', '') or '')
+            
+            if source_rcp:
+                doc_st = str(r_props.get('doc_status') or 'UNKNOWN')
+                ver_st = str(r_props.get('verification_status') or 'UNKNOWN')
+                view_url = str(r_props.get('viewer_url') or f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={source_rcp}")
+            else:
+                doc_st = "UNLINKED"
+                ver_st = "BASELINE_DATA"
+                view_url = ""
+                
+            is_curr = bool(r_props['is_current']) if 'is_current' in r_props and r_props['is_current'] is not None else None
+            book_val = int(r_props.get('book_value', 0) or 0)
+            shares_cnt = int(r_props.get('shares_count', 0) or 0)
+            purp_val = str(r_props.get('purpose', '') or '')
+            
+            r_id = row.get('r_id') or r_props.get('fact_id') or f"{a_name}_{b_name}_{r_type}_{source_rcp}_{as_of_date_val}_{reported_on_val}_{idx}"
+            edges_map[r_id] = {
+                'r_id': r_id,
+                'source': a_name,
+                'target': b_name,
+                'stake': stake_val,
+                'pos': pos_val,
+                'type': r_type,
+                'year': yr,
+                'as_of_date': as_of_date_val,
+                'reported_on': reported_on_val,
+                'source_rcept_no': source_rcp,
+                'doc_status': doc_st,
+                'verification_status': ver_st,
+                'is_current': is_curr,
+                'book_value': book_val,
+                'shares_count': shares_cnt,
+                'purpose': purp_val,
+                'viewer_url': view_url
+            }
         
         # 🌟 3D 그래프 & 데이터 테이블(Table View) 탭 뷰
         tab_graph, tab_table = st.tabs(["🌐 3D 인터랙티브 그래프", "📋 데이터 테이블 (Table View)"])
         
-        is_graph_format = bool(graph_data and isinstance(graph_data[0], dict) and 'a' in graph_data[0] and 'b' in graph_data[0])
+        is_graph_format = bool(raw_graph_data and isinstance(raw_graph_data[0], dict) and 'a' in raw_graph_data[0] and 'b' in raw_graph_data[0])
         
         with tab_graph:
             if is_graph_format:
+                # 3D 그래프 전용 엣지 필터링 (토글 미체크 시 is_current=True 및 베이스라인만 표시)
+                graph_edges = [
+                    e for e in edges_map.values()
+                    if include_history or (e.get('is_current') is True or e.get('is_current') is None)
+                ]
+                
+                # 연도별 필터링 적용 (시계열 지분 스냅샷)
+                if year_filter_num:
+                    graph_edges = [
+                        e for e in graph_edges
+                        if e.get('year') is None or e.get('year') == year_filter_num
+                    ]
+                
                 # PyVis 인터랙티브 네트워크 생성 (메모리 렌더링)
                 net = Network(height="520px", width="100%", bgcolor=canvas_bg, font_color=canvas_font, directed=True)
                 
                 nodes_added = set()
-                edges_map = {}
-                for row in graph_data:
-                    a = row['a']
-                    b = row['b']
-                    r_props = row.get('r_props', {})
-                    r_type = row.get('r_type', 'OWNS_STAKE')
-                    
-                    # 노드 추가
-                    for node_obj in [a, b]:
-                        nid = node_obj.get('name', 'Unknown') if isinstance(node_obj, dict) else str(node_obj)
+                for edge_info in graph_edges:
+                    for nid in [edge_info['source'], edge_info['target']]:
                         if nid not in nodes_added:
                             color = "#2196f3"
                             shape = "dot"
@@ -610,80 +702,54 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                                 color = "#ff4081"
                                 shape = "star"
                                 title = f"👑 총수/인물: {nid}"
-                            elif nid in ["국민연금공단", "MBK파트너스", "골든홀딩스투자조합", "블루스톤1호조합", "아시아혁신투자조합"]:
+                            elif nid in ["국민연금공단", "MBK파트너스", "골든홀딩스투자조합", "블루스톤1호조합", "아시아혁신투자조합", "삼성자산운용", "미래에셋자산운용"]:
                                 color = "#9c27b0"
                                 shape = "hexagon"
                                 title = f"🏛️ 펀드/기관: {nid}"
-                            elif "바이오" in nid or "전자" in nid or "에어로" in nid:
+                            elif "바이오" in nid or "전자" in nid or "에어로" in nid or "리츠" in nid:
                                 color = "#00e676"
-                                title = f"핵심 계열사: {nid}"
+                                title = f"핵심 계열사/법인: {nid}"
                             
                             net.add_node(nid, label=nid, color=color, shape=shape, title=title, size=22)
                             nodes_added.add(nid)
                     
-                    # 엣지 메타데이터 전수 수집 (임의 추정/기본값 배제, 사실 그대로 추출)
-                    # 엣지 메타데이터 전수 수집 (임의 추정/기본값 배제, 사실 그대로 추출)
-                    a_name = a.get('name', 'Unknown') if isinstance(a, dict) else str(a)
-                    b_name = b.get('name', 'Unknown') if isinstance(b, dict) else str(b)
-                    stake_val = float(r_props.get('stake', 0.0) or 0.0)
-                    pos_val = str(r_props.get('position', '') or '')
-                    yr = r_props.get('year', None)
-                    
-                    as_of_date_val = str(r_props.get('as_of_date', '') or '')
-                    reported_on_val = str(r_props.get('reported_on', '') or r_props.get('disclosed_at', '') or '')
-                    source_rcp = str(r_props.get('source_rcept_no', '') or '')
-                    
-                    # 출처 접수번호가 있는 경우와 없는 경우의 상태 엄밀 분리 (기본값 강제 배제)
-                    if source_rcp:
-                        doc_st = str(r_props.get('doc_status') or 'UNKNOWN')
-                        ver_st = str(r_props.get('verification_status') or 'UNKNOWN')
-                        view_url = str(r_props.get('viewer_url') or f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={source_rcp}")
-                    else:
-                        doc_st = "UNLINKED"
-                        ver_st = "BASELINE_DATA"
-                        view_url = ""
-                        
-                    # is_current 추정 금지: 프로퍼티에 명시된 경우만 불리언, 없으면 None(UNKNOWN)
-                    is_curr = bool(r_props['is_current']) if 'is_current' in r_props and r_props['is_current'] is not None else None
-                    book_val = int(r_props.get('book_value', 0) or 0)
-                    shares_cnt = int(r_props.get('shares_count', 0) or 0)
-                    purp_val = str(r_props.get('purpose', '') or '')
-                    
-                    edge_key = (a_name, b_name, r_type)
-                    if edge_key not in edges_map or (yr and yr >= (edges_map[edge_key].get('year') or 0)):
-                        edges_map[edge_key] = {
-                            'source': a_name,
-                            'target': b_name,
-                            'stake': stake_val,
-                            'pos': pos_val,
-                            'type': r_type,
-                            'year': yr,
-                            'as_of_date': as_of_date_val,
-                            'reported_on': reported_on_val,
-                            'source_rcept_no': source_rcp,
-                            'doc_status': doc_st,
-                            'verification_status': ver_st,
-                            'is_current': is_curr,
-                            'book_value': book_val,
-                            'shares_count': shares_cnt,
-                            'purpose': purp_val,
-                            'viewer_url': view_url
-                        }
-                
-                for (a_name, b_name, r_type), edge_info in edges_map.items():
                     stake_val = edge_info['stake']
                     pos_val = edge_info['pos']
                     yr = edge_info['year']
+                    r_type = edge_info['type']
                     
                     edge_label = f"{stake_val}%" if stake_val > 0 else (pos_val if pos_val else r_type)
                     edge_title = f"지분율: {stake_val}% ({yr}년)" if yr else f"지분율: {stake_val}%"
                     edge_width = max(1.5, stake_val / 6.0) if stake_val > 0 else 2.0
                     
-                    net.add_edge(a_name, b_name, label=edge_label, title=edge_title, color="#78909c", arrows="to", width=edge_width)
+                    net.add_edge(edge_info['source'], edge_info['target'], label=edge_label, title=edge_title, color="#78909c", arrows="to", width=edge_width)
                 
-                # 물리 엔진 설정
+                # 물리 엔진 및 고정 레이아웃(randomSeed) 설정 (매번 위치가 달라지는 무작위성 완전 제거)
                 if show_physics:
-                    net.barnes_hut(gravity=-2500, central_gravity=0.3, spring_length=140, spring_strength=0.04, damping=0.88)
+                    net.set_options("""
+                    var options = {
+                      "layout": {
+                        "randomSeed": 42
+                      },
+                      "physics": {
+                        "barnesHut": {
+                          "gravitationalConstant": -3500,
+                          "centralGravity": 0.25,
+                          "springLength": 160,
+                          "springConstant": 0.05,
+                          "damping": 0.92,
+                          "avoidOverlap": 0.3
+                        },
+                        "minVelocity": 0.75,
+                        "solver": "barnesHut",
+                        "stabilization": {
+                          "enabled": true,
+                          "iterations": 120,
+                          "fit": true
+                        }
+                      }
+                    }
+                    """)
                 else:
                     net.toggle_physics(False)
                     
@@ -699,8 +765,21 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
         with tab_table:
             import pandas as pd
             
-            # 1) 데이터 세트 선행 준비
-            stake_items = [e for e in edges_map.values() if e['type'] in ['OWNS_STAKE', 'HOLDS_5PCT']]
+            # 1) 데이터 세트 선행 준비 (3D 토글과 무관하게 전체 이력 100% 유지 + 최신 행 최상단 정렬: is_current DESC, reported_on DESC, as_of_date DESC)
+            def get_stake_sort_key(item):
+                is_curr = item.get('is_current')
+                # True: 2, None(미판정/베이스라인): 1, False(과거 이력): 0
+                curr_score = 2 if is_curr is True else (1 if is_curr is None else 0)
+                rep_on = str(item.get('reported_on') or '')
+                as_of = str(item.get('as_of_date') or '')
+                yr = str(item.get('year') or '')
+                return (curr_score, rep_on, as_of, yr)
+
+            stake_items = sorted(
+                [e for e in edges_map.values() if e['type'] in ['OWNS_STAKE', 'HOLDS_5PCT']],
+                key=get_stake_sort_key,
+                reverse=True
+            )
             
             invest_query = """
             MATCH (a:DART_Company)-[r:INVESTED_IN]->(b:DART_Company)
@@ -1097,7 +1176,7 @@ elif menu == "🤖 2. GraphRAG AI 대화형 챗봇":
     
     if "messages" not in st.session_state:
         st.session_state.messages = [
-            {"role": "assistant", "content": "안녕하세요! **DART-Trace 실시간 GraphRAG AI**입니다.\n\n대한민국 100대 기업의 지분율, 순환출자, 총수 지배력, 계열사 관계에 대해 무엇이든 질문하세요!\n\n💡 **추천 질문 예시:**\n• `현대자동차그룹 순환출자 구조 알려줘`\n• `삼성전자와 삼성바이오로직스 지배구조 비교해줘`\n• `이재용 회장의 삼성 계열사 지배력은?`\n• `최태원 회장이 지배하는 SK 계열사 목록과 지분율`\n• `국민연금이 대주주인 대기업들은 어디야?`"}
+            {"role": "assistant", "content": "안녕하세요! **DART-Trace 실시간 GraphRAG AI**입니다.\n\n대한민국 상장사의 지분율, 순환출자, 총수 지배력, 계열사 관계에 대해 무엇이든 질문하세요!\n\n💡 **추천 질문 예시:**\n• `현대자동차그룹 순환출자 구조 알려줘`\n• `삼성전자와 삼성바이오로직스 지배구조 비교해줘`\n• `이재용 회장의 삼성 계열사 지배력은?`\n• `최태원 회장이 지배하는 SK 계열사 목록과 지분율`\n• `국민연금이 대주주인 대기업들은 어디야?`"}
         ]
         
     for msg in st.session_state.messages:
@@ -1189,7 +1268,7 @@ JSON 출력 포맷:
                 ans = ""
                 
                 # A. 복수 엔티티 비교 (COMPARISON)
-                if detected_intent == "COMPARISON" or len(detected_entities) >= 2:
+                if (detected_intent == "COMPARISON" or len(detected_entities) >= 2) and detected_entities:
                     ent1 = detected_entities[0]
                     ent2 = detected_entities[1] if len(detected_entities) > 1 else detected_entities[0]
                     cypher_executed = f"""
