@@ -941,6 +941,30 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
 
             # 우측: [🏛️ 팩트 상세 패널 (Fact Detail Panel)]
             with col_fact:
+                # 🛠️ [임시 디버그 패널] 실측 이벤트 모니터링
+                with st.expander("🛠️ [DEBUG] 실시간 이벤트 & 상태 추적기", expanded=True):
+                    st.markdown(f"**활성 소스 (`active_source`):** `{st.session_state.get('active_source')}` | **초기화 완료:** `{st.session_state.get('_tables_initialized')}`")
+                    st.json({
+                        "현재 선택 행 (cur)": {
+                            "stake": cur_stake_row,
+                            "invest": cur_invest_row,
+                            "disc": cur_disc_row,
+                            "cand": cur_cand_row
+                        },
+                        "이전 기준값 (_prev)": {
+                            "stake": st.session_state.get("_prev_stake_row"),
+                            "invest": st.session_state.get("_prev_invest_row"),
+                            "disc": st.session_state.get("_prev_disc_row"),
+                            "cand": st.session_state.get("_prev_cand_row")
+                        },
+                        "선택 인덱스 (idx)": {
+                            "stake_idx": st.session_state.get("stake_selected_idx"),
+                            "invest_idx": st.session_state.get("invest_selected_idx"),
+                            "disc_idx": st.session_state.get("disc_selected_idx"),
+                            "cand_idx": st.session_state.get("cand_selected_idx")
+                        }
+                    })
+                
                 active_src = st.session_state.get("active_source", "STAKE")
                 payload = None
                 
