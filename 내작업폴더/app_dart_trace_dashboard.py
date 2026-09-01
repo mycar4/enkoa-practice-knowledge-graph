@@ -316,21 +316,49 @@ LIMIT 7
         for r in stats_res:
             raw_facts_text += f"| **{r['총수명']}** | {r['보유기업수']}개 | {r['총지분합계']}% | {r['평균지분율']}% | **{r['중앙값지분율']}%** |\n"
 
-    # D. 비정형 지배구조 이상 징후 분석 신호 (ILLICIT_MA)
-    elif detected_intent == "ILLICIT_MA" or any(kw in prompt for kw in ["작전", "무자본", "사모펀드", "횡령", "CB"]):
-        cypher_executed = """
-// 🚨 5-Hop 사모사채 및 연계 지분 이동 패턴 탐색
-MATCH path = (hunter:DART_Person)-[:OWNS_STAKE]->(fund:DART_Group)-[:INVESTED_CB]->(shell:DART_Company)-[:ACQUIRED]->(target:DART_Company)<-[r:REPRESENTS]-(kin:DART_Person)
-RETURN hunter.name AS hunter, fund.name AS fund, shell.name AS shell, target.name AS target, kin.name AS kin, r.relation AS relation
-        """
-        raids = run_cypher(cypher_executed)
-        raw_data_result = raids
-        if raids:
-            raw_facts_text = "### 🚨 [지배구조 이상 징후 감지] 사모사채 연계 지분 이동 분석 리포트\n\n"
-            for r in raids:
-                raw_facts_text += f"- ⚠️ **{r['hunter']}** (출자자) ➔ **{r['fund']}** (투자조합) ➔ **{r['shell']}** (CB발행사) ➔ **{r['target']}** (비상장사) ➔ **{r['kin']}** ({r['relation']})\n"
+    # D. 자본 이벤트 공시 팩트 질의 (CAPITAL_EVENTS)
+    elif detected_intent == "CAPITAL_EVENTS" or any(kw in prompt for kw in ["CB", "전환사채", "BW", "신주인수권", "유상증자", "합병", "양수도", "자본이벤트"]):
+        if detected_entities:
+            target_ent = detected_entities[0]
+            cypher_executed = """
+            MATCH (c:DART_Company {name: $name})-[:ANNOUNCED]->(e:DART_CapitalEvent)
+            RETURN e.event_type AS type, e.event_name AS name, e.issue_amount AS amount,
+                   e.conversion_price AS cv_price, e.is_private AS is_private,
+                   e.target_corp_name AS target, e.merger_ratio AS merger_ratio,
+                   e.source_rcept_no AS rcept_no, e.received_on AS received_on,
+                   e.decided_on AS decided_on, e.effective_on AS effective_on
+            ORDER BY e.received_on DESC
+            LIMIT 10
+            """
+            cap_events = run_cypher(cypher_executed, name=target_ent)
+            raw_data_result = cap_events
+            if cap_events:
+                raw_facts_text = f"### ⚡ [GraphRAG 자본 이벤트 팩트] **{target_ent}** 주요 공시 변동 내역\n\n"
+                for ev in cap_events:
+                    amt_str = f" / 발행·양수액 **{int(ev['amount']):,}원**" if ev.get('amount') else ""
+                    cv_str = f" / 전환가 **{int(ev['cv_price']):,}원**" if ev.get('cv_price') else ""
+                    priv_str = " (사모)" if ev.get('is_private') else ""
+                    tgt_str = f" ➔ 상대방: **{ev['target']}**" if ev.get('target') else ""
+                    ratio_str = f" (합병비율: `{ev['merger_ratio']}`)" if ev.get('merger_ratio') else ""
+                    rcp_str = f" [공시: [`{ev['rcept_no']}`](https://dart.fss.or.kr/dsaf001/main.do?rcpNo={ev['rcept_no']})]"
+                    dec_str = f" (결의일: `{str(ev['decided_on'])}`)" if ev.get('decided_on') else ""
+                    eff_str = f" (효력/납입일: `{str(ev['effective_on'])}`)" if ev.get('effective_on') else ""
+                    raw_facts_text += f"• **{ev['name']}**{priv_str}{amt_str}{cv_str}{tgt_str}{ratio_str}{dec_str}{eff_str} (접수일: `{str(ev['received_on'])}`){rcp_str}\n"
+            else:
+                raw_facts_text = f"⚠️ **'{target_ent}'** 관련 사모CB 및 자본 이벤트 데이터는 **현재 적재된 공시 데이터에서 확인 불가**합니다."
         else:
-            raw_facts_text = "⚠️ 사모CB 및 이상 징후 관련 공시 연계 데이터는 **현재 적재된 공시 데이터에서 확인 불가**합니다."
+            cypher_executed = """
+            MATCH path = (hunter:DART_Person)-[:OWNS_STAKE]->(fund:DART_Group)-[:INVESTED_CB]->(shell:DART_Company)-[:ACQUIRED]->(target:DART_Company)<-[r:REPRESENTS]-(kin:DART_Person)
+            RETURN hunter.name AS hunter, fund.name AS fund, shell.name AS shell, target.name AS target, kin.name AS kin, r.relation AS relation
+            """
+            raids = run_cypher(cypher_executed)
+            raw_data_result = raids
+            if raids:
+                raw_facts_text = "### 🚨 [지배구조 이상 징후 감지] 사모사채 연계 지분 이동 분석 리포트\n\n"
+                for r in raids:
+                    raw_facts_text += f"- ⚠️ **{r['hunter']}** (출자자) ➔ **{r['fund']}** (투자조합) ➔ **{r['shell']}** (CB발행사) ➔ **{r['target']}** (비상장사) ➔ **{r['kin']}** ({r['relation']})\n"
+            else:
+                raw_facts_text = "⚠️ 사모CB 및 이상 징후 관련 공시 연계 데이터는 **현재 적재된 공시 데이터에서 확인 불가**합니다."
 
     # E. 단일 엔티티 상세 지배구조 & 출자 현황 (SINGLE_ENTITY)
     elif detected_entities:
@@ -372,9 +400,19 @@ ORDER BY r.is_current DESC, r.reported_on DESC, r.stake DESC
         
         multi_hop = run_cypher("MATCH path = (a {name: $name})-[:OWNS_STAKE*2..3]->(c) RETURN DISTINCT c.name AS indirect_comp, length(path) AS hops LIMIT 10", name=target_ent)
         
-        raw_data_result = {"1_보유지분_및_출자": direct_stakes, "2_주요주주": owned_by, "3_다단계_우회": multi_hop}
+        cap_events = run_cypher("""
+        MATCH (c:DART_Company {name: $name})-[:ANNOUNCED]->(e:DART_CapitalEvent)
+        RETURN e.event_type AS type, e.event_name AS name, e.issue_amount AS amount,
+               e.conversion_price AS cv_price, e.is_private AS is_private,
+               e.target_corp_name AS target, e.merger_ratio AS merger_ratio,
+               e.source_rcept_no AS rcept_no, e.received_on AS received_on
+        ORDER BY e.received_on DESC
+        LIMIT 5
+        """, name=target_ent)
+
+        raw_data_result = {"1_보유지분_및_출자": direct_stakes, "2_주요주주": owned_by, "3_다단계_우회": multi_hop, "4_자본이벤트": cap_events}
         
-        if not direct_stakes and not owned_by and not multi_hop:
+        if not direct_stakes and not owned_by and not multi_hop and not cap_events:
             raw_facts_text = f"⚠️ **'{target_ent}'** 관련 공시 데이터는 **현재 적재된 공시 데이터에서 확인 불가**합니다."
         else:
             raw_facts_text = f"### 📊 [GraphRAG 실시간 분석] **{target_ent}** 지배구조 & 출자 네트워크 리포트\n\n"
@@ -404,6 +442,14 @@ ORDER BY r.is_current DESC, r.reported_on DESC, r.stake DESC
                     rcp_str = f" [공시: [`{row['rcept_no']}`](https://dart.fss.or.kr/dsaf001/main.do?rcpNo={row['rcept_no']})]" if row.get('rcept_no') else " [근거 공시 미연결]"
                     curr_str = " [🟢 최신 유효 사실]" if row.get('is_curr') is True else ""
                     raw_facts_text += f"• **{row['owner']}**: {stake_str}{book_str}{pos_str}{as_of_str}{rep_str}{rcp_str}{curr_str}\n"
+            if cap_events:
+                raw_facts_text += f"\n#### ⚡ **{target_ent}**의 주요 자본 이벤트 (CB·증자·M&A):\n"
+                for ev in cap_events:
+                    amt_str = f" / 발행·양수액 **{int(ev['amount']):,}원**" if ev.get('amount') else ""
+                    cv_str = f" / 전환가 **{int(ev['cv_price']):,}원**" if ev.get('cv_price') else ""
+                    priv_str = " (사모)" if ev.get('is_private') else ""
+                    rcp_str = f" [공시: [`{ev['rcept_no']}`](https://dart.fss.or.kr/dsaf001/main.do?rcpNo={ev['rcept_no']})]"
+                    raw_facts_text += f"• **{ev['name']}**{priv_str}{amt_str}{cv_str} (접수일: `{str(ev['received_on'])}`){rcp_str}\n"
             if multi_hop:
                 raw_facts_text += f"\n#### 3️⃣ **{target_ent}**의 다단계(Multi-hop) 우회 계열사:\n"
                 for row in multi_hop:
@@ -451,7 +497,7 @@ with st.sidebar:
             "🌐 1. 상장사 지배구조 & 순환출자 탐색기",
             "🤖 2. GraphRAG AI 대화형 챗봇",
             "👑 3. GDS 재계 권력 랭킹 (PageRank)",
-            "🚨 4. 비정형 지배구조 이상 징후 분석 신호",
+            "⚡ 4. DS005 기업 주요 자본 이벤트 (CB·BW·증자·M&A)",
             "📥 5. 최근 5년 OpenDART 실시간 수집 & 스토리지"
         ]
     )
@@ -1600,42 +1646,162 @@ elif menu == "👑 3. GDS 재계 권력 랭킹 (PageRank)":
         """, unsafe_allow_html=True)
 
 
-# ── 메뉴 4: 비정형 지배구조 이상 징후 분석 신호 ──
-elif menu == "🚨 4. 비정형 지배구조 이상 징후 분석 신호":
-    st.header("🚨 비정형 지배구조 이상 징후 및 사모사채(CB) 분석 신호")
-    st.caption("사모전환사채(CB) 꺾기 발행, 사모투자조합 우회 지분 분산, 특수관계인 비상장사 연계 패턴을 5-Hop 다단계 경로로 탐지합니다.")
-    
-    st.markdown("""
-    <div class="metric-card" style="border-left: 5px solid #ffa726;">
-        <h3 style="color:#ffa726; margin:0;">⚠️ 공시 기반 다단계 이상 거래 패턴 매칭 엔진 가동 중</h3>
-        <p style="margin-top:5px; color:#cccccc;">모니터링 패턴: 사모펀드 출자 ➔ 한계기업 인수 ➔ 사모사채(CB) 발행 ➔ 특수관계인 비상장사 고가 인수 및 자금 이동 구조</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    raids = run_cypher("""
-    MATCH path = (hunter:DART_Person)-[:OWNS_STAKE]->(fund:DART_Group)-[:INVESTED_CB]->(shell:DART_Company)-[:ACQUIRED]->(target:DART_Company)<-[r:REPRESENTS]-(kin:DART_Person)
-    RETURN hunter.name AS 출자자,
-           fund.name AS 투자조합,
-           shell.name AS CB발행상장사,
-           target.name AS 피인수비상장사,
-           kin.name AS 특수관계인,
-           r.relation AS 관계설명
+# ── 메뉴 4: DS005 기업 주요 자본 이벤트 (CB·BW·증자·M&A) ──
+elif menu == "⚡ 4. DS005 기업 주요 자본 이벤트 (CB·BW·증자·M&A)":
+    st.header("⚡ DS005 기업 주요 자본 변동 및 M&A 지식그래프 탐색기")
+    st.caption("금융감독원 OpenDART DS005 주요사항보고서(사모CB, BW, 유상증자, 주식양수도, 회사합병) 5대 이벤트를 시계열 그래프로 정밀 추적합니다.")
+
+    # 1. 상단 통계 카드
+    stats_ev = run_cypher("""
+    MATCH (e:DART_CapitalEvent)
+    RETURN e.event_type AS type, count(e) AS cnt
     """)
+    stats_dict = {r['type']: r['cnt'] for r in stats_ev} if stats_ev else {}
+    tot_ev = sum(stats_dict.values())
+    cb_cnt = stats_dict.get('CB_ISSUE', 0)
+    bw_cnt = stats_dict.get('BW_ISSUE', 0)
+    pi_cnt = stats_dict.get('PAID_INCREASE', 0)
+    acq_cnt = stats_dict.get('STOCK_ACQUISITION', 0)
+    mg_cnt = stats_dict.get('MERGER', 0)
+
+    m1, m2, m3, m4, m5, m6 = st.columns(6)
+    with m1:
+        st.metric("⚡ 총 자본 이벤트", f"{tot_ev:,}건")
+    with m2:
+        st.metric("💳 전환사채 (CB)", f"{cb_cnt:,}건")
+    with m3:
+        st.metric("📑 유상증자", f"{pi_cnt:,}건")
+    with m4:
+        st.metric("🤝 회사합병", f"{mg_cnt:,}건")
+    with m5:
+        st.metric("🏢 타법인 주식양수", f"{acq_cnt:,}건")
+    with m6:
+        st.metric("🎫 신주인수권 (BW)", f"{bw_cnt:,}건")
+
+    st.markdown("---")
+
+    # 2. 기업 필터 셀렉트박스
+    corps_with_ev = run_cypher("""
+    MATCH (c:DART_Company)-[:ANNOUNCED]->(e:DART_CapitalEvent)
+    RETURN DISTINCT c.name AS name, count(e) AS cnt
+    ORDER BY cnt DESC, name
+    """)
+    corp_options = ["전체 상장사 종합 보기"] + [f"{r['name']} ({r['cnt']}건)" for r in corps_with_ev]
+    selected_corp_raw = st.selectbox("🏢 공시 대상 상장사 선택", corp_options, index=0)
     
-    for i, row in enumerate(raids, 1):
-        with st.expander(f"🔍 [이상 징후 후보 #{i}] {row['출자자']} ➔ {row['투자조합']} ➔ {row['CB발행상장사']}", expanded=True):
-            c1, c2 = st.columns([2, 1])
-            with c1:
-                st.markdown(f"""
-                * **핵심 출자자**: `{row['출자자']}`
-                * **투자 조합**: `{row['투자조합']}`
-                * **CB 발행 상장사**: `{row['CB발행상장사']}`
-                * **피인수 비상장사**: `{row['피인수비상장사']}`
-                * **특수관계인 연결**: `{row['특수관계인']}` (`{row['관계설명']}`)
-                """)
-            with c2:
-                st.warning("⚠️ 패턴 일치도: 98점")
-                st.caption("심층 공시 검토 후보")
+    selected_corp = None
+    if selected_corp_raw != "전체 상장사 종합 보기":
+        selected_corp = selected_corp_raw.split(" (")[0]
+
+    # 3. 5대 탭 구성
+    tab_all, tab_cb, tab_pi, tab_mg, tab_illicit = st.tabs([
+        "📑 1. 전체 이벤트 타임라인",
+        "💳 2. 전환사채(CB) & BW",
+        "📈 3. 유상증자 발행 분석",
+        "🤝 4. 회사합병 & 주식 양수도",
+        "🚨 5. 이상 징후 분석 신호"
+    ])
+
+    with tab_all:
+        st.subheader(f"📑 자본 변동 공시 타임라인 ({selected_corp if selected_corp else '전체'})")
+        where_clause = "WHERE c.name = $corp" if selected_corp else ""
+        query_all = f"""
+        MATCH (c:DART_Company)-[r:ANNOUNCED]->(e:DART_CapitalEvent)
+        {where_clause}
+        RETURN c.name AS 상장사,
+               e.event_type AS 유형,
+               e.event_name AS 공시명,
+               e.issue_method AS 발행_증자방식,
+               e.issue_amount AS 금액,
+               e.conversion_price AS 전환_발행가액,
+               e.decided_on AS 이사회결의일,
+               e.received_on AS 공시접수일,
+               e.effective_on AS 효력_납입일,
+               e.source_rcept_no AS 접수번호,
+               e.viewer_url AS DART원문
+        ORDER BY e.received_on DESC
+        LIMIT 100
+        """
+        all_events = run_cypher(query_all, corp=selected_corp) if selected_corp else run_cypher(query_all)
+        if all_events:
+            df_all = pd.DataFrame(all_events)
+            st.dataframe(df_all, use_container_width=True, height=400)
+        else:
+            st.info("해당 조건의 자본 이벤트 공시가 없습니다.")
+
+    with tab_cb:
+        st.subheader("💳 사모·공모 전환사채(CB) 및 신주인수권부사채(BW) 발행 내역")
+        where_cb = "WHERE e.event_type IN ['CB_ISSUE', 'BW_ISSUE']" + (f" AND c.name = '{selected_corp}'" if selected_corp else "")
+        cb_res = run_cypher(f"""
+        MATCH (c:DART_Company)-[:ANNOUNCED]->(e:DART_CapitalEvent)
+        {where_cb}
+        RETURN c.name AS 발행회사,
+               e.event_name AS 사채명칭,
+               e.is_private AS 사모여부,
+               e.issue_amount AS 권면총액,
+               e.conversion_price AS 전환가액,
+               e.min_refixing_floor AS 리픽싱최저한도,
+               e.decided_on AS 결의일,
+               e.received_on AS 공시접수일,
+               e.effective_on AS 납입일,
+               e.source_rcept_no AS 접수번호,
+               e.viewer_url AS 원문링크
+        ORDER BY e.received_on DESC
+        """)
+        if cb_res:
+            st.dataframe(pd.DataFrame(cb_res), use_container_width=True, height=400)
+        else:
+            st.info("발행된 CB/BW 내역이 없습니다.")
+
+    with tab_pi:
+        st.subheader("📈 유상증자 결정 및 자금조달 목적")
+        where_pi = "WHERE e.event_type = 'PAID_INCREASE'" + (f" AND c.name = '{selected_corp}'" if selected_corp else "")
+        pi_res = run_cypher(f"""
+        MATCH (c:DART_Company)-[:ANNOUNCED]->(e:DART_CapitalEvent)
+        {where_pi}
+        RETURN c.name AS 상장사,
+               e.event_name AS 증자명칭,
+               e.issue_method AS 증자방식,
+               e.issue_amount AS 조달금액,
+               e.conversion_price AS 신주발행가,
+               e.decided_on AS 결의일,
+               e.received_on AS 공시접수일,
+               e.effective_on AS 납입일,
+               e.source_rcept_no AS 접수번호,
+               e.viewer_url AS 원문링크
+        ORDER BY e.received_on DESC
+        """)
+        if pi_res:
+            st.dataframe(pd.DataFrame(pi_res), use_container_width=True, height=400)
+        else:
+            st.info("유상증자 공시 내역이 없습니다.")
+
+    with tab_mg:
+        st.subheader("🤝 회사합병 및 타법인 주식 양수도(M&A)")
+        where_mg = "WHERE e.event_type IN ['MERGER', 'STOCK_ACQUISITION']" + (f" AND c.name = '{selected_corp}'" if selected_corp else "")
+        mg_res = run_cypher(f"""
+        MATCH (c:DART_Company)-[:ANNOUNCED]->(e:DART_CapitalEvent)
+        {where_mg}
+        RETURN c.name AS 당사회사,
+               e.event_type AS 유형,
+               e.target_corp_name AS 상대회사,
+               e.merger_ratio AS 합병비율,
+               e.issue_amount AS 양수금액,
+               e.decided_on AS 결의일,
+               e.received_on AS 공시접수일,
+               e.effective_on AS 효력기일,
+               e.source_rcept_no AS 접수번호,
+               e.viewer_url AS 원문링크
+        ORDER BY e.received_on DESC
+        """)
+        if mg_res:
+            st.dataframe(pd.DataFrame(mg_res), use_container_width=True, height=400)
+        else:
+            st.info("합병 및 주식 양수도 공시 내역이 없습니다.")
+
+    with tab_illicit:
+        st.subheader("🔗 5. 시간순 자본 연계 경로 (Phase 2 예정)")
+        st.info("ℹ️ 다단계 사모사채 인수자(SUBSCRIBED) 및 연계 출자 경로는 Phase 2에서 정식 적재될 예정입니다. (현재 데이터 미적재)")
 
 
 # ── 메뉴 5: 최근 5년 OpenDART 실시간 수집 & 스토리지 ──
