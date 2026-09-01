@@ -725,16 +725,17 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                         except:
                             pass
             
-            # 2) 독립적 액티브 소스 상태 관리 (덮어쓰기 원천 차단)
-            if "active_source" not in st.session_state:
+            # 2) 독립적 액티브 소스 및 테이블 초기화 상태 관리 (덮어쓰기 원천 차단)
+            if "_tables_initialized" not in st.session_state:
+                st.session_state._tables_initialized = False
+                st.session_state._prev_stake_row = None
+                st.session_state._prev_invest_row = None
+                st.session_state._prev_disc_row = None
+                st.session_state._prev_cand_row = None
                 st.session_state.active_source = "STAKE"
-            if "stake_selected_idx" not in st.session_state:
                 st.session_state.stake_selected_idx = 0
-            if "invest_selected_idx" not in st.session_state:
                 st.session_state.invest_selected_idx = 0
-            if "disc_selected_idx" not in st.session_state:
                 st.session_state.disc_selected_idx = 0
-            if "cand_selected_idx" not in st.session_state:
                 st.session_state.cand_selected_idx = 0
             
             # 3) 각 테이블 전용 콜백 정의
@@ -755,6 +756,11 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                 st.session_state.cand_selected_idx = st.session_state.sel_box_cand
             
             col_tbl, col_fact = st.columns([6, 5])
+            
+            tbl_stake_res = None
+            tbl_inv_res = None
+            tbl_disc_res = None
+            tbl_cand_res = None
             
             # 좌측: 4대 팩트 데이터 테이블 영역
             with col_tbl:
@@ -797,13 +803,6 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                             selection_mode="single-row",
                             key="table_stake_select"
                         )
-                        
-                        if tbl_stake_res and hasattr(tbl_stake_res, "selection") and tbl_stake_res.selection.rows:
-                            sel_r = tbl_stake_res.selection.rows[0]
-                            if st.session_state.get("_prev_stake_row") != sel_r:
-                                st.session_state._prev_stake_row = sel_r
-                                st.session_state.active_source = "STAKE"
-                                st.session_state.stake_selected_idx = sel_r
                     else:
                         st.info("선택된 기업/그룹에 대한 정규 지분 소유 데이터가 없습니다.")
                         
@@ -839,13 +838,6 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                             selection_mode="single-row",
                             key="table_invest_select"
                         )
-                        
-                        if tbl_inv_res and hasattr(tbl_inv_res, "selection") and tbl_inv_res.selection.rows:
-                            sel_r = tbl_inv_res.selection.rows[0]
-                            if st.session_state.get("_prev_invest_row") != sel_r:
-                                st.session_state._prev_invest_row = sel_r
-                                st.session_state.active_source = "INVESTMENT"
-                                st.session_state.invest_selected_idx = sel_r
                     else:
                         st.info("조회된 타법인 출자 데이터가 없습니다.")
                         
@@ -879,13 +871,6 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                             selection_mode="single-row",
                             key="table_disc_select"
                         )
-                        
-                        if tbl_disc_res and hasattr(tbl_disc_res, "selection") and tbl_disc_res.selection.rows:
-                            sel_r = tbl_disc_res.selection.rows[0]
-                            if st.session_state.get("_prev_disc_row") != sel_r:
-                                st.session_state._prev_disc_row = sel_r
-                                st.session_state.active_source = "DISCLOSURE"
-                                st.session_state.disc_selected_idx = sel_r
                     else:
                         st.info("조회된 DART 공시 인덱스가 없습니다.")
                         
@@ -921,15 +906,38 @@ if menu == "🌐 1. 대기업 지배구조 & 순환출자 탐색기":
                             selection_mode="single-row",
                             key="table_cand_select"
                         )
-                        
-                        if tbl_cand_res and hasattr(tbl_cand_res, "selection") and tbl_cand_res.selection.rows:
-                            sel_r = tbl_cand_res.selection.rows[0]
-                            if st.session_state.get("_prev_cand_row") != sel_r:
-                                st.session_state._prev_cand_row = sel_r
-                                st.session_state.active_source = "CANDIDATE"
-                                st.session_state.cand_selected_idx = sel_r
                     else:
                         st.info("후보 큐 파일이 비어 있거나 존재하지 않습니다.")
+
+            # 4대 테이블 행 선택 상태 취합 및 실제 변경 감지 (초기 렌더링 덮어쓰기 방지)
+            cur_stake_row = tbl_stake_res.selection.rows[0] if (tbl_stake_res and hasattr(tbl_stake_res, "selection") and tbl_stake_res.selection.rows) else None
+            cur_invest_row = tbl_inv_res.selection.rows[0] if (tbl_inv_res and hasattr(tbl_inv_res, "selection") and tbl_inv_res.selection.rows) else None
+            cur_disc_row = tbl_disc_res.selection.rows[0] if (tbl_disc_res and hasattr(tbl_disc_res, "selection") and tbl_disc_res.selection.rows) else None
+            cur_cand_row = tbl_cand_res.selection.rows[0] if (tbl_cand_res and hasattr(tbl_cand_res, "selection") and tbl_cand_res.selection.rows) else None
+
+            if not st.session_state._tables_initialized:
+                st.session_state._prev_stake_row = cur_stake_row
+                st.session_state._prev_invest_row = cur_invest_row
+                st.session_state._prev_disc_row = cur_disc_row
+                st.session_state._prev_cand_row = cur_cand_row
+                st.session_state._tables_initialized = True
+            else:
+                if cur_stake_row is not None and cur_stake_row != st.session_state._prev_stake_row:
+                    st.session_state._prev_stake_row = cur_stake_row
+                    st.session_state.active_source = "STAKE"
+                    st.session_state.stake_selected_idx = cur_stake_row
+                elif cur_invest_row is not None and cur_invest_row != st.session_state._prev_invest_row:
+                    st.session_state._prev_invest_row = cur_invest_row
+                    st.session_state.active_source = "INVESTMENT"
+                    st.session_state.invest_selected_idx = cur_invest_row
+                elif cur_disc_row is not None and cur_disc_row != st.session_state._prev_disc_row:
+                    st.session_state._prev_disc_row = cur_disc_row
+                    st.session_state.active_source = "DISCLOSURE"
+                    st.session_state.disc_selected_idx = cur_disc_row
+                elif cur_cand_row is not None and cur_cand_row != st.session_state._prev_cand_row:
+                    st.session_state._prev_cand_row = cur_cand_row
+                    st.session_state.active_source = "CANDIDATE"
+                    st.session_state.cand_selected_idx = cur_cand_row
 
             # 우측: [🏛️ 팩트 상세 패널 (Fact Detail Panel)]
             with col_fact:
