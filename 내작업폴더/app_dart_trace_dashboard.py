@@ -210,21 +210,26 @@ if "화이트" in theme_mode:
             border: 1px solid #cbd5e1 !important;
             color: #0f172a !important;
         }
-        div[data-baseweb="select"] * {
+        div[data-baseweb="select"] *, div[data-baseweb="select"] span, div[data-baseweb="select"] div {
             color: #0f172a !important;
         }
-        div[data-baseweb="popover"], div[data-baseweb="popover"] > div, ul[role="listbox"] {
+        div[data-baseweb="popover"], div[data-baseweb="popover"] > div, div[data-baseweb="menu"], ul[role="listbox"] {
             background-color: #ffffff !important;
             border: 1px solid #cbd5e1 !important;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
         }
-        li[role="option"] {
+        div[data-baseweb="popover"] *, div[data-baseweb="menu"] *, ul[role="listbox"] * {
+            color: #0f172a !important;
+            background-color: #ffffff !important;
+        }
+        li[role="option"], li[role="option"] *, li[role="option"] span, li[role="option"] div {
             background-color: #ffffff !important;
             color: #0f172a !important;
         }
-        li[role="option"]:hover, li[aria-selected="true"] {
+        li[role="option"]:hover, li[role="option"]:hover *, li[role="option"]:hover span,
+        li[aria-selected="true"], li[aria-selected="true"] *, li[aria-selected="true"] span {
             background-color: #e2e8f0 !important;
-            color: #000000 !important;
+            color: #0284c7 !important;
         }
         
         /* 5-1. 탭 버튼(st.tabs) 클릭 영역 및 화이트 스타일 */
@@ -289,26 +294,31 @@ else:
             color: #90a4ae !important;
         }
         
-        /* 5. 드롭다운 (BaseWeb Select & Popover 팝업 목록) 다크 스타일 */
+        /* 5. 드롭다운 (BaseWeb Select & Popover 팝업 목록) 다크 스타일 고대비 명확화 */
         div[data-baseweb="select"] > div {
             background-color: #1e293b !important;
             border: 1px solid #334155 !important;
             color: #f8fafc !important;
         }
-        div[data-baseweb="select"] * {
+        div[data-baseweb="select"] *, div[data-baseweb="select"] span, div[data-baseweb="select"] div {
             color: #f8fafc !important;
         }
-        div[data-baseweb="popover"], div[data-baseweb="popover"] > div, ul[role="listbox"] {
+        div[data-baseweb="popover"], div[data-baseweb="popover"] > div, div[data-baseweb="menu"], ul[role="listbox"] {
             background-color: #1e293b !important;
-            border: 1px solid #334155 !important;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
+            border: 1px solid #475569 !important;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.7) !important;
         }
-        li[role="option"] {
+        div[data-baseweb="popover"] *, div[data-baseweb="menu"] *, ul[role="listbox"] * {
+            color: #f8fafc !important;
+            background-color: #1e293b !important;
+        }
+        li[role="option"], li[role="option"] *, li[role="option"] span, li[role="option"] div {
             background-color: #1e293b !important;
             color: #f8fafc !important;
         }
-        li[role="option"]:hover, li[aria-selected="true"] {
-            background-color: #334155 !important;
+        li[role="option"]:hover, li[role="option"]:hover *, li[role="option"]:hover span,
+        li[aria-selected="true"], li[aria-selected="true"] *, li[aria-selected="true"] span {
+            background-color: #0284c7 !important;
             color: #ffffff !important;
         }
         
