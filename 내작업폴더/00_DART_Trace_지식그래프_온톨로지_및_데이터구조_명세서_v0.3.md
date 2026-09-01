@@ -23,7 +23,7 @@ flowchart TD
 
     subgraph V03 ["v0.3 (초안 검토 단계): DS005 기업 주요사항 공시 이벤트 연계"]
         B1["DS005-1 사모CB/BW 발행결정\n(cvbdIsDecsn, bdwtIsDecsn)"]
-        B2["DS005-2 지배구조 재편\n(회사합병 mgDecsn / 분할 dvDecsn)"]
+        B2["DS005-2 지배구조 재편\n(회사합병 cmpMgDecsn / 분할 dvDecsn)"]
         B3["DS005-3 타법인 주식 양수도\n(otrCprAcqDecsn 타법인주식및출자증권양수결정)"]
         B4["DS005-4 주요 소송 제기\n(lwstDecsn 소송등의제기·신청)"]
         R1 --> B1 & B2 & B3 & B4
@@ -169,7 +169,7 @@ FOR (e:DART_CapitalEvent) REQUIRE e.event_id IS UNIQUE;
 |---|---|---|
 | **사모 CB 발행 이력** | *"최근 2년간 사모 전환사채(CB) 발행 공시(`cvbdIsDecsn`)가 2회 이상 제출된 상장사는 어디인가?"* | `(c:DART_Company)-[:ANNOUNCED]->(e:DART_CapitalEvent {event_type: 'CB_ISSUE'})` 집계 |
 | **타법인 주식 양수 연계** | *"사모 CB 발행 공시 이후 6개월 이내에 타법인 주식 양수 공시(`otrCprAcqDecsn`)가 연이어 제출된 기업과 양수 대상 법인은?"* | `(:DART_CapitalEvent)` 간 시계열 기간 조건 연계 질의 |
-| **기업 합병 지배구조** | *"A사가 B사에 대한 흡수합병 공시(`mgDecsn`)를 제출했을 때, 공시상 명시된 합병비율과 신주 상장예정일은?"* | `(A)-[:MERGED_WITH]->(B)` 속성 조회 |
+| **기업 합병 지배구조** | *"A사가 B사에 대한 흡수합병 공시(`cmpMgDecsn`)를 제출했을 때, 공시상 명시된 합병비율과 신주 상장예정일은?"* | `(A)-[:MERGED_WITH]->(B)` 속성 조회 |
 | **경영권 분쟁 관련 소송** | *"현재 대표이사 또는 최대주주를 상대로 직무집행정지 등 소송 공시(`lwstDecsn`)가 제출된 기업은?"* | `(:DART_Person)-[:SUED_BY]->(:DART_Company)` 질의 |
 
 ---
