@@ -1,57 +1,63 @@
-# 📅 프로젝트 업무 인수인계 및 스케줄 관리표 (schedule.md)
+# 📅 [DART-Trace] 프로젝트 진행 현황 및 향후 일정표 (Schedule)
 
-> **프로토콜 가이드**:
-> - 💬 **시작 시**: `"schedule.md 확인해서 다음 업무 시작하자"`  
->   ➔ `git pull origin main` 동기화 ➔ `schedule.md` 확인 ➔ 즉시 작업 돌입
-> - 💬 **종료 시**: `"소스다 push 하고 오늘은 이만 ㅎ자"` (또는 `"작업 끝. 상태 정리하고 다음 할 일 'schedule.md'에 기록해"`)  
->   ➔ `schedule.md` 갱신 ➔ `git commit` ➔ `git push` 자동 완료
-
----
-
-## 📌 현재 진행 상태 및 이력 (Status Log)
-
-* **최근 업데이트 일시**: 2026-08-28 (금요일) 17:50 (Day 30 Cypher 심화 교안/과제 전과정 완주 & 4대 마스터 키트 구축 완료)
-* **담당자 / 레포지토리**: `mycar4` / `https://github.com/mycar4/enkoa-practice-knowledge-graph.git`
-* **진행 완료 단원**: Day 30 (가변길이 경로 탐색, shortestPath, all/any/none 고계함수, EXISTS 서브쿼리, OPTIONAL MATCH 외부조인, WITH 다단계 파이프라인, 결정적 페이징, 교안 01·02 완주, 과제 LV1·LV2·LV3 40문제 100% 올패스)
+> **기준 일시**: 2026-09-01 11:15 (KST)  
+> **현재 마일스톤**: **v0.2 Step 2 완료 / Step 3 UI 연동 진행 대기 / v0.3 설계 초안 검토 중**  
+> **책임 엔진**: Antigravity AI Pair Programmer & Data Governance Agent  
+> **⚠️ 기준 문서 안내**: 본 프로젝트의 최신 작업 일정 및 거버넌스 기준 문서는 항상 **`내작업폴더/schedule.md`**입니다.
 
 ---
 
-## ✅ 완료된 핵심 성과 (Completed Tasks)
+## 📊 1. 현재 단계별 진행 현황 요약 (Current Status)
 
-### [Day 30] Cypher 심화 다차원 경로 탐색 & WITH 파이프라인 전 과정 완주
-
-1. **[교안 실습 완료] Day 30 교안 01 & 교안 02 완주**
-   - 파일: `내작업폴더/day30_Cypher_심화/교안_01_경로_탐색.ipynb`, `교안_02_다중조건_WITH파이프라인.ipynb`
-   - 내용: 
-     - 가변 길이 순회 (`*1..3`, `*0..2`), 최단 경로 (`shortestPath`, `allShortestPaths`)
-     - 리스트 컴프리헨션 (`nodes`, `relationships`, `length`), 고계 술어 (`all`, `any`, `none`, `single`)
-     - 문자열/정규식 정밀 매칭 (`STARTS WITH`, `ENDS WITH`, `CONTAINS`, `=~`)
-     - 패턴 술어 및 `EXISTS { }` 서브쿼리, `OPTIONAL MATCH` + NULL 처리 및 `WITH` 스코프 격리
-     - `WITH` 다단계 파이프라인 체이닝, 결정적 페이징 (`ORDER BY` 다중키 + `SKIP` + `LIMIT`)
-
-2. **[공식 과제 100% 해결] Day 30 과제 LV1, LV2, LV3 40문제 올패스(Pass) 검증 완료**
-   - 파일: 
-     - `내작업폴더/day30_Cypher_심화/과제_LV1_기초.ipynb` (대학 선수과목 DAG 탐색 23문제)
-     - `내작업폴더/day30_Cypher_심화/과제_LV2_응용.ipynb` (스마트 물류 배송망 경로 & 소요시간 가산 10문제)
-     - `내작업폴더/day30_Cypher_심화/과제_LV3_통합.ipynb` (SNS 친구 네트워크 2-Hop 추천 & 고립노드 진단 7문제)
-   - 검증: `scratch/update_and_test_assignments.py` 자동화 테스트를 통해 40개 전 문항 100% 정상 통과 검증.
-
-3. **[엔터프라이즈 마스터 키트 4종 완비]**
-   - `00_Day30_Cypher_심화_마스터_아키텍처_보고서.md`: 11개 챕터 구성, SQL vs Cypher 1:1 완벽 대응 치트시트 표, 실무 아키텍처 5대 헌법 수록.
-   - `00_Day30_데이터_구조_및_그래프_스키마_마스터_명세서.md`: 7대 도메인(수도권 전철, 계좌 송금, 맛집, 캠핑장, 대학 선수과목, 스마트 물류, SNS 친구망) 노드/관계/속성/데이터 인스턴스 100% 전수(Full Coverage) 명세서.
-   - `00_Day30_Cypher_심화_실전_마스터_풀소스.py`: 스마트 물류 라우터(`smart_logistics_router()`) 및 추천 엔진(`intelligent_spot_recommender()`) 탑재 단독 실행형 Python 마스터 스크립트.
-   - `01_Day30_실전_Cypher_심화_핸즈온_워크북.ipynb`: 전 과정 인터랙티브 실습 워크북.
-
-4. **[인프라 복원력 강화] Local Neo4j Desktop ➔ Cloud Aura 스마트 폴백 자동화**
-   - 모든 Day 30 노트북에 스마트 듀얼 드라이버 연결 로직 적용 완료.
+| 단계 | 목표 및 작업 내용 | 대상 범위 | 검수 상태 | 산출물 / 핵심 DB 지표 |
+|:---:|---|:---:|:---:|---|
+| **v0.2 Step 1** | **`DS001` 공시 인덱스 수집 및 DB 승격** | 1차 파일럿 100개사 | **🟢 합격** | • `:DART_Disclosure` 노드: `21,538개`<br>• `[:FILED]` 관계: `21,538건`<br>• `01_DART_Disclosure_공시인덱스_수집기.py` |
+| **v0.2 Step 2** | **`DS004` (지분) + `DS002` (최대주주·타법인출자) 정형 수집·정규화** | 1차 파일럿 100개사 | **🟢 합격 (정식 마감)** | • `:OWNS_STAKE` 관계: `723건` (기존 베이스라인 `319건` + 신규 `404건`)<br>• `:INVESTED_IN` 관계: `116건` (유효 지분율 108건, 유효 장부가액 106건)<br>• 미식별/미매칭 영구 후보 큐: `3,893건` (`candidate_queue.jsonl`)<br>• `02_DART_P1_지분공시_및_타법인출자_통합파이프라인.py` |
+| **v0.2 Step 3** | **Streamlit 대시보드 UI 연동 및 팩트 상세 패널 구축** | 프론트엔드 연동 | **⏳ 진행 대기** | • `app_dart_trace_dashboard.py` (우측 팩트 상세 패널, DART 뷰어 URL 연동, 이중 상태 배지 표기) |
+| **v0.3** | **`DS005` 기업 주요 이벤트 (CB·BW발행, 합병, 분할, 주식양수도, 소송)** | 100개사 확장 | **🟡 초안 검토 (Draft)** | • `00_DART_Trace_지식그래프_온톨로지_및_데이터구조_명세서_v0.3.md`<br>• `Company ➔ ANNOUNCED ➔ CapitalEvent ➔ EVIDENCED_BY ➔ Disclosure` 표준 방향 확립 |
+| **v0.4** | **`DS003` 재무 스냅샷 + `DS006` 증권신고서 상세 결합** | 100개사 확장 | **⚪ 예정** | • 펀더멘털 건전성 진단 및 한도/조건 상세 그래프 |
 
 ---
 
-## 🚀 다음 할 일 (Next To-Do)
+## 🛠️ 2. Step 3 대시보드 UI 연동 핵심 기능 명세
 
-- [ ] **[Day 31 과정 진입]**:
-  - 그래프 알고리즘 & GDS(Graph Data Science) 분석 (PageRank, Community Detection, Node Similarity)
-- [ ] **[DART-Trace 엔진 고도화]**:
-  - Day 30에서 익힌 `shortestPath` 및 `WITH` 파이프라인을 DART-Trace 100개 지식그래프에 접목하여 **자금 세탁/우회 지분 최단 경로 탐지 엔진** 기능 확장
-- [ ] **[GitHub 최종 커밋 & 푸시 동기화]**:
-  - 전체 Day 30 산출물 및 `schedule.md` 커밋/푸시 완료
+1. **지분 / 타법인 출자 테이블 선택 인터랙션**:
+   - 테이블 행(Row) 클릭 또는 셀렉트박스 선택 시 우측 **[팩트 상세 패널 (Fact Detail Panel)]** 즉시 갱신
+2. **DART 원문 뷰어 링크 연결**:
+   - `viewer_url` (`https://dart.fss.or.kr/dsaf001/main.do?rcpNo=...`) 외부 링크 버튼 연동
+3. **이중 상태 배지(Badge) 표시**:
+   - 공시 문서 상태: `doc_status` (`🟢 정규 공시 (NORMAL)` / `🟡 기재 정정 (CORRECTED)` / `🔴 철회 (WITHDRAWN)`)
+   - 데이터 검증 상태: `verification_status` (`🟢 검증 완료 (VERIFIED)` / `⚪ 후보 큐 보류 (CANDIDATE)`)
+4. **날짜 및 최신성 배지 UI 표기**:
+   - 결산기준일(`as_of_date`) vs 공시접수일(`reported_on`) 분리 표시
+   - 최신 유효 여부(`is_current`: `🟢 최신 유효 사실` / `⚪ 과거 이력`)
+
+---
+
+## 🚀 3. v0.3 확장 아키텍처 및 핵심 온톨로지 (Draft)
+
+* **온톨로지 명세서**: [`내작업폴더/00_DART_Trace_지식그래프_온톨로지_및_데이터구조_명세서_v0.3.md`](file:///c:/Users/Playdata/enkoa-practice-knowledge-graph/enkoa-practice-knowledge-graph/%EB%82%B4%EC%9E%91%EC%97%85%ED%8F%B4%EB%8D%94/00_DART_Trace_%EC%A7%80%EC%8B%9D%EA%B7%B8%EB%9E%98%ED%94%84_%EC%98%A8%ED%86%A8%EB%A1%9C%EC%A7%80_%EB%B0%8F_%EB%8D%B0%EC%9D%B4%ED%84%B0%EA%B5%AC%EC%A1%B0_%EB%AA%85%EC%84%B8%EC%84%9C_v0.3.md)
+* **표준 관계 방향**:
+  * `(Company) ──[:ANNOUNCED]──> (CapitalEvent) ──[:EVIDENCED_BY]──> (Disclosure)`
+  * `(Investor) ──[:SUBSCRIBED]──> (CapitalEvent)`
+  * `(CompanyA) ──[:MERGED_WITH / :ACQUIRED_STAKE / :SPUN_OFF_FROM]──> (CompanyB)`
+* **범위 정정**: OpenDART DS005 공식 미지원인 공개매수(`TENDER_OFFER`)는 제외(추후 검토).
+* **표현 정정**: 사실 기반 공시 연계 분석으로 명확화 (인과관계 단정 표현 배제).
+
+---
+
+## 📈 4. 버전별 해금 질문(Q/A) 로드맵
+
+```mermaid
+gantt
+    title DART-Trace 기능 및 질의응답 해금 일정
+    dateFormat  YYYY-MM-DD
+    section v0.2 지분 및 공시출처
+    Step 1 (DS001 공시 인덱스)       :done,    des1, 2026-08-31, 2026-08-31
+    Step 2 (DS004/DS002 지분·출자)    :done,    des2, 2026-08-31, 2026-08-31
+    Step 3 (대시보드 UI 및 팩트패널)   :active,  des3, 2026-09-01, 2026-09-01
+    section v0.3 기업 주요 이벤트
+    DS005 주요사항 (사모CB·합병·M&A) :         des4, 2026-09-02, 2026-09-04
+    section v0.4 재무 및 펀더멘털
+    DS003 재무제표 + DS006 증권신고서 :         des5, 2026-09-05, 2026-09-07
+```
