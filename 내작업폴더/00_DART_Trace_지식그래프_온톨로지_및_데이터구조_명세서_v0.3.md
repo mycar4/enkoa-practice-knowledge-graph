@@ -1,40 +1,46 @@
-# 🏛️ [DART-Trace] 지식그래프 온톨로지(Ontology) & 데이터 구조 명세서 (v0.3 초안)
+# 🏛️ [DART-Trace] 지식그래프 온톨로지(Ontology) & 데이터 구조 명세서 (v0.3 정식 개정안)
 
-> **문서 버전**: `v0.3 Draft` (설계 검토용 초안 명세서)  
-> **상태**: 🟡 **자본 변동(CB·BW) & 주요사항 공시 이벤트 온톨로지 초안 (In Review)**  
+> **문서 버전**: `v0.3 Official Draft` (엔지니어링 검토 및 표준 반영본)  
+> **상태**: 🟡 **온톨로지 설계 검토 완료 (v0.2 정식 마감 완료 후 실개발 착수 대기)**  
 > **작성 일자**: 2026-09-01  
-> **선행 버전**: `v0.2` (지분공시·타법인출자·공시인덱스 정합 완료)  
-> **v0.3 핵심 확장 범위**: **`Step 3` (Streamlit 팩트 패널 UI 완성) + `DS005` (기업 주요사항보고서: 사모CB/BW 발행결정, 타법인 주식 및 출자증권 양수도결정, 회사 합병·분할결정, 소송 제기)**  
-> **비즈니스 목표**: 지분 소유망 위에 OpenDART `DS005` 주요사항보고서 공시 이벤트를 구조화하여, **전환사채(CB) 발행, 타법인 주식 취득, 합병·분할 등 자본시장 주요 이벤트의 공시 연계 사실을 사실 기반으로 추적하는 지식그래프** 확장 설계.
+> **선행 버전**: `v0.2 (Step 1~4 전 단계 검수 완료 및 마감)`  
+> **v0.3 핵심 확장 범위**: **OpenDART `DS005` 기업 주요사항보고서 (CB 발행결정, BW 발행결정, 유상증자결정, 타법인 주식 및 출자증권 양수도결정, 회사합병결정)**  
+> **핵심 설계 원칙**: 
+> 1. **"출처·기준일·정정 이력의 100% 추적 가능성(Traceability)"** 보장 (추정 및 사법적 단정 배제)
+> 2. **이벤트 중심 아키텍처(Company ➔ CapitalEvent ➔ Disclosure)**를 통한 지배구조망과 공시 근거의 명확한 레이어 분리
+> 3. 직접 기업 간 엣지는 이벤트 노드로부터 파생된 **"조회용 프로젝션(Query Projection)"**으로 엄격 정의하고 파생 메타데이터 보존
+> 4. 시계열 일자 필드의 엄밀한 3원 분리 (`decided_on`, `received_on`, `effective_on`)
 
 ---
 
-## 1. 🗺️ DART-Trace 버전별 데이터 확장 마스터 로드맵
+## 1. 🗺️ DART-Trace 단계별 데이터 확장 마스터 로드맵
 
 ```mermaid
 flowchart TD
-    subgraph V02 ["v0.2 (완료 & UI 연동 대기): 지분 소유망 & DART 공시 출처 연동"]
+    subgraph V02 ["v0.2 (구현 완료, 인수검수 대기): 지분 소유망 & DART 공시 출처 연동"]
         A1["DS001 공시 인덱스\n(:DART_Disclosure)"]
         A2["DS004 지분공시\n(majorstock 5%룰 / elestock 임원주요주주)"]
         A3["DS002 정기공시\n(hyslrSttus 최대주주 / otrCprInvstmntSttus 타법인출자)"]
         A4["Step 3 UI 팩트 패널\n(DART 원문 viewer_url & 이중 상태 배지)"]
-        A1 & A2 & A3 & A4 --> R1["🌐 완성: 검증된 법인/인물 간 지분·출자망 & DART 원문 링크 역추적"]
+        A1 & A2 & A3 & A4 --> R1["🌐 기본 지분·출자망 & DART 원문 링크 역추적"]
     end
 
-    subgraph V03 ["v0.3 (초안 검토 단계): DS005 기업 주요사항 공시 이벤트 연계"]
-        B1["DS005-1 사모CB/BW 발행결정\n(cvbdIsDecsn, bdwtIsDecsn)"]
-        B2["DS005-2 지배구조 재편\n(회사합병 cmpMgDecsn / 분할 dvDecsn)"]
-        B3["DS005-3 타법인 주식 양수도\n(otrCprAcqDecsn 타법인주식및출자증권양수결정)"]
-        B4["DS005-4 주요 소송 제기\n(lwstDecsn 소송등의제기·신청)"]
-        R1 --> B1 & B2 & B3 & B4
-        B1 & B2 & B3 & B4 --> R2["⚡ 확장: 자본 변동 및 M&A 관련 공시 연계 경로 추적"]
+    subgraph V03_1 ["v0.3-Phase 1: DS005 5대 핵심 자본·구조개편 이벤트 연계"]
+        B1["1. 전환사채(CB) 발행결정\n(cvbdIsDecsn / 발행방법 bdis_mthn 분류)"]
+        B2["2. 신주인수권부사채(BW) 발행결정\n(bdwtIsDecsn)"]
+        B3["3. 유상증자결정 (지분희석/경영권방어)\n(piicDecsn)"]
+        B4["4. 타법인 주식 및 출자증권 양수도\n(otrCprAcqDecsn)"]
+        B5["5. 회사합병결정\n(cmpMgDecsn)"]
+        R1 --> B1 & B2 & B3 & B4 & B5
+        B1 & B2 & B3 & B4 & B5 --> R2["⚡ 자본 변동 및 M&A 공시 시계열 경로 추적"]
     end
 
-    subgraph V04 ["v0.4 (차기 고도화): 재무 펀더멘털 & 증권신고서 정밀 결합"]
-        C1["DS003 재무제표 스냅샷\n(부채비율 / 영업이익 / 유동성 비율)"]
-        C2["DS006 증권신고서 상세\n(자금조달목적 / 리픽싱 최저한도 / 조기상환청구권)"]
-        R2 --> C1 & C2
-        C1 & C2 --> R3["📊 확장: 재무 건전성 및 공시 한도 조건 결합 분석"]
+    subgraph V03_2 ["v0.3-Phase 2: 구조분할·소송 및 검증 거버넌스 기반 외부 데이터"]
+        C1["6. 회사분할결정 (dvDecsn)"]
+        C2["7. 경영권 분쟁 소송 이벤트 (lwstDecsn)"]
+        C3["📂 외부 근거 데이터 격리 수집\n(사모펀드 LP 명단 / 공정위 집단지정 / KRX 제재 이력)"]
+        R2 --> C1 & C2 & C3
+        C1 & C2 & C3 --> R3["🛡️ 분쟁 시그널 결합 & 거버넌스 메타데이터 관리"]
     end
 ```
 
@@ -46,19 +52,27 @@ v0.3은 **`Company ──[:ANNOUNCED]──> CapitalEvent ──[:EVIDENCED_BY]�
 
 ```mermaid
 flowchart LR
-    INVESTOR["🏛️ :DART_Group / 👤 :DART_Person<br/>(사채 인수자 / 양도인)"]
+    INVESTOR["🏛️ :DART_Group / 👤 :DART_Person<br/>(사채 인수자 / 양도인 / 배정대상자)"]
     COMP_A["🏢 :DART_Company<br/>(발행회사 / 공시회사)"]
     COMP_B["🏢 :DART_Company<br/>(양수대상사 / 합병상대방)"]
     DISC["📑 :DART_Disclosure<br/>(DART 공시 원문)"]
-    EVENT["⚡ :DART_CapitalEvent<br/>(CB발행 / 합병 / 양수도 이벤트)"]
+    EVENT["⚡ :DART_CapitalEvent<br/>(CB/BW/증자/합병/양수도 이벤트)"]
 
     COMP_A -->|ANNOUNCED<br/>(이벤트 공시)| EVENT
-    INVESTOR -->|SUBSCRIBED<br/>(사채 인수)| EVENT
+    INVESTOR -->|SUBSCRIBED<br/>(사채/신주 인수)| EVENT
     EVENT -->|EVIDENCED_BY<br/>(근거 공시)| DISC
     COMP_A -->|FILED| DISC
-    COMP_A -->|ACQUIRED_STAKE<br/>(타법인 주식 취득)| COMP_B
-    COMP_A -->|MERGED_WITH<br/>(흡수합병)| COMP_B
+    
+    COMP_A -.->|ACQUIRED_STAKE<br/>(파생 프로젝션 엣지)| COMP_B
+    COMP_A -.->|MERGED_WITH<br/>(파생 프로젝션 엣지)| COMP_B
 ```
+
+> **📌 프로젝션 엣지 정의 및 메타데이터 원칙**:
+> `ACQUIRED_STAKE`, `MERGED_WITH` 등 기업 간 직접 관계선은 지배구조 그래프 조회를 위해 `CapitalEvent`로부터 파생(Derived)된 **조회용 프로젝션(Query Projection)**입니다.  
+> 원천 사실과의 엄격한 구분을 위해 프로젝션 엣지에는 반드시 다음 메타데이터를 필수 적재합니다:
+> * `derived_from_event_id`: 파생 근거가 된 `:DART_CapitalEvent`의 `event_id`
+> * `source_rcept_no`: 근거 공시 접수번호 (14자리)
+> * `projection_version`: 프로젝션 생성 버전 (예: `'v0.3'`)
 
 ---
 
@@ -70,15 +84,29 @@ flowchart LR
 * **`:DART_Person`**: `name`, `person_id` (UUID)
 * **`:DART_Group`**: `name`, `type` (`'NPS'`, `'PEF'`, `'INVESTMENT_UNION'`)
 
-### ② 신규 추가 노드 (`v0.3` 설계 초안)
+### ② 신규 추가 노드 (`v0.3` 표준)
 
 #### `(:DART_CapitalEvent)` (주요사항 공시 이벤트 노드)
-* **PK (Unique)**: `event_id` (형식: `{corp_code}_{event_type}_{rcept_no}`)
-* `event_type`: 이벤트 유형 (`'CB_ISSUE'`, `'BW_ISSUE'`, `'MERGER'`, `'SPIN_OFF'`, `'STOCK_TRANSFER'`, `'LAWSUIT'`)
-* `event_name`: 이벤트 명칭 (예: `'제3회차 무기명식 무보증 사모 전환사채 발행결정'`)
-* `announced_at`: 이사회 결의일 / 공시 접수일 (`Date`)
+* **PK (Unique)**: `event_id` (형식: `{corp_code}_{event_type}_{rcept_no}_{item_seq}`)
+* `event_type`: 이벤트 유형 (`'CB_ISSUE'`, `'BW_ISSUE'`, `'PAID_INCREASE'`, `'STOCK_ACQUISITION'`, `'MERGER'`)
+* `event_name`: 공시 보고서명 / 이벤트 명칭
+* **📅 엄밀 분리된 3원 일자 필드**:
+  * `decided_on`: 이사회 결의일 등 사건 결정일 (`Date`)
+  * `received_on`: 금융감독원 공시 접수일 (`Date`, `rcept_dt` 대응)
+  * `effective_on`: 주금 납입일 / 합병 효력발생일 / 양수도 대금지급일 (`Date`)
+* **🔢 핵심 조회용 정규 속성 (First-Class Typed Properties)**:
+  * `issue_method`: 발행/배정 방법 (API `bdis_mthn`, 예: `'사모'`, `'주주배정후실권주일반공모'`, `'제3자배정'`)
+  * `is_private`: 사모 발행 여부 (`Boolean`, `issue_method`에 '사모' 포함 시 `true`)
+  * `issue_amount`: 발행/양수/증자 총 금액 (단위: 원, `Integer/Float`)
+  * `conversion_price`: 전환가액 / 행사가액 / 신주발행가액 (단위: 원)
+  * `min_refixing_floor`: 전환가액 최저 조정 한도액 (단위: 원)
+  * `convertible_shares`: 전환/행사 가능 주식수 (`Integer`)
+  * `convertible_ratio`: 주식 총수 대비 비율 (`Float`, %)
+  * `target_corp_name`: 양수 대상사명 또는 합병 상대방명
+  * `merger_ratio`: 합병 비율 (예: `'1 : 0.2351421'`)
 * `source_rcept_no`: 근거 DART 공시 접수번호 (`String`)
 * `viewer_url`: DART 원문 바로가기 URL
+* `raw_payload`: 원본 JSON 레코드 보존 문자열 (`String`)
 
 ---
 
@@ -86,42 +114,23 @@ flowchart LR
 
 #### 1. `[:ANNOUNCED]` (회사 ➔ 이벤트)
 * 회사가 특정 주요사항 이벤트를 공시·결의한 관계
-* `announced_date`: 공시 접수일자 (`Date`)
+* `decided_on`: 이사회 결의일 (`Date`)
+* `received_on`: 공시 접수일 (`Date`)
 
-#### 2. `[:SUBSCRIBED]` (투자자/조합 ➔ 사채 이벤트)
-* `investor_name`: 인수자명 (예: `'골든홀딩스1호투자조합'`)
+#### 2. `[:SUBSCRIBED]` (투자자/조합 ➔ 사채/증자 이벤트)
+* **고유 식별자 (`fact_id`)**: `{event_id}_SUBSCRIBED_{party_hash}`
+* `investor_name`: 인수자/배정대상자명 (예: `'골든홀딩스1호투자조합'`)
 * `allocated_amount`: 배정 금액 (단위: 원)
-* `payment_date`: 납입일자 (`Date`)
+* `allocated_shares`: 배정 주식/사채 수
+* `payment_date`: 납입일자 (`effective_on` 대응)
+* `party_id_or_hash`: 인수자 식별 해시 (`String`)
 
 #### 3. `[:EVIDENCED_BY]` (이벤트 ➔ 공시 원문)
 * 이벤트의 법적 출처가 되는 `:DART_Disclosure` 노드로 연결되는 역추적 엣지
 
-#### 4. `[:MERGED_WITH]` (기업 간 합병)
-* `merger_type`: 합병 형태 (`'흡수합병'`, `'신설합병'`, `'소규모합병'`)
-* `merger_ratio`: 합병 비율 (예: `'1 : 0.2351421'`)
-* `contract_date`: 합병 계약일 (`Date`)
-* `effective_date`: 합병 신주 상장예정일 / 효력발생일 (`Date`)
-* `source_rcept_no`: 근거 합병결정 공시번호
-
-#### 5. `[:SPUN_OFF_FROM]` / `[:DIVIDED_INTO]` (회사 분할)
-* `split_type`: 분할 형태 (`'인적분할'`, `'물적분할'`)
-* `split_ratio`: 분할 비율
-* `source_rcept_no`: 근거 분할결정 공시번호
-
-#### 6. `[:ACQUIRED_STAKE]` (타법인 주식 및 출자증권 양수도)
-* `deal_amount`: 총 양수금액 (단위: 원)
-* `acquired_shares`: 취득 주식수
-* `post_deal_stake`: 양수 후 지분율 (Float, %)
-* `seller_name`: 양도인(매도자)명
-* `deal_date`: 양수도 계약일 / 잔금 지급일 (`Date`)
-* `source_rcept_no`: 근거 타법인주식양수결정 공시번호
-
-#### 7. `[:SUED_BY]` / `[:LITIGATED_AGAINST]` (주요 소송 제기)
-* `lawsuit_type`: 소송 유형 (`'주주총회결의취소'`, `'직무집행정지가처분'`, `'회계장부열람청구'`)
-* `claim_content`: 청구 내용 요약
-* `plaintiff`: 원고 (주주/기관)
+#### 4. `[:PLAINTIFF_IN]` (원고/신청인 ➔ 소송 이벤트, Phase 2 대상)
+* `claim_summary`: 청구 취지 요약
 * `court`: 관할 법원
-* `source_rcept_no`: 근거 소송공시 접수번호
 
 ---
 
@@ -135,45 +144,38 @@ FOR (c:DART_Company) REQUIRE c.corp_code IS UNIQUE;
 CREATE CONSTRAINT dart_disclosure_rcept_no_unique IF NOT EXISTS
 FOR (d:DART_Disclosure) REQUIRE d.rcept_no IS UNIQUE;
 
-// 2. v0.3 자본/공시 이벤트 고유 식별 제약조건
+// 2. v0.3 자본/공시 이벤트 고유 식별 제약조건 (순번 포함)
 CREATE CONSTRAINT dart_capital_event_id_unique IF NOT EXISTS
 FOR (e:DART_CapitalEvent) REQUIRE e.event_id IS UNIQUE;
 ```
 
 ---
 
-## 5. 🖥️ Step 3 Streamlit 대시보드 UI 연동 명세 (Front-End Specification)
+## 5. 🛡️ 데이터 거버넌스 및 정합성 원칙
 
-### 📌 [팩트 상세 패널 (Fact Detail Panel)] 구조
-1. **지분 / 타법인 출자 목록 테이블 인터랙션**:
-   * 테이블 행(Row) 클릭 또는 셀렉트박스 선택 시 우측 사이드 패널이 실시간 갱신.
-2. **우측 팩트 패널 구성 요소**:
-   * 🏷️ **공시 문서 이력 상태 배지 (`doc_status`)**:
-     * `🟢 정규 공시 (NORMAL)`
-     * `🟡 기재 정정 공시 (CORRECTED)`
-     * `🔴 철회 공시 (WITHDRAWN)`
-   * 🛡️ **데이터 검증 상태 배지 (`verification_status`)**:
-     * `🟢 검증 완료 (VERIFIED)`
-     * `⚪ 후보 큐 보류 (CANDIDATE)`
-   * ⏱️ **최신성 및 일자 표기**:
-     * 최신 유효 지분 여부 (`is_current`: `🟢 최신 사실` / `⚪ 과거 이력`)
-     * 공시 접수일 (`reported_on`) vs 결산 기준일 (`as_of_date`) 명확 분리
-   * 🔗 **원문 검증 바로가기 버튼**:
-     * `viewer_url` ➔ 클릭 시 금감원 DART 원문 뷰어 새 탭 오픈 (`https://dart.fss.or.kr/...`)
+1. **무단 단정/추정 금지 원칙**:
+   * 본 지식그래프는 금감원 DART 공시 원문에 공식 기재된 사실(발행, 배정, 취득, 합병 공시)의 **"시간순 공시 경로"**만을 객관적으로 연결합니다.
+   * "차명", "실소유주", "무자본 M&A" 등의 주관적/사법적 판단 용어를 시스템상에서 단정하지 않습니다.
+2. **다중 배정자 충돌 방지 고유 식별키 (`fact_id`)**:
+   * 동일 공시에 다수의 인수자/배정자가 존재하더라도 100% 충돌을 방지하기 위해 **`{event_id}_{relationship_type}_{party_hash}`** 체계를 적용합니다.
+3. **외부 업로드 데이터 격리 및 출처 메타데이터 필수화 (Phase 2)**:
+   * DART 공시 외의 외부 자료(조합 LP 명단, 공정위 지정자료 등)는 `source_url`, `collected_at`, `reviewer`, `verification_status` 등의 메타데이터가 검증되기 전까지 `VERIFIED`로 자동 승격하지 않고 별도 격리 관리합니다.
 
 ---
 
-## 6. 📈 v0.3 해금 질문(Q/A) 로드맵 (Fact-based Queries)
+## 6. 🏆 v0.3 마스터 실행 단계 (추진 순서)
 
-| 카테고리 | v0.3 해금 사실 기반 질의 (Q/A) | 검증 메커니즘 |
-|---|---|---|
-| **사모 CB 발행 이력** | *"최근 2년간 사모 전환사채(CB) 발행 공시(`cvbdIsDecsn`)가 2회 이상 제출된 상장사는 어디인가?"* | `(c:DART_Company)-[:ANNOUNCED]->(e:DART_CapitalEvent {event_type: 'CB_ISSUE'})` 집계 |
-| **타법인 주식 양수 연계** | *"사모 CB 발행 공시 이후 6개월 이내에 타법인 주식 양수 공시(`otrCprAcqDecsn`)가 연이어 제출된 기업과 양수 대상 법인은?"* | `(:DART_CapitalEvent)` 간 시계열 기간 조건 연계 질의 |
-| **기업 합병 지배구조** | *"A사가 B사에 대한 흡수합병 공시(`cmpMgDecsn`)를 제출했을 때, 공시상 명시된 합병비율과 신주 상장예정일은?"* | `(A)-[:MERGED_WITH]->(B)` 속성 조회 |
-| **경영권 분쟁 관련 소송** | *"현재 대표이사 또는 최대주주를 상대로 직무집행정지 등 소송 공시(`lwstDecsn`)가 제출된 기업은?"* | `(:DART_Person)-[:SUED_BY]->(:DART_Company)` 질의 |
-
----
-
-### ⚠️ [거버넌스 유의사항]
-1. **공개매수(`TENDER_OFFER`) 분리**: OpenDART DS005 공식 API에 해당 규격이 없으므로, 공식 엔드포인트 확인 전까지 본 범위에서 제외하고 추후 검토로 보류합니다.
-2. **인과관계 단정 금지 원칙**: 본 지식그래프는 DART에 공식 보고된 공시 사실(`ANNOUNCED`, `ACQUIRED_STAKE`)의 시간순 연계 사실만을 제공하며, 자금의 실질 귀속이나 의도에 대한 인과관계 단정 서술을 배제합니다.
+1. **[Step 3 최종 인수검수 및 Git 커밋]**: 
+   * 대시보드 3D 그래프의 순수 지분망 확인 및 테이블 2건 행 클릭 검수 완료.
+   * 수정 파일 커밋 및 Step 3 PASS 확정.
+2. **[v0.3 Phase 1: 5대 핵심 자본 이벤트 파일럿 적재]**:
+   * OpenDART DS005 5개 엔드포인트 파이프라인 구축:
+     1. 전환사채(CB) 발행결정 (`cvbdIsDecsn`)
+     2. 신주인수권부사채(BW) 발행결정 (`bdwtIsDecsn`)
+     3. 유상증자결정 (`piicDecsn`)
+     4. 타법인 주식 및 출자증권 양수도결정 (`otrCprAcqDecsn`)
+     5. 회사합병결정 (`cmpMgDecsn`)
+3. **[이벤트 정합성 검수]**:
+   * 각 이벤트의 DART 원문 링크, 접수번호, 정정 공시 연계 및 3원 일자(`decided_on`, `received_on`, `effective_on`) 검증.
+4. **[v0.3 Phase 2: 확장 이벤트 및 거버넌스 구축]**:
+   * 회사분할결정(`dvDecsn`), 경영권 분쟁 소송(`lwstDecsn`) 및 외부 근거 데이터 격리 수집 프레임워크 구축.
