@@ -623,10 +623,10 @@ with st.sidebar:
 
 # 🎨 테마별 커스텀 CSS 전면 주입 (BaseWeb 셀렉트박스, 팝업 드롭다운, 상단 헤더 전수 커스텀)
 if "화이트" in theme_mode:
-    # ☀️ 화이트 모드 전용 완벽 스타일
+    # ☀️ 화이트 모드 전용 완벽 스타일 (가시성 100% 보장)
     st.markdown("""
     <style>
-        /* 1. 최상단 헤더바 투명화 (검은 띠 제거) */
+        /* 1. 최상단 헤더바 투명화 */
         header[data-testid="stHeader"] {
             background: transparent !important;
         }
@@ -647,45 +647,102 @@ if "화이트" in theme_mode:
         }
         
         /* 4. 본문 헤더 및 텍스트 */
-        h1, h2, h3, h4, h5, h6, p, span, label, div, small {
+        h1, h2, h3, h4, h5, h6, p, span, label, div, small, strong, b {
             color: #0f172a !important;
         }
         .stCaption {
             color: #64748b !important;
         }
         
-        /* 5. 드롭다운 (BaseWeb Select & Popover 팝업 목록) 완벽 화이트 스타일 */
-        div[data-baseweb="select"] > div {
+        /* 5. 모든 입력창 (input, textarea, text_input, number_input) 화이트 스타일 강제 */
+        input, textarea, [data-testid="stTextInput"] input, [data-testid="stTextArea"] textarea {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 8px !important;
+        }
+        input::placeholder, textarea::placeholder {
+            color: #94a3b8 !important;
+        }
+
+        /* 6. 드롭다운 선택상자 (BaseWeb Select & 팝업 목록) 완벽 화이트 스타일 */
+        div[data-baseweb="select"],
+        div[data-baseweb="select"] > div,
+        div[data-baseweb="select"] input,
+        div[data-baseweb="select"] div {
             background-color: #ffffff !important;
             border: 1px solid #cbd5e1 !important;
             color: #0f172a !important;
+            border-radius: 8px !important;
         }
-        div[data-baseweb="select"] *, div[data-baseweb="select"] span, div[data-baseweb="select"] div {
+        div[data-baseweb="select"] * {
             color: #0f172a !important;
         }
-        div[data-baseweb="popover"], div[data-baseweb="popover"] > div, div[data-baseweb="menu"], ul[role="listbox"],
-        [data-baseweb="popover"] div, [data-baseweb="popover"] ul {
+        
+        /* 전역 팝오버 메뉴 및 리스트박스 (BaseWeb Portal) */
+        div[data-baseweb="popover"],
+        div[data-baseweb="popover"] > div,
+        div[data-baseweb="menu"],
+        ul[role="listbox"],
+        [data-baseweb="popover"] div,
+        [data-baseweb="popover"] ul {
             background-color: #ffffff !important;
             border: 1px solid #cbd5e1 !important;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
         }
-        div[data-baseweb="popover"] *, div[data-baseweb="menu"] *, ul[role="listbox"] * {
+        div[data-baseweb="popover"] *,
+        div[data-baseweb="menu"] *,
+        ul[role="listbox"] * {
             color: #0f172a !important;
             background-color: #ffffff !important;
         }
-        li[role="option"], li[role="option"] *, li[role="option"] span, li[role="option"] div,
-        [data-baseweb="popover"] li, [data-baseweb="popover"] li * {
+        
+        /* 옵션 아이템 (드롭다운 목록) */
+        li[role="option"],
+        li[role="option"] > div,
+        li[role="option"] span,
+        [data-baseweb="popover"] li,
+        [data-baseweb="popover"] li * {
             background-color: #ffffff !important;
             color: #0f172a !important;
+            font-size: 14px !important;
         }
-        li[role="option"]:hover, li[role="option"]:hover *, li[role="option"]:hover span,
-        li[aria-selected="true"], li[aria-selected="true"] *, li[aria-selected="true"] span,
-        [data-highlighted="true"], [data-highlighted="true"] * {
+        li[role="option"]:hover,
+        li[role="option"]:hover *,
+        li[role="option"]:hover span,
+        li[aria-selected="true"],
+        li[aria-selected="true"] *,
+        li[aria-selected="true"] span,
+        [data-highlighted="true"],
+        [data-highlighted="true"] * {
             background-color: #e2e8f0 !important;
             color: #0284c7 !important;
         }
         
-        /* 5-1. 탭 버튼(st.tabs) 클릭 영역 및 화이트 스타일 */
+        /* 7. 하단 챗봇 입력창 (st.chat_input) 고대비 화이트 스타일 */
+        div[data-testid="stChatInput"],
+        div[data-testid="stChatInput"] > div,
+        div[data-testid="stBottomBlockContainer"] > div {
+            background-color: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 12px !important;
+        }
+        div[data-testid="stChatInput"] textarea,
+        div[data-testid="stChatInput"] textarea::placeholder,
+        div[data-testid="stChatInput"] * {
+            color: #0f172a !important;
+            background-color: transparent !important;
+            font-size: 15px !important;
+            font-weight: 500 !important;
+        }
+        div[data-testid="stChatInput"] textarea::placeholder {
+            color: #64748b !important;
+        }
+        div[data-testid="stBottomBlockContainer"] {
+            background-color: rgba(248, 250, 252, 0.95) !important;
+        }
+        
+        /* 8. 탭 버튼(st.tabs) 클릭 영역 및 화이트 스타일 */
         button[data-baseweb="tab"] {
             cursor: pointer !important;
             color: #64748b !important;
@@ -697,7 +754,7 @@ if "화이트" in theme_mode:
             border-bottom: 2px solid #0284c7 !important;
         }
         
-        /* 6. 카드 및 지표 */
+        /* 9. 카드 및 지표 */
         .metric-card {
             background: #ffffff !important;
             border: 1px solid #e2e8f0 !important;
@@ -740,7 +797,7 @@ else:
         }
         
         /* 4. 본문 헤더 및 텍스트 */
-        h1, h2, h3, h4, h5, h6, p, span, label, div, small {
+        h1, h2, h3, h4, h5, h6, p, span, label, div, small, strong, b {
             color: #f0f2f6 !important;
         }
         .stCaption {
@@ -754,6 +811,7 @@ else:
             background-color: #1e293b !important;
             border: 1px solid #475569 !important;
             color: #f8fafc !important;
+            border-radius: 8px !important;
         }
         div[data-baseweb="select"] * {
             color: #f8fafc !important;
@@ -802,7 +860,30 @@ else:
             color: #ffffff !important;
         }
         
-        /* 5-1. 탭 버튼(st.tabs) 클릭 영역 및 다크 스타일 */
+        /* 6. 하단 챗봇 입력창 (st.chat_input) 다크 스타일 */
+        div[data-testid="stChatInput"],
+        div[data-testid="stChatInput"] > div,
+        div[data-testid="stBottomBlockContainer"] > div {
+            background-color: #1e293b !important;
+            border: 1px solid #475569 !important;
+            border-radius: 12px !important;
+        }
+        div[data-testid="stChatInput"] textarea,
+        div[data-testid="stChatInput"] textarea::placeholder,
+        div[data-testid="stChatInput"] * {
+            color: #f8fafc !important;
+            background-color: transparent !important;
+            font-size: 15px !important;
+            font-weight: 500 !important;
+        }
+        div[data-testid="stChatInput"] textarea::placeholder {
+            color: #94a3b8 !important;
+        }
+        div[data-testid="stBottomBlockContainer"] {
+            background-color: rgba(14, 17, 23, 0.95) !important;
+        }
+
+        /* 7. 탭 버튼(st.tabs) 클릭 영역 및 다크 스타일 */
         button[data-baseweb="tab"] {
             cursor: pointer !important;
             color: #94a3b8 !important;
@@ -814,7 +895,7 @@ else:
             border-bottom: 2px solid #38bdf8 !important;
         }
         
-        /* 6. 텍스트 입력창 & 텍스트 영역 (Cypher 입력창) 다크 스타일 */
+        /* 8. 텍스트 입력창 & 텍스트 영역 (Cypher 입력창) 다크 스타일 */
         textarea, input {
             background-color: #1e293b !important;
             color: #f8fafc !important;
@@ -822,7 +903,7 @@ else:
             font-family: 'Consolas', 'Courier New', monospace !important;
         }
         
-        /* 7. 카드 및 지표 */
+        /* 9. 카드 및 지표 */
         .metric-card {
             background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)) !important;
             border: 1px solid rgba(255,255,255,0.15) !important;
