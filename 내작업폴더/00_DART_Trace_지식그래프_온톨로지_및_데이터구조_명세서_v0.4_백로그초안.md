@@ -27,18 +27,18 @@ flowchart TD
     COMP -->|FILED| DISC
     COMP -->|ANNOUNCED| EVENT
     COMP -->|HAS_FINANCIALS| FIN
-    PERSON -->|OWNS_STAKE<br/>(다중 회사 지분 통합)| COMP
+    PERSON -->|"OWNS_STAKE<br/>(다중 회사 지분 통합)"| COMP
     
-    EVENT -->|EVIDENCED_BY<br/>(link_basis: SAME_RCEPT_NO)| DISC
-    EVENT -->|DETAILS<br/>(link_basis: SAME_RCEPT_NO)| SEC
-    FIN -->|EVIDENCED_BY<br/>(link_basis: SAME_RCEPT_NO)| DISC
-    SEC -->|EVIDENCED_BY<br/>(link_basis: SAME_RCEPT_NO)| DISC
+    EVENT -->|"EVIDENCED_BY<br/>(link_basis: SAME_RCEPT_NO)"| DISC
+    EVENT -->|"DETAILS<br/>(link_basis: SAME_RCEPT_NO)"| SEC
+    FIN -->|"EVIDENCED_BY<br/>(link_basis: SAME_RCEPT_NO)"| DISC
+    SEC -->|"EVIDENCED_BY<br/>(link_basis: SAME_RCEPT_NO)"| DISC
     
-    EVENT -.->|FOLLOWED_BY<br/>(match_status: CANDIDATE)| EVENT
+    EVENT -.->|"FOLLOWED_BY<br/>(match_status: CANDIDATE)"| EVENT
     
-    DISC -.->|RESTATES<br/>(정정 공시 연결)| DISC
-    EVENT -.->|RESTATES<br/>(정정 이벤트 연결)| EVENT
-    FIN -.->|RESTATES<br/>(정정 재무 연결)| FIN
+    DISC -.->|"RESTATES<br/>(정정 공시 연결)"| DISC
+    EVENT -.->|"RESTATES<br/>(정정 이벤트 연결)"| EVENT
+    FIN -.->|"RESTATES<br/>(정정 재무 연결)"| FIN
 ```
 
 ---
@@ -141,13 +141,13 @@ flowchart TD
 ```mermaid
 flowchart LR
     subgraph Exact ["🔒 1. 확정 증거 연결 (Exact Match: 동일 rcept_no 일치)"]
-        E1["(:DART_CapitalEvent)"] == "[:EVIDENCED_BY {match_status: 'EXACT', link_basis: 'SAME_RCEPT_NO'}]" ==> D1["(:DART_Disclosure)"]
-        E1 == "[:DETAILS {match_status: 'EXACT', link_basis: 'SAME_RCEPT_NO'}]" ==> S1["(:DART_SecuritiesFiling)"]
-        F1["(:DART_FinancialSnapshot)"] == "[:EVIDENCED_BY {match_status: 'EXACT', link_basis: 'SAME_RCEPT_NO'}]" ==> D1
+        E1["(:DART_CapitalEvent)"] -->|"EVIDENCED_BY<br/>(match_status: EXACT)"| D1["(:DART_Disclosure)"]
+        E1 -->|"DETAILS<br/>(match_status: EXACT)"| S1["(:DART_SecuritiesFiling)"]
+        F1["(:DART_FinancialSnapshot)"] -->|"EVIDENCED_BY<br/>(match_status: EXACT)"| D1
     end
 
     subgraph Candidate ["⏱️ 2. 시계열 후보 연계 (Hypothetical Flow Link: 상이한 rcept_no)"]
-        CB["사모 CB 발행결정<br/>(조달목적: 타법인취득)"] -. "[:FOLLOWED_BY {match_status: 'CANDIDATE', lag_days: 45, score_components: '...'}]" .-> ACQ["타법인 주식 양수도 공시<br/>(취득금액 집행)"]
+        CB["사모 CB 발행결정<br/>(조달목적: 타법인취득)"] -.->|"FOLLOWED_BY<br/>(match_status: CANDIDATE, lag: 45d)"| ACQ["타법인 주식 양수도 공시<br/>(취득금액 집행)"]
     end
 ```
 
