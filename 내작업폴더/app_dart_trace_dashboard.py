@@ -296,11 +296,128 @@ LIMIT 5
         else:
             raw_facts_text = "🔍 지식그래프 내 추가적인 순환출자 고리는 발견되지 않았습니다."
 
+    # B-1. [3대 지배구조 분석] 지배 네트워크 영향력 후보 탐색 & 간접 환산 지분 (INFLUENCE_SEARCH)
+    elif any(kw in prompt for kw in ["영향력", "후보", "실세", "배후", "지배력", "PPR", "지분망", "주변 지분망", "실질지배"]):
+        target_ent = detected_entities[0] if detected_entities else "삼성전자"
+        
+        # 1. 대상 회사 정보 조회
+        comp_info = run_cypher("MATCH (c:DART_Company) WHERE c.name = $name RETURN c.corp_code AS ccode, c.name AS name", name=target_ent)
+        target_code = comp_info[0]['ccode'] if comp_info and comp_info[0].get('ccode') else None
+        
+        # 2. 계층 1: 공시 기재 직접 보유 팩트 (1-Hop)
+        tier1_cypher = """
+        MATCH (h)-[r:OWNS_STAKE]->(c:DART_Company {name: $name})
+        WHERE r.is_current = true
+        RETURN coalesce(h.name, h.global_person_id) AS holder_name,
+               labels(h)[0] AS holder_type,
+               coalesce(h.corp_code, h.org_id, h.global_person_id) AS holder_pk,
+               r.stake AS stake,
+               r.shares_count AS shares,
+               r.source_rcept_no AS rcept_no
+        ORDER BY r.stake DESC
+        LIMIT 7
+        """
+        tier1_res = run_cypher(tier1_cypher, name=target_ent)
+        
+        # 3. 계층 2: 최대 4-Hop 내 단순 산술 경로 곱 합산 (Simple DAG)
+        tier2_cypher = """
+        MATCH path = (root)-[r:OWNS_STAKE*1..4]->(target:DART_Company {name: $name})
+        WHERE ALL(rel IN r WHERE rel.is_current = true)
+          AND ALL(i IN range(0, size(nodes(path))-2) WHERE ALL(j IN range(i+1, size(nodes(path))-1) WHERE nodes(path)[i] <> nodes(path)[j]))
+        WITH root, target, path,
+             REDUCE(prod = 1.0, rel IN relationships(path) | prod * (rel.stake / 100.0)) * 100.0 AS path_stake
+        WITH root, sum(path_stake) AS total_arithmetic_stake, min(length(path)) AS shortest_hop, count(path) AS path_count
+        RETURN coalesce(root.name, root.global_person_id) AS root_name,
+               labels(root)[0] AS root_type,
+               shortest_hop,
+               path_count,
+               total_arithmetic_stake
+        ORDER BY total_arithmetic_stake DESC
+        LIMIT 7
+        """
+        tier2_res = run_cypher(tier2_cypher, name=target_ent)
+        
+        # 4. 계층 3: 지배 네트워크 영향력 후보 탐색 (NetworkX In-Memory PPR)
+        raw_edges = run_cypher("""
+        MATCH (h)-[r:OWNS_STAKE]->(c:DART_Company)
+        WHERE r.is_current = true
+          AND (h:DART_Company OR h:DART_Organization OR (h:DART_Person AND h.verification_status = 'VERIFIED'))
+          AND r.stake IS NOT NULL
+        RETURN coalesce(h.corp_code, h.org_id, h.global_person_id) AS src_id,
+               coalesce(h.name, h.global_person_id) AS src_name,
+               labels(h)[0] AS src_type,
+               c.corp_code AS tgt_id,
+               c.name AS tgt_name,
+               r.stake AS stake
+        """)
+        
+        G = nx.DiGraph()
+        for e in raw_edges:
+            src = e["src_id"]
+            tgt = e["tgt_id"]
+            weight = float(e["stake"]) if e["stake"] > 0 else 0.1
+            G.add_node(src, name=e["src_name"], type=e["src_type"])
+            G.add_node(tgt, name=e["tgt_name"], type="DART_Company")
+            G.add_edge(tgt, src, weight=weight)
+            
+        tier3_candidates = []
+        if target_code and target_code in G:
+            ppr = nx.pagerank(G, alpha=0.85, personalization={target_code: 1.0}, weight='weight')
+            ranked = sorted([(k, v) for k, v in ppr.items() if k != target_code], key=lambda x: x[1], reverse=True)
+            for nid, score in ranked[:5]:
+                nd = G.nodes[nid]
+                tier3_candidates.append({"name": nd["name"], "type": nd["type"], "score": round(score, 6)})
+        elif target_ent:
+            target_node_ids = [nid for nid, data in G.nodes(data=True) if data.get("name") == target_ent]
+            if target_node_ids:
+                src_nid = target_node_ids[0]
+                ppr = nx.pagerank(G, alpha=0.85, personalization={src_nid: 1.0}, weight='weight')
+                ranked = sorted([(k, v) for k, v in ppr.items() if k != src_nid], key=lambda x: x[1], reverse=True)
+                for nid, score in ranked[:5]:
+                    nd = G.nodes[nid]
+                    tier3_candidates.append({"name": nd["name"], "type": nd["type"], "score": round(score, 6)})
+                    
+        raw_facts_text = f"### 🏛️ [3대 지배구조 분석] **{target_ent}** 지배구조 정밀 분석 리포트\n\n"
+        
+        # 1) 직접 보유 팩트 테이블
+        raw_facts_text += f"#### 📑 1. 공시에 기재된 직접 보유 팩트 (1-Hop)\n"
+        if tier1_res:
+            raw_facts_text += "| 순위 | 주주/기관명 | 엔티티 유형 | 직접 지분율 | 소유 주식수 | 근거 공시번호 |\n|---|---|---|:---:|:---:|:---:|\n"
+            for idx, r in enumerate(tier1_res, 1):
+                shares_str = f"{int(r['shares']):,}주" if r.get('shares') else "-"
+                rcp_str = f"[`{r['rcept_no']}`](https://dart.fss.or.kr/dsaf001/main.do?rcpNo={r['rcept_no']})" if r.get('rcept_no') else "-"
+                raw_facts_text += f"| {idx} | **{r['holder_name']}** | `{r['holder_type']}` | **{r['stake']:.2f}%** | {shares_str} | {rcp_str} |\n"
+        else:
+            raw_facts_text += "ℹ️ 등록된 5% 이상 직접 지분 보유 팩트가 없습니다.\n"
+            
+        # 2) 간접 산술 환산 지분 테이블
+        raw_facts_text += f"\n#### 🧮 2. 최대 4-Hop 내 단순 산술 경로 곱 합산\n"
+        raw_facts_text += "> ⚠️ *본 수치는 Simple DAG 경로 기준 단순 산술 계산값이며, 우선주·의결권 차이·순환출자를 포함한 법적 실질 지배력과 동일시할 수 없습니다.*\n\n"
+        if tier2_res:
+            raw_facts_text += "| 순위 | 지배/소유 주체 | 엔티티 유형 | 최소 Hop | 경로수 | 산술 환산 지분율 |\n|---|---|---|:---:|:---:|:---:|\n"
+            for idx, r in enumerate(tier2_res, 1):
+                raw_facts_text += f"| {idx} | **{r['root_name']}** | `{r['root_type']}` | {r['shortest_hop']} | {r['path_count']} | **{r['total_arithmetic_stake']:.4f}%** |\n"
+        else:
+            raw_facts_text += "ℹ️ 다단계 출자 경로가 존재하지 않습니다.\n"
+            
+        # 3) 지배 네트워크 영향력 후보 테이블
+        raw_facts_text += f"\n#### ⚡ 3. 지배 네트워크 영향력 후보 탐색 (PPR)\n"
+        raw_facts_text += "> 💡 *Python NetworkX In-Memory 스트리밍 연산 (가중치 역방향 전파). PageRank 확률 정규화 특성으로 인해 지분율 절대치와 비례하지 않는 탐색 지표입니다.*\n\n"
+        if tier3_candidates:
+            raw_facts_text += "| 순위 | 영향력 후보 주체 | 엔티티 유형 | PPR 탐색 점수 | 비고 |\n|---|---|---|:---:|:---:|\n"
+            for idx, c in enumerate(tier3_candidates, 1):
+                raw_facts_text += f"| {idx} | **{c['name']}** | `{c['type']}` | **{c['score']:.6f}** | 🎯 영향력 핵심 후보 |\n"
+        else:
+            raw_facts_text += "ℹ️ 지배 네트워크 후보 탐색 결과가 없습니다.\n"
+            
+        cypher_executed = tier1_cypher
+        raw_data_result = {"tier1": tier1_res, "tier2": tier2_res, "tier3": tier3_candidates}
+
     # C. 수치 통계 요약 (SUMMARY_STATS)
-    elif detected_intent == "SUMMARY_STATS" or any(kw in prompt for kw in ["통계", "요약", "평균", "중앙값", "순위"]):
+    elif detected_intent == "SUMMARY_STATS" or (any(kw in prompt for kw in ["통계", "요약", "평균", "중앙값", "순위"]) and not detected_entities):
         cypher_executed = """
-// 📊 수치 요약 & 분위수 집계
-MATCH (p:DART_Person)-[r:OWNS_STAKE]->(c:DART_Company)
+// 📊 수치 요약 & 분위수 집계 (최신 유효 지분 is_current=true 만 집계)
+MATCH (p:DART_Person)-[r:OWNS_STAKE {is_current: true}]->(c:DART_Company)
 RETURN p.name AS 총수명,
        count(c) AS 보유기업수,
        round(sum(r.stake), 2) AS 총지분합계,
@@ -311,7 +428,7 @@ LIMIT 7
         """
         stats_res = run_cypher(cypher_executed)
         raw_data_result = stats_res
-        raw_facts_text = "### 📊 [수치 요약 집계] 재벌 총수별 지배 지분 통계 & 중앙값 분석\n\n"
+        raw_facts_text = "### 📊 [수치 요약 집계] 재벌 총수별 최신 유효 지배 지분 통계\n\n"
         raw_facts_text += "| 총수명 | 지배 기업 수 | 총 지분 합계 | 평균 지분율 | 중앙값 (p50) |\n|---|:---:|:---:|:---:|:---:|\n"
         for r in stats_res:
             raw_facts_text += f"| **{r['총수명']}** | {r['보유기업수']}개 | {r['총지분합계']}% | {r['평균지분율']}% | **{r['중앙값지분율']}%** |\n"
