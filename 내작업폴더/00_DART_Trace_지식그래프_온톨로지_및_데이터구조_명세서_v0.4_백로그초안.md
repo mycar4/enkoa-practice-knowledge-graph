@@ -1,14 +1,15 @@
 # 🏛️ [DART-Trace] 지식그래프 온톨로지 & 데이터 구조 마스터 명세서 (v0.4)
 
-> **문서 버전**: `v0.4 Production Specification`  
-> **상태**: 🟢 **v0.4 정규 설계 마스터 명세서 (모순 해결 및 엔터프라이즈 거버넌스 엄격 정합 완료)**  
+> **문서 버전**: `v0.4 Production Master Specification`  
+> **상태**: 🟢 **v0.4 정규 설계 최종 마스터 명세서 (전역 인물 식별·다중 이벤트 순번·정정 버전 모델 전수 정합)**  
 > **작성 일자**: 2026-09-02  
 > **선행 버전**: `v0.2` (지분/출자/UI 정합) ➔ `v0.3` (자본변동 5대 이벤트) ➔ `v0.4` (재무 펀더멘털 & 증권신고서 & GDS 정밀 통합)  
 > **핵심 엔지니어링 원칙**:
 > 1. **키 일치 기반 증거 연결 (Key-Equivalence Proof Link)**: 동일 `rcept_no`가 원천 확인될 때만 `match_status: 'EXACT'`, `link_basis: 'SAME_RCEPT_NO'`로 확정 연계한다.
 > 2. **시간축 4원 분리 (Temporal Fact-Base)**: 공시 접수일(`reported_on`), 이사회 결의일(`decided_on`), 효력/납입일(`effective_on`), 결산 기준일(`as_of_date`)을 명확히 분리한다.
-> 3. **불변 감사 이력 (Immutable Audit Trail)**: 정정 공시 접수 시 과거 노드를 덮어쓰지 않고 `doc_status`, `is_latest`, `restatement_of`로 이력을 보존한다.
-> 4. **단계적 엔지니어링**: 원천 사실 적재 ➔ Cypher 증거 경로 추적 ➔ 목적별 서브그래프 투영 ➔ GDS 보조 탐색(PPR/FastRP) 순으로 진행한다.
+> 3. **불변 감사 이력 (Immutable Audit Trail)**: 정정 공시 접수 시 과거 노드를 덮어쓰지 않고 `doc_status`, `is_latest`, `restatement_of`로 이력을 영구 보존한다.
+> 4. **전역 인물 식별 및 다중 기업 지분 보존**: `DART_Person`은 회사에 종속되지 않는 전역 식별자(`global_person_id`)를 사용하여 여러 상장사에 걸친 통합 지분망을 유지하되, 신원 미확인 시 후보 큐로 격리한다.
+> 5. **결정론적 조회 한계 명시**: 저장된 공시 팩트와 정의된 필터에 대해 결정론적으로 조회되며, 공시 내용의 실질적 진실성이나 자금의 실제 집행 여부까지 자동으로 증명하지는 않는다.
 
 ---
 
@@ -26,7 +27,7 @@ flowchart TD
     COMP -->|FILED| DISC
     COMP -->|ANNOUNCED| EVENT
     COMP -->|HAS_FINANCIALS| FIN
-    PERSON -->|OWNS_STAKE| COMP
+    PERSON -->|OWNS_STAKE<br/>(다중 회사 지분 통합)| COMP
     
     EVENT -->|EVIDENCED_BY<br/>(link_basis: SAME_RCEPT_NO)| DISC
     EVENT -->|DETAILS<br/>(link_basis: SAME_RCEPT_NO)| SEC
@@ -34,6 +35,10 @@ flowchart TD
     SEC -->|EVIDENCED_BY<br/>(link_basis: SAME_RCEPT_NO)| DISC
     
     EVENT -.->|FOLLOWED_BY<br/>(match_status: CANDIDATE)| EVENT
+    
+    DISC -.->|RESTATES<br/>(정정 공시 연결)| DISC
+    EVENT -.->|RESTATES<br/>(정정 이벤트 연결)| EVENT
+    FIN -.->|RESTATES<br/>(정정 재무 연결)| FIN
 ```
 
 ---
@@ -49,16 +54,17 @@ flowchart TD
 * `is_listed`: 상장 여부 (`Boolean`)
 * `updated_at`: 최종 동기화 일시 (`DateTime`)
 
-### ② `(:DART_Person)` (주요 주주, 임원 및 자연인/투자조합)
-* **PK (`person_id`)**: `{corp_code}_{name}_{birth_ym_or_seq}` (`String`, 동명이인 분리 고유키)
+### ② `(:DART_Person)` (전역 인물, 주요 주주 및 투자조합)
+* **PK (`person_id`)**: `{name}_{birth_ym_or_reg_id}` (`String`, 전역 고유 식별자, 회사 종속 `corp_code` 배제)
 * `name`: 인물 또는 조합명 (`String`, 예: `'이재용'`, `'골든홀딩스1호조합'`)
 * `birth_ym`: 생년월 (`String(6)`, DART 공시 기재 시 예: `'196806'`, 미기재 시 `'UNKNOWN'`)
 * `nationality`: 국적 (`String`, 예: `'한국'`, `'미국'`)
 * `entity_type`: 주체 구분 (`'NATURAL_PERSON'`, `'INVESTMENT_UNION'`, `'FOREIGN_INVESTOR'`)
-* `verification_status`: 검증 상태 (`'VERIFIED'`, `'CANDIDATE'`)
+* `verification_status`: 검증 상태 (`'VERIFIED'`=신원확인 완료 및 다중 지분 병합, `'CANDIDATE'`=동명이인 의심 격리)
 
 ### ③ `(:DART_CapitalEvent)` (5대 주요 자본 이벤트: CB, BW, 증자, 양수도, 합병)
-* **PK (`event_id`)**: `{corp_code}_{event_type}_{rcept_no}` (`String`, 고유 사건 식별자)
+* **PK (`event_id`)**: `{corp_code}_{event_type}_{rcept_no}_{event_seq}` (`String`, 다중 건 충돌 방지 고유 식별자)
+* `event_seq`: 동일 공시 내 항목 순번 (`Integer`, 기본값: `1`, 복수 회차 발행/양수 시 `1, 2, 3...`)
 * `event_type`: 이벤트 유형 (`'CB_ISSUE'`, `'BW_ISSUE'`, `'PAID_INCREASE'`, `'ACQUISITION'`, `'MERGER'`)
 * `event_name`: 공시 이벤트 명칭 (`String`, 예: `'제3회차 무기명식 사모 전환사채 발행결정'`)
 * `is_private`: 사모/공모 여부 (`Boolean`, `true`=사모, `false`=공모)
@@ -73,6 +79,8 @@ flowchart TD
 * `received_on`: 공시 접수일 (`Date`)
 * `effective_on`: 납입일 / 합병기일 / 양수도대금지급일 (`Date`)
 * `doc_status`: 공시 문서 상태 (`'NORMAL'`, `'CORRECTED'`, `'WITHDRAWN'`)
+* `is_latest`: 최신 유효 이벤트 여부 (`Boolean`)
+* `restatement_of`: 이전 정정 대상 `event_id` (`String`, 정정 시)
 * `source_rcept_no`: DART 공시접수번호 (`String(14)`)
 * `viewer_url`: DART 원문 뷰어 링크 (`String`)
 
@@ -96,13 +104,14 @@ flowchart TD
 * `debt_ratio`: 부채비율 (`Float`, %, 자본총계 $\le 0$ 시 `NULL`)
 * `capital_impairment_ratio`: 자본잠식률 (`Float`, %, 자본총계/자본금 기반 산출)
 * `is_latest`: 해당 결산기 최신 유효본 여부 (`Boolean`)
-* `restatement_of`: 이전 정정 대상 공시접수번호 (`String(14)`, 정정 시 원본 `source_rcept_no`)
+* `restatement_of`: 이전 정정 대상 `snapshot_id` (`String`, 정정 시)
 * `source_rcept_no`: 근거 공시접수번호 (`String(14)`)
 * `formula_version`: 지표 산식 버전 (`'v1.0'`)
 
 ### ⑤ `(:DART_SecuritiesFiling)` (DS006 증권신고서 조달조건 및 상세 사용목적)
 * **PK (`filing_id`)**: `{corp_code}_SEC_{rcept_no}_{item_seq}` (`String`)
 * `corp_code`: 법인 고유번호 (`String(8)`)
+* `item_seq`: 항목 순번 (`Integer`, 기본값: `1`)
 * `source_rcept_no`: 증권신고서 접수번호 (`String(14)`)
 * `target_facility_fund`: 시설자금 기재액 (`Long`, 원)
 * `target_operating_fund`: 운영자금 기재액 (`Long`, 원)
@@ -112,6 +121,8 @@ flowchart TD
 * `ytm_rate`: 만기이자율 (`Float`, %)
 * `maturity_date`: 사채 만기일 (`Date`)
 * `put_option_start`: 조기상환청구권(풋옵션) 행사개시일 (`Date`)
+* `is_latest`: 최신 유효 신고서 여부 (`Boolean`)
+* `restatement_of`: 이전 정정 대상 `filing_id` (`String`, 정정 시)
 
 ### ⑥ `(:DART_Disclosure)` (금감원 DART 원문 공시 인덱스)
 * **PK (`rcept_no`)**: DART 고유 공시접수번호 (`String(14)`)
@@ -120,6 +131,8 @@ flowchart TD
 * `rcept_dt`: 공시 접수일자 (`String(8)` / `Date`)
 * `flr_nm`: 공시 제출인/보고자명 (`String`)
 * `doc_status`: 문서 상태 (`'NORMAL'`, `'CORRECTED'`, `'WITHDRAWN'`)
+* `is_latest`: 최신 접수 공시 여부 (`Boolean`)
+* `restatement_of`: 이전 정정 대상 `rcept_no` (`String(14)`, 정정 시 원본 접수번호)
 
 ---
 
@@ -140,6 +153,7 @@ flowchart LR
 
 ### ① `[:OWNS_STAKE]` (지분 소유 관계)
 * **시작 ➔ 끝**: `(:DART_Person | :DART_Company)` ➔ `(:DART_Company)`
+* **전역 인물 연계**: 하나의 `DART_Person` 노드가 여러 `DART_Company` 노드로 `OWNS_STAKE` 관계를 형성하여 통합 지배구조 네트워크 구축.
 * `stake`: 지분율 (`Float`, %, 예: `17.97`)
 * `shares_count`: 소유 주식수 (`Long`)
 * `voting_type`: 의결권 구분 (`'VOTING'`, `'NON_VOTING'`, `'PREFERRED'`)
@@ -169,19 +183,20 @@ flowchart LR
 
 ---
 
-## 4. 🔄 정정·철회·재공시 버전 모델 (Versioning Model)
+## 4. 🔄 정정·철회·재공시 버전 모델 (Universal Versioning Pattern)
 
-1. **불변 원칙 (Immutable Audit Trail)**:  
-   기재정정 공시가 접수되더라도 과거의 원본 노드를 삭제하거나 덮어쓰지 않고 이력을 영구 보존한다.
-2. **재무 스냅샷 정정 처리**:
-   - 신규 정정 스냅샷 노드 생성 (`snapshot_id`에 신규 `source_rcept_no` 반영)
-   - `is_latest: true`, `restatement_of: 원본_rcept_no` 설정
-   - 동일 `period_key`를 가진 과거 스냅샷 노드 ➔ `is_latest: false`로 전이
-   - 정정 관계 생성 ➔ `(신규_스냅샷)-[:RESTATES {corrected_at: date()}]->(과거_스냅샷)`
-3. **자본 이벤트 및 공시 인덱스 정정 처리**:
-   - 신규 공시 노드 접수 ➔ `doc_status: 'CORRECTED'`, `is_latest: true`
-   - 과거 공시 노드 ➔ `is_latest: false` 전이
-   - 철회 공시 접수 ➔ `doc_status: 'WITHDRAWN'`, `is_latest: false`
+공시·이벤트·재무·증권신고서 4대 엔티티는 동일한 패턴으로 불변 이력을 보존합니다:
+
+```cypher
+// 1. DART_Disclosure 정정
+(신규_공시:DART_Disclosure {doc_status: 'CORRECTED', is_latest: true})-[:RESTATES {corrected_at: date()}]->(과거_공시:DART_Disclosure {is_latest: false})
+
+// 2. DART_CapitalEvent 정정
+(신규_이벤트:DART_CapitalEvent {doc_status: 'CORRECTED', is_latest: true})-[:RESTATES {corrected_at: date()}]->(과거_이벤트:DART_CapitalEvent {is_latest: false})
+
+// 3. DART_FinancialSnapshot 정정
+(신규_스냅샷:DART_FinancialSnapshot {is_latest: true})-[:RESTATES {corrected_at: date()}]->(과거_스냅샷:DART_FinancialSnapshot {is_latest: false})
+```
 
 ---
 
@@ -224,7 +239,7 @@ CREATE INDEX financial_as_of_date_idx IF NOT EXISTS FOR (f:DART_FinancialSnapsho
 
 * **팩트 질의 (Cypher 기반 확정 질의)**:
   - *"부채비율 200% 초과 상태에서 사모 CB를 발행한 상장사 목록"*
-  - ➔ 임베딩이나 확률 모델 없이 **지식그래프 팩트 관계(Snapshot + CapitalEvent)에서 100% 결정론적으로 도출**.
+  - ➔ **저장된 공시 팩트와 정의된 필터에 대해 결정론적으로 조회된다. 단, 공시 내용의 실질적 진실성이나 자금의 실제 집행 여부까지 자동으로 증명하지는 않는다.**
 * **탐색 질의 (GDS / PPR / FastRP 기반 후보 탐색)**:
   - *"특정 지배·출자 네트워크 토폴로지에서 실질적 영향력 후보군 탐색 (PPR)"*
   - *"사모CB 발행 및 타법인 양수도 자본조달 패턴이 통계적으로 유사한 기업군 후보 클러스터링 (FastRP)"*
