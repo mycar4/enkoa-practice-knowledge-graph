@@ -19,11 +19,10 @@ if hasattr(sys.stderr, "reconfigure"):
 
 # 1. 환경 설정 및 Neo4j 연결
 load_dotenv(".env", override=True)
-load_dotenv("내작업폴더/day28_Neo4j_설치_Movies/.env", override=True)
 
-NEO4J_URI = os.getenv("NEO4J_URI", "bolt://localhost:7687")
-NEO4J_USER = os.getenv("NEO4J_USER", "neo4j")
-NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "test0011")
+NEO4J_URI = os.getenv("NEO4J_URI", "neo4j+ssc://2fa50db4.databases.neo4j.io")
+NEO4J_USER = os.getenv("NEO4J_USER", "2fa50db4")
+NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "FJaQFhJZIow2p-5dFNO5h2bX_QdBD7ngWlwYESYbnkg")
 
 driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
 driver.verify_connectivity()
