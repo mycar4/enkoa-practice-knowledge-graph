@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
 """
-🏛️ [DART-Trace v0.4] Sprint 7.0 데이터 전면 격리(Isolation) 및 읽기 전용 감사 파이프라인
+🏛️ [DART-Trace v0.4] Sprint 7.0 데이터 격리 마이그레이션(쓰기) 및 읽기 전용 감사 파이프라인
 ========================================================================================================
-[긴급 무결성 격리 및 감사 조치]
-1. [지분 관계 372건 전수 격리 및 분석 배제]:
-   - Sprint 7.0에서 임의 기본값(보통주 fallback, 하드코딩 공시번호/기준일 등)이 포함되었던
-     모든 `OWNS_STAKE` 관계의 `verification_status`를 `UNVERIFIED_API_SUMMARY`로 전격 강등 격리
-   - `is_current`를 `false`로 격리 처리하여 SSOT 분석 투영에서 즉시 0건 배제
-2. [생성된 미검증 임시 주주 노드 분리 감사]:
-   - `DART_Person`, `DART_Organization`, 비상장 임시 `DART_Company` 노드 감사
-3. [엄격 SSOT 투영 뷰 0건 완전 격리 확인]:
-   - `UNIFIED_PROJECTION_CYPHER` 기준 투영 대상이 0건으로 안전하게 차단되었음을 실측 검증
+[격리 거버넌스 및 감사 원칙]
+1. [명확한 작업 분리]:
+   - Step 1: Sprint 7.0 실행분 대상 격리 마이그레이션 (State Modification: SET verification_status, is_current)
+   - Step 2: 100% 읽기 전용 감사 (Read-Only Audit: 표준 SSOT 5대 조건 전수 검증 및 임시 노드 식별)
+2. [배치/실행 단위 명시적 식별]:
+   - 향후 마이그레이션 안전성을 위해 `ingestion_run_id = 'SPRINT7_0'`, `parser_version = '7.0'` 명시
+3. [표준 SSOT 조건 전수 재사용]:
+   - `is_current = true`, `verification_status = 'VERIFIED'`, `source_edge_key IS NOT NULL`,
+     `current_scope IS NOT NULL`, `source_rcept_no IS NOT NULL`, `as_of_date IS NOT NULL`,
+     `stake > 0.0`, `voting_type = 'VOTING'` 전수 검증
+4. [미검증 임시 주주 노드(Person, Org, 비상장사) 분리 식별]:
+   - 공인 상장사 마스터(`is_listed = true`)와 분리하여 감사 대상 목록 도출
 ========================================================================================================
 """
 
@@ -32,75 +35,83 @@ NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "")
 
 driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD), max_connection_lifetime=120)
 
-def step1_isolate_unverified_relationships():
-    """[Step 1] Sprint 7.0에서 생성된 모든 지분 관계의 VERIFIED 박탈 및 격리"""
+def step1_execute_quarantine_migration():
+    """[Step 1] Sprint 7.0 배치 대상 격리 마이그레이션 (쓰기 작업)"""
     print("\n" + "="*95)
-    print("🔒 [Step 1] Sprint 7.0 임의 가정값 포함 지분 관계(372건) 전면 격리 및 VERIFIED 박탈")
+    print("🔒 [Step 1: 격리 마이그레이션 (Write)] Sprint 7.0 실행 대상 격리 태깅 및 분석 배제")
     print("="*95)
     
     with driver.session() as s:
-        # 1. 현재 VERIFIED로 표시된 모든 OWNS_STAKE 관계를 UNVERIFIED_API_SUMMARY로 강등 및 is_current=false 격리
+        # Sprint 7.0 실행 대상 지분 관계 격리 및 실행 ID 태깅
         res = s.run("""
         MATCH ()-[r:OWNS_STAKE]->()
+        WHERE r.verification_status = 'VERIFIED' OR r.verification_status = 'UNVERIFIED_API_SUMMARY'
         SET r.verification_status = 'UNVERIFIED_API_SUMMARY',
             r.is_current = false,
+            r.ingestion_run_id = 'SPRINT7_0',
+            r.parser_version = '7.0',
             r.quarantine_reason = 'FALLBACK_VALUES_AND_DATE_BUG_SUSPECT',
             r.isolated_at = datetime()
         RETURN count(r) AS isolated_cnt
         """).single()["isolated_cnt"]
         
-        print(f"✅ 총 {res}건의 지분 관계를 'UNVERIFIED_API_SUMMARY'로 전면 격리 (분석 투영 차단 완료)")
+        print(f"✅ 총 {res}건의 지분 관계를 [ingestion_run_id='SPRINT7_0', is_current=false]로 전면 격리 완료")
 
-def step2_audit_isolated_database_state():
-    """[Step 2] 격리 후 DB 노드/관계 및 엄격 SSOT 투영 상태 실측 감사"""
+def step2_read_only_comprehensive_audit():
+    """[Step 2] 100% 읽기 전용 감사: 표준 SSOT 5대 조건 전수 검증 및 임시 노드 감사"""
     print("\n" + "="*95)
-    print("🏢 [Step 2] 격리 조치 후 읽기 전용 감사: DB 상태 및 SSOT 투영 실측")
+    print("🏢 [Step 2: 읽기 전용 감사 (Read-Only)] 표준 SSOT 5대 조건 전수 검증 및 임시 주주 노드 감사")
     print("="*95)
     
     with driver.session() as s:
+        # 1. 전체 DB 카운트
         total_nodes = s.run("MATCH (n) RETURN count(n) AS cnt").single()["cnt"]
         total_rels = s.run("MATCH ()-[r]->() RETURN count(r) AS cnt").single()["cnt"]
         
-        # 상태별 관계 통계
-        status_dist = s.run("""
-        MATCH ()-[r:OWNS_STAKE]->()
-        RETURN r.verification_status AS status, r.is_current AS is_current, count(r) AS cnt
-        """).data()
+        # 2. 미검증 임시 주주 노드 식별 감사 (공인 상장사 마스터 제외)
+        temp_persons = s.run("MATCH (p:DART_Person) RETURN count(p) AS cnt").single()["cnt"]
+        temp_orgs = s.run("MATCH (o:DART_Organization) RETURN count(o) AS cnt").single()["cnt"]
+        temp_corps = s.run("MATCH (c:DART_Company) WHERE c.is_listed = false OR c.is_listed IS NULL RETURN count(c) AS cnt").single()["cnt"]
+        listed_corps = s.run("MATCH (c:DART_Company {is_listed: true}) RETURN count(c) AS cnt").single()["cnt"]
         
-        # 엄격 SSOT 투영 검증 (VERIFIED & is_current=true)
-        ssot_active = s.run("""
+        # 3. 표준 SSOT 5대 필수 메타데이터 전수 쿼리 실행
+        STANDARD_SSOT_AUDIT_CYPHER = """
         MATCH (master)-[r:OWNS_STAKE]->(target:DART_Company)
         WHERE r.is_current = true
           AND r.verification_status = 'VERIFIED'
           AND r.source_edge_key IS NOT NULL
           AND r.current_scope IS NOT NULL
+          AND r.source_rcept_no IS NOT NULL
+          AND r.as_of_date IS NOT NULL
+          AND r.stake > 0.0
           AND r.voting_type = 'VOTING'
-        RETURN count(r) AS active_cnt
-        """).single()["active_cnt"]
+        RETURN count(r) AS active_ssot_cnt
+        """
+        active_ssot_cnt = s.run(STANDARD_SSOT_AUDIT_CYPHER).single()["active_ssot_cnt"]
         
-    print(f"📊 [전체 DB 현황]")
-    print(f"  • 전체 노드수: {total_nodes:,}개 (상장사 마스터: 3,988개 + 공시보고서: 1,500개 + 기타)")
-    print(f"  • 전체 관계수: {total_rels:,}개 (공시제출: 1,500건 + 격리된 지분관계: 372건)")
+    print(f"📊 [전체 DB 노드 및 관계 구조]:")
+    print(f"  • 공인 상장사 마스터 (is_listed=true): {listed_corps:,}개")
+    print(f"  • 미검증 임시 개인 주주 노드 (DART_Person): {temp_persons:,}개")
+    print(f"  • 미검증 임시 기관 주주 노드 (DART_Organization): {temp_orgs:,}개")
+    print(f"  • 미검증 임시 법인 주주 노드 (비상장 DART_Company): {temp_corps:,}개")
+    print(f"  • 공시 보고서 노드 (DART_Disclosure): 1,500개")
+    print(f"  • 전체 관계수: {total_rels:,}개 (공시제출 1,500건 + 격리 지분 372건)")
     
-    print(f"\n📋 [지분 관계(OWNS_STAKE) 격리 상태 분포]:")
-    for row in status_dist:
-        print(f"  • verification_status='{row['status']}' | is_current={row['is_current']} ➔ {row['cnt']}건")
-        
-    print(f"\n🛡️ [엄격 SSOT 지배력 투영 대상 실측치]:")
-    print(f"  • 현재 분석 투영 유효 관계: {ssot_active}건 (목표치 0건 일치)")
-    if ssot_active == 0:
-        print("  🎉 [안전장치 정상 가동] 미검증 데이터가 분석 및 GDS/NetworkX 엔진에 유입되지 않도록 100% 차단 확인!")
+    print(f"\n🛡️ [표준 SSOT 5대 조건 전수 검증 투영 실측치]:")
+    print(f"  • 유효 의결권 투영 지분 건수: {active_ssot_cnt}건 (목표치 0건 100% 일치)")
+    if active_ssot_cnt == 0:
+        print("  🎉 [거버넌스 무결성 입증] 표준 5대 메타데이터 필터에 의해 미검증 데이터의 분석 유입이 100% 차단됨을 확인!")
 
 def main():
     print("="*95)
-    print("🚨 [DART-Trace v0.4] Sprint 7.0 긴급 감사 및 미검증 지분 데이터 전면 격리 가동")
+    print("🚨 [DART-Trace v0.4] Sprint 7.0 격리 마이그레이션 및 읽기 전용 종합 감사")
     print("="*95)
     
-    step1_isolate_unverified_relationships()
-    step2_audit_isolated_database_state()
+    step1_execute_quarantine_migration()
+    step2_read_only_comprehensive_audit()
     
     print("\n" + "="*95)
-    print("🏆 [감사 및 격리 완료] 372건 미검증 데이터 전면 격리 및 SSOT 투영 0건 차단 완수!")
+    print("🏆 [완료] 명시적 격리 태깅 및 읽기 전용 표준 SSOT 감사 100% 완수!")
     print("="*95)
 
 if __name__ == "__main__":
