@@ -22,7 +22,7 @@ flowchart TD
     FIN["📊 :DART_FinancialSnapshot<br/>(PK: snapshot_id)"]
     SEC["📜 :DART_SecuritiesFiling<br/>(PK: filing_id)"]
     DISC["📑 :DART_Disclosure<br/>(PK: rcept_no)"]
-    PERSON["👤 :DART_Person<br/>(PK: person_id)"]
+    PERSON["👤 :DART_Person<br/>(PK: global_person_id)"]
 
     COMP -->|FILED| DISC
     COMP -->|ANNOUNCED| EVENT
@@ -55,7 +55,7 @@ flowchart TD
 * `updated_at`: 최종 동기화 일시 (`DateTime`)
 
 ### ② `(:DART_Person)` (전역 인물, 주요 주주 및 투자조합)
-* **PK (`person_id`)**: `{name}_{birth_ym_or_reg_id}` (`String`, 전역 고유 식별자, 회사 종속 `corp_code` 배제)
+* **PK (`global_person_id`)**: `{name}_{birth_ym_or_reg_id}` (`String`, 전역 고유 식별자, 회사 종속 `corp_code` 배제)
 * `name`: 인물 또는 조합명 (`String`, 예: `'이재용'`, `'골든홀딩스1호조합'`)
 * `birth_ym`: 생년월 (`String(6)`, DART 공시 기재 시 예: `'196806'`, 미기재 시 `'UNKNOWN'`)
 * `nationality`: 국적 (`String`, 예: `'한국'`, `'미국'`)
@@ -205,7 +205,7 @@ flowchart LR
 ```cypher
 // 1. 고유 제약조건 (Unique Constraints)
 CREATE CONSTRAINT company_corp_code_unique IF NOT EXISTS FOR (c:DART_Company) REQUIRE c.corp_code IS UNIQUE;
-CREATE CONSTRAINT person_id_unique IF NOT EXISTS FOR (p:DART_Person) REQUIRE p.person_id IS UNIQUE;
+CREATE CONSTRAINT person_global_id_unique IF NOT EXISTS FOR (p:DART_Person) REQUIRE p.global_person_id IS UNIQUE;
 CREATE CONSTRAINT disclosure_rcept_no_unique IF NOT EXISTS FOR (d:DART_Disclosure) REQUIRE d.rcept_no IS UNIQUE;
 CREATE CONSTRAINT capital_event_id_unique IF NOT EXISTS FOR (e:DART_CapitalEvent) REQUIRE e.event_id IS UNIQUE;
 CREATE CONSTRAINT financial_snapshot_id_unique IF NOT EXISTS FOR (f:DART_FinancialSnapshot) REQUIRE f.snapshot_id IS UNIQUE;
