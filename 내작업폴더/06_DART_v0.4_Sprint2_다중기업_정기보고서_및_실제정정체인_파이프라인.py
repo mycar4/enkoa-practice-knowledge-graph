@@ -291,10 +291,11 @@ def step3_cross_company_analysis():
     print("🔍 [Step 3] 대표 상장사 최신 재무 펀더멘털 순위 및 증거 추적 Cypher 질의")
     print("="*80)
     
+    target_codes = [c["corp_code"] for c in TARGET_CORPS]
     with driver.session() as s:
         records = s.run("""
         MATCH (c:DART_Company)-[:HAS_FINANCIALS]->(f:DART_FinancialSnapshot)-[:EVIDENCED_BY]->(d:DART_Disclosure)
-        WHERE f.is_latest = true
+        WHERE c.corp_code IN $target_codes AND f.is_latest = true
         RETURN c.name AS corp_name,
                c.stock_code AS stock_code,
                f.as_of_date AS as_of_date,
@@ -306,9 +307,9 @@ def step3_cross_company_analysis():
                d.report_nm AS report_nm,
                d.rcept_no AS rcept_no
         ORDER BY f.debt_ratio DESC
-        """).data()
+        """, target_codes=target_codes).data()
         
-    assert len(records) >= 5, f"❌ 5대 상장사 재무 레코드가 5건 미만입니다. (실제: {len(records)}건)"
+    assert len(records) == 5, f"❌ 5대 대상 상장사 재무 레코드가 정확히 5건이어야 합니다. (실제: {len(records)}건)"
     
     print(f"{'순위':^4} | {'상장사명':^10} | {'기준일자':^10} | {'자산총계(조원)':^12} | {'부채비율':^8} | {'자본잠식':^8} | {'근거 공시번호':^14}")
     print("-" * 85)
