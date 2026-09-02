@@ -1,0 +1,45 @@
+[
+  {
+    "rcept_no": "20240314001652",
+    "corp_cls": "Y",
+    "corp_code": "00129235",
+    "corp_name": "삼화왕관",
+    "stock_knd": "보통주",
+    "nm": "(주)금비",
+    "relate": "본인",
+    "bsis_posesn_stock_co": "1,106,120",
+    "bsis_posesn_stock_qota_rt": "51.34",
+    "trmend_posesn_stock_co": "1,106,120",
+    "trmend_posesn_stock_qota_rt": "51.34",
+    "rm": "-",
+    "stlm_dt": "2023-12-31"
+  },
+  {
+    "rcept_no": "20240314001652",
+    "corp_cls": "Y",
+    "corp_code": "00129235",
+    "corp_name": "삼화왕관",
+    "stock_knd": "보통주",
+    "nm": "계",
+    "bsis_posesn_stock_co": "1,106,120",
+    "bsis_posesn_stock_qota_rt": "51.34",
+    "trmend_posesn_stock_co": "1,106,120",
+    "trmend_posesn_stock_qota_rt": "51.34",
+    "rm": "-",
+    "stlm_dt": "2023-12-31"
+  },
+  {
+    "rcept_no": "20240314001652",
+    "corp_cls": "Y",
+    "corp_code": "00129235",
+    "corp_name": "삼화왕관",
+    "stock_knd": "기타",
+    "nm": "계",
+    "bsis_posesn_stock_co": "-",
+    "bsis_posesn_stock_qota_rt": "-",
+    "trmend_posesn_stock_co": "-",
+    "trmend_posesn_stock_qota_rt": "-",
+    "rm": "-",
+    "stlm_dt": "2023-12-31"
+  }
+]

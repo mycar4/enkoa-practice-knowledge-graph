@@ -1,0 +1,45 @@
+[
+  {
+    "rcept_no": "20240320001116",
+    "corp_cls": "Y",
+    "corp_code": "00753643",
+    "corp_name": "주성코퍼레이션",
+    "stock_knd": "보통주",
+    "nm": "(주)비앤피주성",
+    "relate": "최대주주",
+    "bsis_posesn_stock_co": "0",
+    "bsis_posesn_stock_qota_rt": "0.00",
+    "trmend_posesn_stock_co": "19,000,000",
+    "trmend_posesn_stock_qota_rt": "35.98",
+    "rm": "전 최대주주로부터 구주 매입 및 \n유상증자 참여로 인한 최대주주변경",
+    "stlm_dt": "2023-12-31"
+  },
+  {
+    "rcept_no": "20240320001116",
+    "corp_cls": "Y",
+    "corp_code": "00753643",
+    "corp_name": "주성코퍼레이션",
+    "stock_knd": "보통주",
+    "nm": "계",
+    "bsis_posesn_stock_co": "-",
+    "bsis_posesn_stock_qota_rt": "-",
+    "trmend_posesn_stock_co": "19,000,000",
+    "trmend_posesn_stock_qota_rt": "35.98",
+    "rm": "-",
+    "stlm_dt": "2023-12-31"
+  },
+  {
+    "rcept_no": "20240320001116",
+    "corp_cls": "Y",
+    "corp_code": "00753643",
+    "corp_name": "주성코퍼레이션",
+    "stock_knd": "-",
+    "nm": "계",
+    "bsis_posesn_stock_co": "-",
+    "bsis_posesn_stock_qota_rt": "-",
+    "trmend_posesn_stock_co": "-",
+    "trmend_posesn_stock_qota_rt": "-",
+    "rm": "-",
+    "stlm_dt": "2023-12-31"
+  }
+]

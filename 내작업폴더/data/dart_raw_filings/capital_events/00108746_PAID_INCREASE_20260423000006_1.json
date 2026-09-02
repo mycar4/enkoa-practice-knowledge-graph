@@ -1,0 +1,21 @@
+{
+  "rcept_no": "20260423000006",
+  "corp_cls": "Y",
+  "corp_code": "00108746",
+  "corp_name": "DKME",
+  "nstk_ostk_cnt": "6,000,000",
+  "nstk_estk_cnt": "-",
+  "fv_ps": "2,500",
+  "bfic_tisstk_ostk": "47,396,308",
+  "bfic_tisstk_estk": "-",
+  "fdpp_fclt": "-",
+  "fdpp_bsninh": "-",
+  "fdpp_op": "15,000,000,000",
+  "fdpp_dtrp": "-",
+  "fdpp_ocsa": "-",
+  "fdpp_etc": "-",
+  "ic_mthn": "제3자배정증자",
+  "ssl_at": "N",
+  "ssl_bgd": "-",
+  "ssl_edd": "-"
+}

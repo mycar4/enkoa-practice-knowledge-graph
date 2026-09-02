@@ -1,0 +1,21 @@
+{
+  "rcept_no": "20221118000583",
+  "corp_cls": "K",
+  "corp_code": "00627029",
+  "corp_name": "DGI",
+  "nstk_ostk_cnt": "10,000,000",
+  "nstk_estk_cnt": "-",
+  "fv_ps": "500",
+  "bfic_tisstk_ostk": "14,649,867",
+  "bfic_tisstk_estk": "365,854",
+  "fdpp_fclt": "-",
+  "fdpp_bsninh": "-",
+  "fdpp_op": "-",
+  "fdpp_dtrp": "5,000,000,000",
+  "fdpp_ocsa": "-",
+  "fdpp_etc": "-",
+  "ic_mthn": "제3자배정증자",
+  "ssl_at": "N",
+  "ssl_bgd": "-",
+  "ssl_edd": "-"
+}

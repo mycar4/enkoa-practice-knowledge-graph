@@ -81,9 +81,9 @@ def fetch_and_load_all_listed_corps():
             batch = listed_corps[i:i+batch_size]
             s.run("""
             UNWIND $batch AS c
-            MERGE (comp:DART_Company {name: c.name})
-            SET comp.stock_code = c.stock_code,
-                comp.corp_code = c.corp_code,
+            MERGE (comp:DART_Company {corp_code: c.corp_code})
+            SET comp.name = c.name,
+                comp.stock_code = c.stock_code,
                 comp.is_listed = true,
                 comp.updated_at = datetime()
             """, batch=batch)

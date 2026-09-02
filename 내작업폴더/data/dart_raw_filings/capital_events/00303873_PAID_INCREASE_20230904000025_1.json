@@ -1,0 +1,21 @@
+{
+  "rcept_no": "20230904000025",
+  "corp_cls": "Y",
+  "corp_code": "00303873",
+  "corp_name": "CJ CGV",
+  "nstk_ostk_cnt": "74,700,000",
+  "nstk_estk_cnt": "-",
+  "fv_ps": "500",
+  "bfic_tisstk_ostk": "47,730,920",
+  "bfic_tisstk_estk": "-",
+  "fdpp_fclt": "100,000,000,000",
+  "fdpp_bsninh": "-",
+  "fdpp_op": "90,000,000,000",
+  "fdpp_dtrp": "225,332,000,000",
+  "fdpp_ocsa": "-",
+  "fdpp_etc": "-",
+  "ic_mthn": "주주배정후 실권주 일반공모",
+  "ssl_at": "Y",
+  "ssl_bgd": "20230621",
+  "ssl_edd": "20230901"
+}
