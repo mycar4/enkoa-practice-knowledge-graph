@@ -66,7 +66,7 @@ def main():
         ['Compound', 'Gene'],
         {
             CbG: {
-                type: 'BINDS_CbG',
+                type: 'BINDS',
                 orientation: 'UNDIRECTED'
             }
         }
