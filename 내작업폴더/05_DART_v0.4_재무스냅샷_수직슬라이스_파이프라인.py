@@ -124,7 +124,7 @@ def step2_ingest_financial_snapshot(corp_code="00126380", bsns_year="2023", repr
     rcept_no = target_items[0].get("rcept_no")
     if not rcept_no:
         raise ValueError("❌ API 응답에서 공시접수번호(rcept_no)를 추출할 수 없습니다.")
-    rcept_dt = rcept_no[:8] # DART 14자리 표준 접수번호 앞 8자리 YYYYMMDD
+    rcept_dt = rcept_no[:8] # OpenDART 14자리 표준 접수번호(rcept_no) 앞 8자리에서 접수일자(YYYYMMDD) 파생
     
     # 4. 계정명 엄격 매칭 함수 (정확 일치)
     def get_exact_amount(exact_names):
@@ -153,7 +153,7 @@ def step2_ingest_financial_snapshot(corp_code="00126380", bsns_year="2023", repr
     snapshot_id = f"{corp_code}_{as_of_date}_{reprt_code}_{fs_div}_{rcept_no}"
     period_key = f"{corp_code}_{as_of_date}_{reprt_code}_{fs_div}"
     
-    print(f"📊 [원천 추출 일자] 결산 기준일(thstrm_dt): {as_of_date} | 공시 접수일(rcept_dt): {rcept_dt}")
+    print(f"📊 [원천 추출 일자] 결산 기준일(thstrm_dt): {as_of_date} | 접수번호 파생 접수일(rcept_no[:8]): {rcept_dt}")
     print(f"📊 [지표 실측값] 자산: {total_assets:,}원 | 부채: {total_liabilities:,}원 | 자본: {total_equity:,}원")
     print(f"📊 [비율 산출값] 부채비율: {debt_ratio}% | 자본잠식률: {capital_impairment_ratio}%")
     print(f"🔑 snapshot_id: {snapshot_id}")
