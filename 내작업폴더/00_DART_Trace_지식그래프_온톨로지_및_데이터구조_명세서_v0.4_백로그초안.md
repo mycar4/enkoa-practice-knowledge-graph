@@ -1,14 +1,14 @@
 # 🏛️ [DART-Trace] 지식그래프 온톨로지 & 데이터 구조 마스터 명세서 (v0.4)
 
 > **문서 버전**: `v0.4 Production Specification`  
-> **상태**: 🟢 **v0.4 정규 설계 마스터 명세서 (사건 식별·정정 버전·출처 추적·제약조건 전수 확정)**  
+> **상태**: 🟢 **v0.4 정규 설계 마스터 명세서 (모순 해결 및 엔터프라이즈 거버넌스 엄격 정합 완료)**  
 > **작성 일자**: 2026-09-02  
-> **선행 버전**: `v0.2` (지분/출자/UI 정합) ➔ `v0.3` (자본변동 5대 이벤트) ➔ `v0.4` (재무 펀더멘털 & 증권신고서 & GDS 통합)  
-> **핵심 엔지니어링 철학**:
-> 1. **증거 중심 (Evidence-Driven)**: "그럴듯한 추정"을 배제하고 동일 `rcept_no` 확인 시에만 확정적 증거 관계(`EVIDENCED_BY`)를 형성한다.
-> 2. **시간축 분리 (Temporal Fact-Base)**: 공시 접수일(`reported_on`), 이사회 결의일(`decided_on`), 효력/납입일(`effective_on`), 결산 기준일(`as_of_date`)을 명확히 분리한다.
-> 3. **버전 및 이력 보존 (Versioning & Provenance)**: 정정·철회 시 데이터를 덮어쓰지 않고 `doc_status`, `is_latest`, `restatement_of`로 이력을 영구 보존한다.
-> 4. **GDS 단계적 적용**: 사실 데이터 적재 ➔ Cypher 경로 추적 ➔ 목적별 서브그래프 투영 ➔ PPR/임베딩 순으로 점진 고도화한다.
+> **선행 버전**: `v0.2` (지분/출자/UI 정합) ➔ `v0.3` (자본변동 5대 이벤트) ➔ `v0.4` (재무 펀더멘털 & 증권신고서 & GDS 정밀 통합)  
+> **핵심 엔지니어링 원칙**:
+> 1. **키 일치 기반 증거 연결 (Key-Equivalence Proof Link)**: 동일 `rcept_no`가 원천 확인될 때만 `match_status: 'EXACT'`, `link_basis: 'SAME_RCEPT_NO'`로 확정 연계한다.
+> 2. **시간축 4원 분리 (Temporal Fact-Base)**: 공시 접수일(`reported_on`), 이사회 결의일(`decided_on`), 효력/납입일(`effective_on`), 결산 기준일(`as_of_date`)을 명확히 분리한다.
+> 3. **불변 감사 이력 (Immutable Audit Trail)**: 정정 공시 접수 시 과거 노드를 덮어쓰지 않고 `doc_status`, `is_latest`, `restatement_of`로 이력을 보존한다.
+> 4. **단계적 엔지니어링**: 원천 사실 적재 ➔ Cypher 증거 경로 추적 ➔ 목적별 서브그래프 투영 ➔ GDS 보조 탐색(PPR/FastRP) 순으로 진행한다.
 
 ---
 
@@ -28,12 +28,12 @@ flowchart TD
     COMP -->|HAS_FINANCIALS| FIN
     PERSON -->|OWNS_STAKE| COMP
     
-    EVENT -->|EVIDENCED_BY| DISC
-    EVENT -->|DETAILS| SEC
-    FIN -->|EVIDENCED_BY| DISC
-    SEC -->|EVIDENCED_BY| DISC
+    EVENT -->|EVIDENCED_BY<br/>(link_basis: SAME_RCEPT_NO)| DISC
+    EVENT -->|DETAILS<br/>(link_basis: SAME_RCEPT_NO)| SEC
+    FIN -->|EVIDENCED_BY<br/>(link_basis: SAME_RCEPT_NO)| DISC
+    SEC -->|EVIDENCED_BY<br/>(link_basis: SAME_RCEPT_NO)| DISC
     
-    EVENT -.->|FOLLOWED_BY<br/>(시계열 후보 연계)| EVENT
+    EVENT -.->|FOLLOWED_BY<br/>(match_status: CANDIDATE)| EVENT
 ```
 
 ---
@@ -49,14 +49,22 @@ flowchart TD
 * `is_listed`: 상장 여부 (`Boolean`)
 * `updated_at`: 최종 동기화 일시 (`DateTime`)
 
-### ② `(:DART_CapitalEvent)` (5대 주요 자본 이벤트: CB, BW, 증자, 양수도, 합병)
+### ② `(:DART_Person)` (주요 주주, 임원 및 자연인/투자조합)
+* **PK (`person_id`)**: `{corp_code}_{name}_{birth_ym_or_seq}` (`String`, 동명이인 분리 고유키)
+* `name`: 인물 또는 조합명 (`String`, 예: `'이재용'`, `'골든홀딩스1호조합'`)
+* `birth_ym`: 생년월 (`String(6)`, DART 공시 기재 시 예: `'196806'`, 미기재 시 `'UNKNOWN'`)
+* `nationality`: 국적 (`String`, 예: `'한국'`, `'미국'`)
+* `entity_type`: 주체 구분 (`'NATURAL_PERSON'`, `'INVESTMENT_UNION'`, `'FOREIGN_INVESTOR'`)
+* `verification_status`: 검증 상태 (`'VERIFIED'`, `'CANDIDATE'`)
+
+### ③ `(:DART_CapitalEvent)` (5대 주요 자본 이벤트: CB, BW, 증자, 양수도, 합병)
 * **PK (`event_id`)**: `{corp_code}_{event_type}_{rcept_no}` (`String`, 고유 사건 식별자)
 * `event_type`: 이벤트 유형 (`'CB_ISSUE'`, `'BW_ISSUE'`, `'PAID_INCREASE'`, `'ACQUISITION'`, `'MERGER'`)
 * `event_name`: 공시 이벤트 명칭 (`String`, 예: `'제3회차 무기명식 사모 전환사채 발행결정'`)
 * `is_private`: 사모/공모 여부 (`Boolean`, `true`=사모, `false`=공모)
-* `issue_amount`: 권면/발행/양수 총액 (`Integer/Long`, 단위: 원)
-* `conversion_price`: 전환/행사/신주발행 가액 (`Integer/Long`, 단위: 원)
-* `min_refixing_floor`: 리픽싱 최저 한도액 (`Integer/Long`, 단위: 원)
+* `issue_amount`: 권면/발행/양수 총액 (`Long`, 단위: 원)
+* `conversion_price`: 전환/행사/신주발행 가액 (`Long`, 단위: 원)
+* `min_refixing_floor`: 리픽싱 최저 한도액 (`Long`, 단위: 원)
 * `target_corp_name`: 양수도/합병 상대방 법인명 (`String`)
 * `target_corp_code`: 상대방 고유코드 (`String(8)`, 식별 시)
 * `merger_ratio`: 합병 비율 (`String`, 예: `'1 : 0.15423'`)
@@ -68,15 +76,16 @@ flowchart TD
 * `source_rcept_no`: DART 공시접수번호 (`String(14)`)
 * `viewer_url`: DART 원문 뷰어 링크 (`String`)
 
-### ③ `(:DART_FinancialSnapshot)` (DS003 정기보고서 재무정보)
-* **PK (`snapshot_id`)**: `{corp_code}_{as_of_date}_{reprt_code}_{fs_div}` (`String`)
+### ④ `(:DART_FinancialSnapshot)` (DS003 정기보고서 재무정보)
+* **PK (`snapshot_id`)**: `{corp_code}_{as_of_date}_{reprt_code}_{fs_div}_{source_rcept_no}` (`String`, 정정본 충돌 방지 고유키)
+* **기간 그룹키 (`period_key`)**: `{corp_code}_{as_of_date}_{reprt_code}_{fs_div}` (`String`, 동일 결산기 정정 전후 추적키)
 * `corp_code`: 법인 고유번호 (`String(8)`)
 * `as_of_date`: 결산 기준일 (`Date`, 예: `2025-12-31`)
 * `filed_at`: 공시 접수일 (`Date`)
 * `reprt_code`: 보고서 코드 (`'11013'` 1분기, `'11012'` 반기, `'11014'` 3분기, `'11011'` 사업보고서)
 * `fs_div`: 재무제표 구분 (`'CFS'` 연결, `'OFS'` 개별)
 * `currency`: 통화 단위 (`'KRW'`)
-* `unit`: 금액 표기 단위 (`'KRW'`)
+* `unit`: 금액 단위 (`'KRW'`)
 * `total_assets`: 자산총계 (`Long`, 원)
 * `total_liabilities`: 부채총계 (`Long`, 원)
 * `total_equity`: 자본총계 (`Long`, 원)
@@ -86,12 +95,12 @@ flowchart TD
 * `net_income`: 당기순이익 (`Long`, 원)
 * `debt_ratio`: 부채비율 (`Float`, %, 자본총계 $\le 0$ 시 `NULL`)
 * `capital_impairment_ratio`: 자본잠식률 (`Float`, %, 자본총계/자본금 기반 산출)
-* `is_latest`: 해당 결산기 최신 확정본 여부 (`Boolean`)
-* `restatement_of`: 재작성/정정 대상 원본 공시접수번호 (`String(14)`, 정정 시)
+* `is_latest`: 해당 결산기 최신 유효본 여부 (`Boolean`)
+* `restatement_of`: 이전 정정 대상 공시접수번호 (`String(14)`, 정정 시 원본 `source_rcept_no`)
 * `source_rcept_no`: 근거 공시접수번호 (`String(14)`)
 * `formula_version`: 지표 산식 버전 (`'v1.0'`)
 
-### ④ `(:DART_SecuritiesFiling)` (DS006 증권신고서 조달조건 및 상세 사용목적)
+### ⑤ `(:DART_SecuritiesFiling)` (DS006 증권신고서 조달조건 및 상세 사용목적)
 * **PK (`filing_id`)**: `{corp_code}_SEC_{rcept_no}_{item_seq}` (`String`)
 * `corp_code`: 법인 고유번호 (`String(8)`)
 * `source_rcept_no`: 증권신고서 접수번호 (`String(14)`)
@@ -104,7 +113,7 @@ flowchart TD
 * `maturity_date`: 사채 만기일 (`Date`)
 * `put_option_start`: 조기상환청구권(풋옵션) 행사개시일 (`Date`)
 
-### ⑤ `(:DART_Disclosure)` (금감원 DART 원문 공시 인덱스)
+### ⑥ `(:DART_Disclosure)` (금감원 DART 원문 공시 인덱스)
 * **PK (`rcept_no`)**: DART 고유 공시접수번호 (`String(14)`)
 * `corp_name`: 공시 제출 법인명 (`String`)
 * `report_nm`: 공시 보고서명 (`String`)
@@ -114,44 +123,65 @@ flowchart TD
 
 ---
 
-## 3. 🛡️ 관계(Relationship) 명세 및 2원화 연결 정책 (Linking Policy)
+## 3. 🛡️ 관계(Relationship) 명세 및 엄격 연계 정책 (Linking Policy)
 
 ```mermaid
 flowchart LR
-    subgraph Exact ["🔒 1. 확정 연결 (Exact Proof Link: 동일 rcept_no)"]
-        E1["(:DART_CapitalEvent)"] == "[:EVIDENCED_BY {confidence: 1.0}]" ==> D1["(:DART_Disclosure)"]
-        E1 == "[:DETAILS {confidence: 1.0}]" ==> S1["(:DART_SecuritiesFiling)"]
-        F1["(:DART_FinancialSnapshot)"] == "[:EVIDENCED_BY {confidence: 1.0}]" ==> D1
+    subgraph Exact ["🔒 1. 확정 증거 연결 (Exact Match: 동일 rcept_no 일치)"]
+        E1["(:DART_CapitalEvent)"] == "[:EVIDENCED_BY {match_status: 'EXACT', link_basis: 'SAME_RCEPT_NO'}]" ==> D1["(:DART_Disclosure)"]
+        E1 == "[:DETAILS {match_status: 'EXACT', link_basis: 'SAME_RCEPT_NO'}]" ==> S1["(:DART_SecuritiesFiling)"]
+        F1["(:DART_FinancialSnapshot)"] == "[:EVIDENCED_BY {match_status: 'EXACT', link_basis: 'SAME_RCEPT_NO'}]" ==> D1
     end
 
-    subgraph Candidate ["⏱️ 2. 시계열 후보 연계 (Hypothetical Flow: 상이한 rcept_no)"]
-        CB["사모 CB 발행결정<br/>(조달목적: 타법인취득)"] -. "[:FOLLOWED_BY {lag_days: 45, confidence: 0.85}]" .-> ACQ["타법인 주식 양수도 공시<br/>(취득금액 집행)"]
+    subgraph Candidate ["⏱️ 2. 시계열 후보 연계 (Hypothetical Flow Link: 상이한 rcept_no)"]
+        CB["사모 CB 발행결정<br/>(조달목적: 타법인취득)"] -. "[:FOLLOWED_BY {match_status: 'CANDIDATE', lag_days: 45, score_components: '...'}]" .-> ACQ["타법인 주식 양수도 공시<br/>(취득금액 집행)"]
     end
 ```
 
-### ① 확정 증거 연결 정책 (Proof Link: 100% 신뢰)
-* **원칙**: 동일한 공시접수번호(`rcept_no`)가 원천 확인될 때만 `EVIDENCED_BY` 및 `DETAILS` 관계를 생성한다.
-* **적용**: 자본 이벤트 ➔ 공시 원문, 증권신고서 ➔ 공시 원문, 재무제표 ➔ 정기보고서 공시 원문.
+### ① `[:OWNS_STAKE]` (지분 소유 관계)
+* **시작 ➔ 끝**: `(:DART_Person | :DART_Company)` ➔ `(:DART_Company)`
+* `stake`: 지분율 (`Float`, %, 예: `17.97`)
+* `shares_count`: 소유 주식수 (`Long`)
+* `voting_type`: 의결권 구분 (`'VOTING'`, `'NON_VOTING'`, `'PREFERRED'`)
+* `is_direct`: 직접 소유 여부 (`Boolean`, `true`=직접, `false`=특별관계자/간접)
+* `position`: 직책/관계 (`String`, 예: `'최대주주'`, `'대표이사'`, `'친족'`)
+* `as_of_date`: 기준일자 (`Date`)
+* `reported_on`: 공시 접수일 (`Date`)
+* `source_rcept_no`: 근거 공시접수번호 (`String(14)`)
+* `is_current`: 최신 유효 사실 여부 (`Boolean`)
+* `verification_status`: `'VERIFIED'`
 
-### ② 시계열 후속 연계 정책 (Hypothetical Flow Link: 증거 분리)
-* **원칙**: 서로 다른 접수번호 간의 자금 흐름 추적(예: *"CB 발행 ➔ 45일 뒤 타법인 양수도 공시"*)은 단정하지 않고 `FOLLOWED_BY` 관계로 연결하며, 속성에 `lag_days`와 `confidence`를 명시한다.
-* **속성 규격**:
-  - `lag_days`: 선행 공시와 후속 공시 간의 일수 차이 (`Integer`)
-  - `match_type`: 연계 매칭 근거 (`'FUND_PURPOSE_AND_TIMELINE'`)
-  - `verification_status`: `'CANDIDATE'` (가설적 자금 집행 경로)
+### ② `[:EVIDENCED_BY]` / `[:DETAILS]` (확정 증거 관계)
+* **원칙**: 동일 공시접수번호(`source_rcept_no == rcept_no`)가 원천 일치할 때만 생성한다.
+* `match_status`: `'EXACT'` (키 일치 확정)
+* `link_basis`: `'SAME_RCEPT_NO'` (동일 접수번호 근거)
+* `verified_at`: 검증 일시 (`DateTime`)
+
+### ③ `[:FOLLOWED_BY]` (시계열 후속 후보 연계 관계)
+* **원칙**: 서로 다른 접수번호 간의 자금 흐름 추적(예: *"CB 발행 ➔ 45일 뒤 타법인 양수도 공시"*)은 가설적 후보로 격리 연결한다.
+* `match_status`: `'CANDIDATE'` | `'REVIEWED'` | `'REJECTED'`
+* `match_rule_version`: 적용 규칙 버전 (`'RULE_V1_FUND_USAGE_LAG'`)
+* `lag_days`: 선행 공시와 후속 공시 간의 일수 차이 (`Integer`)
+* `score_components`: 매칭 스코어 상세 내역 (`String(JSON)`, 예: `{"purpose_match": 0.5, "time_decay": 0.35}`)
+* `confidence_score`: 산출된 신뢰도 점수 (`Float`, 0.0 ~ 1.0)
+* `generated_at`: 연계 생성 일시 (`DateTime`)
+* `reviewed_by`: 검토자 식별자 (`String`, 수동 검토 시)
 
 ---
 
 ## 4. 🔄 정정·철회·재공시 버전 모델 (Versioning Model)
 
-1. **덮어쓰기 금지 (Immutable Audit Trail)**:  
-   기재정정 공시가 접수되더라도 과거의 원본 노드를 삭제하거나 덮어쓰지 않는다.
-2. **상태 플래그 전이**:
-   - 신규 정정 공시 생성 ➔ `doc_status: 'CORRECTED'`, `is_latest: true`
-   - 과거 원본 노드 ➔ `is_latest: false`로 전이
-   - 정정 관계 연결 ➔ `(신규공시)-[:CORRECTS {corrected_at: date()}]->(과거공시)`
-3. **철회 공시 처리**:
-   - 철회 공시 접수 시 ➔ `doc_status: 'WITHDRAWN'`, `is_latest: false`
+1. **불변 원칙 (Immutable Audit Trail)**:  
+   기재정정 공시가 접수되더라도 과거의 원본 노드를 삭제하거나 덮어쓰지 않고 이력을 영구 보존한다.
+2. **재무 스냅샷 정정 처리**:
+   - 신규 정정 스냅샷 노드 생성 (`snapshot_id`에 신규 `source_rcept_no` 반영)
+   - `is_latest: true`, `restatement_of: 원본_rcept_no` 설정
+   - 동일 `period_key`를 가진 과거 스냅샷 노드 ➔ `is_latest: false`로 전이
+   - 정정 관계 생성 ➔ `(신규_스냅샷)-[:RESTATES {corrected_at: date()}]->(과거_스냅샷)`
+3. **자본 이벤트 및 공시 인덱스 정정 처리**:
+   - 신규 공시 노드 접수 ➔ `doc_status: 'CORRECTED'`, `is_latest: true`
+   - 과거 공시 노드 ➔ `is_latest: false` 전이
+   - 철회 공시 접수 ➔ `doc_status: 'WITHDRAWN'`, `is_latest: false`
 
 ---
 
@@ -160,32 +190,43 @@ flowchart LR
 ```cypher
 // 1. 고유 제약조건 (Unique Constraints)
 CREATE CONSTRAINT company_corp_code_unique IF NOT EXISTS FOR (c:DART_Company) REQUIRE c.corp_code IS UNIQUE;
+CREATE CONSTRAINT person_id_unique IF NOT EXISTS FOR (p:DART_Person) REQUIRE p.person_id IS UNIQUE;
 CREATE CONSTRAINT disclosure_rcept_no_unique IF NOT EXISTS FOR (d:DART_Disclosure) REQUIRE d.rcept_no IS UNIQUE;
 CREATE CONSTRAINT capital_event_id_unique IF NOT EXISTS FOR (e:DART_CapitalEvent) REQUIRE e.event_id IS UNIQUE;
 CREATE CONSTRAINT financial_snapshot_id_unique IF NOT EXISTS FOR (f:DART_FinancialSnapshot) REQUIRE f.snapshot_id IS UNIQUE;
 CREATE CONSTRAINT securities_filing_id_unique IF NOT EXISTS FOR (s:DART_SecuritiesFiling) REQUIRE s.filing_id IS UNIQUE;
 
-// 2. 고속 검색 색인 (Performance Indexes)
+// 2. 고속 검색 및 시계열 색인 (Performance & Time-Series Indexes)
 CREATE INDEX company_name_idx IF NOT EXISTS FOR (c:DART_Company) ON (c.name);
 CREATE INDEX company_stock_code_idx IF NOT EXISTS FOR (c:DART_Company) ON (c.stock_code);
+CREATE INDEX person_name_idx IF NOT EXISTS FOR (p:DART_Person) ON (p.name);
 CREATE INDEX capital_event_type_idx IF NOT EXISTS FOR (e:DART_CapitalEvent) ON (e.event_type);
 CREATE INDEX capital_event_received_idx IF NOT EXISTS FOR (e:DART_CapitalEvent) ON (e.received_on);
+CREATE INDEX financial_period_key_idx IF NOT EXISTS FOR (f:DART_FinancialSnapshot) ON (f.period_key);
 CREATE INDEX financial_as_of_date_idx IF NOT EXISTS FOR (f:DART_FinancialSnapshot) ON (f.as_of_date);
 ```
 
 ---
 
-## 6. 🏆 엔지니어링 실행 로드맵 및 GDS 적용 4단계
+## 6. 🏆 엔지니어링 실행 로드맵 및 GDS 적용 원칙
 
 ```text
-[1단계] DART 사실·재무·공시 원문 근거 정확 적재 (100% 무결성 확보)
-   ▼
-[2단계] Cypher 경로 추적으로 "무슨 공시가 무엇을 근거로 하는가" 팩트 쿼리
-   ▼
-[3단계] 목적별 GDS 서브그래프 투영 (인메모리 CSR 행렬 구성)
-   ▼
-[4단계] PPR(개인화 PageRank) 실세 총수 판정 & FastRP 128차원 유사 기업 탐색
+[1단계: 팩트 적재] ➔ DART 정규 보고서 사실·재무·공시 원문 근거 100% 무결성 적재
+       ▼
+[2단계: 경로 추적] ➔ Cypher 증거 경로를 통한 확정적 팩트 질의 (원문 접수번호 역추적)
+       ▼
+[3단계: GDS 투영]  ➔ 비즈니스 목적별 서브그래프 투영 (인메모리 C++ CSR 행렬 변환)
+       ▼
+[4단계: 보조 탐색] ➔ PPR(지배력 후보 탐색) 및 FastRP(유사 자본조달 패턴 후보군 클러스터링)
 ```
 
-* **팩트 질의 (Cypher)**: *"부채비율 200% 초과 상태에서 사모 CB를 발행한 상장사"* ➔ 임베딩 없이 100% 팩트 그래프에서 즉시 조회.
-* **탐색 질의 (GDS / FastRP)**: *"기소된 무자본 M&A 작전 세력과 5-Hop 자금 조달 토폴로지가 95% 이상 일치하는 의심 기업 탐색"* ➔ 128차원 FastRP 코사인 유사도로 0.05초 만에 탐지!
+### 🔍 팩트 질의 vs GDS 탐색 질의 분리 원칙
+
+* **팩트 질의 (Cypher 기반 확정 질의)**:
+  - *"부채비율 200% 초과 상태에서 사모 CB를 발행한 상장사 목록"*
+  - ➔ 임베딩이나 확률 모델 없이 **지식그래프 팩트 관계(Snapshot + CapitalEvent)에서 100% 결정론적으로 도출**.
+* **탐색 질의 (GDS / PPR / FastRP 기반 후보 탐색)**:
+  - *"특정 지배·출자 네트워크 토폴로지에서 실질적 영향력 후보군 탐색 (PPR)"*
+  - *"사모CB 발행 및 타법인 양수도 자본조달 패턴이 통계적으로 유사한 기업군 후보 클러스터링 (FastRP)"*
+  - ➔ **탐색된 결과는 반드시 공시 원문(`rcept_no`) 및 규칙 기반의 교차 검증을 거쳐 최종 판정**.
+  - ➔ **성능(Latency)은 인프라 하드웨어 및 데이터 규모별 실측 벤치마크를 통해 별도 측정 및 관리**.
