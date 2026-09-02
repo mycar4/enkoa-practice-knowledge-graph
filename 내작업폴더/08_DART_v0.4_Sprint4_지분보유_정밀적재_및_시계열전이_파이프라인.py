@@ -160,17 +160,18 @@ def step1_ingest_major_shareholders():
                            stake_ratio=stake_ratio, shares_count=shares_count, as_of_date=formatted_dt,
                            is_current=is_latest_for_holder)
                     else:
-                        global_person_id = f"{holder_name}_UNKNOWN"
+                        # 생년월 미확인 자연인은 기업별 후보 ID로 격리 (전역 무차별 병합 방지)
+                        candidate_id = f"{corp_code}_{holder_name}_CANDIDATE"
                         s.run("""
                         MATCH (comp:DART_Company {corp_code: $corp_code})
                         MATCH (disc:DART_Disclosure {rcept_no: $rcept_no})
                         
-                        MERGE (holder:DART_Person {global_person_id: $global_person_id})
+                        MERGE (holder:DART_Person {global_person_id: $candidate_id})
                         ON CREATE SET holder.name = $holder_name,
                                       holder.birth_ym = 'UNKNOWN',
                                       holder.nationality = '한국',
                                       holder.entity_type = 'NATURAL_PERSON',
-                                      holder.verification_status = 'VERIFIED',
+                                      holder.verification_status = 'CANDIDATE',
                                       holder.updated_at = datetime()
                                       
                         MERGE (holder)-[r:OWNS_STAKE {source_rcept_no: $rcept_no}]->(comp)
@@ -181,9 +182,9 @@ def step1_ingest_major_shareholders():
                             r.as_of_date = date($as_of_date),
                             r.reported_on = date($as_of_date),
                             r.is_current = $is_current,
-                            r.verification_status = 'VERIFIED',
+                            r.verification_status = 'CANDIDATE',
                             r.updated_at = datetime()
-                        """, corp_code=corp_code, global_person_id=global_person_id,
+                        """, corp_code=corp_code, candidate_id=candidate_id,
                            holder_name=holder_name, rcept_no=rcept_no, stake_ratio=stake_ratio,
                            shares_count=shares_count, as_of_date=formatted_dt, is_current=is_latest_for_holder)
                            
