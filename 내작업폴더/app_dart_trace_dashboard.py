@@ -31,21 +31,21 @@ NEO4J_URI = os.getenv("NEO4J_URI", "neo4j+ssc://2fa50db4.databases.neo4j.io")
 NEO4J_USER = os.getenv("NEO4J_USER", "2fa50db4")
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "FJaQFhJZIow2p-5dFNO5h2bX_QdBD7ngWlwYESYbnkg")
 
-# Neo4j 드라이버 연결 (캐싱)
+# Neo4j 드라이버 연결 (URI별 캐싱 자동 갱신)
 @st.cache_resource
-def get_neo4j_driver():
+def get_neo4j_driver(uri: str, user: str, password: str):
     try:
-        if not NEO4J_PASSWORD:
+        if not password:
             st.warning("⚠️ .env 파일에 NEO4J_PASSWORD가 설정되지 않았습니다.")
             return None
-        driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
+        driver = GraphDatabase.driver(uri, auth=(user, password))
         driver.verify_connectivity()
         return driver
     except Exception as e:
-        st.error(f"❌ Neo4j 연결 실패: {e}")
+        st.error(f"❌ Neo4j 연결 실패 ({uri}): {e}")
         return None
 
-driver = get_neo4j_driver()
+driver = get_neo4j_driver(NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD)
 
 def run_cypher(query: str, **params):
     if not driver:
