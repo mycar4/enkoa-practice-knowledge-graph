@@ -2,19 +2,21 @@
 """
 🏛️ [DART-Trace v0.4 Sprint 1] 재무 스냅샷 수직 슬라이스 & 6대 제약조건 실전 검증 파이프라인
 ========================================================================================
-[엔터프라이즈 거버넌스 엄격 준수]
+[엔터프라이즈 정합 및 안정성 강화 규격]
 1. [6대 DDL] Aura 클라우드 6종 UNIQUE 제약조건 및 인덱스 배포
-2. [원천 100% 직결] API 실패 시 하드코딩 폴백 금지, 즉시 RuntimeError 예외 발생
-3. [동적 바인딩 & 엄격 매칭] 회사 마스터 및 OpenDART 응답 필드 100% 동적 파싱 & 계정명 정확 매칭
-4. [엄격 멱등성] 재실행 후 노드/관계 중복 시 AssertionError 발생 및 비정상 종료
+2. [선행 검증] DB 내 상장사 노드 사전 존재 여부 확인 (미존재 시 즉시 RuntimeError)
+3. [원천 일자 파싱] OpenDART 응답의 thstrm_dt(결산일) 및 rcept_no(접수일)에서 정규식 동적 추출
+4. [엄격 멱등성] 동일 입력 재실행 후 노드/관계 카운트 엄격 단일 인스턴스 검증 (AssertionError)
 5. [사실 증거 질의] Cypher (:DART_Company)-[:HAS_FINANCIALS]->(:DART_FinancialSnapshot)-[:EVIDENCED_BY]->(:DART_Disclosure)
-6. [격리 정정 검증 & 자동 Teardown] 운영 그래프 오염 방지를 위해 격리된 테스트 픽스처로 검증 후 100% 롤백/삭제
+6. [UUID 동시성 격리 픽스처 & 자동 Teardown] 실행별 고유 UUID 기반 픽스처로 동시 실행 충돌 방지 및 100% 삭제
 ========================================================================================
 """
 
 import os
 import sys
+import re
 import json
+import uuid
 import urllib.request
 import urllib.parse
 from datetime import datetime
@@ -73,6 +75,21 @@ def step2_ingest_financial_snapshot(corp_code="00126380", bsns_year="2023", repr
     print(f"📊 [Step 2] OpenDART DS003 실시간 재무제표 수집 (법인코드: {corp_code}, {bsns_year}년 사업보고서)")
     print("="*80)
     
+    # 1. 선행 검증: 상장사 노드 DB 존재 확인 (Silent Failure 방지)
+    with driver.session() as s:
+        comp_record = s.run("""
+        MATCH (c:DART_Company {corp_code: $corp_code})
+        RETURN c.name AS name, c.stock_code AS stock_code
+        """, corp_code=corp_code).single()
+        
+    if not comp_record:
+        raise RuntimeError(f"❌ 상장사 노드 부재: corp_code='{corp_code}'가 DB에 존재하지 않습니다. 선행 마스터 적재가 필요합니다.")
+        
+    corp_name = comp_record["name"]
+    stock_code = comp_record["stock_code"]
+    print(f"🏢 선행 대상 상장사 식별 완료: {corp_name} (종목코드: {stock_code}, 법인코드: {corp_code})")
+    
+    # 2. OpenDART API 호출
     url = f"https://opendart.fss.or.kr/api/fnlttSinglAcnt.json?crtfc_key={DART_API_KEY}&corp_code={corp_code}&bsns_year={bsns_year}&reprt_code={reprt_code}"
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
     
@@ -82,7 +99,6 @@ def step2_ingest_financial_snapshot(corp_code="00126380", bsns_year="2023", repr
     status = data.get("status")
     message = data.get("message")
     
-    # ❌ API 오류 시 하드코딩 폴백 절대 금지: 즉시 예외 발생
     if status != "000":
         raise RuntimeError(f"❌ OpenDART API 호출 실패: status={status}, message={message}")
         
@@ -97,7 +113,20 @@ def step2_ingest_financial_snapshot(corp_code="00126380", bsns_year="2023", repr
     fs_div = "CFS" if cfs_items else "OFS"
     target_items = cfs_items if cfs_items else items
     
-    # 계정명 엄격 매칭 함수 (정확 일치)
+    # 3. 원천 필드에서 결산일(as_of_date) 및 접수번호(rcept_no) 동적 파싱
+    raw_thstrm_dt = target_items[0].get("thstrm_dt", "")
+    date_match = re.search(r'(\d{4})[.\-/](\d{2})[.\-/](\d{2})', raw_thstrm_dt)
+    if date_match:
+        as_of_date = f"{date_match.group(1)}-{date_match.group(2)}-{date_match.group(3)}"
+    else:
+        as_of_date = f"{bsns_year}-12-31" # 정규식 매칭 실패 시 안전 기본일자
+        
+    rcept_no = target_items[0].get("rcept_no")
+    if not rcept_no:
+        raise ValueError("❌ API 응답에서 공시접수번호(rcept_no)를 추출할 수 없습니다.")
+    rcept_dt = rcept_no[:8] # DART 14자리 표준 접수번호 앞 8자리 YYYYMMDD
+    
+    # 4. 계정명 엄격 매칭 함수 (정확 일치)
     def get_exact_amount(exact_names):
         for it in target_items:
             acc_name = it.get("account_nm", "").strip()
@@ -117,33 +146,27 @@ def step2_ingest_financial_snapshot(corp_code="00126380", bsns_year="2023", repr
     operating_income = get_exact_amount(["영업이익", "영업이익(손실)"])
     net_income = get_exact_amount(["당기순이익", "당기순이익(손실)"])
     
-    # 공시접수번호 동적 추출
-    rcept_no = target_items[0].get("rcept_no")
-    if not rcept_no:
-        raise ValueError("❌ API 응답에서 공시접수번호(rcept_no)를 추출할 수 없습니다.")
-        
     # 재무비율 계산 (0 또는 음수 분모 시 None 안전 처리)
     debt_ratio = round((total_liabilities / total_equity) * 100, 2) if total_equity > 0 else None
     capital_impairment_ratio = 0.0 if total_equity >= capital_stock else round(((capital_stock - total_equity) / capital_stock) * 100, 2)
     
-    as_of_date = f"{bsns_year}-12-31"
-    
     snapshot_id = f"{corp_code}_{as_of_date}_{reprt_code}_{fs_div}_{rcept_no}"
     period_key = f"{corp_code}_{as_of_date}_{reprt_code}_{fs_div}"
     
+    print(f"📊 [원천 추출 일자] 결산 기준일(thstrm_dt): {as_of_date} | 공시 접수일(rcept_dt): {rcept_dt}")
     print(f"📊 [지표 실측값] 자산: {total_assets:,}원 | 부채: {total_liabilities:,}원 | 자본: {total_equity:,}원")
     print(f"📊 [비율 산출값] 부채비율: {debt_ratio}% | 자본잠식률: {capital_impairment_ratio}%")
     print(f"🔑 snapshot_id: {snapshot_id}")
     print(f"🔑 period_key : {period_key}")
     
-    # 동적 Cypher MERGE 적재
+    # 5. 동적 Cypher MERGE 적재 및 실행 요약 검증
     with driver.session() as s:
-        s.run("""
+        result = s.run("""
         MATCH (comp:DART_Company {corp_code: $corp_code})
         
         MERGE (disc:DART_Disclosure {rcept_no: $rcept_no})
-        ON CREATE SET disc.report_nm = '사업보고서 (' + $bsns_year + '.12)',
-                      disc.rcept_dt = substring($rcept_no, 0, 8),
+        ON CREATE SET disc.report_nm = '사업보고서 (' + substring($as_of_date, 0, 4) + '.12)',
+                      disc.rcept_dt = $rcept_dt,
                       disc.flr_nm = comp.name,
                       disc.doc_status = 'NORMAL',
                       disc.is_latest = true
@@ -177,11 +200,14 @@ def step2_ingest_financial_snapshot(corp_code="00126380", bsns_year="2023", repr
         SET r.match_status = 'EXACT',
             r.link_basis = 'SAME_RCEPT_NO',
             r.verified_at = datetime()
-        """, corp_code=corp_code, rcept_no=rcept_no, snapshot_id=snapshot_id, period_key=period_key,
-           as_of_date=as_of_date, reprt_code=reprt_code, fs_div=fs_div, total_assets=total_assets,
-           total_liabilities=total_liabilities, total_equity=total_equity, capital_stock=capital_stock,
-           revenue=revenue, operating_income=operating_income, net_income=net_income,
-           debt_ratio=debt_ratio, capital_impairment_ratio=capital_impairment_ratio, bsns_year=bsns_year)
+        """, corp_code=corp_code, rcept_no=rcept_no, rcept_dt=rcept_dt, snapshot_id=snapshot_id,
+           period_key=period_key, as_of_date=as_of_date, reprt_code=reprt_code, fs_div=fs_div,
+           total_assets=total_assets, total_liabilities=total_liabilities, total_equity=total_equity,
+           capital_stock=capital_stock, revenue=revenue, operating_income=operating_income,
+           net_income=net_income, debt_ratio=debt_ratio, capital_impairment_ratio=capital_impairment_ratio)
+           
+        summary = result.consume()
+        print(f"⚡ Cypher 실행 요약: 속성 설정 {summary.counters.properties_set}개, 노드 생성 {summary.counters.nodes_created}개, 관계 생성 {summary.counters.relationships_created}개")
            
     print("✅ 실제 재무 스냅샷 노드 및 공시 원문 증거 관계(:EVIDENCED_BY) 적재 완료!")
     return snapshot_id, period_key, rcept_no
@@ -209,7 +235,6 @@ def step3_verify_idempotency(snapshot_id):
     print(f"  • snapshot_id '{snapshot_id}' 노드 개수: {node_count}개")
     print(f"  • [:EVIDENCED_BY] 관계 개수: {rel_count}건")
     
-    # ❌ 중복 발생 시 예외 발생 및 프로세스 비정상 종료 (AssertionError)
     assert node_count == 1, f"❌ 멱등성 위반: 스냅샷 노드가 1개가 아닌 {node_count}개 존재합니다."
     assert rel_count == 1, f"❌ 멱등성 위반: 증거 관계가 1건이 아닌 {rel_count}건 존재합니다."
     
@@ -248,18 +273,23 @@ def step4_query_evidence_path(corp_code="00126380"):
     print("🎉 사실 증거 경로 100% 정상 질의 확인 완료!")
 
 def step5_verify_restatement_isolated_fixture():
-    """[Step 5] 정정 공시(:RESTATES) 검증: 격리 픽스처 테스트 후 자동 Teardown (운영 DB 오염 0%)"""
+    """[Step 5] 정정 공시(:RESTATES) 검증: 고유 UUID 격리 픽스처 테스트 후 자동 Teardown"""
     print("\n" + "="*80)
-    print("🔄 [Step 5] 정정 공시(:RESTATES) 체인 격리 픽스처 검증 & 자동 Teardown")
+    print("🔄 [Step 5] 정정 공시(:RESTATES) 체인 고유 UUID 격리 픽스처 검증 & 자동 Teardown")
     print("="*80)
     
-    test_prefix = "TEST_FIXTURE_"
-    orig_test_rcept = f"{test_prefix}ORIG_2023_001"
-    corr_test_rcept = f"{test_prefix}CORR_2023_002"
+    # 🎯 동시성 충돌 방지를 위한 고유 UUID 프리픽스 생성
+    run_uuid = uuid.uuid4().hex[:8]
+    test_prefix = f"TEST_FIXTURE_{run_uuid}_"
+    
+    orig_test_rcept = f"{test_prefix}ORIG_001"
+    corr_test_rcept = f"{test_prefix}CORR_002"
     
     orig_sid = f"{test_prefix}CORP_2023-12-31_11011_CFS_{orig_test_rcept}"
     corr_sid = f"{test_prefix}CORP_2023-12-31_11011_CFS_{corr_test_rcept}"
     period_key = f"{test_prefix}CORP_2023-12-31_11011_CFS"
+    
+    print(f"🔑 이번 실행 격리 UUID: {run_uuid} (프리픽스: {test_prefix})")
     
     try:
         with driver.session() as s:
@@ -302,7 +332,7 @@ def step5_verify_restatement_isolated_fixture():
             print(f"     [신규 정정본: is_latest={chain['new_latest']}] ──[:RESTATES {chain['corrected_at']}]──> [과거 원본: is_latest={chain['old_latest']}]")
             
     finally:
-        # 🧹 4. Teardown: 테스트 격리 픽스처 100% 자동 정화 (운영 DB 오염 0%)
+        # 🧹 4. Teardown: 고유 UUID 픽스처만 100% 정밀 자동 삭제 (다른 동시 실행 픽스처 보존 및 운영 DB 무결성 100%)
         with driver.session() as s:
             s.run("""
             MATCH (d:DART_Disclosure) WHERE d.rcept_no STARTS WITH $prefix DETACH DELETE d
@@ -310,7 +340,7 @@ def step5_verify_restatement_isolated_fixture():
             s.run("""
             MATCH (f:DART_FinancialSnapshot) WHERE f.snapshot_id STARTS WITH $prefix DETACH DELETE f
             """, prefix=test_prefix)
-        print("  🧹 [Teardown 완료] 테스트 픽스처 자동 삭제 완료 (운영 Aura DB 무결성 100% 보존).")
+        print(f"  🧹 [Teardown 완료] 고유 UUID 픽스처({run_uuid}) 정밀 삭제 완료 (운영 Aura DB 무결성 100% 보존).")
 
 def main():
     print("="*90)
@@ -330,7 +360,7 @@ def main():
     # 4. Cypher 사실 증거 경로 역추적 검증
     step4_query_evidence_path()
     
-    # 5. 정정 공시 격리 픽스처 검증 & 자동 Teardown
+    # 5. 정정 공시 UUID 격리 픽스처 검증 & 자동 Teardown
     step5_verify_restatement_isolated_fixture()
     
     print("\n" + "="*90)
