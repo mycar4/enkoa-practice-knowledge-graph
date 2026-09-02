@@ -1,68 +1,80 @@
-# 📋 [Day 33] GDS 알고리즘 & 투영 스키마 마스터 명세서
+# 📋 [Day 33] GDS 서브그래프 데이터 구조 & 알고리즘 마스터 명세서
 
-> **목적**: Hetionet 의생명 그래프 및 서울 지하철 환승 네트워크의 GDS 인메모리 투영 DDL 및 알고리즘 파라미터 표준 규격서
+> 💡 **10초 본질 요약**:  
+> 새 노드나 관계를 DB에 만드는 것이 아닙니다!  
+> 이미 DB에 있는 데이터를 가지고 **"단순 글자(텍스트) 검색으로는 영원히 찾을 수 없는 2-Hop, 3-Hop 뒤의 숨은 신약 표적과 실세 권력자"를 GDS 인메모리 위에서 0.05초 만에 수학적으로 밝혀내는 기술**입니다.
 
 ---
 
-## 🗺️ 1. Big Picture (스키마 & 파이프라인 조감도)
+## 🗺️ 1. 원천 DB vs GDS 인메모리 서브그래프 데이터 구조 비교
 
 ```mermaid
-classDiagram
-    class Disease {
-        +String id (DOID)
-        +String name (질병명)
-    }
-    class Gene {
-        +String id (NCBI)
-        +String name (유전자명)
-    }
-    class Compound {
-        +String id (DrugBank)
-        +String name (약물명)
-    }
-    class Symptom {
-        +String id (MeSH)
-        +String name (증상명)
-    }
-    class PharmacologicClass {
-        +String id (FDA)
-        +String name (약효분류명)
-    }
+flowchart LR
+    subgraph RawDB ["💾 1. 디스크 원천 지식그래프 (Hetionet 전체 DB)"]
+        direction TB
+        N1["Disease (질병 136개)"]
+        N2["Gene (유전자 13,747개)"]
+        N3["Compound (약물 1,531개)"]
+        N4["Symptom (증상 411개 - 제외)"]
+        N5["PharmacologicClass (약효 345개 - 제외)"]
+        
+        N1 -- "단방향 12.6k" --> N2
+        N3 -- "단방향 11.5k" --> N2
+        N3 -- "단방향 755건" --> N1
+        N5 -.-> N3
+        N1 -.-> N4
+    end
 
-    Disease "1" -- "*" Gene : ASSOCIATES (발병연관 12.6k)
-    Compound "1" -- "*" Gene : BINDS (표적결합 11.5k)
-    Compound "1" -- "*" Disease : TREATS (치료효능 755건)
-    PharmacologicClass "1" -- "*" Compound : INCLUDES (약효분류 1.0k)
-    Disease "1" -- "*" Symptom : PRESENTS (증상발현 3.3k)
+    subgraph Subgraph ["⚡ 2. GDS 인메모리 서브그래프 (bioMasterGraph)"]
+        direction TB
+        SN1["Disease\n(속성: id, name)"]
+        SN2["Gene\n(속성: id, name)"]
+        SN3["Compound\n(속성: id, name)"]
+        
+        SN1 <== "ASSOCIATES (양방향 25.2k)" ==> SN2
+        SN3 <== "BINDS (양방향 23.0k)" ==> SN2
+        SN3 <== "TREATS (양방향 1.5k)" ==> SN1
+    end
+
+    RawDB -- "gds.graph.project (필요 노드만 추출 + 가상 양방향 변환)" --> Subgraph
 ```
 
 ---
 
-## 💡 2. WHY (스키마 설계 의도 및 데이터 규격)
+## 📊 2. 서브그래프(bioMasterGraph) 전용 데이터 규격서
 
-### ① 왜 단일 노드가 아니라 5개 이종(Heterogeneous) 노드로 분리했을까?
-* **이유**: 단순 텍스트 검색은 "이 약이 이 병에 왜 듣는지"의 생물학적 메커니즘을 설명하지 못합니다.
-* **해결**: `질병(Disease) ➔ 타겟 유전자(Gene) ➔ 결합 약물(Compound)`의 **삼각 릴레이 경로(Path)**를 구축하여 GraphRAG 및 PageRank가 원인과 결과를 역추적할 수 있도록 설계했습니다.
+### ① 투영 노드 (Nodes: 14,780개)
+| 노드 레이블 | 주요 속성 (Property) | 역할 및 설명 |
+|---|---|---|
+| **`Disease`** | `id` (DOID), `name` (질병명) | 분석의 출발점/도착점 (예: `breast cancer`) |
+| **`Gene`** | `id` (NCBI), `name` (유전자명) | 질병과 약물을 잇는 생물학적 열쇠 구멍 (예: `BRCA1`, `HER2`) |
+| **`Compound`** | `id` (DrugBank), `name` (약물명) | 최종 추천 및 표적 치료제 후보군 (예: `Tamoxifen`, `Doxorubicin`) |
 
----
-
-## 🚀 3. WHEN (투영 DDL 및 알고리즘 모드 규격)
-
-### ① 투영 3대 모드 규격서
-
-| 투영 모드 | 문법 규격 | 장점 및 특징 | 실무 사용 시점 |
-|---|---|---|---|
-| **Native 단일** | `['Compound', 'Gene'], ['BINDS']` | 가장 단순하고 빠름 | 단일 관계망 분석 |
-| **Native 복합 삼각** | `['Disease', 'Gene', 'Compound'], {ASSOCIATES: ..., BINDS: ..., TREATS: ...}` | 다중 이종 엣지 통합 계산 | 신약 후보 발굴, 복합 출자망 |
-| **Cypher 조건부** | `gds.graph.project.cypher(..., nodeQuery, relQuery)` | `WHERE gene_count >= 100` 필터 가능 | 특정 조건의 서브그래프만 동적 추출 |
+### ② 투영 엣지 (Relationships: 49,898건 - 2배 검산 적용)
+| 관계 타입 | 시작 노드 $\leftrightarrow$ 끝 노드 | 방향성 (Orientation) | 서브그래프 엣지 수 |
+|---|---|:---:|:---:|
+| **`ASSOCIATES`** | `Disease` $\leftrightarrow$ `Gene` | `UNDIRECTED` (양방향) | 25,236건 (원본 12,618건 $\times$ 2) |
+| **`BINDS`** | `Compound` $\leftrightarrow$ `Gene` | `UNDIRECTED` (양방향) | 23,074건 (원본 11,537건 $\times$ 2) |
+| **`TREATS`** | `Compound` $\leftrightarrow$ `Disease` | `UNDIRECTED` (양방향) | 1,510건 (원본 755건 $\times$ 2) |
 
 ---
 
-## 💻 4. HOW (표준 DDL 및 알고리즘 실행 명세)
+## 🧬 3. 서브그래프 위에서 생성되는 가상 파생 데이터 (In-Memory Outputs)
 
-### ① [DDL] 삼각 인메모리 그래프 투영 DDL
+| 가상 데이터명 | 데이터 타입 | 생성 알고리즘 | 비즈니스 해석 |
+|---|:---:|---|---|
+| **`degree`** | `Integer` | `gds.degree.stream` | 단순 연결 마당발 지수 (선 개수) |
+| **`pagerank`** | `Float` | `gds.pageRank.stream` | 전역 네트워크 내 실세 권력도 |
+| **`betweenness`** | `Float` | `gds.betweenness.stream` | 네트워크 분단을 막는 핵심 길목도 |
+| **`ppr_score`** | `Float` | `gds.pageRank.stream(sourceNodes)` | **특정 질환(유방암) 타겟 맞춤형 표적 신약 지수** |
+| **`fastRP_vec`** | `Float[128]` | `gds.fastRP.stream` | 네트워크 연결 형태를 압축한 128차원 지문 벡터 |
+
+---
+
+## 💻 4. [완성형 DDL] 서브그래프 생성 및 파생 분석 템플릿
+
 ```cypher
-// 투영 멱등성 보장: 기존 것 삭제 후 생성
+// [1] 서브그래프 멱등성 생성 (디스크 수정 없이 RAM에만 생성)
 CALL gds.graph.drop('bioMasterGraph', false) YIELD graphName;
 
 CALL gds.graph.project(
@@ -75,41 +87,8 @@ CALL gds.graph.project(
     }
 )
 YIELD graphName, nodeCount, relationshipCount, projectMillis;
-```
 
----
-
-### ② [Algorithm] 3대 중심성 지표 실행 규격
-
-```cypher
-// 1. 차수 중심성 (Degree: 로컬 연결 수)
-CALL gds.degree.stream('bioMasterGraph')
-YIELD nodeId, score
-WITH gds.util.asNode(nodeId) AS n, score
-RETURN n.name AS name, labels(n)[0] AS type, toInteger(score) AS degree
-ORDER BY degree DESC LIMIT 5;
-
-// 2. PageRank (전역 권력/실세 랭킹)
-CALL gds.pageRank.stream('bioMasterGraph', {maxIterations: 20, dampingFactor: 0.85})
-YIELD nodeId, score
-WITH gds.util.asNode(nodeId) AS n, score
-RETURN n.name AS name, labels(n)[0] AS type, round(score, 4) AS pagerank
-ORDER BY pagerank DESC LIMIT 5;
-
-// 3. 매개 중심성 (Betweenness: 네트워크 길목)
-CALL gds.betweenness.stream('bioMasterGraph')
-YIELD nodeId, score
-WITH gds.util.asNode(nodeId) AS n, score
-RETURN n.name AS name, labels(n)[0] AS type, round(score, 2) AS betweenness
-ORDER BY betweenness DESC LIMIT 5;
-```
-
----
-
-### ③ [Algorithm] 개인화 PageRank (PPR: 타겟팅 인텔리전스)
-
-```cypher
-// 특정 질환 관점에서의 표적 치료제 Top 5 랭킹
+// [2] 유방암 타겟 개인화 PageRank (PPR) 신약 후보군 10선 도출
 MATCH (d:Disease {name: 'breast cancer'})
 WITH collect(id(d)) AS sources
 CALL gds.pageRank.stream('bioMasterGraph', {
@@ -121,5 +100,8 @@ YIELD nodeId, score
 WITH gds.util.asNode(nodeId) AS n, score
 WHERE n:Compound
 RETURN n.name AS target_drug, round(score, 6) AS ppr_score
-ORDER BY ppr_score DESC LIMIT 5;
+ORDER BY ppr_score DESC LIMIT 10;
+
+// [3] 메모리 반환
+CALL gds.graph.drop('bioMasterGraph') YIELD graphName;
 ```
