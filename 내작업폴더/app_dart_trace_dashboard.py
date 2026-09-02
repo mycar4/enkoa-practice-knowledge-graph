@@ -30,16 +30,16 @@ load_dotenv(".env", override=True)
 
 NEO4J_URI = os.getenv("NEO4J_URI", "neo4j+ssc://2fa50db4.databases.neo4j.io")
 NEO4J_USER = os.getenv("NEO4J_USER", "2fa50db4")
-NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "FJaQFhJZIow2p-5dFNO5h2bX_QdBD7ngWlwYESYbnkg")
+NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "")
 
-# Neo4j 드라이버 연결 (URI별 캐싱 자동 갱신)
+# Neo4j 드라이버 연결 (URI별 캐싱 자동 갱신 - 100% Read-Only 안전 연결)
 @st.cache_resource
 def get_neo4j_driver(uri: str, user: str, password: str):
     try:
         if not password:
-            st.warning("⚠️ .env 파일에 NEO4J_PASSWORD가 설정되지 않았습니다.")
+            st.warning("⚠️ .env 또는 Streamlit Secrets에 NEO4J_PASSWORD가 설정되지 않았습니다.")
             return None
-        driver = GraphDatabase.driver(uri, auth=(user, password))
+        driver = GraphDatabase.driver(uri, auth=(user, password), max_connection_lifetime=120)
         driver.verify_connectivity()
         return driver
     except Exception as e:
@@ -55,85 +55,8 @@ def run_cypher(query: str, **params):
         return [record.data() for record in session.run(query, **params)]
 
 def ensure_company_ownership_data(company_name: str):
-    """지분 데이터가 아직 없는 상장사를 클릭했을 때 OpenDART API를 실시간 호출하여 자동 적재"""
-    if not driver or not company_name:
-        return
-    with driver.session() as s:
-        cnt = s.run("MATCH (a)-[r:OWNS_STAKE]->(b) WHERE a.name = $name OR b.name = $name RETURN count(r) AS c", name=company_name).single()['c']
-        if cnt > 0:
-            return # 이미 지분 데이터 존재
-        
-        res = s.run("MATCH (c:DART_Company {name: $name}) RETURN c.corp_code AS code", name=company_name).single()
-        if not res or not res['code']:
-            return
-        corp_code = res['code']
-        
-    dart_key = os.getenv("DART_API_KEY", "")
-    if not dart_key:
-        return
-        
-    import urllib.request, json
-    try:
-        url = f"https://opendart.fss.or.kr/api/hyslrSttus.json?crtfc_key={dart_key}&corp_code={corp_code}&bsns_year=2023&reprt_code=11011"
-        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-        with urllib.request.urlopen(req, timeout=8) as resp:
-            data = json.loads(resp.read().decode('utf-8'))
-            if data.get('status') == '000' and data.get('list'):
-                items = data.get('list')
-                raw_dir = "내작업폴더/data/dart_raw_filings"
-                os.makedirs(raw_dir, exist_ok=True)
-                json_path = os.path.join(raw_dir, f"{company_name}_2023_최대주주지분현황_OpenDART.json")
-                with open(json_path, "w", encoding="utf-8") as f:
-                    json.dump(items, f, ensure_ascii=False, indent=2)
-                
-                batch = []
-                for it in items:
-                    nm = it.get('nm', '').strip()
-                    relate = it.get('relate', '').strip()
-                    qota = it.get('bsis_posesn_stock_qota_rt', '0.0').replace(',', '').strip()
-                    try:
-                        stake = float(qota) if qota and qota != '-' else 0.0
-                    except:
-                        stake = 0.0
-                    if nm and stake > 0.0:
-                        batch.append({
-                            'source': nm,
-                            'target': company_name,
-                            'stake': stake,
-                            'position': relate,
-                            'year': 2023,
-                            'raw_file': json_path,
-                            'is_person': relate in ['본인', '최대주주', '친인척', '임원', '배우자', '자']
-                        })
-                
-                if batch:
-                    with driver.session() as s:
-                        s.run("""
-                        UNWIND $batch AS it
-                        MERGE (owner {name: it.source})
-                        ON CREATE SET owner:DART_Company
-                        WITH owner, it
-                        CALL {
-                            WITH owner, it
-                            WITH owner, it WHERE it.is_person = true
-                            SET owner:DART_Person
-                            REMOVE owner:DART_Company
-                            RETURN count(owner) AS c
-                            UNION
-                            WITH owner, it
-                            WITH owner, it WHERE it.is_person = false
-                            SET owner:DART_Company
-                            RETURN count(owner) AS c
-                        }
-                        MERGE (comp:DART_Company {name: it.target})
-                        MERGE (owner)-[r:OWNS_STAKE {year: it.year}]->(comp)
-                        SET r.stake = it.stake,
-                            r.position = it.position,
-                            r.raw_file_path = it.raw_file,
-                            r.updated_at = datetime()
-                        """, batch=batch)
-    except Exception as e:
-        pass
+    """[보안 조치] 공개 웹 대시보드에서의 실시간 DB 쓰기(MERGE) 제거 (100% Read-Only 안전 유지)"""
+    pass
 
 def generate_graphrag_response(prompt: str, api_key_input: str = "") -> dict:
     """GraphRAG 자연어 질의 ➔ 엔티티/인텐트 추출 ➔ Neo4j 정밀 Cypher ➔ 팩트 증빙 기반 응답 생성 공용 함수"""
@@ -2039,18 +1962,10 @@ elif menu == "📥 5. 최근 5년 OpenDART 실시간 수집 & 스토리지":
                                 saved_count += 1
                                 st.write(f"   • [{rcept_dt}] {corp_nm}: {report_nm}")
                                 
-                                # 실제 Neo4j 지식그래프 적재
-                                run_cypher("""
-                                MERGE (c:DART_Company {name: $corp})
-                                SET c.last_disclosure_date = $dt,
-                                    c.last_report_name = $rep,
-                                    c.updated_at = datetime()
-                                """, corp=corp_nm, dt=rcept_dt, rep=report_nm)
-                                
-                            st.write(f"2. 공시 원문 텍스트 {saved_count}건 로컬 스토리지(`data/dart_raw_filings/`) 저장 완료")
-                            st.write(f"3. Neo4j 기업 노드 실시간 MERGE 동기화 완료!")
-                            status.update(label=f"🎉 {selected_label} 실제 데이터 동기화 100% 완료!", state="complete", expanded=False)
-                            st.success(f"{saved_count}건의 공시 데이터가 로컬 스토리지 및 Neo4j DB에 실시간 저장되었습니다!")
+                            st.write(f"2. 공시 목록 {saved_count}건 실시간 API 응답 수신 완료")
+                            st.info("🔒 [보안 정책] 공개 웹 대시보드는 100% 읽기 전용(Read-Only)으로 운영되며, DB 적재는 관리자 승인 파이프라인에서만 수행됩니다.")
+                            status.update(label=f"🎉 {selected_label} API 실시간 조회 완료!", state="complete", expanded=False)
+                            st.success(f"{saved_count}건의 공시 목록이 성공적으로 조회되었습니다!")
                     except Exception as op_err:
                         status.update(label="❌ 파이프라인 처리 오류 발생", state="error")
                         st.error(f"호출 오류: {op_err}")
