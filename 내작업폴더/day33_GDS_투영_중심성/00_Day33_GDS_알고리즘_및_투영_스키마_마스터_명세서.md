@@ -59,7 +59,19 @@ flowchart LR
 
 ---
 
-## 🚀 3. GDS 투영 3대 모드 DDL 규격서
+## 🧬 3. 서브그래프에서만 새로 생성되는 가상 파생 데이터 (Outputs)
+
+| 가상 데이터명 | 데이터 타입 | 생성 알고리즘 | 비즈니스 해석 및 실무 가치 |
+|---|:---:|---|---|
+| **`degree`** | `Integer` | `gds.degree.stream` | 단순 연결 마당발 지수 (선 개수) |
+| **`pagerank`** | `Float` | `gds.pageRank.stream` | 전역 네트워크 내 실세 권력도 |
+| **`betweenness`** | `Float` | `gds.betweenness.stream` | 네트워크 분단을 막는 핵심 길목도 (브로커) |
+| **`ppr_score`** | `Float` | `gds.pageRank.stream(sourceNodes)` | **특정 질환(유방암) 타겟 맞춤형 표적 신약 지수** |
+| **`fastRP_vec`** | `Float[128]` | `gds.fastRP.stream` | 네트워크 연결 형태를 압축한 128차원 지문 벡터 |
+
+---
+
+## 🚀 4. GDS 투영 3대 모드 DDL 규격서
 
 ### ① 모드별 비교 요약
 
@@ -121,7 +133,7 @@ YIELD graphName, nodeCount, relationshipCount;
 
 ---
 
-## 💻 4. 5대 알고리즘별 상세 소스 규격 (Full Cypher Reference)
+## 💻 5. 5대 알고리즘별 상세 소스 규격 (Full Cypher Reference)
 
 ### ① 차수 중심성 (Degree Centrality: 마당발 지수)
 
@@ -231,7 +243,7 @@ LIMIT 5;
 
 ---
 
-## 🧹 5. 인메모리 수명주기 관리 DDL (Lifecycle)
+## 🧹 6. 인메모리 수명주기 관리 DDL (Lifecycle)
 
 ```cypher
 // [1] 현재 RAM에 올라온 서브그래프 목록 조회
