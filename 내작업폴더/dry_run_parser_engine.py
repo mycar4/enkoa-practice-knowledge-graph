@@ -88,10 +88,13 @@ def extract_strict_structural_as_of_date(tbl_html: str) -> str:
 
     return ""
 
-def parse_header_paths_2d(header_trs: List[str]) -> Tuple[Dict[int, List[str]], int]:
-    """헤더 <TH>의 ROWSPAN/COLSPAN을 2D 매트릭스로 전개하여 Header Path 산출"""
+class HeaderGridTooWideError(Exception):
+    """헤더 그리드가 최대 지원 열 폭(60열)을 초과할 때 발생하는 예외"""
+    pass
+
+def parse_header_paths_2d(header_trs: List[str], max_cols: int = 60) -> Tuple[Dict[int, List[str]], int]:
+    """헤더 <TH>의 ROWSPAN/COLSPAN을 2D 매트릭스로 전개하여 Header Path 산출 (60열 초과 시 HeaderGridTooWideError)"""
     num_header_rows = len(header_trs)
-    max_cols = 50
     grid = [[None for _ in range(max_cols)] for _ in range(num_header_rows)]
     
     th_pattern = re.compile(r'<TH([^>]*)>(.*?)</TH>', re.DOTALL | re.IGNORECASE)
@@ -104,6 +107,9 @@ def parse_header_paths_2d(header_trs: List[str]) -> Tuple[Dict[int, List[str]], 
             while c_idx < max_cols and grid[r_idx][c_idx] is not None:
                 c_idx += 1
                 
+            if c_idx >= max_cols:
+                raise HeaderGridTooWideError(f"Header column index {c_idx} reached or exceeded maximum grid width ({max_cols})")
+                
             clean_text = re.sub(r'<[^>]+>', '', text).replace('&nbsp;', ' ').strip()
             rowspan = 1
             colspan = 1
@@ -112,8 +118,11 @@ def parse_header_paths_2d(header_trs: List[str]) -> Tuple[Dict[int, List[str]], 
             if r_m: rowspan = int(r_m.group(1))
             if c_m: colspan = int(c_m.group(1))
             
+            if c_idx + colspan > max_cols:
+                raise HeaderGridTooWideError(f"Header cell span {c_idx} + {colspan} exceeds maximum grid width ({max_cols})")
+            
             for r in range(r_idx, min(num_header_rows, r_idx + rowspan)):
-                for c in range(c_idx, min(max_cols, c_idx + colspan)):
+                for c in range(c_idx, c_idx + colspan):
                     grid[r][c] = clean_text
                     if c > actual_max_col:
                         actual_max_col = c
@@ -130,18 +139,20 @@ def parse_header_paths_2d(header_trs: List[str]) -> Tuple[Dict[int, List[str]], 
         
     return header_paths, actual_max_col + 1
 
-def parse_shareholders_strict_v132(
+def parse_shareholders_strict_v133(
     xml_bytes: bytes,
     rcept_no: str,
     target_corp_code: str,
     provider: MasterEntityProvider
 ) -> Tuple[Dict[str, Any], List[Dict[str, Any]], List[Dict[str, Any]]]:
     """
-    v1.3.2 엄격 원문 팩트 파서:
-    - 엄격 구조적 기준일 결속
-    - 데이터 행 병합 셀(ROWSPAN/COLSPAN) 임의 채우기 금지
-    - 소유형태 TRUST 분리 및 모호성 차단
-    - 3대 엔티티 교차 다의성(Cross-Type Ambiguity) 완전 배제
+    v1.3.3 엄격 원문 팩트 파서:
+    1. 엄격 구조적 기준일 결속 (<CAPTION> 또는 1행 단독 <TH>)
+    2. 헤더 그리드 60열 초과/열 전개 오버플로 시 UNSUPPORTED_HEADER_GRID_TOO_WIDE 격리
+    3. 데이터 행 병합 셀(ROWSPAN/COLSPAN) 임의 채우기 금지
+    4. 소유형태 정규화 허용값 전체 일치(Exact Match) 및 복합문구 배제
+    5. 3대 엔티티 교차 다의성(Cross-Type Ambiguity) 완전 배제
+    6. 후보 및 보류 행 전수에 원문 증거 위치(table_index, data_row_index, header_paths, raw_row_text, raw_row_hash) 결속
     """
     xml_size_bytes = len(xml_bytes)
     xml_sha256 = hashlib.sha256(xml_bytes).hexdigest()
@@ -152,7 +163,14 @@ def parse_shareholders_strict_v132(
     planned_records = []
     skipped_records = []
     
-    for match in table_pattern.finditer(xml_text):
+    # 소유형태 정규화 허용값 (전체 일치만 허용)
+    CANONICAL_OWNERSHIP = {
+        "직접": "DIRECT",
+        "간접": "INDIRECT",
+        "신탁": "TRUST"
+    }
+    
+    for table_idx, match in enumerate(table_pattern.finditer(xml_text)):
         tbl = match.group(1)
         
         if any(bad in tbl for bad in ["변동현황", "변동원인", "임원 및 직원", "주요계약", "주식의 분포", "주가 및"]):
@@ -163,7 +181,8 @@ def parse_shareholders_strict_v132(
             as_of_date = extract_strict_structural_as_of_date(tbl)
             if not as_of_date:
                 skipped_records.append({
-                    "raw_sample": tbl[:120].replace("\n", " "),
+                    "table_index": table_idx,
+                    "raw_sample": tbl[:140].replace("\n", " "),
                     "skip_reason": "TABLE_STRICT_CAPTION_OR_HEADER_AS_OF_DATE_MISSING"
                 })
                 continue
@@ -176,7 +195,6 @@ def parse_shareholders_strict_v132(
             data_trs = []
             is_header = True
             for tr in all_trs:
-                # 단독 기준일 행은 헤더 매트릭스에서 제외
                 if "기준일" in tr and len(re.findall(r'<TH', tr, re.IGNORECASE)) == 1:
                     continue
                 if is_header and "<TH" in tr.upper():
@@ -187,13 +205,24 @@ def parse_shareholders_strict_v132(
                     
             if not header_trs or not data_trs:
                 skipped_records.append({
-                    "raw_sample": tbl[:120].replace("\n", " "),
+                    "table_index": table_idx,
+                    "raw_sample": tbl[:140].replace("\n", " "),
                     "skip_reason": "UNSUPPORTED_TABLE_NO_HEADER_OR_DATA_ROWS"
                 })
                 continue
                 
-            # 3. 2D 헤더 매트릭스 전개
-            header_paths, total_cols = parse_header_paths_2d(header_trs)
+            # 3. 2D 헤더 매트릭스 전개 (60열 초과 가드)
+            try:
+                header_paths, total_cols = parse_header_paths_2d(header_trs, max_cols=60)
+            except HeaderGridTooWideError as e:
+                skipped_records.append({
+                    "table_index": table_idx,
+                    "raw_sample": tbl[:140].replace("\n", " "),
+                    "skip_reason": f"UNSUPPORTED_HEADER_GRID_TOO_WIDE ({str(e)})"
+                })
+                continue
+                
+            formatted_header_paths = {str(k): " > ".join(v) for k, v in header_paths.items()}
             
             # 4. 동적 컬럼 인덱스 매핑
             name_col = -1
@@ -220,7 +249,8 @@ def parse_shareholders_strict_v132(
                     
             if name_col == -1 or kind_col == -1 or end_stake_col == -1:
                 skipped_records.append({
-                    "header_paths": {str(k): v for k, v in header_paths.items()},
+                    "table_index": table_idx,
+                    "header_paths": formatted_header_paths,
                     "skip_reason": f"DYNAMIC_HEADER_MAPPING_FAILED (name={name_col}, kind={kind_col}, stake={end_stake_col})"
                 })
                 continue
@@ -229,15 +259,21 @@ def parse_shareholders_strict_v132(
             cell_pattern = re.compile(r'<(?:TD|TE|TH)([^>]*)>(.*?)</(?:TD|TE|TH)>', re.DOTALL | re.IGNORECASE)
             
             for d_idx, tr in enumerate(data_trs):
+                raw_tr_clean = re.sub(r'\s+', ' ', tr[:200]).strip()
+                raw_row_hash = hashlib.sha256(raw_tr_clean.encode("utf-8")).hexdigest()
+                
                 raw_cells = cell_pattern.findall(tr)
                 
-                # ★ 핵심 가드 4: 데이터 행의 병합 셀(ROWSPAN/COLSPAN) 임의 채우기 금지
+                # 가드: 데이터 행 병합 셀 임의 채우기 금지
                 has_rowspan = any(re.search(r'ROWSPAN\s*=\s*["\']?([2-9]|\d{2,})["\']?', attrs, re.IGNORECASE) for attrs, _ in raw_cells)
                 has_colspan = any(re.search(r'COLSPAN\s*=\s*["\']?([2-9]|\d{2,})["\']?', attrs, re.IGNORECASE) for attrs, _ in raw_cells)
                 if has_rowspan or has_colspan:
                     skipped_records.append({
-                        "row_index": d_idx,
-                        "raw_tr": tr[:140].replace("\n", " "),
+                        "table_index": table_idx,
+                        "data_row_index": d_idx,
+                        "header_paths": formatted_header_paths,
+                        "raw_row_text": raw_tr_clean,
+                        "raw_row_hash": raw_row_hash,
                         "skip_reason": "UNSUPPORTED_MERGED_DATA_ROW (ROWSPAN/COLSPAN present in data row)"
                     })
                     continue
@@ -248,7 +284,11 @@ def parse_shareholders_strict_v132(
                 # 열 수 불일치 행 안전 격리
                 if len(row_cells) != total_cols:
                     skipped_records.append({
-                        "row_index": d_idx,
+                        "table_index": table_idx,
+                        "data_row_index": d_idx,
+                        "header_paths": formatted_header_paths,
+                        "raw_row_text": raw_tr_clean,
+                        "raw_row_hash": raw_row_hash,
                         "row_len": len(row_cells),
                         "expected_cols": total_cols,
                         "skip_reason": "UNSUPPORTED_DATA_ROW_COLUMN_COUNT_MISMATCH"
@@ -266,22 +306,54 @@ def parse_shareholders_strict_v132(
                 # 요약 / 날짜 행 격리
                 if any(h in holder_name for h in ["성명", "성 명", "구분", "기초", "기말", "합계", "총계", "소계", "기준일"]):
                     if holder_name in ["계", "소계", "합계", "총계"]:
-                        skipped_records.append({"raw_cells": row_cells, "skip_reason": "SUMMARY_TOTAL_ROW_EXCLUDED"})
+                        skipped_records.append({
+                            "table_index": table_idx,
+                            "data_row_index": d_idx,
+                            "header_paths": formatted_header_paths,
+                            "raw_row_text": raw_tr_clean,
+                            "raw_row_hash": raw_row_hash,
+                            "raw_cells": row_cells,
+                            "skip_reason": "SUMMARY_TOTAL_ROW_EXCLUDED"
+                        })
                     continue
                     
                 if re.match(r'^\d{4}[\.\-\s년]', holder_name):
-                    skipped_records.append({"raw_cells": row_cells, "skip_reason": "DATE_START_CHANGE_EVENT_ROW_EXCLUDED"})
+                    skipped_records.append({
+                        "table_index": table_idx,
+                        "data_row_index": d_idx,
+                        "header_paths": formatted_header_paths,
+                        "raw_row_text": raw_tr_clean,
+                        "raw_row_hash": raw_row_hash,
+                        "raw_cells": row_cells,
+                        "skip_reason": "DATE_START_CHANGE_EVENT_ROW_EXCLUDED"
+                    })
                     continue
                     
                 # 지분율 검증
                 try:
                     stake_val = float(raw_stake)
                 except ValueError:
-                    skipped_records.append({"raw_cells": row_cells, "skip_reason": "INVALID_OR_NON_NUMERIC_STAKE_RATIO"})
+                    skipped_records.append({
+                        "table_index": table_idx,
+                        "data_row_index": d_idx,
+                        "header_paths": formatted_header_paths,
+                        "raw_row_text": raw_tr_clean,
+                        "raw_row_hash": raw_row_hash,
+                        "raw_cells": row_cells,
+                        "skip_reason": "INVALID_OR_NON_NUMERIC_STAKE_RATIO"
+                    })
                     continue
                     
                 if stake_val <= 0.0:
-                    skipped_records.append({"raw_cells": row_cells, "skip_reason": "ZERO_STAKE_RATIO_EXCLUDED"})
+                    skipped_records.append({
+                        "table_index": table_idx,
+                        "data_row_index": d_idx,
+                        "header_paths": formatted_header_paths,
+                        "raw_row_text": raw_tr_clean,
+                        "raw_row_hash": raw_row_hash,
+                        "raw_cells": row_cells,
+                        "skip_reason": "ZERO_STAKE_RATIO_EXCLUDED"
+                    })
                     continue
                     
                 shares_cnt = 0
@@ -297,6 +369,11 @@ def parse_shareholders_strict_v132(
                     share_class = "PREFERRED"
                 else:
                     skipped_records.append({
+                        "table_index": table_idx,
+                        "data_row_index": d_idx,
+                        "header_paths": formatted_header_paths,
+                        "raw_row_text": raw_tr_clean,
+                        "raw_row_hash": raw_row_hash,
                         "raw_cells": row_cells,
                         "stock_knd_raw": stock_knd,
                         "skip_reason": "UNVERIFIED_INDEPENDENT_SHARE_CLASS_NO_INFERENCE"
@@ -311,28 +388,33 @@ def parse_shareholders_strict_v132(
                     voting_type = "NON_VOTING"
                 else:
                     skipped_records.append({
+                        "table_index": table_idx,
+                        "data_row_index": d_idx,
+                        "header_paths": formatted_header_paths,
+                        "raw_row_text": raw_tr_clean,
+                        "raw_row_hash": raw_row_hash,
                         "raw_cells": row_cells,
                         "stock_knd_raw": stock_knd,
                         "skip_reason": "UNVERIFIED_INDEPENDENT_VOTING_RIGHTS_NO_INFERENCE"
                     })
                     continue
                     
-                # [독립 팩트 3] 소유 형태 TRUST 분리 및 모호성 원천 차단
+                # [독립 팩트 3] 소유 형태 정규화 허용값 전체 일치(Exact-Match) 및 복합문구 배제
                 ownership_basis = None
-                if ownership_col != -1:
-                    raw_own = row_cells[ownership_col].strip()
-                    if any(k in raw_own for k in ["직접", "본인소유"]):
-                        ownership_basis = "DIRECT"
-                    elif any(k in raw_own for k in ["간접"]):
-                        ownership_basis = "INDIRECT"
-                    elif any(k in raw_own for k in ["신탁"]):
-                        ownership_basis = "TRUST"
+                raw_own = row_cells[ownership_col].strip() if ownership_col != -1 else ""
+                clean_own = re.sub(r"\s+", "", raw_own)
+                ownership_basis = CANONICAL_OWNERSHIP.get(clean_own)
                         
                 if not ownership_basis:
                     skipped_records.append({
+                        "table_index": table_idx,
+                        "data_row_index": d_idx,
+                        "header_paths": formatted_header_paths,
+                        "raw_row_text": raw_tr_clean,
+                        "raw_row_hash": raw_row_hash,
                         "raw_cells": row_cells,
-                        "ownership_col_value": row_cells[ownership_col] if ownership_col != -1 else "NO_COLUMN",
-                        "skip_reason": "UNVERIFIED_INDEPENDENT_OWNERSHIP_BASIS_NO_RELATION_CONVERSION"
+                        "ownership_col_value": raw_own if ownership_col != -1 else "NO_COLUMN",
+                        "skip_reason": "UNRESOLVED_OWNERSHIP_BASIS_NON_CANONICAL_OR_COMPOSITE"
                     })
                     continue
                     
@@ -342,6 +424,11 @@ def parse_shareholders_strict_v132(
                 # 후보가 0개인 경우
                 if len(all_candidates) == 0:
                     skipped_records.append({
+                        "table_index": table_idx,
+                        "data_row_index": d_idx,
+                        "header_paths": formatted_header_paths,
+                        "raw_row_text": raw_tr_clean,
+                        "raw_row_hash": raw_row_hash,
                         "raw_cells": row_cells,
                         "unresolved_holder_name": holder_name,
                         "skip_reason": "UNRESOLVED_MASTER_ENTITY_AWAITING_MASTER_RESOLUTION"
@@ -351,6 +438,11 @@ def parse_shareholders_strict_v132(
                 # 후보가 2개 이상인 경우 (동명이인 또는 Company/Person/Org 간 교차 다의성)
                 if len(all_candidates) > 1:
                     skipped_records.append({
+                        "table_index": table_idx,
+                        "data_row_index": d_idx,
+                        "header_paths": formatted_header_paths,
+                        "raw_row_text": raw_tr_clean,
+                        "raw_row_hash": raw_row_hash,
                         "raw_cells": row_cells,
                         "holder_name": holder_name,
                         "candidate_matches": [f"{pk}({t})" for pk, t in all_candidates],
@@ -365,6 +457,11 @@ def parse_shareholders_strict_v132(
                 scope_key = f"{resolved_pk}_{target_corp_code}_{share_class}_{voting_type}_{ownership_basis}"
                 
                 planned_records.append({
+                    "table_index": table_idx,
+                    "data_row_index": d_idx,
+                    "header_paths": formatted_header_paths,
+                    "raw_row_text": raw_tr_clean,
+                    "raw_row_hash": raw_row_hash,
                     "holder_name": holder_name,
                     "holder_pk": resolved_pk,
                     "holder_type": resolved_type,
@@ -389,7 +486,10 @@ def parse_shareholders_strict_v132(
     }
     return doc_info, planned_records, skipped_records
 
-def run_dry_run_simulation_v132(
+# v1.3.2 하위 호환성 별칭
+parse_shareholders_strict_v132 = parse_shareholders_strict_v133
+
+def run_dry_run_simulation_v133(
     xml_bytes: bytes,
     rcept_no: str,
     target_corp_code: str,
@@ -397,7 +497,7 @@ def run_dry_run_simulation_v132(
     database_instance_id: str,
     manifest_id: str = None
 ) -> Dict[str, Any]:
-    """v1.3.2 엄격 가드 기반 순수 DRY_RUN 시뮬레이션"""
+    """v1.3.3 엄격 가드 및 원문 증거 위치(Provenance Anchor) 결속 DRY_RUN 시뮬레이션"""
     if not manifest_id:
         manifest_id = f"MANIFEST_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{rcept_no}"
         
@@ -406,7 +506,7 @@ def run_dry_run_simulation_v132(
     pre_nodes, pre_rels = provider.get_pre_counts()
     existing_keys = provider.get_existing_edge_keys()
     
-    doc_info, planned_records, skipped_records = parse_shareholders_strict_v132(
+    doc_info, planned_records, skipped_records = parse_shareholders_strict_v133(
         xml_bytes, rcept_no, target_corp_code, provider
     )
     
@@ -416,7 +516,7 @@ def run_dry_run_simulation_v132(
     finished_at = datetime.now().isoformat() + "Z"
     
     manifest = {
-        "manifest_schema_version": "1.3.2",
+        "manifest_schema_version": "1.3.3",
         "manifest_id": manifest_id,
         "status": "DRY_RUN",
         "git_commit": get_git_commit_hash(),
@@ -448,3 +548,6 @@ def run_dry_run_simulation_v132(
         "planned_updates_count": len(planned_updates),
         "skipped_records_count": len(skipped_records)
     }
+
+# v1.3.2 하위 호환성 별칭
+run_dry_run_simulation_v132 = run_dry_run_simulation_v133

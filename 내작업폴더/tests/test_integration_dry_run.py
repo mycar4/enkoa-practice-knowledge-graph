@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-🌐 [v1.3.2 통합 테스트] Aura DB 3대 엔티티 Provider 및 READ 모드 검증
+🌐 [v1.3.3 통합 테스트] Aura DB 3대 엔티티 Provider 및 READ 모드 검증
 ========================================================================================================
 [검증 목적]
 1. Neo4j Aura DB와의 실제 통신 시 `default_access_mode="READ"` 강제 적용 검증
 2. 실 운영 DB 3대 엔티티(Company, Person, Organization)의 교차 다의성(Cross-Type) 수집 Provider 실측
 3. 통합 실행 전후 실 DB의 노드/관계 수 불변성 실측 (Zero-Write Guard)
 4. 실 공시(SK하이닉스) 입력 시 '0건 WRITE 후보 (True-Zero 무결성)' 실측
+5. 매니페스트 보류 행 전수에 원문 증거 위치(table_index 등) 결속 실측
 ========================================================================================================
 """
 
@@ -21,7 +22,7 @@ sys.path.insert(0, os.path.abspath("내작업폴더"))
 
 from dry_run_parser_engine import (
     MasterEntityProvider,
-    run_dry_run_simulation_v132
+    run_dry_run_simulation_v133
 )
 
 load_dotenv(".env", override=True)
@@ -41,7 +42,6 @@ class AuraCrossTypeMasterManager:
 
     def _load_master_caches(self):
         with self.driver.session(default_access_mode="READ") as s:
-            # name -> List of (PK, TYPE)
             self.registry = defaultdict(list)
             
             # Company 로드
@@ -68,7 +68,6 @@ class AuraCrossTypeMasterManager:
     def resolve_all_types(self, name_or_code: str) -> List[Tuple[str, str]]:
         clean = name_or_code.replace("(주)", "").replace("주식회사", "").replace("㈜", "").strip()
         matches = self.registry.get(name_or_code) or self.registry.get(clean) or []
-        # 중복 제거 (set)
         return list(set(matches))
 
     def get_existing_edge_keys(self) -> Set[str]:
@@ -86,7 +85,7 @@ class AuraCrossTypeMasterManager:
 
 def main():
     print("="*80)
-    print("🌐 [v1.3.2 통합 테스트 실행] Aura DB 3대 엔티티 교차 다의성 방어 & READ 모드 검증")
+    print("🌐 [v1.3.3 통합 테스트 실행] Aura DB 3대 엔티티 교차 다의성 방어 & READ 모드 검증")
     print("="*80)
     
     provider = AuraCrossTypeMasterManager(NEO4J_URI, (NEO4J_USER, NEO4J_PASSWORD))
@@ -96,17 +95,17 @@ def main():
     print(f"  • 실 DB 3대 마스터 등록 명칭 수: {len(provider.registry):,}개 명칭 등록 완료")
     print(f"  • 실 DB 실행 전 상태: 노드 {pre_nodes:,}개 | 관계 {pre_rels:,}개")
     
-    # 2. DRY_RUN 파서 엔진 v1.3.2 실행
+    # 2. DRY_RUN 파서 엔진 v1.3.3 실행
     with open(FIXTURE_PATH, "rb") as f:
         xml_bytes = f.read()
         
-    res = run_dry_run_simulation_v132(
+    res = run_dry_run_simulation_v133(
         xml_bytes=xml_bytes,
         rcept_no="20240319000684",
         target_corp_code="00164779",
         provider=provider,
         database_instance_id=AURA_INSTANCE_ID,
-        manifest_id="TEST_INTEGRATION_V132_AURA"
+        manifest_id="TEST_INTEGRATION_V133_AURA"
     )
     
     manifest = res["manifest"]
@@ -123,13 +122,18 @@ def main():
     assert res["planned_updates_count"] == 0, f"❌ True-Zero 원칙 위반: {res['planned_updates_count']}건"
     assert res["skipped_records_count"] > 0, "❌ 격리 기록 누락"
     
-    print("\n📊 [통합 테스트 실측 결과 (v1.3.2 True-Zero 무결성 입증)]:")
+    # 5. 원문 증거 위치 필드 결속 검증
+    for s in manifest["skipped_records"]:
+        assert "table_index" in s, "❌ 보류 행에 table_index 누락!"
+        assert "skip_reason" in s, "❌ 보류 행에 skip_reason 누락!"
+        
+    print("\n📊 [통합 테스트 실측 결과 (v1.3.3 True-Zero 및 증거 결속 입증)]:")
     print(f"  • DB Zero-Write 검증: 노드 {pre_nodes} == {post_nodes}, 관계 {pre_rels} == {post_rels} (변화 0건)")
     print(f"  • 예정 생성(creations): {res['planned_creations_count']}건 (독립 소유형태 컬럼 결측으로 0건 정상 도출)")
     print(f"  • 예정 갱신(updates): {res['planned_updates_count']}건")
-    print(f"  • 안전 보류(skipped_records): {res['skipped_records_count']}건 (100% 안전 격리 완료)")
+    print(f"  • 안전 보류(skipped_records): {res['skipped_records_count']}건 (100% 원문 위치 증거 결속 완료)")
     print("="*80)
-    print("🎉 [통합 테스트 100% 통과] Aura AccessMode.READ 모드 하에서 True-Zero 무결성 완벽 입증!")
+    print("🎉 [통합 테스트 100% 통과] Aura AccessMode.READ 모드 하에서 True-Zero & 증거 위치 결속 완벽 입증!")
     print("="*80)
 
 if __name__ == "__main__":
