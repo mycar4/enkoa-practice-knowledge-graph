@@ -66,7 +66,7 @@ def _normalize_long_path(p: str) -> str:
 
 
 def atomic_write_bytes(target_path: str, data: bytes) -> None:
-    """임시 파일 생성 후 os.replace()를 통한 원자적(Atomic) 파일 쓰기 (Windows 260자 경로 제한 방어)"""
+    """임시 파일 생성 후 os.replace()를 통한 원자적(Atomic) 파일 쓰기 (Windows 260자 및 핸들 경합 방어)"""
     abs_target = os.path.abspath(target_path)
     dir_name = os.path.dirname(abs_target)
     os.makedirs(dir_name, exist_ok=True)
@@ -76,7 +76,16 @@ def atomic_write_bytes(target_path: str, data: bytes) -> None:
 
     src = _normalize_long_path(temp_path)
     dst = _normalize_long_path(abs_target)
-    os.replace(src, dst)
+
+    # Windows 파일 시스템 핸들 해제 경합(WinError 5) 대비 짧은 재시도 루프
+    for attempt in range(5):
+        try:
+            os.replace(src, dst)
+            return
+        except PermissionError:
+            if attempt == 4:
+                raise
+            time.sleep(0.02)
 
 
 def extract_xml_metadata(xml_bytes: bytes) -> Dict[str, str]:
