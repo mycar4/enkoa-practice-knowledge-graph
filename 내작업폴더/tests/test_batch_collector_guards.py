@@ -2,12 +2,13 @@
 """
 🏛️ [DART-Trace] 1,500건 배치 제어기 4대 운영 가드 모의 검증 테스트
 ================================================================================
-네트워크 호출 0건 (Mock 기반 단위 검증)
-1. [가드 1] 30MB 초과 페이로드 차단 (PAYLOAD_EXCEEDED_MAX_LIMIT_30MB)
-2. [가드 2] 429/5xx 발생 시 지수 백오프 재시도 성공 검증
-3. [가드 3] 연속 5건 실패 시 서킷 브레이커 발동 및 비상 중단 (체크포인트 보존)
-4. [가드 4] 개별 영수증 내 run_id 및 input_manifest_sha256 완전 혈통 결속 검증
-5. [가드 5] 배치 종료 심층 집계 감사: 영수증 내부 JSON 값(해시, 법인코드) 전수 대조
+네트워크 호출 0건 (Mock 기반 정밀 단위 검증)
+1. [가드 1-A] Content-Length 헤더 30MB 초과 시 413 거부 실측
+2. [가드 1-B] 스트리밍 청크 누적 30MB 초과 시 413 조기 차단 실측
+3. [가드 2] 429 ➔ 503 ➔ 200 지수 백오프 3회 시퀀스 재시도 성공 실측
+4. [가드 3] 연속 5건 실패 시 서킷 브레이커 즉시 발동 및 잔여 작업 100% 차단
+5. [가드 4 & 5] 영수증 전수 감사 및 모든 일치 조건(5대 항목) 성공 판정 실측
+6. [가드 5-반증] 메타데이터/해시 불일치 시 BATCH_AUDIT_REJECTED 엄격 거부 실측
 ================================================================================
 """
 
@@ -18,6 +19,8 @@ import json
 import shutil
 import zipfile
 import unittest
+from unittest.mock import patch, MagicMock
+from urllib.error import HTTPError
 import importlib
 
 # 경로 설정
@@ -62,14 +65,72 @@ class TestBatchCollectorGuards(unittest.TestCase):
         if os.path.exists(cls.test_base_dir):
             shutil.rmtree(cls.test_base_dir)
 
-    def test_01_payload_limit_guard_exceeded(self):
-        """[가드 1] 30MB 페이로드 상한 초과 시 413 거부 검증"""
-        transport = RealDartHttpTransport(api_key="test_key", max_payload_bytes=1024) # 1KB 상한 테스트
-        # 1KB 상한이 올바르게 설정되었는지 확인
-        self.assertEqual(transport.max_payload_bytes, 1024)
-        print("  [가드 1 통과] 30MB 페이로드 상한 검사 파라미터 확인")
+    def test_01_content_length_exceeded_guard(self):
+        """[가드 1-A] Content-Length 헤더 30MB 초과 시 413 즉시 거부 실측"""
+        transport = RealDartHttpTransport(api_key="test_api_key", max_payload_bytes=30 * 1024 * 1024)
 
-    def test_02_circuit_breaker_emergency_abort_on_5_failures(self):
+        # Mock HTTP 응답: Content-Length = 35MB
+        mock_resp = MagicMock()
+        mock_resp.__enter__.return_value = mock_resp
+        mock_resp.getcode.return_value = 200
+        mock_resp.headers = {"Content-Length": "36700160"}  # 35MB
+
+        with patch("urllib.request.urlopen", return_value=mock_resp):
+            status, data, err = transport.fetch("20241025000551")
+
+        self.assertEqual(status, 413)
+        self.assertEqual(data, b"")
+        self.assertIn("PAYLOAD_EXCEEDED_MAX_LIMIT_30MB: Content-Length=36700160", err)
+        print("  [가드 1-A 통과] Content-Length 35MB 초과 시 413 즉시 차단 실측 성공")
+
+    def test_02_stream_chunk_exceeded_guard(self):
+        """[가드 1-B] 헤더 없이 청크 스트리밍 중 30MB 상한 도달 시 413 조기 차단 실측"""
+        # 테스트를 위해 상한을 50KB로 낮추어 실측
+        transport = RealDartHttpTransport(api_key="test_api_key", max_payload_bytes=50 * 1024)
+
+        mock_resp = MagicMock()
+        mock_resp.__enter__.return_value = mock_resp
+        mock_resp.getcode.return_value = 200
+        mock_resp.headers = {}  # Content-Length 없음
+        # 64KB 청크 반환 (50KB 상한 초과 유발)
+        mock_resp.read.side_effect = [b"A" * (64 * 1024), b""]
+
+        with patch("urllib.request.urlopen", return_value=mock_resp):
+            status, data, err = transport.fetch("20241025000551")
+
+        self.assertEqual(status, 413)
+        self.assertEqual(data, b"")
+        self.assertIn("PAYLOAD_EXCEEDED_MAX_LIMIT_30MB: stream exceeded 51200", err)
+        print("  [가드 1-B 통과] 스트림 누적 바이트 상한 초과 시 413 조기 차단 실측 성공")
+
+    def test_03_retry_sequence_429_503_200(self):
+        """[가드 2] 429 ➔ 503 ➔ 200 3회 시퀀스 재시도 및 최종 성공 실측"""
+        transport = RealDartHttpTransport(
+            api_key="test_api_key",
+            max_retries=3,
+            retry_backoff_base=0.001  # 테스트 속도를 위해 1ms 백오프
+        )
+
+        # 3회 호출 모의: 1차 429, 2차 503, 3차 200 OK
+        err_429 = HTTPError("http://dummy", 429, "Too Many Requests", {}, None)
+        err_503 = HTTPError("http://dummy", 503, "Service Unavailable", {}, None)
+
+        mock_resp_200 = MagicMock()
+        mock_resp_200.__enter__.return_value = mock_resp_200
+        mock_resp_200.getcode.return_value = 200
+        mock_resp_200.headers = {"Content-Length": str(len(self.sample_zip))}
+        mock_resp_200.read.side_effect = [self.sample_zip, b""]
+
+        with patch("urllib.request.urlopen", side_effect=[err_429, err_503, mock_resp_200]) as mock_urlopen:
+            status, data, err = transport.fetch("20241025000551")
+
+        self.assertEqual(status, 200)
+        self.assertEqual(data, self.sample_zip)
+        self.assertIsNone(err)
+        self.assertEqual(mock_urlopen.call_count, 3, "정확히 3회 시도 후 성공해야 함!")
+        print("  [가드 2 통과] 429 ➔ 503 ➔ 200 지수 백오프 시퀀스 재시도 성공 실측 완료")
+
+    def test_04_circuit_breaker_emergency_abort_on_5_failures(self):
         """[가드 3] 연속 5건 실패 시 서킷 브레이커 즉시 발동 및 잔여 작업 비상 중단 검증"""
         run_dir_base = os.path.join(self.test_base_dir, "test_circuit_breaker")
         mock_transport = MockDartTransport()
@@ -98,7 +159,6 @@ class TestBatchCollectorGuards(unittest.TestCase):
         run_id, run_dir, manifest_sha = collector.init_run(targets, run_id_prefix="cb_test")
         summary = collector.execute_batch(run_id, run_dir, manifest_sha, targets)
 
-        # 서킷 브레이커가 발동했는지 확인
         self.assertTrue(summary["circuit_breaker_tripped"], "서킷 브레이커 미발동!")
         self.assertEqual(summary["processed_count"], 5, "5건 실패 후 즉시 중단되지 않고 추가 실행됨!")
         self.assertIn("CIRCUIT_BREAKER_TRIGGERED", summary["abort_reason"])
@@ -119,66 +179,58 @@ class TestBatchCollectorGuards(unittest.TestCase):
 
         print("  [가드 3 통과] 연속 5건 실패 시 서킷 브레이커 즉시 발동 및 잔여 5건 호출 100% 차단 확인")
 
-    def test_03_lineage_and_deep_closure_audit(self):
-        """[가드 4 & 5] 영수증 내 run_id/manifest_sha 결속 및 심층 집계 감사 실측"""
-        run_dir_base = os.path.join(self.test_base_dir, "test_deep_audit")
+    def test_05_lineage_and_deep_closure_audit_success(self):
+        """[가드 4 & 5] 영수증 전수 열람 및 5대 일치 조건 충족 시 BATCH_VERIFIED_SUCCESS 실측"""
+        run_dir_base = os.path.join(self.test_base_dir, "test_deep_audit_success")
         mock_transport = MockDartTransport()
 
-        # 3개 정상 대상 준비
         targets = [
             {"rcept_no": "20241025000551", "expected_corp_code": "00126380", "expected_corp_name": "삼성전자"},
-            {"rcept_no": "20241025000552", "expected_corp_code": "00126380", "expected_corp_name": "삼성전자"},
-            {"rcept_no": "20241025000553", "expected_corp_code": "00126380", "expected_corp_name": "삼성전자"}
+            {"rcept_no": "20241025000552", "expected_corp_code": "00126380", "expected_corp_name": "삼성전자"}
         ]
         for t in targets:
             mock_transport.set_response(t["rcept_no"], 200, self.sample_zip)
 
-        collector = BatchCollector1500(
-            base_runs_dir=run_dir_base,
-            rate_limit_delay_sec=0.0,
-            transport=mock_transport
-        )
-
-        run_id, run_dir, manifest_sha = collector.init_run(targets, run_id_prefix="lineage_test")
+        collector = BatchCollector1500(base_runs_dir=run_dir_base, rate_limit_delay_sec=0.0, transport=mock_transport)
+        run_id, run_dir, manifest_sha = collector.init_run(targets, run_id_prefix="audit_ok_test")
         collector.execute_batch(run_id, run_dir, manifest_sha, targets)
 
-        # 1. 개별 영수증 내부 JSON 검사: run_id 및 input_manifest_sha256 결속 확인
-        manifests_dir = os.path.join(run_dir, "manifests")
-        receipt_files = os.listdir(manifests_dir)
-        self.assertEqual(len(receipt_files), 3)
-
-        for fn in receipt_files:
-            with open(os.path.join(manifests_dir, fn), "r", encoding="utf-8") as rf:
-                r_json = json.load(rf)
-            self.assertEqual(r_json["run_id"], run_id, "영수증 내 run_id 불일치!")
-            self.assertEqual(r_json["input_manifest_sha256"], manifest_sha, "영수증 내 manifest_sha 불일치!")
-
-        print("  [가드 4 통과] 모든 영수증 JSON 내 run_id 및 input_manifest_sha256 완전 결속 확인")
-
-        # 2. 종료 심층 집계 감사 실행
+        # 심층 감사 실행
         closure_report = run_batch_deep_closure_audit(run_dir)
 
         self.assertEqual(closure_report["run_id"], run_id)
-        self.assertEqual(closure_report["total_targets"], 3)
-        self.assertEqual(closure_report["stored_count"], 3)
-        self.assertEqual(closure_report["failed_count"], 0)
-        self.assertEqual(closure_report["metadata_match_count"], 3)
-        self.assertEqual(closure_report["metadata_match_rate_pct"], 100.0)
+        self.assertEqual(closure_report["total_targets"], 2)
+        self.assertEqual(closure_report["total_receipts_audited"], 2)
+        self.assertTrue(closure_report["all_run_ids_matched"])
+        self.assertTrue(closure_report["all_manifest_shas_matched"])
+        self.assertTrue(closure_report["all_rcept_nos_matched"])
+        self.assertTrue(closure_report["all_xml_hashes_matched"])
+        self.assertTrue(closure_report["all_corp_codes_matched"])
         self.assertEqual(closure_report["audit_verdict"], "BATCH_VERIFIED_SUCCESS")
 
-        # 세부 행별 심층 대조 확인
-        for row in closure_report["detailed_audits"]:
-            self.assertTrue(row["run_id_match"])
-            self.assertTrue(row["manifest_sha_match"])
-            self.assertTrue(row["rcept_no_match"])
-            self.assertTrue(row["xml_hash_match"])
-            self.assertTrue(row["corp_code_match"])
+        print("  [가드 4 & 5 통과] 영수증 전수 열람 및 5대 조건 전수 일치 시 BATCH_VERIFIED_SUCCESS 확인")
 
-        # batch_closure_manifest.json 디스크 존재 확인
-        closure_file = os.path.join(run_dir, "batch_closure_manifest.json")
-        self.assertTrue(os.path.exists(closure_file))
+    def test_06_deep_closure_audit_strictly_rejects_on_mismatch(self):
+        """[가드 5-반증] 법인코드 불일치 시 BATCH_AUDIT_REJECTED로 엄격 거부 실측"""
+        run_dir_base = os.path.join(self.test_base_dir, "test_deep_audit_reject")
+        mock_transport = MockDartTransport()
 
-        print("  [가드 5 통과] batch_closure_manifest 심층 집계 감사: 영수증 내부 값 전수 대조 100% 통과")
+        # 삼성전자 XML(00126380)을 반환하지만, 기대 법인코드가 99999999로 불일치하는 경우
+        targets = [
+            {"rcept_no": "20241025000551", "expected_corp_code": "99999999", "expected_corp_name": "가짜회사"}
+        ]
+        mock_transport.set_response("20241025000551", 200, self.sample_zip)
+
+        collector = BatchCollector1500(base_runs_dir=run_dir_base, rate_limit_delay_sec=0.0, transport=mock_transport)
+        run_id, run_dir, manifest_sha = collector.init_run(targets, run_id_prefix="reject_test")
+        collector.execute_batch(run_id, run_dir, manifest_sha, targets)
+
+        # 심층 감사 실행
+        closure_report = run_batch_deep_closure_audit(run_dir)
+
+        self.assertFalse(closure_report["all_corp_codes_matched"], "법인코드 불일치가 감지되어야 함!")
+        self.assertEqual(closure_report["audit_verdict"], "BATCH_AUDIT_REJECTED", "불일치 시 승인되면 안 됨!")
+        print("  [가드 5-반증 통과] 법인코드 불일치 시 BATCH_AUDIT_REJECTED로 엄격 거부 확인")
 
 
 if __name__ == "__main__":

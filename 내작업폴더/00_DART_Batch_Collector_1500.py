@@ -197,8 +197,14 @@ def run_batch_deep_closure_audit(run_dir: str) -> Dict[str, Any]:
     """
     배치 종료 심층 집계 감사:
     - input_manifest.json 읽기
-    - 1,500개 대상 각각에 대해 manifests/ 디렉토리의 영수증 JSON 내부 값을 전수 열람
-    - run_id, input_manifest_sha256, rcept_no, xml_sha256, extracted_corp_code == expected_corp_code 심층 대조
+    - 대상 1,500개 각각에 대해 manifests/ 디렉토리의 모든 영수증 JSON을 전수 열람 및 감사
+    - 필수 5대 판정 기준:
+      1. run_id 전수 일치
+      2. input_manifest_sha256 전수 일치
+      3. requested_rcept_no 전수 일치
+      4. 디스크 XML SHA-256 vs 영수증 xml_sha256 전수 일치
+      5. XML 추출 extracted_corp_code vs expected_corp_code 전수 일치
+    - BATCH_VERIFIED_SUCCESS 판정은 위 5대 조건 및 failed=0, quarantined=0, missing=0을 100% 충족할 때만 부여
     - batch_closure_manifest.json 최종 발행
     """
     input_manifest_path = os.path.join(run_dir, "input_manifest.json")
@@ -220,7 +226,14 @@ def run_batch_deep_closure_audit(run_dir: str) -> Dict[str, Any]:
     skipped_count = 0
     quarantined_count = 0
     failed_count = 0
+    missing_receipt_count = 0
     metadata_match_count = 0
+
+    all_run_ids_matched = True
+    all_manifest_shas_matched = True
+    all_rcept_nos_matched = True
+    all_xml_hashes_matched = True
+    all_corp_codes_matched = True
 
     all_receipt_files = os.listdir(manifests_dir) if os.path.exists(manifests_dir) else []
 
@@ -229,80 +242,134 @@ def run_batch_deep_closure_audit(run_dir: str) -> Dict[str, Any]:
         expected_code = target.get("expected_corp_code", "")
         expected_name = target.get("expected_corp_name", "")
 
-        # 매칭 영수증 탐색 (가장 최신 매니페스트)
-        matching_receipts = [f for f in all_receipt_files if rcept_no in f and f.endswith(".json")]
+        # 해당 접수번호의 모든 영수증 탐색 (1건 이상 필수)
+        matching_receipts = sorted([f for f in all_receipt_files if rcept_no in f and f.endswith(".json")])
         if not matching_receipts:
-            failed_count += 1
+            missing_receipt_count += 1
+            all_rcept_nos_matched = False
             audited_rows.append({
                 "rcept_no": rcept_no,
-                "audit_status": "MISSING_RECEIPT",
-                "receipt_found": False
+                "audit_verdict": "MISSING_RECEIPT",
+                "receipts_audited_count": 0,
+                "all_receipts_valid": False
             })
             continue
 
-        latest_receipt_fn = sorted(matching_receipts)[-1]
-        receipt_path = os.path.join(manifests_dir, latest_receipt_fn)
-        with open(receipt_path, "r", encoding="utf-8") as rf:
-            receipt = json.load(rf)
+        target_all_valid = True
+        receipts_detail = []
 
-        status = receipt.get("collection_status")
-        if status == "STORED":
-            stored_count += 1
-        elif status == "SKIPPED_LOCAL_PRESENT":
-            skipped_count += 1
-        elif "QUARANTINED" in str(status) or "CORRUPTED" in str(status):
-            quarantined_count += 1
-        else:
-            failed_count += 1
+        for r_fn in matching_receipts:
+            receipt_path = os.path.join(manifests_dir, r_fn)
+            with open(receipt_path, "r", encoding="utf-8") as rf:
+                receipt = json.load(rf)
 
-        # 혈통 및 내부 값 심층 검증
-        run_id_match = (receipt.get("run_id") == run_id)
-        manifest_sha_match = (receipt.get("input_manifest_sha256") == in_manifest_sha)
-        rcept_no_match = (receipt.get("requested_rcept_no") == rcept_no)
+            status = receipt.get("collection_status")
+            if status == "STORED":
+                stored_count += 1
+            elif status == "SKIPPED_LOCAL_PRESENT":
+                skipped_count += 1
+            elif "QUARANTINED" in str(status) or "CORRUPTED" in str(status):
+                quarantined_count += 1
+                target_all_valid = False
+            else:
+                failed_count += 1
+                target_all_valid = False
 
-        extracted_meta = receipt.get("extracted_metadata", {})
-        extracted_code = extracted_meta.get("extracted_corp_code", "")
-        extracted_name = extracted_meta.get("extracted_corp_name", "")
+            # 1. run_id 대조
+            r_run_id = receipt.get("run_id")
+            run_id_match = (r_run_id == run_id)
+            if not run_id_match:
+                all_run_ids_matched = False
+                target_all_valid = False
 
-        code_match = (extracted_code == expected_code) if expected_code else True
-        if code_match and (status in ["STORED", "SKIPPED_LOCAL_PRESENT"]):
+            # 2. input_manifest_sha256 대조
+            r_manifest_sha = receipt.get("input_manifest_sha256")
+            manifest_sha_match = (r_manifest_sha == in_manifest_sha)
+            if not manifest_sha_match:
+                all_manifest_shas_matched = False
+                target_all_valid = False
+
+            # 3. requested_rcept_no 대조
+            r_rcept_no = receipt.get("requested_rcept_no")
+            rcept_no_match = (r_rcept_no == rcept_no)
+            if not rcept_no_match:
+                all_rcept_nos_matched = False
+                target_all_valid = False
+
+            # 4. XML 파일 해시 대조 (STORED/SKIPPED인 경우 필수)
+            xml_hash_match = False
+            if status in ["STORED", "SKIPPED_LOCAL_PRESENT"]:
+                disk_xml_path = os.path.join(xml_dir, f"{rcept_no}.xml")
+                if os.path.exists(disk_xml_path):
+                    actual_xml_hash = compute_file_sha256(disk_xml_path)
+                    xml_hash_match = (actual_xml_hash == receipt.get("xml_sha256"))
+                if not xml_hash_match:
+                    all_xml_hashes_matched = False
+                    target_all_valid = False
+
+            # 5. 법인코드 대조
+            extracted_meta = receipt.get("extracted_metadata", {})
+            extracted_code = extracted_meta.get("extracted_corp_code", "")
+            code_match = (extracted_code == expected_code) if expected_code else True
+            if not code_match:
+                all_corp_codes_matched = False
+                target_all_valid = False
+
+            receipts_detail.append({
+                "receipt_file": r_fn,
+                "collection_status": status,
+                "run_id_match": run_id_match,
+                "manifest_sha_match": manifest_sha_match,
+                "rcept_no_match": rcept_no_match,
+                "xml_hash_match": xml_hash_match,
+                "corp_code_match": code_match
+            })
+
+        if target_all_valid:
             metadata_match_count += 1
-
-        # 디스크 XML과 영수증 해시 일치 검증
-        disk_xml_path = os.path.join(xml_dir, f"{rcept_no}.xml")
-        xml_hash_match = False
-        if os.path.exists(disk_xml_path):
-            actual_xml_hash = compute_file_sha256(disk_xml_path)
-            xml_hash_match = (actual_xml_hash == receipt.get("xml_sha256"))
 
         audited_rows.append({
             "rcept_no": rcept_no,
-            "collection_status": status,
-            "receipt_file": latest_receipt_fn,
-            "run_id_match": run_id_match,
-            "manifest_sha_match": manifest_sha_match,
-            "rcept_no_match": rcept_no_match,
-            "xml_hash_match": xml_hash_match,
             "expected_corp_code": expected_code,
-            "extracted_corp_code": extracted_code,
-            "corp_code_match": code_match
+            "expected_corp_name": expected_name,
+            "receipts_audited_count": len(matching_receipts),
+            "target_all_valid": target_all_valid,
+            "receipts": receipts_detail
         })
 
-    # 최종 batch_closure_manifest.json 발행
+    # 최종 엄격 판정 (5대 조건 전수 충족 필수)
+    is_strictly_verified = (
+        failed_count == 0 and
+        quarantined_count == 0 and
+        missing_receipt_count == 0 and
+        all_run_ids_matched and
+        all_manifest_shas_matched and
+        all_rcept_nos_matched and
+        all_xml_hashes_matched and
+        all_corp_codes_matched
+    )
+
     closure_manifest_path = os.path.join(run_dir, "batch_closure_manifest.json")
     closure_data = {
         "run_id": run_id,
         "audited_at_utc": datetime.now(timezone.utc).isoformat(),
         "input_manifest_sha256": in_manifest_sha,
         "total_targets": len(targets),
+        "total_receipts_audited": len(all_receipt_files),
         "stored_count": stored_count,
         "skipped_count": skipped_count,
         "quarantined_count": quarantined_count,
         "failed_count": failed_count,
+        "missing_receipt_count": missing_receipt_count,
+        "all_run_ids_matched": all_run_ids_matched,
+        "all_manifest_shas_matched": all_manifest_shas_matched,
+        "all_rcept_nos_matched": all_rcept_nos_matched,
+        "all_xml_hashes_matched": all_xml_hashes_matched,
+        "all_corp_codes_matched": all_corp_codes_matched,
         "metadata_match_count": metadata_match_count,
-        "metadata_match_rate_pct": round((metadata_match_count / max(1, stored_count + skipped_count)) * 100, 2),
-        "audit_verdict": "BATCH_VERIFIED_SUCCESS" if (failed_count == 0 and quarantined_count == 0) else "BATCH_PARTIAL_OR_FAILED",
-        "detailed_audits": audited_rows
+        "metadata_match_rate_pct": round((metadata_match_count / max(1, len(targets))) * 100, 2),
+        "audit_verdict": "BATCH_VERIFIED_SUCCESS" if is_strictly_verified else "BATCH_AUDIT_REJECTED",
+        "detailed_target_audits": audited_rows
     }
     atomic_write_bytes(closure_manifest_path, json.dumps(closure_data, ensure_ascii=False, indent=2).encode('utf-8'))
 
