@@ -152,7 +152,9 @@ def parse_shareholders_strict_v133(
     3. 데이터 행 병합 셀(ROWSPAN/COLSPAN) 임의 채우기 금지
     4. 소유형태 정규화 허용값 전체 일치(Exact Match) 및 복합문구 배제
     5. 3대 엔티티 교차 다의성(Cross-Type Ambiguity) 완전 배제
-    6. 후보 및 보류 행 전수에 원문 증거 위치(table_index, data_row_index, header_paths, raw_row_text, raw_row_hash) 결속
+    6. 후보 및 보류 행 전수에 원문 증거 위치(table_index, data_row_index, header_paths, inner HTML 원문 및 해시) 결속
+       - raw_table_hash: normalized_table_inner_html_hash
+       - raw_row_hash: normalized_row_inner_html_hash
     """
     xml_size_bytes = len(xml_bytes)
     xml_sha256 = hashlib.sha256(xml_bytes).hexdigest()
