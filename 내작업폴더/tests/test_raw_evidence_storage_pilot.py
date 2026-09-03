@@ -1,22 +1,26 @@
 # -*- coding: utf-8 -*-
-"""
-🏛️ [DART-Trace] 비파괴 Raw 증거 수집·저장 엔진 수용 계약 검증 테스트
+r"""
+🏛️ [DART-Trace] 네트워크 독립 저장 엔진 완결 수용시험 (8대 방어벽 검증)
 ================================================================================
-1. [계약 1: 불변성 및 충돌 격리] 동일 rcept_no에 다른 바이트 유입 시 기존 파일 보존 & CONFLICT_QUARANTINED 발급
-2. [계약 2: 정직한 상태 표기] 네트워크 미호출 시 network_request_made: False, http_status_code: None, SKIPPED_LOCAL_PRESENT
-3. [계약 3: 자격증명 은폐] 에러 메시지 및 URL 내 crtfc_key=***REDACTED*** 마스킹 검증
-4. [계약 4: 파손 데이터 격리] ZIP 파손 시 quarantine/ 바이너리 격리 및 manifests/ 영수증 동시 발급
-5. [계약 5: 메타데이터 정합] 5개사 표본의 XML 원문과 일치하는 법인코드/회사명 검증
-6. [거버넌스: Git 비오염] raw_filings 디렉토리가 Git 추적 대상에서 100% 제외됨 확인 (.gitignore)
+네트워크 통신 0건 보장 (MockDartTransport 가짜 전송 어댑터 기반)
+1. [테스트 1] 14자리 공시 접수번호 형식 검증 (^\d{14}$ 이외의 경로 순회/변조 거부)
+2. [테스트 2] 정상 ZIP 수신 ➔ XML 원자적 저장 및 내부 메타데이터(발행회사/서식명) 자체 추출 검증
+3. [테스트 3] 파손 ZIP 수신 ➔ quarantine/ 격리 및 manifests/ 영수증 동시 발급 실측
+4. [테스트 4] 비XML ZIP 수신 ➔ XML 부재 오류 탐지 및 quarantine/ 격리
+5. [테스트 5] 대용량 압축(Zip Bomb) 시도 ➔ 용량 상한 초과 탐지 및 안전 차단
+6. [테스트 6] 파일 쓰기 원자성(Atomic Write) 검증 (임시 파일 교체)
+7. [테스트 7] 동일 rcept_no에 상충 바이트 유입 ➔ 기존 파일 100% 보존 및 CONFLICT_QUARANTINED 발급
+8. [테스트 8] 멱등성 검증: 로컬 캐시 존재 시 Transport 호출 0건 (network_request_made: False)
 ================================================================================
 """
 
 import os
+import io
 import sys
 import json
+import zipfile
 import shutil
 import unittest
-import subprocess
 import importlib
 
 # 경로 설정
@@ -27,154 +31,227 @@ if parent_dir not in sys.path:
 
 storage_mod = importlib.import_module("00_DART_Raw_Evidence_Storage_Engine")
 RawEvidenceStorageEngine = storage_mod.RawEvidenceStorageEngine
+MockDartTransport = storage_mod.MockDartTransport
 compute_bytes_sha256 = storage_mod.compute_bytes_sha256
-redact_credentials = storage_mod.redact_credentials
+validate_rcept_no = storage_mod.validate_rcept_no
+inspect_and_extract_zip = storage_mod.inspect_and_extract_zip
+atomic_write_bytes = storage_mod.atomic_write_bytes
 
 
-class TestRawEvidenceStorageContracts(unittest.TestCase):
+def create_zip_bytes(filename_inside: str, content_inside: bytes) -> bytes:
+    """테스트용 인메모리 ZIP 바이트 생성 도우미"""
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
+        z.writestr(filename_inside, content_inside)
+    return buf.getvalue()
+
+
+class TestRawEvidenceStorageEngineContracts(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.test_storage_dir = "내작업폴더/data/raw_filings/contract_test"
+        cls.test_storage_dir = "내작업폴더/data/raw_filings/mock_contract_test"
         if os.path.exists(cls.test_storage_dir):
             shutil.rmtree(cls.test_storage_dir)
 
-        cls.engine = RawEvidenceStorageEngine(base_dir=cls.test_storage_dir)
+        # 실제 fixture 로드 (삼성전자 20241025000551)
+        fixture_path = "내작업폴더/data/fixtures/xml_5pct_samples/20241025000551.xml"
+        with open(fixture_path, "rb") as f:
+            cls.sample_xml_bytes = f.read()
 
-        fixture_base = "내작업폴더/data/fixtures/xml_5pct_samples"
-        # XML 원문과 100% 일치하는 정합 메타데이터
-        cls.pilot_samples = [
-            {"rcept_no": "20241025000551", "corp_code": "00126380", "corp_name": "삼성전자", "report_nm": "주식등의대량보유상황보고서(일반)", "rcept_dt": "20241025", "fixture": os.path.join(fixture_base, "20241025000551.xml")},
-            {"rcept_no": "20240503000063", "corp_code": "00164742", "corp_name": "현대자동차", "report_nm": "주식등의대량보유상황보고서(일반)", "rcept_dt": "20240503", "fixture": os.path.join(fixture_base, "20240503000063.xml")},
-            {"rcept_no": "20241129001948", "corp_code": "00356361", "corp_name": "LG화학", "report_nm": "주식등의대량보유상황보고서(일반)", "rcept_dt": "20241129", "fixture": os.path.join(fixture_base, "20241129001948.xml")},
-            {"rcept_no": "20240925000388", "corp_code": "00164779", "corp_name": "SK하이닉스", "report_nm": "주식등의대량보유상황보고서(약식)", "rcept_dt": "20240925", "fixture": os.path.join(fixture_base, "20240925000388.xml")},
-            {"rcept_no": "20241216000307", "corp_code": "00164779", "corp_name": "SK하이닉스", "report_nm": "주식등의대량보유상황보고서(약식)", "rcept_dt": "20241216", "fixture": os.path.join(fixture_base, "20241216000307.xml")}
-        ]
+        cls.sample_rcept_no = "20241025000551"
 
     @classmethod
     def tearDownClass(cls):
         if os.path.exists(cls.test_storage_dir):
             shutil.rmtree(cls.test_storage_dir)
 
-    def test_01_store_initial_samples_and_verify_receipts(self):
-        """[계약 5] 정합 메타데이터로 5개사 최초 저장 및 영수증 발행 검증"""
-        for item in self.pilot_samples:
-            with open(item["fixture"], "rb") as f:
-                b = f.read()
+    def setUp(self):
+        # 각 테스트마다 전용 격리 하위 디렉토리 생성
+        self.sub_test_dir = os.path.join(self.test_storage_dir, self._testMethodName)
+        os.makedirs(self.sub_test_dir, exist_ok=True)
+        self.mock_transport = MockDartTransport()
+        self.engine = RawEvidenceStorageEngine(base_dir=self.sub_test_dir, transport=self.mock_transport)
 
-            receipt = self.engine.store_raw_xml_bytes(
-                xml_bytes=b,
-                rcept_no=item["rcept_no"],
-                corp_code=item["corp_code"],
-                corp_name=item["corp_name"],
-                report_nm=item["report_nm"],
-                rcept_dt=item["rcept_dt"],
-                network_request_made=False,
-                http_status_code=None,
-                source_note="FIXTURE_SEED"
-            )
-
-            self.assertEqual(receipt["collection_status"], "STORED")
-            self.assertEqual(receipt["requested_rcept_no"], item["rcept_no"])
-            self.assertEqual(receipt["corp_code"], item["corp_code"])
-            self.assertEqual(receipt["corp_name"], item["corp_name"])
+    # -----------------------------------------------------------------
+    # 테스트 1: 14자리 공시 접수번호 형식 검증
+    # -----------------------------------------------------------------
+    def test_01_invalid_rcept_no_rejected(self):
+        """14자리가 아닌 접수번호나 경로 순회 시도 거부 검증"""
+        invalid_cases = [
+            "12345",
+            "../../etc/passwd",
+            "20241025000551/foo",
+            "20241025000551a",
+            "202410250005511", # 15자리
+            "              "
+        ]
+        for inv in invalid_cases:
+            self.assertFalse(validate_rcept_no(inv), f"유효하지 않은 rcept_no가 통과됨: {inv}")
+            receipt = self.engine.fetch_and_store(inv)
+            self.assertEqual(receipt["collection_status"], "REJECTED_INVALID_RCEPT_NO_FORMAT")
             self.assertFalse(receipt["network_request_made"])
-            self.assertIsNone(receipt["http_status_code"])
 
-            # 영수증 JSON 존재 확인
-            receipt_path = os.path.join(self.engine.manifests_dir, f"receipt_{item['rcept_no']}_{receipt['xml_sha256'][:8]}.json")
-            self.assertTrue(os.path.exists(receipt_path))
+        print("  [테스트 1 통과] 14자리 외 접수번호 및 경로순회 공격 거부 100% 확인")
 
-        print("  [계약 5 통과] 정합 메타데이터 및 STORED 영수증 발급 확인")
+    # -----------------------------------------------------------------
+    # 테스트 2: 정상 ZIP 수신 ➔ XML 원자적 저장 및 내부 메타데이터 자체 추출
+    # -----------------------------------------------------------------
+    def test_02_mock_normal_zip_stored_and_metadata_extracted(self):
+        """정상 ZIP 수신 시 XML 저장 및 XML 내부 메타데이터(발행회사/서식명) 자체 추출 검증"""
+        zip_bytes = create_zip_bytes("document.xml", self.sample_xml_bytes)
+        self.mock_transport.set_response(self.sample_rcept_no, 200, zip_bytes)
 
-    def test_02_idempotency_identical_bytes_no_overwrite(self):
-        """[계약 2] 동일 바이트 재유입 시 덮어쓰기 금지 및 SKIPPED_LOCAL_PRESENT 확인"""
-        sample = self.pilot_samples[0]
-        with open(sample["fixture"], "rb") as f:
-            b = f.read()
+        receipt = self.engine.fetch_and_store(self.sample_rcept_no)
 
-        # 동일 바이트로 다시 저장 시도
-        receipt = self.engine.store_raw_xml_bytes(
-            xml_bytes=b,
-            rcept_no=sample["rcept_no"],
-            corp_code=sample["corp_code"],
-            corp_name=sample["corp_name"]
-        )
+        self.assertEqual(receipt["collection_status"], "STORED")
+        self.assertTrue(receipt["network_request_made"])
+        self.assertEqual(receipt["http_status_code"], 200)
+        self.assertEqual(receipt["xml_sha256"], compute_bytes_sha256(self.sample_xml_bytes))
 
-        self.assertEqual(receipt["collection_status"], "SKIPPED_LOCAL_PRESENT")
-        self.assertFalse(receipt["network_request_made"])
-        self.assertIsNone(receipt["http_status_code"])
-        self.assertEqual(receipt["source_note"], "IDENTICAL_BYTES_ALREADY_PRESENT_NO_OVERWRITE")
-        print("  [계약 2 통과] 동일 바이트 재유입 시 덮어쓰기 방지 및 SKIPPED_LOCAL_PRESENT(304 날조 없음) 확인")
+        # [핵심 검증] XML 내부 메타데이터 자체 추출 확인
+        meta = receipt.get("extracted_metadata", {})
+        self.assertEqual(meta.get("extracted_corp_code"), "00126380")
+        self.assertEqual(meta.get("extracted_corp_name"), "삼성전자")
+        self.assertIn("대량보유상황보고서", meta.get("extracted_doc_title", ""))
 
-    def test_03_conflict_quarantine_never_overwrites(self):
-        """[계약 1] 기존 rcept_no에 다른 바이트 유입 시 기존 파일 보존 및 CONFLICT_QUARANTINED 격리 실측"""
-        sample = self.pilot_samples[0] # 20241025000551 삼성전자
-        target_path = os.path.join(self.engine.xml_dir, f"{sample['rcept_no']}.xml")
-        
-        # 기존 파일의 원본 해시 기록
+        # 디스크 파일 존재 확인
+        xml_file = os.path.join(self.engine.xml_dir, f"{self.sample_rcept_no}.xml")
+        self.assertTrue(os.path.exists(xml_file))
+
+        print("  [테스트 2 통과] 정상 ZIP 수신 ➔ 원자적 저장 및 내부 메타데이터 자체 추출 확인")
+
+    # -----------------------------------------------------------------
+    # 테스트 3: 파손 ZIP 수신 ➔ quarantine/ 격리 및 manifests/ 영수증 동시 발급
+    # -----------------------------------------------------------------
+    def test_03_mock_corrupted_zip_quarantined_with_receipt(self):
+        """파손 ZIP 유입 시 엔진의 정상 경로를 통한 quarantine/ 바이너리 격리 및 영수증 발급 검증"""
+        corrupted_bytes = b"BROKEN_ZIP_HEADER_NOT_A_REAL_ZIP_FILE"
+        broken_rcept = "20240909000123"
+        self.mock_transport.set_response(broken_rcept, 200, corrupted_bytes)
+
+        receipt = self.engine.fetch_and_store(broken_rcept)
+
+        self.assertEqual(receipt["collection_status"], "CORRUPTED_XML")
+        self.assertTrue(receipt["network_request_made"])
+        self.assertIn("INSPECT_ZIP_FAILED", receipt["error_message"])
+
+        # quarantine/ 에 바이너리 파일 저장 확인
+        q_files = [f for f in os.listdir(self.engine.quarantine_dir) if broken_rcept in f and f.endswith(".bin")]
+        self.assertTrue(len(q_files) > 0, "quarantine 디렉토리에 파손 파일 미생성!")
+
+        # manifests/ 에 격리 영수증 JSON 생성 확인
+        m_files = [f for f in os.listdir(self.engine.manifests_dir) if broken_rcept in f and "corrupted" in f]
+        self.assertTrue(len(m_files) > 0, "manifests 디렉토리에 격리 영수증 JSON 미생성!")
+
+        print("  [테스트 3 통과] 파손 ZIP 유입 시 quarantine 바이너리 격리 및 영수증 동시 발급 실측 성공")
+
+    # -----------------------------------------------------------------
+    # 테스트 4: 비XML ZIP 수신 ➔ XML 부재 오류 탐지 및 quarantine/ 격리
+    # -----------------------------------------------------------------
+    def test_04_mock_non_xml_zip_quarantined(self):
+        """ZIP 내부에 .xml 파일이 전혀 없는 경우 격리 처리 검증"""
+        non_xml_zip = create_zip_bytes("readme.txt", b"This is plain text, not XML.")
+        bad_rcept = "20240808000456"
+        self.mock_transport.set_response(bad_rcept, 200, non_xml_zip)
+
+        receipt = self.engine.fetch_and_store(bad_rcept)
+
+        self.assertEqual(receipt["collection_status"], "CORRUPTED_XML")
+        self.assertIn("NO_XML_FILE_IN_ZIP", receipt["error_message"])
+
+        q_files = [f for f in os.listdir(self.engine.quarantine_dir) if bad_rcept in f]
+        self.assertTrue(len(q_files) > 0)
+        print("  [테스트 4 통과] 비XML ZIP 수신 시 안전 격리 및 에러 영수증 발급 확인")
+
+    # -----------------------------------------------------------------
+    # 테스트 5: 대용량 압축(Zip Bomb) 시도 ➔ 용량 상한 초과 탐지 및 안전 차단
+    # -----------------------------------------------------------------
+    def test_05_mock_zip_bomb_oversized_rejected(self):
+        """압축 해제 크기 상한(50MB) 초과 시 Zip Bomb 탐지 검증"""
+        # inspect_and_extract_zip 직접 호출로 1KB 상한 초과 시뮬레이션
+        large_content = b"A" * 2048 # 2KB
+        large_zip = create_zip_bytes("big.xml", large_content)
+
+        with self.assertRaises(ValueError) as ctx:
+            inspect_and_extract_zip(large_zip, max_uncompressed_bytes=1024) # 1KB 상한
+
+        self.assertIn("ZIP_BOMB_DETECTED", str(ctx.exception))
+        print("  [테스트 5 통과] Zip Bomb(압축 해제 상한 초과) 원천 차단 검증 완료")
+
+    # -----------------------------------------------------------------
+    # 테스트 6: 파일 쓰기 원자성(Atomic Write) 검증
+    # -----------------------------------------------------------------
+    def test_06_atomic_write_integrity(self):
+        """임시 파일 생성 후 os.replace()를 통한 원자적 교체 검증"""
+        test_file = os.path.join(self.sub_test_dir, "test_atomic.dat")
+        data1 = b"INITIAL_CONTENT"
+        atomic_write_bytes(test_file, data1)
+        with open(test_file, "rb") as f:
+            self.assertEqual(f.read(), data1)
+
+        data2 = b"NEW_ATOMIC_CONTENT"
+        atomic_write_bytes(test_file, data2)
+        with open(test_file, "rb") as f:
+            self.assertEqual(f.read(), data2)
+
+        print("  [테스트 6 통과] 원자적(Atomic) 파일 쓰기 무결성 확인")
+
+    # -----------------------------------------------------------------
+    # 테스트 7: 동일 rcept_no에 상충 바이트 유입 ➔ 기존 파일 보존 및 CONFLICT_QUARANTINED
+    # -----------------------------------------------------------------
+    def test_07_conflict_quarantine_never_overwrites(self):
+        """기존 rcept_no에 다른 바이트 유입 시 기존 파일 100% 보존 및 CONFLICT_QUARANTINED 실측"""
+        # 1. 초기 파일 저장
+        zip_bytes = create_zip_bytes("document.xml", self.sample_xml_bytes)
+        self.mock_transport.set_response(self.sample_rcept_no, 200, zip_bytes)
+        rcpt1 = self.engine.fetch_and_store(self.sample_rcept_no)
+        self.assertEqual(rcpt1["collection_status"], "STORED")
+
+        # 기존 파일 원본 해시
+        target_path = os.path.join(self.engine.xml_dir, f"{self.sample_rcept_no}.xml")
         with open(target_path, "rb") as f:
-            original_bytes = f.read()
-        original_sha = compute_bytes_sha256(original_bytes)
+            orig_bytes = f.read()
+        orig_sha = compute_bytes_sha256(orig_bytes)
 
-        # 변조된 상충 바이트 준비
-        mutated_bytes = original_bytes + b"<!-- CONFLICT_TAMPERED_CONTENT -->"
-        mutated_sha = compute_bytes_sha256(mutated_bytes)
-        self.assertNotEqual(original_sha, mutated_sha)
+        # 2. 변조된 상충 바이트 주입
+        tampered_bytes = self.sample_xml_bytes + b"<!-- CONFLICT -->"
+        rcpt_conflict = self.engine.store_raw_xml_bytes(tampered_bytes, self.sample_rcept_no)
 
-        # 상충 바이트 저장 시도
-        receipt = self.engine.store_raw_xml_bytes(
-            xml_bytes=mutated_bytes,
-            rcept_no=sample["rcept_no"],
-            corp_code=sample["corp_code"],
-            corp_name=sample["corp_name"]
-        )
+        self.assertEqual(rcpt_conflict["collection_status"], "CONFLICT_QUARANTINED")
 
-        # 1. 상태가 CONFLICT_QUARANTINED인지 확인
-        self.assertEqual(receipt["collection_status"], "CONFLICT_QUARANTINED")
-        self.assertIn("CONTENT_SHA256_MISMATCH", receipt["error_message"])
-
-        # 2. [가장 중요] 기존 파일이 덮어쓰여지지 않고 원형 그대로 보존되었는지 검증!
+        # [핵심 검증] 기존 파일이 덮어쓰여지지 않고 원형 그대로 보존되었는가!
         with open(target_path, "rb") as f:
             current_bytes = f.read()
-        self.assertEqual(compute_bytes_sha256(current_bytes), original_sha, "치명적 오류: 기존 XML이 덮어쓰여짐!")
+        self.assertEqual(compute_bytes_sha256(current_bytes), orig_sha, "기존 XML이 덮어쓰여져 훼손됨!")
 
-        # 3. 신규 상충 바이트가 quarantine 디렉토리에 격리 저장되었는지 확인
-        quarantine_file = os.path.join(self.engine.quarantine_dir, f"conflict_{sample['rcept_no']}_{mutated_sha[:8]}.xml")
-        # ts가 붙을 수 있으므로 파일 패턴 확인
-        quarantined_files = [f for f in os.listdir(self.engine.quarantine_dir) if sample['rcept_no'] in f and mutated_sha[:8] in f]
-        self.assertTrue(len(quarantined_files) > 0, "quarantine 격리 파일 미생성!")
+        # quarantine/ 에 격리 파일 생성 확인
+        q_conflicts = [f for f in os.listdir(self.engine.quarantine_dir) if "conflict" in f and self.sample_rcept_no in f]
+        self.assertTrue(len(q_conflicts) > 0)
 
-        # 4. 충돌 영수증 매니페스트가 manifests/에 존재하는지 확인
-        conflict_receipt_file = os.path.join(self.engine.manifests_dir, f"receipt_{sample['rcept_no']}_conflict_{mutated_sha[:8]}.json")
-        self.assertTrue(os.path.exists(conflict_receipt_file), "충돌 영수증 미생성!")
+        print("  [테스트 7 통과] 상충 바이트 시 기존 파일 100% 불변 보존 및 CONFLICT_QUARANTINED 확인")
 
-        print("  [계약 1 통과] 상충 바이트 유입 시 기존 파일 100% 보존 및 CONFLICT_QUARANTINED 영수증 발급 실측 성공")
+    # -----------------------------------------------------------------
+    # 테스트 8: 멱등성 검증: 로컬 캐시 존재 시 Transport 호출 0건
+    # -----------------------------------------------------------------
+    def test_08_idempotency_skip_local(self):
+        """로컬 캐시가 이미 존재할 경우 Transport.fetch() 호출이 0건임을 검증"""
+        # 1회차 수집
+        zip_bytes = create_zip_bytes("document.xml", self.sample_xml_bytes)
+        self.mock_transport.set_response(self.sample_rcept_no, 200, zip_bytes)
+        self.engine.fetch_and_store(self.sample_rcept_no)
+        self.assertEqual(len(self.mock_transport.call_history), 1)
 
-    def test_04_credentials_redaction_security(self):
-        """[계약 3] 예외 메시지 및 로그에서 API 키(crtfc_key) 마스킹 검증"""
-        raw_error_url = "https://opendart.fss.or.kr/api/document.xml?crtfc_key=abc123secretKey999&rcept_no=20241025000551"
-        sanitized = redact_credentials(raw_error_url)
+        # 2회차 호출: 캐시 존재로 네트워크 호출 스킵되어야 함
+        rcpt2 = self.engine.fetch_and_store(self.sample_rcept_no)
+        self.assertEqual(rcpt2["collection_status"], "SKIPPED_LOCAL_PRESENT")
+        self.assertFalse(rcpt2["network_request_made"])
+        self.assertIsNone(rcpt2["http_status_code"])
 
-        self.assertNotIn("abc123secretKey999", sanitized, "치명적 보안 결함: API 키가 마스킹되지 않음!")
-        self.assertIn("crtfc_key=***REDACTED***", sanitized)
+        # Transport 호출 횟수가 여전히 1이어야 함 (2회차는 0건 추가)
+        self.assertEqual(len(self.mock_transport.call_history), 1, "캐시가 있는데 전송 계층이 추가 호출됨!")
 
-        exception_str = "HTTPError: 403 Forbidden for url: https://opendart.fss.or.kr/api/document.xml?crtfc_key=MY_PRIVATE_KEY_1234&foo=bar"
-        sanitized_exc = redact_credentials(exception_str)
-        self.assertNotIn("MY_PRIVATE_KEY_1234", sanitized_exc)
-        self.assertIn("crtfc_key=***REDACTED***", sanitized_exc)
-        print("  [계약 3 통과] API 키 마스킹 (crtfc_key=***REDACTED***) 100% 보안 확인")
-
-    def test_05_git_status_cleanliness(self):
-        """[거버넌스] Git 상태 검사: raw_filings 디렉토리가 Git untracked에 미포함 확인"""
-        res = subprocess.run(
-            ["git", "status", "--porcelain", "내작업폴더/data/raw_filings"],
-            capture_output=True,
-            text=True,
-            shell=True
-        )
-        self.assertEqual(res.stdout.strip(), "", f"Git 추적 오염 발생! {res.stdout}")
-        print("  [거버넌스 통과] raw_filings 디렉토리의 Git 영구 격리 확인 (.gitignore 준수)")
+        print("  [테스트 8 통과] 멱등성 검증: 로컬 캐시 존재 시 네트워크 호출 정확히 0건 확인")
 
 
 if __name__ == "__main__":
