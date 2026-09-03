@@ -1,15 +1,15 @@
 # 🏛️ [DART-Trace v0.4] 변조 탐지 실행 매니페스트 및 감사 영수증 아키텍처 명세서
 **문서 식별자:** `DART-TRACE-ARCH-20260903-MANIFEST`  
-**문서 버전:** `v1.2.1` (DRY_RUN 프레임워크 설계 기준 명세서 - 혈통 모델 분리)  
+**문서 버전:** `v1.3.0` (2D 헤더 그리드 및 4대 독립 팩트 검증 규격)  
 **작성일자:** `2026-09-03`  
-**상태:** `APPROVED_DRY_RUN_DESIGN_STANDARD`  
+**상태:** `APPROVED_ENTERPRISE_STANDARD`  
 
 ---
 
 ## 1. 아키텍처 개요 및 제정 목적
 본 문서는 DART 지식그래프의 인제스천(Ingestion), 갱신(Update), 논리적 격리(Quarantine) 과정에서 발생할 수 있는 **임의의 데이터 오염, 원천 파괴적 쓰기(DELETE), 사후 추정성 감사, 비정상 프로세스 종료 시 고아 쓰기(Orphan Write)**를 방지하고 탐지·재조정하기 위한 **[변조 탐지 가능한 3대 감사 영수증 아키텍처(Tamper-evident Triple-Receipt Architecture)]**를 규정합니다.
 
-본 문서는 실제 WRITE 프로토타입 개발 전, **[DRY_RUN 파서 프레임워크 설계 기준]**으로 동결 적용됩니다.
+특히 본 버전(`v1.3.0`)에서는 고정 열 인덱스 가정과 속성 간 상호 추정을 영구 배제하기 위한 **[2D 헤더 그리드 동적 매핑 규격]** 및 **[4대 독립 팩트 검증 규격]**을 명문화합니다.
 
 ---
 
@@ -30,124 +30,85 @@
 - [PREPARED → DB COMMITTED → RECEIPT FINALIZED] 상태 머신을 통과하며,
   커밋 직후 비정상 종료되더라도 고아 쓰기를 '탐지 및 자동 재조정(Reconciliation)' 가능하도록 보장합니다.
 
-[규칙 4] 원문 필드 미확인 = DB 적재 대신 skipped_records 기록
-- 주식종류, 의결권, 기준일, 지분율 등 필수 메타데이터 중 단 하나라도 공시 원문 팩트에서 검증되지 않으면,
-  어떠한 기본값(fallback)도 주입하지 않고 매니페스트의 skipped_records에만 사유와 함께 기록하고 DB 적재를 보류합니다.
+[규칙 4] 4대 독립 팩트 미확인 = DB 적재 대신 skipped_records 기록 (0건 WRITE 정상성 원칙)
+- 주식종류(share_class), 의결권(voting_type), 소유형태(ownership_basis), 엔티티PK 등 4대 메타데이터 중
+  단 하나라도 공시 원문의 독립적 문구로 입증되지 않거나 마스터 1:1 매핑에 실패하면,
+  어떠한 기본값(fallback)도 주입하지 않고 매니페스트의 skipped_records에만 사유와 함께 기록합니다.
+- 원문 표에 독립적 법률 증거 필드가 없어 '0건의 WRITE 후보'가 도출되더라도, 이는 실패가 아니라 완벽한 무결성 성공으로 간주합니다.
 ```
 
 ---
 
-## 3. 3대 문서 경계 및 영수증 혈통 모델 (Receipt Lineage Model)
+## 3. 2D 헤더 그리드 동적 매핑 규격 (Dynamic Header Grid Specification)
 
 ```mermaid
 flowchart TD
-    subgraph Step1 ["1. 사전 계획 및 시뮬레이션"]
-        M["📋 1. execution_manifest\n• DRY_RUN 결과\n• 입력 XML SHA-256 및 xml_size_bytes\n• Git Commit & DB Instance ID\n• 생성/갱신/보류(skipped) 예정 목록"]
+    subgraph HeaderGrid ["2D 헤더 매트릭스 전개 알고리즘"]
+        H1["1. <TH> 태그별 ROWSPAN, COLSPAN 추출"]
+        H2["2. 2차원 그리드(행 x 열)에 셀 텍스트를 물리적 점유 영역으로 전개"]
+        H3["3. 각 컬럼 인덱스(j)의 수직 경로 수집 ➔ Header Path 복원\n예: j=6 ➔ ['소유주식수 및 지분율', '기 말', '지분율']"]
+        H1 --> H2 --> H3
     end
 
-    subgraph Step2 ["2. 내고장성 상태 머신 & 2중 영수증 속성 분리"]
-        W1["RECEIPT PREPARED (초안 디스크 선행 기록)"]
-        W2["DB COMMITTED\n• r.created_by_receipt_id (최초 생성, 불변)\n• r.last_write_receipt_id (최종 변경, 갱신 가능)"]
-        W3["RECEIPT FINALIZED (최종 영수증 서명 봉인)"]
-        W1 --> W2 --> W3
+    subgraph DynamicMapping ["동적 열 인덱스 확정"]
+        H3 --> M1["Header Path 기반 동적 인덱스 탐색\n• holder_col = path에 '성명' 포함된 열\n• stake_col = path에 '기말'과 '지분율' 포함된 열"]
+        M1 --> M2["고정 열 인덱스(0,1,2,5,6) 하드코딩 영구 금지"]
     end
-
-    subgraph Step3 ["3. 단일 트랜잭션 논리적 격리 (Atomic Quarantine)"]
-        Q["🔒 3. quarantine_receipt\n• 다차원 복합 키(edge_key + last_write_receipt_id + run_id) 매칭\n• 단일 트랜잭션 내 행 수 불변 일치 검증(quarantined == expected)\n• 불일치 시 tx.rollback() 즉시 전면 취소"]
-    end
-
-    Step1 -->|명시적 --commit 승인| W1
-    W3 -.->|결함 감지 시 원자적 복합 격리| Q
 ```
 
-### 3.1. `execution_manifest` (실행 매니페스트)
-* **생성 시점:** DRY_RUN 및 WRITE 실행 전 준비 단계
-* **주요 필드:**
-  * `manifest_id`: 고유 식별자 (`MANIFEST_YYYYMMDD_RUNXX`)
-  * `status`: `DRY_RUN` | `READY_FOR_COMMIT`
-  * `git_commit`: 실행 시점의 Git Commit SHA-1
-  * `database_instance_id`: 타겟 Neo4j Aura 인스턴스 ID (예: `a8a048c8`)
-  * `input_documents`: 각 `rcept_no`별 원문 XML 파일명, **`xml_size_bytes`**, SHA-256 해시
-  * `planned_creations`: 생성 예정 관계 목록
-  * `planned_updates`: 갱신 예정 관계 목록
-  * `skipped_records`: 원문 미확인/결측으로 인해 적재 보류된 원문 행 및 보류 사유
-
-### 3.2. `write_receipt` (쓰기 영수증 및 2중 영수증 혈통 속성)
-본 규격을 준수하는 파이프라인(`v0.5.0+`)이 생성 또는 변경하는 관계는 영수증과의 연결을 위해 **최초 생성 영수증과 최종 변경 영수증을 엄격히 분리**하여 기록합니다:
-
-```cypher
-MERGE (holder)-[r:OWNS_STAKE {source_edge_key: $edge_key}]->(target)
-ON CREATE SET
-    r.created_by_receipt_id = $receipt_id,  // 최초 생성 영수증 (불변 영구 보존)
-    r.created_at = datetime()
-SET
-    r.last_write_receipt_id = $receipt_id,  // 마지막 변경 영수증 (갱신 시 업데이트)
-    r.updated_at = datetime()
-```
-
-* **적용 범위 한정 원칙**:
-  * 본 영수증 속성은 **본 규격을 적용한 파이프라인이 생성·변경한 관계에만 부여**되며, 기존 레거시 관계에 사후 임의 백필하지 않습니다.
-* **영수증 상태 머신 (고아 쓰기 탐지/재조정)**:
-  1. `PREPARED`: DB 트랜잭션 전 영수증 초안 선행 디스크 기록.
-  2. `DB COMMITTED`: Neo4j Aura DB 트랜잭션 완료.
-  3. `FINALIZED`: 실제 영향 행 수 및 변경 전/후 상태 해시를 기록하여 최종 봉인.
-
-### 3.3. `quarantine_receipt` (원자적 논리적 격리 영수증)
-* **다차원 복합 키 대상화**:
-  ```cypher
-  UNWIND $targeted_items AS item
-  MATCH ()-[r:OWNS_STAKE {
-      source_edge_key: item.source_edge_key,
-      last_write_receipt_id: item.write_receipt_id,
-      ingestion_run_id: item.ingestion_run_id
-  }]->()
-  SET r.verification_status = 'UNVERIFIED_QUARANTINE',
-      r.is_current = false,
-      r.quarantine_receipt_id = $quarantine_receipt_id,
-      r.quarantined_at = datetime()
-  RETURN count(r) AS quarantined_count;
-  ```
-* **단일 트랜잭션 원자적 가드 (Atomic Guard)**:
-  * 하나의 애플리케이션 트랜잭션(`session.begin_transaction()`) 내에서 실행하며,
-  * `quarantined_count == expected_count`가 일치하지 않으면 즉시 `tx.rollback()`을 호출하여 부분 격리를 원천 차단합니다.
+### 3.1. 2D 그리드 복원 알고리즘
+1. 표의 헤더 행 수 $R$과 총 열 수 $C$를 산출하고, $R \times C$ 크기의 2차원 빈 배열 `grid[r][c]`를 할당합니다.
+2. 각 행 $r$의 `<TH>` 셀을 순회하며:
+   * 이미 상위 행의 `ROWSPAN`에 의해 점유된 열을 건너뛰고 비어 있는 첫 번째 열 $c$를 찾습니다.
+   * 셀의 `rowspan = s_r`, `colspan = s_c`에 해당하는 영역 `grid[r .. r+s_r-1][c .. c+s_c-1]`에 셀 텍스트를 채웁니다.
+3. 각 열 $c \in [0, C-1]$에 대해 위에서 아래로 중복을 제거한 텍스트 리스트를 수집하여 `header_paths[c]`를 구성합니다.
+4. **엄격 헤더 경로 매칭**:
+   * 성명 열: `header_paths[c]`에 `성명` 또는 `성 명`이 포함된 열
+   * 기말 지분율 열: `header_paths[c]`에 `기말`(또는 `기 말`)과 `지분율`이 모두 포함된 열
+   * 기말 주식수 열: `header_paths[c]`에 `기말`(또는 `기 말`)과 `주식수`가 모두 포함된 열
+   * 주식 종류 열: `header_paths[c]`에 `주식의종류`가 포함된 열
+5. 위 필수 열 중 단 하나라도 고유하게 매핑되지 않으면, 해당 표는 파싱을 중단하고 `skipped_records`(`UNVERIFIED_HEADER_GRID_LAYOUT`)로 분류합니다.
 
 ---
 
-## 4. 해시 체인 블록 규격 및 불변 앵커링 (Hash Chain & Anchoring)
+## 4. 4대 독립 팩트 검증 및 마스터 Provider 규격
 
-### 4.1. 해시 체인 블록 직렬화 포맷 (Deterministic Block Format)
-```text
-block_payload = f"{block_index}\n{prev_hash}\n{timestamp}\n{canonical_json_sha256}"
-current_block_hash = sha256(block_payload.encode('utf-8')).hexdigest()
+```mermaid
+flowchart LR
+    subgraph MasterProvider ["3대 엔티티 Exact-Match Provider"]
+        P1["Company: corp_code exact-match"]
+        P2["Person: global_person_id exact-match"]
+        P3["Organization: org_id exact-match"]
+    end
+
+    subgraph FactIndependence ["독립 팩트 원칙 (상호 추정 배제)"]
+        F1["주식 종류 != 의결권 (보통주여도 의결권 독립 문구 필요)"]
+        F2["관계명 != 소유 형태 (최대주주 본인이어도 직접소유 독립 증거 필요)"]
+    end
+
+    MasterProvider --> FactIndependence
 ```
-* `block_index`: 0부터 시작하는 단조 증가 정수
-* `prev_hash`: 직전 블록의 `current_block_hash` (제네시스 블록은 `0`*64)
-* `canonical_json_sha256`: RFC 8785 표준 키 정렬 후 산출된 SHA-256
 
-### 4.2. Truncation 방어를 위한 외부 앵커링 및 Fail-Closed 정책
-* 매 블록 생성 시 `current_block_hash`를 **Git 서명 커밋(Signed Tag/Commit) 및 외부 WORM/보호 브랜치에 즉시 기록(Anchoring)**합니다.
-* **Fail-Closed 정책**: 외부 앵커링 또는 WORM 저장에 실패할 경우, 다음 WRITE 배치는 즉시 실행을 중단합니다.
+### 4.1. 3대 공인 엔티티 Exact-Match Provider
+* `ExistingEdgeProvider`는 단일 회사가 아닌 3대 엔티티 마스터의 정확 일치를 지원해야 합니다:
+  * `resolve_company(name_or_code) -> Optional[corp_code]`
+  * `resolve_person(name, resident_no_or_id) -> Optional[global_person_id]`
+  * `resolve_organization(name_or_id) -> Optional[org_id]`
+* 마스터에 존재하지 않는 주체는 **`planned_creations` 진입을 영구 금지**하며, 반드시 `skipped_records`(`UNRESOLVED_MASTER_ENTITY`)로 격리합니다.
+
+### 4.2. 팩트 독립성 원칙 (No Cross-Field Inferences)
+1. **주식 종류(`share_class`) vs 의결권(`voting_type`)**:
+   * 원문에 "보통주"라고 적혀 있어도, "의결권 있는 주식"이라는 문구가 별도 독립 필드 또는 행 텍스트에 명시되지 않는 한 `VOTING`으로 승격할 수 없습니다.
+   * 원문에 "의결권 있는 주식"이라고만 적혀 있고 주식 종류가 기재되지 않은 경우, `COMMON`으로 단정할 수 없습니다.
+2. **관계명(`position`) vs 소유 형태(`ownership_basis`)**:
+   * "최대주주 본인"이라는 관계명은 신분일 뿐, 법률상 직접 소유(`DIRECT`)인지 신탁/간접 보유인지의 독립 증거가 아닙니다.
+   * 원문 표에 명시적인 소유 형태 컬럼(직접/간접/신탁 등)이 없는 한 `DIRECT`로 단정할 수 없으며, 미기재 시 `skipped_records`(`UNVERIFIED_OWNERSHIP_BASIS`)로 격리합니다.
 
 ---
 
-## 5. 엔터프라이즈 감사 질의 표준
-
-### 5.1. 엄격 SSOT 5대 조건 투영 불변식 (Zero Active Baseline)
-```cypher
-MATCH (master)-[r:OWNS_STAKE]->(target:DART_Company)
-WHERE r.is_current = true
-  AND r.verification_status = 'VERIFIED'
-  AND r.source_edge_key IS NOT NULL
-  AND r.current_scope IS NOT NULL
-  AND r.source_rcept_no IS NOT NULL
-  AND r.as_of_date IS NOT NULL
-  AND r.stake > 0.0
-  AND r.voting_type = 'VOTING'
-RETURN count(r) AS active_ssot_count;
-```
-
----
-
-## 6. 결론 및 단계별 이행 규정
-1. **문서 지위**: 본 문서는 **DRY_RUN 프레임워크 설계 기준(v1.2.1)**으로 확정합니다.
-2. **실행 안전 보류**: 실제 DB WRITE 프로토타입 및 운영 GDS는 본 규격을 100% 충족하는 **DRY_RUN 파서 프레임워크(`dry_run_parser_engine.py`)** 구현 및 검증이 완료된 이후에만 단계적으로 진행합니다.
+## 5. 결론 및 단계별 이행 로드맵
+1. **Step 1**: 2D 헤더 그리드 및 4대 독립 팩트 아키텍처 확정 (본 문서 v1.3.0)
+2. **Step 2**: Company/Person/Organization exact-match Provider 인터페이스 정의
+3. **Step 3**: 2D 그리드 및 4대 독립 팩트 단위 테스트(`test_dry_run_parser.py`) 작성
+4. **Step 4**: `dry_run_parser_engine.py` 2D 그리드 엔진 구현
+5. **Step 5**: Aura READ 읽기 전용 통합 테스트 검증
