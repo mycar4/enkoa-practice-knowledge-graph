@@ -1,30 +1,37 @@
 # -*- coding: utf-8 -*-
 """
-🏛️ [DART-Trace] RawEvidenceCandidate & EvidenceFragment 격리 계층 적재 엔진
+🏛️ [DART-Trace] RawEvidenceCandidate & EvidenceFragment 엄격 격리 적재 엔진
 ================================================================================
-목적:
-1. 1,500건 검증 완료된 공시 원문(XML) 및 영수증을 오프라인 파싱
-2. 프로덕션 지분 그래프(:OWNS_STAKE, GDS)와 완전히 분리된 순수 증거 계층 적재:
-   - (:RawEvidenceCandidate)
-   - (:EvidenceFragment)
-   - (:RawEvidenceCandidate)-[:EVIDENCED_BY]->(:EvidenceFragment)
-3. 7대 필수 메타데이터 전수 결속:
-   - rcept_no, xml_sha256, run_id, receipt_id, adapter_name, adapter_version, xml_rel_path
-4. 서식 분기:
-   - 제142조 일반서식: SUPPORTED_5PCT_GENERAL 상태 부여 및 후보/파편 결속 적재
-   - 약식 및 기타 서식: UNSUPPORTED_LAYOUT 상태로 후보 노드만 격리 보존
-5. Zero OWNS_STAKE Invariance:
-   - OWNS_STAKE 및 is_current 엣지 생성 0건 보장
+[계약 규격: Strict Evidence Layer Contract v2.0]
+1. 보안:
+   - 하드코딩된 비밀번호 기본값 완전 배제 (환경변수 미설정 시 즉시 에러)
+2. 제로-트러스트 적재 전 실측 대조:
+   - 적재 직전 로컬 XML 디스크 바이트 SHA-256 실시간 계산
+   - 영수증의 requested_rcept_no, xml_sha256, run_id와 100% 일치 실측 검증
+3. 외부 값 주입 및 Fallback 전면 금지:
+   - receipt_id, xml_storage_rel_path 누락 시 fallback 없이 즉시 에러
+   - target_corp_code의 외부 매니페스트 주입(or expected_corp_code) 전면 제거
+4. 원문 행 해시 기반 불변 결정론적 ID:
+   - cand-{rcept_no}-{row_inner_hash[:16]}
+   - cand-{rcept_no}-unsupported-{xml_sha256[:16]}
+   - frag-{rcept_no}-{raw_inner_hash[:16]}-{role}
+5. EvidenceFragment 혈통 메타데이터 전수 결속:
+   - candidate뿐 아니라 모든 fragment에도 run_id, receipt_id, adapter_name, adapter_version, xml_rel_path 필수 결속
+6. 기본 DRY-RUN 및 명시적 --commit 강제:
+   - 기본 실행 시 DB 쓰기 0건 (Dry-run)
+   - --commit 플래그가 주어질 때만 Neo4j 트랜잭션 커밋 수행
+7. DDL 분리:
+   - 인라인 DDL 제거 (migrate_evidence_schema.py로 독립)
 ================================================================================
 """
 
 import os
 import sys
 import json
-import uuid
+import hashlib
 import argparse
 from datetime import datetime, timezone
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any, Optional
 
 from dotenv import load_dotenv
 from neo4j import GraphDatabase, Driver
@@ -38,46 +45,45 @@ if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8")
 
 
+def compute_bytes_sha256(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
 class RawEvidenceGraphLoader:
-    """원천 증거 격리 적재 엔진 (Neo4j)"""
+    """원천 증거 격리 적재 엔진 (엄격 계약 준수)"""
 
     def __init__(
         self,
         base_runs_dir: str = "내작업폴더/data/raw_filings/batch_runs",
-        driver: Optional[Driver] = None
+        driver: Optional[Any] = None
     ):
         self.base_runs_dir = base_runs_dir
-        self.driver = driver
-        if self.driver is None:
+        self.driver = None
+        if driver is not None and driver != "MOCK":
+            self.driver = driver
+        elif driver is None:
             load_dotenv(".env")
-            uri = os.getenv("NEO4J_URI", "bolt://localhost:7687")
-            user = os.getenv("NEO4J_USER", "neo4j")
-            pwd = os.getenv("NEO4J_PASSWORD", "12345678")
+            uri = os.getenv("NEO4J_URI")
+            user = os.getenv("NEO4J_USER")
+            pwd = os.getenv("NEO4J_PASSWORD")
+            if not uri or not user or not pwd:
+                raise ValueError("❌ [보안 오류] NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD 환경변수가 필수입니다.")
             self.driver = GraphDatabase.driver(uri, auth=(user, pwd))
 
     def close(self):
         if self.driver:
             self.driver.close()
 
-    def ensure_constraints(self):
-        """증거 계층 유니크 제약조건 생성"""
-        queries = [
-            "CREATE CONSTRAINT constraint_raw_evidence_candidate_id IF NOT EXISTS FOR (c:RawEvidenceCandidate) REQUIRE c.candidate_id IS UNIQUE",
-            "CREATE CONSTRAINT constraint_evidence_fragment_id IF NOT EXISTS FOR (f:EvidenceFragment) REQUIRE f.fragment_id IS UNIQUE"
-        ]
-        with self.driver.session() as s:
-            for q in queries:
-                s.run(q)
-
     def load_evidence_batch(
         self,
         run_id: str,
-        dry_run: bool = False,
+        commit: bool = False,
         limit: Optional[int] = None,
         batch_size: int = 50
     ) -> Dict[str, Any]:
         """
-        배치 실행 아카이브를 읽어 증거 노드 적재 수행
+        배치 아카이브를 읽어 증거 노드 적재 수행
+        commit=False 이면 DRY-RUN (DB 쓰기 0건)
         """
         run_dir = os.path.join(self.base_runs_dir, run_id)
         if not os.path.exists(run_dir):
@@ -92,7 +98,7 @@ class RawEvidenceGraphLoader:
             closure_audit = json.load(cf)
 
         if closure_audit.get("audit_verdict") != "BATCH_VERIFIED_SUCCESS":
-            raise ValueError(f"❌ [안전 거부] 해당 실행은 BATCH_VERIFIED_SUCCESS 승인을 획득하지 못했습니다: {closure_audit.get('audit_verdict')}")
+            raise ValueError(f"❌ [안전 거부] BATCH_VERIFIED_SUCCESS 승인을 획득하지 못한 런입니다: {closure_audit.get('audit_verdict')}")
 
         in_manifest_path = os.path.join(run_dir, "input_manifest.json")
         with open(in_manifest_path, "r", encoding="utf-8") as mf:
@@ -105,7 +111,7 @@ class RawEvidenceGraphLoader:
         xml_dir = os.path.join(run_dir, "xml")
         manifests_dir = os.path.join(run_dir, "manifests")
 
-        # 영수증 인덱싱 (rcept_no -> receipt_info)
+        # 영수증 인덱싱
         receipt_map: Dict[str, Dict[str, Any]] = {}
         for fn in os.listdir(manifests_dir):
             if fn.endswith(".json") and fn.startswith("receipt_"):
@@ -118,20 +124,18 @@ class RawEvidenceGraphLoader:
 
         stats = {
             "run_id": run_id,
-            "dry_run": dry_run,
+            "commit_mode": commit,
             "total_targets_evaluated": len(targets),
             "supported_general_count": 0,
             "unsupported_layout_count": 0,
             "candidates_created": 0,
             "fragments_created": 0,
             "relationships_created": 0,
-            "owns_stake_created": 0, # 불변식 검증용 (반드시 0이어야 함)
+            "zero_trust_verified_count": 0,
+            "owns_stake_created": 0,  # 절대 불변식 (반드시 0)
             "started_at": datetime.now(timezone.utc).isoformat(),
             "completed_at": None
         }
-
-        if not dry_run:
-            self.ensure_constraints()
 
         candidate_batch: List[Dict[str, Any]] = []
         fragment_batch: List[Dict[str, Any]] = []
@@ -141,8 +145,6 @@ class RawEvidenceGraphLoader:
 
         for idx, target in enumerate(targets, start=1):
             rcept_no = target["rcept_no"]
-            expected_corp_code = target.get("expected_corp_code", "")
-            expected_corp_name = target.get("expected_corp_name", "")
 
             xml_path = os.path.join(xml_dir, f"{rcept_no}.xml")
             if not os.path.exists(xml_path):
@@ -151,47 +153,88 @@ class RawEvidenceGraphLoader:
             with open(xml_path, "rb") as xf:
                 xml_bytes = xf.read()
 
-            receipt = receipt_map.get(rcept_no, {})
-            receipt_id = receipt.get("receipt_id", f"rcpt-{rcept_no}")
-            xml_sha256 = receipt.get("xml_sha256", "")
-            xml_rel_path = receipt.get("xml_storage_rel_path", f"xml/{rcept_no}.xml")
+            # 2. 제로-트러스트 적재 직전 실시간 해시 및 영수증 대조
+            disk_xml_sha = compute_bytes_sha256(xml_bytes)
 
-            # 2. 어댑터 실행 (순수 오프라인 파싱)
+            receipt = receipt_map.get(rcept_no)
+            if not receipt:
+                raise ValueError(f"❌ [실패-폐쇄] 영수증 누락: rcept_no={rcept_no}")
+
+            receipt_id = receipt.get("receipt_id")
+            if not receipt_id:
+                raise ValueError(f"❌ [실패-폐쇄] 영수증 내 receipt_id 결손 (Fallback 금지): rcept_no={rcept_no}")
+
+            xml_rel_path = receipt.get("xml_storage_rel_path")
+            if not xml_rel_path:
+                raise ValueError(f"❌ [실패-폐쇄] 영수증 내 xml_storage_rel_path 결손 (Fallback 금지): rcept_no={rcept_no}")
+
+            if receipt.get("xml_sha256") != disk_xml_sha:
+                raise ValueError(f"❌ [실패-폐쇄] 디스크 XML 실측 해시({disk_xml_sha})와 영수증 해시({receipt.get('xml_sha256')}) 불일치: rcept_no={rcept_no}")
+
+            if receipt.get("run_id") != run_id:
+                raise ValueError(f"❌ [실패-폐쇄] 영수증의 run_id({receipt.get('run_id')})가 현재 런({run_id})과 불일치: rcept_no={rcept_no}")
+
+            stats["zero_trust_verified_count"] += 1
+
+            # 3. 어댑터 파싱
             adapter_res = run_adapter_5pct_general_art142_v1(xml_bytes, rcept_no=rcept_no)
             status = adapter_res.get("adapter_status")
 
             if status == "SUCCESS":
                 stats["supported_general_count"] += 1
                 doc_meta = adapter_res.get("document_metadata", {})
-                t_corp_code = doc_meta.get("target_corp_code") or expected_corp_code
-                t_corp_name = doc_meta.get("target_corp_name") or expected_corp_name
-                reporter_name = doc_meta.get("reporter_name", "")
 
-                # 증거 파편 등록
+                # 외부 값 주입 전면 배제: 오직 XML 파싱 결과만 사용
+                t_corp_code = doc_meta.get("target_corp_code") or None
+                t_corp_name = doc_meta.get("target_corp_name") or None
+                reporter_name = doc_meta.get("reporter_name") or None
+
+                # 증거 파편 등록 (결정론적 fragment_id 및 전수 혈통 결속)
                 frag_id_map: Dict[str, str] = {}
                 for f in adapter_res.get("evidence_fragments", []):
-                    f_id = f["fragment_id"]
+                    raw_hash = f.get("raw_inner_hash", "")
+                    role = f.get("role", "UNKNOWN")
+                    # 불변 결정론적 ID
+                    f_id = f"frag-{rcept_no}-{raw_hash[:16]}-{role}"
+                    old_uuid = f["fragment_id"]
+                    frag_id_map[old_uuid] = f_id
+
                     frag_dict = {
                         "fragment_id": f_id,
                         "rcept_no": rcept_no,
-                        "xml_sha256": xml_sha256,
-                        "role": f.get("role", "UNKNOWN"),
+                        "xml_sha256": disk_xml_sha,
+                        "run_id": run_id,
+                        "receipt_id": receipt_id,
+                        "adapter_name": ADAPTER_NAME,
+                        "adapter_version": ADAPTER_VERSION,
+                        "xml_rel_path": xml_rel_path,
+                        "role": role,
                         "xpath": f.get("xpath", ""),
-                        "raw_inner_hash": f.get("raw_inner_hash", ""),
+                        "raw_inner_hash": raw_hash,
                         "extracted_value": str(f.get("extracted_value", "")),
                         "created_at": now_str
                     }
                     fragment_batch.append(frag_dict)
-                    frag_id_map[f_id] = f_id
                     stats["fragments_created"] += 1
 
-                # 후보 등록
-                for c_idx, cand in enumerate(adapter_res.get("candidates", [])):
-                    c_id = f"cand-{rcept_no}-{c_idx+1}"
+                # 후보 등록 (원문 행 해시 기반 불변 결정론적 ID)
+                for cand in adapter_res.get("candidates", []):
+                    # cand에 결속된 row 증거 파편의 해시 탐색
+                    row_hash = ""
+                    for orig_fid in cand.get("evidence_fragment_ids", []):
+                        for ef in adapter_res.get("evidence_fragments", []):
+                            if ef["fragment_id"] == orig_fid and ef.get("role") == "ROW_DATA_EVIDENCE":
+                                row_hash = ef.get("raw_inner_hash", "")
+                                break
+                    if not row_hash:
+                        row_hash = compute_bytes_sha256(f"{cand.get('holder_name')}_{cand.get('shares_count')}".encode('utf-8'))
+
+                    c_id = f"cand-{rcept_no}-{row_hash[:16]}"
+
                     cand_dict = {
                         "candidate_id": c_id,
                         "rcept_no": rcept_no,
-                        "xml_sha256": xml_sha256,
+                        "xml_sha256": disk_xml_sha,
                         "run_id": run_id,
                         "receipt_id": receipt_id,
                         "adapter_name": ADAPTER_NAME,
@@ -211,23 +254,25 @@ class RawEvidenceGraphLoader:
                     candidate_batch.append(cand_dict)
                     stats["candidates_created"] += 1
 
-                    # 후보 -> 파편 엣지 등록
-                    for linked_f_id in cand.get("evidence_fragment_ids", []):
-                        rel_batch.append({
-                            "candidate_id": c_id,
-                            "fragment_id": linked_f_id
-                        })
-                        stats["relationships_created"] += 1
+                    # 후보 -> 파편 엣지
+                    for orig_fid in cand.get("evidence_fragment_ids", []):
+                        mapped_fid = frag_id_map.get(orig_fid)
+                        if mapped_fid:
+                            rel_batch.append({
+                                "candidate_id": c_id,
+                                "fragment_id": mapped_fid
+                            })
+                            stats["relationships_created"] += 1
 
             else:
-                # 미지원 서식 (약식 또는 비일반)
+                # 미지원 서식: 외부 값 주입 없이 순수 rejection_reason 및 XML 해시 기반 ID 격리 보존
                 stats["unsupported_layout_count"] += 1
                 rejection_reason = adapter_res.get("rejection_reason", "UNSUPPORTED_LAYOUT")
-                c_id = f"cand-{rcept_no}-unsupported"
+                c_id = f"cand-{rcept_no}-unsupported-{disk_xml_sha[:16]}"
                 cand_dict = {
                     "candidate_id": c_id,
                     "rcept_no": rcept_no,
-                    "xml_sha256": xml_sha256,
+                    "xml_sha256": disk_xml_sha,
                     "run_id": run_id,
                     "receipt_id": receipt_id,
                     "adapter_name": ADAPTER_NAME,
@@ -235,8 +280,8 @@ class RawEvidenceGraphLoader:
                     "xml_rel_path": xml_rel_path,
                     "layout_status": "UNSUPPORTED_LAYOUT",
                     "rejection_reason": rejection_reason,
-                    "target_corp_code": expected_corp_code,
-                    "target_corp_name": expected_corp_name,
+                    "target_corp_code": None,
+                    "target_corp_name": None,
                     "reporter_name": None,
                     "holder_name": None,
                     "shares_count": None,
@@ -247,14 +292,14 @@ class RawEvidenceGraphLoader:
                 candidate_batch.append(cand_dict)
                 stats["candidates_created"] += 1
 
-            # 배치 단위 커밋 (dry_run이 아닐 때)
-            if not dry_run and (idx % batch_size == 0 or idx == len(targets)):
+            # 배치 단위 커밋 (commit=True 일 때만)
+            if commit and (idx % batch_size == 0 or idx == len(targets)):
                 self._flush_batches(candidate_batch, fragment_batch, rel_batch)
                 candidate_batch.clear()
                 fragment_batch.clear()
                 rel_batch.clear()
 
-        if not dry_run and (candidate_batch or fragment_batch or rel_batch):
+        if commit and (candidate_batch or fragment_batch or rel_batch):
             self._flush_batches(candidate_batch, fragment_batch, rel_batch)
 
         stats["completed_at"] = datetime.now(timezone.utc).isoformat()
@@ -267,6 +312,8 @@ class RawEvidenceGraphLoader:
         relationships: List[Dict[str, Any]]
     ):
         """Neo4j 트랜잭션 배치 적재"""
+        if not self.driver:
+            raise RuntimeError("❌ [적재 불가] commit=True이나 유효한 Neo4j Driver가 제공되지 않았습니다.")
         with self.driver.session() as session:
             # 1. Fragments 적재
             if fragments:
@@ -275,6 +322,11 @@ class RawEvidenceGraphLoader:
                 MERGE (frag:EvidenceFragment {fragment_id: f.fragment_id})
                 SET frag.rcept_no = f.rcept_no,
                     frag.xml_sha256 = f.xml_sha256,
+                    frag.run_id = f.run_id,
+                    frag.receipt_id = f.receipt_id,
+                    frag.adapter_name = f.adapter_name,
+                    frag.adapter_version = f.adapter_version,
+                    frag.xml_rel_path = f.xml_rel_path,
                     frag.role = f.role,
                     frag.xpath = f.xpath,
                     frag.raw_inner_hash = f.raw_inner_hash,
@@ -320,28 +372,33 @@ class RawEvidenceGraphLoader:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Raw Evidence Graph Loader")
+    parser = argparse.ArgumentParser(description="Raw Evidence Graph Loader (Strict Contract)")
     parser.add_argument("--run-id", default="batch_1500_20260903_051738", help="적재 대상 Run ID")
-    parser.add_argument("--dry-run", action="store_true", help="DB 쓰기 없이 통계 산출")
+    parser.add_argument("--commit", action="store_true", help="명시적 실제 DB 적재 플래그 (미지정 시 DRY-RUN)")
     parser.add_argument("--limit", type=int, default=None, help="처리 건수 제한 (파일럿용)")
     parser.add_argument("--batch-size", type=int, default=50, help="DB 적재 배치 크기")
     args = parser.parse_args()
 
     print("=" * 80)
-    mode_str = "🔍 [DRY-RUN 모드 - DB 쓰기 0건]" if args.dry_run else "🚀 [실제 Neo4j 격리 적재 모드]"
+    if args.commit:
+        mode_str = "🚀 [실제 Neo4j 격리 적재 모드 (--commit)]"
+    else:
+        mode_str = "🔍 [기본 DRY-RUN 모드 - DB 쓰기 0건]"
     print(f"{mode_str} Run ID: {args.run_id} (limit: {args.limit})")
     print("=" * 80)
 
-    loader = RawEvidenceGraphLoader()
+    # commit=False이면 드라이버 연결 불필요하므로 더미 드라이버 주입 가능
+    loader = RawEvidenceGraphLoader(driver=None if args.commit else "MOCK")
     try:
         res = loader.load_evidence_batch(
             run_id=args.run_id,
-            dry_run=args.dry_run,
+            commit=args.commit,
             limit=args.limit,
             batch_size=args.batch_size
         )
         print("\n📊 [적재 처리 결과]")
         print(f"• 평가 대상 공시 건수: {res['total_targets_evaluated']:,}건")
+        print(f"• 제로-트러스트 해시 검증 통과: {res['zero_trust_verified_count']:,}건")
         print(f"• 제142조 일반서식 지원: {res['supported_general_count']:,}건")
         print(f"• 미지원/약식 서식 격리: {res['unsupported_layout_count']:,}건")
         print(f"• RawEvidenceCandidate 노드: {res['candidates_created']:,}개")
@@ -350,7 +407,8 @@ def main():
         print(f"• OWNS_STAKE 관계 (불변식 검증): {res['owns_stake_created']}개 (100% 0건 유지)")
         print("=" * 80)
     finally:
-        loader.close()
+        if args.commit:
+            loader.close()
 
 
 if __name__ == "__main__":
