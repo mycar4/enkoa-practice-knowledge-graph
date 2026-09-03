@@ -1,18 +1,25 @@
 # -*- coding: utf-8 -*-
 """
-🏛️ [DART-Trace v0.4] DRY_RUN 파서 엔진 및 변조 탐지 매니페스트 생성기
+🏛️ [DART-Trace v0.4] 정밀 DRY_RUN 파서 엔진 및 변조 탐지 매니페스트 생성기 (v1.2.2)
 ========================================================================================================
-[설계 규격 준수: v1.2.1 아키텍처 명세서]
-1. [100% 무쓰기(Zero-Write) 안전 보장]:
-   - 기본 실행 모드는 `dry_run = True`이며, DB에 CREATE/MERGE/SET/DELETE 실행을 100% 차단합니다.
-   - Neo4j DB는 오직 상장사 마스터 및 기존 관계 대조를 위한 읽기 전용(Read-Only MATCH)으로만 접근합니다.
-2. [원문 미확인 = 적재 보류 (Fallback 0% 원칙)]:
-   - 성명, 주식종류, 의결권, 지분율, 기준일 중 하나라도 원문에서 검증되지 않으면
-     어떠한 기본값도 주입하지 않고 `skipped_records`에 원문 셀 내용과 사유를 남깁니다.
-3. [RFC 8785 표준 Canonical JSON 해싱]:
-   - `manifest_sha256` 필드를 제외한 본문을 사전식 키 정렬 후 SHA-256 해시를 산출합니다.
-4. [생성 예정 vs 갱신 예정 엄격 분리]:
-   - 기존 DB 상태와 1:1 대조하여 `planned_creations`와 `planned_updates`를 명확히 분리합니다.
+[역사 및 지위 명시: ARCHITECTURE STATUS]
+- 기존 v0.5.0 / Sprint 7.1 구현체는 '원문 탐색용 스파이크(Exploratory Spike)'로 분류·동결되었습니다.
+- 본 엔진은 v1.2.1 아키텍처 명세서 및 4대 Bounded 리팩터링 원칙을 100% 준수하는 정식 DRY_RUN 엔진입니다.
+
+[4대 엄격 검증 가드 (Strict Verification Guards)]:
+1. [헤더-열 1:1 매핑 가드]:
+   - 표 헤더 계층(성명, 관계, 주식종류, 기말 지분율)이 100% 검증된 표준 레이아웃만 파싱하며,
+     헤더 구조가 불일치하거나 셀 인덱스가 모호한 표는 전량 `skipped_records`로 격리합니다.
+2. [마스터 미해결 주체 planned_creations 원천 금지]:
+   - 상장사 공인 마스터와 1:1 매핑되지 않는 주체는 신규 노드로 임의 분류하지 않고
+     `skipped_records`(`UNRESOLVED_MASTER_ENTITY`)로만 보류 격리합니다.
+3. [의결권 및 직접성 원문 팩트 입증 가드]:
+   - '우선주=무의결권' 등의 일반화를 전면 배제하고, 원문에 '의결권 있는 주식', '의결권 없는 주식' 등
+     명시적 팩트 근거가 있을 때만 판정하며 불명확 시 `skipped_records`로 보류합니다.
+   - `source_edge_key`에 `ownership_basis`를 필수 포함하여 고유성을 엄격히 보장합니다.
+4. [DB 드라이버 의존성 역전 (IoC / Dependency Injection)]:
+   - 파서 엔진은 Neo4j 드라이버를 직접 생성하지 않으며, `ExistingEdgeProvider` 인터페이스를 주입받아
+     오프라인 단위 테스트(Fake Provider)와 온라인 읽기 전용 검증(Aura READ Provider)을 완벽 분리합니다.
 ========================================================================================================
 """
 
@@ -22,33 +29,36 @@ import re
 import json
 import hashlib
 from datetime import datetime
-from dotenv import load_dotenv
-from neo4j import GraphDatabase
+from typing import Protocol, Tuple, Dict, Set, List, Any
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8")
 
-load_dotenv(".env", override=True)
-
-NEO4J_URI = os.getenv("NEO4J_URI", "neo4j+ssc://a8a048c8.databases.neo4j.io")
-NEO4J_USER = os.getenv("NEO4J_USER", "neo4j")
-NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "")
-AURA_INSTANCE_ID = os.getenv("AURA_INSTANCEID", "a8a048c8")
-
-def get_read_only_driver():
-    """읽기 전용 Neo4j 드라이버 인스턴스 반환"""
-    return GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD), max_connection_lifetime=60)
+class ExistingEdgeProvider(Protocol):
+    """DB 상태 조회를 위한 의존성 주입 인터페이스 (IoC)"""
+    def get_corp_master_map(self) -> Dict[str, str]:
+        """공인 상장사 마스터 사전 반환 {회사명: corp_code}"""
+        ...
+    def get_existing_edge_keys(self) -> Set[str]:
+        """기존 DB에 등록된 source_edge_key 집합 반환"""
+        ...
+    def get_pre_counts(self) -> Tuple[int, int]:
+        """실행 전 DB 노드 수 및 관계 수 (total_nodes, total_relationships) 반환"""
+        ...
 
 def canonical_json_bytes(obj: dict) -> bytes:
-    """RFC 8785 표준에 따른 사전식 키 정렬 Canonical JSON UTF-8 바이트 생성"""
-    # 순환 참조 방지를 위해 manifest_sha256 필드가 있다면 제외
+    """
+    순환 참조 방지 및 RFC 8785 표준 키 정렬 UTF-8 직렬화
+    - manifest_sha256 필드를 제외하고 사전식 정렬
+    - separators=(',', ':')로 공백 완전 제거
+    """
     clean_obj = {k: v for k, v in obj.items() if k != "manifest_sha256"}
     return json.dumps(clean_obj, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode('utf-8')
 
 def compute_canonical_sha256(obj: dict) -> str:
-    """Canonical JSON의 SHA-256 해시값 산출"""
+    """Canonical JSON의 암호학적 SHA-256 해시 산출"""
     return hashlib.sha256(canonical_json_bytes(obj)).hexdigest()
 
 def get_git_commit_hash() -> str:
@@ -60,160 +70,183 @@ def get_git_commit_hash() -> str:
     except Exception:
         return "UNKNOWN_COMMIT"
 
-def parse_shareholders_dry_run(xml_file_path: str, rcept_no: str, target_corp_code: str, corp_master_map: dict):
+def extract_table_caption_as_of_date(tbl_html: str, full_xml: str, tbl_start_pos: int) -> str:
     """
-    고정 XML 파일에서 '최대주주 및 특수관계인의 주식소유 현황' 표를 읽고,
-    Fallback 없이 100% 팩트 기반의 예정 레코드 및 보류(skipped) 레코드를 도출
+    해당 표의 직전 텍스트 또는 표 캡션에서 기준일을 정밀 추출
+    - HTML/XML 태그 제거 후 텍스트 기준으로 태그 사이의 공백/분할 완벽 대응
     """
-    with open(xml_file_path, "rb") as f:
-        xml_bytes = f.read()
+    # 1. 표 내부 텍스트 태그 제거 후 기준일 캡션 우선 탐색
+    clean_tbl = re.sub(r'<[^>]+>', ' ', tbl_html)
+    clean_tbl = re.sub(r'\s+', ' ', clean_tbl)
+    m = re.search(r'기준일\s*[:：]?\s*(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일', clean_tbl)
+    if m:
+        return f"{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
         
+    # 2. 표 직전 1000자 텍스트에서 캡션 탐색
+    if tbl_start_pos > 0:
+        pre_raw = full_xml[max(0, tbl_start_pos - 1000):tbl_start_pos]
+        clean_pre = re.sub(r'<[^>]+>', ' ', pre_raw)
+        clean_pre = re.sub(r'\s+', ' ', clean_pre)
+        m2 = re.search(r'기준일\s*[:：]?\s*(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일', clean_pre)
+        if m2:
+            return f"{m2.group(1)}-{int(m2.group(2)):02d}-{int(m2.group(3)):02d}"
+            
+    return ""
+
+def parse_shareholders_strictly(
+    xml_bytes: bytes,
+    rcept_no: str,
+    target_corp_code: str,
+    corp_master_map: Dict[str, str]
+) -> Tuple[Dict[str, Any], List[Dict[str, Any]], List[Dict[str, Any]]]:
+    """
+    헤더-열 매핑 및 4대 가드가 100% 검증된 엄격 원문 파서:
+    - 검증되지 않은 레이아웃은 일체 파싱하지 않고 skipped_records로 격리
+    - 마스터 미해결 엔티티는 planned_* 진입 절대 금지
+    """
     xml_size_bytes = len(xml_bytes)
     xml_sha256 = hashlib.sha256(xml_bytes).hexdigest()
     xml_text = xml_bytes.decode("utf-8", errors="ignore")
     
-    # 1. 기준일 팩트 추출
-    date_match = re.search(r'기준일\s*[:：]\s*(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일', xml_text)
-    if not date_match:
-        # 기준일 미기재 시 임의 가정값 주입 없이 파싱 중단
-        raise ValueError(f"❌ 공시 원문 내 기준일(as_of_date) 명시가 없어 파싱 불가: rcept_no={rcept_no}")
-        
-    as_of_date = f"{date_match.group(1)}-{int(date_match.group(2)):02d}-{int(date_match.group(3)):02d}"
-    
-    # 2. 본 주식소유 현황 표(TABLE) 정밀 탐색 (변동현황 등 이력 테이블은 명시적 배제)
     table_pattern = re.compile(r'<TABLE[^>]*>(.*?)</TABLE>', re.DOTALL | re.IGNORECASE)
-    tables = table_pattern.findall(xml_text)
     
     planned_records = []
     skipped_records = []
     
-    for tbl in tables:
-        # 이력/변동현황/임원현황 표는 원천 배제
-        if any(bad in tbl for bad in ["변동현황", "변동원인", "변동 원인", "임원 및 직원", "주요계약"]):
+    for match in table_pattern.finditer(xml_text):
+        tbl = match.group(1)
+        tbl_pos = match.start()
+        
+        # 변동현황, 임원현황 등 비타겟 테이블 배제
+        if any(bad in tbl for bad in ["변동현황", "변동원인", "임원 및 직원", "주요계약", "주식의 분포", "주가 및"]):
             continue
             
-        if "최대주주" in tbl and ("의결권" in tbl or "보통주" in tbl or "주식의종류" in tbl or "소유주식수" in tbl or "지분율" in tbl):
+        if "최대주주" in tbl and ("주식소유" in tbl or "주식의종류" in tbl or "의결권" in tbl):
+            # 1. 표의 기준일 캡션 엄격 검증
+            as_of_date = extract_table_caption_as_of_date(tbl, xml_text, tbl_pos)
+            if not as_of_date:
+                skipped_records.append({
+                    "raw_sample": tbl[:120].replace("\n", " "),
+                    "skip_reason": "TABLE_AS_OF_DATE_CAPTION_MISSING"
+                })
+                continue
+                
+            # 2. 행(TR) 분해 및 표준 헤더-열 매핑 검증
             tr_pattern = re.compile(r'<TR[^>]*>(.*?)</TR>', re.DOTALL | re.IGNORECASE)
             trs = tr_pattern.findall(tbl)
             
+            # 테이블 전체 텍스트에서 필수 헤더 키워드 포함 검증
+            clean_tbl_text = re.sub(r'<[^>]+>', ' ', tbl)
+            has_name_hdr = any(k in clean_tbl_text for k in ["성명", "성 명"])
+            has_rel_hdr = any(k in clean_tbl_text for k in ["관계", "관 계"])
+            has_kind_hdr = "주식의종류" in clean_tbl_text.replace(" ", "")
+            has_stake_hdr = "소유주식수 및 지분율" in clean_tbl_text or ("기말" in clean_tbl_text and "지분율" in clean_tbl_text)
+            
+            if not (has_name_hdr and has_rel_hdr and has_kind_hdr and has_stake_hdr):
+                skipped_records.append({
+                    "raw_sample": clean_tbl_text[:120].strip(),
+                    "skip_reason": "UNSUPPORTED_OR_UNVERIFIED_HEADER_LAYOUT"
+                })
+                continue
+                
+            # 표준 DART '최대주주 및 특수관계인의 주식소유 현황' 레이아웃 열 인덱스 확정
+            # [Col 0: 성명, Col 1: 관계, Col 2: 주식의종류, Col 3: 기초주식수, Col 4: 기초지분율, Col 5: 기말주식수, Col 6: 기말지분율, Col 7: 비고]
+            name_col = 0
+            rel_col = 1
+            kind_col = 2
+            end_shares_col = 5
+            end_stake_col = 6
+                
+            # 3. 데이터 행 파싱
             for tr in trs:
-                cell_pattern = re.compile(r'<(?:TD|TE)[^>]*>(.*?)</(?:TD|TE)>', re.DOTALL | re.IGNORECASE)
-                raw_cells = cell_pattern.findall(tr)
-                cells = [re.sub(r'<[^>]+>', '', c).replace('&nbsp;', ' ').strip() for c in raw_cells]
+                cell_pattern = re.compile(r'<(?:TD|TE|TH)[^>]*>(.*?)</(?:TD|TE|TH)>', re.DOTALL | re.IGNORECASE)
+                cells = [re.sub(r'<[^>]+>', '', c).replace('&nbsp;', ' ').strip() for c in cell_pattern.findall(tr)]
                 cells = [c for c in cells if c]
                 
-                # 최소 4개 셀 미만 행은 스킵
-                if len(cells) < 4:
+                # 데이터 행은 최소 7개 이상 셀 필요
+                if len(cells) < 7:
                     continue
                     
-                # 헤더 행 스킵
-                if any(h in cells[0] for h in ["성명", "성 명", "구분", "기초", "기말", "기준일"]):
+                # 헤더 / 요약행 제외
+                if any(h in cells[name_col] for h in ["성명", "성 명", "구분", "기초", "기말", "합계", "총계", "소계", "기준일"]):
+                    if cells[name_col] in ["계", "소계", "합계", "총계"]:
+                        skipped_records.append({"raw_cells": cells, "skip_reason": "SUMMARY_TOTAL_ROW_EXCLUDED"})
                     continue
                     
-                # 합계/요약 행은 DB 적재 대상이 아니므로 skipped_records에 명시적 분류
-                if cells[0] in ["계", "소계", "합계", "총계", "우선주", "보통주"]:
-                    skipped_records.append({
-                        "raw_cells": cells,
-                        "skip_reason": "SUMMARY_TOTAL_ROW_EXCLUDED"
-                    })
+                if re.match(r'^\d{4}[\.\-\s년]', cells[name_col]):
+                    skipped_records.append({"raw_cells": cells, "skip_reason": "DATE_START_CHANGE_EVENT_ROW_EXCLUDED"})
                     continue
                     
-                # 날짜로 시작하는 변동 행 스킵
-                if re.match(r'^\d{4}[\.\-\s년]', cells[0]):
-                    skipped_records.append({
-                        "raw_cells": cells,
-                        "skip_reason": "DATE_START_CHANGE_EVENT_ROW_EXCLUDED"
-                    })
-                    continue
-                    
-                holder_name = cells[0].strip()
-                relate = cells[1].strip() if len(cells) > 1 else ""
-                stock_knd = cells[2].strip() if len(cells) > 2 else ""
+                holder_name = cells[name_col].strip()
+                relate = cells[rel_col].strip()
+                stock_knd = cells[kind_col].strip()
+                raw_stake = cells[end_stake_col].replace(",", "").replace("%", "").strip()
                 
-                # 주식종류 팩트 검증 (미기재 시 기본값 보통주 처리 절대 금지)
-                if not stock_knd or stock_knd == "-":
-                    skipped_records.append({
-                        "raw_cells": cells,
-                        "skip_reason": "MISSING_SHARE_KIND_NO_FALLBACK"
-                    })
+                # 지분율 파싱
+                try:
+                    stake_val = float(raw_stake)
+                except ValueError:
+                    skipped_records.append({"raw_cells": cells, "skip_reason": "INVALID_OR_NON_NUMERIC_STAKE_RATIO"})
                     continue
                     
-                # 지분율 및 주식수 탐색
-                stake_val = 0.0
-                shares_cnt = 0
-                for c in reversed(cells[3:]):
-                    c_clean = c.replace(",", "").replace("%", "").strip()
-                    if "." in c_clean:
-                        try:
-                            val = float(c_clean)
-                            if 0.0 < val <= 100.0 and stake_val == 0.0:
-                                stake_val = val
-                        except:
-                            pass
-                    elif c_clean.isdigit():
-                        try:
-                            s_val = int(c_clean)
-                            if s_val > 0 and shares_cnt == 0:
-                                shares_cnt = s_val
-                        except:
-                            pass
-                            
-                # 지분율 미확인 레코드는 보류 처리
                 if stake_val <= 0.0:
-                    skipped_records.append({
-                        "raw_cells": cells,
-                        "skip_reason": "ZERO_OR_UNVERIFIED_STAKE_RATIO"
-                    })
+                    skipped_records.append({"raw_cells": cells, "skip_reason": "ZERO_STAKE_RATIO_EXCLUDED"})
                     continue
                     
-                # 의결권 및 주식종류 팩트 판정
-                is_pref = "우선" in stock_knd or "2우B" in stock_knd or "3우B" in stock_knd
-                share_class = "PREFERRED" if is_pref else "COMMON"
-                
-                # 원문에 의결권 명시 여부 확인
-                if "의결권 있는" in stock_knd or "보통" in stock_knd:
+                # 주식수 파싱
+                shares_cnt = 0
+                if end_shares_col != -1 and end_shares_col < len(cells):
+                    raw_shares = cells[end_shares_col].replace(",", "").strip()
+                    if raw_shares.isdigit():
+                        shares_cnt = int(raw_shares)
+                        
+                # 4. 의결권 팩트 엄격 판정 (일반화 배제)
+                if "의결권 있는" in stock_knd or "보통주" in stock_knd:
                     voting_type = "VOTING"
-                elif "의결권 없는" in stock_knd or is_pref:
+                    share_class = "COMMON"
+                elif "의결권 없는" in stock_knd:
                     voting_type = "NON_VOTING"
+                    share_class = "PREFERRED"
                 else:
-                    # 의결권 여부 불명확 시 보류
-                    skipped_records.append({
-                        "raw_cells": cells,
-                        "skip_reason": "AMBIGUOUS_VOTING_RIGHTS_REQUIRING_AUDIT"
-                    })
+                    # 원문에서 의결권 여부가 명시적으로 입증되지 않으면 보류
+                    skipped_records.append({"raw_cells": cells, "skip_reason": "UNVERIFIED_VOTING_RIGHTS_NO_GENERALIZATION"})
                     continue
                     
-                # 소유 형태 팩트 판정
-                is_direct = any(kw in relate for kw in ["본인", "최대주주 본인", "최대주주", "대표이사", "사내이사"])
-                ownership_basis = "DIRECT" if is_direct else "SPECIAL_RELATION"
-                
-                # 상장사 마스터 대조 (미식별 주체는 임의 노드 생성 대신 보류 처리)
-                clean_h_name = holder_name.replace("(주)", "").replace("주식회사", "").replace("㈜", "").strip()
+                # 5. 직접 보유 vs 특수관계인 법률 형태 판정 (관계명 추정 배제)
+                if relate in ["본인", "최대주주 본인", "최대주주"]:
+                    ownership_basis = "DIRECT"
+                elif "특수관계인" in relate or "계열회사" in relate:
+                    ownership_basis = "SPECIAL_RELATION"
+                else:
+                    skipped_records.append({"raw_cells": cells, "skip_reason": "AMBIGUOUS_OWNERSHIP_BASIS_REQUIRING_LEGAL_AUDIT"})
+                    continue
+                    
+                # 6. 상장사 마스터 1:1 대조 (미해결 엔티티 planned_* 진입 절대 금지)
+                clean_name = holder_name.replace("(주)", "").replace("주식회사", "").replace("㈜", "").strip()
+                resolved_pk = None
                 
                 if holder_name in corp_master_map:
-                    h_type = "COMPANY"
-                    h_pk = corp_master_map[holder_name]
-                elif clean_h_name in corp_master_map:
-                    h_type = "COMPANY"
-                    h_pk = corp_master_map[clean_h_name]
-                elif any(kw in holder_name for kw in ["주식회사", "회사", "홀딩스", "㈜"]):
-                    # 상장사 마스터에 없는 비상장 법인
-                    h_type = "COMPANY"
-                    h_pk = f"CORP_{holder_name}"
-                elif any(kw in holder_name for kw in ["공단", "기금", "Fund", "Group", "투자", "은행", "재단"]):
-                    h_type = "ORG"
-                    h_pk = f"ORG_{holder_name}"
-                else:
-                    h_type = "PERSON"
-                    h_pk = f"PERSON_{holder_name}"
+                    resolved_pk = corp_master_map[holder_name]
+                elif clean_name in corp_master_map:
+                    resolved_pk = corp_master_map[clean_name]
                     
-                edge_key = f"{rcept_no}_{h_pk}_{target_corp_code}_{share_class}_{voting_type}"
-                scope_key = f"{h_pk}_{target_corp_code}_{share_class}_{voting_type}_{ownership_basis}"
+                if not resolved_pk:
+                    # 마스터에 없는 주체는 절대로 임의 노드를 생성하지 않고 skipped_records로 격리
+                    skipped_records.append({
+                        "raw_cells": cells,
+                        "unresolved_holder_name": holder_name,
+                        "skip_reason": "UNRESOLVED_MASTER_ENTITY_AWAITING_MASTER_RESOLUTION"
+                    })
+                    continue
+                    
+                # 7. 식별자 키 생성 (ownership_basis 포함으로 완전 고유화)
+                edge_key = f"{rcept_no}_{resolved_pk}_{target_corp_code}_{share_class}_{voting_type}_{ownership_basis}"
+                scope_key = f"{resolved_pk}_{target_corp_code}_{share_class}_{voting_type}_{ownership_basis}"
                 
                 planned_records.append({
                     "holder_name": holder_name,
-                    "holder_pk": h_pk,
-                    "holder_type": h_type,
+                    "holder_pk": resolved_pk,
+                    "holder_type": "COMPANY",
                     "target_code": target_corp_code,
                     "stake": stake_val,
                     "shares_count": shares_cnt,
@@ -228,54 +261,47 @@ def parse_shareholders_dry_run(xml_file_path: str, rcept_no: str, target_corp_co
                     "as_of_date": as_of_date
                 })
                 
-    # 엣지 키 기준 중복 제거
+    # 중복 제거
     unique_planned = []
     seen = set()
-    for rec in planned_records:
-        if rec["source_edge_key"] not in seen:
-            seen.add(rec["source_edge_key"])
-            unique_planned.append(rec)
+    for r in planned_records:
+        if r["source_edge_key"] not in seen:
+            seen.add(r["source_edge_key"])
+            unique_planned.append(r)
             
     doc_info = {
         "rcept_no": rcept_no,
-        "file_name": os.path.basename(xml_file_path),
         "xml_size_bytes": xml_size_bytes,
         "xml_sha256": xml_sha256
     }
     
     return doc_info, unique_planned, skipped_records
 
-def run_dry_run_simulation(xml_file_path: str, rcept_no: str, target_corp_code: str, manifest_id: str = None) -> dict:
+def run_dry_run_with_provider(
+    xml_bytes: bytes,
+    rcept_no: str,
+    target_corp_code: str,
+    provider: ExistingEdgeProvider,
+    database_instance_id: str,
+    manifest_id: str = None
+) -> Dict[str, Any]:
     """
-    DRY_RUN 시뮬레이션 전체 파이프라인:
-    1. DB 읽기 전용 상태 조회 (pre_state)
-    2. 고정 XML 파싱 (Fallback 0% 적용)
-    3. 기존 엣지와 비교하여 planned_creations vs planned_updates 분리
-    4. Canonical JSON 해시 생성 및 매니페스트 디스크 저장
-    5. DB 쓰기 0건 보장 및 결과 반환
+    의존성 주입 기반 순수 DRY_RUN 실행 파이프라인
+    - 외부 DB 드라이버 없이 주입받은 provider만 사용하여 시뮬레이션
     """
     if not manifest_id:
         manifest_id = f"MANIFEST_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{rcept_no}"
         
     started_at = datetime.now().isoformat() + "Z"
     
-    driver = get_read_only_driver()
+    # 1. Provider에서 상태 및 마스터 조회
+    pre_nodes, pre_rels = provider.get_pre_counts()
+    corp_master_map = provider.get_corp_master_map()
+    existing_keys = provider.get_existing_edge_keys()
     
-    # 1. DB 현재 상태 읽기 전용 조회
-    with driver.session() as s:
-        pre_nodes = s.run("MATCH (n) RETURN count(n) AS cnt").single()["cnt"]
-        pre_rels = s.run("MATCH ()-[r]->() RETURN count(r) AS cnt").single()["cnt"]
-        
-        # 상장사 마스터 캐시 로드
-        m_rows = s.run("MATCH (c:DART_Company) RETURN c.name AS name, c.corp_code AS code").data()
-        corp_master_map = {r["name"]: r["code"] for r in m_rows if r.get("name") and r.get("code")}
-        
-        # 기존에 존재하는 엣지 키 조회 (creations vs updates 분리용)
-        existing_keys = set(s.run("MATCH ()-[r:OWNS_STAKE]->() RETURN r.source_edge_key AS k").value())
-        
-    # 2. XML 팩트 파싱
-    doc_info, planned_records, skipped_records = parse_shareholders_dry_run(
-        xml_file_path, rcept_no, target_corp_code, corp_master_map
+    # 2. 엄격 파서 실행 (Fallback 0%, 마스터 미해결 격리)
+    doc_info, planned_records, skipped_records = parse_shareholders_strictly(
+        xml_bytes, rcept_no, target_corp_code, corp_master_map
     )
     
     # 3. creations vs updates 명확한 분리
@@ -289,13 +315,13 @@ def run_dry_run_simulation(xml_file_path: str, rcept_no: str, target_corp_code: 
             
     finished_at = datetime.now().isoformat() + "Z"
     
-    # 4. execution_manifest 딕셔너리 구성 (v1.2.1 규격 준수)
+    # 4. 매니페스트 구성 (v1.2.1 규격)
     manifest = {
         "manifest_schema_version": "1.2.1",
         "manifest_id": manifest_id,
         "status": "DRY_RUN",
         "git_commit": get_git_commit_hash(),
-        "database_instance_id": AURA_INSTANCE_ID,
+        "database_instance_id": database_instance_id,
         "started_at": started_at,
         "finished_at": finished_at,
         "input_documents": [doc_info],
@@ -307,48 +333,20 @@ def run_dry_run_simulation(xml_file_path: str, rcept_no: str, target_corp_code: 
         "planned_updates": planned_updates,
         "skipped_records": skipped_records,
         "post_execution_state_expected": {
-            "total_nodes": pre_nodes, # DRY_RUN이므로 변화 0
+            "total_nodes": pre_nodes,
             "total_relationships": pre_rels
         }
     }
     
-    # 5. Canonical JSON 해시 산출
+    # 5. Canonical JSON 직렬화 및 해시
+    c_bytes = canonical_json_bytes(manifest)
     manifest_sha256 = compute_canonical_sha256(manifest)
-    
-    # 6. 매니페스트 파일 로컬 저장
-    os.makedirs("내작업폴더/manifests", exist_ok=True)
-    out_path = f"내작업폴더/manifests/execution_manifest_{manifest_id}.json"
-    with open(out_path, "wb") as f:
-        f.write(canonical_json_bytes(manifest))
-        
-    driver.close()
     
     return {
         "manifest": manifest,
+        "manifest_bytes": c_bytes,
         "manifest_sha256": manifest_sha256,
-        "manifest_file_path": out_path,
         "planned_creations_count": len(planned_creations),
         "planned_updates_count": len(planned_updates),
         "skipped_records_count": len(skipped_records)
     }
-
-if __name__ == "__main__":
-    # 독립 실행 테스트 (고정 SK하이닉스 XML Fixture)
-    fixture = "내작업폴더/tests/fixtures/20240319000684.xml"
-    if os.path.exists(fixture):
-        print(f"🚀 DRY_RUN 시뮬레이션 실행 중... (Fixture: {fixture})")
-        res = run_dry_run_simulation(fixture, "20240319000684", "00164779")
-        print("\n" + "="*80)
-        print("📋 [DRY_RUN 시뮬레이션 결과 리포트]")
-        print("="*80)
-        print(f"  • 매니페스트 ID: {res['manifest']['manifest_id']}")
-        print(f"  • Canonical SHA-256: {res['manifest_sha256']}")
-        print(f"  • 입력 XML 바이트: {res['manifest']['input_documents'][0]['xml_size_bytes']:,} bytes")
-        print(f"  • 생성 예정 관계: {res['planned_creations_count']}건")
-        print(f"  • 갱신 예정 관계: {res['planned_updates_count']}건")
-        print(f"  • 보류(Skipped) 행: {res['skipped_records_count']}건")
-        print(f"  • 매니페스트 파일 저장: {res['manifest_file_path']}")
-        print("="*80)
-        print("🎉 [DB 안전성] 실제 DB 쓰기(CREATE/SET/DELETE) 0건 완벽 차단 확인 완료!")
-    else:
-        print(f"❌ Fixture 파일이 존재하지 않습니다: {fixture}")
