@@ -152,9 +152,10 @@ def inspect_and_extract_zip(
         main_xml_name = xml_files[0]
         xml_bytes = z.read(main_xml_name)
 
-    # ElementTree 파싱 실측 검증 (DART 특화 unescaped & 정규화 후 Well-formed XML 보장)
+    # ElementTree 파싱 실측 검증 (DART 특화 unescaped & 및 unescaped < 정규화 후 Well-formed XML 보장)
     try:
         clean_xml = re.sub(r'&(?!(amp|lt|gt|quot|apos|#\d+|#x[0-9a-fA-F]+);)', '&amp;', xml_bytes.decode('utf-8', errors='ignore'))
+        clean_xml = re.sub(r'<(?![a-zA-Z_/?!])', '&lt;', clean_xml)
         root = ET.fromstring(clean_xml)
         if root is None or not root.tag:
             raise ValueError("EMPTY_ROOT_TAG")
