@@ -31,10 +31,11 @@ class TestAdapter5PctGeneralArt142V1(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.samsung_xml_path = "scratch/xml_5pct_samples/20241025000551.xml"
-        cls.hyundai_xml_path = "scratch/xml_5pct_samples/20240503000063.xml"
-        cls.lg_xml_path = "scratch/xml_5pct_samples/20241129001948.xml"
-        cls.nps_simplified_path = "scratch/xml_5pct_samples/20240925000388.xml"
+        fixture_dir = "내작업폴더/data/fixtures/xml_5pct_samples" if os.path.exists("내작업폴더/data/fixtures/xml_5pct_samples") else "scratch/xml_5pct_samples"
+        cls.samsung_xml_path = os.path.join(fixture_dir, "20241025000551.xml")
+        cls.hyundai_xml_path = os.path.join(fixture_dir, "20240503000063.xml")
+        cls.lg_xml_path = os.path.join(fixture_dir, "20241129001948.xml")
+        cls.nps_simplified_path = os.path.join(fixture_dir, "20240925000388.xml")
 
     def test_01_real_document_samsung(self):
         """[실제 공시 1/3] 삼성전자 5% 일반보고 (삼성물산): 동적 헤더 매핑 및 Candidate 생성"""

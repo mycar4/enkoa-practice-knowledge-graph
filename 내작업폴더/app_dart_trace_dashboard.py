@@ -2002,150 +2002,181 @@ elif "6." in menu:
     </div>
     """, unsafe_allow_html=True)
     
-    # 1. 공시 표본 및 변조 Fixture 선택
-    col_sel1, col_sel2 = st.columns([2, 1])
-    with col_sel1:
+    # 1. 폼 기반 감사 파라미터 설정 (자동 재실행 방지 및 10MB 크기 제한)
+    fixture_base = "내작업폴더/data/fixtures/xml_5pct_samples"
+    fixtures_available = os.path.exists(fixture_base) and any(f.endswith('.xml') for f in os.listdir(fixture_base))
+    
+    sample_options = {}
+    if fixtures_available:
         sample_options = {
-            "삼성전자 (2024.10.25 접수, 삼성물산 5% 일반보고)": ("scratch/xml_5pct_samples/20241025000551.xml", "20241025000551", "NORMAL"),
-            "현대자동차 (2024.05.03 접수, 현대모비스 5% 일반보고)": ("scratch/xml_5pct_samples/20240503000063.xml", "20240503000063", "NORMAL"),
-            "LG화학 (2024.11.29 접수, ㈜LG 5% 일반보고)": ("scratch/xml_5pct_samples/20241129001948.xml", "20241129001948", "NORMAL"),
-            "[거부 시험] SK하이닉스 (국민연금 5% 약식보고서)": ("scratch/xml_5pct_samples/20240925000388.xml", "20240925000388", "NORMAL"),
-            "[변조 시험 1] 필수 헤더 누락 변조 ('비율' 헤더 제거)": ("scratch/xml_5pct_samples/20241025000551.xml", "20241025000551_MUTATED_NO_HEADER", "MUTATE_NO_HEADER"),
-            "[변조 시험 2] 실제 열 순서 교환 변조 (주수 ↔ 비율 열 교환)": ("scratch/xml_5pct_samples/20241025000551.xml", "20241025000551_MUTATED_SWAPPED", "MUTATE_SWAP_COLS"),
-            "[변조 시험 3] 정상 데이터 행 필수 셀 결손 변조 (지분율 셀 삭제)": ("scratch/xml_5pct_samples/20241025000551.xml", "20241025000551_MUTATED_CORRUPT_ROW", "MUTATE_CORRUPT_ROW")
+            "삼성전자 (2024.10.25 접수, 삼성물산 5% 일반보고)": (os.path.join(fixture_base, "20241025000551.xml"), "20241025000551", "NORMAL"),
+            "현대자동차 (2024.05.03 접수, 현대모비스 5% 일반보고)": (os.path.join(fixture_base, "20240503000063.xml"), "20240503000063", "NORMAL"),
+            "LG화학 (2024.11.29 접수, ㈜LG 5% 일반보고)": (os.path.join(fixture_base, "20241129001948.xml"), "20241129001948", "NORMAL"),
+            "[거부 시험] SK하이닉스 (국민연금 5% 약식보고서)": (os.path.join(fixture_base, "20240925000388.xml"), "20240925000388", "NORMAL"),
+            "[변조 시험 1] 필수 헤더 누락 변조 ('비율' 헤더 제거)": (os.path.join(fixture_base, "20241025000551.xml"), "20241025000551_MUTATED_NO_HEADER", "MUTATE_NO_HEADER"),
+            "[변조 시험 2] 실제 열 순서 교환 변조 (주수 ↔ 비율 열 교환)": (os.path.join(fixture_base, "20241025000551.xml"), "20241025000551_MUTATED_SWAPPED", "MUTATE_SWAP_COLS"),
+            "[변조 시험 3] 정상 데이터 행 필수 셀 결손 변조 (지분율 셀 삭제)": (os.path.join(fixture_base, "20241025000551.xml"), "20241025000551_MUTATED_CORRUPT_ROW", "MUTATE_CORRUPT_ROW")
         }
-        selected_sample_label = st.selectbox("🎯 검증할 공시 문서 및 변조 시나리오 선택", list(sample_options.keys()))
-        sample_path, sample_rcept_no, sample_mode = sample_options[selected_sample_label]
 
-    with col_sel2:
-        st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
-        uploaded_xml = st.file_uploader("📂 외부 공시 XML 직접 업로드", type=["xml"])
+    with st.form("evidence_audit_form"):
+        col_sel1, col_sel2 = st.columns([2, 1])
+        with col_sel1:
+            if fixtures_available:
+                selected_sample_label = st.selectbox("🎯 검증할 공시 문서 및 변조 시나리오 선택", list(sample_options.keys()))
+                sample_path, sample_rcept_no, sample_mode = sample_options[selected_sample_label]
+            else:
+                st.info("ℹ️ 서버에 기본 표본 fixture가 없습니다. 우측의 'XML 업로드'로 검증을 진행해 주세요.")
+                selected_sample_label = None
+                sample_path, sample_rcept_no, sample_mode = None, None, None
 
-    # XML 바이트 로드 및 변조 적용
-    xml_bytes = None
-    rcept_no = sample_rcept_no
-    if uploaded_xml is not None:
-        xml_bytes = uploaded_xml.read()
-        rcept_no = uploaded_xml.name.replace(".xml", "")
-    elif os.path.exists(sample_path):
-        with open(sample_path, "rb") as f:
-            raw_b = f.read()
-        if sample_mode == "NORMAL":
-            xml_bytes = raw_b
-        elif sample_mode == "MUTATE_NO_HEADER":
-            txt = raw_b.decode('utf-8', errors='ignore')
-            txt = re.sub(r'<TH[^>]*>비율</TH>', '<TH>기타항목</TH>', txt)
-            xml_bytes = txt.encode('utf-8')
-        elif sample_mode == "MUTATE_SWAP_COLS":
-            txt = raw_b.decode('utf-8', errors='ignore')
-            txt = re.sub(r'(<TH[^>]*>주수</TH>)(\s*)(<TH[^>]*>비율</TH>)', r'\3\2\1', txt, count=1)
-            txt = re.sub(r'(<TE[^>]*ACODE=["\']HLD_TOT_CNT["\'][^>]*>298,818,100</TE>)(\s*)(<TE[^>]*ACODE=["\']HLD_TOT_RT["\'][^>]*>5\.01</TE>)', r'\3\2\1', txt, count=1)
-            xml_bytes = txt.encode('utf-8')
-        elif sample_mode == "MUTATE_CORRUPT_ROW":
-            txt = raw_b.decode('utf-8', errors='ignore')
-            txt = re.sub(r'<TE[^>]*ACODE=["\']HLD_TOT_RT["\'][^>]*>5\.01</TE>', '', txt, count=1)
-            xml_bytes = txt.encode('utf-8')
+        with col_sel2:
+            uploaded_xml = st.file_uploader("📂 외부 공시 XML 직접 업로드 (최대 10MB)", type=["xml"])
 
-    if xml_bytes:
-        manifest = run_adapter_5pct_general_art142_v1(xml_bytes, rcept_no)
+        submit_btn = st.form_submit_button("🚀 공시 원문 증거 감사 실행", type="primary")
+
+    # 세션 상태로 실행 결과 유지 (폼 제출 또는 첫 기본 로드)
+    if "audit_executed" not in st.session_state:
+        st.session_state["audit_executed"] = True
+
+    if submit_btn or st.session_state.get("audit_executed"):
+        xml_bytes = None
+        doc_source_name = ""
+        rcept_no = ""
         
-        # 2. 핵심 KPI 메트릭 카드
-        m_col1, m_col2, m_col3, m_col4 = st.columns(4)
-        status_color = "🟢" if manifest["adapter_status"] == "SUCCESS" else "🔴"
-        with m_col1:
-            st.metric("어댑터 실행 상태", f"{status_color} {manifest['adapter_status']}")
-        with m_col2:
-            st.metric("승인 후보 (Candidates)", f"{manifest['candidates_count']}건")
-        with m_col3:
-            st.metric("안전 격리 행 (Quarantined)", f"{manifest['quarantined_rows_count']}건")
-        with m_col4:
-            xml_hash = manifest["provenance"]["xml_sha256"]
-            st.metric("원문 해시 (SHA-256)", f"{xml_hash[:10]}...")
-
-        if manifest["rejection_reason"]:
-            st.warning(f"⚠️ **안전 거부 사유**: `{manifest['rejection_reason']}` (어댑터 규격 불일치로 문서 전체 억지 해석 배제)")
-
-        st.markdown("---")
-
-        # 3. 3대 상세 탭
-        tab_cand, tab_quar, tab_mani = st.tabs([
-            f"📋 승인된 후보 행 ({manifest['candidates_count']}건)",
-            f"🛡️ 격리/보류 행 내역 ({manifest['quarantined_rows_count']}건)",
-            "📜 문서 내부 증거 매니페스트 (JSON)"
-        ])
-
-        with tab_cand:
-            if manifest["candidates_count"] == 0:
-                st.info("ℹ️ 본 문서에서 승인된 RawEvidenceCandidate 후보가 0건입니다. (규격 불일치 또는 안전 거부)")
+        # 1. 업로드 파일 처리 (10MB 제한 검증 및 user_supplied_filename 표시)
+        if uploaded_xml is not None:
+            max_size_bytes = 10 * 1024 * 1024 # 10MB
+            if uploaded_xml.size > max_size_bytes:
+                st.error(f"❌ 업로드 파일 크기 초과: {uploaded_xml.size / (1024*1024):.2f}MB (최대 10MB까지 허용됩니다)")
             else:
-                st.subheader("1. 후보 행 목록 요약 (RawEvidenceCandidate)")
-                df_cands = []
-                for c in manifest["candidates"]:
-                    df_cands.append({
-                        "후보 ID": c["candidate_id"][:8] + "...",
-                        "보고자": c["reporter_name"],
-                        "보유자": c["holder_name"],
-                        "대상회사": f"{c['target_corp_name']} ({c['target_corp_code']})",
-                        "보유주식수": f"{c['shares_count']:,}주",
-                        "지분율": f"{c['stake_ratio']:.2f}%",
-                        "보고의무발생일": c["reporting_obligation_date"]
-                    })
-                st.dataframe(pd.DataFrame(df_cands), use_container_width=True)
+                xml_bytes = uploaded_xml.read()
+                doc_source_name = f"user_supplied_filename: {uploaded_xml.name}"
+                rcept_no = uploaded_xml.name.replace(".xml", "")
+        # 2. 기본 표본 처리
+        elif sample_path and os.path.exists(sample_path):
+            with open(sample_path, "rb") as f:
+                raw_b = f.read()
+            doc_source_name = f"표본 Fixture: {selected_sample_label}"
+            rcept_no = sample_rcept_no
+            if sample_mode == "NORMAL":
+                xml_bytes = raw_b
+            elif sample_mode == "MUTATE_NO_HEADER":
+                txt = raw_b.decode('utf-8', errors='ignore')
+                txt = re.sub(r'<TH[^>]*>비율</TH>', '<TH>기타항목</TH>', txt)
+                xml_bytes = txt.encode('utf-8')
+            elif sample_mode == "MUTATE_SWAP_COLS":
+                txt = raw_b.decode('utf-8', errors='ignore')
+                txt = re.sub(r'(<TH[^>]*>주수</TH>)(\s*)(<TH[^>]*>비율</TH>)', r'\3\2\1', txt, count=1)
+                txt = re.sub(r'(<TE[^>]*ACODE=["\']HLD_TOT_CNT["\'][^>]*>298,818,100</TE>)(\s*)(<TE[^>]*ACODE=["\']HLD_TOT_RT["\'][^>]*>5\.01</TE>)', r'\3\2\1', txt, count=1)
+                xml_bytes = txt.encode('utf-8')
+            elif sample_mode == "MUTATE_CORRUPT_ROW":
+                txt = raw_b.decode('utf-8', errors='ignore')
+                txt = re.sub(r'<TE[^>]*ACODE=["\']HLD_TOT_RT["\'][^>]*>5\.01</TE>', '', txt, count=1)
+                xml_bytes = txt.encode('utf-8')
 
-                st.subheader("2. 개별 후보 행 상세 증거 결속 내역")
-                for idx, cand in enumerate(manifest["candidates"]):
-                    with st.expander(f"🔍 [후보 {idx+1}] {cand['holder_name']} ➔ {cand['target_corp_name']} ({cand['shares_count']:,}주 / {cand['stake_ratio']}%)", expanded=(idx==0)):
-                        c_left, c_right = st.columns([1, 1])
-                        with c_left:
-                            st.markdown("#### 📌 동적 헤더 결속 위치")
-                            matched = manifest["document_metadata"].get("matched_columns", {})
-                            st.write(f"- **성명(명칭) 열**: Col {matched.get('holder_col_idx')} (`{manifest['header_mapping'].get(matched.get('holder_col_idx'))}`)")
-                            st.write(f"- **합계 주수 열**: Col {matched.get('shares_col_idx')} (`{manifest['header_mapping'].get(matched.get('shares_col_idx'))}`)")
-                            st.write(f"- **합계 비율 열**: Col {matched.get('stake_col_idx')} (`{manifest['header_mapping'].get(matched.get('stake_col_idx'))}`)")
-                            st.write(f"- **보고의무발생일**: `{cand['reporting_obligation_date']}`")
-
-                        with c_right:
-                            st.markdown("#### ⚖️ 제142조 각 호 원문 셀값 전수 보존 (추론 0%)")
-                            raw_entries = cand.get("article_142_raw_entries", [])
-                            if raw_entries:
-                                df_art = pd.DataFrame([
-                                    {"조항": e["item_name"], "열 번호": f"Col {e['col_idx']}", "원문 셀값": e["raw_cell_value"], "헤더 경로": e["header_path"]}
-                                    for e in raw_entries
-                                ])
-                                st.dataframe(df_art, use_container_width=True)
-                            else:
-                                st.write("보존된 제142조 항목 없음")
-
-                        st.markdown("#### 🔒 원문 행 증거 파편 (Fragment)")
-                        frag_ids = cand.get("evidence_fragment_ids", [])
-                        matched_frags = [f for f in manifest["evidence_fragments"] if f["fragment_id"] in frag_ids]
-                        for fr in matched_frags:
-                            st.caption(f"**역할**: `{fr['role']}` | **XPath**: `{fr['xpath']}` | **해시**: `{fr['raw_inner_hash']}`")
-                            st.code(fr["raw_inner_html"][:300] + ("..." if len(fr["raw_inner_html"]) > 300 else ""), language="html")
-
-        with tab_quar:
-            st.subheader(f"🛡️ 안전 격리 행 목록 (총 {manifest['quarantined_rows_count']}건)")
-            st.caption("병합(ROWSPAN/COLSPAN), 요약행, 셀 결손 등 규격과 불일치하는 행을 억지로 해석하지 않고 격리한 내역입니다.")
+        if xml_bytes:
+            st.caption(f"📄 **감사 대상 원본**: `{doc_source_name}` (문서 식별자: `{rcept_no}`)")
+            manifest = run_adapter_5pct_general_art142_v1(xml_bytes, rcept_no)
             
-            if manifest["quarantined_rows_count"] == 0:
-                st.success("격리된 행이 없습니다.")
-            else:
-                df_quar = pd.DataFrame([
-                    {"행 번호": q["data_row_index"], "격리 사유": q["reason"], "원문 미리보기": q["raw_preview"]}
-                    for q in manifest["quarantined_rows"]
-                ])
-                st.dataframe(df_quar, use_container_width=True)
+            # 2. 핵심 KPI 메트릭 카드
+            m_col1, m_col2, m_col3, m_col4 = st.columns(4)
+            status_color = "🟢" if manifest["adapter_status"] == "SUCCESS" else "🔴"
+            with m_col1:
+                st.metric("어댑터 실행 상태", f"{status_color} {manifest['adapter_status']}")
+            with m_col2:
+                st.metric("추출 후보 (RawEvidenceCandidate)", f"{manifest['candidates_count']}건")
+            with m_col3:
+                st.metric("안전 격리 행 (Quarantined)", f"{manifest['quarantined_rows_count']}건")
+            with m_col4:
+                xml_hash = manifest["provenance"]["xml_sha256"]
+                st.metric("원문 해시 (SHA-256)", f"{xml_hash[:10]}...")
 
-        with tab_mani:
-            st.subheader("📜 실행 증거 매니페스트 (Execution Manifest)")
-            st.caption("감사 추적(Audit Trail)을 위한 원문 해시, 2D 헤더 매핑 경로, 전체 증거 파편 JSON")
-            st.download_button(
-                label="📥 증거 매니페스트 JSON 다운로드",
-                data=json.dumps(manifest, ensure_ascii=False, indent=2),
-                file_name=f"evidence_manifest_{rcept_no}.json",
-                mime="application/json"
-            )
-            st.json(manifest)
+            if manifest["rejection_reason"]:
+                st.warning(f"⚠️ **안전 거부 사유**: `{manifest['rejection_reason']}` (어댑터 규격 불일치로 문서 전체 억지 해석 배제)")
+
+            st.markdown("---")
+
+            # 3. 3대 상세 탭
+            tab_cand, tab_quar, tab_mani = st.tabs([
+                f"📋 추출 후보 행 ({manifest['candidates_count']}건)",
+                f"🛡️ 격리/보류 행 내역 ({manifest['quarantined_rows_count']}건)",
+                "📜 문서 내부 증거 매니페스트 (JSON)"
+            ])
+
+            with tab_cand:
+                if manifest["candidates_count"] == 0:
+                    st.info("ℹ️ 본 문서에서 추출된 RawEvidenceCandidate 후보가 0건입니다. (규격 불일치 또는 안전 거부)")
+                else:
+                    st.subheader("1. 추출 후보 행 목록 요약 (RawEvidenceCandidate)")
+                    df_cands = []
+                    for c in manifest["candidates"]:
+                        df_cands.append({
+                            "후보 ID": c["candidate_id"][:8] + "...",
+                            "보고자": c["reporter_name"],
+                            "보유자": c["holder_name"],
+                            "대상회사": f"{c['target_corp_name']} ({c['target_corp_code']})",
+                            "보유주식수": f"{c['shares_count']:,}주",
+                            "지분율": f"{c['stake_ratio']:.2f}%",
+                            "보고의무발생일": c["reporting_obligation_date"]
+                        })
+                    st.dataframe(pd.DataFrame(df_cands), use_container_width=True)
+
+                    st.subheader("2. 개별 후보 행 상세 증거 결속 내역")
+                    for idx, cand in enumerate(manifest["candidates"]):
+                        with st.expander(f"🔍 [후보 {idx+1}] {cand['holder_name']} ➔ {cand['target_corp_name']} ({cand['shares_count']:,}주 / {cand['stake_ratio']}%)", expanded=(idx==0)):
+                            c_left, c_right = st.columns([1, 1])
+                            with c_left:
+                                st.markdown("#### 📌 동적 헤더 결속 위치")
+                                matched = manifest["document_metadata"].get("matched_columns", {})
+                                st.write(f"- **성명(명칭) 열**: Col {matched.get('holder_col_idx')} (`{manifest['header_mapping'].get(matched.get('holder_col_idx'))}`)")
+                                st.write(f"- **합계 주수 열**: Col {matched.get('shares_col_idx')} (`{manifest['header_mapping'].get(matched.get('shares_col_idx'))}`)")
+                                st.write(f"- **합계 비율 열**: Col {matched.get('stake_col_idx')} (`{manifest['header_mapping'].get(matched.get('stake_col_idx'))}`)")
+                                st.write(f"- **보고의무발생일**: `{cand['reporting_obligation_date']}`")
+
+                            with c_right:
+                                st.markdown("#### ⚖️ 제142조 각 호 원문 셀값 전수 보존 (추론 0%)")
+                                raw_entries = cand.get("article_142_raw_entries", [])
+                                if raw_entries:
+                                    df_art = pd.DataFrame([
+                                        {"조항": e["item_name"], "열 번호": f"Col {e['col_idx']}", "원문 셀값": e["raw_cell_value"], "헤더 경로": e["header_path"]}
+                                        for e in raw_entries
+                                    ])
+                                    st.dataframe(df_art, use_container_width=True)
+                                else:
+                                    st.write("보존된 제142조 항목 없음")
+
+                            st.markdown("#### 🔒 원문 행 증거 파편 (Fragment)")
+                            frag_ids = cand.get("evidence_fragment_ids", [])
+                            matched_frags = [f for f in manifest["evidence_fragments"] if f["fragment_id"] in frag_ids]
+                            for fr in matched_frags:
+                                st.caption(f"**역할**: `{fr['role']}` | **XPath**: `{fr['xpath']}` | **해시**: `{fr['raw_inner_hash']}`")
+                                st.code(fr["raw_inner_html"][:300] + ("..." if len(fr["raw_inner_html"]) > 300 else ""), language="html")
+
+            with tab_quar:
+                st.subheader(f"🛡️ 안전 격리 행 목록 (총 {manifest['quarantined_rows_count']}건)")
+                st.caption("병합(ROWSPAN/COLSPAN), 요약행, 셀 결손 등 규격과 불일치하는 행을 억지로 해석하지 않고 격리한 내역입니다.")
+                
+                if manifest["quarantined_rows_count"] == 0:
+                    st.success("격리된 행이 없습니다.")
+                else:
+                    df_quar = pd.DataFrame([
+                        {"행 번호": q["data_row_index"], "격리 사유": q["reason"], "원문 미리보기": q["raw_preview"]}
+                        for q in manifest["quarantined_rows"]
+                    ])
+                    st.dataframe(df_quar, use_container_width=True)
+
+            with tab_mani:
+                st.subheader("📜 문서 내부 증거 매니페스트 (Document Evidence Manifest)")
+                st.caption("감사 추적(Audit Trail)을 위한 원문 해시, 2D 헤더 매핑 경로, 전체 증거 파편 JSON")
+                st.download_button(
+                    label="📥 문서 내부 증거 매니페스트 JSON 다운로드",
+                    data=json.dumps(manifest, ensure_ascii=False, indent=2),
+                    file_name=f"evidence_manifest_{rcept_no}.json",
+                    mime="application/json"
+                )
+                st.json(manifest)
+        else:
+            st.info("선택된 공시 XML 파일이 없습니다.")
     else:
         st.error("XML 파일을 불러오지 못했습니다.")
 
