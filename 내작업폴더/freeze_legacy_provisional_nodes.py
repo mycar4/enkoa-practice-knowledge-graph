@@ -35,21 +35,24 @@ def freeze_legacy_provisional_nodes():
 
     cypher = """
     MATCH (c:RawEvidenceCandidate)
-    WHERE c.candidate_id =~ 'cand-\\d{14}-\\d+'
+    WHERE c.candidate_id =~ 'cand-\\d{14}-\\d+' OR c.legacy_status = 'LEGACY_PROVISIONAL_TEST_LOAD'
     SET c.legacy_status = 'LEGACY_PROVISIONAL_TEST_LOAD',
         c.load_run_id = 'legacy_provisional_test'
-    RETURN count(c) AS frozen_count, collect(c.candidate_id) AS frozen_cids
+    WITH c
+    OPTIONAL MATCH (c)-[:EVIDENCED_BY]->(f:EvidenceFragment)
+    WHERE f IS NOT NULL
+    SET f.legacy_status = 'LEGACY_PROVISIONAL_TEST_LOAD',
+        f.load_run_id = 'legacy_provisional_test'
+    RETURN count(DISTINCT c) AS frozen_cands, count(DISTINCT f) AS frozen_frags
     """
 
     with GraphDatabase.driver(uri, auth=(user, pwd)) as driver:
         with driver.session() as session:
             record = session.run(cypher).single()
-            frozen_cnt = record["frozen_count"]
-            frozen_cids = record["frozen_cids"]
+            frozen_cands = record["frozen_cands"]
+            frozen_frags = record["frozen_frags"]
 
-    print(f"✔️ 동결 처리된 잠정 시험 노드 수: {frozen_cnt}개")
-    for cid in frozen_cids:
-        print(f"   ❄️ 동결: {cid}")
+    print(f"✔️ 동결 처리된 잠정 시험 노드 수: 후보 {frozen_cands}개, 파편 {frozen_frags}개")
     print("=" * 80)
 
 

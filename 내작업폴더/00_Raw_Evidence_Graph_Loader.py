@@ -359,16 +359,12 @@ class RawEvidenceGraphLoader:
         if not self.driver:
             raise RuntimeError("❌ [적재 불가] commit=True이나 유효한 Neo4j Driver가 제공되지 않았습니다.")
         with self.driver.session() as session:
-            # 1. Fragments 적재 (created_at 불변 보존)
+            # 1. Fragments 적재 (ON CREATE SET 전용 불변식 - 재실행 시 완전 no-op)
             if fragments:
                 frag_cypher = """
                 UNWIND $batch AS f
                 MERGE (frag:EvidenceFragment {fragment_id: f.fragment_id})
                 ON CREATE SET
-                    frag.created_at = f.created_at,
-                    frag.first_load_run_id = f.load_run_id,
-                    frag.first_load_receipt_id = f.load_receipt_id
-                SET
                     frag.rcept_no = f.rcept_no,
                     frag.xml_sha256 = f.xml_sha256,
                     frag.collection_run_id = f.collection_run_id,
@@ -381,20 +377,17 @@ class RawEvidenceGraphLoader:
                     frag.role = f.role,
                     frag.xpath = f.xpath,
                     frag.raw_inner_hash = f.raw_inner_hash,
-                    frag.extracted_value = f.extracted_value
+                    frag.extracted_value = f.extracted_value,
+                    frag.created_at = f.created_at
                 """
                 session.run(frag_cypher, {"batch": fragments})
 
-            # 2. Candidates 적재 (created_at 불변 보존)
+            # 2. Candidates 적재 (ON CREATE SET 전용 불변식 - 재실행 시 완전 no-op)
             if candidates:
                 cand_cypher = """
                 UNWIND $batch AS c
                 MERGE (cand:RawEvidenceCandidate {candidate_id: c.candidate_id})
                 ON CREATE SET
-                    cand.created_at = c.created_at,
-                    cand.first_load_run_id = c.load_run_id,
-                    cand.first_load_receipt_id = c.load_receipt_id
-                SET
                     cand.rcept_no = c.rcept_no,
                     cand.xml_sha256 = c.xml_sha256,
                     cand.collection_run_id = c.collection_run_id,
@@ -412,7 +405,8 @@ class RawEvidenceGraphLoader:
                     cand.holder_name = c.holder_name,
                     cand.shares_count = c.shares_count,
                     cand.stake_ratio = c.stake_ratio,
-                    cand.reporting_obligation_date = c.reporting_obligation_date
+                    cand.reporting_obligation_date = c.reporting_obligation_date,
+                    cand.created_at = c.created_at
                 """
                 session.run(cand_cypher, {"batch": candidates})
 

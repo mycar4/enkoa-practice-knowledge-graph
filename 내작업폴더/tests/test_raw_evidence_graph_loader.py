@@ -201,6 +201,7 @@ class TestRawEvidenceGraphLoaderOffline(unittest.TestCase):
 
             if "MERGE (frag:EvidenceFragment" in cypher_query or "MERGE (cand:RawEvidenceCandidate" in cypher_query:
                 self.assertIn("ON CREATE SET", cypher_query, "❌ MERGE 문에 ON CREATE SET 불변식 쓰기가 적용되지 않았습니다!")
+                self.assertNotIn("\n                SET\n", cypher_query, "❌ 불변성 위반: trailing SET이 남아있어 재실행 시 덮어쓰기가 발생합니다!")
                 self.assertIn("load_run_id", cypher_query)
                 self.assertIn("load_receipt_id", cypher_query)
 
