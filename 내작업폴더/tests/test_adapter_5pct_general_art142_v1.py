@@ -68,6 +68,14 @@ class TestAdapter5PctGeneralArt142V1(unittest.TestCase):
         self.assertEqual(ss_cand["stake_ratio"], 5.01)
         self.assertEqual(ss_cand["target_corp_name"], "삼성전자")
         self.assertEqual(ss_cand["reporting_obligation_date"], "2024-10-22")
+        
+        # 4. 제142조 원문값 배열 보존 검증 (수치 일치 추론 배제!)
+        self.assertIn("article_142_raw_entries", ss_cand)
+        self.assertGreater(len(ss_cand["article_142_raw_entries"]), 0)
+        item1 = next((e for e in ss_cand["article_142_raw_entries"] if e["item_name"] == "제1호"), None)
+        self.assertIsNotNone(item1)
+        self.assertEqual(item1["raw_cell_value"], "298,818,100")
+        print(f"             제142조 원문 항목 전수 보존 확인: {len(ss_cand['article_142_raw_entries'])}개 열")
         print(f"             후보 {manifest['candidates_count']}건, 보류 {manifest['quarantined_rows_count']}건 정상 수집")
 
     def test_02_real_document_hyundai(self):
@@ -121,18 +129,36 @@ class TestAdapter5PctGeneralArt142V1(unittest.TestCase):
         print(f"  [Pass 변조1] 필수 헤더 누락 변조 시 안전 거부 성공: {manifest['rejection_reason']}")
 
     def test_05_mutation_swapped_columns_tracked_dynamically(self):
-        """[변조 시험 2] 열 순서 변경 변조 시 고정 인덱스가 아닌 동적 헤더로 정확히 추적"""
+        """[진짜 변조 시험 2] 헤더 열과 데이터 행 셀을 함께 교환한 변조 Fixture: 동적 어댑터가 바뀐 열에서 올바르게 추출하는지 실측"""
         with open(self.samsung_xml_path, "rb") as f:
-            original_xml = f.read().decode('utf-8', errors='ignore')
+            xml_str = f.read().decode('utf-8', errors='ignore')
             
-        # 열 순서가 변경되어도 동적으로 헤더 경로를 읽는지 검증
-        manifest = run_adapter_5pct_general_art142_v1(original_xml.encode('utf-8'), "20241025000551")
+        # 1. 헤더에서 '주수'와 '비율' 순서 교환
+        # 기존: <TH ...>주수</TH>\s*<TH ...>비율</TH> ➔ <TH ...>비율</TH>\s*<TH ...>주수</TH>
+        header_pattern = r'(<TH[^>]*>주수</TH>)(\s*)(<TH[^>]*>비율</TH>)'
+        self.assertTrue(bool(re.search(header_pattern, xml_str)), "헤더 치환 타겟 발견 실패")
+        mutated_xml = re.sub(header_pattern, r'\3\2\1', xml_str, count=1)
+        
+        # 2. 데이터 행(삼성물산 Row 2)에서 주수 셀과 비율 셀의 순서 교환
+        row_cell_pattern = r'(<TE[^>]*ACODE=["\']HLD_TOT_CNT["\'][^>]*>298,818,100</TE>)(\s*)(<TE[^>]*ACODE=["\']HLD_TOT_RT["\'][^>]*>5\.01</TE>)'
+        self.assertTrue(bool(re.search(row_cell_pattern, mutated_xml)), "데이터 행 치환 타겟 발견 실패")
+        mutated_xml = re.sub(row_cell_pattern, r'\3\2\1', mutated_xml, count=1)
+        
+        # 3. 어댑터 실행
+        manifest = run_adapter_5pct_general_art142_v1(mutated_xml.encode('utf-8'), "20241025000551_SWAPPED")
+        self.assertEqual(manifest["adapter_status"], "SUCCESS")
+        
+        # 4. 동적 헤더 매핑 결과 확인: 주수열과 비율열 인덱스가 서로 바뀌어 있어야 함!
         matched = manifest["document_metadata"]["matched_columns"]
-        # 매핑된 열 인덱스에서 실제 해당 경로가 나타나는지 확인
-        header_map = manifest["header_mapping"]
-        self.assertIn("합계 > 주수", header_map[matched["shares_col_idx"]])
-        self.assertIn("합계 > 비율", header_map[matched["stake_col_idx"]])
-        print(f"  [Pass 변조2] 동적 헤더 결속 열 추적 검증 완료")
+        self.assertEqual(matched["shares_col_idx"], 11, "주수 열이 11번 열로 동적 이동 감지 실패")
+        self.assertEqual(matched["stake_col_idx"], 10, "비율 열이 10번 열로 동적 이동 감지 실패")
+        
+        # 5. 바뀐 열 위치에서 추출된 수치가 여전히 정확한지 검증
+        ss_cand = next((c for c in manifest["candidates"] if "삼성물산" in c["holder_name"]), None)
+        self.assertIsNotNone(ss_cand)
+        self.assertEqual(ss_cand["shares_count"], 298818100, "바뀐 주수 열에서 올바른 주식수 추출 실패")
+        self.assertEqual(ss_cand["stake_ratio"], 5.01, "바뀐 비율 열에서 올바른 지분율 추출 실패")
+        print(f"  [Pass 변조2] 실제 열 교환 변조 Fixture 실측 성공: 비율열(Col 10)=5.01%, 주수열(Col 11)=298,818,100주 동적 추출 완료!")
 
     def test_06_mutation_non_5pct_general_rejected(self):
         """[변조 시험 3] 약식보고서 투입 변조 ➔ UNSUPPORTED_LAYOUT_NOT_5PCT_GENERAL 안전 거부"""

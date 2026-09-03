@@ -317,15 +317,17 @@ def run_adapter_5pct_general_art142_v1(
             })
             continue
 
-        # 소유형태 원문 표기 보존 (수치 추론 일체 배제!)
-        # 제142조 조항 열들 중 해당 행의 수치와 연관된 열이 있는지 확인하되, 헤더 문자열만 원문 그대로 기록
-        ownership_basis_raw = None
-        for item_name, col_i in article_item_cols.items():
+        # 소유형태 원문 표기 보존 (수치 추론 일체 배제! 제142조 각 호 열의 원문 셀값 배열 전수 보관)
+        article_142_raw_entries = []
+        for item_name, col_i in sorted(article_item_cols.items()):
             if col_i < len(cells):
-                cell_item_val = cells[col_i].replace(",", "").strip()
-                if cell_item_val.isdigit() and int(cell_item_val) == shares_cnt:
-                    ownership_basis_raw = f"자본시장법시행령_제142조_{item_name}"
-                    break
+                cell_item_val = cells[col_i].strip()
+                article_142_raw_entries.append({
+                    "item_name": item_name,
+                    "col_idx": col_i,
+                    "header_path": manifest["header_mapping"].get(col_i, f"제142조 > {item_name}"),
+                    "raw_cell_value": cell_item_val
+                })
 
         # 증거 파편 생성 및 결속
         candidate_id = str(uuid.uuid4())
@@ -351,7 +353,7 @@ def run_adapter_5pct_general_art142_v1(
             "reporting_obligation_date": reporting_obligation_date,
             "shares_count": shares_cnt,
             "stake_ratio": stake_val,
-            "ownership_basis_raw": ownership_basis_raw,
+            "article_142_raw_entries": article_142_raw_entries,
             "evidence_fragment_ids": [
                 frag_target_comp["fragment_id"],
                 frag_reporter["fragment_id"],
