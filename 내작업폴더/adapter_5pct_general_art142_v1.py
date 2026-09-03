@@ -43,7 +43,8 @@ def compute_sha256(text_or_bytes: Any) -> str:
 
 def run_adapter_5pct_general_art142_v1(
     xml_bytes: bytes,
-    rcept_no: str
+    rcept_no: Optional[str] = None,
+    user_supplied_filename: Optional[str] = None
 ) -> Dict[str, Any]:
     """5PCT_GENERAL_ART142_V1 어댑터 실행 진입점 (순수 비파괴 오프라인)"""
     run_timestamp = datetime.now(timezone.utc).isoformat()
@@ -56,6 +57,7 @@ def run_adapter_5pct_general_art142_v1(
         "execution_timestamp": run_timestamp,
         "provenance": {
             "requested_rcept_no": rcept_no,
+            "user_supplied_filename": user_supplied_filename,
             "xml_size_bytes": len(xml_bytes),
             "xml_sha256": xml_sha256
         },
