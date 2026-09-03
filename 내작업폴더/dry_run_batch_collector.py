@@ -75,7 +75,11 @@ def run_1500_dry_run():
         transport=mock_transport
     )
 
-    run_id, run_dir, in_manifest_sha = collector.init_run(targets, run_id_prefix="dryrun_1500")
+    run_id, run_dir, in_manifest_sha = collector.init_run(
+        targets=targets,
+        source_manifest_path=manifest_path,
+        run_id_prefix="dryrun_1500"
+    )
     print(f"• Run ID: {run_id}")
     print(f"• Run Dir: {run_dir}")
     print(f"• Input Manifest SHA-256: {in_manifest_sha}")

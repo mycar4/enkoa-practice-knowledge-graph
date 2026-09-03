@@ -52,25 +52,42 @@ class BatchCollector1500:
 
     def init_run(
         self,
-        targets: List[Dict[str, str]],
+        targets: Optional[List[Dict[str, str]]] = None,
+        source_manifest_path: Optional[str] = None,
         run_id_prefix: str = "batch_1500",
         list_source_name: str = "KOSPI_KOSDAQ_MIDCAP_MASTER"
     ) -> Tuple[str, str, str]:
         """
         배치 런 초기화:
         - 실행 디렉토리 생성
-        - 사전 input_manifest.json 영구 고정 및 SHA-256 계산
-        - 반환: (run_id, run_dir, input_manifest_sha256)
+        - source_manifest_path가 지정되면 해당 원천 파일의 SHA-256 및 경로를 영구 결속
+        - targets가 None이면 source_manifest_path에서 로드
+        - input_manifest.json 생성 후 (run_id, run_dir, input_manifest_sha256) 반환
         """
         ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         run_id = f"{run_id_prefix}_{ts}"
         run_dir = os.path.join(self.base_runs_dir, run_id)
         os.makedirs(run_dir, exist_ok=True)
 
+        source_manifest_sha = None
+        source_manifest_rel = None
+        if source_manifest_path and os.path.exists(source_manifest_path):
+            source_manifest_sha = compute_file_sha256(source_manifest_path)
+            source_manifest_rel = os.path.relpath(source_manifest_path, start=os.getcwd()).replace("\\", "/")
+            if targets is None:
+                with open(source_manifest_path, "r", encoding="utf-8") as sf:
+                    src_data = json.load(sf)
+                targets = src_data.get("targets", [])
+
+        if targets is None:
+            targets = []
+
         input_manifest_path = os.path.join(run_dir, "input_manifest.json")
         manifest_data = {
             "run_id": run_id,
             "created_at_utc": datetime.now(timezone.utc).isoformat(),
+            "source_manifest_path": source_manifest_rel,
+            "source_manifest_sha256": source_manifest_sha,
             "list_source_name": list_source_name,
             "total_target_count": len(targets),
             "max_consecutive_failures_limit": self.max_consecutive_failures,
@@ -88,12 +105,14 @@ class BatchCollector1500:
         run_id: str,
         run_dir: str,
         input_manifest_sha256: str,
-        targets: List[Dict[str, str]]
+        targets: List[Dict[str, str]],
+        resume: bool = False
     ) -> Dict[str, Any]:
         """
         배치 순차 실행:
+        - resume=True 시 checkpoint.json 및 로컬 xml/ 상태를 읽어 이미 완료된 rcept_no를 안전하게 건너뜀
         - 서킷 브레이커(연속 5건 실패 시 즉시 중단)
-        - 실시간 checkpoint.json 갱신
+        - 실시간 checkpoint.json 갱신 (completed_rcept_nos 목록 포함)
         - 개별 영수증에 run_id 및 input_manifest_sha256 전수 결속
         """
         engine = RawEvidenceStorageEngine(
@@ -107,10 +126,27 @@ class BatchCollector1500:
         circuit_breaker_tripped = False
         abort_reason = None
 
+        completed_rcept_nos = set()
+        if resume and os.path.exists(checkpoint_path):
+            try:
+                with open(checkpoint_path, "r", encoding="utf-8") as cf:
+                    chk_info = json.load(cf)
+                completed_rcept_nos = set(chk_info.get("completed_rcept_nos", []))
+                print(f"🔄 [체크포인트 재개 감지] 기존 완료 목록 {len(completed_rcept_nos)}건 건너뜀 준비")
+            except Exception as e:
+                print(f"⚠️ 체크포인트 읽기 실패: {e}")
+
+        # 로컬 xml/ 에 실존하는 파일도 완료 목록에 통합
+        xml_dir = os.path.join(run_dir, "xml")
+        if os.path.exists(xml_dir):
+            for fn in os.listdir(xml_dir):
+                if fn.endswith(".xml"):
+                    completed_rcept_nos.add(fn[:-4])
+
         processed_results: List[Dict[str, Any]] = []
 
-        print(f"🚀 [배치 시작] Run ID: {run_id}")
-        print(f"   • 대상 건수: {len(targets)}건 (순차 제어)")
+        print(f"🚀 [배치 가동] Run ID: {run_id}")
+        print(f"   • 대상 건수: {len(targets)}건 (재개 모드: {resume}, 기완료: {len(completed_rcept_nos)}건)")
         print(f"   • 연속 실패 중단 기준: {self.max_consecutive_failures}회")
 
         for idx, target in enumerate(targets, start=1):
@@ -118,14 +154,27 @@ class BatchCollector1500:
             expected_corp_code = target.get("expected_corp_code", "")
             expected_corp_name = target.get("expected_corp_name", "")
 
-            # 서킷 브레이커 검사
+            # 1. 재개 모드 건너뛰기
+            if resume and rcept_no in completed_rcept_nos:
+                processed_results.append({
+                    "index": idx,
+                    "rcept_no": rcept_no,
+                    "expected_corp_code": expected_corp_code,
+                    "expected_corp_name": expected_corp_name,
+                    "collection_status": "SKIPPED_LOCAL_PRESENT",
+                    "resumed_skip": True
+                })
+                consecutive_failures = 0
+                continue
+
+            # 2. 서킷 브레이커 검사
             if consecutive_failures >= self.max_consecutive_failures:
                 circuit_breaker_tripped = True
                 abort_reason = f"CIRCUIT_BREAKER_TRIGGERED: consecutive_failures={consecutive_failures} reached limit {self.max_consecutive_failures}"
                 print(f"\n🚨 [비상 중단] {abort_reason}")
                 break
 
-            # 개별 수집 및 영수증 결속 발행
+            # 3. 개별 수집 및 영수증 결속 발행
             receipt = engine.fetch_and_store(
                 rcept_no=rcept_no,
                 caller_corp_code=expected_corp_code,
@@ -138,6 +187,7 @@ class BatchCollector1500:
             status = receipt.get("collection_status")
             if status in ["STORED", "SKIPPED_LOCAL_PRESENT"]:
                 consecutive_failures = 0  # 성공 시 리셋
+                completed_rcept_nos.add(rcept_no)
             else:
                 consecutive_failures += 1
                 print(f"   ⚠️ 실패/격리 감지 ({rcept_no}): {status}, 연속 실패: {consecutive_failures}회")
@@ -160,6 +210,8 @@ class BatchCollector1500:
                 "updated_at_utc": datetime.now(timezone.utc).isoformat(),
                 "processed_count": len(processed_results),
                 "total_target_count": len(targets),
+                "completed_count": len(completed_rcept_nos),
+                "completed_rcept_nos": sorted(list(completed_rcept_nos)),
                 "current_consecutive_failures": consecutive_failures,
                 "circuit_breaker_tripped": circuit_breaker_tripped,
                 "last_processed_rcept_no": rcept_no
@@ -172,6 +224,8 @@ class BatchCollector1500:
             "updated_at_utc": datetime.now(timezone.utc).isoformat(),
             "processed_count": len(processed_results),
             "total_target_count": len(targets),
+            "completed_count": len(completed_rcept_nos),
+            "completed_rcept_nos": sorted(list(completed_rcept_nos)),
             "current_consecutive_failures": consecutive_failures,
             "circuit_breaker_tripped": circuit_breaker_tripped,
             "abort_reason": abort_reason,
@@ -185,6 +239,7 @@ class BatchCollector1500:
             "completed_at_utc": datetime.now(timezone.utc).isoformat(),
             "total_target_count": len(targets),
             "processed_count": len(processed_results),
+            "completed_count": len(completed_rcept_nos),
             "circuit_breaker_tripped": circuit_breaker_tripped,
             "abort_reason": abort_reason,
             "consecutive_failures_at_end": consecutive_failures
@@ -337,7 +392,18 @@ def run_batch_deep_closure_audit(run_dir: str) -> Dict[str, Any]:
             "receipts": receipts_detail
         })
 
-    # 최종 엄격 판정 (5대 조건 전수 충족 필수)
+    # 원천 입력 매니페스트 해시 결속 검증
+    source_manifest_path = in_manifest.get("source_manifest_path")
+    source_manifest_sha = in_manifest.get("source_manifest_sha256")
+    source_manifest_verified = True
+    if source_manifest_path and source_manifest_sha:
+        if os.path.exists(source_manifest_path):
+            current_src_sha = compute_file_sha256(source_manifest_path)
+            source_manifest_verified = (current_src_sha == source_manifest_sha)
+        else:
+            source_manifest_verified = False
+
+    # 최종 엄격 판정 (5대 조건 및 원천 목록 결속 전수 충족 필수)
     is_strictly_verified = (
         failed_count == 0 and
         quarantined_count == 0 and
@@ -346,7 +412,8 @@ def run_batch_deep_closure_audit(run_dir: str) -> Dict[str, Any]:
         all_manifest_shas_matched and
         all_rcept_nos_matched and
         all_xml_hashes_matched and
-        all_corp_codes_matched
+        all_corp_codes_matched and
+        source_manifest_verified
     )
 
     closure_manifest_path = os.path.join(run_dir, "batch_closure_manifest.json")
@@ -354,6 +421,9 @@ def run_batch_deep_closure_audit(run_dir: str) -> Dict[str, Any]:
         "run_id": run_id,
         "audited_at_utc": datetime.now(timezone.utc).isoformat(),
         "input_manifest_sha256": in_manifest_sha,
+        "source_manifest_path": source_manifest_path,
+        "source_manifest_sha256": source_manifest_sha,
+        "source_manifest_verified": source_manifest_verified,
         "total_targets": len(targets),
         "total_receipts_audited": len(all_receipt_files),
         "stored_count": stored_count,
@@ -374,3 +444,59 @@ def run_batch_deep_closure_audit(run_dir: str) -> Dict[str, Any]:
     atomic_write_bytes(closure_manifest_path, json.dumps(closure_data, ensure_ascii=False, indent=2).encode('utf-8'))
 
     return closure_data
+
+
+def main():
+    import argparse
+    parser = argparse.ArgumentParser(description="DART-Trace 1,500건 배치 수집 제어기")
+    parser.add_argument("--source-manifest", type=str, default="내작업폴더/data/raw_filings/input_manifest_1500.json", help="고정 입력 매니페스트 경로")
+    parser.add_argument("--resume", action="store_true", help="중단된 런 체크포인트에서 이어서 재개")
+    parser.add_argument("--run-id", type=str, default=None, help="재개할 기존 run_id (미지정 시 가장 최근 런 디렉토리)")
+    parser.add_argument("--delay", type=float, default=0.2, help="API 호출 간 딜레이(초)")
+    parser.add_argument("--max-failures", type=int, default=5, help="서킷 브레이커 연속 실패 상한")
+    args = parser.parse_args()
+
+    base_runs_dir = "내작업폴더/data/raw_filings/batch_runs"
+    collector = BatchCollector1500(
+        base_runs_dir=base_runs_dir,
+        max_consecutive_failures=args.max_failures,
+        rate_limit_delay_sec=args.delay
+    )
+
+    if args.resume:
+        if args.run_id:
+            run_id = args.run_id
+            run_dir = os.path.join(base_runs_dir, run_id)
+        else:
+            all_runs = sorted([d for d in os.listdir(base_runs_dir) if os.path.isdir(os.path.join(base_runs_dir, d))])
+            if not all_runs:
+                raise FileNotFoundError("재개할 기존 런 디렉토리가 없습니다.")
+            run_id = all_runs[-1]
+            run_dir = os.path.join(base_runs_dir, run_id)
+
+        in_manifest_path = os.path.join(run_dir, "input_manifest.json")
+        if not os.path.exists(in_manifest_path):
+            raise FileNotFoundError(f"재개할 런의 input_manifest.json 부재: {in_manifest_path}")
+
+        in_manifest_sha = compute_file_sha256(in_manifest_path)
+        with open(in_manifest_path, "r", encoding="utf-8") as f:
+            manifest_info = json.load(f)
+        targets = manifest_info.get("targets", [])
+        print(f"🔄 [--resume 재개 모드] Run ID: {run_id}, 잔여 대상 처리 시작")
+    else:
+        run_id, run_dir, in_manifest_sha = collector.init_run(
+            source_manifest_path=args.source_manifest,
+            run_id_prefix="batch_1500"
+        )
+        with open(os.path.join(run_dir, "input_manifest.json"), "r", encoding="utf-8") as f:
+            manifest_info = json.load(f)
+        targets = manifest_info.get("targets", [])
+
+    summary = collector.execute_batch(run_id, run_dir, in_manifest_sha, targets, resume=args.resume)
+    print("\n🔍 배치 종료 후 심층 집계 감사 자동 실행...")
+    audit_res = run_batch_deep_closure_audit(run_dir)
+    print(f"📊 최종 심층 감사 판정: {audit_res['audit_verdict']}")
+
+
+if __name__ == "__main__":
+    main()

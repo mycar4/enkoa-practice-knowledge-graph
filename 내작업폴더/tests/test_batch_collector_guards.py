@@ -232,6 +232,49 @@ class TestBatchCollectorGuards(unittest.TestCase):
         self.assertEqual(closure_report["audit_verdict"], "BATCH_AUDIT_REJECTED", "불일치 시 승인되면 안 됨!")
         print("  [가드 5-반증 통과] 법인코드 불일치 시 BATCH_AUDIT_REJECTED로 엄격 거부 확인")
 
+    def test_07_source_manifest_lineage_and_resume_mode(self):
+        """[재개 및 혈통] 원천 매니페스트 해시 결속 및 --resume 체크포인트 재개 실측"""
+        run_dir_base = os.path.join(self.test_base_dir, "test_resume")
+        mock_transport = MockDartTransport()
+
+        # 1. 원천 매니페스트 생성
+        source_manifest_file = os.path.join(self.test_base_dir, "dummy_source_manifest.json")
+        targets = [
+            {"rcept_no": f"2024102500055{i}", "expected_corp_code": "00126380", "expected_corp_name": "삼성전자"}
+            for i in range(1, 6)
+        ]
+        with open(source_manifest_file, "w", encoding="utf-8") as sf:
+            json.dump({"targets": targets}, sf)
+
+        for t in targets:
+            mock_transport.set_response(t["rcept_no"], 200, self.sample_zip)
+
+        collector = BatchCollector1500(base_runs_dir=run_dir_base, rate_limit_delay_sec=0.0, transport=mock_transport)
+
+        # 2. 원천 매니페스트 기반 초기화
+        run_id, run_dir, in_sha = collector.init_run(source_manifest_path=source_manifest_file, run_id_prefix="resume_test")
+
+        # 3. 1차 실행: 앞 2개만 실행 후 중단 시뮬레이션
+        partial_targets = targets[:2]
+        collector.execute_batch(run_id, run_dir, in_sha, partial_targets, resume=False)
+        self.assertEqual(len(mock_transport.call_history), 2)
+
+        # 4. 2차 실행: 전체 5개 대상을 resume=True로 가동
+        # 앞 2개는 건너뛰고, 뒤 3개만 새로 수집되어야 함!
+        resumed_summary = collector.execute_batch(run_id, run_dir, in_sha, targets, resume=True)
+
+        self.assertEqual(resumed_summary["processed_count"], 5)
+        self.assertEqual(resumed_summary["completed_count"], 5)
+        # 네트워크 호출은 총 5회여야 함 (앞 2회 + 뒤 3회, 중복 0건!)
+        self.assertEqual(len(mock_transport.call_history), 5, "재개 시 이미 수집된 건은 호출되지 않아야 함!")
+
+        # 5. 심층 집계 감사 검증 (원천 매니페스트 해시 일치 확인)
+        closure_report = run_batch_deep_closure_audit(run_dir)
+        self.assertTrue(closure_report["source_manifest_verified"], "원천 매니페스트 해시 일치 실패!")
+        self.assertEqual(closure_report["audit_verdict"], "BATCH_VERIFIED_SUCCESS")
+
+        print("  [재개 및 혈통 통과] 원천 매니페스트 해시 결속 및 checkpoint 기반 재개(0건 중복 호출) 실측 완수")
+
 
 if __name__ == "__main__":
     unittest.main()
