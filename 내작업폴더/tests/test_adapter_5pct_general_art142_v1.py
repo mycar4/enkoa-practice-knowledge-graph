@@ -187,5 +187,36 @@ class TestAdapter5PctGeneralArt142V1(unittest.TestCase):
         self.assertTrue(any("ROW_CELLS_INSUFFICIENT" in r or "SKIPPED_" in r for r in reasons))
         print(f"  [Pass 행 격리] 비데이터/결손행 {manifest['quarantined_rows_count']}건 개별 격리 기록 확인: {reasons[0]}")
 
+    def test_08_mutation_essential_cell_removed_isolated_to_quarantine(self):
+        """[진짜 변조 시험 4] 정상 데이터 행(삼성물산)의 필수 지분율 셀을 의도적으로 삭제/병합 결손 변조 ➔ 해당 행만 안전 격리되고 타 행은 정상 수집됨을 실측"""
+        with open(self.samsung_xml_path, "rb") as f:
+            xml_str = f.read().decode('utf-8', errors='ignore')
+            
+        # 삼성물산 데이터 행에서 마지막 필수 셀인 지분율(5.01) 태그를 완전히 제거 (열 결손 발생)
+        target_cell_pattern = r'<TE[^>]*ACODE=["\']HLD_TOT_RT["\'][^>]*>5\.01</TE>'
+        self.assertTrue(bool(re.search(target_cell_pattern, xml_str)), "삼성물산 지분율 셀 발견 실패")
+        mutated_xml = re.sub(target_cell_pattern, '', xml_str, count=1)
+        
+        manifest = run_adapter_5pct_general_art142_v1(mutated_xml.encode('utf-8'), "20241025000551_ROW_CORRUPTED")
+        
+        # 1. 어댑터는 전체 문서를 비정상 중단하지 않고 정상 실행됨
+        self.assertEqual(manifest["adapter_status"], "SUCCESS")
+        
+        # 2. 필수 셀이 결손된 삼성물산 행은 후보(candidates)에서 반드시 제외되어야 함!
+        ss_cand = next((c for c in manifest["candidates"] if "삼성물산" in c["holder_name"]), None)
+        self.assertIsNone(ss_cand, "필수 셀이 결손된 변조 행이 후보로 오인 승인됨!")
+        
+        # 3. 격리 목록(quarantined_rows)에 해당 행 결손 사유가 정확히 기록되어야 함
+        quarantined = manifest["quarantined_rows"]
+        row_reasons = [q["reason"] for q in quarantined]
+        self.assertTrue(any("ROW_CELLS_INSUFFICIENT" in r for r in row_reasons), "결손 행의 격리 사유 부재")
+        
+        # 4. 결손되지 않은 다른 정상 데이터 행(삼성생명보험)은 정상적으로 후보에 유지되어야 함!
+        life_cand = next((c for c in manifest["candidates"] if "삼성생명" in c["holder_name"]), None)
+        self.assertIsNotNone(life_cand, "다른 정상 행까지 연쇄 탈락함!")
+        self.assertEqual(life_cand["shares_count"], 513938710)
+        self.assertEqual(life_cand["stake_ratio"], 8.61)
+        print(f"  [Pass 변조4] 필수 셀 결손 행 변조 시험 실측 성공: 삼성물산 행 안전 격리 확인, 타 정상 행(삼성생명) 1건 정상 유지 확인!")
+
 if __name__ == "__main__":
     unittest.main()
