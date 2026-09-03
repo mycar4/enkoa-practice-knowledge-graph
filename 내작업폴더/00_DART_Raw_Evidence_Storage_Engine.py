@@ -166,9 +166,20 @@ class BaseTransportAdapter:
 
 
 class RealDartHttpTransport(BaseTransportAdapter):
-    """실제 금융감독원 OpenDART HTTP 통신 어댑터"""
-    def __init__(self, api_key: str):
+    """실제 금융감독원 OpenDART HTTP 통신 어댑터 (30MB 크기 제한 및 지수 백오프 탑재)"""
+    def __init__(
+        self,
+        api_key: str,
+        max_payload_bytes: int = 30 * 1024 * 1024,
+        max_retries: int = 3,
+        retry_backoff_base: float = 1.0,
+        timeout_sec: float = 30.0
+    ):
         self.api_key = api_key
+        self.max_payload_bytes = max_payload_bytes
+        self.max_retries = max_retries
+        self.retry_backoff_base = retry_backoff_base
+        self.timeout_sec = timeout_sec
 
     def fetch(self, rcept_no: str) -> Tuple[int, bytes, Optional[str]]:
         if not self.api_key:
@@ -176,15 +187,50 @@ class RealDartHttpTransport(BaseTransportAdapter):
 
         url = f"https://opendart.fss.or.kr/api/document.xml?crtfc_key={self.api_key}&rcept_no={rcept_no}"
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (DART-Trace Raw Collector v3)"})
-        try:
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                status_code = resp.getcode()
-                zip_bytes = resp.read()
-            return status_code, zip_bytes, None
-        except Exception as e:
-            safe_err = redact_credentials(str(e))
-            status_code = getattr(e, "code", 500) if hasattr(e, "code") else 500
-            return status_code, b"", safe_err
+
+        last_error = None
+        status_code = 500
+
+        for attempt in range(self.max_retries + 1):
+            try:
+                with urllib.request.urlopen(req, timeout=self.timeout_sec) as resp:
+                    status_code = resp.getcode()
+
+                    # 1. Content-Length 헤더 사전 검증
+                    cl_header = resp.headers.get("Content-Length")
+                    if cl_header and cl_header.isdigit() and int(cl_header) > self.max_payload_bytes:
+                        return 413, b"", f"PAYLOAD_EXCEEDED_MAX_LIMIT_30MB: Content-Length={cl_header}"
+
+                    # 2. 스트리밍 누적 읽기 및 30MB 상한 가드
+                    chunks = []
+                    total_bytes = 0
+                    chunk_size = 64 * 1024
+                    while True:
+                        chunk = resp.read(chunk_size)
+                        if not chunk:
+                            break
+                        total_bytes += len(chunk)
+                        if total_bytes > self.max_payload_bytes:
+                            return 413, b"", f"PAYLOAD_EXCEEDED_MAX_LIMIT_30MB: stream exceeded {self.max_payload_bytes}"
+                        chunks.append(chunk)
+
+                    zip_bytes = b"".join(chunks)
+                    return status_code, zip_bytes, None
+
+            except Exception as e:
+                safe_err = redact_credentials(str(e))
+                status_code = getattr(e, "code", 500) if hasattr(e, "code") else 500
+                last_error = safe_err
+
+                # 재시도 대상: 429(Rate Limit) 또는 일시적 5xx 서버 오류
+                if status_code in [429, 500, 502, 503, 504] and attempt < self.max_retries:
+                    backoff = self.retry_backoff_base * (2 ** attempt)
+                    time.sleep(backoff)
+                    continue
+                else:
+                    break
+
+        return status_code, b"", last_error
 
 
 class MockDartTransport(BaseTransportAdapter):
@@ -272,7 +318,9 @@ class RawEvidenceStorageEngine:
         rcept_dt: str = "",
         network_request_made: bool = False,
         http_status_code: Optional[int] = None,
-        source_note: str = "DIRECT_BYTE_INJECTION"
+        source_note: str = "DIRECT_BYTE_INJECTION",
+        run_id: str = "",
+        input_manifest_sha256: str = ""
     ) -> Dict[str, Any]:
         """
         원문 XML 바이트를 비파괴 불변 원칙 및 배타적 생성(xb)으로 저장
@@ -282,6 +330,8 @@ class RawEvidenceStorageEngine:
             return {
                 "receipt_id": f"rcpt-invalid-{int(time.time())}",
                 "requested_rcept_no": rcept_no,
+                "run_id": run_id,
+                "input_manifest_sha256": input_manifest_sha256,
                 "collection_status": "REJECTED_INVALID_RCEPT_NO_FORMAT",
                 "network_request_made": False,
                 "http_status_code": None,
@@ -308,6 +358,8 @@ class RawEvidenceStorageEngine:
                 receipt = {
                     "receipt_id": f"rcpt-skip-{rcept_no}-{new_sha256[:8]}",
                     "requested_rcept_no": rcept_no,
+                    "run_id": run_id,
+                    "input_manifest_sha256": input_manifest_sha256,
                     "caller_corp_code": caller_corp_code,
                     "caller_corp_name": caller_corp_name,
                     "caller_report_nm": caller_report_nm,
@@ -336,6 +388,8 @@ class RawEvidenceStorageEngine:
                 receipt = {
                     "receipt_id": f"rcpt-conflict-{rcept_no}-{new_sha256[:8]}",
                     "requested_rcept_no": rcept_no,
+                    "run_id": run_id,
+                    "input_manifest_sha256": input_manifest_sha256,
                     "caller_corp_code": caller_corp_code,
                     "caller_corp_name": caller_corp_name,
                     "caller_report_nm": caller_report_nm,
@@ -369,6 +423,8 @@ class RawEvidenceStorageEngine:
                 receipt = {
                     "receipt_id": f"rcpt-concurrent-skip-{rcept_no}-{new_sha256[:8]}",
                     "requested_rcept_no": rcept_no,
+                    "run_id": run_id,
+                    "input_manifest_sha256": input_manifest_sha256,
                     "caller_corp_code": caller_corp_code,
                     "caller_corp_name": caller_corp_name,
                     "caller_report_nm": caller_report_nm,
@@ -396,6 +452,8 @@ class RawEvidenceStorageEngine:
                 receipt = {
                     "receipt_id": f"rcpt-conflict-{rcept_no}-{new_sha256[:8]}",
                     "requested_rcept_no": rcept_no,
+                    "run_id": run_id,
+                    "input_manifest_sha256": input_manifest_sha256,
                     "caller_corp_code": caller_corp_code,
                     "caller_corp_name": caller_corp_name,
                     "caller_report_nm": caller_report_nm,
@@ -420,6 +478,8 @@ class RawEvidenceStorageEngine:
         receipt = {
             "receipt_id": receipt_id,
             "requested_rcept_no": rcept_no,
+            "run_id": run_id,
+            "input_manifest_sha256": input_manifest_sha256,
             "caller_corp_code": caller_corp_code,
             "caller_corp_name": caller_corp_name,
             "caller_report_nm": caller_report_nm,
@@ -446,7 +506,9 @@ class RawEvidenceStorageEngine:
         caller_corp_name: str = "",
         caller_report_nm: str = "",
         rcept_dt: str = "",
-        force_refresh: bool = False
+        force_refresh: bool = False,
+        run_id: str = "",
+        input_manifest_sha256: str = ""
     ) -> Dict[str, Any]:
         """
         전송 어댑터를 통해 원문 수집 및 비파괴 저장 (멱등성 보장)
@@ -456,6 +518,8 @@ class RawEvidenceStorageEngine:
             return {
                 "receipt_id": f"rcpt-invalid-{int(time.time())}",
                 "requested_rcept_no": rcept_no,
+                "run_id": run_id,
+                "input_manifest_sha256": input_manifest_sha256,
                 "collection_status": "REJECTED_INVALID_RCEPT_NO_FORMAT",
                 "network_request_made": False,
                 "http_status_code": None,
@@ -475,6 +539,8 @@ class RawEvidenceStorageEngine:
                 receipt = {
                     "receipt_id": f"rcpt-local-{rcept_no}-{cached_sha256[:8]}",
                     "requested_rcept_no": rcept_no,
+                    "run_id": run_id,
+                    "input_manifest_sha256": input_manifest_sha256,
                     "caller_corp_code": caller_corp_code,
                     "caller_corp_name": caller_corp_name,
                     "caller_report_nm": caller_report_nm,
@@ -502,6 +568,8 @@ class RawEvidenceStorageEngine:
             receipt = {
                 "receipt_id": f"rcpt-err-{rcept_no}",
                 "requested_rcept_no": rcept_no,
+                "run_id": run_id,
+                "input_manifest_sha256": input_manifest_sha256,
                 "caller_corp_code": caller_corp_code,
                 "caller_corp_name": caller_corp_name,
                 "caller_report_nm": caller_report_nm,
@@ -531,6 +599,8 @@ class RawEvidenceStorageEngine:
             receipt = {
                 "receipt_id": f"rcpt-corrupt-{rcept_no}-{ts_compact}",
                 "requested_rcept_no": rcept_no,
+                "run_id": run_id,
+                "input_manifest_sha256": input_manifest_sha256,
                 "caller_corp_code": caller_corp_code,
                 "caller_corp_name": caller_corp_name,
                 "caller_report_nm": caller_report_nm,
@@ -559,7 +629,9 @@ class RawEvidenceStorageEngine:
             rcept_dt=rcept_dt,
             network_request_made=True,
             http_status_code=status_code,
-            source_note="TRANSPORT_DOWNLOAD"
+            source_note="TRANSPORT_DOWNLOAD",
+            run_id=run_id,
+            input_manifest_sha256=input_manifest_sha256
         )
 
         if self.rate_limit_delay_sec > 0:
