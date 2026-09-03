@@ -253,6 +253,85 @@ class TestRawEvidenceStorageEngineContracts(unittest.TestCase):
 
         print("  [테스트 8 통과] 멱등성 검증: 로컬 캐시 존재 시 네트워크 호출 정확히 0건 확인")
 
+    # -----------------------------------------------------------------
+    # 테스트 9: XML이 2개 든 ZIP ➔ CORRUPTED_XML 격리
+    # -----------------------------------------------------------------
+    def test_09_multiple_xml_files_in_zip_quarantined(self):
+        """ZIP 내부에 .xml 파일이 2개 이상일 때 임의 선택하지 않고 CORRUPTED_XML로 안전 격리"""
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
+            z.writestr("document1.xml", b"<ROOT1/>")
+            z.writestr("document2.xml", b"<ROOT2/>")
+        multi_zip_bytes = buf.getvalue()
+
+        multi_rcept = "20240707000789"
+        self.mock_transport.set_response(multi_rcept, 200, multi_zip_bytes)
+
+        receipt = self.engine.fetch_and_store(multi_rcept)
+
+        self.assertEqual(receipt["collection_status"], "CORRUPTED_XML")
+        self.assertIn("MULTIPLE_XML_FILES_IN_ZIP", receipt["error_message"])
+
+        # quarantine 디렉토리에 바이너리 파일 확인
+        q_files = [f for f in os.listdir(self.engine.quarantine_dir) if multi_rcept in f and f.endswith(".bin")]
+        self.assertTrue(len(q_files) > 0, "quarantine/ 에 다중 XML 바이너리 미생성!")
+
+        # manifests 디렉토리에 영수증 JSON 확인
+        m_files = [f for f in os.listdir(self.engine.manifests_dir) if multi_rcept in f and "corrupted" in f]
+        self.assertTrue(len(m_files) > 0, "manifests/ 에 다중 XML 격리 영수증 미생성!")
+
+        print("  [테스트 9 통과] 복수 XML(2개 이상) ZIP 유입 시 임의 선택 없이 CORRUPTED_XML 격리 확인")
+
+    # -----------------------------------------------------------------
+    # 테스트 10: 잘못된 XML 본문 (Malformed XML) ➔ CORRUPTED_XML 격리
+    # -----------------------------------------------------------------
+    def test_10_malformed_xml_content_quarantined(self):
+        """XML 태그가 닫히지 않았거나 구문 오류가 있는 XML ➔ ElementTree 파싱 에러로 CORRUPTED_XML 격리"""
+        broken_xml_content = b"<UNCLOSED_TAG><COMPANY-NAME>Malformed without closing tags"
+        broken_zip = create_zip_bytes("document.xml", broken_xml_content)
+
+        malformed_rcept = "20240606000456"
+        self.mock_transport.set_response(malformed_rcept, 200, broken_zip)
+
+        receipt = self.engine.fetch_and_store(malformed_rcept)
+
+        self.assertEqual(receipt["collection_status"], "CORRUPTED_XML")
+        self.assertIn("MALFORMED_XML_PARSE_ERROR", receipt["error_message"])
+
+        q_files = [f for f in os.listdir(self.engine.quarantine_dir) if malformed_rcept in f and f.endswith(".bin")]
+        self.assertTrue(len(q_files) > 0, "quarantine/ 에 파손 XML 바이너리 미생성!")
+
+        m_files = [f for f in os.listdir(self.engine.manifests_dir) if malformed_rcept in f and "corrupted" in f]
+        self.assertTrue(len(m_files) > 0, "manifests/ 에 파손 XML 격리 영수증 미생성!")
+
+        print("  [테스트 10 통과] 구문 오류(Malformed XML) 본문 ElementTree 파싱 검증으로 CORRUPTED_XML 격리 확인")
+
+    # -----------------------------------------------------------------
+    # 테스트 11: 같은 초에 동일 문서를 두 번 캐시 조회 ➔ 영수증 JSON 2개 모두 보존
+    # -----------------------------------------------------------------
+    def test_11_same_second_cache_hit_both_receipts_preserved(self):
+        """같은 초에 연속으로 캐시 조회가 발생하더라도 파일명 충돌 없이 영수증 JSON 2개가 개별 보존됨을 검증"""
+        # 1. 초기 문서 저장
+        zip_bytes = create_zip_bytes("document.xml", self.sample_xml_bytes)
+        self.mock_transport.set_response(self.sample_rcept_no, 200, zip_bytes)
+        self.engine.fetch_and_store(self.sample_rcept_no)
+
+        # 2. 같은 초 내에 2회 연속 캐시 조회
+        rcpt_hit1 = self.engine.fetch_and_store(self.sample_rcept_no)
+        rcpt_hit2 = self.engine.fetch_and_store(self.sample_rcept_no)
+
+        self.assertEqual(rcpt_hit1["collection_status"], "SKIPPED_LOCAL_PRESENT")
+        self.assertEqual(rcpt_hit2["collection_status"], "SKIPPED_LOCAL_PRESENT")
+
+        # 3. manifests/ 디렉토리 내에 캐시 히트 영수증 파일이 정확히 2개 존재해야 함 (덮어쓰기 없음)
+        cache_hit_files = [f for f in os.listdir(self.engine.manifests_dir) if self.sample_rcept_no in f and "cache_hit" in f]
+        self.assertEqual(len(cache_hit_files), 2, f"영수증 파일 덮어쓰기 발생! 파일 목록: {cache_hit_files}")
+
+        # 두 파일명이 서로 완전히 다른지 확인
+        self.assertNotEqual(cache_hit_files[0], cache_hit_files[1])
+
+        print("  [테스트 11 통과] 동일 초 캐시 조회 2회 발생 시 영수증 JSON 2개 덮어쓰기 없이 100% 개별 보존 확인")
+
 
 if __name__ == "__main__":
     unittest.main()

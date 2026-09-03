@@ -22,6 +22,8 @@ import time
 import zipfile
 import hashlib
 import tempfile
+import uuid
+import xml.etree.ElementTree as ET
 import urllib.request
 import urllib.parse
 from datetime import datetime, timezone
@@ -55,14 +57,26 @@ def validate_rcept_no(rcept_no: str) -> bool:
     return bool(re.match(r'^\d{14}$', rcept_no.strip()))
 
 
+def _normalize_long_path(p: str) -> str:
+    """Windows MAX_PATH(260자) 제한 방어를 위한 extended-length 경로 정규화"""
+    abs_p = os.path.abspath(p)
+    if os.name == 'nt' and not abs_p.startswith('\\\\?\\'):
+        return '\\\\?\\' + abs_p
+    return abs_p
+
+
 def atomic_write_bytes(target_path: str, data: bytes) -> None:
-    """임시 파일 생성 후 os.replace()를 통한 원자적(Atomic) 파일 쓰기"""
-    dir_name = os.path.dirname(target_path)
+    """임시 파일 생성 후 os.replace()를 통한 원자적(Atomic) 파일 쓰기 (Windows 260자 경로 제한 방어)"""
+    abs_target = os.path.abspath(target_path)
+    dir_name = os.path.dirname(abs_target)
     os.makedirs(dir_name, exist_ok=True)
     with tempfile.NamedTemporaryFile(dir=dir_name, delete=False) as tf:
         temp_path = tf.name
         tf.write(data)
-    os.replace(temp_path, target_path)
+
+    src = _normalize_long_path(temp_path)
+    dst = _normalize_long_path(abs_target)
+    os.replace(src, dst)
 
 
 def extract_xml_metadata(xml_bytes: bytes) -> Dict[str, str]:
@@ -98,8 +112,8 @@ def inspect_and_extract_zip(
     """
     ZIP 바이너리 보안 검증 및 XML 원문 안전 추출:
     - Zip Bomb 방지: 총 압축 해제 크기 상한(50MB) 검증
-    - 확장자 검증: .xml 단일 메인 파일 존재 확인
-    - XML 웰폼드 최소 검증: < 와 > 포함 확인
+    - 확장자 검증: .xml 파일이 '정확히 1개'여야 함 (0개 또는 복수 개 거부)
+    - ElementTree 파싱 실측: DART 비표준 unescaped & 정규화 후 Well-formed XML 여부 엄격 검증
     """
     if len(zip_bytes) == 0:
         raise ValueError("EMPTY_ZIP_BYTES")
@@ -119,17 +133,24 @@ def inspect_and_extract_zip(
         if total_uncompressed > max_uncompressed_bytes:
             raise ValueError(f"ZIP_BOMB_DETECTED: uncompressed size {total_uncompressed} exceeds limit {max_uncompressed_bytes}")
 
-        # .xml 파일 탐색
+        # .xml 파일 탐색 및 정확히 1개 존재 검증
         xml_files = [name for name in namelist if name.lower().endswith(".xml")]
-        if not xml_files:
+        if len(xml_files) == 0:
             raise ValueError(f"NO_XML_FILE_IN_ZIP: files={namelist[:5]}")
+        if len(xml_files) > 1:
+            raise ValueError(f"MULTIPLE_XML_FILES_IN_ZIP: expected exactly 1, found {len(xml_files)}: {xml_files}")
 
         main_xml_name = xml_files[0]
         xml_bytes = z.read(main_xml_name)
 
-    # 최소 XML 구조 검증
-    if len(xml_bytes) < 10 or (b"<" not in xml_bytes) or (b">" not in xml_bytes):
-        raise ValueError("INVALID_XML_CONTENT: missing angle brackets")
+    # ElementTree 파싱 실측 검증 (DART 특화 unescaped & 정규화 후 Well-formed XML 보장)
+    try:
+        clean_xml = re.sub(r'&(?!(amp|lt|gt|quot|apos|#\d+|#x[0-9a-fA-F]+);)', '&amp;', xml_bytes.decode('utf-8', errors='ignore'))
+        root = ET.fromstring(clean_xml)
+        if root is None or not root.tag:
+            raise ValueError("EMPTY_ROOT_TAG")
+    except Exception as e:
+        raise ValueError(f"MALFORMED_XML_PARSE_ERROR: {str(e)}")
 
     return xml_bytes, main_xml_name
 
@@ -221,10 +242,11 @@ class RawEvidenceStorageEngine:
             f.write(json.dumps(receipt, ensure_ascii=False) + "\n")
 
     def _write_receipt_file(self, rcept_no: str, receipt: Dict[str, Any], suffix: str = "") -> str:
-        """실행별 고유 영수증 JSON 파일 영구 저장"""
+        """실행별 고유 영수증 JSON 파일 영구 저장 (UUID 및 나노초로 동일 초 충돌 100% 방지)"""
         ts_compact = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
-        receipt_id_short = receipt.get("receipt_id", "")[-6:]
-        fn = f"receipt_{rcept_no}_{ts_compact}_{receipt_id_short}{suffix}.json"
+        nano_part = str(time.time_ns())[-6:]
+        uid_short = uuid.uuid4().hex[:8]
+        fn = f"receipt_{rcept_no}_{ts_compact}_{nano_part}_{uid_short}{suffix}.json"
         target_receipt_path = os.path.join(self.manifests_dir, fn)
         atomic_write_bytes(target_receipt_path, json.dumps(receipt, ensure_ascii=False, indent=2).encode('utf-8'))
         return target_receipt_path
@@ -253,7 +275,7 @@ class RawEvidenceStorageEngine:
         source_note: str = "DIRECT_BYTE_INJECTION"
     ) -> Dict[str, Any]:
         """
-        원문 XML 바이트를 비파괴 불변 원칙 및 원자적 쓰기로 저장
+        원문 XML 바이트를 비파괴 불변 원칙 및 배타적 생성(xb)으로 저장
         """
         # 1. 14자리 접수번호 검증
         if not validate_rcept_no(rcept_no):
@@ -307,7 +329,7 @@ class RawEvidenceStorageEngine:
             else:
                 # 상충 바이트 유입: 기존 파일 보존! 신규 바이트는 quarantine 격리
                 ts_compact = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
-                conflict_abs_path = os.path.join(self.quarantine_dir, f"conflict_{rcept_no}_{new_sha256[:8]}_{ts_compact}.xml")
+                conflict_abs_path = os.path.join(self.quarantine_dir, f"conflict_{rcept_no}_{new_sha256[:8]}_{ts_compact}_{uuid.uuid4().hex[:6]}.xml")
                 atomic_write_bytes(conflict_abs_path, xml_bytes)
 
                 rel_conflict_path = os.path.relpath(conflict_abs_path, start=os.getcwd()).replace("\\", "/")
@@ -334,8 +356,65 @@ class RawEvidenceStorageEngine:
                 self._append_audit_log(receipt)
                 return receipt
 
-        # 3. 신규 파일 원자적(Atomic) 쓰기
-        atomic_write_bytes(target_xml_path, xml_bytes)
+        # 3. 신규 파일 배타적 원자적 생성 (Exclusive Atomic Creation)
+        try:
+            with open(target_xml_path, "xb") as ef:
+                ef.write(xml_bytes)
+        except FileExistsError:
+            # 동시 실행으로 이미 생성됨 -> 기존 바이트 재확인
+            with open(target_xml_path, "rb") as ef:
+                concurrent_bytes = ef.read()
+            concurrent_sha256 = compute_bytes_sha256(concurrent_bytes)
+            if concurrent_sha256 == new_sha256:
+                receipt = {
+                    "receipt_id": f"rcpt-concurrent-skip-{rcept_no}-{new_sha256[:8]}",
+                    "requested_rcept_no": rcept_no,
+                    "caller_corp_code": caller_corp_code,
+                    "caller_corp_name": caller_corp_name,
+                    "caller_report_nm": caller_report_nm,
+                    "extracted_metadata": extracted_meta,
+                    "rcept_dt": rcept_dt,
+                    "collection_timestamp_utc": now_utc,
+                    "xml_storage_rel_path": rel_xml_path,
+                    "xml_size_bytes": len(concurrent_bytes),
+                    "xml_sha256": concurrent_sha256,
+                    "collection_status": "SKIPPED_LOCAL_PRESENT",
+                    "network_request_made": network_request_made,
+                    "http_status_code": http_status_code,
+                    "error_message": None,
+                    "source_note": "CONCURRENT_CREATION_DETECTED_IDENTICAL"
+                }
+                self._write_receipt_file(rcept_no, receipt, suffix="_skipped")
+                self._append_audit_log(receipt)
+                return receipt
+            else:
+                # 상충 바이트: 격리
+                ts_compact = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
+                conflict_abs_path = os.path.join(self.quarantine_dir, f"conflict_{rcept_no}_{new_sha256[:8]}_{ts_compact}_{uuid.uuid4().hex[:6]}.xml")
+                atomic_write_bytes(conflict_abs_path, xml_bytes)
+                rel_conflict_path = os.path.relpath(conflict_abs_path, start=os.getcwd()).replace("\\", "/")
+                receipt = {
+                    "receipt_id": f"rcpt-conflict-{rcept_no}-{new_sha256[:8]}",
+                    "requested_rcept_no": rcept_no,
+                    "caller_corp_code": caller_corp_code,
+                    "caller_corp_name": caller_corp_name,
+                    "caller_report_nm": caller_report_nm,
+                    "extracted_metadata": extracted_meta,
+                    "rcept_dt": rcept_dt,
+                    "collection_timestamp_utc": now_utc,
+                    "xml_storage_rel_path": rel_conflict_path,
+                    "xml_size_bytes": len(xml_bytes),
+                    "xml_sha256": new_sha256,
+                    "existing_xml_sha256": concurrent_sha256,
+                    "collection_status": "CONFLICT_QUARANTINED",
+                    "network_request_made": network_request_made,
+                    "http_status_code": http_status_code,
+                    "error_message": f"CONCURRENT_CONTENT_SHA256_MISMATCH: existing={concurrent_sha256[:10]}... new={new_sha256[:10]}...",
+                    "source_note": "CONCURRENT_QUARANTINED_NEVER_OVERWRITE"
+                }
+                self._write_receipt_file(rcept_no, receipt, suffix=f"_conflict_{new_sha256[:8]}")
+                self._append_audit_log(receipt)
+                return receipt
 
         receipt_id = f"rcpt-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}-{rcept_no}-{new_sha256[:8]}"
         receipt = {
@@ -466,7 +545,7 @@ class RawEvidenceStorageEngine:
                 "error_message": redact_credentials(f"INSPECT_ZIP_FAILED: {str(ze)}"),
                 "source_note": "QUARANTINED"
             }
-            self._write_receipt_file(rcept_no, receipt, suffix=f"_corrupted_{ts_compact}")
+            self._write_receipt_file(rcept_no, receipt, suffix="_corrupted")
             self._append_audit_log(receipt)
             return receipt
 
