@@ -178,9 +178,10 @@ def test_header_grid_width_overflow_guard():
     print("  ✅ [Test 3 통과] 헤더 그리드 60열 초과 표의 안전 격리(UNSUPPORTED_HEADER_GRID_TOO_WIDE) 검증 완료")
 
 def test_provenance_anchor_cryptographic_binding():
-    """4. 후보 및 보류 행 전수에 원문 증거 위치(table_index, data_row_index, header_paths, raw_row_text, raw_row_hash) 결속 검증"""
+    """4. 후보 및 보류 행의 record_scope(TABLE vs ROW) 분리 및 원문 증거 위치 암호학적 결속 검증"""
     xml = """<?xml version="1.0" encoding="utf-8"?>
     <DOCUMENT>
+      <!-- Table 0: 유효 표 (행 단위 후보 및 보류 발생) -->
       <TABLE>
         <CAPTION>최대주주 주식소유현황 (기준일 : 2023년 12월 31일)</CAPTION>
         <TR>
@@ -195,6 +196,12 @@ def test_provenance_anchor_cryptographic_binding():
           <TD>특수관계인</TD><TD>직접</TD><TD>보통주 (의결권 있는 주식)</TD><TD>1.05</TD>
         </TR>
       </TABLE>
+      <!-- Table 1: 표 단위 보류 (헤더 매핑 실패 표) -->
+      <TABLE>
+        <CAPTION>최대주주 주식소유현황 (기준일 : 2023년 12월 31일)</CAPTION>
+        <TR><TH>기타헤더1</TH><TH>기타헤더2</TH></TR>
+        <TR><TD>값1</TD><TD>값2</TD></TR>
+      </TABLE>
     </DOCUMENT>
     """.encode('utf-8')
     
@@ -208,26 +215,39 @@ def test_provenance_anchor_cryptographic_binding():
     )
     manifest = res["manifest"]
     
-    # 1) 후보 행 원문 증거 위치 검증
+    # 1) 후보 행 (ROW scope) 원문 증거 위치 및 전체 행 해시 검증
     assert len(manifest["planned_creations"]) == 1
     p_rec = manifest["planned_creations"][0]
-    for req_field in ["table_index", "data_row_index", "header_paths", "raw_row_text", "raw_row_hash"]:
+    assert p_rec["record_scope"] == "ROW"
+    for req_field in ["table_index", "data_row_index", "header_paths", "raw_row_text", "raw_row_preview", "raw_row_hash"]:
         assert req_field in p_rec, f"❌ 후보 행에 필수 증거 필드 누락: {req_field}"
     assert p_rec["table_index"] == 0
     assert p_rec["data_row_index"] == 0
     expected_p_hash = hashlib.sha256(p_rec["raw_row_text"].encode("utf-8")).hexdigest()
-    assert p_rec["raw_row_hash"] == expected_p_hash, "❌ 후보 행 raw_row_hash 불일치!"
+    assert p_rec["raw_row_hash"] == expected_p_hash, "❌ 후보 행 전체 raw_row_hash 불일치!"
+    assert p_rec["raw_row_preview"] == p_rec["raw_row_text"][:200]
     
-    # 2) 보류 행 원문 증거 위치 검증
-    assert len(manifest["skipped_records"]) >= 1
-    s_rec = manifest["skipped_records"][0]
-    for req_field in ["table_index", "data_row_index", "header_paths", "raw_row_text", "raw_row_hash"]:
-        assert req_field in s_rec, f"❌ 보류 행에 필수 증거 필드 누락: {req_field}"
-    assert s_rec["table_index"] == 0
-    assert s_rec["data_row_index"] == 1
-    expected_s_hash = hashlib.sha256(s_rec["raw_row_text"].encode("utf-8")).hexdigest()
-    assert s_rec["raw_row_hash"] == expected_s_hash, "❌ 보류 행 raw_row_hash 불일치!"
-    print("  ✅ [Test 4 통과] 매니페스트 후보 및 보류 행 전수에 원문 증거 위치(table_idx, data_row_idx, header_paths, hash) 결속 완료")
+    # 2) 행 단위 보류 (ROW scope) 원문 증거 위치 검증
+    row_skips = [s for s in manifest["skipped_records"] if s.get("record_scope") == "ROW"]
+    assert len(row_skips) >= 1
+    s_row = row_skips[0]
+    for req_field in ["table_index", "data_row_index", "header_paths", "raw_row_text", "raw_row_preview", "raw_row_hash"]:
+        assert req_field in s_row, f"❌ 행 보류 객체에 필수 증거 필드 누락: {req_field}"
+    assert s_row["table_index"] == 0
+    assert s_row["data_row_index"] == 1
+    expected_s_hash = hashlib.sha256(s_row["raw_row_text"].encode("utf-8")).hexdigest()
+    assert s_row["raw_row_hash"] == expected_s_hash, "❌ 행 보류 전체 raw_row_hash 불일치!"
+    
+    # 3) 표 단위 보류 (TABLE scope) 원문 증거 위치 검증 (억지 행 필드 부재 확인)
+    tbl_skips = [s for s in manifest["skipped_records"] if s.get("record_scope") == "TABLE"]
+    assert len(tbl_skips) >= 1
+    s_tbl = tbl_skips[0]
+    for req_field in ["table_index", "raw_table_hash", "raw_table_preview", "header_paths"]:
+        assert req_field in s_tbl, f"❌ 표 보류 객체에 필수 증거 필드 누락: {req_field}"
+    assert "data_row_index" not in s_tbl, "❌ 표 단위 보류에 억지 data_row_index가 주입됨!"
+    assert "raw_row_text" not in s_tbl, "❌ 표 단위 보류에 억지 raw_row_text가 주입됨!"
+    assert s_tbl["table_index"] == 1
+    print("  ✅ [Test 4 통과] Provenance Anchor의 record_scope(TABLE vs ROW) 분리 및 전체 행 해시 검증 완료")
 
 def test_cross_type_ambiguity_defense():
     """5. 동일 명칭이 복수 엔티티 타입에 매칭 시 AMBIGUOUS_MASTER_ENTITY_CROSS_TYPE 차단 검증"""
