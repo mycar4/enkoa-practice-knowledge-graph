@@ -2,26 +2,23 @@
 """
 🏛️ [DART-Trace] RawEvidenceCandidate & EvidenceFragment 엄격 격리 적재 엔진
 ================================================================================
-[계약 규격: Strict Evidence Layer Contract v2.0]
+[계약 규격: Strict Evidence Layer Contract v3.0]
 1. 보안:
    - 하드코딩된 비밀번호 기본값 완전 배제 (환경변수 미설정 시 즉시 에러)
-2. 제로-트러스트 적재 전 실측 대조:
-   - 적재 직전 로컬 XML 디스크 바이트 SHA-256 실시간 계산
-   - 영수증의 requested_rcept_no, xml_sha256, run_id와 100% 일치 실측 검증
-3. 외부 값 주입 및 Fallback 전면 금지:
-   - receipt_id, xml_storage_rel_path 누락 시 fallback 없이 즉시 에러
-   - target_corp_code의 외부 매니페스트 주입(or expected_corp_code) 전면 제거
-4. 원문 행 해시 기반 불변 결정론적 ID:
-   - cand-{rcept_no}-{row_inner_hash[:16]}
-   - cand-{rcept_no}-unsupported-{xml_sha256[:16]}
-   - frag-{rcept_no}-{raw_inner_hash[:16]}-{role}
-5. EvidenceFragment 혈통 메타데이터 전수 결속:
-   - candidate뿐 아니라 모든 fragment에도 run_id, receipt_id, adapter_name, adapter_version, xml_rel_path 필수 결속
-6. 기본 DRY-RUN 및 명시적 --commit 강제:
-   - 기본 실행 시 DB 쓰기 0건 (Dry-run)
-   - --commit 플래그가 주어질 때만 Neo4j 트랜잭션 커밋 수행
-7. DDL 분리:
-   - 인라인 DDL 제거 (migrate_evidence_schema.py로 독립)
+2. 제로-트러스트 적재 전 4대 실측 대조:
+   - 디스크 XML 실시간 SHA-256 == receipt.xml_sha256
+   - receipt.requested_rcept_no == rcept_no
+   - receipt.run_id == run_id
+   - receipt.input_manifest_sha256 == input_manifest.json 실측 해시
+3. 행 해시 Fallback 완전 배제:
+   - ROW_DATA_EVIDENCE 파편 결손 시 holder_name/shares_count 대체 생성 일체 금지
+   - UNRESOLVED_ROW_PROVENANCE 로 안전 보류 격리
+4. 불변성 쓰기 계약 (ON CREATE SET):
+   - 최초 적재 시에만 created_at 및 원시 증거 속성 기록 (ON MATCH 시 기존 원본 불변)
+5. 그래프 적재 전용 영수증 체계:
+   - load_run_id 및 노드별 load_receipt_id 필수 결속
+   - commit 완료 시 graph_load_manifest_{load_run_id}.json 영구 디스크 발행
+6. 기본 DRY-RUN 및 명시적 --commit 강제
 ================================================================================
 """
 
@@ -47,6 +44,14 @@ if hasattr(sys.stderr, "reconfigure"):
 
 def compute_bytes_sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+def compute_file_sha256(path: str) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        while chunk := f.read(65536):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 class RawEvidenceGraphLoader:
@@ -77,6 +82,7 @@ class RawEvidenceGraphLoader:
     def load_evidence_batch(
         self,
         run_id: str,
+        load_run_id: Optional[str] = None,
         commit: bool = False,
         limit: Optional[int] = None,
         batch_size: int = 50
@@ -101,6 +107,11 @@ class RawEvidenceGraphLoader:
             raise ValueError(f"❌ [안전 거부] BATCH_VERIFIED_SUCCESS 승인을 획득하지 못한 런입니다: {closure_audit.get('audit_verdict')}")
 
         in_manifest_path = os.path.join(run_dir, "input_manifest.json")
+        if not os.path.exists(in_manifest_path):
+            raise FileNotFoundError(f"입력 매니페스트 부재: {in_manifest_path}")
+
+        disk_in_manifest_sha = compute_file_sha256(in_manifest_path)
+
         with open(in_manifest_path, "r", encoding="utf-8") as mf:
             in_manifest = json.load(mf)
 
@@ -122,19 +133,24 @@ class RawEvidenceGraphLoader:
                 if r_no:
                     receipt_map[r_no] = rcpt_data
 
+        effective_load_run_id = load_run_id or f"load_{run_id}_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
+
         stats = {
-            "run_id": run_id,
+            "collection_run_id": run_id,
+            "load_run_id": effective_load_run_id,
             "commit_mode": commit,
             "total_targets_evaluated": len(targets),
             "supported_general_count": 0,
             "unsupported_layout_count": 0,
+            "unresolved_provenance_rows": 0,
             "candidates_created": 0,
             "fragments_created": 0,
             "relationships_created": 0,
             "zero_trust_verified_count": 0,
             "owns_stake_created": 0,  # 절대 불변식 (반드시 0)
             "started_at": datetime.now(timezone.utc).isoformat(),
-            "completed_at": None
+            "completed_at": None,
+            "write_manifest_path": None
         }
 
         candidate_batch: List[Dict[str, Any]] = []
@@ -153,15 +169,15 @@ class RawEvidenceGraphLoader:
             with open(xml_path, "rb") as xf:
                 xml_bytes = xf.read()
 
-            # 2. 제로-트러스트 적재 직전 실시간 해시 및 영수증 대조
+            # 2. 제로-트러스트 적재 직전 실시간 4대 대조
             disk_xml_sha = compute_bytes_sha256(xml_bytes)
 
             receipt = receipt_map.get(rcept_no)
             if not receipt:
                 raise ValueError(f"❌ [실패-폐쇄] 영수증 누락: rcept_no={rcept_no}")
 
-            receipt_id = receipt.get("receipt_id")
-            if not receipt_id:
+            collection_receipt_id = receipt.get("receipt_id")
+            if not collection_receipt_id:
                 raise ValueError(f"❌ [실패-폐쇄] 영수증 내 receipt_id 결손 (Fallback 금지): rcept_no={rcept_no}")
 
             xml_rel_path = receipt.get("xml_storage_rel_path")
@@ -173,6 +189,11 @@ class RawEvidenceGraphLoader:
 
             if receipt.get("run_id") != run_id:
                 raise ValueError(f"❌ [실패-폐쇄] 영수증의 run_id({receipt.get('run_id')})가 현재 런({run_id})과 불일치: rcept_no={rcept_no}")
+
+            # [계약 보완] 입력 매니페스트 해시 전수 대조
+            receipt_in_sha = receipt.get("input_manifest_sha256")
+            if receipt_in_sha != disk_in_manifest_sha:
+                raise ValueError(f"❌ [실패-폐쇄] 영수증의 input_manifest_sha256({receipt_in_sha})가 디스크 매니페스트 해시({disk_in_manifest_sha})와 불일치: rcept_no={rcept_no}")
 
             stats["zero_trust_verified_count"] += 1
 
@@ -196,6 +217,7 @@ class RawEvidenceGraphLoader:
                     role = f.get("role", "UNKNOWN")
                     # 불변 결정론적 ID
                     f_id = f"frag-{rcept_no}-{raw_hash[:16]}-{role}"
+                    load_rcpt_frag = f"ldrcpt-{effective_load_run_id}-{f_id}"
                     old_uuid = f["fragment_id"]
                     frag_id_map[old_uuid] = f_id
 
@@ -203,8 +225,10 @@ class RawEvidenceGraphLoader:
                         "fragment_id": f_id,
                         "rcept_no": rcept_no,
                         "xml_sha256": disk_xml_sha,
-                        "run_id": run_id,
-                        "receipt_id": receipt_id,
+                        "collection_run_id": run_id,
+                        "collection_receipt_id": collection_receipt_id,
+                        "load_run_id": effective_load_run_id,
+                        "load_receipt_id": load_rcpt_frag,
                         "adapter_name": ADAPTER_NAME,
                         "adapter_version": ADAPTER_VERSION,
                         "xml_rel_path": xml_rel_path,
@@ -217,26 +241,33 @@ class RawEvidenceGraphLoader:
                     fragment_batch.append(frag_dict)
                     stats["fragments_created"] += 1
 
-                # 후보 등록 (원문 행 해시 기반 불변 결정론적 ID)
+                # 후보 등록 (원문 행 해시 기반 불변 결정론적 ID - Fallback 완전 제거!)
                 for cand in adapter_res.get("candidates", []):
-                    # cand에 결속된 row 증거 파편의 해시 탐색
-                    row_hash = ""
+                    row_hash = None
                     for orig_fid in cand.get("evidence_fragment_ids", []):
                         for ef in adapter_res.get("evidence_fragments", []):
                             if ef["fragment_id"] == orig_fid and ef.get("role") == "ROW_DATA_EVIDENCE":
-                                row_hash = ef.get("raw_inner_hash", "")
+                                row_hash = ef.get("raw_inner_hash")
                                 break
+                        if row_hash:
+                            break
+
+                    # [계약 보완] 행 해시 부재 시 fallback 절대 금지 -> 격리 보류
                     if not row_hash:
-                        row_hash = compute_bytes_sha256(f"{cand.get('holder_name')}_{cand.get('shares_count')}".encode('utf-8'))
+                        stats["unresolved_provenance_rows"] += 1
+                        continue
 
                     c_id = f"cand-{rcept_no}-{row_hash[:16]}"
+                    load_rcpt_cand = f"ldrcpt-{effective_load_run_id}-{c_id}"
 
                     cand_dict = {
                         "candidate_id": c_id,
                         "rcept_no": rcept_no,
                         "xml_sha256": disk_xml_sha,
-                        "run_id": run_id,
-                        "receipt_id": receipt_id,
+                        "collection_run_id": run_id,
+                        "collection_receipt_id": collection_receipt_id,
+                        "load_run_id": effective_load_run_id,
+                        "load_receipt_id": load_rcpt_cand,
                         "adapter_name": ADAPTER_NAME,
                         "adapter_version": ADAPTER_VERSION,
                         "xml_rel_path": xml_rel_path,
@@ -269,12 +300,16 @@ class RawEvidenceGraphLoader:
                 stats["unsupported_layout_count"] += 1
                 rejection_reason = adapter_res.get("rejection_reason", "UNSUPPORTED_LAYOUT")
                 c_id = f"cand-{rcept_no}-unsupported-{disk_xml_sha[:16]}"
+                load_rcpt_cand = f"ldrcpt-{effective_load_run_id}-{c_id}"
+
                 cand_dict = {
                     "candidate_id": c_id,
                     "rcept_no": rcept_no,
                     "xml_sha256": disk_xml_sha,
-                    "run_id": run_id,
-                    "receipt_id": receipt_id,
+                    "collection_run_id": run_id,
+                    "collection_receipt_id": collection_receipt_id,
+                    "load_run_id": effective_load_run_id,
+                    "load_receipt_id": load_rcpt_cand,
                     "adapter_name": ADAPTER_NAME,
                     "adapter_version": ADAPTER_VERSION,
                     "xml_rel_path": xml_rel_path,
@@ -303,6 +338,15 @@ class RawEvidenceGraphLoader:
             self._flush_batches(candidate_batch, fragment_batch, rel_batch)
 
         stats["completed_at"] = datetime.now(timezone.utc).isoformat()
+
+        # [계약 보완] 적재 실행 영수증 (Write Manifest) 영구 발행
+        if commit:
+            manifest_filename = f"graph_load_manifest_{effective_load_run_id}.json"
+            write_manifest_path = os.path.join(manifests_dir, manifest_filename)
+            with open(write_manifest_path, "w", encoding="utf-8") as wf:
+                json.dump(stats, wf, ensure_ascii=False, indent=2)
+            stats["write_manifest_path"] = write_manifest_path
+
         return stats
 
     def _flush_batches(
@@ -311,39 +355,52 @@ class RawEvidenceGraphLoader:
         fragments: List[Dict[str, Any]],
         relationships: List[Dict[str, Any]]
     ):
-        """Neo4j 트랜잭션 배치 적재"""
+        """Neo4j 트랜잭션 배치 적재 (ON CREATE SET 불변성 준수)"""
         if not self.driver:
             raise RuntimeError("❌ [적재 불가] commit=True이나 유효한 Neo4j Driver가 제공되지 않았습니다.")
         with self.driver.session() as session:
-            # 1. Fragments 적재
+            # 1. Fragments 적재 (created_at 불변 보존)
             if fragments:
                 frag_cypher = """
                 UNWIND $batch AS f
                 MERGE (frag:EvidenceFragment {fragment_id: f.fragment_id})
-                SET frag.rcept_no = f.rcept_no,
+                ON CREATE SET
+                    frag.created_at = f.created_at,
+                    frag.first_load_run_id = f.load_run_id,
+                    frag.first_load_receipt_id = f.load_receipt_id
+                SET
+                    frag.rcept_no = f.rcept_no,
                     frag.xml_sha256 = f.xml_sha256,
-                    frag.run_id = f.run_id,
-                    frag.receipt_id = f.receipt_id,
+                    frag.collection_run_id = f.collection_run_id,
+                    frag.collection_receipt_id = f.collection_receipt_id,
+                    frag.load_run_id = f.load_run_id,
+                    frag.load_receipt_id = f.load_receipt_id,
                     frag.adapter_name = f.adapter_name,
                     frag.adapter_version = f.adapter_version,
                     frag.xml_rel_path = f.xml_rel_path,
                     frag.role = f.role,
                     frag.xpath = f.xpath,
                     frag.raw_inner_hash = f.raw_inner_hash,
-                    frag.extracted_value = f.extracted_value,
-                    frag.created_at = f.created_at
+                    frag.extracted_value = f.extracted_value
                 """
                 session.run(frag_cypher, {"batch": fragments})
 
-            # 2. Candidates 적재
+            # 2. Candidates 적재 (created_at 불변 보존)
             if candidates:
                 cand_cypher = """
                 UNWIND $batch AS c
                 MERGE (cand:RawEvidenceCandidate {candidate_id: c.candidate_id})
-                SET cand.rcept_no = c.rcept_no,
+                ON CREATE SET
+                    cand.created_at = c.created_at,
+                    cand.first_load_run_id = c.load_run_id,
+                    cand.first_load_receipt_id = c.load_receipt_id
+                SET
+                    cand.rcept_no = c.rcept_no,
                     cand.xml_sha256 = c.xml_sha256,
-                    cand.run_id = c.run_id,
-                    cand.receipt_id = c.receipt_id,
+                    cand.collection_run_id = c.collection_run_id,
+                    cand.collection_receipt_id = c.collection_receipt_id,
+                    cand.load_run_id = c.load_run_id,
+                    cand.load_receipt_id = c.load_receipt_id,
                     cand.adapter_name = c.adapter_name,
                     cand.adapter_version = c.adapter_version,
                     cand.xml_rel_path = c.xml_rel_path,
@@ -355,8 +412,7 @@ class RawEvidenceGraphLoader:
                     cand.holder_name = c.holder_name,
                     cand.shares_count = c.shares_count,
                     cand.stake_ratio = c.stake_ratio,
-                    cand.reporting_obligation_date = c.reporting_obligation_date,
-                    cand.created_at = c.created_at
+                    cand.reporting_obligation_date = c.reporting_obligation_date
                 """
                 session.run(cand_cypher, {"batch": candidates})
 
@@ -372,8 +428,9 @@ class RawEvidenceGraphLoader:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Raw Evidence Graph Loader (Strict Contract)")
+    parser = argparse.ArgumentParser(description="Raw Evidence Graph Loader (Strict Contract v3.0)")
     parser.add_argument("--run-id", default="batch_1500_20260903_051738", help="적재 대상 Run ID")
+    parser.add_argument("--load-run-id", default=None, help="그래프 적재 실행 고유 ID (생략 시 자동 생성)")
     parser.add_argument("--commit", action="store_true", help="명시적 실제 DB 적재 플래그 (미지정 시 DRY-RUN)")
     parser.add_argument("--limit", type=int, default=None, help="처리 건수 제한 (파일럿용)")
     parser.add_argument("--batch-size", type=int, default=50, help="DB 적재 배치 크기")
@@ -387,24 +444,29 @@ def main():
     print(f"{mode_str} Run ID: {args.run_id} (limit: {args.limit})")
     print("=" * 80)
 
-    # commit=False이면 드라이버 연결 불필요하므로 더미 드라이버 주입 가능
     loader = RawEvidenceGraphLoader(driver=None if args.commit else "MOCK")
     try:
         res = loader.load_evidence_batch(
             run_id=args.run_id,
+            load_run_id=args.load_run_id,
             commit=args.commit,
             limit=args.limit,
             batch_size=args.batch_size
         )
         print("\n📊 [적재 처리 결과]")
+        print(f"• 수집 Run ID: {res['collection_run_id']}")
+        print(f"• 적재 Load Run ID: {res['load_run_id']}")
         print(f"• 평가 대상 공시 건수: {res['total_targets_evaluated']:,}건")
-        print(f"• 제로-트러스트 해시 검증 통과: {res['zero_trust_verified_count']:,}건")
+        print(f"• 제로-트러스트 4대 해시 검증 통과: {res['zero_trust_verified_count']:,}건")
         print(f"• 제142조 일반서식 지원: {res['supported_general_count']:,}건")
         print(f"• 미지원/약식 서식 격리: {res['unsupported_layout_count']:,}건")
+        print(f"• 행 해시 결손 보류 (Fallback 배제): {res['unresolved_provenance_rows']:,}건")
         print(f"• RawEvidenceCandidate 노드: {res['candidates_created']:,}개")
         print(f"• EvidenceFragment 노드: {res['fragments_created']:,}개")
         print(f"• EVIDENCED_BY 관계: {res['relationships_created']:,}개")
         print(f"• OWNS_STAKE 관계 (불변식 검증): {res['owns_stake_created']}개 (100% 0건 유지)")
+        if res.get("write_manifest_path"):
+            print(f"• 📜 적재 실행 영수증 발행: {res['write_manifest_path']}")
         print("=" * 80)
     finally:
         if args.commit:
