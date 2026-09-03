@@ -2044,6 +2044,11 @@ elif "6." in menu:
 
     # 오직 사용자가 명시적으로 '🚀 공시 원문 증거 감사 실행' 버튼을 눌렀을 때만 파싱 실행!
     if submit_btn:
+        # 신규 제출 시 이전 감사 결과를 먼저 초기화하여 오류 발생 시 이전 결과 잔존 방지
+        st.session_state["audit_manifest"] = None
+        st.session_state["audit_doc_source"] = None
+        st.session_state["audit_doc_id"] = None
+
         xml_bytes = None
         doc_source_name = ""
         rcept_no = None
