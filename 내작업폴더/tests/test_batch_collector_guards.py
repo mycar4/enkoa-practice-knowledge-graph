@@ -52,6 +52,7 @@ class TestBatchCollectorGuards(unittest.TestCase):
         cls.test_base_dir = "내작업폴더/data/raw_filings/batch_guards_test"
         if os.path.exists(cls.test_base_dir):
             shutil.rmtree(cls.test_base_dir)
+        os.makedirs(cls.test_base_dir, exist_ok=True)
 
         # 삼성전자 XML fixture 준비
         fixture_path = "내작업폴더/data/fixtures/xml_5pct_samples/20241025000551.xml"
@@ -138,7 +139,7 @@ class TestBatchCollectorGuards(unittest.TestCase):
         # 10개 대상 중 앞 5개는 500 에러, 뒤 5개는 정상
         targets = []
         for i in range(1, 11):
-            rcpt = f"2024010100000{i}"
+            rcpt = f"202401010000{i:02d}"
             targets.append({
                 "rcept_no": rcpt,
                 "expected_corp_code": "00126380",
@@ -175,7 +176,7 @@ class TestBatchCollectorGuards(unittest.TestCase):
         called_targets = mock_transport.call_history
         self.assertEqual(len(called_targets), 5)
         for i in range(6, 11):
-            self.assertNotIn(f"2024010100000{i}", called_targets, "중단 이후 항목이 호출됨!")
+            self.assertNotIn(f"202401010000{i:02d}", called_targets, "중단 이후 항목이 호출됨!")
 
         print("  [가드 3 통과] 연속 5건 실패 시 서킷 브레이커 즉시 발동 및 잔여 5건 호출 100% 차단 확인")
 
@@ -191,8 +192,12 @@ class TestBatchCollectorGuards(unittest.TestCase):
         for t in targets:
             mock_transport.set_response(t["rcept_no"], 200, self.sample_zip)
 
+        source_manifest_file = os.path.join(self.test_base_dir, "test_05_source.json")
+        with open(source_manifest_file, "w", encoding="utf-8") as sf:
+            json.dump({"targets": targets}, sf)
+
         collector = BatchCollector1500(base_runs_dir=run_dir_base, rate_limit_delay_sec=0.0, transport=mock_transport)
-        run_id, run_dir, manifest_sha = collector.init_run(targets, run_id_prefix="audit_ok_test")
+        run_id, run_dir, manifest_sha = collector.init_run(targets, source_manifest_path=source_manifest_file, run_id_prefix="audit_ok_test")
         collector.execute_batch(run_id, run_dir, manifest_sha, targets)
 
         # 심층 감사 실행
@@ -201,6 +206,7 @@ class TestBatchCollectorGuards(unittest.TestCase):
         self.assertEqual(closure_report["run_id"], run_id)
         self.assertEqual(closure_report["total_targets"], 2)
         self.assertEqual(closure_report["total_receipts_audited"], 2)
+        self.assertTrue(closure_report["source_manifest_verified"])
         self.assertTrue(closure_report["all_run_ids_matched"])
         self.assertTrue(closure_report["all_manifest_shas_matched"])
         self.assertTrue(closure_report["all_rcept_nos_matched"])
@@ -221,8 +227,12 @@ class TestBatchCollectorGuards(unittest.TestCase):
         ]
         mock_transport.set_response("20241025000551", 200, self.sample_zip)
 
+        source_manifest_file = os.path.join(self.test_base_dir, "test_06_source.json")
+        with open(source_manifest_file, "w", encoding="utf-8") as sf:
+            json.dump({"targets": targets}, sf)
+
         collector = BatchCollector1500(base_runs_dir=run_dir_base, rate_limit_delay_sec=0.0, transport=mock_transport)
-        run_id, run_dir, manifest_sha = collector.init_run(targets, run_id_prefix="reject_test")
+        run_id, run_dir, manifest_sha = collector.init_run(targets, source_manifest_path=source_manifest_file, run_id_prefix="reject_test")
         collector.execute_batch(run_id, run_dir, manifest_sha, targets)
 
         # 심층 감사 실행
@@ -274,6 +284,59 @@ class TestBatchCollectorGuards(unittest.TestCase):
         self.assertEqual(closure_report["audit_verdict"], "BATCH_VERIFIED_SUCCESS")
 
         print("  [재개 및 혈통 통과] 원천 매니페스트 해시 결속 및 checkpoint 기반 재개(0건 중복 호출) 실측 완수")
+
+    def test_08_fail_closed_validation_and_audit_rejection(self):
+        """[실패-폐쇄 가드] 매니페스트 부재, 0건 타겟, 중복 접수번호, 해시 미결속 시 100% 거부 실측"""
+        run_dir_base = os.path.join(self.test_base_dir, "test_fail_closed")
+        collector = BatchCollector1500(base_runs_dir=run_dir_base, rate_limit_delay_sec=0.0)
+
+        # 1. 원천 매니페스트 파일 부재 시 즉시 FileNotFoundError (Fail-Closed)
+        with self.assertRaises(FileNotFoundError):
+            collector.init_run(source_manifest_path="non_existent_manifest.json")
+
+        # 2. 타겟이 0건이거나 None인 경우 즉시 ValueError (Fail-Closed)
+        with self.assertRaises(ValueError):
+            collector.init_run(targets=[])
+
+        # 3. 중복 rcept_no 포함 시 즉시 ValueError (Fail-Closed)
+        dup_targets = [
+            {"rcept_no": "20241025000551", "expected_corp_code": "00126380"},
+            {"rcept_no": "20241025000551", "expected_corp_code": "00126380"}
+        ]
+        with self.assertRaises(ValueError):
+            collector.init_run(targets=dup_targets)
+
+        # 4. expected_target_count 불일치 시 즉시 ValueError (Fail-Closed)
+        valid_targets = [{"rcept_no": "20241025000551", "expected_corp_code": "00126380"}]
+        with self.assertRaises(ValueError):
+            collector.init_run(targets=valid_targets, expected_target_count=1500)
+
+        # 5. 종료 감사: source_manifest_path 또는 SHA 미결속 시 BATCH_AUDIT_REJECTED (Fail-Closed)
+        fake_run_dir = os.path.join(run_dir_base, "fake_open_run")
+        os.makedirs(fake_run_dir, exist_ok=True)
+        fake_in_manifest = {
+            "run_id": "fake_open_run",
+            "targets": valid_targets,
+            "source_manifest_path": None,
+            "source_manifest_sha256": None
+        }
+        with open(os.path.join(fake_run_dir, "input_manifest.json"), "w", encoding="utf-8") as f:
+            json.dump(fake_in_manifest, f)
+
+        closure_report = run_batch_deep_closure_audit(fake_run_dir)
+        self.assertFalse(closure_report["source_manifest_verified"], "원천 매니페스트 미결속인데 verified=True가 됨!")
+        self.assertEqual(closure_report["audit_verdict"], "BATCH_AUDIT_REJECTED", "원천 미결속 시 반드시 거부되어야 함!")
+
+        # 6. 종료 감사: targets가 0건일 때도 무조건 BATCH_AUDIT_REJECTED
+        fake_empty_dir = os.path.join(run_dir_base, "fake_empty_run")
+        os.makedirs(fake_empty_dir, exist_ok=True)
+        with open(os.path.join(fake_empty_dir, "input_manifest.json"), "w", encoding="utf-8") as f:
+            json.dump({"run_id": "fake_empty_run", "targets": []}, f)
+
+        empty_closure = run_batch_deep_closure_audit(fake_empty_dir)
+        self.assertEqual(empty_closure["audit_verdict"], "BATCH_AUDIT_REJECTED", "0건 타겟은 무조건 거부되어야 함!")
+
+        print("  [가드 8 통과] 원천 부재, 0건 타겟, 중복 접수번호, 해시 미결속 100% 거부 실측 완료")
 
 
 if __name__ == "__main__":

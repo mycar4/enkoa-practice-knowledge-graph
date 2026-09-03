@@ -55,15 +55,43 @@ class BatchCollector1500:
         targets: Optional[List[Dict[str, str]]] = None,
         source_manifest_path: Optional[str] = None,
         run_id_prefix: str = "batch_1500",
-        list_source_name: str = "KOSPI_KOSDAQ_MIDCAP_MASTER"
+        list_source_name: str = "KOSPI_KOSDAQ_MIDCAP_MASTER",
+        expected_target_count: Optional[int] = None
     ) -> Tuple[str, str, str]:
         """
-        배치 런 초기화:
-        - 실행 디렉토리 생성
-        - source_manifest_path가 지정되면 해당 원천 파일의 SHA-256 및 경로를 영구 결속
-        - targets가 None이면 source_manifest_path에서 로드
+        배치 런 초기화 (실패-폐쇄 Fail-Closed 강제):
+        - source_manifest_path 지정 시 파일 존재, JSON 파싱, 고유성 검증 필수
+        - targets 비어있거나 0건이면 즉시 예외 발생
+        - targets 내 14자리 숫자 rcept_no 고유성 전수 검증
+        - expected_target_count 지정 시 건수 엄격 일치 강제
         - input_manifest.json 생성 후 (run_id, run_dir, input_manifest_sha256) 반환
         """
+        if source_manifest_path is not None:
+            if not os.path.exists(source_manifest_path):
+                raise FileNotFoundError(f"❌ [실패-폐쇄] 원천 매니페스트 파일이 존재하지 않습니다: {source_manifest_path}")
+            try:
+                with open(source_manifest_path, "r", encoding="utf-8") as sf:
+                    src_data = json.load(sf)
+            except Exception as e:
+                raise ValueError(f"❌ [실패-폐쇄] 원천 매니페스트 JSON 파싱 실패: {e}")
+
+            if targets is None:
+                targets = src_data.get("targets", [])
+
+        if not targets:
+            raise ValueError("❌ [실패-폐쇄] 수집 대상(targets)이 0건이거나 비어있습니다. 실행을 생성할 수 없습니다.")
+
+        # 접수번호 14자리 및 고유성 전수 검증
+        rcept_nos = [t.get("rcept_no", "").strip() for t in targets]
+        if any(not r or len(r) != 14 or not r.isdigit() for r in rcept_nos):
+            raise ValueError("❌ [실패-폐쇄] targets 내에 14자리 숫자가 아닌 비정상 rcept_no가 포함되어 있습니다.")
+        if len(set(rcept_nos)) != len(targets):
+            raise ValueError(f"❌ [실패-폐쇄] targets 내에 중복된 rcept_no가 존재합니다! (전체: {len(targets)}, 고유: {len(set(rcept_nos))})")
+
+        # 대상 건수 검증 (지정된 경우)
+        if expected_target_count is not None and len(targets) != expected_target_count:
+            raise ValueError(f"❌ [실패-폐쇄] 대상 건수 불일치: 기대={expected_target_count}건, 실제={len(targets)}건")
+
         ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         run_id = f"{run_id_prefix}_{ts}"
         run_dir = os.path.join(self.base_runs_dir, run_id)
@@ -74,13 +102,6 @@ class BatchCollector1500:
         if source_manifest_path and os.path.exists(source_manifest_path):
             source_manifest_sha = compute_file_sha256(source_manifest_path)
             source_manifest_rel = os.path.relpath(source_manifest_path, start=os.getcwd()).replace("\\", "/")
-            if targets is None:
-                with open(source_manifest_path, "r", encoding="utf-8") as sf:
-                    src_data = json.load(sf)
-                targets = src_data.get("targets", [])
-
-        if targets is None:
-            targets = []
 
         input_manifest_path = os.path.join(run_dir, "input_manifest.json")
         manifest_data = {
@@ -392,19 +413,22 @@ def run_batch_deep_closure_audit(run_dir: str) -> Dict[str, Any]:
             "receipts": receipts_detail
         })
 
-    # 원천 입력 매니페스트 해시 결속 검증
+    # 원천 입력 매니페스트 해시 결속 검증 (실패-폐쇄: 누락/None/부재 시 무조건 False)
     source_manifest_path = in_manifest.get("source_manifest_path")
     source_manifest_sha = in_manifest.get("source_manifest_sha256")
-    source_manifest_verified = True
+    source_manifest_verified = False
     if source_manifest_path and source_manifest_sha:
         if os.path.exists(source_manifest_path):
             current_src_sha = compute_file_sha256(source_manifest_path)
             source_manifest_verified = (current_src_sha == source_manifest_sha)
-        else:
-            source_manifest_verified = False
 
-    # 최종 엄격 판정 (5대 조건 및 원천 목록 결속 전수 충족 필수)
+    # 타겟 수 0건이거나 source_manifest 결속 실패 시 무조건 승인 거부
+    has_valid_targets = len(targets) > 0
+
+    # 최종 엄격 판정 (실패-폐쇄: 0건 수집 또는 원천 결속 누락 시 무조건 BATCH_AUDIT_REJECTED)
     is_strictly_verified = (
+        has_valid_targets and
+        source_manifest_verified and
         failed_count == 0 and
         quarantined_count == 0 and
         missing_receipt_count == 0 and
@@ -412,8 +436,7 @@ def run_batch_deep_closure_audit(run_dir: str) -> Dict[str, Any]:
         all_manifest_shas_matched and
         all_rcept_nos_matched and
         all_xml_hashes_matched and
-        all_corp_codes_matched and
-        source_manifest_verified
+        all_corp_codes_matched
     )
 
     closure_manifest_path = os.path.join(run_dir, "batch_closure_manifest.json")
@@ -484,9 +507,11 @@ def main():
         targets = manifest_info.get("targets", [])
         print(f"🔄 [--resume 재개 모드] Run ID: {run_id}, 잔여 대상 처리 시작")
     else:
+        expected_cnt = 1500 if "1500" in str(args.source_manifest) else None
         run_id, run_dir, in_manifest_sha = collector.init_run(
             source_manifest_path=args.source_manifest,
-            run_id_prefix="batch_1500"
+            run_id_prefix="batch_1500",
+            expected_target_count=expected_cnt
         )
         with open(os.path.join(run_dir, "input_manifest.json"), "r", encoding="utf-8") as f:
             manifest_info = json.load(f)
