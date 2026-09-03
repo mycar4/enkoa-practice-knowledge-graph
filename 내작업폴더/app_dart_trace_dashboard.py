@@ -14,7 +14,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 import pandas as pd
 from dotenv import load_dotenv
-from neo4j import GraphDatabase
+from neo4j import GraphDatabase, READ_ACCESS
 from pyvis.network import Network
 import networkx as nx
 
@@ -43,7 +43,7 @@ def get_neo4j_driver(uri: str, user: str, password: str):
         if not password:
             st.warning("⚠️ .env 또는 Streamlit Secrets에 NEO4J_PASSWORD가 설정되지 않았습니다.")
             return None
-        driver = GraphDatabase.driver(uri, auth=(user, password), max_connection_lifetime=120)
+        driver = GraphDatabase.driver(uri, auth=(user, password))
         driver.verify_connectivity()
         return driver
     except Exception as e:
@@ -55,7 +55,7 @@ driver = get_neo4j_driver(NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD)
 def run_cypher(query: str, **params):
     if not driver:
         return []
-    with driver.session() as session:
+    with driver.session(default_access_mode=READ_ACCESS) as session:
         return [record.data() for record in session.run(query, **params)]
 
 def ensure_company_ownership_data(company_name: str):
@@ -1990,13 +1990,23 @@ elif menu == "📥 5. 최근 5년 OpenDART 실시간 수집 & 스토리지":
                 st.info("저장된 공시 파일이 없습니다.")
 
 elif "6." in menu:
+    # 1. 증거 계층 메트릭 실시간 사전 집계 (Zero DB Write / READ_ACCESS 모드)
+    cand_stat = run_cypher("MATCH (c:RawEvidenceCandidate) RETURN count(c) AS cnt")[0]['cnt'] if driver else 0
+    frag_stat = run_cypher("MATCH (f:EvidenceFragment) RETURN count(f) AS cnt")[0]['cnt'] if driver else 0
+    edge_stat = run_cypher("MATCH ()-[r:EVIDENCED_BY]->() RETURN count(r) AS cnt")[0]['cnt'] if driver else 0
+    tainted_stat = run_cypher("""
+        MATCH (n)-[r:OWNS_STAKE]-(m)
+        WHERE n:RawEvidenceCandidate OR n:EvidenceFragment OR m:RawEvidenceCandidate OR m:EvidenceFragment
+        RETURN count(r) AS cnt
+    """)[0]['cnt'] if driver else 0
+
     st.header("🔍 5% 공시 원문 증거 감사기 (Evidence Audit Inspector)")
-    st.caption("Neo4j에 격리 적재된 2,460개 원시 증거 후보(RawEvidenceCandidate)와 5,472개 증거 파편(EvidenceFragment)의 원문 해시 및 혈통 역추적 감사")
+    st.caption(f"Neo4j에 격리 적재된 {cand_stat:,}개 원시 증거 후보(RawEvidenceCandidate)와 {frag_stat:,}개 증거 파편(EvidenceFragment)의 원문 해시 및 혈통 역추적 감사")
     
     st.markdown("""
     <div style='background: rgba(0, 229, 255, 0.08); border: 1px solid rgba(0, 229, 255, 0.3); border-radius: 8px; padding: 12px 18px; margin-bottom: 20px;'>
         <b>🛡️ [증거 계층 감사 원칙]</b><br/>
-        • <b>Zero DB Write</b>: 본 감사기는 Neo4j 쓰기 없이 순수 읽기 전용(Read-Only)으로 안전하게 작동합니다.<br/>
+        • <b>Zero DB Write</b>: 본 감사기는 Neo4j 세션 수준 READ_ACCESS 강제로 순수 읽기 전용(Read-Only)으로 안전하게 작동합니다.<br/>
         • <b>추출 후보 격리 (Strict Isolation)</b>: 본 화면의 <code>RawEvidenceCandidate</code>는 프로덕션 지분 사실이 아니며, 감사 가능한 <b>원문 추출 후보</b>입니다.<br/>
         • <b>Zero OWNS_STAKE Invariance</b>: 본 증거 계층은 프로덕션 지분 관계(<code>:OWNS_STAKE</code>: 373건) 및 GDS 알고리즘에 일절 영향을 주지 않습니다.
     </div>
@@ -2009,16 +2019,6 @@ elif "6." in menu:
 
     with tab_graph_inspector:
         st.markdown("### 📊 증거 계층(Evidence Layer) 실시간 메트릭")
-        
-        # 1. 메트릭 집계 (Zero DB Write)
-        cand_stat = run_cypher("MATCH (c:RawEvidenceCandidate) RETURN count(c) AS cnt")[0]['cnt'] if driver else 0
-        frag_stat = run_cypher("MATCH (f:EvidenceFragment) RETURN count(f) AS cnt")[0]['cnt'] if driver else 0
-        edge_stat = run_cypher("MATCH ()-[r:EVIDENCED_BY]->() RETURN count(r) AS cnt")[0]['cnt'] if driver else 0
-        tainted_stat = run_cypher("""
-            MATCH (n)-[r:OWNS_STAKE]-(m)
-            WHERE n:RawEvidenceCandidate OR n:EvidenceFragment OR m:RawEvidenceCandidate OR m:EvidenceFragment
-            RETURN count(r) AS cnt
-        """)[0]['cnt'] if driver else 0
 
         m1, m2, m3, m4 = st.columns(4)
         m1.metric("총 추출 후보 (Candidates)", f"{cand_stat:,}개", "원문 결속")
@@ -2108,7 +2108,7 @@ elif "6." in menu:
                     "보고의무발생일": r['ob_date'] or "-",
                     "서식 판정": "❄️ 동결" if r['legacy_status'] else ("✅ 일반서식" if r['layout_status'] == "SUPPORTED_5PCT_GENERAL" else "⚠️ 미지원")
                 })
-            st.dataframe(pd.DataFrame(df_display), use_container_width=True, hide_index=True)
+            st.dataframe(pd.DataFrame(df_display), width="stretch", hide_index=True)
 
             st.markdown("---")
             st.markdown("### 🔬 4단계 무결성 역추적 감사 (Candidate Drill-down)")
@@ -2188,7 +2188,7 @@ elif "6." in menu:
                         "문서 내 XPath 경로": fr['xpath'],
                         "파편 식별자 (Fragment ID)": fr['frag_id']
                     })
-                st.dataframe(pd.DataFrame(frag_table), use_container_width=True, hide_index=True)
+                st.dataframe(pd.DataFrame(frag_table), width="stretch", hide_index=True)
 
                 # 원문 행 해시 불변성 검증 안내 배너
                 row_frags = [fr for fr in frag_rows if fr['role'] == "ROW_DATA_EVIDENCE"]
