@@ -11,3 +11,9 @@ output/
 .claude/
 내작업/
 .백업/
+
+# DART 원문 대량 아카이브 및 임시 캐시 영구 격리 (Git 비오염 원칙)
+내작업폴더/data/raw_filings/
+내작업폴더/data/dart_raw_filings/
+*.xml.zip
+scratch/
