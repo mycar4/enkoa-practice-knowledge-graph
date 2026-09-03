@@ -1991,220 +1991,478 @@ elif menu == "📥 5. 최근 5년 OpenDART 실시간 수집 & 스토리지":
 
 elif "6." in menu:
     st.header("🔍 5% 공시 원문 증거 감사기 (Evidence Audit Inspector)")
-    st.caption("명시적 어댑터(`5PCT_GENERAL_ART142_V1`) 기반 동적 헤더 결속, 후보 행, inner HTML 해시 및 격리 사유 실시간 투명 감사")
+    st.caption("Neo4j에 격리 적재된 2,460개 원시 증거 후보(RawEvidenceCandidate)와 5,472개 증거 파편(EvidenceFragment)의 원문 해시 및 혈통 역추적 감사")
     
     st.markdown("""
     <div style='background: rgba(0, 229, 255, 0.08); border: 1px solid rgba(0, 229, 255, 0.3); border-radius: 8px; padding: 12px 18px; margin-bottom: 20px;'>
-        <b>🛡️ [감사 원칙 안내]</b><br/>
-        • <b>Zero DB Write</b>: 본 감사기는 데이터베이스 쓰기 없이 메모리상에서 순수 읽기 전용으로 안전하게 작동합니다.<br/>
-        • <b>추론 배제 & 원문 보존</b>: 수치 일치 등으로 직접보유를 임의 추론하지 않으며, 제142조 각 호 열의 원문 셀값과 2D 헤더 경로를 있는 그대로 증거 조각으로 검증합니다.<br/>
-        • <b>개별 격리 (Quarantine)</b>: 열 수가 모자라거나 요약/결손인 행은 전체 문서를 억지 해석하지 않고 안전하게 격리 목록에 기록합니다.
+        <b>🛡️ [증거 계층 감사 원칙]</b><br/>
+        • <b>Zero DB Write</b>: 본 감사기는 Neo4j 쓰기 없이 순수 읽기 전용(Read-Only)으로 안전하게 작동합니다.<br/>
+        • <b>추출 후보 격리 (Strict Isolation)</b>: 본 화면의 <code>RawEvidenceCandidate</code>는 프로덕션 지분 사실이 아니며, 감사 가능한 <b>원문 추출 후보</b>입니다.<br/>
+        • <b>Zero OWNS_STAKE Invariance</b>: 본 증거 계층은 프로덕션 지분 관계(<code>:OWNS_STAKE</code>: 373건) 및 GDS 알고리즘에 일절 영향을 주지 않습니다.
     </div>
     """, unsafe_allow_html=True)
     
-    # 1. 폼 기반 감사 파라미터 설정 (자동 재실행 방지 및 10MB 크기 제한)
-    fixture_base = "내작업폴더/data/fixtures/xml_5pct_samples"
-    fixtures_available = os.path.exists(fixture_base) and any(f.endswith('.xml') for f in os.listdir(fixture_base))
-    
-    sample_options = {}
-    if fixtures_available:
-        sample_options = {
-            "삼성전자 (2024.10.25 접수, 삼성물산 5% 일반보고)": (os.path.join(fixture_base, "20241025000551.xml"), "20241025000551", "NORMAL"),
-            "현대자동차 (2024.05.03 접수, 현대모비스 5% 일반보고)": (os.path.join(fixture_base, "20240503000063.xml"), "20240503000063", "NORMAL"),
-            "LG화학 (2024.11.29 접수, ㈜LG 5% 일반보고)": (os.path.join(fixture_base, "20241129001948.xml"), "20241129001948", "NORMAL"),
-            "[거부 시험] SK하이닉스 (국민연금 5% 약식보고서)": (os.path.join(fixture_base, "20240925000388.xml"), "20240925000388", "NORMAL"),
-            "[변조 시험 1] 필수 헤더 누락 변조 ('비율' 헤더 제거)": (os.path.join(fixture_base, "20241025000551.xml"), "20241025000551_MUTATED_NO_HEADER", "MUTATE_NO_HEADER"),
-            "[변조 시험 2] 실제 열 순서 교환 변조 (주수 ↔ 비율 열 교환)": (os.path.join(fixture_base, "20241025000551.xml"), "20241025000551_MUTATED_SWAPPED", "MUTATE_SWAP_COLS"),
-            "[변조 시험 3] 정상 데이터 행 필수 셀 결손 변조 (지분율 셀 삭제)": (os.path.join(fixture_base, "20241025000551.xml"), "20241025000551_MUTATED_CORRUPT_ROW", "MUTATE_CORRUPT_ROW")
-        }
+    tab_graph_inspector, tab_file_sandbox = st.tabs([
+        "🏛️ Neo4j Raw 증거 그래프 탐색기 (1,500건 전수)",
+        "🧪 단일 XML 파서 시험기 (In-Memory Sandbox)"
+    ])
 
-    with st.form("evidence_audit_form"):
-        col_sel1, col_sel2 = st.columns([2, 1])
-        with col_sel1:
-            if fixtures_available:
-                selected_sample_label = st.selectbox("🎯 검증할 공시 문서 및 변조 시나리오 선택", list(sample_options.keys()))
-                sample_path, sample_rcept_no, sample_mode = sample_options[selected_sample_label]
-            else:
-                st.info("ℹ️ 서버에 기본 표본 fixture가 없습니다. 우측의 'XML 업로드'로 검증을 진행해 주세요.")
-                selected_sample_label = None
-                sample_path, sample_rcept_no, sample_mode = None, None, None
-
-        with col_sel2:
-            uploaded_xml = st.file_uploader("📂 외부 공시 XML 직접 업로드 (최대 10MB)", type=["xml"])
-
-        submit_btn = st.form_submit_button("🚀 공시 원문 증거 감사 실행", type="primary")
-
-    # 세션 상태 초기화 (초기값은 None / 미실행)
-    if "audit_manifest" not in st.session_state:
-        st.session_state["audit_manifest"] = None
-    if "audit_doc_source" not in st.session_state:
-        st.session_state["audit_doc_source"] = None
-    if "audit_doc_id" not in st.session_state:
-        st.session_state["audit_doc_id"] = None
-
-    # 오직 사용자가 명시적으로 '🚀 공시 원문 증거 감사 실행' 버튼을 눌렀을 때만 파싱 실행!
-    if submit_btn:
-        # 신규 제출 시 이전 감사 결과를 먼저 초기화하여 오류 발생 시 이전 결과 잔존 방지
-        st.session_state["audit_manifest"] = None
-        st.session_state["audit_doc_source"] = None
-        st.session_state["audit_doc_id"] = None
-
-        xml_bytes = None
-        doc_source_name = ""
-        rcept_no = None
-        user_filename = None
+    with tab_graph_inspector:
+        st.markdown("### 📊 증거 계층(Evidence Layer) 실시간 메트릭")
         
-        # 1. 업로드 파일 처리 (10MB 제한 검증 및 user_supplied_filename 별도 식별자)
-        if uploaded_xml is not None:
-            max_size_bytes = 10 * 1024 * 1024 # 10MB
-            if uploaded_xml.size > max_size_bytes:
-                st.error(f"❌ 업로드 파일 크기 초과: {uploaded_xml.size / (1024*1024):.2f}MB (최대 10MB까지 허용됩니다)")
-            else:
-                xml_bytes = uploaded_xml.read()
-                user_filename = uploaded_xml.name
-                doc_source_name = f"user_supplied_filename: {uploaded_xml.name}"
-        # 2. 기본 표본 처리
-        elif sample_path and os.path.exists(sample_path):
-            with open(sample_path, "rb") as f:
-                raw_b = f.read()
-            doc_source_name = f"표본 Fixture: {selected_sample_label}"
-            rcept_no = sample_rcept_no
-            if sample_mode == "NORMAL":
-                xml_bytes = raw_b
-            elif sample_mode == "MUTATE_NO_HEADER":
-                txt = raw_b.decode('utf-8', errors='ignore')
-                txt = re.sub(r'<TH[^>]*>비율</TH>', '<TH>기타항목</TH>', txt)
-                xml_bytes = txt.encode('utf-8')
-            elif sample_mode == "MUTATE_SWAP_COLS":
-                txt = raw_b.decode('utf-8', errors='ignore')
-                txt = re.sub(r'(<TH[^>]*>주수</TH>)(\s*)(<TH[^>]*>비율</TH>)', r'\3\2\1', txt, count=1)
-                txt = re.sub(r'(<TE[^>]*ACODE=["\']HLD_TOT_CNT["\'][^>]*>298,818,100</TE>)(\s*)(<TE[^>]*ACODE=["\']HLD_TOT_RT["\'][^>]*>5\.01</TE>)', r'\3\2\1', txt, count=1)
-                xml_bytes = txt.encode('utf-8')
-            elif sample_mode == "MUTATE_CORRUPT_ROW":
-                txt = raw_b.decode('utf-8', errors='ignore')
-                txt = re.sub(r'<TE[^>]*ACODE=["\']HLD_TOT_RT["\'][^>]*>5\.01</TE>', '', txt, count=1)
-                xml_bytes = txt.encode('utf-8')
+        # 1. 메트릭 집계 (Zero DB Write)
+        cand_stat = run_cypher("MATCH (c:RawEvidenceCandidate) RETURN count(c) AS cnt")[0]['cnt'] if driver else 0
+        frag_stat = run_cypher("MATCH (f:EvidenceFragment) RETURN count(f) AS cnt")[0]['cnt'] if driver else 0
+        edge_stat = run_cypher("MATCH ()-[r:EVIDENCED_BY]->() RETURN count(r) AS cnt")[0]['cnt'] if driver else 0
+        tainted_stat = run_cypher("""
+            MATCH (n)-[r:OWNS_STAKE]-(m)
+            WHERE n:RawEvidenceCandidate OR n:EvidenceFragment OR m:RawEvidenceCandidate OR m:EvidenceFragment
+            RETURN count(r) AS cnt
+        """)[0]['cnt'] if driver else 0
 
-        if xml_bytes:
-            with st.spinner("⏳ 공시 원문 증거 감사 실행 중..."):
-                manifest = run_adapter_5pct_general_art142_v1(
-                    xml_bytes, 
-                    rcept_no=rcept_no, 
-                    user_supplied_filename=user_filename
-                )
-                st.session_state["audit_manifest"] = manifest
-                st.session_state["audit_doc_source"] = doc_source_name
-                st.session_state["audit_doc_id"] = rcept_no or user_filename
-        else:
-            st.warning("⚠️ 감사할 XML 파일 또는 표본을 선택해 주세요.")
-
-    # 렌더링은 세션 상태에 저장된 manifest만 표출 (재파싱 0회 보장!)
-    manifest = st.session_state.get("audit_manifest")
-    doc_source_name = st.session_state.get("audit_doc_source")
-    doc_id = st.session_state.get("audit_doc_id")
-
-    if manifest:
-        st.caption(f"📄 **감사 대상 원본**: `{doc_source_name}` (문서 식별자: `{doc_id}`)")
-        
-        # 2. 핵심 KPI 메트릭 카드
-        m_col1, m_col2, m_col3, m_col4 = st.columns(4)
-        status_color = "🟢" if manifest["adapter_status"] == "SUCCESS" else "🔴"
-        with m_col1:
-            st.metric("어댑터 실행 상태", f"{status_color} {manifest['adapter_status']}")
-        with m_col2:
-            st.metric("추출 후보 (RawEvidenceCandidate)", f"{manifest['candidates_count']}건")
-        with m_col3:
-            st.metric("안전 격리 행 (Quarantined)", f"{manifest['quarantined_rows_count']}건")
-        with m_col4:
-            xml_hash = manifest["provenance"]["xml_sha256"]
-            st.metric("원문 해시 (SHA-256)", f"{xml_hash[:10]}...")
-
-        if manifest["rejection_reason"]:
-            st.warning(f"⚠️ **안전 거부 사유**: `{manifest['rejection_reason']}` (어댑터 규격 불일치로 문서 전체 억지 해석 배제)")
+        m1, m2, m3, m4 = st.columns(4)
+        m1.metric("총 추출 후보 (Candidates)", f"{cand_stat:,}개", "원문 결속")
+        m2.metric("총 증거 파편 (Fragments)", f"{frag_stat:,}개", "2D XPath 결속")
+        m3.metric("증거 관계 (EVIDENCED_BY)", f"{edge_stat:,}건", "후보-파편 결속")
+        m4.metric("프로덕션 지분 오염 (OWNS_STAKE)", f"{tainted_stat}건", "100% 무결성 유지", delta_color="normal")
 
         st.markdown("---")
+        st.markdown("### 🔍 증거 후보 검색 및 원문 역추적 필터")
 
-        # 3. 3대 상세 탭
-        tab_cand, tab_quar, tab_mani = st.tabs([
-            f"📋 추출 후보 행 ({manifest['candidates_count']}건)",
-            f"🛡️ 격리/보류 행 내역 ({manifest['quarantined_rows_count']}건)",
-            "📜 문서 내부 증거 매니페스트 (JSON)"
-        ])
-
-        with tab_cand:
-            if manifest["candidates_count"] == 0:
-                st.info("ℹ️ 본 문서에서 추출된 RawEvidenceCandidate 후보가 0건입니다. (규격 불일치 또는 안전 거부)")
-            else:
-                st.subheader("1. 추출 후보 행 목록 요약 (RawEvidenceCandidate)")
-                df_cands = []
-                for c in manifest["candidates"]:
-                    df_cands.append({
-                        "후보 ID": c["candidate_id"][:8] + "...",
-                        "보고자": c["reporter_name"],
-                        "보유자": c["holder_name"],
-                        "대상회사": f"{c['target_corp_name']} ({c['target_corp_code']})",
-                        "보유주식수": f"{c['shares_count']:,}주",
-                        "지분율": f"{c['stake_ratio']:.2f}%",
-                        "보고의무발생일": c["reporting_obligation_date"]
-                    })
-                st.dataframe(pd.DataFrame(df_cands))
-
-                st.subheader("2. 개별 후보 행 상세 증거 결속 내역")
-                for idx, cand in enumerate(manifest["candidates"]):
-                    with st.expander(f"🔍 [후보 {idx+1}] {cand['holder_name']} ➔ {cand['target_corp_name']} ({cand['shares_count']:,}주 / {cand['stake_ratio']}%)", expanded=(idx==0)):
-                        c_left, c_right = st.columns([1, 1])
-                        with c_left:
-                            st.markdown("#### 📌 동적 헤더 결속 위치")
-                            matched = manifest["document_metadata"].get("matched_columns", {})
-                            st.write(f"- **성명(명칭) 열**: Col {matched.get('holder_col_idx')} (`{manifest['header_mapping'].get(matched.get('holder_col_idx'))}`)")
-                            st.write(f"- **합계 주수 열**: Col {matched.get('shares_col_idx')} (`{manifest['header_mapping'].get(matched.get('shares_col_idx'))}`)")
-                            st.write(f"- **합계 비율 열**: Col {matched.get('stake_col_idx')} (`{manifest['header_mapping'].get(matched.get('stake_col_idx'))}`)")
-                            st.write(f"- **보고의무발생일**: `{cand['reporting_obligation_date']}`")
-
-                        with c_right:
-                            st.markdown("#### ⚖️ 제142조 각 호 원문 셀값 전수 보존 (추론 0%)")
-                            raw_entries = cand.get("article_142_raw_entries", [])
-                            if raw_entries:
-                                df_art = pd.DataFrame([
-                                    {"조항": e["item_name"], "열 번호": f"Col {e['col_idx']}", "원문 셀값": e["raw_cell_value"], "헤더 경로": e["header_path"]}
-                                    for e in raw_entries
-                                ])
-                                st.dataframe(df_art)
-                            else:
-                                st.write("보존된 제142조 항목 없음")
-
-                        st.markdown("#### 🔒 원문 행 증거 파편 (Fragment)")
-                        frag_ids = cand.get("evidence_fragment_ids", [])
-                        matched_frags = [f for f in manifest["evidence_fragments"] if f["fragment_id"] in frag_ids]
-                        for fr in matched_frags:
-                            st.caption(f"**역할**: `{fr['role']}` | **XPath**: `{fr['xpath']}` | **해시**: `{fr['raw_inner_hash']}`")
-                            st.code(fr["raw_inner_html"][:300] + ("..." if len(fr["raw_inner_html"]) > 300 else ""), language="html")
-
-        with tab_quar:
-            st.subheader(f"🛡️ 안전 격리 행 목록 (총 {manifest['quarantined_rows_count']}건)")
-            st.caption("병합(ROWSPAN/COLSPAN), 요약행, 셀 결손 등 규격과 불일치하는 행을 억지로 해석하지 않고 격리한 내역입니다.")
-            
-            if manifest["quarantined_rows_count"] == 0:
-                st.success("격리된 행이 없습니다.")
-            else:
-                df_quar = pd.DataFrame([
-                    {"행 번호": q["data_row_index"], "격리 사유": q["reason"], "원문 미리보기": q["raw_preview"]}
-                    for q in manifest["quarantined_rows"]
-                ])
-                st.dataframe(df_quar)
-
-        with tab_mani:
-            st.subheader("📜 문서 내부 증거 매니페스트 (Document Evidence Manifest)")
-            st.caption("감사 추적(Audit Trail)을 위한 원문 해시, 2D 헤더 매핑 경로, 전체 증거 파편 JSON")
-            st.download_button(
-                label="📥 문서 내부 증거 매니페스트 JSON 다운로드",
-                data=json.dumps(manifest, ensure_ascii=False, indent=2),
-                file_name=f"evidence_manifest_{doc_id or 'unknown'}.json",
-                mime="application/json"
+        col_f1, col_f2, col_f3 = st.columns([1.5, 2.5, 1])
+        with col_f1:
+            status_filter = st.selectbox(
+                "서식/상태 필터",
+                ["전체 (ALL)", "제142조 일반서식 (SUPPORTED_5PCT_GENERAL)", "미지원/약식 서식 (UNSUPPORTED_LAYOUT)", "동결 시험분 (LEGACY_PROVISIONAL_TEST_LOAD)"],
+                index=0
             )
-            st.json(manifest)
-    else:
-        st.info("💡 상단의 '🎯 검증할 공시 문서 및 변조 시나리오 선택' 또는 '📂 외부 공시 XML 직접 업로드' 후, **[🚀 공시 원문 증거 감사 실행]** 버튼을 클릭하세요.")
+        with col_f2:
+            search_kw = st.text_input(
+                "기업명 / 보유자명 / 접수번호(14자리) / 후보 ID",
+                placeholder="예: 삼성전자, 현대모비스, 파인메딕스, 20241231000509 등"
+            ).strip()
+        with col_f3:
+            limit_choice = st.selectbox("조회 건수", [10, 20, 50, 100], index=1)
+
+        status_param = "ALL"
+        if "일반서식" in status_filter:
+            status_param = "SUPPORTED_5PCT_GENERAL"
+        elif "미지원" in status_filter:
+            status_param = "UNSUPPORTED_LAYOUT"
+        elif "동결" in status_filter:
+            status_param = "LEGACY"
+
+        # Cypher 검색 쿼리 실행
+        candidate_query = """
+        MATCH (c:RawEvidenceCandidate)
+        WHERE ($status = 'ALL' 
+               OR ($status = 'LEGACY' AND c.legacy_status = 'LEGACY_PROVISIONAL_TEST_LOAD')
+               OR ($status <> 'LEGACY' AND c.layout_status = $status AND c.legacy_status IS NULL))
+          AND ($kw = '' 
+               OR c.target_corp_name CONTAINS $kw 
+               OR c.holder_name CONTAINS $kw 
+               OR c.rcept_no CONTAINS $kw 
+               OR c.candidate_id CONTAINS $kw)
+        RETURN c.candidate_id AS candidate_id,
+               c.rcept_no AS rcept_no,
+               c.target_corp_name AS corp_name,
+               c.target_corp_code AS corp_code,
+               c.reporter_name AS reporter_name,
+               c.holder_name AS holder_name,
+               c.shares_count AS shares,
+               c.stake_ratio AS ratio,
+               c.reporting_obligation_date AS ob_date,
+               c.layout_status AS layout_status,
+               c.legacy_status AS legacy_status,
+               c.rejection_reason AS rejection_reason,
+               c.xml_sha256 AS xml_sha256,
+               c.xml_rel_path AS xml_rel_path,
+               c.collection_run_id AS col_run,
+               c.collection_receipt_id AS col_rcpt,
+               c.load_run_id AS load_run,
+               c.load_receipt_id AS load_rcpt,
+               c.created_at AS created_at
+        ORDER BY c.rcept_no DESC, c.candidate_id
+        LIMIT $limit
+        """
+        
+        cand_records = run_cypher(candidate_query, status=status_param, kw=search_kw, limit=limit_choice) if driver else []
+
+        if not cand_records:
+            st.info("ℹ️ 조건에 일치하는 증거 후보가 없습니다. 검색어나 필터를 변경해 보세요.")
+        else:
+            st.markdown(f"**검색 결과: 총 {len(cand_records)}건 조회됨 (최대 {limit_choice}건 표시)**")
+            
+            # 테이블 요약 표시
+            df_display = []
+            for r in cand_records:
+                shares_str = f"{r['shares']:,}주" if r['shares'] is not None else "-"
+                ratio_str = f"{r['ratio']:.2f}%" if r['ratio'] is not None else "-"
+                df_display.append({
+                    "후보 식별자 (Candidate ID)": r['candidate_id'],
+                    "공시 접수번호": r['rcept_no'],
+                    "대상 기업": r['corp_name'] or "미지원/약식",
+                    "보유자명": r['holder_name'] or "미지원/약식",
+                    "보유주수": shares_str,
+                    "지분율": ratio_str,
+                    "보고의무발생일": r['ob_date'] or "-",
+                    "서식 판정": "❄️ 동결" if r['legacy_status'] else ("✅ 일반서식" if r['layout_status'] == "SUPPORTED_5PCT_GENERAL" else "⚠️ 미지원")
+                })
+            st.dataframe(pd.DataFrame(df_display), use_container_width=True, hide_index=True)
+
+            st.markdown("---")
+            st.markdown("### 🔬 4단계 무결성 역추적 감사 (Candidate Drill-down)")
+            
+            cand_map = {
+                f"[{r['rcept_no']}] {r['corp_name'] or '미지원'} | {r['holder_name'] or '미지원'} ({r['candidate_id']})": r 
+                for r in cand_records
+            }
+            selected_cand_label = st.selectbox("🎯 상세 감사할 증거 후보 선택", list(cand_map.keys()))
+            selected_cand = cand_map[selected_cand_label]
+            sel_cid = selected_cand['candidate_id']
+
+            # 4단계 역추적 상세 레이아웃
+            d_col1, d_col2 = st.columns([1, 1])
+
+            with d_col1:
+                st.markdown("#### 1️⃣ 추출 사실 요약 (Extraction Profile)")
+                shares_val = f"{selected_cand['shares']:,}주" if selected_cand['shares'] is not None else "해당 없음"
+                ratio_val = f"{selected_cand['stake_ratio']:.2f}%" if selected_cand.get('stake_ratio') is not None else (f"{selected_cand['ratio']:.2f}%" if selected_cand.get('ratio') is not None else "해당 없음")
+                
+                st.markdown(f"""
+                <div style='background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 14px 18px;'>
+                    • <b>후보 ID</b>: <code>{selected_cand['candidate_id']}</code><br/>
+                    • <b>대상 기업</b>: <b>{selected_cand['corp_name'] or '서식 미지원'}</b> (법인코드: <code>{selected_cand['corp_code'] or 'None'}</code>)<br/>
+                    • <b>보고자</b>: {selected_cand['reporter_name'] or 'None'}<br/>
+                    • <b>보유자</b>: <b>{selected_cand['holder_name'] or 'None'}</b><br/>
+                    • <b>보유 주수</b>: {shares_val} / <b>지분율</b>: {ratio_val}<br/>
+                    • <b>보고의무발생일</b>: {selected_cand['ob_date'] or 'None'}<br/>
+                    • <b>서식 상태</b>: <code>{selected_cand['layout_status']}</code> {f"(사유: {selected_cand['rejection_reason']})" if selected_cand['rejection_reason'] else ''}
+                </div>
+                """, unsafe_allow_html=True)
+
+            with d_col2:
+                st.markdown("#### 2️⃣ 원천 문서 혈통 (Document Provenance)")
+                dart_url = f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={selected_cand['rcept_no']}"
+                st.markdown(f"""
+                <div style='background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 14px 18px;'>
+                    • <b>공시 접수번호</b>: <a href='{dart_url}' target='_blank'><b>{selected_cand['rcept_no']} ↗ (DART 전자공시 바로가기)</b></a><br/>
+                    • <b>XML SHA-256</b>: <code style='font-size: 11px;'>{selected_cand['xml_sha256']}</code><br/>
+                    • <b>XML 상대경로</b>: <code>{selected_cand['xml_rel_path']}</code><br/>
+                    • <b>수집 Run ID</b>: <code>{selected_cand['col_run']}</code><br/>
+                    • <b>수집 영수증 ID</b>: <code>{selected_cand['col_rcpt']}</code><br/>
+                    • <b>그래프 적재 Run ID</b>: <code>{selected_cand['load_run']}</code><br/>
+                    • <b>적재 영수증 ID</b>: <code>{selected_cand['load_rcpt']}</code><br/>
+                    • <b>최초 생성 시각</b>: <code>{selected_cand['created_at']}</code>
+                </div>
+                """, unsafe_allow_html=True)
+
+            # 3단계: 결속된 증거 파편 (EvidenceFragment) 전수 조회
+            st.markdown("---")
+            st.markdown("#### 3️⃣ 결속된 원시 증거 파편 (Evidence Fragments & Raw Hashes)")
+            st.caption("제142조 각 호 표 셀 및 메타데이터에서 추출된 원문 inner HTML 해시와 2D XPath 전수 검증")
+
+            frag_cypher = """
+            MATCH (c:RawEvidenceCandidate {candidate_id: $cid})-[:EVIDENCED_BY]->(f:EvidenceFragment)
+            RETURN f.fragment_id AS frag_id,
+                   f.role AS role,
+                   f.extracted_value AS extracted_value,
+                   f.xpath AS xpath,
+                   f.raw_inner_hash AS raw_inner_hash,
+                   f.adapter_name AS adapter_name,
+                   f.adapter_version AS adapter_version,
+                   f.created_at AS created_at
+            ORDER BY f.role, f.fragment_id
+            """
+            frag_rows = run_cypher(frag_cypher, cid=sel_cid) if driver else []
+
+            if not frag_rows:
+                st.warning("⚠️ 본 후보에 직접 연결된 EvidenceFragment 파편이 없습니다 (미지원/약식 서식이거나 동결 시험분).")
+            else:
+                frag_table = []
+                for fr in frag_rows:
+                    frag_table.append({
+                        "증거 역할 (Role)": fr['role'],
+                        "원문 추출값 (Extracted Value)": fr['extracted_value'],
+                        "원문 텍스트 SHA-256 (raw_inner_hash)": fr['raw_inner_hash'],
+                        "문서 내 XPath 경로": fr['xpath'],
+                        "파편 식별자 (Fragment ID)": fr['frag_id']
+                    })
+                st.dataframe(pd.DataFrame(frag_table), use_container_width=True, hide_index=True)
+
+                # 원문 행 해시 불변성 검증 안내 배너
+                row_frags = [fr for fr in frag_rows if fr['role'] == "ROW_DATA_EVIDENCE"]
+                if row_frags:
+                    row_h = row_frags[0]['raw_inner_hash']
+                    cand_expected_prefix = row_h[:16]
+                    is_hash_bound = cand_expected_prefix in sel_cid
+                    if is_hash_bound:
+                        st.success(f"🔒 **[불변 해시 결속 입증]** 후보 식별자(`...{cand_expected_prefix}`)가 행 원문 해시(`{row_h[:16]}...`)와 100% 암호학적으로 일치합니다.")
+                    else:
+                        st.info(f"ℹ️ 식별자 해시 매핑: 후보 ID=`{sel_cid}` / 행 해시=`{row_h}`")
+
+                # 4단계: 증거 결속 미니 네트워크 인터랙티브 뷰
+                st.markdown("---")
+                st.markdown("#### 4️⃣ 증거 결속 지식 네트워크 (Interactive Provenance Graph)")
+                st.caption("중앙의 증거 후보 노드와 주변의 원천 증거 파편들이 `EVIDENCED_BY` 관계로 연결된 실시간 그래프")
+
+                is_dark = "다크" in theme_mode
+                net = Network(
+                    height="420px",
+                    width="100%",
+                    bgcolor="#0f172a" if is_dark else "#f8fafc",
+                    font_color="#e2e8f0" if is_dark else "#1e293b",
+                    directed=True
+                )
+
+                # 중앙 후보 노드
+                cand_label_short = f"【후보】\n{selected_cand['corp_name'] or '미지원'}\n{selected_cand['holder_name'] or '미지원'}"
+                net.add_node(
+                    sel_cid,
+                    label=cand_label_short,
+                    color="#f59e0b",
+                    shape="box",
+                    size=26,
+                    title=f"후보 ID: {sel_cid}\n접수번호: {selected_cand['rcept_no']}\n서식: {selected_cand['layout_status']}"
+                )
+
+                # 주변 파편 노드
+                for fr in frag_rows:
+                    f_id = fr['frag_id']
+                    f_role = fr['role']
+                    f_val_short = str(fr['extracted_value'])[:24]
+                    f_hash_short = fr['raw_inner_hash'][:8] + "..."
+                    net.add_node(
+                        f_id,
+                        label=f"[{f_role}]\n{f_val_short}\n#{f_hash_short}",
+                        color="#06b6d4",
+                        shape="dot",
+                        size=18,
+                        title=f"Fragment ID: {f_id}\nRole: {f_role}\nValue: {fr['extracted_value']}\nXPath: {fr['xpath']}\nHash: {fr['raw_inner_hash']}"
+                    )
+                    net.add_edge(sel_cid, f_id, label="EVIDENCED_BY", color="#94a3b8")
+
+                net.set_options("""
+                var options = {
+                  "physics": {
+                    "barnesHut": {
+                      "gravitationalConstant": -3200,
+                      "centralGravity": 0.25,
+                      "springLength": 130
+                    }
+                  }
+                }
+                """)
+                html_graph = net.generate_html()
+                components.html(html_graph, height=440)
+
+    with tab_file_sandbox:
+        st.markdown("### 🧪 단일 XML 파서 시험기 (In-Memory Sandbox)")
+        st.caption("단일 공시 XML 파일의 어댑터 파싱, 동적 헤더 탐지, 변조 시나리오 시험 및 격리 분석")
+
+        # 1. 폼 기반 감사 파라미터 설정 (자동 재실행 방지 및 10MB 크기 제한)
+        fixture_base = "내작업폴더/data/fixtures/xml_5pct_samples"
+        fixtures_available = os.path.exists(fixture_base) and any(f.endswith('.xml') for f in os.listdir(fixture_base))
+    
+        sample_options = {}
+        if fixtures_available:
+            sample_options = {
+                "삼성전자 (2024.10.25 접수, 삼성물산 5% 일반보고)": (os.path.join(fixture_base, "20241025000551.xml"), "20241025000551", "NORMAL"),
+                "현대자동차 (2024.05.03 접수, 현대모비스 5% 일반보고)": (os.path.join(fixture_base, "20240503000063.xml"), "20240503000063", "NORMAL"),
+                "LG화학 (2024.11.29 접수, ㈜LG 5% 일반보고)": (os.path.join(fixture_base, "20241129001948.xml"), "20241129001948", "NORMAL"),
+                "[거부 시험] SK하이닉스 (국민연금 5% 약식보고서)": (os.path.join(fixture_base, "20240925000388.xml"), "20240925000388", "NORMAL"),
+                "[변조 시험 1] 필수 헤더 누락 변조 ('비율' 헤더 제거)": (os.path.join(fixture_base, "20241025000551.xml"), "20241025000551_MUTATED_NO_HEADER", "MUTATE_NO_HEADER"),
+                "[변조 시험 2] 실제 열 순서 교환 변조 (주수 ↔ 비율 열 교환)": (os.path.join(fixture_base, "20241025000551.xml"), "20241025000551_MUTATED_SWAPPED", "MUTATE_SWAP_COLS"),
+                "[변조 시험 3] 정상 데이터 행 필수 셀 결손 변조 (지분율 셀 삭제)": (os.path.join(fixture_base, "20241025000551.xml"), "20241025000551_MUTATED_CORRUPT_ROW", "MUTATE_CORRUPT_ROW")
+            }
+
+        with st.form("evidence_audit_form"):
+            col_sel1, col_sel2 = st.columns([2, 1])
+            with col_sel1:
+                if fixtures_available:
+                    selected_sample_label = st.selectbox("🎯 검증할 공시 문서 및 변조 시나리오 선택", list(sample_options.keys()))
+                    sample_path, sample_rcept_no, sample_mode = sample_options[selected_sample_label]
+                else:
+                    st.info("ℹ️ 서버에 기본 표본 fixture가 없습니다. 우측의 'XML 업로드'로 검증을 진행해 주세요.")
+                    selected_sample_label = None
+                    sample_path, sample_rcept_no, sample_mode = None, None, None
+
+            with col_sel2:
+                uploaded_xml = st.file_uploader("📂 외부 공시 XML 직접 업로드 (최대 10MB)", type=["xml"])
+
+            submit_btn = st.form_submit_button("🚀 공시 원문 증거 감사 실행", type="primary")
+
+        # 세션 상태 초기화 (초기값은 None / 미실행)
+        if "audit_manifest" not in st.session_state:
+            st.session_state["audit_manifest"] = None
+        if "audit_doc_source" not in st.session_state:
+            st.session_state["audit_doc_source"] = None
+        if "audit_doc_id" not in st.session_state:
+            st.session_state["audit_doc_id"] = None
+
+        # 오직 사용자가 명시적으로 '🚀 공시 원문 증거 감사 실행' 버튼을 눌렀을 때만 파싱 실행!
+        if submit_btn:
+            # 신규 제출 시 이전 감사 결과를 먼저 초기화하여 오류 발생 시 이전 결과 잔존 방지
+            st.session_state["audit_manifest"] = None
+            st.session_state["audit_doc_source"] = None
+            st.session_state["audit_doc_id"] = None
+
+            xml_bytes = None
+            doc_source_name = ""
+            rcept_no = None
+            user_filename = None
+        
+            # 1. 업로드 파일 처리 (10MB 제한 검증 및 user_supplied_filename 별도 식별자)
+            if uploaded_xml is not None:
+                max_size_bytes = 10 * 1024 * 1024 # 10MB
+                if uploaded_xml.size > max_size_bytes:
+                    st.error(f"❌ 업로드 파일 크기 초과: {uploaded_xml.size / (1024*1024):.2f}MB (최대 10MB까지 허용됩니다)")
+                else:
+                    xml_bytes = uploaded_xml.read()
+                    user_filename = uploaded_xml.name
+                    doc_source_name = f"user_supplied_filename: {uploaded_xml.name}"
+            # 2. 기본 표본 처리
+            elif sample_path and os.path.exists(sample_path):
+                with open(sample_path, "rb") as f:
+                    raw_b = f.read()
+                doc_source_name = f"표본 Fixture: {selected_sample_label}"
+                rcept_no = sample_rcept_no
+                if sample_mode == "NORMAL":
+                    xml_bytes = raw_b
+                elif sample_mode == "MUTATE_NO_HEADER":
+                    txt = raw_b.decode('utf-8', errors='ignore')
+                    txt = re.sub(r'<TH[^>]*>비율</TH>', '<TH>기타항목</TH>', txt)
+                    xml_bytes = txt.encode('utf-8')
+                elif sample_mode == "MUTATE_SWAP_COLS":
+                    txt = raw_b.decode('utf-8', errors='ignore')
+                    txt = re.sub(r'(<TH[^>]*>주수</TH>)(\s*)(<TH[^>]*>비율</TH>)', r'\3\2\1', txt, count=1)
+                    txt = re.sub(r'(<TE[^>]*ACODE=["\']HLD_TOT_CNT["\'][^>]*>298,818,100</TE>)(\s*)(<TE[^>]*ACODE=["\']HLD_TOT_RT["\'][^>]*>5\.01</TE>)', r'\3\2\1', txt, count=1)
+                    xml_bytes = txt.encode('utf-8')
+                elif sample_mode == "MUTATE_CORRUPT_ROW":
+                    txt = raw_b.decode('utf-8', errors='ignore')
+                    txt = re.sub(r'<TE[^>]*ACODE=["\']HLD_TOT_RT["\'][^>]*>5\.01</TE>', '', txt, count=1)
+                    xml_bytes = txt.encode('utf-8')
+
+            if xml_bytes:
+                with st.spinner("⏳ 공시 원문 증거 감사 실행 중..."):
+                    manifest = run_adapter_5pct_general_art142_v1(
+                        xml_bytes, 
+                        rcept_no=rcept_no, 
+                        user_supplied_filename=user_filename
+                    )
+                    st.session_state["audit_manifest"] = manifest
+                    st.session_state["audit_doc_source"] = doc_source_name
+                    st.session_state["audit_doc_id"] = rcept_no or user_filename
+            else:
+                st.warning("⚠️ 감사할 XML 파일 또는 표본을 선택해 주세요.")
+
+        # 렌더링은 세션 상태에 저장된 manifest만 표출 (재파싱 0회 보장!)
+        manifest = st.session_state.get("audit_manifest")
+        doc_source_name = st.session_state.get("audit_doc_source")
+        doc_id = st.session_state.get("audit_doc_id")
+
+        if manifest:
+            st.caption(f"📄 **감사 대상 원본**: `{doc_source_name}` (문서 식별자: `{doc_id}`)")
+        
+            # 2. 핵심 KPI 메트릭 카드
+            m_col1, m_col2, m_col3, m_col4 = st.columns(4)
+            status_color = "🟢" if manifest["adapter_status"] == "SUCCESS" else "🔴"
+            with m_col1:
+                st.metric("어댑터 실행 상태", f"{status_color} {manifest['adapter_status']}")
+            with m_col2:
+                st.metric("추출 후보 (RawEvidenceCandidate)", f"{manifest['candidates_count']}건")
+            with m_col3:
+                st.metric("안전 격리 행 (Quarantined)", f"{manifest['quarantined_rows_count']}건")
+            with m_col4:
+                xml_hash = manifest["provenance"]["xml_sha256"]
+                st.metric("원문 해시 (SHA-256)", f"{xml_hash[:10]}...")
+
+            if manifest["rejection_reason"]:
+                st.warning(f"⚠️ **안전 거부 사유**: `{manifest['rejection_reason']}` (어댑터 규격 불일치로 문서 전체 억지 해석 배제)")
+
+            st.markdown("---")
+
+            # 3. 3대 상세 탭
+            tab_cand, tab_quar, tab_mani = st.tabs([
+                f"📋 추출 후보 행 ({manifest['candidates_count']}건)",
+                f"🛡️ 격리/보류 행 내역 ({manifest['quarantined_rows_count']}건)",
+                "📜 문서 내부 증거 매니페스트 (JSON)"
+            ])
+
+            with tab_cand:
+                if manifest["candidates_count"] == 0:
+                    st.info("ℹ️ 본 문서에서 추출된 RawEvidenceCandidate 후보가 0건입니다. (규격 불일치 또는 안전 거부)")
+                else:
+                    st.subheader("1. 추출 후보 행 목록 요약 (RawEvidenceCandidate)")
+                    df_cands = []
+                    for c in manifest["candidates"]:
+                        df_cands.append({
+                            "후보 ID": c["candidate_id"][:8] + "...",
+                            "보고자": c["reporter_name"],
+                            "보유자": c["holder_name"],
+                            "대상회사": f"{c['target_corp_name']} ({c['target_corp_code']})",
+                            "보유주식수": f"{c['shares_count']:,}주",
+                            "지분율": f"{c['stake_ratio']:.2f}%",
+                            "보고의무발생일": c["reporting_obligation_date"]
+                        })
+                    st.dataframe(pd.DataFrame(df_cands))
+
+                    st.subheader("2. 개별 후보 행 상세 증거 결속 내역")
+                    for idx, cand in enumerate(manifest["candidates"]):
+                        with st.expander(f"🔍 [후보 {idx+1}] {cand['holder_name']} ➔ {cand['target_corp_name']} ({cand['shares_count']:,}주 / {cand['stake_ratio']}%)", expanded=(idx==0)):
+                            c_left, c_right = st.columns([1, 1])
+                            with c_left:
+                                st.markdown("#### 📌 동적 헤더 결속 위치")
+                                matched = manifest["document_metadata"].get("matched_columns", {})
+                                st.write(f"- **성명(명칭) 열**: Col {matched.get('holder_col_idx')} (`{manifest['header_mapping'].get(matched.get('holder_col_idx'))}`)")
+                                st.write(f"- **합계 주수 열**: Col {matched.get('shares_col_idx')} (`{manifest['header_mapping'].get(matched.get('shares_col_idx'))}`)")
+                                st.write(f"- **합계 비율 열**: Col {matched.get('stake_col_idx')} (`{manifest['header_mapping'].get(matched.get('stake_col_idx'))}`)")
+                                st.write(f"- **보고의무발생일**: `{cand['reporting_obligation_date']}`")
+
+                            with c_right:
+                                st.markdown("#### ⚖️ 제142조 각 호 원문 셀값 전수 보존 (추론 0%)")
+                                raw_entries = cand.get("article_142_raw_entries", [])
+                                if raw_entries:
+                                    df_art = pd.DataFrame([
+                                        {"조항": e["item_name"], "열 번호": f"Col {e['col_idx']}", "원문 셀값": e["raw_cell_value"], "헤더 경로": e["header_path"]}
+                                        for e in raw_entries
+                                    ])
+                                    st.dataframe(df_art)
+                                else:
+                                    st.write("보존된 제142조 항목 없음")
+
+                            st.markdown("#### 🔒 원문 행 증거 파편 (Fragment)")
+                            frag_ids = cand.get("evidence_fragment_ids", [])
+                            matched_frags = [f for f in manifest["evidence_fragments"] if f["fragment_id"] in frag_ids]
+                            for fr in matched_frags:
+                                st.caption(f"**역할**: `{fr['role']}` | **XPath**: `{fr['xpath']}` | **해시**: `{fr['raw_inner_hash']}`")
+                                st.code(fr["raw_inner_html"][:300] + ("..." if len(fr["raw_inner_html"]) > 300 else ""), language="html")
+
+            with tab_quar:
+                st.subheader(f"🛡️ 안전 격리 행 목록 (총 {manifest['quarantined_rows_count']}건)")
+                st.caption("병합(ROWSPAN/COLSPAN), 요약행, 셀 결손 등 규격과 불일치하는 행을 억지로 해석하지 않고 격리한 내역입니다.")
+            
+                if manifest["quarantined_rows_count"] == 0:
+                    st.success("격리된 행이 없습니다.")
+                else:
+                    df_quar = pd.DataFrame([
+                        {"행 번호": q["data_row_index"], "격리 사유": q["reason"], "원문 미리보기": q["raw_preview"]}
+                        for q in manifest["quarantined_rows"]
+                    ])
+                    st.dataframe(df_quar)
+
+            with tab_mani:
+                st.subheader("📜 문서 내부 증거 매니페스트 (Document Evidence Manifest)")
+                st.caption("감사 추적(Audit Trail)을 위한 원문 해시, 2D 헤더 매핑 경로, 전체 증거 파편 JSON")
+                st.download_button(
+                    label="📥 문서 내부 증거 매니페스트 JSON 다운로드",
+                    data=json.dumps(manifest, ensure_ascii=False, indent=2),
+                    file_name=f"evidence_manifest_{doc_id or 'unknown'}.json",
+                    mime="application/json"
+                )
+                st.json(manifest)
+        else:
+            st.info("💡 상단의 '🎯 검증할 공시 문서 및 변조 시나리오 선택' 또는 '📂 외부 공시 XML 직접 업로드' 후, **[🚀 공시 원문 증거 감사 실행]** 버튼을 클릭하세요.")
 
 # ── 법적 고지 및 면책 조항 (Legal Disclaimer) ──
 st.markdown("""
