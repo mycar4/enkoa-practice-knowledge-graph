@@ -211,7 +211,10 @@ class BatchCollector1500:
                 completed_rcept_nos.add(rcept_no)
             else:
                 consecutive_failures += 1
-                print(f"   ⚠️ 실패/격리 감지 ({rcept_no}): {status}, 연속 실패: {consecutive_failures}회")
+                print(f"   ⚠️ 실패/격리 감지 ({rcept_no}): {status}, 연속 실패: {consecutive_failures}회", flush=True)
+
+            if idx % 50 == 0 or idx == len(targets):
+                print(f"   [{idx:4d}/{len(targets)}] {rcept_no} ({expected_corp_name}): {status} (완료 누적: {len(completed_rcept_nos)}건)", flush=True)
 
             res_item = {
                 "index": idx,
@@ -513,6 +516,13 @@ def main():
             run_id_prefix="batch_1500",
             expected_target_count=expected_cnt
         )
+        print("=" * 80)
+        print(f"🚀 [1,500건 배치 수집 시작] Run ID: {run_id}")
+        print(f"   • 실행 폴더: {run_dir}")
+        print(f"   • 입력 매니페스트 SHA-256: {in_manifest_sha}")
+        print(f"   • 중단 시 재개 명령: uv run python 내작업폴더/00_DART_Batch_Collector_1500.py --resume --run-id {run_id} --delay {args.delay}")
+        print("=" * 80, flush=True)
+
         with open(os.path.join(run_dir, "input_manifest.json"), "r", encoding="utf-8") as f:
             manifest_info = json.load(f)
         targets = manifest_info.get("targets", [])
