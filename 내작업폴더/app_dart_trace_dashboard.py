@@ -22,6 +22,7 @@ import networkx as nx
 sys.path.insert(0, os.path.abspath("내작업폴더"))
 from adapter_5pct_general_art142_v1 import run_adapter_5pct_general_art142_v1
 from engine_financial_graphrag import analyze_financial_graphrag
+from ui.pages.menu2_decision_report import render_menu2_decision_report
 
 # 1. 환경 설정 & Streamlit 페이지 설정
 st.set_page_config(
@@ -98,7 +99,7 @@ with st.sidebar:
         "📌 서비스 메뉴",
         [
             "🌐 1. 상장사 지배구조 & 순환출자 탐색기",
-            "🤖 2. 공시 증거 기반 Cypher 질의 어시스턴트",
+            "📋 2. 단일 기업 4단 의사결정 리포트",
             "👑 3. GDS 재계 권력 랭킹 (PageRank)",
             "⚡ 4. DS005 기업 주요 자본 이벤트 (CB·BW·증자·M&A)",
             "📥 5. 최근 5년 OpenDART 실시간 수집 & 스토리지",
@@ -1185,82 +1186,84 @@ if menu == "🌐 1. 상장사 지배구조 & 순환출자 탐색기":
         """, unsafe_allow_html=True)
 
 
-# ── 메뉴 2: 공시 증거 기반 Cypher 질의 어시스턴트 ──
-elif menu == "🤖 2. 공시 증거 기반 Cypher 질의 어시스턴트":
-    st.header("🤖 공시 원문 증거 기반 Cypher 질의 어시스턴트")
-    st.caption("15,000건 공시 원문 증거(23,996건 후보)와 313건 주요 자본이벤트를 공시접수번호·2D XPath·SHA-256 해시 근거와 함께 100% 읽기 전용(READ_ACCESS)으로 실시간 질의합니다.")
+# ── 메뉴 2: 단일 기업 4단 의사결정 리포트 ──
+elif menu == "📋 2. 단일 기업 4단 의사결정 리포트":
+    # 🏛️ 토스/블룸버그 스타일 4단 의사결정 리포트 렌더링 (Facts / Interpretation / Evidence / Next Actions)
+    render_menu2_decision_report(driver=driver, theme_mode=theme_mode)
     
-    api_key_input = os.getenv("OPENAI_API_KEY", os.getenv("GEMINI_API_KEY", os.getenv("GOOGLE_API_KEY", "")))
-    
-    if "messages" not in st.session_state:
-        st.session_state.messages = [
-            {"role": "assistant", "content": "안녕하세요! **DART-Trace 원문 증거 기반 Cypher 질의 어시스턴트**입니다.\n\n금융감독원 15,000건 공시 원문 증거(`RawEvidenceCandidate` 23,996건)와 313건 주요 자본변동(CB·BW·증자·합병) 공시를 **접수번호·2D XPath·SHA-256 해시 근거**와 함께 100% 읽기 전용으로 투명하게 질의응답합니다.\n\n💡 **추천 질문 예시:**\n• `삼성전자의 5% 대량보유 공시 후보를 원문 근거와 함께 보여줘`\n• `파인메딕스 관련 5% 공시에서 보고자와 지분율 후보를 보여줘`\n• `최근 주요 상장사의 사모 CB 및 유상증자 공시 타임라인`\n• `접수번호 20241231000509 공시의 원문 XPath와 SHA-256 근거는?`\n• `(가드레일 시험) 홍하종 일가의 DSR제강 실질 지배력과 권력 순위는?`\n\n*(※ 실질 지배력 단정 및 순환출자망 해석은 2단계 엔티티 해소 전 단계로 가드레일에 의해 차단됩니다.)*"}
-        ]
+    # 🤖 [컴패니언 도구] 공시 증거 기반 자유 대화형 GraphRAG 질의 패널
+    with st.expander("🤖 [보조 도구] 기업 지배구조 & 공시 증거 자유 대화형 GraphRAG 어시스턴트", expanded=False):
+        st.caption("15,000건 공시 원문 증거(23,996건 후보)와 313건 주요 자본이벤트를 공시접수번호·2D XPath·SHA-256 해시 근거와 함께 100% 읽기 전용(READ_ACCESS)으로 실시간 질의합니다.")
         
-    for msg in st.session_state.messages:
-        with st.chat_message(msg["role"]):
-            st.markdown(msg["content"])
-            if msg.get("token_caption"):
-                st.caption(msg["token_caption"])
-            if msg.get("cypher"):
-                with st.expander("🛠️ [엔지니어링 뷰] 백그라운드 Cypher 쿼리 & Raw Data & AI 프롬프트 검증 패널", expanded=False):
-                    tab_cypher, tab_data, tab_prompt = st.tabs(["⚡ 실행된 Cypher 쿼리", "📦 Neo4j 반환 Raw Data", "🤖 AI 프롬프트 & LLM 지시문"])
-                    with tab_cypher:
-                        st.code(msg.get("cypher", "MATCH (n) RETURN n"), language="cypher")
-                    with tab_data:
-                        st.json(msg.get("raw_data", {}))
-                    with tab_prompt:
-                        p_info = msg.get("prompt_payload", {})
-                        st.markdown("**1. 시스템 역할 지시문 (System Prompt):**")
-                        st.info(p_info.get("system_prompt", "당신은 금융감독원 수석 기업지배구조 분석관입니다."))
-                        st.markdown("**2. AI에 주입된 지식그래프 팩트 & 사용자 질문 (User Prompt Payload):**")
-                        st.code(p_info.get("user_prompt_with_graph_context", ""), language="markdown")
+        api_key_input = os.getenv("OPENAI_API_KEY", os.getenv("GEMINI_API_KEY", os.getenv("GOOGLE_API_KEY", "")))
+        
+        if "messages" not in st.session_state:
+            st.session_state.messages = [
+                {"role": "assistant", "content": "안녕하세요! **DART-Trace 원문 증거 기반 Cypher 질의 어시스턴트**입니다.\n\n금융감독원 15,000건 공시 원문 증거(`RawEvidenceCandidate` 23,996건)와 313건 주요 자본변동(CB·BW·증자·합병) 공시를 **접수번호·2D XPath·SHA-256 해시 근거**와 함께 100% 읽기 전용으로 투명하게 질의응답합니다.\n\n💡 **추천 질문 예시:**\n• `삼성전자의 5% 대량보유 공시 후보를 원문 근거와 함께 보여줘`\n• `파인메딕스 관련 5% 공시에서 보고자와 지분율 후보를 보여줘`\n• `최근 주요 상장사의 사모 CB 및 유상증자 공시 타임라인`\n• `접수번호 20241231000509 공시의 원문 XPath와 SHA-256 근거는?`\n• `(가드레일 시험) 홍하종 일가의 DSR제강 실질 지배력과 권력 순위는?`\n\n*(※ 실질 지배력 단정 및 순환출자망 해석은 2단계 엔티티 해소 전 단계로 가드레일에 의해 차단됩니다.)*"}
+            ]
             
-    if prompt := st.chat_input("회사명, 공시 접수번호(14자리), CB·BW·증자, 또는 원문 해시를 입력하세요..."):
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
-            
-        with st.chat_message("assistant"):
-            with st.spinner("🧠 LLM 인텐트 분석 ➔ 엔티티 링킹 ➔ Neo4j 동적 Cypher 생성 중..."):
-                res = generate_graphrag_response(prompt, api_key_input)
-                ans = res["ans"]
-                token_usage_info = res.get("token_usage_info")
+        for msg in st.session_state.messages:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
+                if msg.get("token_caption"):
+                    st.caption(msg["token_caption"])
+                if msg.get("cypher"):
+                    with st.expander("🛠️ [엔지니어링 뷰] 백그라운드 Cypher 쿼리 & Raw Data & AI 프롬프트 검증 패널", expanded=False):
+                        tab_cypher, tab_data, tab_prompt = st.tabs(["⚡ 실행된 Cypher 쿼리", "📦 Neo4j 반환 Raw Data", "🤖 AI 프롬프트 & LLM 지시문"])
+                        with tab_cypher:
+                            st.code(msg.get("cypher", "MATCH (n) RETURN n"), language="cypher")
+                        with tab_data:
+                            st.json(msg.get("raw_data", {}))
+                        with tab_prompt:
+                            p_info = msg.get("prompt_payload", {})
+                            st.markdown("**1. 시스템 역할 지시문 (System Prompt):**")
+                            st.info(p_info.get("system_prompt", "당신은 금융감독원 수석 기업지배구조 분석관입니다."))
+                            st.markdown("**2. AI에 주입된 지식그래프 팩트 & 사용자 질문 (User Prompt Payload):**")
+                            st.code(p_info.get("user_prompt_with_graph_context", ""), language="markdown")
                 
-                # 최종 답변 출력
-                st.markdown(ans)
+        if prompt := st.chat_input("회사명, 공시 접수번호(14자리), CB·BW·증자, 또는 원문 해시를 입력하세요...", key="menu2_chat_input"):
+            st.session_state.messages.append({"role": "user", "content": prompt})
+            with st.chat_message("user"):
+                st.markdown(prompt)
                 
-                # 토큰 사용량 뱃지 생성
-                token_caption_str = None
-                if token_usage_info and "total" in token_usage_info:
-                    token_caption_str = f"⚡ **OpenAI gpt-4o-mini 토큰 소비량**: 입력 `{token_usage_info['prompt']} tok` + 출력 `{token_usage_info['completion']} tok` = 총 `{token_usage_info['total']} tok` (예상 비용: 약 **{token_usage_info['cost_krw']}원**)"
-                elif token_usage_info:
-                    token_caption_str = f"⚡ **토큰 소비량**: {token_usage_info['info']}"
-                
-                if token_caption_str:
-                    st.caption(token_caption_str)
-                
-                with st.expander("🛠️ [엔지니어링 뷰] 백그라운드 Cypher 쿼리 & Raw Data & AI 프롬프트 검증 패널", expanded=False):
-                    tab_cypher, tab_data, tab_prompt = st.tabs(["⚡ 실행된 Cypher 쿼리", "📦 Neo4j 반환 Raw Data", "🤖 AI 프롬프트 & LLM 지시문"])
-                    with tab_cypher:
-                        st.code(res.get("cypher", "MATCH (n) RETURN n").strip(), language="cypher")
-                    with tab_data:
-                        st.json(res.get("raw_data", {}))
-                    with tab_prompt:
-                        p_info = res.get("prompt_payload", {})
-                        st.markdown("**1. 시스템 역할 지시문 (System Prompt):**")
-                        st.info(p_info.get("system_prompt", "당신은 금융감독원 수석 기업지배구조 분석관입니다."))
-                        st.markdown("**2. AI에 주입된 지식그래프 팩트 & 사용자 질문 (User Prompt Payload):**")
-                        st.code(p_info.get("user_prompt_with_graph_context", ""), language="markdown")
-                
-                st.session_state.messages.append({
-                    "role": "assistant",
-                    "content": ans,
-                    "token_caption": token_caption_str,
-                    "cypher": res.get("cypher"),
-                    "raw_data": res.get("raw_data"),
-                    "prompt_payload": res.get("prompt_payload", {})
-                })
+            with st.chat_message("assistant"):
+                with st.spinner("🧠 LLM 인텐트 분석 ➔ 엔티티 링킹 ➔ Neo4j 동적 Cypher 생성 중..."):
+                    res = generate_graphrag_response(prompt, api_key_input)
+                    ans = res["ans"]
+                    token_usage_info = res.get("token_usage_info")
+                    
+                    st.markdown(ans)
+                    
+                    token_caption_str = None
+                    if token_usage_info and "total" in token_usage_info:
+                        token_caption_str = f"⚡ **OpenAI gpt-4o-mini 토큰 소비량**: 입력 `{token_usage_info['prompt']} tok` + 출력 `{token_usage_info['completion']} tok` = 총 `{token_usage_info['total']} tok` (예상 비용: 약 **{token_usage_info['cost_krw']}원**)"
+                    elif token_usage_info:
+                        token_caption_str = f"⚡ **토큰 소비량**: {token_usage_info['info']}"
+                    
+                    if token_caption_str:
+                        st.caption(token_caption_str)
+                    
+                    with st.expander("🛠️ [엔지니어링 뷰] 백그라운드 Cypher 쿼리 & Raw Data & AI 프롬프트 검증 패널", expanded=False):
+                        tab_cypher, tab_data, tab_prompt = st.tabs(["⚡ 실행된 Cypher 쿼리", "📦 Neo4j 반환 Raw Data", "🤖 AI 프롬프트 & LLM 지시문"])
+                        with tab_cypher:
+                            st.code(res.get("cypher", "MATCH (n) RETURN n").strip(), language="cypher")
+                        with tab_data:
+                            st.json(res.get("raw_data", {}))
+                        with tab_prompt:
+                            p_info = res.get("prompt_payload", {})
+                            st.markdown("**1. 시스템 역할 지시문 (System Prompt):**")
+                            st.info(p_info.get("system_prompt", "당신은 금융감독원 수석 기업지배구조 분석관입니다."))
+                            st.markdown("**2. AI에 주입된 지식그래프 팩트 & 사용자 질문 (User Prompt Payload):**")
+                            st.code(p_info.get("user_prompt_with_graph_context", ""), language="markdown")
+                    
+                    st.session_state.messages.append({
+                        "role": "assistant",
+                        "content": ans,
+                        "token_caption": token_caption_str,
+                        "cypher": res.get("cypher"),
+                        "raw_data": res.get("raw_data"),
+                        "prompt_payload": res.get("prompt_payload", {})
+                    })
 
 
 # ── 메뉴 3: GDS 재계 권력 랭킹 (PageRank & 영향력 분석) ──
