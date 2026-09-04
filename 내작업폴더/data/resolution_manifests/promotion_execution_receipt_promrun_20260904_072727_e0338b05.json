@@ -1,0 +1,145 @@
+{
+  "status": "PROMOTION_SUCCESS",
+  "run_id": "promrun_20260904_072727_e0338b05",
+  "timestamp": "2026-09-04T07:27:30.923470+00:00",
+  "applied_manifest": "promotion_dryrun_20260904_061552.json",
+  "manifest_sha256": "1c4fceb788874b5e4f928d44aa9954423c89188f2f325c758eb8e6b4742e8ac1",
+  "promotion_engine": "PROMOTION_HARNESS_V3.0",
+  "accounting": {
+    "total_requested": 19,
+    "created": 19,
+    "already_existing": 0,
+    "rejected": 0
+  },
+  "name_resolution_rule": {
+    "rule_name": "CORP_CODE_AND_LEGAL_AFFIX_NORMALIZED_MATCH_V1",
+    "definition": "법인격 표기 제거 후 괄호/공백 정규화 대조 및 DART 8자리 고유코드 일치 검증",
+    "all_19_resolved": true
+  },
+  "temporal_semantics": {
+    "temporal_context": "HISTORICAL_DISCLOSURE_FACT_2023",
+    "fact_type": "HISTORICAL_REPORTED_ECONOMIC_STAKE",
+    "definition": "2023년 공시 보고의무발생일 기준 과거 공시 사실 (2026년 현재 지분 아님)"
+  },
+  "pre_db_state": {
+    "nodes": 79848,
+    "relationships": 78861,
+    "owns_stake": 0,
+    "holds_economic_stake": 0
+  },
+  "post_db_state": {
+    "nodes": 79848,
+    "relationships": 78880,
+    "owns_stake": 0,
+    "holds_economic_stake": 19
+  },
+  "db_delta": {
+    "delta_nodes": 0,
+    "delta_relationships": 19
+  },
+  "verified_invariances": {
+    "zero_node_pollution": true,
+    "exact_relationship_increase_matches_created": true,
+    "zero_owns_stake_isolation": true,
+    "manifest_sha256_persisted": true,
+    "run_id_persisted": true,
+    "idempotent_safe": true
+  },
+  "tx_execution_details": [
+    {
+      "cid": "cand-20230810000694-def7b651945594cc",
+      "rel_key": "rel-holds-00357607-00117027-20230810000694-def7b651945594cc",
+      "action": "CREATED"
+    },
+    {
+      "cid": "cand-20230811000625-27d3a496d91ff14a",
+      "rel_key": "rel-holds-00693651-00428729-20230811000625-27d3a496d91ff14a",
+      "action": "CREATED"
+    },
+    {
+      "cid": "cand-20230811000749-003afacc877fc87d",
+      "rel_key": "rel-holds-00624749-01497142-20230811000749-003afacc877fc87d",
+      "action": "CREATED"
+    },
+    {
+      "cid": "cand-20230811001413-20de2e407b9fa018",
+      "rel_key": "rel-holds-00131850-01744703-20230811001413-20de2e407b9fa018",
+      "action": "CREATED"
+    },
+    {
+      "cid": "cand-20230811001867-527b8f81926e549b",
+      "rel_key": "rel-holds-01074862-01414422-20230811001867-527b8f81926e549b",
+      "action": "CREATED"
+    },
+    {
+      "cid": "cand-20230811002030-be6f73106029a80e",
+      "rel_key": "rel-holds-00120562-01258507-20230811002030-be6f73106029a80e",
+      "action": "CREATED"
+    },
+    {
+      "cid": "cand-20230811002344-642af118c1d1dd7a",
+      "rel_key": "rel-holds-00120562-00120571-20230811002344-642af118c1d1dd7a",
+      "action": "CREATED"
+    },
+    {
+      "cid": "cand-20230811002466-b2723bc651eaf130",
+      "rel_key": "rel-holds-00101220-00264547-20230811002466-b2723bc651eaf130",
+      "action": "CREATED"
+    },
+    {
+      "cid": "cand-20230814002495-c9c0e812c0cce76b",
+      "rel_key": "rel-holds-00153126-00428321-20230814002495-c9c0e812c0cce76b",
+      "action": "CREATED"
+    },
+    {
+      "cid": "cand-20230816000062-f5a10558a7d5c8d3",
+      "rel_key": "rel-holds-00366845-00269612-20230816000062-f5a10558a7d5c8d3",
+      "action": "CREATED"
+    },
+    {
+      "cid": "cand-20230816000292-47856b6c4f2aa830",
+      "rel_key": "rel-holds-00238782-00176914-20230816000292-47856b6c4f2aa830",
+      "action": "CREATED"
+    },
+    {
+      "cid": "cand-20230817000046-23bd4d6e478c3586",
+      "rel_key": "rel-holds-01493535-00531078-20230817000046-23bd4d6e478c3586",
+      "action": "CREATED"
+    },
+    {
+      "cid": "cand-20230817000275-c545d5d528c400dd",
+      "rel_key": "rel-holds-00970453-00362292-20230817000275-c545d5d528c400dd",
+      "action": "CREATED"
+    },
+    {
+      "cid": "cand-20230818000036-0b9d222d8571f08f",
+      "rel_key": "rel-holds-00128607-00606770-20230818000036-0b9d222d8571f08f",
+      "action": "CREATED"
+    },
+    {
+      "cid": "cand-20230818000319-7c3851eaf9fd4bfb",
+      "rel_key": "rel-holds-00412597-00403632-20230818000319-7c3851eaf9fd4bfb",
+      "action": "CREATED"
+    },
+    {
+      "cid": "cand-20230821000070-60998c33c56d17fb",
+      "rel_key": "rel-holds-00970453-00362292-20230821000070-60998c33c56d17fb",
+      "action": "CREATED"
+    },
+    {
+      "cid": "cand-20230821000395-298a14099140c582",
+      "rel_key": "rel-holds-01137383-01067808-20230821000395-298a14099140c582",
+      "action": "CREATED"
+    },
+    {
+      "cid": "cand-20230821000432-e5842f792b2c06e8",
+      "rel_key": "rel-holds-01159853-00962922-20230821000432-e5842f792b2c06e8",
+      "action": "CREATED"
+    },
+    {
+      "cid": "cand-20230822000253-7d0ef0c346aa2507",
+      "rel_key": "rel-holds-00545716-01026157-20230822000253-7d0ef0c346aa2507",
+      "action": "CREATED"
+    }
+  ]
+}
