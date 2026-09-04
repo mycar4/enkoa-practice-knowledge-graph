@@ -90,9 +90,10 @@ def render_menu2_decision_report(driver=None, theme_mode: str = "🌙 다크 모
             with preset_cols1[idx]:
                 if st.button(label.split()[0], key=f"btn_preset_{code_or_name}", use_container_width=True):
                     st.session_state.selected_report_corp = code_or_name
+                    st.session_state.report_company_search_input = ""
                     st.rerun()
 
-        st.caption("🔒 검증 경제적 보유 사실 예시 (19건 승격본):")
+        st.caption("🔒 검증 경제적 보유 사실 예시:")
         preset_cols2 = st.columns(3)
         presets2 = [
             ("알루코 (승격 1건)", "알루코"),
@@ -103,6 +104,7 @@ def render_menu2_decision_report(driver=None, theme_mode: str = "🌙 다크 모
             with preset_cols2[idx]:
                 if st.button(label.split()[0], key=f"btn_promoted_preset_{code_or_name}", use_container_width=True):
                     st.session_state.selected_report_corp = code_or_name
+                    st.session_state.report_company_search_input = ""
                     st.rerun()
 
     target_to_load = st.session_state.selected_report_corp
@@ -176,8 +178,8 @@ def render_menu2_decision_report(driver=None, theme_mode: str = "🌙 다크 모
 
     cap_events = facts.get("capital_events_summary", {}).get("events_detail", [])
     total_events_cnt = len(cap_events)
-    cb_bw_cnt = sum(1 for e in cap_events if any(k in str(e.get("event_type", "")) for k in ["전환사채", "CB", "신주인수권", "BW"]))
-    increase_cnt = sum(1 for e in cap_events if "유상증자" in str(e.get("event_type", "")))
+    cb_bw_cnt = sum(1 for e in cap_events if any(k in str(e.get("event_type", "")) or k in str(e.get("event_type_kr", "")) for k in ["전환사채", "CB", "신주인수권", "BW"]))
+    increase_cnt = sum(1 for e in cap_events if "유상증자" in str(e.get("event_type_kr", "")) or str(e.get("event_type", "")) == "PAID")
     holdings_summary = facts.get("major_holdings_summary", {})
     promoted_stakes = holdings_summary.get("promoted_stakes", [])
     promoted_cnt = len(promoted_stakes)
@@ -189,17 +191,16 @@ def render_menu2_decision_report(driver=None, theme_mode: str = "🌙 다크 모
     with kpi2:
         st.metric("전환사채(CB)·BW 발행", f"{cb_bw_cnt}건", help="CB/BW 발행 결정 공시")
     with kpi3:
-        st.metric("검증된 경제적 보유 사실", f"{promoted_cnt}건", help="봉인 매니페스트 SHA-256 결속 및 원문 행 해시 전수 검증 승격 완료 (HOLDS_ECONOMIC_STAKE)")
+        st.metric("검증 경제적 보유 사실", f"{promoted_cnt}건", help="봉인 매니페스트 SHA-256 결속 승격본 (당사 기준 보유 및 피보유 포함)")
     with kpi4:
-        st.metric("5% 공시 원문 추출 후보", f"{len(raw_candidates)}건", help="원문 테이블 파싱 1차 추출 후보 (엔티티 해소 검증 전)")
+        total_raw_cand_cnt = holdings_summary.get("raw_candidate_count", len(raw_candidates))
+        st.metric("5% 공시 피보유 후보", f"{total_raw_cand_cnt}건", help=f"당사 대상 5% 대량보유 공시 원문 추출본 (미검증 후보 전체 {total_raw_cand_cnt}건 중 상위 10건 표기)")
 
     # 1-1. 최근 자본이벤트 타임라인
     st.markdown(f"**⚡ 최근 자본이벤트 타임라인 (DART DS005 연동)**")
     if cap_events:
         events_df_data = []
         for ev in cap_events:
-            amt = ev.get("issue_amount")
-            amt_str = f"{int(amt):,}원" if (amt and isinstance(amt, (int, float))) else (str(amt) if amt else "-")
             c_price = ev.get("conversion_price")
             c_price_str = f"{int(c_price):,}원" if (c_price and isinstance(c_price, (int, float))) else (str(c_price) if c_price else "-")
             floor = ev.get("min_refixing_floor")
@@ -207,11 +208,11 @@ def render_menu2_decision_report(driver=None, theme_mode: str = "🌙 다크 모
             
             events_df_data.append({
                 "결정일자": str(ev.get("decided_on") or ev.get("received_on") or "-"),
-                "이벤트 구분": ev.get("event_type", "-"),
-                "조달 금액": amt_str,
+                "이벤트 구분": ev.get("event_type_kr") or ev.get("event_type", "-"),
+                "조달 금액": ev.get("amount_display") or "-",
                 "전환/발행가": c_price_str,
                 "최저 리픽싱가": floor_str,
-                "조달 목적": ev.get("purpose") or "-"
+                "조달 목적": ev.get("sanitized_purpose") or "-"
             })
         st.dataframe(pd.DataFrame(events_df_data), use_container_width=True, height=200)
     else:
@@ -237,21 +238,23 @@ def render_menu2_decision_report(driver=None, theme_mode: str = "🌙 다크 모
         promoted_df_data = []
         for p in promoted_stakes:
             amt_shares = p.get("shares_count")
-            shares_str = f"{int(amt_shares):,}주" if (amt_shares and isinstance(amt_shares, (int, float))) else str(amt_shares)
+            shares_str = f"{int(amt_shares):,}주" if (amt_shares and isinstance(amt_shares, (int, float))) else (str(amt_shares) if amt_shares is not None else "-")
             ratio = p.get("stake_ratio")
             ratio_str = f"{float(ratio):.2f}%" if ratio is not None else "-"
+            h_raw = p.get("row_inner_hash")
+            hash_display = f"{h_raw[:16]}..." if h_raw else "-"
             promoted_df_data.append({
                 "보유사 → 대상회사": p.get("holder_to_target", "-"),
                 "지분율": ratio_str,
                 "보유주식수": shares_str,
                 "보고의무발생일": str(p.get("reporting_obligation_date") or "-"),
-                "원문 행 해시": f"{p.get('row_inner_hash', '')[:16]}...",
+                "원문 행 해시": hash_display,
                 "최초 승격일": str(p.get("promoted_at") or "-")[:19]
             })
-        st.dataframe(pd.DataFrame(promoted_df_data), use_container_width=True)
-        st.caption("🛡️ 위 내역은 2023년 공시 보고의무발생일 기준 과거 경제적 지분 보유 사실이며, 지배력·경영권 단정이나 현재(2026년) 지분이 아닙니다.")
+        st.dataframe(pd.DataFrame(promoted_df_data), use_container_width=True, height=160)
+        st.caption("🛡️ 위 내역은 DART 대량보유 공시 보고의무발생일 기준 과거 경제적 지분 보유 사실이며, 지배력·경영권 단정이나 현재 지분이 아닙니다.")
     else:
-        st.info(f"'{corp_name}'에 대해 검증·승격된 경제적 보유 관계(:HOLDS_ECONOMIC_STAKE)가 없습니다. (현재 19건 승격 대상 외 기업)")
+        st.info(f"'{corp_name}'에 대해 검증·승격된 경제적 보유 사실(HOLDS_ECONOMIC_STAKE)이 없습니다.")
 
     st.markdown("<div style='margin-top: 16px;'></div>", unsafe_allow_html=True)
 
@@ -380,9 +383,18 @@ def render_menu2_decision_report(driver=None, theme_mode: str = "🌙 다크 모
             ev_level = ev.get("evidence_level")
             ev_note = ev.get("evidence_note", "")
 
+            is_promoted = (ev_level == "MANIFEST_SEALED_ROW_HASH" or ev.get("item_type") == "PROMOTED_ECONOMIC_STAKE")
             is_hash_bound = (ev_level == "ROW_HASH_BOUND")
-            badge_color = "#10b981" if is_hash_bound else "#64748b"
-            badge_text = "🟢 파서 추출 좌표 + 원문 행 SHA-256 결속" if is_hash_bound else "🔗 공시 링크 근거"
+
+            if is_promoted:
+                badge_color = "#10b981"
+                badge_text = "🔒 봉인 매니페스트 SHA-256 결속 + 원문 행 해시 전수 검증"
+            elif is_hash_bound:
+                badge_color = "#38bdf8"
+                badge_text = "⚪ 파서 추출 좌표 + 원문 행 SHA-256 결속 (미검증 후보)"
+            else:
+                badge_color = "#64748b"
+                badge_text = "🔗 공시 원문 링크 연동"
 
             with st.container():
                 st.markdown(f"""

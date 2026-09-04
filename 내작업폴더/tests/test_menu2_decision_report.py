@@ -93,6 +93,11 @@ def test_decision_report_data_contract_rigorous():
                 assert ev["inner_hash"] is not None, "ROW_HASH_BOUND must have real inner_hash"
                 assert "[미검증 원문 추출 후보]" in ev["title"]
                 assert "파서 추출 좌표 + 원문 행 SHA-256 결속" == ev["evidence_note"]
+            elif ev["evidence_level"] == "MANIFEST_SEALED_ROW_HASH":
+                # 승격 사실은 봉인 매니페스트 결속 및 원문 행 해시 존재 (xpath는 None)
+                assert ev["xpath"] is None, "MANIFEST_SEALED_ROW_HASH must have xpath=None"
+                assert ev["inner_hash"] is not None
+                assert "[검증·승격 사실]" in ev["title"]
         
         assert cap_ev_found, "Must contain at least one FILING_LINK_ONLY capital event evidence"
         assert stake_ev_found, "Must contain at least one ROW_HASH_BOUND stake candidate evidence"
@@ -140,15 +145,102 @@ def test_promoted_company_contract_aluko():
         assert promoted["status"] == "VERIFIED_ECONOMIC_STAKE"
         assert promoted["status_label"] == "검증·승격 완료"
 
-        # 미검증 후보와 분리 확인
-        assert "raw_candidates" in holdings
+        # 1. [불변 계약 ⑤] 승격된 동일 해시가 미검증 후보 테이블에서 배제되었는지 검증
+        raw_candidates = holdings.get("raw_candidates", [])
+        assert len(raw_candidates) > 0
+        for cand in raw_candidates:
+            assert cand.get("row_inner_hash") != promoted["row_inner_hash"], (
+                f"Promoted hash {promoted['row_inner_hash']} leaked into unverified candidates!"
+            )
+            assert cand["status"] == "UNVERIFIED_EXTRACTED_CANDIDATE"
+
+        # 2. 정직한 전체 후보 건수 검증 (슬라이스 10에 축소 왜곡되지 않고, 승격 1건이 정확히 차감됨)
+        assert holdings["raw_candidate_count"] == 23, (
+            f"Expected true total count exactly 23 for Aluko (24 minus 1 promoted), got {holdings['raw_candidate_count']}"
+        )
         
-        # 증거 분리 확인
+        # 3. [증거 등급 분리] 승격 증거는 MANIFEST_SEALED_ROW_HASH 토큰 및 xpath=None 검증
         evidence = report["tier3_evidence"]
         promoted_ev = [ev for ev in evidence if ev.get("item_type") == "PROMOTED_ECONOMIC_STAKE"]
         assert len(promoted_ev) >= 1
+        assert promoted_ev[0]["evidence_level"] == "MANIFEST_SEALED_ROW_HASH"
+        assert promoted_ev[0]["xpath"] is None
+        assert promoted_ev[0]["inner_hash"].startswith("def7b651")
         assert "HOLDS_ECONOMIC_STAKE" in promoted_ev[0]["evidence_note"]
         print("✅ test_promoted_company_contract_aluko passed!")
+    finally:
+        service.close()
+
+
+def test_zero_mixing_across_all_promoted_companies():
+    """10대 피보유 승격 기업 전수 스캔: 승격 해시가 미검증 후보 테이블에 단 1건도 누출되지 않음을 증명"""
+    service = DecisionReportService()
+    try:
+        test_corps = [
+            "KG이니시스", "아이비김영", "롯데칠성음료", "파워로직스", "해태제과식품",
+            "유비온", "참좋은여행", "넵튠", "엠아이큐브솔루션", "에스케이증권제10호기업인수목적"
+        ]
+        for corp in test_corps:
+            report = service.generate_company_decision_report(corp)
+            if report.get("status") != "SUCCESS":
+                continue
+            holdings = report["tier1_facts"]["major_holdings_summary"]
+            promoted_hashes = {p["row_inner_hash"] for p in holdings.get("promoted_stakes", []) if p.get("row_inner_hash")}
+            raw_hashes = {c.get("row_inner_hash") for c in holdings.get("raw_candidates", []) if c.get("row_inner_hash")}
+            
+            intersection = promoted_hashes.intersection(raw_hashes)
+            assert len(intersection) == 0, f"Leaked hashes found in {corp}: {intersection}"
+        print("✅ test_zero_mixing_across_all_promoted_companies passed! (0 leaks across all 10 companies)")
+    finally:
+        service.close()
+
+
+def test_capital_events_sanitization_and_defense():
+    """자본이벤트 한글화, 금액/목적 스왑 방어 및 주관적 점수 배제 계약 검증"""
+    service = DecisionReportService()
+    try:
+        for corp in ["HLB", "DXVX", "FSN"]:
+            report = service.generate_company_decision_report(corp)
+            assert report["status"] == "SUCCESS"
+            
+            events = report["tier1_facts"]["capital_events_summary"]["events_detail"]
+            assert len(events) > 0, f"Expected capital events for {corp}"
+            
+            for ev in events:
+                # 1. 이벤트 코드 한글화 검증 (영문 코드 raw 노출 방지)
+                assert "event_type_kr" in ev
+                assert ev["event_type_kr"] != "PAID", "PAID must be translated to '유상증자 결정'"
+                assert ev["event_type_kr"] in [
+                    "유상증자 결정",
+                    "전환사채(CB) 발행 결정",
+                    "신주인수권부사채(BW) 발행 결정",
+                    "회사합병 결정",
+                    "타법인 주식 및 출자증권 취득 결정"
+                ] or not ev["event_type_kr"].isascii(), f"Raw ascii event type found: {ev['event_type_kr']}"
+                
+                # 2. 금액 및 목적 컬럼 정정 및 방어 검증
+                amt_str = ev.get("amount_display", "-")
+                pur_str = ev.get("sanitized_purpose", "-")
+                
+                # 목적 컬럼에 순수 숫자(예: '29,005,171,650')가 그대로 방치되지 않았는지 검증
+                clean_pur = pur_str.replace(",", "").strip()
+                assert not clean_pur.isdigit(), f"Raw numeric string leaked into purpose: {pur_str}"
+                
+                # PAID 이벤트인 경우 금액이 purpose에서 정상 구출되어 amount_display에 들어갔는지 검증
+                if ev.get("event_type") == "PAID":
+                    assert ev["event_type_kr"] == "유상증자 결정"
+                    if ev.get("sanitized_amount") is not None:
+                        assert amt_str != "-", "PAID with sanitized amount must have formatted amount_display"
+                        assert "원" in amt_str
+            
+            # 3. 주관적 리스크 점수 및 가격 예측 배제 검증
+            interp = report["tier2_interpretations"]
+            assert "risk_score" not in interp, "Subjective risk_score must not exist"
+            assert "predicted_price" not in interp, "Price prediction must not exist"
+            assert "target_price" not in interp, "Target price must not exist"
+            assert "투자 자문이나 주가 예측이 아닙니다" in interp.get("disclaimer", "")
+        
+        print("✅ test_capital_events_sanitization_and_defense passed!")
     finally:
         service.close()
 
@@ -157,4 +249,7 @@ if __name__ == "__main__":
     test_decision_report_data_contract_rigorous()
     test_company_search_find_companies()
     test_promoted_company_contract_aluko()
+    test_zero_mixing_across_all_promoted_companies()
+    test_capital_events_sanitization_and_defense()
     print("🎉 ALL RIGOROUS MENU 2 TESTS PASSED!")
+

@@ -26,6 +26,81 @@ uri = os.getenv("AURA_URI") or os.getenv("NEO4J_URI")
 user = os.getenv("AURA_USER") or os.getenv("NEO4J_USER", "neo4j")
 pwd = os.getenv("AURA_PASSWORD") or os.getenv("NEO4J_PASSWORD")
 
+EVENT_TYPE_KR_MAP = {
+    "PAID": "유상증자 결정",
+    "CB_ISSUE": "전환사채(CB) 발행 결정",
+    "BW_ISSUE": "신주인수권부사채(BW) 발행 결정",
+    "MERGER": "회사합병 결정",
+    "STOCK_ACQUISITION": "타법인 주식 및 출자증권 취득 결정"
+}
+
+
+def sanitize_capital_event(ev: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    자본이벤트 공시 사실 정제 및 방어:
+    1. 이벤트 코드 한글화 (PAID -> 유상증자 결정 등)
+    2. 조달 금액 및 목적 컬럼 정정 (PAID 등에서 금액이 purpose로 유입된 현상 방어)
+    3. 순수 숫자 문자열이 목적 컬럼에 노출되는 결손 방어
+    """
+    raw_type = str(ev.get("event_type") or "-").strip()
+    event_type_kr = EVENT_TYPE_KR_MAP.get(raw_type, raw_type)
+    
+    raw_amt = ev.get("issue_amount")
+    raw_pur = ev.get("purpose")
+    
+    # 1. 조달 금액 정제
+    final_amount = None
+    if raw_amt is not None and str(raw_amt).strip() not in ["", "-", "None"]:
+        try:
+            clean_amt_str = str(raw_amt).replace(",", "").strip()
+            final_amount = int(float(clean_amt_str))
+        except (ValueError, TypeError):
+            pass
+
+    pur_is_numeric = False
+    pur_num_val = None
+    if raw_pur is not None:
+        pur_cleaned = str(raw_pur).replace(",", "").strip()
+        if pur_cleaned.isdigit():
+            pur_is_numeric = True
+            pur_num_val = int(pur_cleaned)
+
+    # PAID 유상증자 등에서 금액이 purpose에만 숫자로 존재하는 경우 승계
+    if final_amount is None and pur_is_numeric:
+        final_amount = pur_num_val
+
+    if final_amount is not None and final_amount > 0:
+        if final_amount >= 100_000_000:
+            eok = final_amount / 100_000_000
+            amt_display = f"{final_amount:,}원 ({eok:,.1f}억원)"
+        else:
+            amt_display = f"{final_amount:,}원"
+    else:
+        amt_display = "-"
+
+    # 2. 조달 목적 정제
+    if raw_pur is None or str(raw_pur).strip() in ["", "-", "None"]:
+        purpose_display = "-"
+    elif pur_is_numeric:
+        # raw_amt가 따로 있고 pur도 숫자인 경우(세부 배정자금)
+        if raw_amt is not None and final_amount != pur_num_val and pur_num_val is not None:
+            if pur_num_val >= 100_000_000:
+                eok_sub = pur_num_val / 100_000_000
+                purpose_display = f"배정 자금: {pur_num_val:,}원 ({eok_sub:,.1f}억원)"
+            else:
+                purpose_display = f"배정 자금: {pur_num_val:,}원"
+        else:
+            purpose_display = "공시 원문 서식 참조"
+    else:
+        purpose_display = str(raw_pur).strip()
+
+    sanitized = dict(ev)
+    sanitized["event_type_kr"] = event_type_kr
+    sanitized["sanitized_amount"] = final_amount
+    sanitized["amount_display"] = amt_display
+    sanitized["sanitized_purpose"] = purpose_display
+    return sanitized
+
 
 class DecisionReportService:
     """단일 기업 대상 4단 의사결정 리포트 데이터 서비스"""
@@ -98,29 +173,10 @@ class DecisionReportService:
             ORDER BY e.decided_on DESC
             LIMIT $max_events
             """
-            capital_events = session.run(cap_query, corp_code=corp_code, max_events=max_events).data()
+            raw_capital_events = session.run(cap_query, corp_code=corp_code, max_events=max_events).data()
+            capital_events = [sanitize_capital_event(e) for e in raw_capital_events]
 
-            # 3. 5% 대량보유 공시 원문 추출 후보 조회 (Aura 경고 방지: 실재하는 속성만 조회)
-            stake_query = """
-            MATCH (cand:RawEvidenceCandidate {target_corp_code: $corp_code})
-            OPTIONAL MATCH (cand)-[:EVIDENCED_BY]->(frag:EvidenceFragment {role: 'ROW_DATA_EVIDENCE'})
-            RETURN 
-                cand.candidate_id AS candidate_id,
-                cand.holder_name AS holder_name,
-                cand.stake_ratio AS stake_ratio,
-                cand.shares_count AS shares_count,
-                cand.reporting_obligation_date AS reporting_obligation_date,
-                cand.rcept_no AS rcept_no,
-                cand.layout_status AS layout_status,
-                frag.xpath AS row_raw_parser_xpath,
-                frag.raw_inner_hash AS row_inner_hash,
-                frag.extracted_value AS extracted_value
-            ORDER BY cand.reporting_obligation_date DESC, cand.stake_ratio DESC
-            LIMIT 20
-            """
-            stake_rows = session.run(stake_query, corp_code=corp_code).data()
-
-            # 4. 검증·승격된 경제적 보유 사실 조회 (HOLDS_ECONOMIC_STAKE - 단일 기업 관련 보유/피보유)
+            # 3. 검증·승격된 경제적 보유 사실 조회 (HOLDS_ECONOMIC_STAKE - 단일 기업 관련 보유/피보유)
             promoted_query = """
             MATCH (h:DART_Company)-[r:HOLDS_ECONOMIC_STAKE]->(t:DART_Company)
             WHERE h.corp_code = $corp_code OR t.corp_code = $corp_code
@@ -140,11 +196,47 @@ class DecisionReportService:
             ORDER BY r.reporting_obligation_date DESC, r.stake_ratio DESC
             """
             promoted_rows = session.run(promoted_query, corp_code=corp_code).data()
+            promoted_hashes = list({r["row_inner_hash"] for r in promoted_rows if r.get("row_inner_hash")})
+
+            # 4. 5% 대량보유 공시 원문 추출 후보 조회 (승격 완료된 row_inner_hash 완벽 배제 - WITH 스코프 분리)
+            stake_query = """
+            MATCH (cand:RawEvidenceCandidate {target_corp_code: $corp_code})
+            OPTIONAL MATCH (cand)-[:EVIDENCED_BY]->(frag:EvidenceFragment {role: 'ROW_DATA_EVIDENCE'})
+            WITH cand, frag
+            WHERE $promoted_hashes IS NULL OR size($promoted_hashes) = 0 
+               OR frag IS NULL OR NOT frag.raw_inner_hash IN $promoted_hashes
+            RETURN 
+                cand.candidate_id AS candidate_id,
+                cand.holder_name AS holder_name,
+                cand.stake_ratio AS stake_ratio,
+                cand.shares_count AS shares_count,
+                cand.reporting_obligation_date AS reporting_obligation_date,
+                cand.rcept_no AS rcept_no,
+                cand.layout_status AS layout_status,
+                frag.xpath AS row_raw_parser_xpath,
+                frag.raw_inner_hash AS row_inner_hash,
+                frag.extracted_value AS extracted_value
+            ORDER BY cand.reporting_obligation_date DESC, cand.stake_ratio DESC
+            LIMIT 50
+            """
+            stake_rows = session.run(stake_query, corp_code=corp_code, promoted_hashes=promoted_hashes).data()
+
+            # 전체 미검증 후보 건수 정밀 집계 (승격 제외 실측 수치 - WITH 스코프 분리)
+            total_cand_query = """
+            MATCH (cand:RawEvidenceCandidate {target_corp_code: $corp_code})
+            OPTIONAL MATCH (cand)-[:EVIDENCED_BY]->(frag:EvidenceFragment {role: 'ROW_DATA_EVIDENCE'})
+            WITH cand, frag
+            WHERE $promoted_hashes IS NULL OR size($promoted_hashes) = 0 
+               OR frag IS NULL OR NOT frag.raw_inner_hash IN $promoted_hashes
+            RETURN count(DISTINCT cand) AS total_count
+            """
+            total_cand_res = session.run(total_cand_query, corp_code=corp_code, promoted_hashes=promoted_hashes).single()
+            total_raw_candidate_count = total_cand_res["total_count"] if total_cand_res else len(stake_rows)
 
         # =========================================================================
         # 1단: 사실 (Facts) - 정확한 관찰 기간 계산 (가짜 '최근 2년' 주장 제거)
         # =========================================================================
-        event_dates = [e["decided_on"] for e in capital_events if e.get("decided_on")]
+        event_dates = [e.get("decided_on") or e.get("received_on") for e in capital_events if (e.get("decided_on") or e.get("received_on"))]
         date_coverage = {
             "start_date": min(event_dates) if event_dates else None,
             "end_date": max(event_dates) if event_dates else None,
@@ -174,9 +266,13 @@ class DecisionReportService:
                 "verification_note": "봉인 매니페스트 SHA-256 결속 + 원문 행 해시 전수 검증 승격 완료"
             })
 
-        # 원문 추출 후보 가공 (미검증 후보 상태 명시)
+        # 원문 추출 후보 가공 (미검증 후보 상태 명시, 승격된 해시 2차 안전 배제)
+        promoted_hash_set = set(promoted_hashes)
         raw_candidates = []
         for r in stake_rows:
+            h_val = r.get("row_inner_hash")
+            if h_val and h_val in promoted_hash_set:
+                continue
             if r.get("holder_name"):
                 raw_candidates.append({
                     "candidate_id": r["candidate_id"],
@@ -208,7 +304,7 @@ class DecisionReportService:
             "major_holdings_summary": {
                 "promoted_count": len(promoted_stakes),
                 "promoted_stakes": promoted_stakes,
-                "raw_candidate_count": len(raw_candidates),
+                "raw_candidate_count": total_raw_candidate_count,
                 "raw_candidates": raw_candidates[:10]
             }
         }
@@ -216,17 +312,17 @@ class DecisionReportService:
         # =========================================================================
         # 2단: 관찰 지표 (Rule-based Observation) - 단정적 금융 판단 배제 및 근거 명시
         # =========================================================================
-        cb_bw_events = [e for e in capital_events if any(k in str(e.get("event_type", "")) for k in ["전환사채", "CB", "신주인수권", "BW"])]
+        cb_bw_events = [e for e in capital_events if any(k in str(e.get("event_type", "")) or k in str(e.get("event_type_kr", "")) for k in ["전환사채", "CB", "신주인수권", "BW"])]
         cb_bw_count = len(cb_bw_events)
-        capital_increase_events = [e for e in capital_events if "유상증자" in str(e.get("event_type", ""))]
+        capital_increase_events = [e for e in capital_events if "유상증자" in str(e.get("event_type_kr", "")) or str(e.get("event_type", "")) == "PAID"]
         increase_count = len(capital_increase_events)
 
         relevant_events = cb_bw_events + capital_increase_events
         basis_rcept_nos = list(dict.fromkeys([e["rcept_no"] for e in relevant_events if e.get("rcept_no")]))
-        basis_event_dates = sorted(list(dict.fromkeys([e.get("decided_on") for e in relevant_events if e.get("decided_on")])))
+        basis_event_dates = sorted(list(dict.fromkeys([e.get("decided_on") or e.get("received_on") for e in relevant_events if (e.get("decided_on") or e.get("received_on"))])))
 
-        # 목적 문구 키워드 탐지
-        purposes = [str(e.get("purpose", "")) for e in capital_events if e.get("purpose")]
+        # 목적 문구 키워드 탐지 (정제된 목적 텍스트 기준)
+        purposes = [str(e.get("sanitized_purpose", "")) for e in capital_events if e.get("sanitized_purpose") and e.get("sanitized_purpose") not in ["-", "공시 원문 서식 참조"]]
         has_facility = any(any(k in p for k in ["시설", "설비", "연구", "R&D", "타법인"]) for p in purposes)
         has_debt = any(any(k in p for k in ["채무상환", "운영자금"]) for p in purposes)
 
@@ -278,9 +374,10 @@ class DecisionReportService:
         # 자본이벤트: 공시 접수번호 기준 원문 링크 연동 (행 단위 2D 해시 미적재 명시)
         for e in capital_events[:5]:
             rcp = e.get("rcept_no")
+            ev_date = e.get("decided_on") or e.get("received_on") or "-"
             evidence_list.append({
                 "item_type": "CAPITAL_EVENT",
-                "title": f"{e.get('event_type')} 결정 ({e.get('decided_on')})",
+                "title": f"{e.get('event_type_kr', e.get('event_type'))} ({ev_date})",
                 "rcept_no": rcp,
                 "dart_viewer_url": f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={rcp}" if rcp else None,
                 "evidence_level": "FILING_LINK_ONLY",
@@ -297,9 +394,10 @@ class DecisionReportService:
                 "title": f"[검증·승격 사실] {p['holder_to_target']} ({p['stake_ratio']}%, {p['reporting_obligation_date']})",
                 "rcept_no": rcp,
                 "dart_viewer_url": f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={rcp}" if rcp else None,
-                "evidence_level": "ROW_HASH_BOUND",
+                "evidence_level": "MANIFEST_SEALED_ROW_HASH",
                 "xpath": None,
                 "inner_hash": p.get("row_inner_hash"),
+                "manifest_sha256": p.get("promotion_manifest_sha256"),
                 "evidence_note": "봉인 매니페스트 SHA-256 결속 + 원문 행 해시 전수 검증 승격 완료 (HOLDS_ECONOMIC_STAKE)"
             })
 
