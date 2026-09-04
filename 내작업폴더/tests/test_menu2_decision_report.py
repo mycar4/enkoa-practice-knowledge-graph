@@ -19,7 +19,11 @@ if hasattr(sys.stdout, 'reconfigure'):
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
 
-from services.decision_report_service import DecisionReportService
+from services.decision_report_service import (
+    DecisionReportService,
+    parse_accounting_number,
+    format_currency_kr
+)
 
 
 def test_decision_report_data_contract_rigorous():
@@ -52,6 +56,17 @@ def test_decision_report_data_contract_rigorous():
             assert cand["status_label"] == "미검증 원문 추출 후보"
             assert cand["holder_name"] is not None
             assert cand["rcept_no"] is not None
+
+        # 재무제표 팩트 계약 검증
+        assert "financial_facts" in facts
+        fin_facts = facts["financial_facts"]
+        assert fin_facts["status"] in ["AVAILABLE", "UNAVAILABLE"]
+        if fin_facts["status"] == "AVAILABLE":
+            assert fin_facts["bsns_year"] in ["2024", "2023"]
+            assert fin_facts["reprt_code"] == "11011"
+            assert fin_facts["fs_div"] in ["CFS", "OFS"]
+            assert fin_facts["revenue"] is not None
+            assert fin_facts["debt_ratio"] is not None
         
         # 3. [Tier 2: 관찰 지표] 규칙 기반 정직한 지표 및 시나리오 검증
         interp = report["tier2_interpretations"]
@@ -98,6 +113,10 @@ def test_decision_report_data_contract_rigorous():
                 assert ev["xpath"] is None, "MANIFEST_SEALED_ROW_HASH must have xpath=None"
                 assert ev["inner_hash"] is not None
                 assert "[검증·승격 사실]" in ev["title"]
+            elif ev["evidence_level"] == "OPENDART_API_FACT":
+                assert ev["xpath"] is None
+                assert ev["inner_hash"] is None
+                assert "OpenDART" in ev["evidence_note"]
         
         assert cap_ev_found, "Must contain at least one FILING_LINK_ONLY capital event evidence"
         assert stake_ev_found, "Must contain at least one ROW_HASH_BOUND stake candidate evidence"
@@ -245,11 +264,61 @@ def test_capital_events_sanitization_and_defense():
         service.close()
 
 
+def test_opendart_financial_facts_contract():
+    """OpenDART DS003 정기공시 주요계정 연동, CFS/OFS 계층, 제로트러스트 폴백 계약 검증"""
+    service = DecisionReportService()
+    try:
+        # 1. 삼성전자 (CFS 연결재무제표 정상 바인딩 검증)
+        samsung_fin = service.get_company_financial_facts("00126380")
+        assert samsung_fin["status"] == "AVAILABLE"
+        assert samsung_fin["bsns_year"] in ["2024", "2023"]
+        assert samsung_fin["reprt_code"] == "11011"
+        assert samsung_fin["fs_div"] == "CFS"
+        assert "연결재무제표" in samsung_fin["fs_div_name"]
+        assert samsung_fin["revenue"] is not None and samsung_fin["revenue"] > 100_000_000_000_000  # 100조원 이상
+        assert samsung_fin["total_assets"] is not None and samsung_fin["total_assets"] > 300_000_000_000_000
+        assert samsung_fin["total_liabilities"] is not None and samsung_fin["total_liabilities"] > 0
+        assert samsung_fin["total_equity"] is not None and samsung_fin["total_equity"] > 0
+        assert samsung_fin["debt_ratio"] is not None and samsung_fin["debt_ratio"] > 0
+        assert len(samsung_fin["accounts_detail"]) >= 5
+
+        # 2. HLB 및 알루코 연동 검증
+        hlb_fin = service.get_company_financial_facts("00199252")
+        assert hlb_fin["status"] == "AVAILABLE"
+        assert hlb_fin["revenue"] is not None and hlb_fin["revenue"] > 0
+
+        aluko_fin = service.get_company_financial_facts("00117027")
+        assert aluko_fin["status"] == "AVAILABLE"
+        assert aluko_fin["revenue"] is not None and aluko_fin["revenue"] > 0
+
+        # 3. 비정상 고유번호 제로트러스트 폴백 검증 (크래시 없이 UNAVAILABLE 반환)
+        invalid_fin = service.get_company_financial_facts("99999999")
+        assert invalid_fin["status"] == "UNAVAILABLE"
+        assert invalid_fin["revenue"] is None
+        assert "미공시 또는 조회 제한" in invalid_fin["message"]
+
+        # 4. 회계 수치 및 원화 포맷터 유닛 검증
+        assert parse_accounting_number("-24,169,405,515") == -24169405515
+        assert parse_accounting_number("(24,169,405,515)") == -24169405515
+        assert parse_accounting_number("300,870,903,000,000") == 300870903000000
+        assert parse_accounting_number("-") is None
+        assert parse_accounting_number(None) is None
+
+        assert "조원" in format_currency_kr(300_870_903_000_000)
+        assert "억원" in format_currency_kr(68_125_727_347)
+        assert format_currency_kr(None) == "-"
+
+        print("✅ test_opendart_financial_facts_contract passed!")
+    finally:
+        service.close()
+
+
 if __name__ == "__main__":
     test_decision_report_data_contract_rigorous()
     test_company_search_find_companies()
     test_promoted_company_contract_aluko()
     test_zero_mixing_across_all_promoted_companies()
     test_capital_events_sanitization_and_defense()
+    test_opendart_financial_facts_contract()
     print("🎉 ALL RIGOROUS MENU 2 TESTS PASSED!")
 

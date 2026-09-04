@@ -15,6 +15,7 @@ import sys
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional
+import requests
 from neo4j import GraphDatabase, READ_ACCESS
 from dotenv import load_dotenv
 
@@ -26,6 +27,18 @@ uri = os.getenv("AURA_URI") or os.getenv("NEO4J_URI")
 user = os.getenv("AURA_USER") or os.getenv("NEO4J_USER", "neo4j")
 pwd = os.getenv("AURA_PASSWORD") or os.getenv("NEO4J_PASSWORD")
 
+_MAX_FINANCIAL_CACHE_SIZE = 256
+_financial_facts_cache: Dict[str, Dict[str, Any]] = {}
+
+
+def _cache_financial_facts(key: str, data: Dict[str, Any]) -> None:
+    """메모리 보호를 위한 상한선(256개) 기반 캐시 저장 및 오래된 항목 축출"""
+    if len(_financial_facts_cache) >= _MAX_FINANCIAL_CACHE_SIZE:
+        oldest_keys = list(_financial_facts_cache.keys())[:50]
+        for k in oldest_keys:
+            _financial_facts_cache.pop(k, None)
+    _financial_facts_cache[key] = data
+
 EVENT_TYPE_KR_MAP = {
     "PAID": "유상증자 결정",
     "CB_ISSUE": "전환사채(CB) 발행 결정",
@@ -33,6 +46,42 @@ EVENT_TYPE_KR_MAP = {
     "MERGER": "회사합병 결정",
     "STOCK_ACQUISITION": "타법인 주식 및 출자증권 취득 결정"
 }
+
+
+def parse_accounting_number(raw_val: Any) -> Optional[int]:
+    """공시 회계 수치 문자열을 정수(원 단위)로 파싱 (콤마, 괄호 음수, None 방어)"""
+    if raw_val is None:
+        return None
+    s = str(raw_val).strip()
+    if not s or s in ["-", "None", "null", "N/A"]:
+        return None
+    is_negative = False
+    if s.startswith("(") and s.endswith(")"):
+        is_negative = True
+        s = s[1:-1].strip()
+    s = s.replace(",", "").strip()
+    try:
+        val = int(float(s))
+        return -val if is_negative else val
+    except (ValueError, TypeError):
+        return None
+
+
+def format_currency_kr(val: Optional[int]) -> str:
+    """원화 금액을 조/억원 단위 병기 포맷팅 (None 방어)"""
+    if val is None:
+        return "-"
+    abs_val = abs(val)
+    sign = "-" if val < 0 else ""
+    if abs_val >= 1_000_000_000_000:
+        jo = abs_val / 1_000_000_000_000
+        return f"{sign}{jo:,.1f}조원 ({val:,}원)"
+    elif abs_val >= 100_000_000:
+        eok = abs_val / 100_000_000
+        return f"{sign}{eok:,.1f}억원 ({val:,}원)"
+    else:
+        return f"{val:,}원"
+
 
 
 def sanitize_capital_event(ev: Dict[str, Any]) -> Dict[str, Any]:
@@ -127,6 +176,201 @@ class DecisionReportService:
         """
         with self.driver.session(default_access_mode=READ_ACCESS) as session:
             return session.run(cypher, q=q, limit=limit).data()
+
+    def get_company_financial_facts(self, corp_code: str, preferred_year: int = 2024) -> Dict[str, Any]:
+        """
+        OpenDART fnlttSinglAcnt.json API를 호출하여 단일회사의 주요 재무제표 팩트(DS003) 조회
+        - 연결재무제표(CFS) 우선 바인딩, 미제공 시 개별재무제표(OFS) 자동 폴백
+        - preferred_year(기본 2024년) 미공시 시 직전년도(2023년) 자동 폴백
+        - API 키 부재, 비상장사/미제출사, 네트워크 장애 시 UNAVAILABLE 상태로 안전 방어
+        - 사실(Fact)과 단순 산술 비율(부채비율)만 제공하며 주관적 가치평가 배제
+        """
+        if not corp_code or len(str(corp_code).strip()) != 8:
+            return {
+                "status": "UNAVAILABLE",
+                "message": f"유효하지 않은 고유번호(corp_code: '{corp_code}')입니다.",
+                "bsns_year": None,
+                "reprt_code": None,
+                "reprt_name": None,
+                "rcept_no": None,
+                "fs_div": None,
+                "fs_div_name": None,
+                "revenue": None,
+                "revenue_prev": None,
+                "operating_income": None,
+                "operating_income_prev": None,
+                "net_income": None,
+                "net_income_prev": None,
+                "total_assets": None,
+                "total_assets_prev": None,
+                "total_liabilities": None,
+                "total_liabilities_prev": None,
+                "total_equity": None,
+                "total_equity_prev": None,
+                "debt_ratio": None,
+                "accounts_detail": []
+            }
+
+        cleaned_code = str(corp_code).strip()
+        cache_key = f"{cleaned_code}_{preferred_year}"
+        if cache_key in _financial_facts_cache:
+            return _financial_facts_cache[cache_key]
+
+        dart_api_key = os.getenv("DART_API_KEY")
+        if not dart_api_key:
+            return {
+                "status": "UNAVAILABLE",
+                "message": "DART_API_KEY 환경변수가 설정되지 않아 OpenDART 재무제표를 조회할 수 없습니다.",
+                "bsns_year": None,
+                "reprt_code": None,
+                "reprt_name": None,
+                "rcept_no": None,
+                "fs_div": None,
+                "fs_div_name": None,
+                "revenue": None,
+                "revenue_prev": None,
+                "operating_income": None,
+                "operating_income_prev": None,
+                "net_income": None,
+                "net_income_prev": None,
+                "total_assets": None,
+                "total_assets_prev": None,
+                "total_liabilities": None,
+                "total_liabilities_prev": None,
+                "total_equity": None,
+                "total_equity_prev": None,
+                "debt_ratio": None,
+                "accounts_detail": []
+            }
+
+        years_to_try = [preferred_year, preferred_year - 1]
+        target_year = None
+        raw_items = []
+        last_msg = ""
+
+        for yr in years_to_try:
+            url = f"https://opendart.fss.or.kr/api/fnlttSinglAcnt.json?crtfc_key={dart_api_key}&corp_code={cleaned_code}&bsns_year={yr}&reprt_code=11011"
+            try:
+                resp = requests.get(url, timeout=5)
+                if resp.status_code == 200:
+                    payload = resp.json()
+                    st_code = payload.get("status")
+                    if st_code == "000" and payload.get("list"):
+                        target_year = yr
+                        raw_items = payload["list"]
+                        break
+                    else:
+                        last_msg = payload.get("message", "조회 실패")
+            except Exception as e:
+                last_msg = str(e)
+
+        if not target_year or not raw_items:
+            res_fail = {
+                "status": "UNAVAILABLE",
+                "message": f"OpenDART 재무제표 미공시 또는 조회 제한 ({last_msg})",
+                "bsns_year": None,
+                "reprt_code": None,
+                "reprt_name": None,
+                "rcept_no": None,
+                "fs_div": None,
+                "fs_div_name": None,
+                "revenue": None,
+                "revenue_prev": None,
+                "operating_income": None,
+                "operating_income_prev": None,
+                "net_income": None,
+                "net_income_prev": None,
+                "total_assets": None,
+                "total_assets_prev": None,
+                "total_liabilities": None,
+                "total_liabilities_prev": None,
+                "total_equity": None,
+                "total_equity_prev": None,
+                "debt_ratio": None,
+                "accounts_detail": []
+            }
+            _cache_financial_facts(cache_key, res_fail)
+            return res_fail
+
+        # CFS 우선, 없으면 OFS
+        has_cfs = any(item.get("fs_div") == "CFS" for item in raw_items)
+        target_fs_div = "CFS" if has_cfs else "OFS"
+        fs_div_name = "연결재무제표 (CFS)" if target_fs_div == "CFS" else "별도/개별재무제표 (OFS)"
+        filtered_items = [item for item in raw_items if item.get("fs_div") == target_fs_div]
+
+        def find_item(account_names: List[str]) -> Optional[Dict[str, Any]]:
+            for it in filtered_items:
+                if it.get("account_nm") in account_names:
+                    return it
+            return None
+
+        rev_item = find_item(["매출액", "수익(매출액)", "영업수익"])
+        op_item = find_item(["영업이익", "영업이익(손실)"])
+        net_item = find_item(["당기순이익", "당기순이익(손실)"])
+        asset_item = find_item(["자산총계"])
+        liab_item = find_item(["부채총계"])
+        equity_item = find_item(["자본총계"])
+
+        revenue = parse_accounting_number(rev_item.get("thstrm_amount")) if rev_item else None
+        revenue_prev = parse_accounting_number(rev_item.get("frmtrm_amount")) if rev_item else None
+        operating_income = parse_accounting_number(op_item.get("thstrm_amount")) if op_item else None
+        operating_income_prev = parse_accounting_number(op_item.get("frmtrm_amount")) if op_item else None
+        net_income = parse_accounting_number(net_item.get("thstrm_amount")) if net_item else None
+        net_income_prev = parse_accounting_number(net_item.get("frmtrm_amount")) if net_item else None
+        total_assets = parse_accounting_number(asset_item.get("thstrm_amount")) if asset_item else None
+        total_assets_prev = parse_accounting_number(asset_item.get("frmtrm_amount")) if asset_item else None
+        total_liabilities = parse_accounting_number(liab_item.get("thstrm_amount")) if liab_item else None
+        total_liabilities_prev = parse_accounting_number(liab_item.get("frmtrm_amount")) if liab_item else None
+        total_equity = parse_accounting_number(equity_item.get("thstrm_amount")) if equity_item else None
+        total_equity_prev = parse_accounting_number(equity_item.get("frmtrm_amount")) if equity_item else None
+
+        debt_ratio = None
+        if total_equity is not None and total_equity > 0 and total_liabilities is not None:
+            debt_ratio = round((total_liabilities / total_equity) * 100, 2)
+
+        rcept_no = None
+        for it in filtered_items:
+            if it.get("rcept_no"):
+                rcept_no = it.get("rcept_no")
+                break
+
+        res_success = {
+            "status": "AVAILABLE",
+            "message": "OpenDART 정기공시 주요계정 조회 성공",
+            "bsns_year": str(target_year),
+            "reprt_code": "11011",
+            "reprt_name": "사업보고서",
+            "rcept_no": rcept_no,
+            "fs_div": target_fs_div,
+            "fs_div_name": fs_div_name,
+            "revenue": revenue,
+            "revenue_prev": revenue_prev,
+            "operating_income": operating_income,
+            "operating_income_prev": operating_income_prev,
+            "net_income": net_income,
+            "net_income_prev": net_income_prev,
+            "total_assets": total_assets,
+            "total_assets_prev": total_assets_prev,
+            "total_liabilities": total_liabilities,
+            "total_liabilities_prev": total_liabilities_prev,
+            "total_equity": total_equity,
+            "total_equity_prev": total_equity_prev,
+            "debt_ratio": debt_ratio,
+            "accounts_detail": [
+                {
+                    "account_nm": it.get("account_nm"),
+                    "fs_div": it.get("fs_div"),
+                    "sj_nm": it.get("sj_nm"),
+                    "thstrm_nm": it.get("thstrm_nm"),
+                    "thstrm_amount": it.get("thstrm_amount"),
+                    "frmtrm_nm": it.get("frmtrm_nm"),
+                    "frmtrm_amount": it.get("frmtrm_amount")
+                }
+                for it in filtered_items
+            ]
+        }
+        _cache_financial_facts(cache_key, res_success)
+        return res_success
 
     def generate_company_decision_report(self, corp_code_or_name: str, max_events: int = 15) -> Dict[str, Any]:
         """
@@ -289,6 +533,9 @@ class DecisionReportService:
                     "verification_note": "DART 5% 공시 원문 테이블에서 추출된 1차 후보이며, 엔티티 해소 승격 전 단계입니다."
                 })
 
+        # OpenDART 주요 재무제표 팩트 조회 (DS003)
+        financial_facts = self.get_company_financial_facts(corp_code)
+
         facts = {
             "company_profile": {
                 "corp_code": corp_code,
@@ -297,6 +544,7 @@ class DecisionReportService:
                 "is_listed": comp_res["is_listed"]
             },
             "date_coverage": date_coverage,
+            "financial_facts": financial_facts,
             "capital_events_summary": {
                 "total_events_count": len(capital_events),
                 "events_detail": capital_events
@@ -413,6 +661,20 @@ class DecisionReportService:
                 "xpath": s.get("row_raw_parser_xpath"),
                 "inner_hash": s.get("row_inner_hash"),
                 "evidence_note": "파서 추출 좌표 + 원문 행 SHA-256 결속"
+            })
+
+        # 정기공시 재무제표 팩트: OpenDART DS003 단일회사 주요계정 직연동
+        if financial_facts.get("status") == "AVAILABLE":
+            fin_rcp = financial_facts.get("rcept_no")
+            evidence_list.append({
+                "item_type": "FINANCIAL_STATEMENT_FACT",
+                "title": f"[정기공시 재무제표 팩트] {financial_facts.get('bsns_year')}년 {financial_facts.get('reprt_name')} ({financial_facts.get('fs_div_name')})",
+                "rcept_no": fin_rcp,
+                "dart_viewer_url": f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={fin_rcp}" if fin_rcp else None,
+                "evidence_level": "OPENDART_API_FACT",
+                "xpath": None,
+                "inner_hash": None,
+                "evidence_note": f"금융감독원 OpenDART 사업보고서 주요계정(fnlttSinglAcnt) API 팩트 연동 ({financial_facts.get('fs_div')})"
             })
 
         # =========================================================================

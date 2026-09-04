@@ -17,7 +17,7 @@ import streamlit as st
 import pandas as pd
 from typing import Dict, Any, Optional
 
-from services.decision_report_service import DecisionReportService
+from services.decision_report_service import DecisionReportService, format_currency_kr
 
 
 def get_observation_badge(obs_code: str, obs_level: str) -> str:
@@ -280,6 +280,97 @@ def render_menu2_decision_report(driver=None, theme_mode: str = "🌙 다크 모
     else:
         st.info("수집된 5% 이상 대량보유 공시 원문 후보가 없습니다.")
 
+    st.markdown("<div style='margin-top: 16px;'></div>", unsafe_allow_html=True)
+
+    # 1-4. 🏛️ 주요 재무제표 팩트 (OpenDART DS003 단일회사 주요계정 연동)
+    fin_facts = facts.get("financial_facts", {})
+    fin_status = fin_facts.get("status")
+
+    if fin_status == "AVAILABLE":
+        bsns_yr = fin_facts.get("bsns_year", "2024")
+        fs_nm = fin_facts.get("fs_div_name", "연결재무제표")
+        rep_nm = fin_facts.get("reprt_name", "사업보고서")
+        debt_ratio_val = fin_facts.get("debt_ratio")
+        debt_ratio_str = f"{debt_ratio_val:.2f}%" if debt_ratio_val is not None else "-"
+        fin_rcp = fin_facts.get("rcept_no")
+
+        st.markdown(f"""
+        <div style="background: {bg_card}; border: 1px solid rgba(56, 189, 248, 0.35); border-left: 5px solid {accent_blue}; border-radius: 12px; padding: 14px 18px; margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 16px;">🏛️</span>
+                    <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: {text_primary};">주요 재무제표 팩트 (OpenDART DS003 단일회사 주요계정)</h4>
+                    <span style="background: rgba(56, 189, 248, 0.15); color: {accent_blue}; border: 1px solid rgba(56, 189, 248, 0.3); padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 700;">
+                        {bsns_yr}년 {rep_nm} ({fs_nm})
+                    </span>
+                </div>
+                <span style="font-size: 12px; color: {text_secondary};">※ 금융감독원 OpenDART 공시 원문 단일계정 직연동 사실</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        fin_col1, fin_col2, fin_col3, fin_col4 = st.columns(4)
+        with fin_col1:
+            rev_curr = fin_facts.get("revenue")
+            st.metric("매출액 (당기)", format_currency_kr(rev_curr), help="OpenDART 정기보고서 손익계산서 매출액")
+        with fin_col2:
+            op_curr = fin_facts.get("operating_income")
+            st.metric("영업이익 (당기)", format_currency_kr(op_curr), help="OpenDART 정기보고서 손익계산서 영업이익(손실)")
+        with fin_col3:
+            net_curr = fin_facts.get("net_income")
+            st.metric("당기순이익 (당기)", format_currency_kr(net_curr), help="OpenDART 정기보고서 손익계산서 당기순이익(손실)")
+        with fin_col4:
+            st.metric("부채비율", debt_ratio_str, help="부채총계 / 자본총계 × 100 (회계적 단순 산술비율, 주관적 리스크 판정 아님)")
+
+        fin_table_data = [
+            {
+                "주요 계정과목": "자산총계",
+                "당기 금액": format_currency_kr(fin_facts.get("total_assets")),
+                "전기 금액": format_currency_kr(fin_facts.get("total_assets_prev")),
+                "비고": "재무상태표 (BS)"
+            },
+            {
+                "주요 계정과목": "부채총계",
+                "당기 금액": format_currency_kr(fin_facts.get("total_liabilities")),
+                "전기 금액": format_currency_kr(fin_facts.get("total_liabilities_prev")),
+                "비고": "재무상태표 (BS)"
+            },
+            {
+                "주요 계정과목": "자본총계",
+                "당기 금액": format_currency_kr(fin_facts.get("total_equity")),
+                "전기 금액": format_currency_kr(fin_facts.get("total_equity_prev")),
+                "비고": "재무상태표 (BS)"
+            },
+            {
+                "주요 계정과목": "매출액",
+                "당기 금액": format_currency_kr(fin_facts.get("revenue")),
+                "전기 금액": format_currency_kr(fin_facts.get("revenue_prev")),
+                "비고": "손익계산서 (IS)"
+            },
+            {
+                "주요 계정과목": "영업이익",
+                "당기 금액": format_currency_kr(fin_facts.get("operating_income")),
+                "전기 금액": format_currency_kr(fin_facts.get("operating_income_prev")),
+                "비고": "손익계산서 (IS)"
+            },
+            {
+                "주요 계정과목": "당기순이익",
+                "당기 금액": format_currency_kr(fin_facts.get("net_income")),
+                "전기 금액": format_currency_kr(fin_facts.get("net_income_prev")),
+                "비고": "손익계산서 (IS)"
+            }
+        ]
+        st.dataframe(pd.DataFrame(fin_table_data), use_container_width=True, height=220)
+
+        c_sub1, c_sub2 = st.columns([4, 1])
+        with c_sub1:
+            st.caption("🛡️ 위 재무제표 수치는 금융감독원 OpenDART 사업보고서(DS003) 공시 원문 팩트이며, 주관적 가치평가나 목표주가 산출이 아닙니다.")
+        with c_sub2:
+            if fin_rcp:
+                st.link_button("📑 사업보고서 원문", f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={fin_rcp}", use_container_width=True)
+    else:
+        st.info(f"🏛️ 주요 재무제표 팩트: {fin_facts.get('message', 'OpenDART 재무제표 데이터 미공시 또는 조회 제한')}")
+
     st.markdown("---")
 
     # ── [2단: 관찰 지표 (Rule-based Observation)] ──
@@ -385,6 +476,7 @@ def render_menu2_decision_report(driver=None, theme_mode: str = "🌙 다크 모
 
             is_promoted = (ev_level == "MANIFEST_SEALED_ROW_HASH" or ev.get("item_type") == "PROMOTED_ECONOMIC_STAKE")
             is_hash_bound = (ev_level == "ROW_HASH_BOUND")
+            is_opendart_fact = (ev_level == "OPENDART_API_FACT" or ev.get("item_type") == "FINANCIAL_STATEMENT_FACT")
 
             if is_promoted:
                 badge_color = "#10b981"
@@ -392,6 +484,9 @@ def render_menu2_decision_report(driver=None, theme_mode: str = "🌙 다크 모
             elif is_hash_bound:
                 badge_color = "#38bdf8"
                 badge_text = "⚪ 파서 추출 좌표 + 원문 행 SHA-256 결속 (미검증 후보)"
+            elif is_opendart_fact:
+                badge_color = "#a855f7"
+                badge_text = "🏛️ OpenDART 정기공시 재무제표 팩트 직연동"
             else:
                 badge_color = "#64748b"
                 badge_text = "🔗 공시 원문 링크 연동"

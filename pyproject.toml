@@ -11,28 +11,30 @@ dependencies = [
     "numpy>=2.3,<2.5",
     "matplotlib>=3.9",
     "python-dotenv>=1.0",
-    # day27 — 그래프DB 개념·온톨로지·RDF/SPARQL
+    # day27: 그래프DB 개념·온톨로지·RDF/SPARQL
     #   그래프는 파이썬 dict/list 로 모델링하고 networkx 로 그린다.
     #   RDF/SPARQL 은 rdflib(내 컴퓨터 안의 그래프)과 SPARQLWrapper(공개 엔드포인트)로 실습한다.
     "networkx>=3.4",
     "rdflib>=7.1",
     "SPARQLWrapper>=2.0",
-    # day28~34 — Neo4j 설치·Cypher·집계/인덱스·지식그래프 적재·GDS
+    # day28~34: Neo4j 설치·Cypher·집계/인덱스·지식그래프 적재·GDS
     #   GDS 는 파이썬 클라이언트가 아니라 Cypher CALL 로 부른다(추가 의존성 없음).
     "neo4j>=6.0",
-    # day34 — 커뮤니티·유사도·경로 비교에 코사인 등 보조 계산
+    # day34: 커뮤니티·유사도·경로 비교에 코사인 등 보조 계산
     "scikit-learn>=1.5",
-    # day35 — 벡터 검색·GraphRAG(리트리버)
+    # day35: 벡터 검색·GraphRAG(리트리버). 임베딩과 답변 모두 OpenAI 를 쓴다
     "neo4j-graphrag>=1.18",
     "langchain>=1.0",
-    "langchain-google-genai>=4.0",
-    # day36~41 — 정보추출·트리플·관계추출·엔티티 정규화·KG 파이프라인
+    "langchain-openai>=0.3",
+    # day36~41: 정보추출·트리플·관계추출·엔티티 정규화·KG 파이프라인
     #   추출 결과를 스키마로 받는다.
     "pydantic>=2.0",
     #   day40 SimpleKGPipeline 은 google-genai 를 직접 쓴다.
     "google-genai>=1.0",
-    # day42 — 도메인 GraphRAG(Text2Cypher 체인)
+    "langchain-google-genai>=4.0",
+    # day42: 도메인 GraphRAG(Text2Cypher 체인)
     "langchain-neo4j>=0.10",
     "streamlit>=1.62.0",
     "pyvis>=0.3.2",
+    "requests>=2.31.0",
 ]
