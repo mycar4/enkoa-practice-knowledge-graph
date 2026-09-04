@@ -58,7 +58,7 @@
 | **v0.5** | **경제적 보유 관계 생성 DRY-RUN 및 실행기 안전성 보강** | PASS 19건 | **🟢 DRY-RUN 및 보강 완료 (2026-09-04)** | • 정규식/숫자형 3/3 일치 전수 검증 통과 (탈락 0건)<br>• 사명 변경 98건 `DEFERRED_HISTORICAL_NAME` 보류<br>• 실행기 v2.1 4대 안전성(표준 XPath, 단일 트랜잭션, 3분할 no-op 회계, 2023년 공시일 고정) 장착<br>• *Cloud Aura 19건 지분 승격 및 0건 오염 유지* |
 | **v0.6** | **메뉴 2 전면 개편: 4단 의사결정 리포트 코어 엔진** | 단일 기업 대상 | **🟢 정식 마감 (`d1fa1e2`)** | • **"사실 / 해석 / 원문 근거 / 다음 확인 항목"** 4단 구조 응답 엔진 배포<br>• WITH 스코프 격리 0% 지분 혼입(Zero-Mixing) 방어 완료<br>• CB/BW 희석 위험, 유상증자 목적, 대주주 변동 시나리오 분석기 탑재 |
 | **v0.7** | **OpenDART XBRL 재무제표 & 공식 채널 타임라인 결합** | 상장사 전수 | **🟢 정식 마감 (`41b41e0`)** | • OpenDART `fnlttSinglAcnt.json` 연계 (CFS 우선/OFS 폴백, 5대 제로트러스트 방어)<br>• DART 공시(A급) + KRX KIND 상세조회 교차검증 exact-match 바인딩<br>• Claude Code 뮤테이션 테스트 전수 통과 (10/10 PASS 최종 승인) |
-| **v1.0** | **자본이벤트 512차원 Vector Index & Day 35 Hybrid GraphRAG** | 전체 자본이벤트 | **⚪ 차기 최우선 착수** | • 자본조달 목적 text-embedding-3-small 임베딩 및 Neo4j Vector Index 구축<br>• GDS Louvain 커뮤니티 사전 필터 & MinMax 70:30 (유사도:PageRank) 리랭커 가동 |
+| **v1.0** | **자본이벤트 512차원 Vector Index & Day 35 Hybrid GraphRAG** | 전체 자본이벤트 | **⚪ 차기 최우선 착수** | • 설계 명세서: `[설계_v1.0]_DART-Trace_자본이벤트_512차원_GraphRAG_명세서.md`<br>• 자본조달 목적 text-embedding-3-small 임베딩 및 Neo4j Vector Index 구축<br>• GDS Louvain 커뮤니티 사전 필터 & MinMax 70:30 (유사도:PageRank) 리랭커 가동 |
 | **v1.1** | **사용자 포트폴리오 로컬 관리 & 시장 시세 레이어** | 복수 보유종목 | **⚪ 사용자 경험 확장** | • 종목코드, 수량, 매수단가 로컬/비공개 저장 및 Streamlit 포트폴리오 탭 신설<br>• 현재가, 등락률, 평가손익 자동 산출 ➔ 복수 보유종목 일괄 리포트 |
 | **v2.0** | **클라우드 아카이브 및 24/7 자동화 (백로그)** | 운영 인프라 | **⚪ 백로그** | • 15,000건 원문 AWS S3 / Cloudflare R2 클라우드 이관<br>• GitHub Actions 24/7 야간 자동 수집 스케줄러 운영 |
 
