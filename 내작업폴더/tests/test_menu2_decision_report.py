@@ -527,6 +527,11 @@ def test_official_channels_timeline_contract():
         assert p_item["channel_grade"] == "GRADE_A_DART"
         assert p_item["rcept_no"] == "20230810000694"
         assert "케이피티유" in p_item["title"]
+        assert p_item["dart_url"] == f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={p_item['rcept_no']}"
+        assert p_item["krx_kind_url"] == f"https://kind.krx.co.kr/common/disclsviewer.do?acptno={p_item['rcept_no']}&method=search"
+        for p in promoted_items:
+            assert p["dart_url"] == f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={p['rcept_no']}"
+            assert p["krx_kind_url"] == f"https://kind.krx.co.kr/common/disclsviewer.do?acptno={p['rcept_no']}&method=search"
 
         # 3. 헬퍼 유닛 검증 (빈 데이터 및 결손 방어)
         empty_res = build_official_timeline([], [], {"status": "UNAVAILABLE"}, [])
