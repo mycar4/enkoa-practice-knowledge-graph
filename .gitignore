@@ -17,3 +17,6 @@ output/
 내작업폴더/data/dart_raw_filings/
 *.xml.zip
 scratch/
+.playwright-mcp/
+lib/
+*.html

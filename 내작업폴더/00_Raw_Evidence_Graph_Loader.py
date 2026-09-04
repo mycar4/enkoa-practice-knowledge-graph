@@ -147,6 +147,7 @@ class RawEvidenceGraphLoader:
             "fragments_created": 0,
             "relationships_created": 0,
             "zero_trust_verified_count": 0,
+            "quarantined_count": 0,
             "owns_stake_created": 0,  # 절대 불변식 (반드시 0)
             "started_at": datetime.now(timezone.utc).isoformat(),
             "completed_at": None,
@@ -162,6 +163,15 @@ class RawEvidenceGraphLoader:
         for idx, target in enumerate(targets, start=1):
             rcept_no = target["rcept_no"]
 
+            receipt = receipt_map.get(rcept_no)
+            if not receipt:
+                raise ValueError(f"❌ [실패-폐쇄] 영수증 누락: rcept_no={rcept_no}")
+
+            coll_status = receipt.get("collection_status")
+            if coll_status in ["CORRUPTED_XML", "QUARANTINED"] or "QUARANTINE" in str(coll_status):
+                stats["quarantined_count"] += 1
+                continue
+
             xml_path = os.path.join(xml_dir, f"{rcept_no}.xml")
             if not os.path.exists(xml_path):
                 raise FileNotFoundError(f"XML 파일 부재: {xml_path}")
@@ -171,10 +181,6 @@ class RawEvidenceGraphLoader:
 
             # 2. 제로-트러스트 적재 직전 실시간 4대 대조
             disk_xml_sha = compute_bytes_sha256(xml_bytes)
-
-            receipt = receipt_map.get(rcept_no)
-            if not receipt:
-                raise ValueError(f"❌ [실패-폐쇄] 영수증 누락: rcept_no={rcept_no}")
 
             collection_receipt_id = receipt.get("receipt_id")
             if not collection_receipt_id:

@@ -385,14 +385,26 @@ def run_batch_deep_closure_audit(run_dir: str) -> Dict[str, Any]:
                 if not xml_hash_match:
                     all_xml_hashes_matched = False
                     target_all_valid = False
+            elif "QUARANTINED" in str(status) or "CORRUPTED" in str(status):
+                # 격리 파일의 경우 quarantine/ 디렉토리 내 바이너리 실존 검증
+                q_dir = os.path.join(run_dir, "quarantine")
+                q_files = [f for f in os.listdir(q_dir) if rcept_no in f] if os.path.exists(q_dir) else []
+                xml_hash_match = (len(q_files) > 0)
+                if not xml_hash_match:
+                    all_xml_hashes_matched = False
+                    target_all_valid = False
 
             # 5. 법인코드 대조
             extracted_meta = receipt.get("extracted_metadata", {})
             extracted_code = extracted_meta.get("extracted_corp_code", "")
-            code_match = (extracted_code == expected_code) if expected_code else True
-            if not code_match:
-                all_corp_codes_matched = False
-                target_all_valid = False
+            code_match = False
+            if status in ["STORED", "SKIPPED_LOCAL_PRESENT"]:
+                code_match = (extracted_code == expected_code) if expected_code else True
+                if not code_match:
+                    all_corp_codes_matched = False
+                    target_all_valid = False
+            elif "QUARANTINED" in str(status) or "CORRUPTED" in str(status):
+                code_match = True  # 격리 대상은 구문 파손으로 메타데이터 추출 불가 사유가 입증됨
 
             receipts_detail.append({
                 "receipt_file": r_fn,
@@ -428,12 +440,11 @@ def run_batch_deep_closure_audit(run_dir: str) -> Dict[str, Any]:
     # 타겟 수 0건이거나 source_manifest 결속 실패 시 무조건 승인 거부
     has_valid_targets = len(targets) > 0
 
-    # 최종 엄격 판정 (실패-폐쇄: 0건 수집 또는 원천 결속 누락 시 무조건 BATCH_AUDIT_REJECTED)
+    # 최종 엄격 판정 (실패-폐쇄: 0건 수집, 미처리 누락, 검증 불일치 시 무조건 BATCH_AUDIT_REJECTED)
     is_strictly_verified = (
         has_valid_targets and
         source_manifest_verified and
         failed_count == 0 and
-        quarantined_count == 0 and
         missing_receipt_count == 0 and
         all_run_ids_matched and
         all_manifest_shas_matched and

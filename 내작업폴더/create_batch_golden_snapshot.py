@@ -33,8 +33,7 @@ def compute_file_sha256(path: str) -> str:
     return h.hexdigest()
 
 
-def create_snapshot_and_backup():
-    run_id = "batch_1500_20260903_051738"
+def create_snapshot_and_backup(run_id: str = "batch_15000_20260904_001355"):
     run_dir = os.path.join("내작업폴더/data/raw_filings/batch_runs", run_id)
     if not os.path.exists(run_dir):
         raise FileNotFoundError(f"실행 디렉토리 부재: {run_dir}")
@@ -150,4 +149,5 @@ def create_snapshot_and_backup():
 
 
 if __name__ == "__main__":
-    create_snapshot_and_backup()
+    target_rid = sys.argv[1] if len(sys.argv) > 1 else "batch_15000_20260904_001355"
+    create_snapshot_and_backup(target_rid)

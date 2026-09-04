@@ -1,0 +1,1877 @@
+{
+  "engine_version": "PROMOTION_CONTRACT_DRYRUN_V2.1",
+  "timestamp": "2026-09-04T06:09:36.652060+00:00",
+  "input_resolution_manifest": "resolution_dryrun_20260904_055025.json",
+  "total_evaluated_pass": 19,
+  "total_proposed_relationships": 19,
+  "total_rejected_from_pass": 0,
+  "total_deferred_historical_name": 98,
+  "db_pre_state": {
+    "nodes": 79848,
+    "relationships": 78861
+  },
+  "db_post_state": {
+    "nodes": 79848,
+    "relationships": 78861
+  },
+  "db_delta": {
+    "delta_nodes": 0,
+    "delta_relationships": 0
+  },
+  "proposed_holds_economic_stake": [
+    {
+      "sequence": 1,
+      "status": "PROPOSED_NOT_WRITTEN",
+      "relationship_key": "rel-holds-00357607-00117027-20230810000694-def7b651945594cc",
+      "relationship_type": "HOLDS_ECONOMIC_STAKE",
+      "candidate_id": "cand-20230810000694-def7b651945594cc",
+      "rcept_no": "20230810000694",
+      "xml_sha256": "2bd7d1e3a69d61337291d6d97ab7814b0720ce51d52b84d0cc420c833659cc25",
+      "temporal_semantics": {
+        "reporting_obligation_date": "2023-08-04",
+        "temporal_context": "HISTORICAL_DISCLOSURE_FACT_2023",
+        "fact_type": "HISTORICAL_REPORTED_ECONOMIC_STAKE",
+        "temporal_definition": "2023년 공시 보고의무발생일 기준 원문 결속 사실 (현재 2026년 지분 아님)"
+      },
+      "source_holding_company": {
+        "corp_code": "00357607",
+        "corp_name": "(주)케이피티유"
+      },
+      "target_investee_company": {
+        "corp_code": "00117027",
+        "corp_name": "(주)알루코"
+      },
+      "holding_facts": {
+        "shares_count": 18502826,
+        "stake_ratio": 19.21,
+        "reporting_obligation_date": "2023-08-04"
+      },
+      "evidence_bindings": {
+        "row_raw_parser_xpath": "//TABLE[17]//TR[0]",
+        "parser_row_index": 0,
+        "row_standard_xpath": "//TABLE[17]//TR[1]",
+        "row_inner_hash": "def7b651945594ccaddbb6dedd6a8067b18b68eb212578dc0b22ce7cf6d88f81",
+        "row_extracted_value": "holder=(주)케이피티유, shares=18502826, stake=19.21%",
+        "fragment_hashes": {
+          "TARGET_COMPANY": "89f0a6ca9effe9569fd9fe3c90f20a1a771a5462408e8e37669831154dd43014",
+          "REPORTER": "8acf31876e0543fec5a18c691f374266252f7d18add5bcf7105da99360f90ce7",
+          "REPORTING_OBLIGATION_DATE": "3af35b90bd9fdfd2cd747833b4934c484e6569a5edbeeecf4e3207c4cf464932",
+          "ROW_DATA_EVIDENCE": "def7b651945594ccaddbb6dedd6a8067b18b68eb212578dc0b22ce7cf6d88f81"
+        }
+      },
+      "re_verification_details": {
+        "holder_match": true,
+        "shares_match": true,
+        "stake_match": true,
+        "parsed_evidence": {
+          "extracted_holder": "(주)케이피티유",
+          "extracted_shares": 18502826,
+          "extracted_stake": 19.21
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "status": "PROPOSED_NOT_WRITTEN",
+      "relationship_key": "rel-holds-00693651-00428729-20230811000625-27d3a496d91ff14a",
+      "relationship_type": "HOLDS_ECONOMIC_STAKE",
+      "candidate_id": "cand-20230811000625-27d3a496d91ff14a",
+      "rcept_no": "20230811000625",
+      "xml_sha256": "c6e6b818be7fc26593031cb9f5eb6735e0fb168f16ee7aede17962efbebbead5",
+      "temporal_semantics": {
+        "reporting_obligation_date": "2023-08-04",
+        "temporal_context": "HISTORICAL_DISCLOSURE_FACT_2023",
+        "fact_type": "HISTORICAL_REPORTED_ECONOMIC_STAKE",
+        "temporal_definition": "2023년 공시 보고의무발생일 기준 원문 결속 사실 (현재 2026년 지분 아님)"
+      },
+      "source_holding_company": {
+        "corp_code": "00693651",
+        "corp_name": "(주)비덴트"
+      },
+      "target_investee_company": {
+        "corp_code": "00428729",
+        "corp_name": "(주)대호에이엘"
+      },
+      "holding_facts": {
+        "shares_count": 11297774,
+        "stake_ratio": 18.71,
+        "reporting_obligation_date": "2023-08-04"
+      },
+      "evidence_bindings": {
+        "row_raw_parser_xpath": "//TABLE[17]//TR[0]",
+        "parser_row_index": 0,
+        "row_standard_xpath": "//TABLE[17]//TR[1]",
+        "row_inner_hash": "27d3a496d91ff14aa4fbb7a66e6f48cff312a8812e632e106d62e88cdf38801c",
+        "row_extracted_value": "holder=(주)비덴트, shares=11297774, stake=18.71%",
+        "fragment_hashes": {
+          "TARGET_COMPANY": "822187062d794e0a7dd7a7d3b62d9ffcf41a84c65a50425ea41bb4ac54b17394",
+          "REPORTER": "c8ed0212d6d8550cb4eaf1b37457fcbb087e656f4c379b0592e1acb17203190d",
+          "REPORTING_OBLIGATION_DATE": "3af35b90bd9fdfd2cd747833b4934c484e6569a5edbeeecf4e3207c4cf464932",
+          "ROW_DATA_EVIDENCE": "27d3a496d91ff14aa4fbb7a66e6f48cff312a8812e632e106d62e88cdf38801c"
+        }
+      },
+      "re_verification_details": {
+        "holder_match": true,
+        "shares_match": true,
+        "stake_match": true,
+        "parsed_evidence": {
+          "extracted_holder": "(주)비덴트",
+          "extracted_shares": 11297774,
+          "extracted_stake": 18.71
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "status": "PROPOSED_NOT_WRITTEN",
+      "relationship_key": "rel-holds-00624749-01497142-20230811000749-003afacc877fc87d",
+      "relationship_type": "HOLDS_ECONOMIC_STAKE",
+      "candidate_id": "cand-20230811000749-003afacc877fc87d",
+      "rcept_no": "20230811000749",
+      "xml_sha256": "336553cbc003e7197384ef6666b1aeba7e0891e40ec55790839aeb0727840bc3",
+      "temporal_semantics": {
+        "reporting_obligation_date": "2023-08-04",
+        "temporal_context": "HISTORICAL_DISCLOSURE_FACT_2023",
+        "fact_type": "HISTORICAL_REPORTED_ECONOMIC_STAKE",
+        "temporal_definition": "2023년 공시 보고의무발생일 기준 원문 결속 사실 (현재 2026년 지분 아님)"
+      },
+      "source_holding_company": {
+        "corp_code": "00624749",
+        "corp_name": "㈜에스피시스템스"
+      },
+      "target_investee_company": {
+        "corp_code": "01497142",
+        "corp_name": "엠아이큐브솔루션㈜"
+      },
+      "holding_facts": {
+        "shares_count": 2298000,
+        "stake_ratio": 47.56,
+        "reporting_obligation_date": "2023-08-04"
+      },
+      "evidence_bindings": {
+        "row_raw_parser_xpath": "//TABLE[19]//TR[0]",
+        "parser_row_index": 0,
+        "row_standard_xpath": "//TABLE[19]//TR[1]",
+        "row_inner_hash": "003afacc877fc87dc6f5330b1ca8ce37dbe64a81e13ecae96bb4404cca698455",
+        "row_extracted_value": "holder=㈜에스피시스템스, shares=2298000, stake=47.56%",
+        "fragment_hashes": {
+          "TARGET_COMPANY": "f3ab2641aa626f4732cc6677dff34f01beb2c6599eb34a99b8bd264665d0bd46",
+          "REPORTER": "0320df1675181955e4dba6035f4e5a5e87d64d407f86155adf6002742be67edb",
+          "REPORTING_OBLIGATION_DATE": "3af35b90bd9fdfd2cd747833b4934c484e6569a5edbeeecf4e3207c4cf464932",
+          "ROW_DATA_EVIDENCE": "003afacc877fc87dc6f5330b1ca8ce37dbe64a81e13ecae96bb4404cca698455"
+        }
+      },
+      "re_verification_details": {
+        "holder_match": true,
+        "shares_match": true,
+        "stake_match": true,
+        "parsed_evidence": {
+          "extracted_holder": "㈜에스피시스템스",
+          "extracted_shares": 2298000,
+          "extracted_stake": 47.56
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "status": "PROPOSED_NOT_WRITTEN",
+      "relationship_key": "rel-holds-00131850-01744703-20230811001413-20de2e407b9fa018",
+      "relationship_type": "HOLDS_ECONOMIC_STAKE",
+      "candidate_id": "cand-20230811001413-20de2e407b9fa018",
+      "rcept_no": "20230811001413",
+      "xml_sha256": "5b2255d5683f3c6d154f502614c1f83a0cb0eb37db03b6f6018ac8da9d189a2a",
+      "temporal_semantics": {
+        "reporting_obligation_date": "2023-08-11",
+        "temporal_context": "HISTORICAL_DISCLOSURE_FACT_2023",
+        "fact_type": "HISTORICAL_REPORTED_ECONOMIC_STAKE",
+        "temporal_definition": "2023년 공시 보고의무발생일 기준 원문 결속 사실 (현재 2026년 지분 아님)"
+      },
+      "source_holding_company": {
+        "corp_code": "00131850",
+        "corp_name": "SK증권㈜"
+      },
+      "target_investee_company": {
+        "corp_code": "01744703",
+        "corp_name": "에스케이증권제10호기업인수목적 주식회사"
+      },
+      "holding_facts": {
+        "shares_count": 1000000,
+        "stake_ratio": 23.26,
+        "reporting_obligation_date": "2023-08-11"
+      },
+      "evidence_bindings": {
+        "row_raw_parser_xpath": "//TABLE[20]//TR[0]",
+        "parser_row_index": 0,
+        "row_standard_xpath": "//TABLE[20]//TR[1]",
+        "row_inner_hash": "20de2e407b9fa018fd3514547c1fa70dcd6b23be159018610b72b943a6645091",
+        "row_extracted_value": "holder=SK증권㈜, shares=1000000, stake=23.26%",
+        "fragment_hashes": {
+          "TARGET_COMPANY": "a7a6472f7fcd24ea13e4af71e085954a03b269656458597bfa19af65d433e999",
+          "REPORTER": "a0678c2cccd9cb83e491bca09b4f37054fd923675c71b1665ed554f671be4fb7",
+          "REPORTING_OBLIGATION_DATE": "f6bb08932994bfc2677d20587014fc0ca7ddc413c8e17a59ac807fff1f12e5c9",
+          "ROW_DATA_EVIDENCE": "20de2e407b9fa018fd3514547c1fa70dcd6b23be159018610b72b943a6645091"
+        }
+      },
+      "re_verification_details": {
+        "holder_match": true,
+        "shares_match": true,
+        "stake_match": true,
+        "parsed_evidence": {
+          "extracted_holder": "SK증권㈜",
+          "extracted_shares": 1000000,
+          "extracted_stake": 23.26
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "status": "PROPOSED_NOT_WRITTEN",
+      "relationship_key": "rel-holds-01074862-01414422-20230811001867-527b8f81926e549b",
+      "relationship_type": "HOLDS_ECONOMIC_STAKE",
+      "candidate_id": "cand-20230811001867-527b8f81926e549b",
+      "rcept_no": "20230811001867",
+      "xml_sha256": "cc6c0ecedd8d8a636d31dc77ab34b7e02b1b3ea97c50746193fd46662b0f561f",
+      "temporal_semantics": {
+        "reporting_obligation_date": "2023-08-07",
+        "temporal_context": "HISTORICAL_DISCLOSURE_FACT_2023",
+        "fact_type": "HISTORICAL_REPORTED_ECONOMIC_STAKE",
+        "temporal_definition": "2023년 공시 보고의무발생일 기준 원문 결속 사실 (현재 2026년 지분 아님)"
+      },
+      "source_holding_company": {
+        "corp_code": "01074862",
+        "corp_name": "메가스터디교육(주)"
+      },
+      "target_investee_company": {
+        "corp_code": "01414422",
+        "corp_name": "(주)아이비김영"
+      },
+      "holding_facts": {
+        "shares_count": 24862080,
+        "stake_ratio": 55.31,
+        "reporting_obligation_date": "2023-08-07"
+      },
+      "evidence_bindings": {
+        "row_raw_parser_xpath": "//TABLE[17]//TR[0]",
+        "parser_row_index": 0,
+        "row_standard_xpath": "//TABLE[17]//TR[1]",
+        "row_inner_hash": "527b8f81926e549b725c35f42d57aa921de9efde0135fc1671735139856172d9",
+        "row_extracted_value": "holder=메가스터디교육(주), shares=24862080, stake=55.31%",
+        "fragment_hashes": {
+          "TARGET_COMPANY": "647d91ce661bdaee7a4528b46c2f46f991064af4db171c718f3dd5511af4f83f",
+          "REPORTER": "620cb17afc9f2fe2408438b7c988f52a8aee5f3ebff6fd53ece314c1ed6766d8",
+          "REPORTING_OBLIGATION_DATE": "c424142876da36b03e819056397eb182377f464f770f29e68ea008adcb3ca862",
+          "ROW_DATA_EVIDENCE": "527b8f81926e549b725c35f42d57aa921de9efde0135fc1671735139856172d9"
+        }
+      },
+      "re_verification_details": {
+        "holder_match": true,
+        "shares_match": true,
+        "stake_match": true,
+        "parsed_evidence": {
+          "extracted_holder": "메가스터디교육(주)",
+          "extracted_shares": 24862080,
+          "extracted_stake": 55.31
+        }
+      }
+    },
+    {
+      "sequence": 6,
+      "status": "PROPOSED_NOT_WRITTEN",
+      "relationship_key": "rel-holds-00120562-01258507-20230811002030-be6f73106029a80e",
+      "relationship_type": "HOLDS_ECONOMIC_STAKE",
+      "candidate_id": "cand-20230811002030-be6f73106029a80e",
+      "rcept_no": "20230811002030",
+      "xml_sha256": "f668afd998c95c5c120db3e37cba601d97e9773e2124f8986963c7373ed3b52d",
+      "temporal_semantics": {
+        "reporting_obligation_date": "2023-08-07",
+        "temporal_context": "HISTORICAL_DISCLOSURE_FACT_2023",
+        "fact_type": "HISTORICAL_REPORTED_ECONOMIC_STAKE",
+        "temporal_definition": "2023년 공시 보고의무발생일 기준 원문 결속 사실 (현재 2026년 지분 아님)"
+      },
+      "source_holding_company": {
+        "corp_code": "00120562",
+        "corp_name": "롯데지주(주)"
+      },
+      "target_investee_company": {
+        "corp_code": "01258507",
+        "corp_name": "롯데웰푸드(주)"
+      },
+      "holding_facts": {
+        "shares_count": 4478208,
+        "stake_ratio": 47.47,
+        "reporting_obligation_date": "2023-08-07"
+      },
+      "evidence_bindings": {
+        "row_raw_parser_xpath": "//TABLE[24]//TR[1]",
+        "parser_row_index": 1,
+        "row_standard_xpath": "//TABLE[24]//TR[2]",
+        "row_inner_hash": "be6f73106029a80ea1884277aee3bb8d4f98ba00a33c6cc033991e9a5a6e75fe",
+        "row_extracted_value": "holder=롯데지주(주), shares=4478208, stake=47.47%",
+        "fragment_hashes": {
+          "TARGET_COMPANY": "3f84eb8ce602dd8cfe2093a703ea860e21cf97b32fc0bb1bfdabf88323d0f515",
+          "REPORTER": "652b12e1e137ac52f860161d4cadeb5e22b3b31df343e0ba8fa782927b7cf1ec",
+          "REPORTING_OBLIGATION_DATE": "c424142876da36b03e819056397eb182377f464f770f29e68ea008adcb3ca862",
+          "ROW_DATA_EVIDENCE": "be6f73106029a80ea1884277aee3bb8d4f98ba00a33c6cc033991e9a5a6e75fe"
+        }
+      },
+      "re_verification_details": {
+        "holder_match": true,
+        "shares_match": true,
+        "stake_match": true,
+        "parsed_evidence": {
+          "extracted_holder": "롯데지주(주)",
+          "extracted_shares": 4478208,
+          "extracted_stake": 47.47
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "status": "PROPOSED_NOT_WRITTEN",
+      "relationship_key": "rel-holds-00120562-00120571-20230811002344-642af118c1d1dd7a",
+      "relationship_type": "HOLDS_ECONOMIC_STAKE",
+      "candidate_id": "cand-20230811002344-642af118c1d1dd7a",
+      "rcept_no": "20230811002344",
+      "xml_sha256": "09dd86bf0280d31ec008e383452c142f0b2e6c81311def36b5c27b83800b1ec3",
+      "temporal_semantics": {
+        "reporting_obligation_date": "2023-08-07",
+        "temporal_context": "HISTORICAL_DISCLOSURE_FACT_2023",
+        "fact_type": "HISTORICAL_REPORTED_ECONOMIC_STAKE",
+        "temporal_definition": "2023년 공시 보고의무발생일 기준 원문 결속 사실 (현재 2026년 지분 아님)"
+      },
+      "source_holding_company": {
+        "corp_code": "00120562",
+        "corp_name": "롯데지주(주)"
+      },
+      "target_investee_company": {
+        "corp_code": "00120571",
+        "corp_name": "롯데칠성음료(주)"
+      },
+      "holding_facts": {
+        "shares_count": 4175694,
+        "stake_ratio": 45.0,
+        "reporting_obligation_date": "2023-08-07"
+      },
+      "evidence_bindings": {
+        "row_raw_parser_xpath": "//TABLE[22]//TR[0]",
+        "parser_row_index": 0,
+        "row_standard_xpath": "//TABLE[22]//TR[1]",
+        "row_inner_hash": "642af118c1d1dd7a88a268a846939b99549f3cbf1851e0de28b38c79426a00b6",
+        "row_extracted_value": "holder=롯데지주(주), shares=4175694, stake=45.0%",
+        "fragment_hashes": {
+          "TARGET_COMPANY": "b68de1e40e4e1cc278e00f948abc6edaf9794dd56dd8b298ae7d9bb73be931cb",
+          "REPORTER": "30b2faa9c26e81afa8516be339b77a136d6827d5fe219bbbb961cb8d31dde4fa",
+          "REPORTING_OBLIGATION_DATE": "c424142876da36b03e819056397eb182377f464f770f29e68ea008adcb3ca862",
+          "ROW_DATA_EVIDENCE": "642af118c1d1dd7a88a268a846939b99549f3cbf1851e0de28b38c79426a00b6"
+        }
+      },
+      "re_verification_details": {
+        "holder_match": true,
+        "shares_match": true,
+        "stake_match": true,
+        "parsed_evidence": {
+          "extracted_holder": "롯데지주(주)",
+          "extracted_shares": 4175694,
+          "extracted_stake": 45.0
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "status": "PROPOSED_NOT_WRITTEN",
+      "relationship_key": "rel-holds-00101220-00264547-20230811002466-b2723bc651eaf130",
+      "relationship_type": "HOLDS_ECONOMIC_STAKE",
+      "candidate_id": "cand-20230811002466-b2723bc651eaf130",
+      "rcept_no": "20230811002466",
+      "xml_sha256": "a56a39d3aba66ee5e747e6c6567cbbc9d39cb582da98e7c234714a5b215c2476",
+      "temporal_semantics": {
+        "reporting_obligation_date": "2023-08-07",
+        "temporal_context": "HISTORICAL_DISCLOSURE_FACT_2023",
+        "fact_type": "HISTORICAL_REPORTED_ECONOMIC_STAKE",
+        "temporal_definition": "2023년 공시 보고의무발생일 기준 원문 결속 사실 (현재 2026년 지분 아님)"
+      },
+      "source_holding_company": {
+        "corp_code": "00101220",
+        "corp_name": "KG케미칼(주)"
+      },
+      "target_investee_company": {
+        "corp_code": "00264547",
+        "corp_name": "(주)KG이니시스"
+      },
+      "holding_facts": {
+        "shares_count": 11045852,
+        "stake_ratio": 39.58,
+        "reporting_obligation_date": "2023-08-07"
+      },
+      "evidence_bindings": {
+        "row_raw_parser_xpath": "//TABLE[17]//TR[0]",
+        "parser_row_index": 0,
+        "row_standard_xpath": "//TABLE[17]//TR[1]",
+        "row_inner_hash": "b2723bc651eaf1300afa06f31a9294b1dc0a8301d4f8a4813a945f7096a8904c",
+        "row_extracted_value": "holder=KG케미칼(주), shares=11045852, stake=39.58%",
+        "fragment_hashes": {
+          "TARGET_COMPANY": "d19a92b011ac64a7e2f16b523b24d68ebda843a4204af10c0f7479687ef943b5",
+          "REPORTER": "f5a97031fb974144263ee58560501def169667f0668e983daea98574196cdbda",
+          "REPORTING_OBLIGATION_DATE": "c424142876da36b03e819056397eb182377f464f770f29e68ea008adcb3ca862",
+          "ROW_DATA_EVIDENCE": "b2723bc651eaf1300afa06f31a9294b1dc0a8301d4f8a4813a945f7096a8904c"
+        }
+      },
+      "re_verification_details": {
+        "holder_match": true,
+        "shares_match": true,
+        "stake_match": true,
+        "parsed_evidence": {
+          "extracted_holder": "KG케미칼(주)",
+          "extracted_shares": 11045852,
+          "extracted_stake": 39.58
+        }
+      }
+    },
+    {
+      "sequence": 9,
+      "status": "PROPOSED_NOT_WRITTEN",
+      "relationship_key": "rel-holds-00153126-00428321-20230814002495-c9c0e812c0cce76b",
+      "relationship_type": "HOLDS_ECONOMIC_STAKE",
+      "candidate_id": "cand-20230814002495-c9c0e812c0cce76b",
+      "rcept_no": "20230814002495",
+      "xml_sha256": "476019adfcd1ccffd75f6bd1b3ef6eef4ef1d70777674c80ef0f9393cb273d38",
+      "temporal_semantics": {
+        "reporting_obligation_date": "2023-08-14",
+        "temporal_context": "HISTORICAL_DISCLOSURE_FACT_2023",
+        "fact_type": "HISTORICAL_REPORTED_ECONOMIC_STAKE",
+        "temporal_definition": "2023년 공시 보고의무발생일 기준 원문 결속 사실 (현재 2026년 지분 아님)"
+      },
+      "source_holding_company": {
+        "corp_code": "00153126",
+        "corp_name": "(주)크라운해태홀딩스"
+      },
+      "target_investee_company": {
+        "corp_code": "00428321",
+        "corp_name": "해태제과식품(주)"
+      },
+      "holding_facts": {
+        "shares_count": 17460078,
+        "stake_ratio": 59.97,
+        "reporting_obligation_date": "2023-08-14"
+      },
+      "evidence_bindings": {
+        "row_raw_parser_xpath": "//TABLE[19]//TR[0]",
+        "parser_row_index": 0,
+        "row_standard_xpath": "//TABLE[19]//TR[1]",
+        "row_inner_hash": "c9c0e812c0cce76b48bb4e4edcea698dbda77c1dc51896a2f18c407c0f9ea631",
+        "row_extracted_value": "holder=(주)크라운해태홀딩스, shares=17460078, stake=59.97%",
+        "fragment_hashes": {
+          "TARGET_COMPANY": "d924435673bd4de513e12a49a46282219ea405b97cec7e5ba223d975baaa0e54",
+          "REPORTER": "4c8f6500a4d15320e6666068c7b9c5ef6aa3359c93d918e9156d49eaf33f8772",
+          "REPORTING_OBLIGATION_DATE": "c46094d84d3d476f0ff7d96131d969e75fdeedab54540aa4a0ecda8f0b260925",
+          "ROW_DATA_EVIDENCE": "c9c0e812c0cce76b48bb4e4edcea698dbda77c1dc51896a2f18c407c0f9ea631"
+        }
+      },
+      "re_verification_details": {
+        "holder_match": true,
+        "shares_match": true,
+        "stake_match": true,
+        "parsed_evidence": {
+          "extracted_holder": "(주)크라운해태홀딩스",
+          "extracted_shares": 17460078,
+          "extracted_stake": 59.97
+        }
+      }
+    },
+    {
+      "sequence": 10,
+      "status": "PROPOSED_NOT_WRITTEN",
+      "relationship_key": "rel-holds-00366845-00269612-20230816000062-f5a10558a7d5c8d3",
+      "relationship_type": "HOLDS_ECONOMIC_STAKE",
+      "candidate_id": "cand-20230816000062-f5a10558a7d5c8d3",
+      "rcept_no": "20230816000062",
+      "xml_sha256": "d0cfe8ddd2eee8c4a286a31ddce183615fc36ea18b0b5b79dd40d11f58b7d2d0",
+      "temporal_semantics": {
+        "reporting_obligation_date": "2023-08-09",
+        "temporal_context": "HISTORICAL_DISCLOSURE_FACT_2023",
+        "fact_type": "HISTORICAL_REPORTED_ECONOMIC_STAKE",
+        "temporal_definition": "2023년 공시 보고의무발생일 기준 원문 결속 사실 (현재 2026년 지분 아님)"
+      },
+      "source_holding_company": {
+        "corp_code": "00366845",
+        "corp_name": "(주)탑엔지니어링"
+      },
+      "target_investee_company": {
+        "corp_code": "00269612",
+        "corp_name": "(주)파워로직스"
+      },
+      "holding_facts": {
+        "shares_count": 12356182,
+        "stake_ratio": 35.01,
+        "reporting_obligation_date": "2023-08-09"
+      },
+      "evidence_bindings": {
+        "row_raw_parser_xpath": "//TABLE[17]//TR[0]",
+        "parser_row_index": 0,
+        "row_standard_xpath": "//TABLE[17]//TR[1]",
+        "row_inner_hash": "f5a10558a7d5c8d3ba9cfd9235d0f252025e1c85e673210732aa0dc3add0e63c",
+        "row_extracted_value": "holder=(주)탑엔지니어링, shares=12356182, stake=35.01%",
+        "fragment_hashes": {
+          "TARGET_COMPANY": "69f9fc3de0e98d597092dd998493e2adec9c83aaad11795dd1c945b2b611f880",
+          "REPORTER": "8ca89b5fc2933500d40a1f7be5e9b2160dd2496352f31cdd89e9c60b29c09874",
+          "REPORTING_OBLIGATION_DATE": "8d5c55c0e38dbdc4606f9ffb3b1a7176587e61edc5c25acf35a1d62835c92862",
+          "ROW_DATA_EVIDENCE": "f5a10558a7d5c8d3ba9cfd9235d0f252025e1c85e673210732aa0dc3add0e63c"
+        }
+      },
+      "re_verification_details": {
+        "holder_match": true,
+        "shares_match": true,
+        "stake_match": true,
+        "parsed_evidence": {
+          "extracted_holder": "(주)탑엔지니어링",
+          "extracted_shares": 12356182,
+          "extracted_stake": 35.01
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "status": "PROPOSED_NOT_WRITTEN",
+      "relationship_key": "rel-holds-00238782-00176914-20230816000292-47856b6c4f2aa830",
+      "relationship_type": "HOLDS_ECONOMIC_STAKE",
+      "candidate_id": "cand-20230816000292-47856b6c4f2aa830",
+      "rcept_no": "20230816000292",
+      "xml_sha256": "cedeab4a197d8482f9652825cb1ece490fc3518c9fdec0d65a7052eb2e12cd65",
+      "temporal_semantics": {
+        "reporting_obligation_date": "2023-08-16",
+        "temporal_context": "HISTORICAL_DISCLOSURE_FACT_2023",
+        "fact_type": "HISTORICAL_REPORTED_ECONOMIC_STAKE",
+        "temporal_definition": "2023년 공시 보고의무발생일 기준 원문 결속 사실 (현재 2026년 지분 아님)"
+      },
+      "source_holding_company": {
+        "corp_code": "00238782",
+        "corp_name": "(주)다우데이타"
+      },
+      "target_investee_company": {
+        "corp_code": "00176914",
+        "corp_name": "(주)다우기술"
+      },
+      "holding_facts": {
+        "shares_count": 20278000,
+        "stake_ratio": 45.2,
+        "reporting_obligation_date": "2023-08-16"
+      },
+      "evidence_bindings": {
+        "row_raw_parser_xpath": "//TABLE[18]//TR[0]",
+        "parser_row_index": 0,
+        "row_standard_xpath": "//TABLE[18]//TR[1]",
+        "row_inner_hash": "47856b6c4f2aa83000043d341c9d327e37c8184e4556363fb926d9a72fb2c57f",
+        "row_extracted_value": "holder=(주)다우데이타, shares=20278000, stake=45.2%",
+        "fragment_hashes": {
+          "TARGET_COMPANY": "3cdfe2af2a892df9e4c5d73fb6d1d0bc388cc26454d7783eb0edcd7fc86545f5",
+          "REPORTER": "4e3a6e5bd125d236ba283e6af9745006de5c3005d09a1dbe60947f4c8eb180c4",
+          "REPORTING_OBLIGATION_DATE": "8aab0459a8b65c853475fb1b10c5c94312b5da2fccd2400d99a51d9111301206",
+          "ROW_DATA_EVIDENCE": "47856b6c4f2aa83000043d341c9d327e37c8184e4556363fb926d9a72fb2c57f"
+        }
+      },
+      "re_verification_details": {
+        "holder_match": true,
+        "shares_match": true,
+        "stake_match": true,
+        "parsed_evidence": {
+          "extracted_holder": "(주)다우데이타",
+          "extracted_shares": 20278000,
+          "extracted_stake": 45.2
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "status": "PROPOSED_NOT_WRITTEN",
+      "relationship_key": "rel-holds-01493535-00531078-20230817000046-23bd4d6e478c3586",
+      "relationship_type": "HOLDS_ECONOMIC_STAKE",
+      "candidate_id": "cand-20230817000046-23bd4d6e478c3586",
+      "rcept_no": "20230817000046",
+      "xml_sha256": "bc5cd9620adff32d2aee8950cae546a267964a982e3878613bd59d0db65b6539",
+      "temporal_semantics": {
+        "reporting_obligation_date": "2023-08-10",
+        "temporal_context": "HISTORICAL_DISCLOSURE_FACT_2023",
+        "fact_type": "HISTORICAL_REPORTED_ECONOMIC_STAKE",
+        "temporal_definition": "2023년 공시 보고의무발생일 기준 원문 결속 사실 (현재 2026년 지분 아님)"
+      },
+      "source_holding_company": {
+        "corp_code": "01493535",
+        "corp_name": "(주)모비데이즈"
+      },
+      "target_investee_company": {
+        "corp_code": "00531078",
+        "corp_name": "(주)유비온"
+      },
+      "holding_facts": {
+        "shares_count": 985641,
+        "stake_ratio": 5.0,
+        "reporting_obligation_date": "2023-08-10"
+      },
+      "evidence_bindings": {
+        "row_raw_parser_xpath": "//TABLE[17]//TR[0]",
+        "parser_row_index": 0,
+        "row_standard_xpath": "//TABLE[17]//TR[1]",
+        "row_inner_hash": "23bd4d6e478c3586a1553d01bc6306cd81c59a152ee401a4461f6d1323483b4a",
+        "row_extracted_value": "holder=(주)모비데이즈, shares=985641, stake=5.0%",
+        "fragment_hashes": {
+          "TARGET_COMPANY": "cd93aa1f9d56b845558c23c2b1c5b8983f930beec0da0f33eaff61bf7bec3013",
+          "REPORTER": "3450d0bd67a2e03647ad90e000f119162490d0e0214f3ce317873373647825ed",
+          "REPORTING_OBLIGATION_DATE": "a2bb798fd8d2dbe38fef2326c3c709ae8b050ab447bf697b21ae2aeba238b18d",
+          "ROW_DATA_EVIDENCE": "23bd4d6e478c3586a1553d01bc6306cd81c59a152ee401a4461f6d1323483b4a"
+        }
+      },
+      "re_verification_details": {
+        "holder_match": true,
+        "shares_match": true,
+        "stake_match": true,
+        "parsed_evidence": {
+          "extracted_holder": "(주)모비데이즈",
+          "extracted_shares": 985641,
+          "extracted_stake": 5.0
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "status": "PROPOSED_NOT_WRITTEN",
+      "relationship_key": "rel-holds-00970453-00362292-20230817000275-c545d5d528c400dd",
+      "relationship_type": "HOLDS_ECONOMIC_STAKE",
+      "candidate_id": "cand-20230817000275-c545d5d528c400dd",
+      "rcept_no": "20230817000275",
+      "xml_sha256": "ef42c7541328408424b43496675e0154af38abefb47fc0af02ca19d3c82b963d",
+      "temporal_semantics": {
+        "reporting_obligation_date": "2023-08-17",
+        "temporal_context": "HISTORICAL_DISCLOSURE_FACT_2023",
+        "fact_type": "HISTORICAL_REPORTED_ECONOMIC_STAKE",
+        "temporal_definition": "2023년 공시 보고의무발생일 기준 원문 결속 사실 (현재 2026년 지분 아님)"
+      },
+      "source_holding_company": {
+        "corp_code": "00970453",
+        "corp_name": "(주) 파마리서치"
+      },
+      "target_investee_company": {
+        "corp_code": "00362292",
+        "corp_name": "(주) 씨티씨바이오"
+      },
+      "holding_facts": {
+        "shares_count": 3191910,
+        "stake_ratio": 13.2,
+        "reporting_obligation_date": "2023-08-17"
+      },
+      "evidence_bindings": {
+        "row_raw_parser_xpath": "//TABLE[17]//TR[0]",
+        "parser_row_index": 0,
+        "row_standard_xpath": "//TABLE[17]//TR[1]",
+        "row_inner_hash": "c545d5d528c400dd6990da0bdb52a9e7e50655fb5fe40688a9c52921bc3829de",
+        "row_extracted_value": "holder=(주) 파마리서치, shares=3191910, stake=13.2%",
+        "fragment_hashes": {
+          "TARGET_COMPANY": "f6100b99949d9b43fc0d110afb97ee6f2f06ccb25f85b5558cf5daad37daf63a",
+          "REPORTER": "b69ebadc0fd39459f89f112ffbe2b318ecd8e367e9a122b9098d2aef195782ed",
+          "REPORTING_OBLIGATION_DATE": "cee73419a9846c7353e09a79ecb7af9c99476343c6cf3ead4ff11fec0ca9f786",
+          "ROW_DATA_EVIDENCE": "c545d5d528c400dd6990da0bdb52a9e7e50655fb5fe40688a9c52921bc3829de"
+        }
+      },
+      "re_verification_details": {
+        "holder_match": true,
+        "shares_match": true,
+        "stake_match": true,
+        "parsed_evidence": {
+          "extracted_holder": "(주) 파마리서치",
+          "extracted_shares": 3191910,
+          "extracted_stake": 13.2
+        }
+      }
+    },
+    {
+      "sequence": 14,
+      "status": "PROPOSED_NOT_WRITTEN",
+      "relationship_key": "rel-holds-00128607-00606770-20230818000036-0b9d222d8571f08f",
+      "relationship_type": "HOLDS_ECONOMIC_STAKE",
+      "candidate_id": "cand-20230818000036-0b9d222d8571f08f",
+      "rcept_no": "20230818000036",
+      "xml_sha256": "96d1ff60432b1c2094a0e9776ebf748ce7b14f098b02310b73b3e7aeb72d7194",
+      "temporal_semantics": {
+        "reporting_obligation_date": "2023-08-11",
+        "temporal_context": "HISTORICAL_DISCLOSURE_FACT_2023",
+        "fact_type": "HISTORICAL_REPORTED_ECONOMIC_STAKE",
+        "temporal_definition": "2023년 공시 보고의무발생일 기준 원문 결속 사실 (현재 2026년 지분 아님)"
+      },
+      "source_holding_company": {
+        "corp_code": "00128607",
+        "corp_name": "삼천리자전거㈜"
+      },
+      "target_investee_company": {
+        "corp_code": "00606770",
+        "corp_name": "참좋은여행㈜"
+      },
+      "holding_facts": {
+        "shares_count": 5900000,
+        "stake_ratio": 42.14,
+        "reporting_obligation_date": "2023-08-11"
+      },
+      "evidence_bindings": {
+        "row_raw_parser_xpath": "//TABLE[19]//TR[0]",
+        "parser_row_index": 0,
+        "row_standard_xpath": "//TABLE[19]//TR[1]",
+        "row_inner_hash": "0b9d222d8571f08f7a38f7f0b15da3285577f4147b8a986308c52287644c712b",
+        "row_extracted_value": "holder=삼천리자전거㈜, shares=5900000, stake=42.14%",
+        "fragment_hashes": {
+          "TARGET_COMPANY": "8a9532892ddd35b43f828746baaded04cec6adad92c367ba7dd38ec97bcf5f99",
+          "REPORTER": "16fede2b9bd36ba3781bb17a181081dc053b46a0041e2adac40972788dbc34b7",
+          "REPORTING_OBLIGATION_DATE": "f6bb08932994bfc2677d20587014fc0ca7ddc413c8e17a59ac807fff1f12e5c9",
+          "ROW_DATA_EVIDENCE": "0b9d222d8571f08f7a38f7f0b15da3285577f4147b8a986308c52287644c712b"
+        }
+      },
+      "re_verification_details": {
+        "holder_match": true,
+        "shares_match": true,
+        "stake_match": true,
+        "parsed_evidence": {
+          "extracted_holder": "삼천리자전거㈜",
+          "extracted_shares": 5900000,
+          "extracted_stake": 42.14
+        }
+      }
+    },
+    {
+      "sequence": 15,
+      "status": "PROPOSED_NOT_WRITTEN",
+      "relationship_key": "rel-holds-00412597-00403632-20230818000319-7c3851eaf9fd4bfb",
+      "relationship_type": "HOLDS_ECONOMIC_STAKE",
+      "candidate_id": "cand-20230818000319-7c3851eaf9fd4bfb",
+      "rcept_no": "20230818000319",
+      "xml_sha256": "8c37ad98d88c8b9f6b0c38dd09cbadfbcac55cc3c3bc927f20dc0d2bc874f8d4",
+      "temporal_semantics": {
+        "reporting_obligation_date": "2023-08-08",
+        "temporal_context": "HISTORICAL_DISCLOSURE_FACT_2023",
+        "fact_type": "HISTORICAL_REPORTED_ECONOMIC_STAKE",
+        "temporal_definition": "2023년 공시 보고의무발생일 기준 원문 결속 사실 (현재 2026년 지분 아님)"
+      },
+      "source_holding_company": {
+        "corp_code": "00412597",
+        "corp_name": "(주)현대홈쇼핑"
+      },
+      "target_investee_company": {
+        "corp_code": "00403632",
+        "corp_name": "(주)현대퓨처넷"
+      },
+      "holding_facts": {
+        "shares_count": 48889011,
+        "stake_ratio": 44.36,
+        "reporting_obligation_date": "2023-08-08"
+      },
+      "evidence_bindings": {
+        "row_raw_parser_xpath": "//TABLE[19]//TR[0]",
+        "parser_row_index": 0,
+        "row_standard_xpath": "//TABLE[19]//TR[1]",
+        "row_inner_hash": "7c3851eaf9fd4bfbc59da9f263d6fec258d15bb11e0bb2e25c4d7e685f0206c1",
+        "row_extracted_value": "holder=(주)현대홈쇼핑, shares=48889011, stake=44.36%",
+        "fragment_hashes": {
+          "TARGET_COMPANY": "fab303467203899d7c4aad1689b95f3e04c0e76ff05b2aae0185d3a4963eeccb",
+          "REPORTER": "f91c06fa9c1123432531d286c5a5473000896a1f7db96d9a70e5beffad952d04",
+          "REPORTING_OBLIGATION_DATE": "e4618b8e7ae2645bb08cefa8737cbb91afee540b160d44754acd7ee817bd36f7",
+          "ROW_DATA_EVIDENCE": "7c3851eaf9fd4bfbc59da9f263d6fec258d15bb11e0bb2e25c4d7e685f0206c1"
+        }
+      },
+      "re_verification_details": {
+        "holder_match": true,
+        "shares_match": true,
+        "stake_match": true,
+        "parsed_evidence": {
+          "extracted_holder": "(주)현대홈쇼핑",
+          "extracted_shares": 48889011,
+          "extracted_stake": 44.36
+        }
+      }
+    },
+    {
+      "sequence": 16,
+      "status": "PROPOSED_NOT_WRITTEN",
+      "relationship_key": "rel-holds-00970453-00362292-20230821000070-60998c33c56d17fb",
+      "relationship_type": "HOLDS_ECONOMIC_STAKE",
+      "candidate_id": "cand-20230821000070-60998c33c56d17fb",
+      "rcept_no": "20230821000070",
+      "xml_sha256": "6a747ca1da6c6a8261cba51aac3e29930fcf88635c0d1fab8f52018f3990ba09",
+      "temporal_semantics": {
+        "reporting_obligation_date": "2023-08-18",
+        "temporal_context": "HISTORICAL_DISCLOSURE_FACT_2023",
+        "fact_type": "HISTORICAL_REPORTED_ECONOMIC_STAKE",
+        "temporal_definition": "2023년 공시 보고의무발생일 기준 원문 결속 사실 (현재 2026년 지분 아님)"
+      },
+      "source_holding_company": {
+        "corp_code": "00970453",
+        "corp_name": "(주) 파마리서치"
+      },
+      "target_investee_company": {
+        "corp_code": "00362292",
+        "corp_name": "(주) 씨티씨바이오"
+      },
+      "holding_facts": {
+        "shares_count": 3419510,
+        "stake_ratio": 14.14,
+        "reporting_obligation_date": "2023-08-18"
+      },
+      "evidence_bindings": {
+        "row_raw_parser_xpath": "//TABLE[17]//TR[0]",
+        "parser_row_index": 0,
+        "row_standard_xpath": "//TABLE[17]//TR[1]",
+        "row_inner_hash": "60998c33c56d17fbb9fd082283df76a835ce0db6269edee1acd028acc9f599b7",
+        "row_extracted_value": "holder=(주) 파마리서치, shares=3419510, stake=14.14%",
+        "fragment_hashes": {
+          "TARGET_COMPANY": "f6100b99949d9b43fc0d110afb97ee6f2f06ccb25f85b5558cf5daad37daf63a",
+          "REPORTER": "b69ebadc0fd39459f89f112ffbe2b318ecd8e367e9a122b9098d2aef195782ed",
+          "REPORTING_OBLIGATION_DATE": "af5692224edb7cff30ee63dc63cb8e02b2f85d9f739c87bb21d6ecbcff9d9c45",
+          "ROW_DATA_EVIDENCE": "60998c33c56d17fbb9fd082283df76a835ce0db6269edee1acd028acc9f599b7"
+        }
+      },
+      "re_verification_details": {
+        "holder_match": true,
+        "shares_match": true,
+        "stake_match": true,
+        "parsed_evidence": {
+          "extracted_holder": "(주) 파마리서치",
+          "extracted_shares": 3419510,
+          "extracted_stake": 14.14
+        }
+      }
+    },
+    {
+      "sequence": 17,
+      "status": "PROPOSED_NOT_WRITTEN",
+      "relationship_key": "rel-holds-01137383-01067808-20230821000395-298a14099140c582",
+      "relationship_type": "HOLDS_ECONOMIC_STAKE",
+      "candidate_id": "cand-20230821000395-298a14099140c582",
+      "rcept_no": "20230821000395",
+      "xml_sha256": "e0a936a88f97f5f9cabafefa330647b5868b61251075b5692bc9b2bb0e0f35ca",
+      "temporal_semantics": {
+        "reporting_obligation_date": "2023-08-16",
+        "temporal_context": "HISTORICAL_DISCLOSURE_FACT_2023",
+        "fact_type": "HISTORICAL_REPORTED_ECONOMIC_STAKE",
+        "temporal_definition": "2023년 공시 보고의무발생일 기준 원문 결속 사실 (현재 2026년 지분 아님)"
+      },
+      "source_holding_company": {
+        "corp_code": "01137383",
+        "corp_name": "㈜카카오게임즈"
+      },
+      "target_investee_company": {
+        "corp_code": "01067808",
+        "corp_name": "(주)넵튠"
+      },
+      "holding_facts": {
+        "shares_count": 18387039,
+        "stake_ratio": 39.43,
+        "reporting_obligation_date": "2023-08-16"
+      },
+      "evidence_bindings": {
+        "row_raw_parser_xpath": "//TABLE[19]//TR[0]",
+        "parser_row_index": 0,
+        "row_standard_xpath": "//TABLE[19]//TR[1]",
+        "row_inner_hash": "298a14099140c58202dca858b26ef5c6726622a8aeb2f3bf41f909bc7264edd8",
+        "row_extracted_value": "holder=㈜카카오게임즈, shares=18387039, stake=39.43%",
+        "fragment_hashes": {
+          "TARGET_COMPANY": "692a562da99485806ea9f75764a8f65586e83e65f9a97c42fa098b22614b3e49",
+          "REPORTER": "1a47082983782417a2ad2790bbb94c173bcc9aa179e0288436d351ce9fda314c",
+          "REPORTING_OBLIGATION_DATE": "8aab0459a8b65c853475fb1b10c5c94312b5da2fccd2400d99a51d9111301206",
+          "ROW_DATA_EVIDENCE": "298a14099140c58202dca858b26ef5c6726622a8aeb2f3bf41f909bc7264edd8"
+        }
+      },
+      "re_verification_details": {
+        "holder_match": true,
+        "shares_match": true,
+        "stake_match": true,
+        "parsed_evidence": {
+          "extracted_holder": "㈜카카오게임즈",
+          "extracted_shares": 18387039,
+          "extracted_stake": 39.43
+        }
+      }
+    },
+    {
+      "sequence": 18,
+      "status": "PROPOSED_NOT_WRITTEN",
+      "relationship_key": "rel-holds-01159853-00962922-20230821000432-e5842f792b2c06e8",
+      "relationship_type": "HOLDS_ECONOMIC_STAKE",
+      "candidate_id": "cand-20230821000432-e5842f792b2c06e8",
+      "rcept_no": "20230821000432",
+      "xml_sha256": "a968363376651ace09a42d6461eb861a6b30804258d8a9b048a70c2abad74854",
+      "temporal_semantics": {
+        "reporting_obligation_date": "2023-08-21",
+        "temporal_context": "HISTORICAL_DISCLOSURE_FACT_2023",
+        "fact_type": "HISTORICAL_REPORTED_ECONOMIC_STAKE",
+        "temporal_definition": "2023년 공시 보고의무발생일 기준 원문 결속 사실 (현재 2026년 지분 아님)"
+      },
+      "source_holding_company": {
+        "corp_code": "01159853",
+        "corp_name": "(주)휴온스"
+      },
+      "target_investee_company": {
+        "corp_code": "00962922",
+        "corp_name": "(주)팬젠"
+      },
+      "holding_facts": {
+        "shares_count": 1151526,
+        "stake_ratio": 10.78,
+        "reporting_obligation_date": "2023-08-21"
+      },
+      "evidence_bindings": {
+        "row_raw_parser_xpath": "//TABLE[17]//TR[0]",
+        "parser_row_index": 0,
+        "row_standard_xpath": "//TABLE[17]//TR[1]",
+        "row_inner_hash": "e5842f792b2c06e810fe3d5e7fc3a72b46ca057890e00d4d336d2da2befb5bf0",
+        "row_extracted_value": "holder=(주)휴온스, shares=1151526, stake=10.78%",
+        "fragment_hashes": {
+          "TARGET_COMPANY": "10695043fedbef42aa96a85b0e9a881debad509644c4b4bb77d26463fee043cf",
+          "REPORTER": "be80bdfced5a8b0949aa93a7bca9c4f62429974bb3c763e0a7c12a888261239c",
+          "REPORTING_OBLIGATION_DATE": "4d2837f5c5f8c4f6ffcee4eb22494fa8d8432f0b19f3b202183162ca0ea2c1bd",
+          "ROW_DATA_EVIDENCE": "e5842f792b2c06e810fe3d5e7fc3a72b46ca057890e00d4d336d2da2befb5bf0"
+        }
+      },
+      "re_verification_details": {
+        "holder_match": true,
+        "shares_match": true,
+        "stake_match": true,
+        "parsed_evidence": {
+          "extracted_holder": "(주)휴온스",
+          "extracted_shares": 1151526,
+          "extracted_stake": 10.78
+        }
+      }
+    },
+    {
+      "sequence": 19,
+      "status": "PROPOSED_NOT_WRITTEN",
+      "relationship_key": "rel-holds-00545716-01026157-20230822000253-7d0ef0c346aa2507",
+      "relationship_type": "HOLDS_ECONOMIC_STAKE",
+      "candidate_id": "cand-20230822000253-7d0ef0c346aa2507",
+      "rcept_no": "20230822000253",
+      "xml_sha256": "27db1ccedbf2126d7fe8c06b2dc66b20306c654380772e5529a6e540ee246519",
+      "temporal_semantics": {
+        "reporting_obligation_date": "2023-08-22",
+        "temporal_context": "HISTORICAL_DISCLOSURE_FACT_2023",
+        "fact_type": "HISTORICAL_REPORTED_ECONOMIC_STAKE",
+        "temporal_definition": "2023년 공시 보고의무발생일 기준 원문 결속 사실 (현재 2026년 지분 아님)"
+      },
+      "source_holding_company": {
+        "corp_code": "00545716",
+        "corp_name": "롯데렌탈(주)"
+      },
+      "target_investee_company": {
+        "corp_code": "01026157",
+        "corp_name": "(주)쏘카"
+      },
+      "holding_facts": {
+        "shares_count": 4918075,
+        "stake_ratio": 14.99,
+        "reporting_obligation_date": "2023-08-22"
+      },
+      "evidence_bindings": {
+        "row_raw_parser_xpath": "//TABLE[18]//TR[0]",
+        "parser_row_index": 0,
+        "row_standard_xpath": "//TABLE[18]//TR[1]",
+        "row_inner_hash": "7d0ef0c346aa2507d521d4b0ad38ac5e8d7c50a2343189015d34e4306e2ec320",
+        "row_extracted_value": "holder=롯데렌탈(주), shares=4918075, stake=14.99%",
+        "fragment_hashes": {
+          "TARGET_COMPANY": "4bec6ae5916e93bde9f913386ca1deea5dcaca35db2eac1c46f7bd077433637a",
+          "REPORTER": "b8a2e65b841b68897747ac0cafb417abef294f8d96ad4742ed3005bbe3dbcfaa",
+          "REPORTING_OBLIGATION_DATE": "366b30d94e6ec91df800e90612017201eca3f31a14d58d9cb9f281d33de8eb4a",
+          "ROW_DATA_EVIDENCE": "7d0ef0c346aa2507d521d4b0ad38ac5e8d7c50a2343189015d34e4306e2ec320"
+        }
+      },
+      "re_verification_details": {
+        "holder_match": true,
+        "shares_match": true,
+        "stake_match": true,
+        "parsed_evidence": {
+          "extracted_holder": "롯데렌탈(주)",
+          "extracted_shares": 4918075,
+          "extracted_stake": 14.99
+        }
+      }
+    }
+  ],
+  "rejected_from_pass_details": [],
+  "deferred_historical_name_candidates": [
+    {
+      "candidate_id": "cand-20230810000812-a385c2a126cd0b91",
+      "rcept_no": "20230810000812",
+      "target_corp_code": "00172079",
+      "candidate_corp_name": "에이치엘비파나진 주식회사",
+      "master_corp_name": "HLB파나진",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230810000812-a823effe1bfb0162",
+      "rcept_no": "20230810000812",
+      "target_corp_code": "00172079",
+      "candidate_corp_name": "에이치엘비파나진 주식회사",
+      "master_corp_name": "HLB파나진",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230810000878-b6d4bbd10de1bcf5",
+      "rcept_no": "20230810000878",
+      "target_corp_code": "00172079",
+      "candidate_corp_name": "에이치엘비파나진㈜",
+      "master_corp_name": "HLB파나진",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230810000878-edec397ad7a38d47",
+      "rcept_no": "20230810000878",
+      "target_corp_code": "00172079",
+      "candidate_corp_name": "에이치엘비파나진㈜",
+      "master_corp_name": "HLB파나진",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230810000928-335372949b25ff88",
+      "rcept_no": "20230810000928",
+      "target_corp_code": "01335453",
+      "candidate_corp_name": "(주)오하임아이엔티",
+      "master_corp_name": "조이웍스앤코",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230810001002-680ca64a61e96332",
+      "rcept_no": "20230810001002",
+      "target_corp_code": "01110076",
+      "candidate_corp_name": "(주)에이트원",
+      "master_corp_name": "비유테크놀러지",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230811000818-8ebd8bc26bbee465",
+      "rcept_no": "20230811000818",
+      "target_corp_code": "00105101",
+      "candidate_corp_name": "(주)예스코홀딩스",
+      "master_corp_name": "INVENI",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230811000818-f02d78b756bf1360",
+      "rcept_no": "20230811000818",
+      "target_corp_code": "00105101",
+      "candidate_corp_name": "(주)예스코홀딩스",
+      "master_corp_name": "INVENI",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230811001498-02c53001ce14cfaa",
+      "rcept_no": "20230811001498",
+      "target_corp_code": "00125530",
+      "candidate_corp_name": "(주)SPC삼립",
+      "master_corp_name": "삼립",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230811001498-62927bc4aba265be",
+      "rcept_no": "20230811001498",
+      "target_corp_code": "00125530",
+      "candidate_corp_name": "(주)SPC삼립",
+      "master_corp_name": "삼립",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230811001614-7fb124f6e6f4cda1",
+      "rcept_no": "20230811001614",
+      "target_corp_code": "00292434",
+      "candidate_corp_name": "(주)인트론바이오테크놀로지",
+      "master_corp_name": "인트론바이오",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230811001614-9d78da6edafe96af",
+      "rcept_no": "20230811001614",
+      "target_corp_code": "00292434",
+      "candidate_corp_name": "(주)인트론바이오테크놀로지",
+      "master_corp_name": "인트론바이오",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230811001727-6ab73e169f1b91ad",
+      "rcept_no": "20230811001727",
+      "target_corp_code": "00838500",
+      "candidate_corp_name": "엘브이엠씨홀딩스",
+      "master_corp_name": "엘브이엠씨",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230811001727-c74944da670104ce",
+      "rcept_no": "20230811001727",
+      "target_corp_code": "00838500",
+      "candidate_corp_name": "엘브이엠씨홀딩스",
+      "master_corp_name": "엘브이엠씨",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230811002008-0b3f6fd34ba56556",
+      "rcept_no": "20230811002008",
+      "target_corp_code": "00303703",
+      "candidate_corp_name": "(주)씨에스",
+      "master_corp_name": "CS",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230811002008-4326595b5decaa63",
+      "rcept_no": "20230811002008",
+      "target_corp_code": "00303703",
+      "candidate_corp_name": "(주)씨에스",
+      "master_corp_name": "CS",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230811002076-ad46db144cd9f87c",
+      "rcept_no": "20230811002076",
+      "target_corp_code": "00141389",
+      "candidate_corp_name": "영풍정밀(주)",
+      "master_corp_name": "KZ정밀",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230811002076-cb7daf9281fae90e",
+      "rcept_no": "20230811002076",
+      "target_corp_code": "00141389",
+      "candidate_corp_name": "영풍정밀(주)",
+      "master_corp_name": "KZ정밀",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230814000597-8763a92e31793792",
+      "rcept_no": "20230814000597",
+      "target_corp_code": "01110182",
+      "candidate_corp_name": "이노테라피",
+      "master_corp_name": "SCL사이언스",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230814000597-ffbbd545fd44360d",
+      "rcept_no": "20230814000597",
+      "target_corp_code": "01110182",
+      "candidate_corp_name": "이노테라피",
+      "master_corp_name": "SCL사이언스",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230814001044-1e757e9d03e78f7c",
+      "rcept_no": "20230814001044",
+      "target_corp_code": "00126089",
+      "candidate_corp_name": "(주)대유플러스",
+      "master_corp_name": "DH오토넥스",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230814001044-5fbc7d426a7e4c79",
+      "rcept_no": "20230814001044",
+      "target_corp_code": "00126089",
+      "candidate_corp_name": "(주)대유플러스",
+      "master_corp_name": "DH오토넥스",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230814001063-93e42a0854e64c1d",
+      "rcept_no": "20230814001063",
+      "target_corp_code": "00149804",
+      "candidate_corp_name": "(주)대유에이텍",
+      "master_corp_name": "디와이에이",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230814001063-f7da792a1b12527a",
+      "rcept_no": "20230814001063",
+      "target_corp_code": "00149804",
+      "candidate_corp_name": "(주)대유에이텍",
+      "master_corp_name": "디와이에이",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230814001534-d70cadb9d49e57a7",
+      "rcept_no": "20230814001534",
+      "target_corp_code": "00346407",
+      "candidate_corp_name": "(주)큐로컴",
+      "master_corp_name": "크레오에스지",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230814001534-e562548f0ddb1031",
+      "rcept_no": "20230814001534",
+      "target_corp_code": "00346407",
+      "candidate_corp_name": "(주)큐로컴",
+      "master_corp_name": "크레오에스지",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230814001910-173d6a75937515fc",
+      "rcept_no": "20230814001910",
+      "target_corp_code": "00158316",
+      "candidate_corp_name": "(주)NICE홀딩스",
+      "master_corp_name": "NICE",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230814001910-8b16141a97ee5d5f",
+      "rcept_no": "20230814001910",
+      "target_corp_code": "00158316",
+      "candidate_corp_name": "(주)NICE홀딩스",
+      "master_corp_name": "NICE",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230814002018-6caf4429f0b0f924",
+      "rcept_no": "20230814002018",
+      "target_corp_code": "01335453",
+      "candidate_corp_name": "주식회사 오하임아이엔티",
+      "master_corp_name": "조이웍스앤코",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230814002155-2b35b13ba19a3d16",
+      "rcept_no": "20230814002155",
+      "target_corp_code": "00116949",
+      "candidate_corp_name": "(주)디엔오토모티브",
+      "master_corp_name": "DN오토모티브",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230814002155-f35d58697f0e7091",
+      "rcept_no": "20230814002155",
+      "target_corp_code": "00116949",
+      "candidate_corp_name": "(주)디엔오토모티브",
+      "master_corp_name": "DN오토모티브",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230814002171-45e177e678dae038",
+      "rcept_no": "20230814002171",
+      "target_corp_code": "01391103",
+      "candidate_corp_name": "(주)브랜드엑스코퍼레이션",
+      "master_corp_name": "젝시믹스",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230814002171-b25369dd2289c1a4",
+      "rcept_no": "20230814002171",
+      "target_corp_code": "01391103",
+      "candidate_corp_name": "(주)브랜드엑스코퍼레이션",
+      "master_corp_name": "젝시믹스",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230814002388-0a95d1da82a68eb9",
+      "rcept_no": "20230814002388",
+      "target_corp_code": "00164618",
+      "candidate_corp_name": "(주) 카나리아바이오",
+      "master_corp_name": "현대사료",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230814002388-df99198f2c9ca574",
+      "rcept_no": "20230814002388",
+      "target_corp_code": "00164618",
+      "candidate_corp_name": "(주) 카나리아바이오",
+      "master_corp_name": "현대사료",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230816000088-292aa1d0a38c292e",
+      "rcept_no": "20230816000088",
+      "target_corp_code": "00365989",
+      "candidate_corp_name": "(주)용평리조트",
+      "master_corp_name": "모나용평",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230816000110-36c67450e1f1cdce",
+      "rcept_no": "20230816000110",
+      "target_corp_code": "00365989",
+      "candidate_corp_name": "용평리조트",
+      "master_corp_name": "모나용평",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230816000185-641d302e18f20a99",
+      "rcept_no": "20230816000185",
+      "target_corp_code": "00136642",
+      "candidate_corp_name": "엠벤처투자(주)",
+      "master_corp_name": "에스유앤피",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230816000185-6d3b88f8b9475f66",
+      "rcept_no": "20230816000185",
+      "target_corp_code": "00136642",
+      "candidate_corp_name": "엠벤처투자(주)",
+      "master_corp_name": "에스유앤피",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230816000265-ddd743941e4cca79",
+      "rcept_no": "20230816000265",
+      "target_corp_code": "01201970",
+      "candidate_corp_name": "(주)클리노믹스",
+      "master_corp_name": "셀레스트라",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230816000265-e6dacae14801bb53",
+      "rcept_no": "20230816000265",
+      "target_corp_code": "01201970",
+      "candidate_corp_name": "(주)클리노믹스",
+      "master_corp_name": "셀레스트라",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230816000281-292aa1d0a38c292e",
+      "rcept_no": "20230816000281",
+      "target_corp_code": "00365989",
+      "candidate_corp_name": "(주)용평리조트",
+      "master_corp_name": "모나용평",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230816000289-548204916c62aa22",
+      "rcept_no": "20230816000289",
+      "target_corp_code": "00133706",
+      "candidate_corp_name": "세하(주)",
+      "master_corp_name": "한국제지",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230816000308-0ae9f44a514851b3",
+      "rcept_no": "20230816000308",
+      "target_corp_code": "00599595",
+      "candidate_corp_name": "주식회사 비지에프에코머티리얼즈",
+      "master_corp_name": "BGF에코머티리얼즈",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230816000308-a8a4c9398a87a9ee",
+      "rcept_no": "20230816000308",
+      "target_corp_code": "00599595",
+      "candidate_corp_name": "주식회사 비지에프에코머티리얼즈",
+      "master_corp_name": "BGF에코머티리얼즈",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230817000148-15138bf1eb1ddf5a",
+      "rcept_no": "20230817000148",
+      "target_corp_code": "00276083",
+      "candidate_corp_name": "주식회사 스카이문스테크놀로지",
+      "master_corp_name": "피노",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230817000222-6b257a226d1af30f",
+      "rcept_no": "20230817000222",
+      "target_corp_code": "00579999",
+      "candidate_corp_name": "주식회사 고영테크놀러지",
+      "master_corp_name": "고영",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230817000222-d6f18008f16137ad",
+      "rcept_no": "20230817000222",
+      "target_corp_code": "00579999",
+      "candidate_corp_name": "주식회사 고영테크놀러지",
+      "master_corp_name": "고영",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230817000230-1388d1c3168f2892",
+      "rcept_no": "20230817000230",
+      "target_corp_code": "00540863",
+      "candidate_corp_name": "(주)글로벌스탠다드테크놀로지",
+      "master_corp_name": "GST",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230817000230-7c924d4cfc88ad15",
+      "rcept_no": "20230817000230",
+      "target_corp_code": "00540863",
+      "candidate_corp_name": "(주)글로벌스탠다드테크놀로지",
+      "master_corp_name": "GST",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230817000237-39da0c297527b8bb",
+      "rcept_no": "20230817000237",
+      "target_corp_code": "00265421",
+      "candidate_corp_name": "인지디스플레이",
+      "master_corp_name": "인지디스플레",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230817000237-ca2d463da029fe0b",
+      "rcept_no": "20230817000237",
+      "target_corp_code": "00265421",
+      "candidate_corp_name": "인지디스플레이",
+      "master_corp_name": "인지디스플레",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230817000256-c6106b2b4ddc17fb",
+      "rcept_no": "20230817000256",
+      "target_corp_code": "00977650",
+      "candidate_corp_name": "(주)엔케이맥스",
+      "master_corp_name": "엔케이젠바이오텍코리아",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230817000256-d209b6459512a10b",
+      "rcept_no": "20230817000256",
+      "target_corp_code": "00977650",
+      "candidate_corp_name": "(주)엔케이맥스",
+      "master_corp_name": "엔케이젠바이오텍코리아",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230817000258-6f02ad13485c4701",
+      "rcept_no": "20230817000258",
+      "target_corp_code": "00109754",
+      "candidate_corp_name": "대림비앤코주식회사",
+      "master_corp_name": "대림바스",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230817000258-d82d5c25aa835996",
+      "rcept_no": "20230817000258",
+      "target_corp_code": "00109754",
+      "candidate_corp_name": "대림비앤코주식회사",
+      "master_corp_name": "대림바스",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230817000266-1f102919744bbaff",
+      "rcept_no": "20230817000266",
+      "target_corp_code": "00501970",
+      "candidate_corp_name": "코드네이처(주)",
+      "master_corp_name": "퀀타피아",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230817000266-dc558d01409b4a72",
+      "rcept_no": "20230817000266",
+      "target_corp_code": "00501970",
+      "candidate_corp_name": "코드네이처(주)",
+      "master_corp_name": "퀀타피아",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230817000306-f0736717847c42da",
+      "rcept_no": "20230817000306",
+      "target_corp_code": "00501970",
+      "candidate_corp_name": "코드네이처(주)",
+      "master_corp_name": "퀀타피아",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230817000338-f0736717847c42da",
+      "rcept_no": "20230817000338",
+      "target_corp_code": "00501970",
+      "candidate_corp_name": "코드네이처(주)",
+      "master_corp_name": "퀀타피아",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230817000339-28bdd89f6bcc6d9a",
+      "rcept_no": "20230817000339",
+      "target_corp_code": "00225742",
+      "candidate_corp_name": "케이티서브마린",
+      "master_corp_name": "LS마린솔루션",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230817000339-61b0f27a5f7b0edf",
+      "rcept_no": "20230817000339",
+      "target_corp_code": "00225742",
+      "candidate_corp_name": "케이티서브마린",
+      "master_corp_name": "LS마린솔루션",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230818000139-90f1b8698357f44f",
+      "rcept_no": "20230818000139",
+      "target_corp_code": "00135111",
+      "candidate_corp_name": "(주)수산중공업",
+      "master_corp_name": "수산세보틱스",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230818000174-29e41dc88048cad1",
+      "rcept_no": "20230818000174",
+      "target_corp_code": "00172079",
+      "candidate_corp_name": "주식회사 파나진",
+      "master_corp_name": "HLB파나진",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230818000174-716b4d9828b650db",
+      "rcept_no": "20230818000174",
+      "target_corp_code": "00172079",
+      "candidate_corp_name": "주식회사 파나진",
+      "master_corp_name": "HLB파나진",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230818000235-3f0cfa87cc843a02",
+      "rcept_no": "20230818000235",
+      "target_corp_code": "00415327",
+      "candidate_corp_name": "(주)중앙백신연구소",
+      "master_corp_name": "중앙백신",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230818000235-8809ac630e00323a",
+      "rcept_no": "20230818000235",
+      "target_corp_code": "00415327",
+      "candidate_corp_name": "(주)중앙백신연구소",
+      "master_corp_name": "중앙백신",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230818000240-2a266206c77733f7",
+      "rcept_no": "20230818000240",
+      "target_corp_code": "00550082",
+      "candidate_corp_name": "(주)빅토리콘텐츠",
+      "master_corp_name": "캔버스엔",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230818000240-cd6c1f2b8323fbe7",
+      "rcept_no": "20230818000240",
+      "target_corp_code": "00550082",
+      "candidate_corp_name": "(주)빅토리콘텐츠",
+      "master_corp_name": "캔버스엔",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230818000342-07de07d61f73e148",
+      "rcept_no": "20230818000342",
+      "target_corp_code": "00144164",
+      "candidate_corp_name": "에스케이가스(주)",
+      "master_corp_name": "SK가스",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230818000342-940aa197a0237cdf",
+      "rcept_no": "20230818000342",
+      "target_corp_code": "00144164",
+      "candidate_corp_name": "에스케이가스(주)",
+      "master_corp_name": "SK가스",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230818000424-71ddfc663701f7e7",
+      "rcept_no": "20230818000424",
+      "target_corp_code": "00141404",
+      "candidate_corp_name": "영풍제지(주)",
+      "master_corp_name": "블루산업개발",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230818000445-2b0fe1d645b5aaf3",
+      "rcept_no": "20230818000445",
+      "target_corp_code": "01061497",
+      "candidate_corp_name": "(주)에프에스엔",
+      "master_corp_name": "FSN",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230818000445-970644e26af84c13",
+      "rcept_no": "20230818000445",
+      "target_corp_code": "01061497",
+      "candidate_corp_name": "(주)에프에스엔",
+      "master_corp_name": "FSN",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230818000469-2ceb9dc1e926f1a8",
+      "rcept_no": "20230818000469",
+      "target_corp_code": "01110474",
+      "candidate_corp_name": "에스씨엠생명과학 주식회사",
+      "master_corp_name": "풍전약품",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230818000469-56493ec1060443e7",
+      "rcept_no": "20230818000469",
+      "target_corp_code": "01110474",
+      "candidate_corp_name": "에스씨엠생명과학 주식회사",
+      "master_corp_name": "풍전약품",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230818000494-03e9972ae3b7b19e",
+      "rcept_no": "20230818000494",
+      "target_corp_code": "00122825",
+      "candidate_corp_name": "(주)인스코비",
+      "master_corp_name": "프리티",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230818000494-f36f1388fdc3a769",
+      "rcept_no": "20230818000494",
+      "target_corp_code": "00122825",
+      "candidate_corp_name": "(주)인스코비",
+      "master_corp_name": "프리티",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230821000160-7c3e49af3e043bb3",
+      "rcept_no": "20230821000160",
+      "target_corp_code": "00203290",
+      "candidate_corp_name": "한국콜마홀딩스(주)",
+      "master_corp_name": "콜마홀딩스",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230821000160-c41958d1698477bc",
+      "rcept_no": "20230821000160",
+      "target_corp_code": "00203290",
+      "candidate_corp_name": "한국콜마홀딩스(주)",
+      "master_corp_name": "콜마홀딩스",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230821000310-9d613bc373fa94ef",
+      "rcept_no": "20230821000310",
+      "target_corp_code": "01082418",
+      "candidate_corp_name": "(주)에스에이엠지엔터테인먼트",
+      "master_corp_name": "SAMG엔터",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230821000310-f89db48aa48b85a6",
+      "rcept_no": "20230821000310",
+      "target_corp_code": "01082418",
+      "candidate_corp_name": "(주)에스에이엠지엔터테인먼트",
+      "master_corp_name": "SAMG엔터",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230821000332-0b3f6fd34ba56556",
+      "rcept_no": "20230821000332",
+      "target_corp_code": "00303703",
+      "candidate_corp_name": "(주)씨에스",
+      "master_corp_name": "CS",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230821000332-4326595b5decaa63",
+      "rcept_no": "20230821000332",
+      "target_corp_code": "00303703",
+      "candidate_corp_name": "(주)씨에스",
+      "master_corp_name": "CS",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230821000384-19f9f020a576d3e5",
+      "rcept_no": "20230821000384",
+      "target_corp_code": "01526806",
+      "candidate_corp_name": "(주)삼기이브이",
+      "master_corp_name": "삼기에너지솔루션즈",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230821000384-5f2d986a662286e9",
+      "rcept_no": "20230821000384",
+      "target_corp_code": "01526806",
+      "candidate_corp_name": "(주)삼기이브이",
+      "master_corp_name": "삼기에너지솔루션즈",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230821000393-038c7d82fcfbc65f",
+      "rcept_no": "20230821000393",
+      "target_corp_code": "00638487",
+      "candidate_corp_name": "주식회사 파수",
+      "master_corp_name": "파수AI",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230821000393-b171df8f3783aaa0",
+      "rcept_no": "20230821000393",
+      "target_corp_code": "00638487",
+      "candidate_corp_name": "주식회사 파수",
+      "master_corp_name": "파수AI",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230822000206-b1005de2bdd6149c",
+      "rcept_no": "20230822000206",
+      "target_corp_code": "01144569",
+      "candidate_corp_name": "명성티엔에스(주)",
+      "master_corp_name": "피엔티엠에스",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230822000224-814fe297884269f6",
+      "rcept_no": "20230822000224",
+      "target_corp_code": "01175499",
+      "candidate_corp_name": "(주)위니아에이드",
+      "master_corp_name": "큐에이드",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230822000224-b389864923bd178f",
+      "rcept_no": "20230822000224",
+      "target_corp_code": "01175499",
+      "candidate_corp_name": "(주)위니아에이드",
+      "master_corp_name": "큐에이드",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230822000244-7b19b233b6e97d79",
+      "rcept_no": "20230822000244",
+      "target_corp_code": "01071041",
+      "candidate_corp_name": "씨제이바이오사이언스(주)",
+      "master_corp_name": "CJ 바이오사이언스",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230822000244-e87bdc4d103947e7",
+      "rcept_no": "20230822000244",
+      "target_corp_code": "01071041",
+      "candidate_corp_name": "씨제이바이오사이언스(주)",
+      "master_corp_name": "CJ 바이오사이언스",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230822000311-ae641c8d709fd3c3",
+      "rcept_no": "20230822000311",
+      "target_corp_code": "00303873",
+      "candidate_corp_name": "씨제이씨지브이(주)",
+      "master_corp_name": "CJ CGV",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230822000313-2f822955723c14d7",
+      "rcept_no": "20230822000313",
+      "target_corp_code": "00492894",
+      "candidate_corp_name": "(주)젬백스앤카엘",
+      "master_corp_name": "젬백스",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230822000313-e4f0beb7cd6eff2f",
+      "rcept_no": "20230822000313",
+      "target_corp_code": "00492894",
+      "candidate_corp_name": "(주)젬백스앤카엘",
+      "master_corp_name": "젬백스",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230822000314-20c29019f721ac04",
+      "rcept_no": "20230822000314",
+      "target_corp_code": "01290132",
+      "candidate_corp_name": "(주)에이아이더뉴트리진",
+      "master_corp_name": "인터로이드",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    },
+    {
+      "candidate_id": "cand-20230822000314-8e1636647f7d7c1c",
+      "rcept_no": "20230822000314",
+      "target_corp_code": "01290132",
+      "candidate_corp_name": "(주)에이아이더뉴트리진",
+      "master_corp_name": "인터로이드",
+      "status": "DEFERRED_HISTORICAL_NAME",
+      "deferral_reason": "과거 공시 사명과 현재 상장사 마스터 사명 차이 (추후 사명 이력/별칭 마스터 매핑 대상)"
+    }
+  ]
+}
