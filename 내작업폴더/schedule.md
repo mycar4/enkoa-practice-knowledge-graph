@@ -1,9 +1,9 @@
 # 📅 [DART-Trace] 프로젝트 진행 현황 및 향후 일정표 (Schedule)
 
-> **최종 갱신 일시**: 2026-09-04 19:05 (KST - v0.6 & v0.7 최종 승인 완료 및 v1.0 전환)  
+> **최종 갱신 일시**: 2026-09-04 20:35 (KST - v1.0 True Day 35 Hybrid GraphRAG 완성 및 정식 마감 🟢)  
 > **공식 플랫폼 정체성**: **"오를 종목 맞히기가 아닌, 내 보유 종목의 사실·변화·리스크·공식 근거를 판단하는 투자 의사결정 보조 도구"**  
-> **현재 마일스톤**: **v0.6 (4단 의사결정 리포트 엔진) & v0.7 (OpenDART 재무 팩트 및 공식 채널 타임라인) 최종 승인 완료 🟢**  
-> **차기 최우선 착수**: **v1.0 (True Day 35 Hybrid GraphRAG 파이프라인 완성) ➔ v1.1 (포트폴리오/시세 확장) ⚪**  
+> **현재 마일스톤**: **v1.0 (True Day 35 512차원 Hybrid GraphRAG 파이프라인 완성) 정식 완료 🟢**  
+> **차기 착수**: **v1.1 (포트폴리오 로컬 저장 및 시장 시세/수익률 결합 레이어) ⚪**  
 > **책임 엔진**: Antigravity AI Pair Programmer & Data Governance Agent  
 > **⚠️ 동기화 안내**: 본 문서는 프로젝트 루트 `schedule.md` 및 `내작업폴더/schedule.md`에 동일하게 상호 동기화 보존됩니다.
 
@@ -20,7 +20,7 @@
 [2. 공식 채널 종합] DART 공시 · KIND 거래소 상장공시 · 기업 공식 IR 페이지/자료실
         │
         ▼
-[3. 4단 리포트 QA]  "사실 / 해석 / 원문 근거 / 다음 확인 항목" 의사결정 코어 엔진 (기본 완성)
+[3. 4단 리포트 QA]  "사실 / 해석 / 원문 근거 / 다음 확인 항목" 의사결정 코어 엔진 (v0.6~v1.0 완성)
         │
         ▼ (기본 코어 엔진 완성 후 사용자 경험 확장)
 [4. 내 포트폴리오]  보유 종목코드 · 보유수량 · 매수평단가 (로컬/비공개 저장)
@@ -50,7 +50,7 @@
 | **v0.2** | **공시 인덱스 수집 및 지분·출자 정규화** | 1차 파일럿 95개사 | **🟢 정식 마감** | • `:DART_Disclosure` 17,443건 / 지분 505건 / 출자 84건 적재<br>• GraphRAG AI 자연어 챗봇 및 환각 차단 단정 테스트 전수 통과 |
 | **v0.3** | **`DS005` 기업 주요 자본 이벤트 (CB·BW·증자·합병)** | 1차 파일럿 95개사 | **🟢 정식 마감 (`a1ab4f7`)** | • `:DART_CapitalEvent` 313건 / `MERGED_WITH` 1:1 매칭 4건 전수 연결<br>• 3원 일자(`decided_on`, `received_on`, `effective_on`) 분리 적재 |
 | **v0.4 Step 1** | **OpenDART 1,500건 실수집 및 이중 물리 보존** | 5% 대량보유공시 1,500건 | **🟢 정식 마감 (`fc2bdd4`)** | • 1,500건 100% `STORED` (0 누락, 0 격리)<br>• 종료 감사 `BATCH_VERIFIED_SUCCESS` 획득<br>• 로컬 골든 스냅샷(`afc5f70e...`) 및 `D:\` 물리 디스크 ReadOnly 봉인 |
-| **v0.4 Step 2** | **증거 계층 격리 적재 및 불변성 계약 확립** | 1,500건 전수 | **🟢 정식 마감 (`dcd1c43`)** | • `RawEvidenceCandidate`: 2,479개 (추출 후보 격리)<br>• `EvidenceFragment`: 5,570개 / `EVIDENCED_BY`: 8,504개<br>• 프로덕션 `OWNS_STAKE` 373건 유지 (신규 생성 0건, 지분 오염 0건) |
+| **v0.4 Step 2** | **증거 계층 격리 적재 및 불변성 계약 확립** | 1,500건 전수 | **🟢 정식 마감 (`dcd1c43`)** | • `RawEvidenceCandidate`: 2,479개 (추출 후보 격리)<br>• `EvidenceFragment`: 5,570개 / `EVIDENCED_BY`: 8,504개<br>• `:OWNS_STAKE` 0건 완전 격리 유지 (DB 미생성, 지분 오염 0건) |
 | **v0.4 Step 3** | **대시보드 읽기 전용 Evidence Inspector UI 연동** | Streamlit 서비스 메뉴 6 | **🟢 정식 마감 (`3ed01fb`)** | • `READ_ACCESS` 세션 수준 쓰기 원천 차단<br>• 4단계 무결성 역추적 UI 완성 |
 | **v0.4 Step 4** | **경제적 보유 사실 탐색 스파이크** | 통제 드라이런 | **🟢 탐색 완료 및 동결 (`0be70bc`)** | • 지배력 과도 해석 차단, 7대 결손 요건 도출 후 안전 동결 |
 | **v0.4 Step 5** | **3차 15,000건 대량 공시 실수집 및 Cloud Aura 적재** | 2,138개 상장사 전수 | **🟢 정식 마감 (`e081dbc`)** | • `RawEvidenceCandidate`: 23,996건 / `EvidenceFragment`: 51,551건 적재<br>• 전체 규모: 노드 79,848개 / 관계 78,861건 무결 적재 보존 |
@@ -58,9 +58,10 @@
 | **v0.5** | **경제적 보유 관계 생성 DRY-RUN 및 실행기 안전성 보강** | PASS 19건 | **🟢 DRY-RUN 및 보강 완료 (2026-09-04)** | • 정규식/숫자형 3/3 일치 전수 검증 통과 (탈락 0건)<br>• 사명 변경 98건 `DEFERRED_HISTORICAL_NAME` 보류<br>• 실행기 v2.1 4대 안전성(표준 XPath, 단일 트랜잭션, 3분할 no-op 회계, 2023년 공시일 고정) 장착<br>• *Cloud Aura 19건 지분 승격 및 0건 오염 유지* |
 | **v0.6** | **메뉴 2 전면 개편: 4단 의사결정 리포트 코어 엔진** | 단일 기업 대상 | **🟢 정식 마감 (`d1fa1e2`)** | • **"사실 / 해석 / 원문 근거 / 다음 확인 항목"** 4단 구조 응답 엔진 배포<br>• WITH 스코프 격리 0% 지분 혼입(Zero-Mixing) 방어 완료<br>• CB/BW 희석 위험, 유상증자 목적, 대주주 변동 시나리오 분석기 탑재 |
 | **v0.7** | **OpenDART XBRL 재무제표 & 공식 채널 타임라인 결합** | 상장사 전수 | **🟢 정식 마감 (`41b41e0`)** | • OpenDART `fnlttSinglAcnt.json` 연계 (CFS 우선/OFS 폴백, 5대 제로트러스트 방어)<br>• DART 공시(A급) + KRX KIND 상세조회 교차검증 exact-match 바인딩<br>• Claude Code 뮤테이션 테스트 전수 통과 (10/10 PASS 최종 승인) |
-| **v1.0** | **자본이벤트 512차원 Vector Index & Day 35 Hybrid GraphRAG** | 전체 자본이벤트 | **⚪ 차기 최우선 착수** | • 설계 명세서: `[설계_v1.0]_DART-Trace_자본이벤트_512차원_GraphRAG_명세서.md`<br>• 자본조달 목적 text-embedding-3-small 임베딩 및 Neo4j Vector Index 구축<br>• GDS Louvain 커뮤니티 사전 필터 & MinMax 70:30 (유사도:PageRank) 리랭커 가동 |
-| **v1.1** | **사용자 포트폴리오 로컬 관리 & 시장 시세 레이어** | 복수 보유종목 | **⚪ 사용자 경험 확장** | • 종목코드, 수량, 매수단가 로컬/비공개 저장 및 Streamlit 포트폴리오 탭 신설<br>• 현재가, 등락률, 평가손익 자동 산출 ➔ 복수 보유종목 일괄 리포트 |
+| **v1.0** | **자본이벤트 512차원 Vector Index & Day 35 Hybrid GraphRAG** | 전체 자본이벤트 | **🟢 정식 마감 (2026-09-04)** | • 313개 `:DART_CapitalEvent` 노드 512차원 임베딩 100% 적재 완료<br>• Neo4j HNSW Vector Index (`dart_capital_event_vector_idx`) 및 Fulltext Index ONLINE 구축<br>• Day 35 MinMax 70:30 (유사도:PageRank/규모) 하이브리드 리랭커 가동<br>• 4-tier Response Contract 및 대시보드 메뉴 4 탭 5 UI 연동 완료<br>• 전수 검증 테스트 6/6 (100%) 통과 |
+| **v1.1** | **사용자 포트폴리오 로컬 관리 & 시장 시세 레이어** | 복수 보유종목 | **⚪ 차기 착수** | • 종목코드, 수량, 매수단가 로컬/비공개 저장 및 Streamlit 포트폴리오 탭 신설<br>• 현재가, 등락률, 평가손익 자동 산출 ➔ 복수 보유종목 일괄 리포트 |
 | **v2.0** | **클라우드 아카이브 및 24/7 자동화 (백로그)** | 운영 인프라 | **⚪ 백로그** | • 15,000건 원문 AWS S3 / Cloudflare R2 클라우드 이관<br>• GitHub Actions 24/7 야간 자동 수집 스케줄러 운영 |
+
 
 ---
 
@@ -81,14 +82,14 @@ flowchart TD
         V05 --> V06 --> V07
     end
 
-    subgraph Phase_v10 ["💎 차기 최우선 착수: True Day 35 Hybrid GraphRAG"]
-        V10["[v1.0] True Day 35 Hybrid GraphRAG 완성\n- 512차원 Vector Index + GDS 70:30 리랭커 융합 ⚪"]
+    subgraph Phase_v10 ["✅ v1.0 True Day 35 Hybrid GraphRAG 완성 (Approved)"]
+        V10["[v1.0] True Day 35 Hybrid GraphRAG 완성\n- 512차원 Vector Index + GDS 70:30 리랭커 융합 🟢"]
         V07 --> V10
     end
 
-    subgraph Phase_v11_v20 ["🚀 사용자 경험 확장 & 운영 인프라"]
-        V11["[v1.1] 사용자 포트폴리오 로컬 저장 & 시세/수익률 결합\n- 복수 보유 종목 일괄 4단 진단 리포트"]
-        V20["[v2.0] S3/R2 클라우드 아카이브 & 24/7 야간 자동화"]
+    subgraph Phase_v11_v20 ["🚀 차기 사용자 경험 확장 & 운영 인프라"]
+        V11["[v1.1] 사용자 포트폴리오 로컬 저장 & 시세/수익률 결합\n- 복수 보유 종목 일괄 4단 진단 리포트 ⚪"]
+        V20["[v2.0] S3/R2 클라우드 아카이브 & 24/7 야간 자동화 ⚪"]
         V10 --> V11 --> V20
     end
 ```

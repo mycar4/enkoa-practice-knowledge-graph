@@ -1376,13 +1376,14 @@ elif menu == "⚡ 4. DS005 기업 주요 자본 이벤트 (CB·BW·증자·M&A)"
         selected_corp = selected_corp_raw.split(" (")[0]
 
     # 3. 5대 탭 구성
-    tab_all, tab_cb, tab_pi, tab_mg, tab_phase2 = st.tabs([
+    tab_all, tab_cb, tab_pi, tab_mg, tab_graphrag = st.tabs([
         "📑 1. 전체 이벤트 타임라인",
         "💳 2. 전환사채(CB) & BW",
         "📈 3. 유상증자 발행 분석",
         "🤝 4. 회사합병 & 주식 양수도",
-        "🔗 5. 시간순 자본 연계 경로 (Phase 2 예정)"
+        "🤖 5. 512차원 자본이벤트 GraphRAG AI 분석기 (v1.0)"
     ])
+
 
     with tab_all:
         st.subheader(f"📑 자본 변동 공시 타임라인 ({selected_corp if selected_corp else '전체'})")
@@ -1481,9 +1482,79 @@ elif menu == "⚡ 4. DS005 기업 주요 자본 이벤트 (CB·BW·증자·M&A)"
         else:
             st.info("합병 및 주식 양수도 공시 내역이 없습니다.")
 
-    with tab_phase2:
-        st.subheader("🔗 5. 시간순 자본 연계 경로 (Phase 2 예정)")
-        st.info("ℹ️ 다단계 사모사채 인수자(SUBSCRIBED) 및 연계 출자 경로는 Phase 2에서 정식 적재될 예정입니다. (현재 데이터 미적재)")
+    with tab_graphrag:
+        st.subheader("🤖 512차원 Vector Index + MinMax 70:30 하이브리드 GraphRAG 질의응답 (v1.0)")
+        st.caption("Day 35 하이브리드 리랭커 (유사도 70% + 자본규모/PageRank 30%)와 4단 의사결정 리포트(사실/해석/원문근거/다음확인)가 탑재된 공식 AI 분석기입니다.")
+
+        # 추천 질문 예시
+        st.markdown("##### 💡 추천 질의 예시 (클릭 시 자동 입력)")
+        col_q1, col_q2, col_q3 = st.columns(3)
+        sample_q = ""
+        if col_q1.button("🏢 타법인 인수 및 지분 투자"):
+            sample_q = "타법인 증권 취득이나 인수를 위해 자금을 조달한 기업과 조달 목적을 알려줘"
+        if col_q2.button("🏭 시설 투자 및 공장 증설 (CB/BW)"):
+            sample_q = "시설 투자 및 공장 증설을 위해 전환사채(CB)나 신주인수권부사채(BW)를 발행한 기업"
+        if col_q3.button("⚠️ 운영자금 충당 및 채무상환 증자"):
+            sample_q = "운영자금 조달 또는 채무상환을 목적으로 대규모 유상증자를 결의한 공시"
+
+        user_query = st.text_input(
+            "자본이벤트 관련 질문을 입력하세요",
+            value=sample_q if sample_q else "",
+            placeholder="예: 타법인 지분 인수 목적으로 자본을 조달한 기업과 자금용도를 분석해줘",
+            key="graphrag_v10_query"
+        )
+
+        col_k, col_corp = st.columns([1, 2])
+        with col_k:
+            top_k_select = st.slider("검색 상위 건수 (top_k)", min_value=1, max_value=10, value=3)
+        with col_corp:
+            corp_filter_input = st.text_input("특정 기업 필터 (선택 사항)", value=selected_corp if selected_corp else "")
+
+        if st.button("🚀 GraphRAG AI 분석 리포트 생성", type="primary", key="btn_graphrag_v10"):
+            if not user_query:
+                st.warning("질문을 입력해주세요.")
+            else:
+                with st.spinner("512차원 벡터 검색 및 MinMax 70:30 리랭킹 연산 중..."):
+                    from services.graphrag_service import generate_graphrag_response
+                    c_filter = corp_filter_input.strip() if corp_filter_input.strip() else None
+                    report = generate_graphrag_response(user_query, corp_filter=c_filter, top_k=top_k_select)
+
+                    # 1. 검색 적중 및 리랭킹 점수 테이블
+                    st.markdown("#### 🎯 하이브리드 리랭킹 검색 결과 (Top K)")
+                    if report["hits"]:
+                        hit_rows = []
+                        for h in report["hits"]:
+                            hit_rows.append({
+                                "기업명": h.get("corp_name"),
+                                "유형": h.get("event_type"),
+                                "종합점수 (70:30)": f"{h.get('final_score', 0):.4f}",
+                                "코사인유사도": f"{h.get('score', 0):.4f}",
+                                "조달규모": f"{h.get('scale_amount', 0):,}원",
+                                "공시접수번호": h.get("rcept_no"),
+                                "결의일": h.get("decided_on")
+                            })
+                        st.dataframe(pd.DataFrame(hit_rows), use_container_width=True)
+
+                    # 2. 4단 의사결정 리포트
+                    st.markdown("---")
+                    st.markdown("### 📋 4단 의사결정 AI 리포트 (Fact vs Interpretation)")
+
+                    c_fact, c_interp = st.columns(2)
+                    with c_fact:
+                        st.markdown("#### 1. 📌 사실 (Fact)")
+                        st.info(report["fact"])
+                    with c_interp:
+                        st.markdown("#### 2. 🧠 해석 (Interpretation)")
+                        st.success(report["interpretation"])
+
+                    c_evid, c_next = st.columns(2)
+                    with c_evid:
+                        st.markdown("#### 3. 🔍 원문 근거 (Evidence)")
+                        st.warning(report["evidence"])
+                    with c_next:
+                        st.markdown("#### 4. 🧭 다음 확인 항목 (Next Action)")
+                        st.error(report["next_action"])
+
 
 
 # ── 메뉴 5: 최근 5년 OpenDART 실시간 수집 & 스토리지 ──
