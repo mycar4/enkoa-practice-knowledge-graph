@@ -249,9 +249,15 @@ class DecisionReportService:
         last_msg = ""
 
         for yr in years_to_try:
-            url = f"https://opendart.fss.or.kr/api/fnlttSinglAcnt.json?crtfc_key={dart_api_key}&corp_code={cleaned_code}&bsns_year={yr}&reprt_code=11011"
+            url = "https://opendart.fss.or.kr/api/fnlttSinglAcnt.json"
+            params = {
+                "crtfc_key": dart_api_key,
+                "corp_code": cleaned_code,
+                "bsns_year": str(yr),
+                "reprt_code": "11011"
+            }
             try:
-                resp = requests.get(url, timeout=5)
+                resp = requests.get(url, params=params, timeout=5)
                 if resp.status_code == 200:
                     payload = resp.json()
                     st_code = payload.get("status")

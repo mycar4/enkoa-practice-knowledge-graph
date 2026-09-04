@@ -19,6 +19,8 @@ if hasattr(sys.stdout, 'reconfigure'):
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
 
+from unittest.mock import patch, MagicMock
+
 from services.decision_report_service import (
     DecisionReportService,
     parse_accounting_number,
@@ -313,6 +315,152 @@ def test_opendart_financial_facts_contract():
         service.close()
 
 
+def test_financial_facts_cfs_ofs_mock_selection():
+    """CFS/OFS 혼재 시 CFS 우선 선택 및 CFS 부재 시 OFS 폴백 강제 mock 검증"""
+    from services.decision_report_service import _financial_facts_cache
+    service = DecisionReportService()
+    try:
+        # 1. CFS & OFS 혼재 mock 데이터 -> CFS만 선택되어야 함
+        mixed_items = [
+            {"fs_div": "CFS", "account_nm": "매출액", "thstrm_amount": "500,000,000", "frmtrm_amount": "400,000,000"},
+            {"fs_div": "CFS", "account_nm": "영업이익", "thstrm_amount": "50,000,000", "frmtrm_amount": "40,000,000"},
+            {"fs_div": "CFS", "account_nm": "당기순이익", "thstrm_amount": "30,000,000", "frmtrm_amount": "20,000,000"},
+            {"fs_div": "CFS", "account_nm": "자산총계", "thstrm_amount": "1,000,000,000", "frmtrm_amount": "800,000,000"},
+            {"fs_div": "CFS", "account_nm": "부채총계", "thstrm_amount": "400,000,000", "frmtrm_amount": "300,000,000"},
+            {"fs_div": "CFS", "account_nm": "자본총계", "thstrm_amount": "600,000,000", "frmtrm_amount": "500,000,000"},
+            # OFS 데이터 (혼재)
+            {"fs_div": "OFS", "account_nm": "매출액", "thstrm_amount": "100,000,000", "frmtrm_amount": "80,000,000"},
+            {"fs_div": "OFS", "account_nm": "영업이익", "thstrm_amount": "10,000,000", "frmtrm_amount": "8,000,000"},
+            {"fs_div": "OFS", "account_nm": "당기순이익", "thstrm_amount": "5,000,000", "frmtrm_amount": "4,000,000"},
+            {"fs_div": "OFS", "account_nm": "자산총계", "thstrm_amount": "300,000,000", "frmtrm_amount": "200,000,000"},
+            {"fs_div": "OFS", "account_nm": "부채총계", "thstrm_amount": "100,000,000", "frmtrm_amount": "50,000,000"},
+            {"fs_div": "OFS", "account_nm": "자본총계", "thstrm_amount": "200,000,000", "frmtrm_amount": "150,000,000"},
+        ]
+        
+        mock_resp_mixed = MagicMock()
+        mock_resp_mixed.status_code = 200
+        mock_resp_mixed.json.return_value = {"status": "000", "list": mixed_items}
+        
+        _financial_facts_cache.pop("88880001_2024", None)
+        with patch("requests.get", return_value=mock_resp_mixed):
+            res_cfs = service.get_company_financial_facts("88880001", preferred_year=2024)
+            assert res_cfs["status"] == "AVAILABLE"
+            assert res_cfs["fs_div"] == "CFS"
+            assert "연결재무제표" in res_cfs["fs_div_name"]
+            assert res_cfs["revenue"] == 500_000_000, "Should select CFS revenue, not OFS"
+            assert res_cfs["total_equity"] == 600_000_000
+            assert res_cfs["debt_ratio"] == 66.67  # 400M / 600M * 100
+
+        # 2. CFS 부재 시 (OFS만 있는 경우) -> OFS 선택되어야 함
+        ofs_only_items = [
+            {"fs_div": "OFS", "account_nm": "매출액", "thstrm_amount": "100,000,000", "frmtrm_amount": "80,000,000"},
+            {"fs_div": "OFS", "account_nm": "영업이익", "thstrm_amount": "10,000,000", "frmtrm_amount": "8,000,000"},
+            {"fs_div": "OFS", "account_nm": "당기순이익", "thstrm_amount": "5,000,000", "frmtrm_amount": "4,000,000"},
+            {"fs_div": "OFS", "account_nm": "자산총계", "thstrm_amount": "300,000,000", "frmtrm_amount": "200,000,000"},
+            {"fs_div": "OFS", "account_nm": "부채총계", "thstrm_amount": "100,000,000", "frmtrm_amount": "50,000,000"},
+            {"fs_div": "OFS", "account_nm": "자본총계", "thstrm_amount": "200,000,000", "frmtrm_amount": "150,000,000"},
+        ]
+        mock_resp_ofs = MagicMock()
+        mock_resp_ofs.status_code = 200
+        mock_resp_ofs.json.return_value = {"status": "000", "list": ofs_only_items}
+
+        _financial_facts_cache.pop("88880002_2024", None)
+        with patch("requests.get", return_value=mock_resp_ofs):
+            res_ofs = service.get_company_financial_facts("88880002", preferred_year=2024)
+            assert res_ofs["status"] == "AVAILABLE"
+            assert res_ofs["fs_div"] == "OFS"
+            assert "개별재무제표" in res_ofs["fs_div_name"]
+            assert res_ofs["revenue"] == 100_000_000
+            assert res_ofs["debt_ratio"] == 50.0  # 100M / 200M * 100
+
+        print("✅ test_financial_facts_cfs_ofs_mock_selection passed!")
+    finally:
+        service.close()
+
+
+def test_financial_facts_year_fallback_mock():
+    """2024년 status=013 조회 실패 후 2023년 자동 재시도 및 성공 mock 검증"""
+    from services.decision_report_service import _financial_facts_cache
+    service = DecisionReportService()
+    try:
+        # 1차(2024): 013 실패, 2차(2023): 000 성공
+        mock_resp_2024 = MagicMock()
+        mock_resp_2024.status_code = 200
+        mock_resp_2024.json.return_value = {"status": "013", "message": "조회된 데이타가 없습니다."}
+
+        mock_resp_2023 = MagicMock()
+        mock_resp_2023.status_code = 200
+        mock_resp_2023.json.return_value = {
+            "status": "000",
+            "list": [
+                {"fs_div": "CFS", "account_nm": "매출액", "thstrm_amount": "300,000,000", "frmtrm_amount": "250,000,000"},
+                {"fs_div": "CFS", "account_nm": "영업이익", "thstrm_amount": "30,000,000", "frmtrm_amount": "25,000,000"},
+                {"fs_div": "CFS", "account_nm": "당기순이익", "thstrm_amount": "20,000,000", "frmtrm_amount": "15,000,000"},
+                {"fs_div": "CFS", "account_nm": "자산총계", "thstrm_amount": "800,000,000", "frmtrm_amount": "700,000,000"},
+                {"fs_div": "CFS", "account_nm": "부채총계", "thstrm_amount": "300,000,000", "frmtrm_amount": "250,000,000"},
+                {"fs_div": "CFS", "account_nm": "자본총계", "thstrm_amount": "500,000,000", "frmtrm_amount": "450,000,000"},
+            ]
+        }
+
+        _financial_facts_cache.pop("88880003_2024", None)
+        with patch("requests.get", side_effect=[mock_resp_2024, mock_resp_2023]) as mock_get:
+            res_fb = service.get_company_financial_facts("88880003", preferred_year=2024)
+            assert res_fb["status"] == "AVAILABLE"
+            assert res_fb["bsns_year"] == "2023", "Must fallback to 2023 when 2024 returns status 013"
+            assert res_fb["revenue"] == 300_000_000
+            assert mock_get.call_count == 2
+            calls = mock_get.call_args_list
+            assert calls[0].kwargs["params"]["bsns_year"] == "2024"
+            assert calls[1].kwargs["params"]["bsns_year"] == "2023"
+
+        print("✅ test_financial_facts_year_fallback_mock passed!")
+    finally:
+        service.close()
+
+
+def test_financial_facts_zero_trust_edge_cases():
+    """None, 빈 문자열, 형식 오류, 미등록 코드, API 키 부재 5대 제로트러스트 케이스 전수 실측"""
+    from services.decision_report_service import _financial_facts_cache
+    service = DecisionReportService()
+    try:
+        # Case 1: None
+        res_none = service.get_company_financial_facts(None)
+        assert res_none["status"] == "UNAVAILABLE"
+        assert res_none["revenue"] is None
+        assert "유효하지 않은 고유번호" in res_none["message"]
+
+        # Case 2: 빈 문자열
+        res_empty = service.get_company_financial_facts("")
+        assert res_empty["status"] == "UNAVAILABLE"
+        assert res_empty["revenue"] is None
+        assert "유효하지 않은 고유번호" in res_empty["message"]
+
+        # Case 3: 8자리 미만 형식 오류 ("12345")
+        res_short = service.get_company_financial_facts("12345")
+        assert res_short["status"] == "UNAVAILABLE"
+        assert res_short["revenue"] is None
+        assert "유효하지 않은 고유번호" in res_short["message"]
+
+        # Case 4: 미등록 8자리 코드 ("99999999" - DART 실제 호출)
+        _financial_facts_cache.pop("99999999_2024", None)
+        res_unregistered = service.get_company_financial_facts("99999999")
+        assert res_unregistered["status"] == "UNAVAILABLE"
+        assert res_unregistered["revenue"] is None
+        assert "미공시 또는 조회 제한" in res_unregistered["message"]
+
+        # Case 5: DART_API_KEY 환경변수 부재
+        _financial_facts_cache.pop("88889999_2024", None)
+        with patch.dict(os.environ, {"DART_API_KEY": ""}):
+            res_nokey = service.get_company_financial_facts("88889999")
+            assert res_nokey["status"] == "UNAVAILABLE"
+            assert res_nokey["revenue"] is None
+            assert "DART_API_KEY 환경변수가 설정되지 않아" in res_nokey["message"]
+
+        print("✅ test_financial_facts_zero_trust_edge_cases passed! (All 5 zero-trust cases verified)")
+    finally:
+        service.close()
+
+
 if __name__ == "__main__":
     test_decision_report_data_contract_rigorous()
     test_company_search_find_companies()
@@ -320,5 +468,9 @@ if __name__ == "__main__":
     test_zero_mixing_across_all_promoted_companies()
     test_capital_events_sanitization_and_defense()
     test_opendart_financial_facts_contract()
-    print("🎉 ALL RIGOROUS MENU 2 TESTS PASSED!")
+    test_financial_facts_cfs_ofs_mock_selection()
+    test_financial_facts_year_fallback_mock()
+    test_financial_facts_zero_trust_edge_cases()
+    print("🎉 ALL 9 RIGOROUS MENU 2 TESTS PASSED!")
+
 
