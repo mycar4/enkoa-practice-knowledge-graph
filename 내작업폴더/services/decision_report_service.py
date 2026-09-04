@@ -120,6 +120,27 @@ class DecisionReportService:
             """
             stake_rows = session.run(stake_query, corp_code=corp_code).data()
 
+            # 4. 검증·승격된 경제적 보유 사실 조회 (HOLDS_ECONOMIC_STAKE - 단일 기업 관련 보유/피보유)
+            promoted_query = """
+            MATCH (h:DART_Company)-[r:HOLDS_ECONOMIC_STAKE]->(t:DART_Company)
+            WHERE h.corp_code = $corp_code OR t.corp_code = $corp_code
+            RETURN 
+                h.name AS holder_name,
+                h.corp_code AS holder_code,
+                t.name AS target_name,
+                t.corp_code AS target_code,
+                r.stake_ratio AS stake_ratio,
+                r.shares_count AS shares_count,
+                r.reporting_obligation_date AS reporting_obligation_date,
+                r.row_inner_hash AS row_inner_hash,
+                r.promoted_at AS promoted_at,
+                r.promotion_manifest_sha256 AS promotion_manifest_sha256,
+                r.relationship_key AS relationship_key,
+                r.rcept_no AS rcept_no
+            ORDER BY r.reporting_obligation_date DESC, r.stake_ratio DESC
+            """
+            promoted_rows = session.run(promoted_query, corp_code=corp_code).data()
+
         # =========================================================================
         # 1단: 사실 (Facts) - 정확한 관찰 기간 계산 (가짜 '최근 2년' 주장 제거)
         # =========================================================================
@@ -130,6 +151,28 @@ class DecisionReportService:
             "observed_events_count": len(capital_events),
             "description": f"최근 수집된 공시 {len(capital_events)}건 (기간: {min(event_dates)} ~ {max(event_dates)})" if event_dates else "수집된 자본이벤트 공시 없음"
         }
+
+        # 검증·승격된 경제적 보유 사실 가공 (19건 승격본)
+        promoted_stakes = []
+        for r in promoted_rows:
+            promoted_stakes.append({
+                "holder_name": r["holder_name"],
+                "holder_code": r["holder_code"],
+                "target_name": r["target_name"],
+                "target_code": r["target_code"],
+                "holder_to_target": f"{r['holder_name']} → {r['target_name']}",
+                "stake_ratio": r["stake_ratio"],
+                "shares_count": r["shares_count"],
+                "reporting_obligation_date": r["reporting_obligation_date"],
+                "row_inner_hash": r["row_inner_hash"],
+                "promoted_at": str(r.get("promoted_at") or "-"),
+                "promotion_manifest_sha256": r.get("promotion_manifest_sha256"),
+                "relationship_key": r.get("relationship_key"),
+                "rcept_no": r.get("rcept_no"),
+                "status": "VERIFIED_ECONOMIC_STAKE",
+                "status_label": "검증·승격 완료",
+                "verification_note": "봉인 매니페스트 SHA-256 결속 + 원문 행 해시 전수 검증 승격 완료"
+            })
 
         # 원문 추출 후보 가공 (미검증 후보 상태 명시)
         raw_candidates = []
@@ -163,8 +206,8 @@ class DecisionReportService:
                 "events_detail": capital_events
             },
             "major_holdings_summary": {
-                "promoted_count": 0,
-                "promoted_stakes": [],  # Phase 2 승격 전이므로 0건으로 정직하게 고정
+                "promoted_count": len(promoted_stakes),
+                "promoted_stakes": promoted_stakes,
                 "raw_candidate_count": len(raw_candidates),
                 "raw_candidates": raw_candidates[:10]
             }
@@ -244,6 +287,20 @@ class DecisionReportService:
                 "xpath": None,
                 "inner_hash": None,
                 "evidence_note": "공시 접수번호 기준 DART 원문 바로가기 연동 (행 단위 2D 해시 미적재)"
+            })
+
+        # 검증·승격된 경제적 보유 사실: 봉인 매니페스트 결속 및 원문 행 해시 전수 검증
+        for p in promoted_stakes[:5]:
+            rcp = p.get("rcept_no")
+            evidence_list.append({
+                "item_type": "PROMOTED_ECONOMIC_STAKE",
+                "title": f"[검증·승격 사실] {p['holder_to_target']} ({p['stake_ratio']}%, {p['reporting_obligation_date']})",
+                "rcept_no": rcp,
+                "dart_viewer_url": f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={rcp}" if rcp else None,
+                "evidence_level": "ROW_HASH_BOUND",
+                "xpath": None,
+                "inner_hash": p.get("row_inner_hash"),
+                "evidence_note": "봉인 매니페스트 SHA-256 결속 + 원문 행 해시 전수 검증 승격 완료 (HOLDS_ECONOMIC_STAKE)"
             })
 
         # 5% 보고 후보: 파서 추출 좌표 및 원문 행 SHA-256 결속

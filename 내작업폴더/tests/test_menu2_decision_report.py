@@ -119,7 +119,42 @@ def test_company_search_find_companies():
         service.close()
 
 
+def test_promoted_company_contract_aluko():
+    service = DecisionReportService()
+    try:
+        report = service.generate_company_decision_report("00117027")  # 알루코
+        assert report["status"] == "SUCCESS"
+        assert report["target_company"]["corp_name"] == "알루코"
+
+        holdings = report["tier1_facts"]["major_holdings_summary"]
+        assert holdings["promoted_count"] == 1, f"Expected 1 promoted stake for Aluko, got {holdings['promoted_count']}"
+        
+        promoted = holdings["promoted_stakes"][0]
+        assert promoted["holder_name"] == "케이피티유"
+        assert promoted["target_name"] == "알루코"
+        assert promoted["holder_to_target"] == "케이피티유 → 알루코"
+        assert promoted["stake_ratio"] == 19.21
+        assert promoted["shares_count"] == 18502826
+        assert promoted["reporting_obligation_date"] == "2023-08-04"
+        assert promoted["row_inner_hash"].startswith("def7b651")
+        assert promoted["status"] == "VERIFIED_ECONOMIC_STAKE"
+        assert promoted["status_label"] == "검증·승격 완료"
+
+        # 미검증 후보와 분리 확인
+        assert "raw_candidates" in holdings
+        
+        # 증거 분리 확인
+        evidence = report["tier3_evidence"]
+        promoted_ev = [ev for ev in evidence if ev.get("item_type") == "PROMOTED_ECONOMIC_STAKE"]
+        assert len(promoted_ev) >= 1
+        assert "HOLDS_ECONOMIC_STAKE" in promoted_ev[0]["evidence_note"]
+        print("✅ test_promoted_company_contract_aluko passed!")
+    finally:
+        service.close()
+
+
 if __name__ == "__main__":
     test_decision_report_data_contract_rigorous()
     test_company_search_find_companies()
+    test_promoted_company_contract_aluko()
     print("🎉 ALL RIGOROUS MENU 2 TESTS PASSED!")

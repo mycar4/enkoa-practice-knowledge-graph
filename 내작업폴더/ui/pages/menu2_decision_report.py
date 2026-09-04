@@ -78,17 +78,30 @@ def render_menu2_decision_report(driver=None, theme_mode: str = "🌙 다크 모
         )
     with search_col2:
         st.caption("⚡ 주요 자본이벤트 분석 대표 기업 숏컷:")
-        preset_cols = st.columns(5)
-        presets = [
+        preset_cols1 = st.columns(5)
+        presets1 = [
             ("HLB (코스닥 028300)", "HLB"),
             ("DXVX (코스닥 180400)", "DXVX"),
             ("FSN (코스닥 214270)", "FSN"),
             ("삼성전자 (코스피 005930)", "삼성전자"),
             ("파인메딕스 (코넥스)", "파인메딕스")
         ]
-        for idx, (label, code_or_name) in enumerate(presets):
-            with preset_cols[idx]:
+        for idx, (label, code_or_name) in enumerate(presets1):
+            with preset_cols1[idx]:
                 if st.button(label.split()[0], key=f"btn_preset_{code_or_name}", use_container_width=True):
+                    st.session_state.selected_report_corp = code_or_name
+                    st.rerun()
+
+        st.caption("🔒 검증 경제적 보유 사실 예시 (19건 승격본):")
+        preset_cols2 = st.columns(3)
+        presets2 = [
+            ("알루코 (승격 1건)", "알루코"),
+            ("씨티씨바이오 (승격 2건)", "씨티씨바이오"),
+            ("롯데지주 (승격 2건)", "롯데지주")
+        ]
+        for idx, (label, code_or_name) in enumerate(presets2):
+            with preset_cols2[idx]:
+                if st.button(label.split()[0], key=f"btn_promoted_preset_{code_or_name}", use_container_width=True):
                     st.session_state.selected_report_corp = code_or_name
                     st.rerun()
 
@@ -165,7 +178,10 @@ def render_menu2_decision_report(driver=None, theme_mode: str = "🌙 다크 모
     total_events_cnt = len(cap_events)
     cb_bw_cnt = sum(1 for e in cap_events if any(k in str(e.get("event_type", "")) for k in ["전환사채", "CB", "신주인수권", "BW"]))
     increase_cnt = sum(1 for e in cap_events if "유상증자" in str(e.get("event_type", "")))
-    raw_candidates = facts.get("major_holdings_summary", {}).get("raw_candidates", [])
+    holdings_summary = facts.get("major_holdings_summary", {})
+    promoted_stakes = holdings_summary.get("promoted_stakes", [])
+    promoted_cnt = len(promoted_stakes)
+    raw_candidates = holdings_summary.get("raw_candidates", [])
 
     kpi1, kpi2, kpi3, kpi4 = st.columns(4)
     with kpi1:
@@ -173,56 +189,93 @@ def render_menu2_decision_report(driver=None, theme_mode: str = "🌙 다크 모
     with kpi2:
         st.metric("전환사채(CB)·BW 발행", f"{cb_bw_cnt}건", help="CB/BW 발행 결정 공시")
     with kpi3:
-        st.metric("유상증자 결정", f"{increase_cnt}건", help="유상증자 결정 공시")
+        st.metric("검증된 경제적 보유 사실", f"{promoted_cnt}건", help="봉인 매니페스트 SHA-256 결속 및 원문 행 해시 전수 검증 승격 완료 (HOLDS_ECONOMIC_STAKE)")
     with kpi4:
         st.metric("5% 공시 원문 추출 후보", f"{len(raw_candidates)}건", help="원문 테이블 파싱 1차 추출 후보 (엔티티 해소 검증 전)")
 
-    col_t1_left, col_t1_right = st.columns([3, 2])
-    with col_t1_left:
-        st.markdown(f"**⚡ 최근 자본이벤트 타임라인 (DART DS005 연동)**")
-        if cap_events:
-            events_df_data = []
-            for ev in cap_events:
-                amt = ev.get("issue_amount")
-                amt_str = f"{int(amt):,}원" if (amt and isinstance(amt, (int, float))) else (str(amt) if amt else "-")
-                c_price = ev.get("conversion_price")
-                c_price_str = f"{int(c_price):,}원" if (c_price and isinstance(c_price, (int, float))) else (str(c_price) if c_price else "-")
-                floor = ev.get("min_refixing_floor")
-                floor_str = f"{int(floor):,}원" if (floor and isinstance(floor, (int, float))) else (str(floor) if floor else "-")
-                
-                events_df_data.append({
-                    "결정일자": str(ev.get("decided_on") or ev.get("received_on") or "-"),
-                    "이벤트 구분": ev.get("event_type", "-"),
-                    "조달 금액": amt_str,
-                    "전환/발행가": c_price_str,
-                    "최저 리픽싱가": floor_str,
-                    "조달 목적": ev.get("purpose") or "-"
-                })
-            st.dataframe(pd.DataFrame(events_df_data), use_container_width=True, height=240)
-        else:
-            st.info(f"'{corp_name}'에 대해 수집된 자본이벤트(CB·BW·유상증자) 공시가 없습니다.")
+    # 1-1. 최근 자본이벤트 타임라인
+    st.markdown(f"**⚡ 최근 자본이벤트 타임라인 (DART DS005 연동)**")
+    if cap_events:
+        events_df_data = []
+        for ev in cap_events:
+            amt = ev.get("issue_amount")
+            amt_str = f"{int(amt):,}원" if (amt and isinstance(amt, (int, float))) else (str(amt) if amt else "-")
+            c_price = ev.get("conversion_price")
+            c_price_str = f"{int(c_price):,}원" if (c_price and isinstance(c_price, (int, float))) else (str(c_price) if c_price else "-")
+            floor = ev.get("min_refixing_floor")
+            floor_str = f"{int(floor):,}원" if (floor and isinstance(floor, (int, float))) else (str(floor) if floor else "-")
+            
+            events_df_data.append({
+                "결정일자": str(ev.get("decided_on") or ev.get("received_on") or "-"),
+                "이벤트 구분": ev.get("event_type", "-"),
+                "조달 금액": amt_str,
+                "전환/발행가": c_price_str,
+                "최저 리픽싱가": floor_str,
+                "조달 목적": ev.get("purpose") or "-"
+            })
+        st.dataframe(pd.DataFrame(events_df_data), use_container_width=True, height=200)
+    else:
+        st.info(f"'{corp_name}'에 대해 수집된 자본이벤트(CB·BW·유상증자) 공시가 없습니다.")
 
-    with col_t1_right:
-        st.markdown(f"**👥 5% 대량보유 공시 원문 추출 후보 (미검증 후보)**")
-        if raw_candidates:
-            holdings_df_data = []
-            for h in raw_candidates:
-                ratio = h.get("stake_ratio")
-                ratio_str = f"{float(ratio):.2f}%" if ratio is not None else "-"
-                shares = h.get("shares_count")
-                shares_str = f"{int(shares):,}주" if (shares and isinstance(shares, (int, float))) else (str(shares) if shares else "-")
-                
-                holdings_df_data.append({
-                    "보고자 / 보유자": h.get("holder_name", "-"),
-                    "지분율": ratio_str,
-                    "보유주식수": shares_str,
-                    "보고의무발생일": str(h.get("reporting_obligation_date") or "-"),
-                    "검증 상태": "⚪ 미검증 후보"
-                })
-            st.dataframe(pd.DataFrame(holdings_df_data), use_container_width=True, height=240)
-            st.caption("🛡️ 위 지분 데이터는 DART 원문 테이블에서 추출된 1차 후보이며, 자연인/법인 식별 전 단계입니다.")
-        else:
-            st.info("수집된 5% 이상 대량보유 공시 원문 후보가 없습니다.")
+    st.markdown("<div style='margin-top: 16px;'></div>", unsafe_allow_html=True)
+
+    # 1-2. 검증·승격된 경제적 보유 사실 (HOLDS_ECONOMIC_STAKE) - 전용 카드
+    st.markdown(f"""
+    <div style="background: {bg_card}; border: 1px solid rgba(16, 185, 129, 0.35); border-left: 5px solid {accent_green}; border-radius: 12px; padding: 14px 18px; margin-bottom: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 16px;">🔒</span>
+                <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: {text_primary};">검증·승격된 경제적 보유 사실 (HOLDS_ECONOMIC_STAKE)</h4>
+                <span style="background: rgba(16, 185, 129, 0.15); color: {accent_green}; border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 700;">{promoted_cnt}건 검증 승격</span>
+            </div>
+            <span style="font-size: 12px; color: {text_secondary};">※ 봉인 매니페스트 SHA-256 결속 + 원문 행 해시 전수 감사 통과본</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if promoted_stakes:
+        promoted_df_data = []
+        for p in promoted_stakes:
+            amt_shares = p.get("shares_count")
+            shares_str = f"{int(amt_shares):,}주" if (amt_shares and isinstance(amt_shares, (int, float))) else str(amt_shares)
+            ratio = p.get("stake_ratio")
+            ratio_str = f"{float(ratio):.2f}%" if ratio is not None else "-"
+            promoted_df_data.append({
+                "보유사 → 대상회사": p.get("holder_to_target", "-"),
+                "지분율": ratio_str,
+                "보유주식수": shares_str,
+                "보고의무발생일": str(p.get("reporting_obligation_date") or "-"),
+                "원문 행 해시": f"{p.get('row_inner_hash', '')[:16]}...",
+                "최초 승격일": str(p.get("promoted_at") or "-")[:19]
+            })
+        st.dataframe(pd.DataFrame(promoted_df_data), use_container_width=True)
+        st.caption("🛡️ 위 내역은 2023년 공시 보고의무발생일 기준 과거 경제적 지분 보유 사실이며, 지배력·경영권 단정이나 현재(2026년) 지분이 아닙니다.")
+    else:
+        st.info(f"'{corp_name}'에 대해 검증·승격된 경제적 보유 관계(:HOLDS_ECONOMIC_STAKE)가 없습니다. (현재 19건 승격 대상 외 기업)")
+
+    st.markdown("<div style='margin-top: 16px;'></div>", unsafe_allow_html=True)
+
+    # 1-3. 5% 대량보유 공시 원문 추출 후보 (미검증 후보) - 전용 카드
+    st.markdown(f"**👥 5% 대량보유 공시 원문 추출 후보 (미검증 후보)**")
+    if raw_candidates:
+        holdings_df_data = []
+        for h in raw_candidates:
+            ratio = h.get("stake_ratio")
+            ratio_str = f"{float(ratio):.2f}%" if ratio is not None else "-"
+            shares = h.get("shares_count")
+            shares_str = f"{int(shares):,}주" if (shares and isinstance(shares, (int, float))) else (str(shares) if shares else "-")
+            
+            holdings_df_data.append({
+                "보고자 / 보유자": h.get("holder_name", "-"),
+                "지분율": ratio_str,
+                "보유주식수": shares_str,
+                "보고의무발생일": str(h.get("reporting_obligation_date") or "-"),
+                "검증 상태": "⚪ 미검증 1차 후보"
+            })
+        st.dataframe(pd.DataFrame(holdings_df_data), use_container_width=True, height=200)
+        st.caption("🛡️ 위 지분 데이터는 DART 원문 테이블에서 추출된 1차 후보이며, 엔티티 해소 검증 전 단계입니다.")
+    else:
+        st.info("수집된 5% 이상 대량보유 공시 원문 후보가 없습니다.")
 
     st.markdown("---")
 
