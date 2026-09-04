@@ -502,8 +502,11 @@ def test_official_channels_timeline_contract():
             
             rcp = item.get("rcept_no")
             if rcp:
-                assert item["dart_url"].startswith("https://dart.fss.or.kr/dsaf001/main.do?rcpNo=")
-                assert item["krx_kind_url"].startswith("https://kind.krx.co.kr/common/disclsviewer.do?acptno=")
+                assert item["dart_url"] == f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={rcp}", f"Mismatch in dart_url for rcp {rcp}"
+                assert item["krx_kind_url"] == f"https://kind.krx.co.kr/common/disclsviewer.do?acptno={rcp}&method=search", f"Mismatch in krx_kind_url for rcp {rcp}"
+            else:
+                assert item["dart_url"] is None
+                assert item["krx_kind_url"] is None
 
         # 정렬 순서 검증 (최신순 내림차순)
         dates = [item["event_date"] for item in timeline]
