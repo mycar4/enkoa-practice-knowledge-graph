@@ -24,7 +24,8 @@ from unittest.mock import patch, MagicMock
 from services.decision_report_service import (
     DecisionReportService,
     parse_accounting_number,
-    format_currency_kr
+    format_currency_kr,
+    build_official_timeline
 )
 
 
@@ -69,6 +70,14 @@ def test_decision_report_data_contract_rigorous():
             assert fin_facts["fs_div"] in ["CFS", "OFS"]
             assert fin_facts["revenue"] is not None
             assert fin_facts["debt_ratio"] is not None
+
+        # 공식 채널 통합 타임라인 계약 검증
+        assert "official_timeline" in facts
+        assert "official_timeline_summary" in facts
+        assert isinstance(facts["official_timeline"], list)
+        assert len(facts["official_timeline"]) > 0
+        assert facts["official_timeline_summary"]["grade_a_count"] > 0
+        assert facts["official_timeline_summary"]["total_timeline_events"] == len(facts["official_timeline"])
         
         # 3. [Tier 2: 관찰 지표] 규칙 기반 정직한 지표 및 시나리오 검증
         interp = report["tier2_interpretations"]
@@ -461,6 +470,75 @@ def test_financial_facts_zero_trust_edge_cases():
         service.close()
 
 
+def test_official_channels_timeline_contract():
+    """출처별 공식 채널 타임라인 (DART A급, KRX KIND A급, OpenDART A급, 후보 B급) 계약 검증"""
+    service = DecisionReportService()
+    try:
+        # 1. HLB 공식 타임라인 검증 (자본이벤트 + 재무제표 + 5% 후보 통합 피드)
+        hlb_report = service.generate_company_decision_report("HLB")
+        assert hlb_report["status"] == "SUCCESS"
+        facts = hlb_report["tier1_facts"]
+        timeline = facts["official_timeline"]
+        summary = facts["official_timeline_summary"]
+
+        assert len(timeline) > 0
+        assert summary["total_timeline_events"] == len(timeline)
+        assert summary["grade_a_count"] > 0, "HLB must have Grade A DART events"
+        assert summary["earliest_date"] is not None
+        assert summary["latest_date"] is not None
+        assert summary["earliest_date"] <= summary["latest_date"]
+
+        # 타임라인 항목 속성 및 URL 검증
+        for item in timeline:
+            assert item["event_date"] is not None
+            assert item["channel_grade"] in [
+                "GRADE_A_DART", "GRADE_A_KRX", "GRADE_A_FINANCIAL", "GRADE_B_UNVERIFIED"
+            ]
+            assert item["event_category"] in [
+                "CAPITAL_EVENT", "PROMOTED_STAKE", "FINANCIAL_FACT", "CANDIDATE_STAKE"
+            ]
+            assert item["title"] is not None
+            assert item["summary"] is not None
+            
+            rcp = item.get("rcept_no")
+            if rcp:
+                assert item["dart_url"].startswith("https://dart.fss.or.kr/dsaf001/main.do?rcpNo=")
+                assert item["krx_kind_url"].startswith("https://kind.krx.co.kr/common/disclsviewer.do?acptno=")
+
+        # 정렬 순서 검증 (최신순 내림차순)
+        dates = [item["event_date"] for item in timeline]
+        assert dates == sorted(dates, reverse=True), "Timeline must be sorted in descending order"
+
+        # 2. 알루코 승격 지분 타임라인 포함 검증
+        aluko_report = service.generate_company_decision_report("00117027")
+        assert aluko_report["status"] == "SUCCESS"
+        aluko_timeline = aluko_report["tier1_facts"]["official_timeline"]
+        
+        promoted_items = [
+            item for item in aluko_timeline
+            if item["event_category"] == "PROMOTED_STAKE"
+        ]
+        assert len(promoted_items) >= 1, "Aluko timeline must contain promoted stake event"
+        p_item = promoted_items[0]
+        assert p_item["event_date"] == "2023-08-04"
+        assert p_item["channel_grade"] == "GRADE_A_DART"
+        assert p_item["rcept_no"] == "20230810000694"
+        assert "케이피티유" in p_item["title"]
+
+        # 3. 헬퍼 유닛 검증 (빈 데이터 및 결손 방어)
+        empty_res = build_official_timeline([], [], {"status": "UNAVAILABLE"}, [])
+        assert len(empty_res["feed"]) == 0
+        assert empty_res["summary"]["total_timeline_events"] == 0
+        assert empty_res["summary"]["grade_a_count"] == 0
+        assert empty_res["summary"]["grade_b_count"] == 0
+        assert empty_res["summary"]["earliest_date"] is None
+        assert empty_res["summary"]["latest_date"] is None
+
+        print("✅ test_official_channels_timeline_contract passed!")
+    finally:
+        service.close()
+
+
 if __name__ == "__main__":
     test_decision_report_data_contract_rigorous()
     test_company_search_find_companies()
@@ -471,6 +549,8 @@ if __name__ == "__main__":
     test_financial_facts_cfs_ofs_mock_selection()
     test_financial_facts_year_fallback_mock()
     test_financial_facts_zero_trust_edge_cases()
-    print("🎉 ALL 9 RIGOROUS MENU 2 TESTS PASSED!")
+    test_official_channels_timeline_contract()
+    print("🎉 ALL 10 RIGOROUS MENU 2 TESTS PASSED!")
+
 
 

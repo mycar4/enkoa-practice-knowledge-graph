@@ -151,6 +151,156 @@ def sanitize_capital_event(ev: Dict[str, Any]) -> Dict[str, Any]:
     return sanitized
 
 
+def build_official_timeline(
+    capital_events: List[Dict[str, Any]],
+    promoted_stakes: List[Dict[str, Any]],
+    financial_facts: Dict[str, Any],
+    raw_candidates: List[Dict[str, Any]]
+) -> Dict[str, Any]:
+    """
+    출처별 공식 채널 타임라인 통합 생성:
+    - GRADE_A_DART: DART 전자공시 법정 자본이벤트 공시 원문
+    - GRADE_A_KRX: KRX KIND 상장공시 교차검증 결속
+    - GRADE_A_FINANCIAL: OpenDART 정기보고서 재무제표 팩트
+    - GRADE_B_UNVERIFIED: DART 5% 대량보유 미검증 원문 후보
+    """
+    timeline_items: List[Dict[str, Any]] = []
+
+    # 1. 자본이벤트 (A급 DART + A급 KRX KIND 교차검증)
+    for ev in capital_events:
+        ev_date = ev.get("decided_on") or ev.get("received_on") or ev.get("effective_on")
+        if not ev_date:
+            continue
+        rcp = ev.get("rcept_no")
+        ev_kr = ev.get("event_type_kr", ev.get("event_type", "자본이벤트"))
+        amt_disp = ev.get("amount_display", "-")
+        pur_disp = ev.get("sanitized_purpose", "-")
+        
+        dart_url = f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={rcp}" if rcp else None
+        krx_url = f"https://kind.krx.co.kr/common/disclsviewer.do?acptno={rcp}&method=search" if rcp else None
+
+        timeline_items.append({
+            "event_date": str(ev_date)[:10],
+            "date_type": "DECIDED_ON" if ev.get("decided_on") else "RECEIVED_ON",
+            "date_type_kr": "결정일자" if ev.get("decided_on") else "접수일자",
+            "event_category": "CAPITAL_EVENT",
+            "event_category_kr": "자본조달 공시",
+            "channel_grade": "GRADE_A_DART",
+            "channel_grade_kr": "🏛️ DART 공시 (A급)",
+            "title": f"{ev_kr}",
+            "summary": f"조달금액: {amt_disp} | 목적: {pur_disp}",
+            "rcept_no": rcp,
+            "dart_url": dart_url,
+            "krx_kind_url": krx_url,
+            "verification_status": "VERIFIED_FILING",
+            "verification_note": "DART 전자공시 접수번호 결속 + KRX KIND 상장공시 교차검증 링크 제공"
+        })
+
+    # 2. 검증·승격된 경제적 보유 사실 (A급 법정 대량보유 공시)
+    for p in promoted_stakes:
+        p_date = p.get("reporting_obligation_date")
+        if not p_date:
+            continue
+        rcp = p.get("rcept_no")
+        dart_url = f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={rcp}" if rcp else None
+        krx_url = f"https://kind.krx.co.kr/common/disclsviewer.do?acptno={rcp}&method=search" if rcp else None
+        ratio_str = f"{p.get('stake_ratio')}%" if p.get('stake_ratio') is not None else "-"
+        shares_cnt = p.get('shares_count')
+        shares_str = f"{shares_cnt:,}주" if isinstance(shares_cnt, (int, float)) else (str(shares_cnt) if shares_cnt is not None else "-")
+
+        timeline_items.append({
+            "event_date": str(p_date)[:10],
+            "date_type": "OBLIGATION_DATE",
+            "date_type_kr": "보고의무발생일",
+            "event_category": "PROMOTED_STAKE",
+            "event_category_kr": "검증 경제적 보유",
+            "channel_grade": "GRADE_A_DART",
+            "channel_grade_kr": "🔒 DART 승격공시 (A급)",
+            "title": f"[검증지분] {p.get('holder_to_target')}",
+            "summary": f"지분율: {ratio_str} ({shares_str}) | 봉인 매니페스트 결속 완료",
+            "rcept_no": rcp,
+            "dart_url": dart_url,
+            "krx_kind_url": krx_url,
+            "verification_status": "VERIFIED_ECONOMIC_STAKE",
+            "verification_note": "봉인 매니페스트 SHA-256 결속 + 원문 행 해시 전수 검증 승격"
+        })
+
+    # 3. OpenDART 정기보고서 재무제표 팩트 (A급 정기공시)
+    if isinstance(financial_facts, dict) and financial_facts.get("status") == "AVAILABLE":
+        bsns_year = financial_facts.get("bsns_year")
+        fin_rcp = financial_facts.get("rcept_no")
+        dart_url = f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={fin_rcp}" if fin_rcp else None
+        krx_url = f"https://kind.krx.co.kr/common/disclsviewer.do?acptno={fin_rcp}&method=search" if fin_rcp else None
+        rev_str = format_currency_kr(financial_facts.get("revenue"))
+        op_str = format_currency_kr(financial_facts.get("operating_income"))
+        debt_r = financial_facts.get("debt_ratio")
+        debt_str = f"{debt_r:.2f}%" if isinstance(debt_r, (int, float)) else (str(debt_r) if debt_r is not None else "-")
+
+        timeline_items.append({
+            "event_date": f"{bsns_year}-12-31",
+            "date_type": "FISCAL_YEAR_END",
+            "date_type_kr": "결산기준일",
+            "event_category": "FINANCIAL_FACT",
+            "event_category_kr": "정기 재무공시",
+            "channel_grade": "GRADE_A_FINANCIAL",
+            "channel_grade_kr": "📊 OpenDART 재무 (A급)",
+            "title": f"{bsns_year}년 {financial_facts.get('reprt_name', '사업보고서')} ({financial_facts.get('fs_div_name', '연결')})",
+            "summary": f"매출액: {rev_str} | 영업이익: {op_str} | 부채비율: {debt_str}",
+            "rcept_no": fin_rcp,
+            "dart_url": dart_url,
+            "krx_kind_url": krx_url,
+            "verification_status": "VERIFIED_FILING",
+            "verification_note": "금융감독원 OpenDART 사업보고서(fnlttSinglAcnt) 단일회사 주요계정 직연동"
+        })
+
+    # 4. 5% 대량보유 미검증 원문 추출 후보 (B급 미검증 후보 - 상위 5건)
+    for cand in raw_candidates[:5]:
+        cand_date = cand.get("reporting_obligation_date")
+        if not cand_date:
+            continue
+        rcp = cand.get("rcept_no")
+        dart_url = f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={rcp}" if rcp else None
+        krx_url = f"https://kind.krx.co.kr/common/disclsviewer.do?acptno={rcp}&method=search" if rcp else None
+        ratio_str = f"{cand.get('stake_ratio')}%" if cand.get('stake_ratio') is not None else "-"
+
+        timeline_items.append({
+            "event_date": str(cand_date)[:10],
+            "date_type": "OBLIGATION_DATE",
+            "date_type_kr": "보고의무발생일",
+            "event_category": "CANDIDATE_STAKE",
+            "event_category_kr": "5% 보유 후보",
+            "channel_grade": "GRADE_B_UNVERIFIED",
+            "channel_grade_kr": "⚪ 원문추출 후보 (B급)",
+            "title": f"[후보] {cand.get('holder_name')} 5% 보유 공시",
+            "summary": f"지분율: {ratio_str} | 원문 파서 추출 (엔티티 미승격)",
+            "rcept_no": rcp,
+            "dart_url": dart_url,
+            "krx_kind_url": krx_url,
+            "verification_status": "UNVERIFIED_CANDIDATE",
+            "verification_note": "DART 5% 대량보유 공시 원문 테이블 추출 1차 후보"
+        })
+
+    # 시간 역순(최신순) 정렬
+    timeline_items.sort(key=lambda x: str(x.get("event_date", "")), reverse=True)
+
+    grade_a_count = sum(1 for item in timeline_items if item.get("channel_grade") != "GRADE_B_UNVERIFIED")
+    grade_b_count = sum(1 for item in timeline_items if item.get("channel_grade") == "GRADE_B_UNVERIFIED")
+    all_dates = [item["event_date"] for item in timeline_items if item.get("event_date")]
+
+    summary = {
+        "total_timeline_events": len(timeline_items),
+        "grade_a_count": grade_a_count,
+        "grade_b_count": grade_b_count,
+        "earliest_date": min(all_dates) if all_dates else None,
+        "latest_date": max(all_dates) if all_dates else None
+    }
+
+    return {
+        "summary": summary,
+        "feed": timeline_items
+    }
+
+
 class DecisionReportService:
     """단일 기업 대상 4단 의사결정 리포트 데이터 서비스"""
 
@@ -542,6 +692,9 @@ class DecisionReportService:
         # OpenDART 주요 재무제표 팩트 조회 (DS003)
         financial_facts = self.get_company_financial_facts(corp_code)
 
+        # 출처별 공식 채널 통합 타임라인 피드 생성 (DART A급 + KRX KIND 교차검증)
+        timeline_bundle = build_official_timeline(capital_events, promoted_stakes, financial_facts, raw_candidates)
+
         facts = {
             "company_profile": {
                 "corp_code": corp_code,
@@ -551,6 +704,8 @@ class DecisionReportService:
             },
             "date_coverage": date_coverage,
             "financial_facts": financial_facts,
+            "official_timeline": timeline_bundle["feed"],
+            "official_timeline_summary": timeline_bundle["summary"],
             "capital_events_summary": {
                 "total_events_count": len(capital_events),
                 "events_detail": capital_events

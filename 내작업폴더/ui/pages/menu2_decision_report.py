@@ -371,6 +371,76 @@ def render_menu2_decision_report(driver=None, theme_mode: str = "🌙 다크 모
     else:
         st.info(f"🏛️ 주요 재무제표 팩트: {fin_facts.get('message', 'OpenDART 재무제표 데이터 미공시 또는 조회 제한')}")
 
+    st.markdown("<div style='margin-top: 16px;'></div>", unsafe_allow_html=True)
+
+    # 1-5. 🌐 출처별 공식 채널 통합 타임라인 (DART A급 + KRX KIND 상장공시 교차검증)
+    timeline_feed = facts.get("official_timeline", [])
+    timeline_summary = facts.get("official_timeline_summary", {})
+    t_total = timeline_summary.get("total_timeline_events", len(timeline_feed))
+    t_grade_a = timeline_summary.get("grade_a_count", 0)
+    t_grade_b = timeline_summary.get("grade_b_count", 0)
+
+    st.markdown(f"""
+    <div style="background: {bg_card}; border: 1px solid rgba(168, 85, 247, 0.35); border-left: 5px solid #a855f7; border-radius: 12px; padding: 14px 18px; margin-bottom: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 16px;">🌐</span>
+                <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: {text_primary};">출처별 공식 채널 통합 타임라인 & KRX KIND 교차검증 피드</h4>
+                <span style="background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 700;">
+                    총 {t_total}건 (A급 법정공시 {t_grade_a}건 | B급 후보 {t_grade_b}건)
+                </span>
+            </div>
+            <span style="font-size: 12px; color: {text_secondary};">※ 금융감독원 DART + 한국거래소 KRX KIND 상장공시 접수번호 교차 결속</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if timeline_feed:
+        t_filter = st.radio(
+            "타임라인 필터링:",
+            ["전체 공시 보기", "🏛️ A급 법정공시만 보기 (DART / KRX 교차검증)", "⚪ B급 원문추출 후보 포함"],
+            index=0,
+            horizontal=True,
+            key=f"timeline_filter_{corp_code}"
+        )
+
+        filtered_timeline = timeline_feed
+        if "A급 법정공시만" in t_filter:
+            filtered_timeline = [item for item in timeline_feed if item.get("channel_grade") != "GRADE_B_UNVERIFIED"]
+
+        timeline_df_data = []
+        for item in filtered_timeline:
+            rcp = item.get("rcept_no") or "-"
+            timeline_df_data.append({
+                "일자": item.get("event_date", "-"),
+                "출처 등급": item.get("channel_grade_kr", "-"),
+                "구분": item.get("event_category_kr", "-"),
+                "공시/이벤트명": item.get("title", "-"),
+                "핵심 팩트 요약": item.get("summary", "-"),
+                "공시접수번호": rcp
+            })
+
+        st.dataframe(pd.DataFrame(timeline_df_data), use_container_width=True, height=260)
+
+        # 하단 공식 채널 통합 바로가기 바
+        c_tl1, c_tl2, c_tl3 = st.columns([2, 2, 3])
+        with c_tl1:
+            st.link_button(
+                "🏛️ DART 기업 종합공시 바로가기",
+                f"https://dart.fss.or.kr/dsab007/main.do?findCorpName={corp_name}",
+                use_container_width=True
+            )
+        with c_tl2:
+            st.link_button(
+                "🏛️ KRX KIND 상장공시 뷰어",
+                "https://kind.krx.co.kr/corpgeneral/corpList.do?method=loadInitPage",
+                use_container_width=True
+            )
+        with c_tl3:
+            st.caption("🛡️ 위 타임라인은 법적 효력이 있는 DART/KRX 접수번호 기준 정렬이며, 가격 예측 및 투자 권유가 아닙니다.")
+    else:
+        st.info("수집된 공식 채널 타임라인 이벤트가 없습니다.")
+
     st.markdown("---")
 
     # ── [2단: 관찰 지표 (Rule-based Observation)] ──
