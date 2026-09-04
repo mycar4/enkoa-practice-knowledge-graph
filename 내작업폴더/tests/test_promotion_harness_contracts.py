@@ -275,6 +275,18 @@ def test_integration_rerun_lineage_immutability():
         print(f"  ✅ [실측 통과] 재실행 시 노드 변동 Δ=0, 관계 변동 Δ=0 (완전 멱등성)")
 
     finally:
+        # [클린업] 운영 DB의 마지막 검증 필드를 테스트 실행 전 상태(공식 영수증 기준)로 안전하게 복원
+        if 'pre_rows' in locals() and pre_rows:
+            with driver.session(default_access_mode=WRITE_ACCESS) as s:
+                s.run("""
+                    MATCH ()-[r:HOLDS_ECONOMIC_STAKE]->()
+                    WHERE r.promotion_manifest_sha256 = $m_sha
+                    SET r.last_verified_run_id = $orig_last_run,
+                        r.last_verified_at = $orig_last_at
+                """, m_sha=EXPECTED_MANIFEST_SHA256,
+                     orig_last_run=pre_rows[0]["last_run"],
+                     orig_last_at=pre_rows[0]["last_at"])
+            print("  🧹 [클린업] 테스트 완료 후 운영 DB 감사 필드를 사전 영수증 상태로 안전 복원 완료")
         driver.close()
 
 
@@ -284,5 +296,13 @@ if __name__ == "__main__":
     test_pre_audit_against_aura()
     test_in_tx_assertion_rollback_guarantee()
     test_zero_owns_stake_guarantee()
-    test_integration_rerun_lineage_immutability()
-    print("\n🎉 모든 자동 하네스 계약 및 통합 테스트 6/6 전수 통과!")
+
+    allow_live_rerun = ("--live-rerun" in sys.argv) or (os.getenv("ALLOW_AURA_RERUN_TEST", "").lower() in ("true", "1", "yes"))
+    if allow_live_rerun:
+        test_integration_rerun_lineage_immutability()
+        print("\n🎉 모든 자동 하네스 계약 및 라이브 통합 테스트 6/6 전수 통과!")
+    else:
+        print("\n--- [통합 테스트 6/6 건너뜀 (안전 기본 모드)] ---")
+        print("  ℹ️ 운영 Aura 재실행 테스트는 '--live-rerun' 인자 또는 'ALLOW_AURA_RERUN_TEST=true' 환경변수 지정 시에만 실행됩니다.")
+        print("  ℹ️ 기본 계약 테스트 5/5 통과 (운영 DB 무변경 안전 확인 완료)")
+        print("\n🎉 기본 자동 하네스 계약 테스트 5/5 전수 통과!")
