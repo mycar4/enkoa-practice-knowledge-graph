@@ -18,9 +18,10 @@ from neo4j import GraphDatabase, READ_ACCESS
 from pyvis.network import Network
 import networkx as nx
 
-# 5% 공시 명시적 어댑터 (읽기 전용 / 동결 규격)
+# 5% 공시 명시적 어댑터 및 금융특화 GraphRAG 엔진 (읽기 전용 / 동결 규격)
 sys.path.insert(0, os.path.abspath("내작업폴더"))
 from adapter_5pct_general_art142_v1 import run_adapter_5pct_general_art142_v1
+from engine_financial_graphrag import analyze_financial_graphrag
 
 # 1. 환경 설정 & Streamlit 페이지 설정
 st.set_page_config(
@@ -32,9 +33,10 @@ st.set_page_config(
 
 load_dotenv(".env", override=True)
 
-NEO4J_URI = os.getenv("NEO4J_URI", "neo4j+ssc://2fa50db4.databases.neo4j.io")
-NEO4J_USER = os.getenv("NEO4J_USER", "2fa50db4")
-NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "")
+# 클라우드 Aura 전용 변수 1순위 탐색 (교안 실습용 NEO4J_URI와 완벽 격리)
+NEO4J_URI = os.getenv("AURA_URI") or os.getenv("NEO4J_URI", "neo4j+ssc://a8a048c8.databases.neo4j.io")
+NEO4J_USER = os.getenv("AURA_USER") or os.getenv("NEO4J_USER", "neo4j")
+NEO4J_PASSWORD = os.getenv("AURA_PASSWORD") or os.getenv("NEO4J_PASSWORD", "")
 
 # Neo4j 드라이버 연결 (URI별 캐싱 자동 갱신 - 100% Read-Only 안전 연결)
 @st.cache_resource
@@ -63,452 +65,20 @@ def ensure_company_ownership_data(company_name: str):
     pass
 
 def generate_graphrag_response(prompt: str, api_key_input: str = "") -> dict:
-    """GraphRAG 자연어 질의 ➔ 엔티티/인텐트 추출 ➔ Neo4j 정밀 Cypher ➔ 팩트 증빙 기반 응답 생성 공용 함수"""
-    llm_intent_data = {
-        "intent": "SINGLE_SEARCH",
-        "entities": [],
-        "keywords": []
-    }
-    
-    if api_key_input and api_key_input.startswith("sk-"):
-        try:
-            parser_prompt = f"""
-당신은 금융 지식그래프 쿼리 라우터입니다. 사용자의 질문을 분석하여 JSON 형식으로만 응답하세요.
-지식그래프에 존재하는 대표 엔티티: 삼성물산, 삼성전자, 삼성생명, 삼성바이오로직스, 이재용, 이부진, 현대자동차, 현대모비스, 기아, 현대글로비스, 정의선, 정몽구, SK(주), SK이노베이션, SK텔레콤, SK하이닉스, 최태원, (주)LG, LG전자, LG화학, 구광모, (주)한화, 한화에어로스페이스, 김승연, 김동관, 국민연금공단, MBK파트너스, 강철민, 골든홀딩스투자조합, 루미너스테크, 에이펙스바이오, 박성호, 조명훈, 블루스톤1호조합, 스타네트웍스, 장동식, 아시아혁신투자조합, ESR켄달스퀘어리츠, HD한국조선해양, HD현대중공업, HD현대, HDC, NAVER, KB금융
-
-[규칙]:
-1. intent 분류: 
-   - "CIRCULAR_LOOP" (순환출자, 고리, 루프 질문)
-   - "COMPARISON" (2개 이상 기업 또는 특정 소유자-대상사 간의 지분/출자 비교)
-   - "SUMMARY_STATS" (총수별 통계, 집계, 평균, 중앙값, 지배력순위)
-   - "CAPITAL_EVENTS" (주요 자본 이벤트: CB/BW 발행, 유상증자, 회사합병, 주식양수도)
-   - "SINGLE_ENTITY" (단일 기업이나 인물 지배구조 분석)
-   - "GENERAL" (일반 질문)
-2. entities: 질문에서 언급된 기업/인물명을 표준 명칭으로 정규화하여 리스트로 반환 (예: "삼전" -> "삼성전자", "현대중공업" -> "HD현대중공업", "한국조선해양" -> "HD한국조선해양", "켄달스퀘어" -> "ESR켄달스퀘어리츠", "국민연금" -> "국민연금공단")
-
-JSON 출력 포맷:
-{{"intent": "...", "entities": ["..."], "summary": "사용자 질문 요약"}}
-            """
-            headers = {"Content-Type": "application/json", "Authorization": f"Bearer {api_key_input}"}
-            payload = {
-                "model": "gpt-4o-mini",
-                "messages": [
-                    {"role": "system", "content": parser_prompt},
-                    {"role": "user", "content": prompt}
-                ],
-                "response_format": {"type": "json_object"},
-                "temperature": 0.0
-            }
-            req = urllib.request.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(payload).encode("utf-8"), headers=headers)
-            with urllib.request.urlopen(req, timeout=10) as resp:
-                res_body = json.loads(resp.read().decode("utf-8"))
-                raw_content = res_body["choices"][0]["message"]["content"]
-                raw_clean = re.sub(r"^```json\s*|\s*```$", "", raw_content.strip(), flags=re.MULTILINE)
-                llm_intent_data = json.loads(raw_clean)
-                
-                usage = res_body.get("usage", {})
-                p_tok = usage.get("prompt_tokens", 0)
-                c_tok = usage.get("completion_tokens", 0)
-                tot_tok = usage.get("total_tokens", 0)
-                cost_krw = (p_tok * 0.15 / 1000000 + c_tok * 0.60 / 1000000) * 1400
-                token_usage_info = {
-                    "prompt": p_tok,
-                    "completion": c_tok,
-                    "total": tot_tok,
-                    "cost_krw": round(cost_krw, 4),
-                    "task": "인텐트 및 엔티티 파싱"
-                }
-                llm_prompt_payload = {
-                    "task": "LLM 기반 자연어 인텐트 및 엔티티 링킹 (Router)",
-                    "system_prompt": parser_prompt,
-                    "user_prompt": prompt
-                }
-        except Exception:
-            token_usage_info = None
-            llm_prompt_payload = {}
-    else:
-        token_usage_info = None
-        llm_prompt_payload = {}
-    
-    # 엔티티 파서 백업 (규칙 기반 엔티티 탐지)
-    detected_intent = llm_intent_data.get("intent", "GENERAL")
-    detected_entities = llm_intent_data.get("entities", [])
-    
-    if not detected_entities:
-        prompt_clean = prompt.replace(" ", "")
-        all_nodes = run_cypher("MATCH (n) WHERE any(l in labels(n) WHERE l STARTS WITH 'DART_') RETURN DISTINCT n.name AS name")
-        detected_entities = [row['name'] for row in all_nodes if row['name'] and (row['name'] in prompt or row['name'].replace(" ", "") in prompt_clean)]
-        detected_entities.sort(key=len, reverse=True)
-
-    # ── [2단계: 인텐트 및 복수 엔티티 기반 동적 Cypher 실행] ──
-    cypher_executed = ""
-    raw_data_result = {}
-    raw_facts_text = ""
-    
-    # A. 2개 이상 엔티티 쌍방 직접 지분/출자 관계 조회 (PAIR_ENTITY_STAKE)
-    if (detected_intent == "COMPARISON" or len(detected_entities) >= 2) and detected_entities:
-        ent1 = detected_entities[0]
-        ent2 = detected_entities[1] if len(detected_entities) > 1 else detected_entities[0]
-        
-        cypher_executed = f"""
-// ⚖️ [지정된 두 엔티티 간의 직접 지분 및 출자 관계 엄격 쿼리] {ent1} <-> {ent2}
-MATCH (a)-[r]->(b)
-WHERE ((a.name = '{ent1}' AND b.name = '{ent2}') OR (a.name = '{ent2}' AND b.name = '{ent1}'))
-  AND type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN']
-RETURN a.name AS owner, type(r) AS rel, r.stake AS stake, r.position AS pos, b.name AS target,
-       r.source_rcept_no AS rcept_no, r.reported_on AS reported_on, r.as_of_date AS as_of_date,
-       r.verification_status AS ver_st, r.is_current AS is_curr, r.book_value AS book_value
-ORDER BY r.is_current DESC, r.reported_on DESC, r.as_of_date DESC
-LIMIT 10
-        """
-        compare_res = run_cypher("""
-        MATCH (a)-[r]->(b)
-        WHERE ((a.name = $ent1 AND b.name = $ent2) OR (a.name = $ent2 AND b.name = $ent1))
-          AND type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN']
-        RETURN a.name AS owner, type(r) AS rel, r.stake AS stake, r.position AS pos, b.name AS target,
-               r.source_rcept_no AS rcept_no, r.reported_on AS reported_on, r.as_of_date AS as_of_date,
-               r.verification_status AS ver_st, r.is_current AS is_curr, r.book_value AS book_value
-        ORDER BY r.is_current DESC, r.reported_on DESC, r.as_of_date DESC
-        LIMIT 10
-        """, ent1=ent1, ent2=ent2)
-        
-        raw_data_result = {"조회_엔티티": [ent1, ent2], "조회_데이터": compare_res}
-        if compare_res:
-            raw_facts_text = f"### ⚖️ [GraphRAG 정밀 팩트 추출] **{ent1}** ↔ **{ent2}** 공시 지분·출자 사실\n\n"
-            for r in compare_res:
-                pos_str = f" ({r['pos']})" if r.get('pos') else ""
-                stake_str = f"지분율 **{r.get('stake', 0.0)}%**" if r.get('stake') is not None else ""
-                book_str = f" / 장부가액 **{int(r['book_value']):,}원**" if r.get('book_value') else ""
-                as_of_val = str(r['as_of_date']) if r.get('as_of_date') else ""
-                rep_val = str(r['reported_on']) if r.get('reported_on') else ""
-                as_of_str = f" (결산기준일: `{as_of_val}`)" if as_of_val else ""
-                rep_str = f" (공시접수일: `{rep_val}`)" if rep_val else ""
-                rcp_str = f" [공시: [`{r['rcept_no']}`](https://dart.fss.or.kr/dsaf001/main.do?rcpNo={r['rcept_no']})]" if r.get('rcept_no') else " [근거 공시 미연결]"
-                curr_str = " [🟢 최신 유효 사실]" if r.get('is_curr') is True else (" [⚪ 과거 이력]" if r.get('is_curr') is False else "")
-                ver_str = f" [{r['ver_st']}]" if r.get('ver_st') else ""
-                raw_facts_text += f"• **{r['owner']}** ──[{r['rel']}: {stake_str}{book_str}]──> **{r['target']}**{pos_str}{as_of_str}{rep_str}{rcp_str}{curr_str}{ver_str}\n"
-        else:
-            raw_facts_text = f"⚠️ **'{ent1}'**와(과) **'{ent2}'** 간의 직접적인 지분/출자 관계는 **현재 적재된 공시 데이터에서 확인 불가**합니다."
-
-    # B. 순환출자 고리 (CIRCULAR_LOOP)
-    elif detected_intent == "CIRCULAR_LOOP" or any(kw in prompt for kw in ["순환", "순환출자", "루프"]):
-        cypher_executed = """
-// 🔄 3-Hop 순환출자 고리 자동 탐색 (가변 경로)
-MATCH path = (a:DART_Company)-[:OWNS_STAKE*2..4]->(a)
-RETURN [n in nodes(path) | n.name] AS cycle_nodes,
-       [r in relationships(path) | r.stake] AS cycle_stakes
-LIMIT 5
-        """
-        cycles = run_cypher("""
-        MATCH path = (a:DART_Company)-[:OWNS_STAKE*2..4]->(a)
-        RETURN [n in nodes(path) | n.name] AS cycle_nodes,
-               [r in relationships(path) | r.stake] AS cycle_stakes
-        LIMIT 5
-        """)
-        
-        unique_cycles = []
-        seen_cycle_sets = set()
-        for c in cycles:
-            c_set = frozenset(c['cycle_nodes'][:-1])
-            if c_set not in seen_cycle_sets:
-                seen_cycle_sets.add(c_set)
-                unique_cycles.append(c)
-                
-        raw_data_result = unique_cycles
-        if unique_cycles:
-            c_nodes = unique_cycles[0]['cycle_nodes']
-            c_stakes = unique_cycles[0]['cycle_stakes']
-            route_str = " ➔ ".join([f"**{c_nodes[i]}** ({c_stakes[i]}%)" for i in range(len(c_stakes))]) + f" ➔ **{c_nodes[0]}**"
-            raw_facts_text = f"### 🔄 [순환출자 탐색] 현대차그룹 순환출자 고리 적발\n\n```text\n{route_str}\n```\n"
-        else:
-            raw_facts_text = "🔍 지식그래프 내 추가적인 순환출자 고리는 발견되지 않았습니다."
-
-    # B-1. [3대 지배구조 분석] 지배 네트워크 영향력 후보 탐색 & 간접 환산 지분 (INFLUENCE_SEARCH)
-    elif any(kw in prompt for kw in ["영향력", "후보", "실세", "배후", "지배력", "PPR", "지분망", "주변 지분망", "실질지배"]):
-        target_ent = detected_entities[0] if detected_entities else "삼성전자"
-        
-        # 1. 대상 회사 정보 조회
-        comp_info = run_cypher("MATCH (c:DART_Company) WHERE c.name = $name RETURN c.corp_code AS ccode, c.name AS name", name=target_ent)
-        target_code = comp_info[0]['ccode'] if comp_info and comp_info[0].get('ccode') else None
-        
-        # 2. 계층 1: 공시 기재 직접 보유 팩트 (1-Hop)
-        tier1_cypher = """
-        MATCH (h)-[r:OWNS_STAKE]->(c:DART_Company {name: $name})
-        WHERE r.is_current = true
-        RETURN coalesce(h.name, h.global_person_id) AS holder_name,
-               labels(h)[0] AS holder_type,
-               coalesce(h.corp_code, h.org_id, h.global_person_id) AS holder_pk,
-               r.stake AS stake,
-               r.shares_count AS shares,
-               r.source_rcept_no AS rcept_no
-        ORDER BY r.stake DESC
-        LIMIT 7
-        """
-        tier1_res = run_cypher(tier1_cypher, name=target_ent)
-        
-        # 3. 계층 2: 최대 4-Hop 내 단순 산술 경로 곱 합산 (Simple DAG)
-        tier2_cypher = """
-        MATCH path = (root)-[r:OWNS_STAKE*1..4]->(target:DART_Company {name: $name})
-        WHERE ALL(rel IN r WHERE rel.is_current = true)
-          AND ALL(i IN range(0, size(nodes(path))-2) WHERE ALL(j IN range(i+1, size(nodes(path))-1) WHERE nodes(path)[i] <> nodes(path)[j]))
-        WITH root, target, path,
-             REDUCE(prod = 1.0, rel IN relationships(path) | prod * (rel.stake / 100.0)) * 100.0 AS path_stake
-        WITH root, sum(path_stake) AS total_arithmetic_stake, min(length(path)) AS shortest_hop, count(path) AS path_count
-        RETURN coalesce(root.name, root.global_person_id) AS root_name,
-               labels(root)[0] AS root_type,
-               shortest_hop,
-               path_count,
-               total_arithmetic_stake
-        ORDER BY total_arithmetic_stake DESC
-        LIMIT 7
-        """
-        tier2_res = run_cypher(tier2_cypher, name=target_ent)
-        
-        # 4. 계층 3: 지배 네트워크 영향력 후보 탐색 (NetworkX In-Memory PPR)
-        raw_edges = run_cypher("""
-        MATCH (h)-[r:OWNS_STAKE]->(c:DART_Company)
-        WHERE r.is_current = true
-          AND (h:DART_Company OR h:DART_Organization OR (h:DART_Person AND h.verification_status = 'VERIFIED'))
-          AND r.stake IS NOT NULL
-        RETURN coalesce(h.corp_code, h.org_id, h.global_person_id) AS src_id,
-               coalesce(h.name, h.global_person_id) AS src_name,
-               labels(h)[0] AS src_type,
-               c.corp_code AS tgt_id,
-               c.name AS tgt_name,
-               r.stake AS stake
-        """)
-        
-        G = nx.DiGraph()
-        for e in raw_edges:
-            src = e["src_id"]
-            tgt = e["tgt_id"]
-            weight = float(e["stake"]) if e["stake"] > 0 else 0.1
-            G.add_node(src, name=e["src_name"], type=e["src_type"])
-            G.add_node(tgt, name=e["tgt_name"], type="DART_Company")
-            G.add_edge(tgt, src, weight=weight)
-            
-        tier3_candidates = []
-        if target_code and target_code in G:
-            ppr = nx.pagerank(G, alpha=0.85, personalization={target_code: 1.0}, weight='weight')
-            ranked = sorted([(k, v) for k, v in ppr.items() if k != target_code], key=lambda x: x[1], reverse=True)
-            for nid, score in ranked[:5]:
-                nd = G.nodes[nid]
-                tier3_candidates.append({"name": nd["name"], "type": nd["type"], "score": round(score, 6)})
-        elif target_ent:
-            target_node_ids = [nid for nid, data in G.nodes(data=True) if data.get("name") == target_ent]
-            if target_node_ids:
-                src_nid = target_node_ids[0]
-                ppr = nx.pagerank(G, alpha=0.85, personalization={src_nid: 1.0}, weight='weight')
-                ranked = sorted([(k, v) for k, v in ppr.items() if k != src_nid], key=lambda x: x[1], reverse=True)
-                for nid, score in ranked[:5]:
-                    nd = G.nodes[nid]
-                    tier3_candidates.append({"name": nd["name"], "type": nd["type"], "score": round(score, 6)})
-                    
-        raw_facts_text = f"### 🏛️ [3대 지배구조 분석] **{target_ent}** 지배구조 정밀 분석 리포트\n\n"
-        
-        # 1) 직접 보유 팩트 테이블
-        raw_facts_text += f"#### 📑 1. 공시에 기재된 직접 보유 팩트 (1-Hop)\n"
-        if tier1_res:
-            raw_facts_text += "| 순위 | 주주/기관명 | 엔티티 유형 | 직접 지분율 | 소유 주식수 | 근거 공시번호 |\n|---|---|---|:---:|:---:|:---:|\n"
-            for idx, r in enumerate(tier1_res, 1):
-                shares_str = f"{int(r['shares']):,}주" if r.get('shares') else "-"
-                rcp_str = f"[`{r['rcept_no']}`](https://dart.fss.or.kr/dsaf001/main.do?rcpNo={r['rcept_no']})" if r.get('rcept_no') else "-"
-                raw_facts_text += f"| {idx} | **{r['holder_name']}** | `{r['holder_type']}` | **{r['stake']:.2f}%** | {shares_str} | {rcp_str} |\n"
-        else:
-            raw_facts_text += "ℹ️ 등록된 5% 이상 직접 지분 보유 팩트가 없습니다.\n"
-            
-        # 2) 간접 산술 환산 지분 테이블
-        raw_facts_text += f"\n#### 🧮 2. 최대 4-Hop 내 단순 산술 경로 곱 합산\n"
-        raw_facts_text += "> ⚠️ *본 수치는 Simple DAG 경로 기준 단순 산술 계산값이며, 우선주·의결권 차이·순환출자를 포함한 법적 실질 지배력과 동일시할 수 없습니다.*\n\n"
-        if tier2_res:
-            raw_facts_text += "| 순위 | 지배/소유 주체 | 엔티티 유형 | 최소 Hop | 경로수 | 산술 환산 지분율 |\n|---|---|---|:---:|:---:|:---:|\n"
-            for idx, r in enumerate(tier2_res, 1):
-                raw_facts_text += f"| {idx} | **{r['root_name']}** | `{r['root_type']}` | {r['shortest_hop']} | {r['path_count']} | **{r['total_arithmetic_stake']:.4f}%** |\n"
-        else:
-            raw_facts_text += "ℹ️ 다단계 출자 경로가 존재하지 않습니다.\n"
-            
-        # 3) 지배 네트워크 영향력 후보 테이블
-        raw_facts_text += f"\n#### ⚡ 3. 지배 네트워크 영향력 후보 탐색 (PPR)\n"
-        raw_facts_text += "> 💡 *Python NetworkX In-Memory 스트리밍 연산 (가중치 역방향 전파). PageRank 확률 정규화 특성으로 인해 지분율 절대치와 비례하지 않는 탐색 지표입니다.*\n\n"
-        if tier3_candidates:
-            raw_facts_text += "| 순위 | 영향력 후보 주체 | 엔티티 유형 | PPR 탐색 점수 | 비고 |\n|---|---|---|:---:|:---:|\n"
-            for idx, c in enumerate(tier3_candidates, 1):
-                raw_facts_text += f"| {idx} | **{c['name']}** | `{c['type']}` | **{c['score']:.6f}** | 🎯 영향력 핵심 후보 |\n"
-        else:
-            raw_facts_text += "ℹ️ 지배 네트워크 후보 탐색 결과가 없습니다.\n"
-            
-        cypher_executed = tier1_cypher
-        raw_data_result = {"tier1": tier1_res, "tier2": tier2_res, "tier3": tier3_candidates}
-
-    # C. 수치 통계 요약 (SUMMARY_STATS)
-    elif detected_intent == "SUMMARY_STATS" or (any(kw in prompt for kw in ["통계", "요약", "평균", "중앙값", "순위"]) and not detected_entities):
-        cypher_executed = """
-// 📊 수치 요약 & 분위수 집계 (최신 유효 지분 is_current=true 만 집계)
-MATCH (p:DART_Person)-[r:OWNS_STAKE {is_current: true}]->(c:DART_Company)
-RETURN p.name AS 총수명,
-       count(c) AS 보유기업수,
-       round(sum(r.stake), 2) AS 총지분합계,
-       round(avg(r.stake), 2) AS 평균지분율,
-       percentileCont(r.stake, 0.5) AS 중앙값지분율
-ORDER BY 보유기업수 DESC, 총지분합계 DESC
-LIMIT 7
-        """
-        stats_res = run_cypher(cypher_executed)
-        raw_data_result = stats_res
-        raw_facts_text = "### 📊 [수치 요약 집계] 재벌 총수별 최신 유효 지배 지분 통계\n\n"
-        raw_facts_text += "| 총수명 | 지배 기업 수 | 총 지분 합계 | 평균 지분율 | 중앙값 (p50) |\n|---|:---:|:---:|:---:|:---:|\n"
-        for r in stats_res:
-            raw_facts_text += f"| **{r['총수명']}** | {r['보유기업수']}개 | {r['총지분합계']}% | {r['평균지분율']}% | **{r['중앙값지분율']}%** |\n"
-
-    # D. 자본 이벤트 공시 팩트 질의 (CAPITAL_EVENTS)
-    elif detected_intent == "CAPITAL_EVENTS" or any(kw in prompt for kw in ["CB", "전환사채", "BW", "신주인수권", "유상증자", "합병", "양수도", "자본이벤트"]):
-        if detected_entities:
-            target_ent = detected_entities[0]
-            cypher_executed = """
-            MATCH (c:DART_Company {name: $name})-[:ANNOUNCED]->(e:DART_CapitalEvent)
-            RETURN e.event_type AS type, e.event_name AS name, e.issue_amount AS amount,
-                   e.conversion_price AS cv_price, e.is_private AS is_private,
-                   e.target_corp_name AS target, e.merger_ratio AS merger_ratio,
-                   e.source_rcept_no AS rcept_no, e.received_on AS received_on,
-                   e.decided_on AS decided_on, e.effective_on AS effective_on
-            ORDER BY e.received_on DESC
-            LIMIT 10
-            """
-            cap_events = run_cypher(cypher_executed, name=target_ent)
-            raw_data_result = cap_events
-            if cap_events:
-                raw_facts_text = f"### ⚡ [GraphRAG 자본 이벤트 팩트] **{target_ent}** 주요 공시 변동 내역\n\n"
-                for ev in cap_events:
-                    amt_str = f" / 발행·양수액 **{int(ev['amount']):,}원**" if ev.get('amount') else ""
-                    cv_str = f" / 전환가 **{int(ev['cv_price']):,}원**" if ev.get('cv_price') else ""
-                    priv_str = " (사모)" if ev.get('is_private') else ""
-                    tgt_str = f" ➔ 상대방: **{ev['target']}**" if ev.get('target') else ""
-                    ratio_str = f" (합병비율: `{ev['merger_ratio']}`)" if ev.get('merger_ratio') else ""
-                    rcp_str = f" [공시: [`{ev['rcept_no']}`](https://dart.fss.or.kr/dsaf001/main.do?rcpNo={ev['rcept_no']})]"
-                    dec_str = f" (결의일: `{str(ev['decided_on'])}`)" if ev.get('decided_on') else ""
-                    eff_str = f" (효력/납입일: `{str(ev['effective_on'])}`)" if ev.get('effective_on') else ""
-                    raw_facts_text += f"• **{ev['name']}**{priv_str}{amt_str}{cv_str}{tgt_str}{ratio_str}{dec_str}{eff_str} (접수일: `{str(ev['received_on'])}`){rcp_str}\n"
-            else:
-                raw_facts_text = f"⚠️ **'{target_ent}'** 관련 사모CB 및 자본 이벤트 데이터는 **현재 적재된 공시 데이터에서 확인 불가**합니다."
-        else:
-            raw_facts_text = "ℹ️ 다단계 사모사채 인수자(SUBSCRIBED) 및 연계 출자 경로는 **Phase 2에서 정식 적재될 예정**입니다. (현재 데이터 미적재)"
-
-    # E. 단일 엔티티 상세 지배구조 & 출자 현황 (SINGLE_ENTITY)
-    elif detected_entities:
-        target_ent = detected_entities[0]
-        cypher_executed = f"""
-// 1. 직접 지분 및 출자 관계 (1-Hop)
-MATCH (a {{name: '{target_ent}'}})-[r]->(b)
-WHERE type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN']
-RETURN b.name AS target, type(r) AS rel, r.stake AS stake, r.position AS pos,
-       r.source_rcept_no AS rcept_no, r.reported_on AS reported_on, r.as_of_date AS as_of_date,
-       r.verification_status AS ver_st, r.is_current AS is_curr, r.book_value AS book_value
-ORDER BY r.is_current DESC, r.reported_on DESC, r.stake DESC
-
-// 2. 피지배 / 주요주주 관계 (누가 지배하는가)
-MATCH (a)-[r]->(b {{name: '{target_ent}'}})
-WHERE type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN']
-RETURN a.name AS owner, type(r) AS rel, r.stake AS stake, r.position AS pos,
-       r.source_rcept_no AS rcept_no, r.reported_on AS reported_on, r.as_of_date AS as_of_date,
-       r.verification_status AS ver_st, r.is_current AS is_curr, r.book_value AS book_value
-ORDER BY r.is_current DESC, r.reported_on DESC, r.stake DESC
-        """
-        direct_stakes = run_cypher("""
-        MATCH (a {name: $name})-[r]->(b)
-        WHERE type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN']
-        RETURN b.name AS target, type(r) AS rel, r.stake AS stake, r.position AS pos,
-               r.source_rcept_no AS rcept_no, r.reported_on AS reported_on, r.as_of_date AS as_of_date,
-               r.verification_status AS ver_st, r.is_current AS is_curr, r.book_value AS book_value
-        ORDER BY r.is_current DESC, r.reported_on DESC, r.stake DESC
-        """, name=target_ent)
-        
-        owned_by = run_cypher("""
-        MATCH (a)-[r]->(b {name: $name})
-        WHERE type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN']
-        RETURN a.name AS owner, type(r) AS rel, r.stake AS stake, r.position AS pos,
-               r.source_rcept_no AS rcept_no, r.reported_on AS reported_on, r.as_of_date AS as_of_date,
-               r.verification_status AS ver_st, r.is_current AS is_curr, r.book_value AS book_value
-        ORDER BY r.is_current DESC, r.reported_on DESC, r.stake DESC
-        """, name=target_ent)
-        
-        multi_hop = run_cypher("MATCH path = (a {name: $name})-[:OWNS_STAKE*2..3]->(c) RETURN DISTINCT c.name AS indirect_comp, length(path) AS hops LIMIT 10", name=target_ent)
-        
-        cap_events = run_cypher("""
-        MATCH (c:DART_Company {name: $name})-[:ANNOUNCED]->(e:DART_CapitalEvent)
-        RETURN e.event_type AS type, e.event_name AS name, e.issue_amount AS amount,
-               e.conversion_price AS cv_price, e.is_private AS is_private,
-               e.target_corp_name AS target, e.merger_ratio AS merger_ratio,
-               e.source_rcept_no AS rcept_no, e.received_on AS received_on
-        ORDER BY e.received_on DESC
-        LIMIT 5
-        """, name=target_ent)
-
-        raw_data_result = {"1_보유지분_및_출자": direct_stakes, "2_주요주주": owned_by, "3_다단계_우회": multi_hop, "4_자본이벤트": cap_events}
-        
-        if not direct_stakes and not owned_by and not multi_hop and not cap_events:
-            raw_facts_text = f"⚠️ **'{target_ent}'** 관련 공시 데이터는 **현재 적재된 공시 데이터에서 확인 불가**합니다."
-        else:
-            raw_facts_text = f"### 📊 [GraphRAG 실시간 분석] **{target_ent}** 지배구조 & 출자 네트워크 리포트\n\n"
-            if direct_stakes:
-                raw_facts_text += f"#### 1️⃣ **{target_ent}**이(가) 보유한 지분 및 출자 내역:\n"
-                for row in direct_stakes:
-                    pos_str = f" ({row['pos']})" if row.get('pos') else ""
-                    stake_str = f"**{row.get('stake', 0.0)}%**" if row.get('stake') is not None else ""
-                    book_str = f" / 장부가액 **{int(row['book_value']):,}원**" if row.get('book_value') else ""
-                    as_of_val = str(row['as_of_date']) if row.get('as_of_date') else ""
-                    rep_val = str(row['reported_on']) if row.get('reported_on') else ""
-                    as_of_str = f" (기준일: `{as_of_val}`)" if as_of_val else ""
-                    rep_str = f" (접수일: `{rep_val}`)" if rep_val else ""
-                    rcp_str = f" [공시: [`{row['rcept_no']}`](https://dart.fss.or.kr/dsaf001/main.do?rcpNo={row['rcept_no']})]" if row.get('rcept_no') else " [근거 공시 미연결]"
-                    curr_str = " [🟢 최신 유효 사실]" if row.get('is_curr') is True else ""
-                    raw_facts_text += f"• **{row['target']}**: {stake_str}{book_str}{pos_str}{as_of_str}{rep_str}{rcp_str}{curr_str}\n"
-            if owned_by:
-                raw_facts_text += f"\n#### 2️⃣ **{target_ent}**의 주요 주주 (누가 지배하는가):\n"
-                for row in owned_by:
-                    pos_str = f" ({row['pos']})" if row.get('pos') else ""
-                    stake_str = f"**{row.get('stake', 0.0)}%**" if row.get('stake') is not None else ""
-                    book_str = f" / 장부가액 **{int(row['book_value']):,}원**" if row.get('book_value') else ""
-                    as_of_val = str(row['as_of_date']) if row.get('as_of_date') else ""
-                    rep_val = str(row['reported_on']) if row.get('reported_on') else ""
-                    as_of_str = f" (기준일: `{as_of_val}`)" if as_of_val else ""
-                    rep_str = f" (접수일: `{rep_val}`)" if rep_val else ""
-                    rcp_str = f" [공시: [`{row['rcept_no']}`](https://dart.fss.or.kr/dsaf001/main.do?rcpNo={row['rcept_no']})]" if row.get('rcept_no') else " [근거 공시 미연결]"
-                    curr_str = " [🟢 최신 유효 사실]" if row.get('is_curr') is True else ""
-                    raw_facts_text += f"• **{row['owner']}**: {stake_str}{book_str}{pos_str}{as_of_str}{rep_str}{rcp_str}{curr_str}\n"
-            if cap_events:
-                raw_facts_text += f"\n#### ⚡ **{target_ent}**의 주요 자본 이벤트 (CB·증자·M&A):\n"
-                for ev in cap_events:
-                    amt_str = f" / 발행·양수액 **{int(ev['amount']):,}원**" if ev.get('amount') else ""
-                    cv_str = f" / 전환가 **{int(ev['cv_price']):,}원**" if ev.get('cv_price') else ""
-                    priv_str = " (사모)" if ev.get('is_private') else ""
-                    rcp_str = f" [공시: [`{ev['rcept_no']}`](https://dart.fss.or.kr/dsaf001/main.do?rcpNo={ev['rcept_no']})]"
-                    raw_facts_text += f"• **{ev['name']}**{priv_str}{amt_str}{cv_str} (접수일: `{str(ev['received_on'])}`){rcp_str}\n"
-            if multi_hop:
-                raw_facts_text += f"\n#### 3️⃣ **{target_ent}**의 다단계(Multi-hop) 우회 계열사:\n"
-                for row in multi_hop:
-                    raw_facts_text += f"• **{row['indirect_comp']}** ({row['hops']}-Hop)\n"
-
-    # F. 일반 질문 (FALLBACK)
-    else:
-        cypher_executed = "MATCH (n) WHERE any(l in labels(n) WHERE l STARTS WITH 'DART_') RETURN n.name LIMIT 10"
-        raw_data_result = {"info": "전체 노드 탐색"}
-        raw_facts_text = f"🔍 **'{prompt}'**에 대한 지식그래프 질의 결과:\n\n**현재 적재된 공시 데이터에서 확인 불가**합니다. (미등록 엔티티이거나 지분 공시 미존재)"
-
-    # ── [3단계: 최종 답변 출력 (100% Neo4j 팩트 원문 보장 정책)] ──
-    # LLM은 1단계 인텐트/엔티티 파싱에만 엄격 제한하여 사용하며,
-    # 최종 사용자 노출 답변(final_ans)은 0% 환각 보장을 위해 100% Neo4j 실측 팩트 원문(raw_facts_text)만 출력합니다.
-    final_ans = raw_facts_text
-            
-    return {
-        "ans": final_ans,
-        "raw_facts_text": raw_facts_text,
-        "raw_data": raw_data_result,
-        "cypher": cypher_executed,
-        "intent": detected_intent,
-        "entities": detected_entities,
-        "token_usage_info": token_usage_info,
-        "prompt_payload": llm_prompt_payload
-    }
+    """DART-Trace 금융특화 GraphRAG (증거 기반 질의응답 및 거버넌스 가드레일)"""
+    drv = get_neo4j_driver(NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD)
+    if not drv:
+        return {
+            "ans": "⚠️ Neo4j 데이터베이스 연결에 실패했습니다. 환경 설정을 확인하세요.",
+            "raw_facts_text": "",
+            "raw_data": {},
+            "cypher": "// Database connection error",
+            "intent": "ERROR",
+            "entities": [],
+            "token_usage_info": None,
+            "prompt_payload": {}
+        }
+    return analyze_financial_graphrag(prompt, drv, api_key_input)
 
 # 사이드바
 with st.sidebar:
@@ -528,7 +98,7 @@ with st.sidebar:
         "📌 서비스 메뉴",
         [
             "🌐 1. 상장사 지배구조 & 순환출자 탐색기",
-            "🤖 2. GraphRAG AI 대화형 챗봇",
+            "🤖 2. 공시 증거 기반 Cypher 질의 어시스턴트",
             "👑 3. GDS 재계 권력 랭킹 (PageRank)",
             "⚡ 4. DS005 기업 주요 자본 이벤트 (CB·BW·증자·M&A)",
             "📥 5. 최근 5년 OpenDART 실시간 수집 & 스토리지",
@@ -539,11 +109,11 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("### 📊 인프라 연결 현황")
     if driver:
-        node_res = run_cypher("MATCH (n) WHERE any(l in labels(n) WHERE l STARTS WITH 'DART_') RETURN count(n) AS c")
-        rel_res = run_cypher("MATCH ()-[r]->() WHERE type(r) STARTS WITH 'OWNS' OR type(r) STARTS WITH 'INVESTED' OR type(r) STARTS WITH 'ACQUIRED' OR type(r) STARTS WITH 'REPRESENTS' RETURN count(r) AS c")
+        node_res = run_cypher("MATCH (n) WHERE any(l in labels(n) WHERE l STARTS WITH 'DART_' OR l STARTS WITH 'RawEvidence' OR l STARTS WITH 'Evidence') RETURN count(n) AS c")
+        rel_res = run_cypher("MATCH ()-[r]->() WHERE type(r) IN ['EVIDENCED_BY', 'ANNOUNCED', 'OWNS_STAKE', 'INVESTED_IN', 'ACQUIRED_STAKE', 'REPRESENTS'] RETURN count(r) AS c")
         node_cnt = node_res[0]['c'] if node_res else 0
         rel_cnt = rel_res[0]['c'] if rel_res else 0
-        st.success(f"✅ Neo4j: {node_cnt}개 노드 / {rel_cnt}건 관계")
+        st.success(f"✅ Neo4j: {node_cnt:,}개 노드 / {rel_cnt:,}건 관계")
     if os.getenv("DART_API_KEY"):
         st.success("✅ OpenDART 실시간 API 활성화")
     if os.getenv("OPENAI_API_KEY"):
@@ -1615,16 +1185,16 @@ if menu == "🌐 1. 상장사 지배구조 & 순환출자 탐색기":
         """, unsafe_allow_html=True)
 
 
-# ── 메뉴 2: GraphRAG AI 대화형 챗봇 ──
-elif menu == "🤖 2. GraphRAG AI 대화형 챗봇":
-    st.header("🤖 GraphRAG AI 지배구조 분석 어시스턴트")
-    st.caption("자연어 질문을 입력하면 지식그래프에서 팩트를 실시간 다단계 탐색(Multi-hop Traversal)하여 브리핑 리포트를 생성합니다.")
+# ── 메뉴 2: 공시 증거 기반 Cypher 질의 어시스턴트 ──
+elif menu == "🤖 2. 공시 증거 기반 Cypher 질의 어시스턴트":
+    st.header("🤖 공시 원문 증거 기반 Cypher 질의 어시스턴트")
+    st.caption("15,000건 공시 원문 증거(23,996건 후보)와 313건 주요 자본이벤트를 공시접수번호·2D XPath·SHA-256 해시 근거와 함께 100% 읽기 전용(READ_ACCESS)으로 실시간 질의합니다.")
     
     api_key_input = os.getenv("OPENAI_API_KEY", os.getenv("GEMINI_API_KEY", os.getenv("GOOGLE_API_KEY", "")))
     
     if "messages" not in st.session_state:
         st.session_state.messages = [
-            {"role": "assistant", "content": "안녕하세요! **DART-Trace 실시간 GraphRAG AI**입니다.\n\n대한민국 상장사의 지분율, 순환출자, 총수 지배력, 계열사 관계에 대해 무엇이든 질문하세요!\n\n💡 **추천 질문 예시:**\n• `현대자동차그룹 순환출자 구조 알려줘`\n• `삼성전자와 삼성바이오로직스 지배구조 비교해줘`\n• `이재용 회장의 삼성 계열사 지배력은?`\n• `최태원 회장이 지배하는 SK 계열사 목록과 지분율`\n• `국민연금이 대주주인 대기업들은 어디야?`"}
+            {"role": "assistant", "content": "안녕하세요! **DART-Trace 원문 증거 기반 Cypher 질의 어시스턴트**입니다.\n\n금융감독원 15,000건 공시 원문 증거(`RawEvidenceCandidate` 23,996건)와 313건 주요 자본변동(CB·BW·증자·합병) 공시를 **접수번호·2D XPath·SHA-256 해시 근거**와 함께 100% 읽기 전용으로 투명하게 질의응답합니다.\n\n💡 **추천 질문 예시:**\n• `삼성전자의 5% 대량보유 공시 후보를 원문 근거와 함께 보여줘`\n• `파인메딕스 관련 5% 공시에서 보고자와 지분율 후보를 보여줘`\n• `최근 주요 상장사의 사모 CB 및 유상증자 공시 타임라인`\n• `접수번호 20241231000509 공시의 원문 XPath와 SHA-256 근거는?`\n• `(가드레일 시험) 홍하종 일가의 DSR제강 실질 지배력과 권력 순위는?`\n\n*(※ 실질 지배력 단정 및 순환출자망 해석은 2단계 엔티티 해소 전 단계로 가드레일에 의해 차단됩니다.)*"}
         ]
         
     for msg in st.session_state.messages:
@@ -1646,7 +1216,7 @@ elif menu == "🤖 2. GraphRAG AI 대화형 챗봇":
                         st.markdown("**2. AI에 주입된 지식그래프 팩트 & 사용자 질문 (User Prompt Payload):**")
                         st.code(p_info.get("user_prompt_with_graph_context", ""), language="markdown")
             
-    if prompt := st.chat_input("기업명, 총수 이름, 또는 지배구조 질문을 입력하세요..."):
+    if prompt := st.chat_input("회사명, 공시 접수번호(14자리), CB·BW·증자, 또는 원문 해시를 입력하세요..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
@@ -1723,20 +1293,23 @@ elif menu == "👑 3. GDS 재계 권력 랭킹 (PageRank)":
         LIMIT 10
         """)
         
-        for i, row in enumerate(power_rank_data, 1):
-            with st.container():
-                st.markdown(f"""
-                <div class="metric-card" style="border-left: 5px solid {'#ff4081' if i<=3 else '#2196f3'};">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h4 style="margin:0;">🎖️ #{i}위: <b>{row['총수명']}</b></h4>
-                        <span style="font-size:18px; font-weight:bold; color:#00e5ff;">파워 스코어: {row['권력점수']} pts</span>
+        if power_rank_data:
+            for i, row in enumerate(power_rank_data, 1):
+                with st.container():
+                    st.markdown(f"""
+                    <div class="metric-card" style="border-left: 5px solid {'#ff4081' if i<=3 else '#2196f3'};">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <h4 style="margin:0;">🎖️ #{i}위: <b>{row['총수명']}</b></h4>
+                            <span style="font-size:18px; font-weight:bold; color:#00e5ff;">파워 스코어: {row['권력점수']} pts</span>
+                        </div>
+                        <p style="margin:6px 0 0 0; color:#bbbbbb;">
+                            • 지배 계열사: 총 <b>{row['총지배기업수']}개사</b> (직접 {row['직접지배기업수']}개 + 우회 {row['우회지배계열사수']}개)<br>
+                            • 핵심 지배축: <code>{', '.join(row['핵심지배기업'])}</code>
+                        </p>
                     </div>
-                    <p style="margin:6px 0 0 0; color:#bbbbbb;">
-                        • 지배 계열사: 총 <b>{row['총지배기업수']}개사</b> (직접 {row['직접지배기업수']}개 + 우회 {row['우회지배계열사수']}개)<br>
-                        • 핵심 지배축: <code>{', '.join(row['핵심지배기업'])}</code>
-                    </p>
-                </div>
-                """, unsafe_allow_html=True)
+                    """, unsafe_allow_html=True)
+        else:
+            st.info("🛡️ **[지분 무결성 격리 안내]**\n현재 Cloud Aura DB는 원시 증거 추출 계층(23,996건)과 3,988개 상장사 마스터의 100% 무결성을 위해 프로덕션 지분 관계(`:OWNS_STAKE`)를 안전 격리(0건) 상태로 유지하고 있습니다.\n\n엔티티 해소(Entity Resolution v1.1) 승인 후 지분 연결이 완료되면 실시간 GDS PageRank 파워 랭킹이 즉시 활성화됩니다.")
                 
     with col_gds2:
         st.subheader("🧠 GDS 알고리즘 원리")
@@ -2008,7 +1581,7 @@ elif "6." in menu:
         <b>🛡️ [증거 계층 감사 원칙]</b><br/>
         • <b>Zero DB Write</b>: 본 감사기는 Neo4j 세션 수준 READ_ACCESS 강제로 순수 읽기 전용(Read-Only)으로 안전하게 작동합니다.<br/>
         • <b>추출 후보 격리 (Strict Isolation)</b>: 본 화면의 <code>RawEvidenceCandidate</code>는 프로덕션 지분 사실이 아니며, 감사 가능한 <b>원문 추출 후보</b>입니다.<br/>
-        • <b>Zero OWNS_STAKE Invariance</b>: 본 증거 계층은 프로덕션 지분 관계(<code>:OWNS_STAKE</code>: 373건) 및 GDS 알고리즘에 일절 영향을 주지 않습니다.
+        • <b>Zero OWNS_STAKE Invariance</b>: 본 증거 계층은 프로덕션 지분 관계(<code>:OWNS_STAKE</code>: 0건 안전 격리) 및 기존 데이터에 일절 영향을 주지 않는 순수 원문 증거 추출 계층입니다.
     </div>
     """, unsafe_allow_html=True)
     
