@@ -474,8 +474,10 @@ def run_batch_deep_closure_audit(run_dir: str) -> Dict[str, Any]:
 
 def main():
     import argparse
-    parser = argparse.ArgumentParser(description="DART-Trace 1,500건 배치 수집 제어기")
+    parser = argparse.ArgumentParser(description="DART-Trace 배치 수집 제어기")
     parser.add_argument("--source-manifest", type=str, default="내작업폴더/data/raw_filings/input_manifest_1500.json", help="고정 입력 매니페스트 경로")
+    parser.add_argument("--run-id-prefix", type=str, default="batch_1500", help="런 ID 접두어 (예: batch_1500, batch_15000)")
+    parser.add_argument("--expected-target-count", type=int, default=None, help="기대 대상 건수 (미지정 시 자동 판정)")
     parser.add_argument("--resume", action="store_true", help="중단된 런 체크포인트에서 이어서 재개")
     parser.add_argument("--run-id", type=str, default=None, help="재개할 기존 run_id (미지정 시 가장 최근 런 디렉토리)")
     parser.add_argument("--delay", type=float, default=0.2, help="API 호출 간 딜레이(초)")
@@ -508,24 +510,35 @@ def main():
         with open(in_manifest_path, "r", encoding="utf-8") as f:
             manifest_info = json.load(f)
         targets = manifest_info.get("targets", [])
-        print(f"🔄 [--resume 재개 모드] Run ID: {run_id}, 잔여 대상 처리 시작")
+        print(f"🔄 [--resume 재개 모드] Run ID: {run_id}, 잔여 대상 처리 시작 ({len(targets):,}건 대상)")
     else:
-        expected_cnt = 1500 if "1500" in str(args.source_manifest) else None
+        expected_cnt = args.expected_target_count
+        if expected_cnt is None:
+            if "15000" in str(args.source_manifest):
+                expected_cnt = 15000
+            elif "1500" in str(args.source_manifest):
+                expected_cnt = 1500
+
+        run_prefix = args.run_id_prefix
+        if run_prefix == "batch_1500" and expected_cnt == 15000:
+            run_prefix = "batch_15000"
+
         run_id, run_dir, in_manifest_sha = collector.init_run(
             source_manifest_path=args.source_manifest,
-            run_id_prefix="batch_1500",
+            run_id_prefix=run_prefix,
             expected_target_count=expected_cnt
         )
-        print("=" * 80)
-        print(f"🚀 [1,500건 배치 수집 시작] Run ID: {run_id}")
-        print(f"   • 실행 폴더: {run_dir}")
-        print(f"   • 입력 매니페스트 SHA-256: {in_manifest_sha}")
-        print(f"   • 중단 시 재개 명령: uv run python 내작업폴더/00_DART_Batch_Collector_1500.py --resume --run-id {run_id} --delay {args.delay}")
-        print("=" * 80, flush=True)
 
         with open(os.path.join(run_dir, "input_manifest.json"), "r", encoding="utf-8") as f:
             manifest_info = json.load(f)
         targets = manifest_info.get("targets", [])
+
+        print("=" * 80)
+        print(f"🚀 [{len(targets):,}건 배치 수집 시작] Run ID: {run_id}")
+        print(f"   • 실행 폴더: {run_dir}")
+        print(f"   • 입력 매니페스트 SHA-256: {in_manifest_sha}")
+        print(f"   • 중단 시 재개 명령: uv run python 내작업폴더/00_DART_Batch_Collector_1500.py --resume --run-id {run_id} --delay {args.delay}")
+        print("=" * 80, flush=True)
 
     summary = collector.execute_batch(run_id, run_dir, in_manifest_sha, targets, resume=args.resume)
     print("\n🔍 배치 종료 후 심층 집계 감사 자동 실행...")
