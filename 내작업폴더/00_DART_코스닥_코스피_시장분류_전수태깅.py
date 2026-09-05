@@ -21,9 +21,9 @@ if hasattr(sys.stderr, "reconfigure"):
 
 load_dotenv(".env", override=True)
 
-NEO4J_URI = os.getenv("NEO4J_URI", "bolt://localhost:7687")
-NEO4J_USER = os.getenv("NEO4J_USER", "neo4j")
-NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "test0011")
+NEO4J_URI = os.getenv("AURA_URI") or os.getenv("NEO4J_URI", "bolt://localhost:7687")
+NEO4J_USER = os.getenv("AURA_USER") or os.getenv("NEO4J_USER", "neo4j")
+NEO4J_PASSWORD = os.getenv("AURA_PASSWORD") or os.getenv("NEO4J_PASSWORD", "test0011")
 
 driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
 

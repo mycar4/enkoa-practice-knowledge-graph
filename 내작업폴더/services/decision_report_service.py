@@ -311,6 +311,43 @@ class DecisionReportService:
         if self.driver:
             self.driver.close()
 
+    def get_influence_and_evidence(self, corp_code: str, corp_name: str) -> Dict[str, Any]:
+        """
+        메뉴 개편 2단계: 메뉴 3(GDS 지배력 랭킹)·메뉴 6(증거 감사기)를 단일 기업 리포트 안에
+        회사 단위로 스코프를 좁혀 임베드하기 위한 데이터.
+        - 지배력 관계: :HOLDS_ECONOMIC_STAKE 기준 (구 메뉴3은 항상 0건인 :OWNS_STAKE를 조회하던
+          죽은 코드였음 - 여기서는 실제 승격 데이터를 사용하는 관계로 정정)
+        - 원문 증거: RawEvidenceCandidate를 이 회사명으로 스코프 필터링 (구 메뉴6의 검색 쿼리를
+          단일 회사 전용으로 축소)
+        """
+        with self.driver.session(default_access_mode=READ_ACCESS) as session:
+            influence = session.run("""
+                OPTIONAL MATCH (holder:DART_Company)-[r_in:HOLDS_ECONOMIC_STAKE]->(target:DART_Company {corp_code: $cc})
+                WITH collect({name: holder.name, stake_ratio: r_in.stake_ratio, reporting_obligation_date: r_in.reporting_obligation_date}) AS held_by
+                OPTIONAL MATCH (self_c:DART_Company {corp_code: $cc})-[r_out:HOLDS_ECONOMIC_STAKE]->(investee:DART_Company)
+                WITH held_by, collect({name: investee.name, stake_ratio: r_out.stake_ratio, reporting_obligation_date: r_out.reporting_obligation_date}) AS holds
+                RETURN held_by, holds
+            """, cc=corp_code).single()
+
+            held_by = [h for h in (influence["held_by"] if influence else []) if h.get("name")]
+            holds = [h for h in (influence["holds"] if influence else []) if h.get("name")]
+
+            evidence_candidates = session.run("""
+                MATCH (c:RawEvidenceCandidate {target_corp_code: $cc})
+                RETURN c.candidate_id AS candidate_id, c.rcept_no AS rcept_no, c.holder_name AS holder_name,
+                       c.shares_count AS shares, c.stake_ratio AS ratio,
+                       c.reporting_obligation_date AS ob_date, c.layout_status AS layout_status
+                ORDER BY c.rcept_no DESC
+                LIMIT 20
+            """, cc=corp_code).data()
+
+        return {
+            "held_by": held_by,
+            "holds": holds,
+            "total_influence_count": len(held_by) + len(holds),
+            "evidence_candidates": evidence_candidates,
+        }
+
     def find_companies(self, query: str, limit: int = 10) -> List[Dict[str, Any]]:
         """기업명, 종목코드, 법인코드 기반 검색"""
         q = query.strip()

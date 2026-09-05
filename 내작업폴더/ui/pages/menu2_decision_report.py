@@ -68,6 +68,13 @@ def render_menu2_decision_report(driver=None, theme_mode: str = "🌙 다크 모
     if "selected_report_corp" not in st.session_state:
         st.session_state.selected_report_corp = "HLB"
 
+    def _select_preset_corp(code_or_name: str):
+        # on_click 콜백은 위젯이 재인스턴스화되기 전에 실행되므로,
+        # 텍스트 입력 위젯의 session_state를 여기서 안전하게 초기화할 수 있다
+        # (버튼 클릭 시 st.rerun() 이후 직접 대입하면 StreamlitAPIException 발생).
+        st.session_state.selected_report_corp = code_or_name
+        st.session_state.report_company_search_input = ""
+
     search_col1, search_col2 = st.columns([2, 5])
     with search_col1:
         search_input = st.text_input(
@@ -88,10 +95,10 @@ def render_menu2_decision_report(driver=None, theme_mode: str = "🌙 다크 모
         ]
         for idx, (label, code_or_name) in enumerate(presets1):
             with preset_cols1[idx]:
-                if st.button(label.split()[0], key=f"btn_preset_{code_or_name}", use_container_width=True):
-                    st.session_state.selected_report_corp = code_or_name
-                    st.session_state.report_company_search_input = ""
-                    st.rerun()
+                st.button(
+                    label.split()[0], key=f"btn_preset_{code_or_name}", use_container_width=True,
+                    on_click=_select_preset_corp, args=(code_or_name,)
+                )
 
         st.caption("🔒 검증 경제적 보유 사실 예시:")
         preset_cols2 = st.columns(3)
@@ -102,10 +109,10 @@ def render_menu2_decision_report(driver=None, theme_mode: str = "🌙 다크 모
         ]
         for idx, (label, code_or_name) in enumerate(presets2):
             with preset_cols2[idx]:
-                if st.button(label.split()[0], key=f"btn_promoted_preset_{code_or_name}", use_container_width=True):
-                    st.session_state.selected_report_corp = code_or_name
-                    st.session_state.report_company_search_input = ""
-                    st.rerun()
+                st.button(
+                    label.split()[0], key=f"btn_promoted_preset_{code_or_name}", use_container_width=True,
+                    on_click=_select_preset_corp, args=(code_or_name,)
+                )
 
     target_to_load = st.session_state.selected_report_corp
     if search_input.strip():
@@ -126,6 +133,15 @@ def render_menu2_decision_report(driver=None, theme_mode: str = "🌙 다크 모
             st.error(f"❌ 리포트 생성 중 오류 발생: {e}")
             service.close()
             return
+
+    influence_and_evidence = None
+    if report.get("status") == "SUCCESS":
+        try:
+            influence_and_evidence = service.get_influence_and_evidence(
+                report["target_company"]["corp_code"], report["target_company"]["corp_name"]
+            )
+        except Exception:
+            influence_and_evidence = None
 
     service.close()
 
@@ -610,16 +626,59 @@ def render_menu2_decision_report(driver=None, theme_mode: str = "🌙 다크 모
 
     st.markdown("<div style='margin-top: 16px;'></div>", unsafe_allow_html=True)
 
-    # 5. 크로스 네비게이션 액션 버튼 (메뉴 4 및 메뉴 6 연결)
+    # ── [메뉴 개편 2단계: 구 메뉴3(지배력 랭킹) + 구 메뉴6(증거 감사기) 회사 단위 임베드] ──
+    if influence_and_evidence:
+        held_by = influence_and_evidence["held_by"]
+        holds = influence_and_evidence["holds"]
+        evid_candidates = influence_and_evidence["evidence_candidates"]
+
+        with st.expander(f"🏆 {corp_name}의 지배력 관계 (HOLDS_ECONOMIC_STAKE 기준)", expanded=False):
+            st.caption("구 메뉴 3(GDS PageRank)이 조회하던 :OWNS_STAKE는 이 DB에서 항상 0건(금지 관계)이라 실질적으로 죽어있던 화면이었습니다. 여기서는 실제 승격된 :HOLDS_ECONOMIC_STAKE 기준으로 보여줍니다.")
+            ic1, ic2 = st.columns(2)
+            with ic1:
+                st.markdown(f"**📥 이 회사를 보유한 회사 ({len(held_by)}건)**")
+                if held_by:
+                    st.dataframe(pd.DataFrame([
+                        {"보유회사": h["name"], "지분율": f"{h['stake_ratio']}%" if h.get("stake_ratio") is not None else "-",
+                         "보고의무발생일": h.get("reporting_obligation_date") or "-"} for h in held_by
+                    ]), use_container_width=True, hide_index=True)
+                else:
+                    st.info("승격된 보유 관계 없음")
+            with ic2:
+                st.markdown(f"**📤 이 회사가 보유한 회사 ({len(holds)}건)**")
+                if holds:
+                    st.dataframe(pd.DataFrame([
+                        {"피보유회사": h["name"], "지분율": f"{h['stake_ratio']}%" if h.get("stake_ratio") is not None else "-",
+                         "보고의무발생일": h.get("reporting_obligation_date") or "-"} for h in holds
+                    ]), use_container_width=True, hide_index=True)
+                else:
+                    st.info("승격된 피보유 관계 없음")
+
+        with st.expander(f"🔍 {corp_name} 5% 공시 원문 증거 역추적 (구 메뉴6 회사 단위 임베드)", expanded=False):
+            if evid_candidates:
+                st.dataframe(pd.DataFrame([
+                    {"후보 ID": c["candidate_id"], "접수번호": c["rcept_no"], "보유자명": c.get("holder_name") or "-",
+                     "지분율": f"{c['ratio']:.2f}%" if c.get("ratio") is not None else "-",
+                     "보고의무발생일": c.get("ob_date") or "-",
+                     "서식": "✅ 일반서식" if c.get("layout_status") == "SUPPORTED_5PCT_GENERAL" else "⚠️ 미지원/약식"}
+                    for c in evid_candidates
+                ]), use_container_width=True, hide_index=True)
+                st.caption("전체 원문 좌표(XPath)·해시 단위 감사가 필요하면 사이드바 '개발자 도구 → 5% 공시 원문 증거 감사기'에서 후보 ID로 검색하세요.")
+            else:
+                st.info("이 회사에 대한 5% 공시 원문 추출 후보가 없습니다.")
+
+        st.markdown("<div style='margin-top: 16px;'></div>", unsafe_allow_html=True)
+
+    # 5. 크로스 네비게이션 액션 버튼 (메뉴 4 연결)
     st.markdown(f"""
     <div style="background: {bg_card}; border: 1px solid {border_card}; border-radius: 12px; padding: 16px 20px; margin-top: 24px;">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
             <div>
                 <h4 style="margin: 0 0 4px 0; font-size: 15px; color: {text_primary};">🔗 DART-Trace 심층 분석 바로가기</h4>
-                <p style="margin: 0; font-size: 13px; color: {text_secondary};">현재 보고 계신 <b>{corp_name}</b>의 원문 증거와 자본이벤트를 다른 전문 메뉴에서 심층 탐색하세요.</p>
+                <p style="margin: 0; font-size: 13px; color: {text_secondary};">현재 보고 계신 <b>{corp_name}</b>의 자본이벤트 원문을 더 깊이 탐색하세요. 지배력 관계·원문 증거는 위 펼침 섹션에서 바로 확인 가능합니다.</p>
             </div>
             <div style="display: flex; gap: 12px;">
-                <span style="font-size: 13px; color: {accent_blue};">👉 좌측 사이드바 <b>메뉴 4 (DS005 자본이벤트)</b> 또는 <b>메뉴 6 (5% 공시 원문 증거 감사기)</b>를 선택하세요.</span>
+                <span style="font-size: 13px; color: {accent_blue};">👉 좌측 사이드바 <b>메뉴 4 (DS005 자본이벤트)</b>를 선택하세요.</span>
             </div>
         </div>
     </div>

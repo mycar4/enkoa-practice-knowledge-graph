@@ -6,6 +6,7 @@
 
 import os
 import sys
+import time
 import json
 import re
 import urllib.request
@@ -95,6 +96,8 @@ with st.sidebar:
     theme_mode = st.radio("🎨 화면 테마 선택", ["☀️ 화이트 모드 (Light)", "🌙 다크 모드 (Dark)"], index=0, horizontal=True)
     st.markdown("---")
     
+    # 사용자 대상 메뉴(5개)와 개발자 전용 도구(2개)를 분리 - 일반 사용자 화면에서
+    # 실시간 수집기/Cypher 콘솔이 안 보이도록 접이식 섹션으로 이동 (메뉴 개편 1단계)
     menu = st.radio(
         "📌 서비스 메뉴",
         [
@@ -102,29 +105,49 @@ with st.sidebar:
             "📋 2. 단일 기업 4단 의사결정 리포트",
             "👑 3. GDS 재계 권력 랭킹 (PageRank)",
             "⚡ 4. DS005 기업 주요 자본 이벤트 (CB·BW·증자·M&A)",
-            "📥 5. 최근 5년 OpenDART 실시간 수집 & 스토리지",
-            "🔍 6. 5% 공시 원문 증거 감사기 (Evidence Audit Inspector)"
+            "🔍 6. 5% 공시 원문 증거 감사기 (Evidence Audit Inspector)",
         ]
     )
+
+    with st.expander("🛠️ 개발자 도구"):
+        dev_menu = st.radio(
+            "개발자/운영자 전용",
+            [
+                "(선택 안 함)",
+                "📥 5. 최근 5년 OpenDART 실시간 수집 & 스토리지",
+                "💻 7. 개발자/분석가 라이브 쿼리 콘솔 (FO Live Cypher Console)"
+            ],
+            key="dev_menu_select"
+        )
+        if dev_menu != "(선택 안 함)":
+            menu = dev_menu
     
     st.markdown("---")
     st.markdown("### 📊 인프라 연결 현황")
     if driver:
         node_res = run_cypher("MATCH (n) WHERE any(l in labels(n) WHERE l STARTS WITH 'DART_' OR l STARTS WITH 'RawEvidence' OR l STARTS WITH 'Evidence') RETURN count(n) AS c")
-        rel_res = run_cypher("MATCH ()-[r]->() WHERE type(r) IN ['EVIDENCED_BY', 'ANNOUNCED', 'OWNS_STAKE', 'INVESTED_IN', 'ACQUIRED_STAKE', 'REPRESENTS'] RETURN count(r) AS c")
+        rel_res = run_cypher("MATCH ()-[r]->() WHERE type(r) IN ['EVIDENCED_BY', 'ANNOUNCED', 'HOLDS_ECONOMIC_STAKE', 'OWNS_STAKE', 'INVESTED_IN', 'ACQUIRED_STAKE', 'REPRESENTS'] RETURN count(r) AS c")
         node_cnt = node_res[0]['c'] if node_res else 0
         rel_cnt = rel_res[0]['c'] if rel_res else 0
         st.success(f"✅ Neo4j: {node_cnt:,}개 노드 / {rel_cnt:,}건 관계")
-    if os.getenv("DART_API_KEY"):
-        st.success("✅ OpenDART 실시간 API 활성화")
-    if os.getenv("OPENAI_API_KEY"):
-        st.success("✅ OpenAI gpt-4o-mini 활성화")
+    else:
+        st.error("❌ Neo4j 데이터베이스 미연결")
 
-# 🎨 테마별 커스텀 CSS 전면 주입 (BaseWeb 셀렉트박스, 팝업 드롭다운, 상단 헤더 전수 커스텀)
+# # 🎨 테마별 커스텀 CSS 전면 주입 (전 화면 모든 위젯 음영·대비 100% 가시성 보장)
 if "화이트" in theme_mode:
     # ☀️ 화이트 모드 전용 완벽 스타일 (가시성 100% 보장)
     st.markdown("""
     <style>
+        /* 0. 텍스트 드래그 선택 영역(Selection) 음영 */
+        ::selection {
+            background-color: #bae6fd !important;
+            color: #0369a1 !important;
+        }
+        ::-moz-selection {
+            background-color: #bae6fd !important;
+            color: #0369a1 !important;
+        }
+
         /* 1. 최상단 헤더바 투명화 */
         header[data-testid="stHeader"] {
             background: transparent !important;
@@ -150,21 +173,131 @@ if "화이트" in theme_mode:
             color: #0f172a !important;
         }
         .stCaption {
-            color: #64748b !important;
+            color: #475569 !important;
+            font-weight: 500 !important;
         }
         
-        /* 5. 모든 입력창 (input, textarea, text_input, number_input) 화이트 스타일 강제 */
+        /* 5. 버튼 완벽 화이트 스타일 (검은색 묻힘 완전 제거) */
+        button:not([data-baseweb="tab"]):not([kind="primary"]) {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 8px !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+            font-weight: 600 !important;
+            transition: all 0.15s ease !important;
+        }
+        button:not([data-baseweb="tab"]):not([kind="primary"]) * {
+            color: #0f172a !important;
+        }
+        button:not([data-baseweb="tab"]):not([kind="primary"]):hover {
+            background-color: #f1f5f9 !important;
+            border-color: #0284c7 !important;
+            color: #0284c7 !important;
+        }
+        button:not([data-baseweb="tab"]):not([kind="primary"]):hover * {
+            color: #0284c7 !important;
+        }
+        button[kind="primary"] {
+            background-color: #0284c7 !important;
+            color: #ffffff !important;
+            border: none !important;
+            border-radius: 8px !important;
+            font-weight: 700 !important;
+            box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3) !important;
+        }
+        button[kind="primary"] * {
+            color: #ffffff !important;
+        }
+        
+        /* 6. 인라인 코드 및 코드 블록 화이트 음영 (검은 박스 완전 제거) */
+        code:not(pre code) {
+            background-color: #e0f2fe !important;
+            color: #0369a1 !important;
+            padding: 2px 6px !important;
+            border-radius: 4px !important;
+            border: 1px solid #bae6fd !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+        }
+        pre, div[data-testid="stCodeBlock"], div[data-testid="stCodeBlock"] pre {
+            background-color: #f8fafc !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 8px !important;
+        }
+        div[data-testid="stCodeBlock"] code, div[data-testid="stCodeBlock"] span, div[data-testid="stCodeBlock"] * {
+            color: #0f172a !important;
+            background-color: transparent !important;
+            font-family: 'Consolas', 'Courier New', monospace !important;
+        }
+
+        /* 7. Expander 화이트 스타일 (검은색 헤더 완전 제거) */
+        div[data-testid="stExpander"] {
+            background-color: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 10px !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
+            overflow: hidden !important;
+        }
+        div[data-testid="stExpander"] summary {
+            background-color: #f8fafc !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            padding: 10px 16px !important;
+        }
+        div[data-testid="stExpander"] summary:hover {
+            background-color: #f1f5f9 !important;
+        }
+        div[data-testid="stExpander"] summary span, div[data-testid="stExpander"] summary p, div[data-testid="stExpander"] summary * {
+            color: #0f172a !important;
+            font-weight: 600 !important;
+        }
+        div[data-testid="stExpander"] > div[role="region"] {
+            background-color: #ffffff !important;
+            padding: 14px !important;
+        }
+
+        /* 8. 라디오 버튼 & 체크박스 (검은 직사각형 완전 제거) */
+        div[data-testid="stRadio"] input[type="radio"],
+        div[data-testid="stCheckbox"] input[type="checkbox"] {
+            accent-color: #0284c7 !important;
+            cursor: pointer !important;
+            width: 17px !important;
+            height: 17px !important;
+        }
+        div[data-testid="stCheckbox"] label, div[data-testid="stCheckbox"] span, div[data-testid="stCheckbox"] p {
+            color: #0f172a !important;
+        }
+        div[data-testid="stRadio"] label:hover,
+        div[data-testid="stCheckbox"] label:hover {
+            color: #0284c7 !important;
+        }
+        div[data-testid="stRadio"] label:has(input:checked) {
+            color: #0284c7 !important;
+            font-weight: 700 !important;
+        }
+        div[data-baseweb="checkbox"] > div {
+            border-color: #cbd5e1 !important;
+            background-color: transparent !important;
+        }
+        
+        /* 9. 모든 입력창 (input, textarea, text_input) */
         input, textarea, [data-testid="stTextInput"] input, [data-testid="stTextArea"] textarea {
             background-color: #ffffff !important;
             color: #0f172a !important;
             border: 1px solid #cbd5e1 !important;
             border-radius: 8px !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+        }
+        input:focus, textarea:focus, [data-testid="stTextInput"] input:focus, [data-testid="stTextArea"] textarea:focus {
+            border-color: #0284c7 !important;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2) !important;
+            outline: none !important;
         }
         input::placeholder, textarea::placeholder {
             color: #94a3b8 !important;
         }
 
-        /* 6. 드롭다운 선택상자 (BaseWeb Select & 팝업 목록) 완벽 화이트 스타일 */
+        /* 10. 드롭다운 선택상자 (BaseWeb Select & 팝오버 포털 100% 화이트화) */
         div[data-baseweb="select"],
         div[data-baseweb="select"] > div,
         div[data-baseweb="select"] input,
@@ -174,57 +307,46 @@ if "화이트" in theme_mode:
             color: #0f172a !important;
             border-radius: 8px !important;
         }
+        div[data-baseweb="select"]:hover,
+        div[data-baseweb="select"] > div:hover {
+            border-color: #0284c7 !important;
+        }
         div[data-baseweb="select"] * {
             color: #0f172a !important;
         }
         
-        /* 전역 팝오버 메뉴 및 리스트박스 (BaseWeb Portal) */
-        div[data-baseweb="popover"],
-        div[data-baseweb="popover"] > div,
-        div[data-baseweb="menu"],
-        ul[role="listbox"],
-        [data-baseweb="popover"] div,
-        [data-baseweb="popover"] ul {
+        /* 전역 팝오버 메뉴 및 리스트박스 (BaseWeb Portal - 화면 밖 포털까지 전수 제어) */
+        body div[data-baseweb="popover"],
+        body div[data-baseweb="popover"] > div,
+        body div[data-baseweb="menu"],
+        body ul[role="listbox"] {
             background-color: #ffffff !important;
             border: 1px solid #cbd5e1 !important;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.18) !important;
+            border-radius: 8px !important;
         }
-        div[data-baseweb="popover"] *,
-        div[data-baseweb="menu"] *,
-        ul[role="listbox"] * {
+        body ul[role="listbox"] li,
+        body ul[role="listbox"] li * {
             color: #0f172a !important;
             background-color: #ffffff !important;
         }
-        
-        /* 옵션 아이템 (드롭다운 목록) */
-        li[role="option"],
-        li[role="option"] > div,
-        li[role="option"] span,
-        [data-baseweb="popover"] li,
-        [data-baseweb="popover"] li * {
-            background-color: #ffffff !important;
-            color: #0f172a !important;
-            font-size: 14px !important;
-        }
-        li[role="option"]:hover,
-        li[role="option"]:hover *,
-        li[role="option"]:hover span,
-        li[aria-selected="true"],
-        li[aria-selected="true"] *,
-        li[aria-selected="true"] span,
-        [data-highlighted="true"],
-        [data-highlighted="true"] * {
-            background-color: #e2e8f0 !important;
+        body ul[role="listbox"] li:hover,
+        body ul[role="listbox"] li:hover *,
+        body ul[role="listbox"] li[aria-selected="true"],
+        body ul[role="listbox"] li[aria-selected="true"] * {
+            background-color: #e0f2fe !important;
             color: #0284c7 !important;
+            font-weight: 600 !important;
         }
         
-        /* 7. 하단 챗봇 입력창 (st.chat_input) 고대비 화이트 스타일 */
+        /* 11. 하단 챗봇 입력창 (st.chat_input) */
         div[data-testid="stChatInput"],
         div[data-testid="stChatInput"] > div,
         div[data-testid="stBottomBlockContainer"] > div {
             background-color: #ffffff !important;
             border: 1px solid #cbd5e1 !important;
             border-radius: 12px !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06) !important;
         }
         div[data-testid="stChatInput"] textarea,
         div[data-testid="stChatInput"] textarea::placeholder,
@@ -241,19 +363,53 @@ if "화이트" in theme_mode:
             background-color: rgba(248, 250, 252, 0.95) !important;
         }
         
-        /* 8. 탭 버튼(st.tabs) 클릭 영역 및 화이트 스타일 */
+        /* 12. 탭 버튼 (st.tabs) */
         button[data-baseweb="tab"] {
             cursor: pointer !important;
-            color: #64748b !important;
+            color: #475569 !important;
             font-weight: 600 !important;
             font-size: 15px !important;
+            padding: 8px 16px !important;
+            border-radius: 6px 6px 0 0 !important;
+            transition: all 0.2s ease !important;
+        }
+        button[data-baseweb="tab"]:hover {
+            color: #0284c7 !important;
+            background-color: rgba(2, 132, 199, 0.08) !important;
         }
         button[data-baseweb="tab"][aria-selected="true"] {
             color: #0284c7 !important;
-            border-bottom: 2px solid #0284c7 !important;
+            border-bottom: 3px solid #0284c7 !important;
+            background-color: rgba(2, 132, 199, 0.06) !important;
         }
         
-        /* 9. 카드 및 지표 */
+        /* 13. 알림 박스 (st.info, st.success, st.warning, st.error) */
+        div[data-testid="stAlert"] {
+            border-radius: 10px !important;
+            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+        }
+        div[data-testid="stAlert"] * {
+            color: #0f172a !important;
+        }
+        
+        /* 14. 데이터 테이블 & JSON 뷰어 */
+        [data-testid="stDataFrame"] {
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 8px !important;
+            background-color: #ffffff !important;
+        }
+        div[data-testid="stJson"], div[data-testid="stJson"] pre {
+            background-color: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 8px !important;
+            color: #0f172a !important;
+        }
+        div[data-testid="stJson"] * {
+            color: #0f172a !important;
+        }
+
+        /* 15. 카드 및 지표 */
         .metric-card {
             background: #ffffff !important;
             border: 1px solid #e2e8f0 !important;
@@ -272,9 +428,19 @@ if "화이트" in theme_mode:
     canvas_bg = "#ffffff"
     canvas_font = "#0f172a"
 else:
-    # 🌙 다크 모드 전용 완벽 스타일
+    # 🌙 다크 모드 전용 완벽 스타일 (가시성 100% 보장)
     st.markdown("""
     <style>
+        /* 0. 텍스트 드래그 선택 영역(Selection) 음영 */
+        ::selection {
+            background-color: #0284c7 !important;
+            color: #ffffff !important;
+        }
+        ::-moz-selection {
+            background-color: #0284c7 !important;
+            color: #ffffff !important;
+        }
+
         /* 1. 최상단 헤더바 투명화 */
         header[data-testid="stHeader"] {
             background: transparent !important;
@@ -300,10 +466,128 @@ else:
             color: #f0f2f6 !important;
         }
         .stCaption {
-            color: #90a4ae !important;
+            color: #94a3b8 !important;
+            font-weight: 500 !important;
         }
         
-        /* 5. 드롭다운 (BaseWeb Select & Popover 팝업 목록) 다크 스타일 고대비 명확화 */
+        /* 5. 버튼 완벽 다크 스타일 */
+        button:not([data-baseweb="tab"]):not([kind="primary"]) {
+            background-color: #1e293b !important;
+            color: #f8fafc !important;
+            border: 1px solid #475569 !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            transition: all 0.15s ease !important;
+        }
+        button:not([data-baseweb="tab"]):not([kind="primary"]) * {
+            color: #f8fafc !important;
+        }
+        button:not([data-baseweb="tab"]):not([kind="primary"]):hover {
+            background-color: #334155 !important;
+            border-color: #38bdf8 !important;
+            color: #38bdf8 !important;
+        }
+        button:not([data-baseweb="tab"]):not([kind="primary"]):hover * {
+            color: #38bdf8 !important;
+        }
+        button[kind="primary"] {
+            background-color: #0284c7 !important;
+            color: #ffffff !important;
+            border: none !important;
+            border-radius: 8px !important;
+            font-weight: 700 !important;
+        }
+        button[kind="primary"] * {
+            color: #ffffff !important;
+        }
+        
+        /* 6. 인라인 코드 및 코드 블록 다크 음영 */
+        code:not(pre code) {
+            background-color: #1e293b !important;
+            color: #38bdf8 !important;
+            padding: 2px 6px !important;
+            border-radius: 4px !important;
+            border: 1px solid #334155 !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+        }
+        pre, div[data-testid="stCodeBlock"], div[data-testid="stCodeBlock"] pre {
+            background-color: #111827 !important;
+            border: 1px solid #374151 !important;
+            border-radius: 8px !important;
+        }
+        div[data-testid="stCodeBlock"] code, div[data-testid="stCodeBlock"] span, div[data-testid="stCodeBlock"] * {
+            color: #f8fafc !important;
+            background-color: transparent !important;
+            font-family: 'Consolas', 'Courier New', monospace !important;
+        }
+
+        /* 7. Expander 다크 스타일 */
+        div[data-testid="stExpander"] {
+            background-color: #1e293b !important;
+            border: 1px solid rgba(255,255,255,0.12) !important;
+            border-radius: 10px !important;
+            overflow: hidden !important;
+        }
+        div[data-testid="stExpander"] summary {
+            background-color: #11151c !important;
+            border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+            padding: 10px 16px !important;
+        }
+        div[data-testid="stExpander"] summary:hover {
+            background-color: #1e293b !important;
+        }
+        div[data-testid="stExpander"] summary span, div[data-testid="stExpander"] summary p, div[data-testid="stExpander"] summary * {
+            color: #f8fafc !important;
+            font-weight: 600 !important;
+        }
+        div[data-testid="stExpander"] > div[role="region"] {
+            background-color: #1e293b !important;
+            padding: 14px !important;
+        }
+
+        /* 8. 라디오 버튼 & 체크박스 다크 스타일 */
+        div[data-testid="stRadio"] input[type="radio"],
+        div[data-testid="stCheckbox"] input[type="checkbox"] {
+            accent-color: #38bdf8 !important;
+            cursor: pointer !important;
+            width: 17px !important;
+            height: 17px !important;
+        }
+        div[data-testid="stCheckbox"] label, div[data-testid="stCheckbox"] span, div[data-testid="stCheckbox"] p {
+            color: #f8fafc !important;
+        }
+        div[data-testid="stRadio"] label:hover,
+        div[data-testid="stCheckbox"] label:hover {
+            color: #38bdf8 !important;
+        }
+        div[data-testid="stRadio"] label:has(input:checked) {
+            color: #38bdf8 !important;
+            font-weight: 700 !important;
+        }
+        div[data-baseweb="checkbox"] > div {
+            border-color: #475569 !important;
+            background-color: transparent !important;
+        }
+        
+        /* 9. 입력창 다크 스타일 */
+        textarea, input, [data-testid="stTextInput"] input, [data-testid="stTextArea"] textarea {
+            background-color: #1e293b !important;
+            color: #f8fafc !important;
+            border: 1px solid #475569 !important;
+            font-family: 'Consolas', 'Courier New', monospace !important;
+            border-radius: 8px !important;
+        }
+        textarea:focus, input:focus, [data-testid="stTextInput"] input:focus, [data-testid="stTextArea"] textarea:focus {
+            border-color: #38bdf8 !important;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
+            outline: none !important;
+        }
+        input::placeholder, textarea::placeholder {
+            color: #94a3b8 !important;
+        }
+
+        /* 10. 드롭다운 선택상자 및 팝오버 다크 스타일 */
         div[data-baseweb="select"] > div,
         div[data-baseweb="select"] input,
         div[data-baseweb="select"] div {
@@ -312,60 +596,45 @@ else:
             color: #f8fafc !important;
             border-radius: 8px !important;
         }
+        div[data-baseweb="select"]:hover,
+        div[data-baseweb="select"] > div:hover {
+            border-color: #38bdf8 !important;
+        }
         div[data-baseweb="select"] * {
             color: #f8fafc !important;
         }
         
-        /* 팝업 컨테이너 및 리스트박스 전역 다크화 */
-        div[data-baseweb="popover"], 
-        div[data-baseweb="popover"] > div, 
-        div[data-baseweb="menu"], 
-        ul[role="listbox"],
-        [data-baseweb="popover"] div,
-        [data-baseweb="popover"] ul {
+        body div[data-baseweb="popover"], 
+        body div[data-baseweb="popover"] > div, 
+        body div[data-baseweb="menu"], 
+        body ul[role="listbox"] {
             background-color: #1e293b !important;
             border: 1px solid #475569 !important;
-            color: #f8fafc !important;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.8) !important;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.8) !important;
+            border-radius: 8px !important;
         }
-        div[data-baseweb="popover"] *, 
-        div[data-baseweb="menu"] *, 
-        ul[role="listbox"] * {
+        body ul[role="listbox"] li,
+        body ul[role="listbox"] li * {
             color: #f8fafc !important;
             background-color: #1e293b !important;
         }
-        
-        /* 옵션 항목 텍스트 및 배경 */
-        li[role="option"], 
-        li[role="option"] > div,
-        li[role="option"] span,
-        [data-baseweb="popover"] li,
-        [data-baseweb="popover"] li * {
-            background-color: #1e293b !important;
-            color: #f8fafc !important;
-            font-size: 14px !important;
-        }
-        
-        /* 호버 및 선택된 옵션 */
-        li[role="option"]:hover, 
-        li[role="option"]:hover *, 
-        li[role="option"]:hover span,
-        li[aria-selected="true"], 
-        li[aria-selected="true"] *, 
-        li[aria-selected="true"] span,
-        [data-highlighted="true"],
-        [data-highlighted="true"] * {
+        body ul[role="listbox"] li:hover, 
+        body ul[role="listbox"] li:hover *, 
+        body ul[role="listbox"] li[aria-selected="true"], 
+        body ul[role="listbox"] li[aria-selected="true"] * {
             background-color: #0284c7 !important;
             color: #ffffff !important;
+            font-weight: 600 !important;
         }
         
-        /* 6. 하단 챗봇 입력창 (st.chat_input) 다크 스타일 */
+        /* 11. 하단 챗봇 입력창 */
         div[data-testid="stChatInput"],
         div[data-testid="stChatInput"] > div,
         div[data-testid="stBottomBlockContainer"] > div {
             background-color: #1e293b !important;
             border: 1px solid #475569 !important;
             border-radius: 12px !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
         }
         div[data-testid="stChatInput"] textarea,
         div[data-testid="stChatInput"] textarea::placeholder,
@@ -382,27 +651,53 @@ else:
             background-color: rgba(14, 17, 23, 0.95) !important;
         }
 
-        /* 7. 탭 버튼(st.tabs) 클릭 영역 및 다크 스타일 */
+        /* 12. 탭 버튼 (st.tabs) */
         button[data-baseweb="tab"] {
             cursor: pointer !important;
             color: #94a3b8 !important;
             font-weight: 600 !important;
             font-size: 15px !important;
+            padding: 8px 16px !important;
+            border-radius: 6px 6px 0 0 !important;
+            transition: all 0.2s ease !important;
+        }
+        button[data-baseweb="tab"]:hover {
+            color: #38bdf8 !important;
+            background-color: rgba(56, 189, 248, 0.1) !important;
         }
         button[data-baseweb="tab"][aria-selected="true"] {
             color: #38bdf8 !important;
-            border-bottom: 2px solid #38bdf8 !important;
+            border-bottom: 3px solid #38bdf8 !important;
+            background-color: rgba(56, 189, 248, 0.08) !important;
         }
-        
-        /* 8. 텍스트 입력창 & 텍스트 영역 (Cypher 입력창) 다크 스타일 */
-        textarea, input {
-            background-color: #1e293b !important;
+
+        /* 13. 알림 박스 */
+        div[data-testid="stAlert"] {
+            border-radius: 10px !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+        }
+        div[data-testid="stAlert"] * {
             color: #f8fafc !important;
-            border: 1px solid #475569 !important;
-            font-family: 'Consolas', 'Courier New', monospace !important;
         }
         
-        /* 9. 카드 및 지표 */
+        /* 14. 데이터 테이블 & JSON 뷰어 */
+        [data-testid="stDataFrame"] {
+            border: 1px solid #334155 !important;
+            border-radius: 8px !important;
+            background-color: #1e293b !important;
+        }
+        div[data-testid="stJson"], div[data-testid="stJson"] pre {
+            background-color: #111827 !important;
+            border: 1px solid #374151 !important;
+            border-radius: 8px !important;
+            color: #f8fafc !important;
+        }
+        div[data-testid="stJson"] * {
+            color: #f8fafc !important;
+        }
+        
+        /* 15. 카드 및 지표 */
         .metric-card {
             background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)) !important;
             border: 1px solid rgba(255,255,255,0.15) !important;
@@ -423,10 +718,84 @@ else:
 
 
 # ── 메뉴 1: 상장사 지배구조 & 순환출자 탐색기 ──
+def render_graphrag_chat_section(default_corp_filter: str = ""):
+    """512차원 하이브리드 GraphRAG 질의응답 (메뉴 개편 2단계: 메뉴4 탭5 -> 메뉴1 홈으로 이동)"""
+    st.markdown("### 🤖 AI에게 자본이벤트를 물어보세요")
+    st.caption("512차원 Vector Index + MinMax 70:30 하이브리드 리랭커(유사도 70% + 자본규모/PageRank 30%) 기반 4단 의사결정 리포트를 즉시 생성합니다.")
+
+    col_q1, col_q2, col_q3 = st.columns(3)
+    sample_q = ""
+    if col_q1.button("🏢 타법인 인수 및 지분 투자", key="home_q1"):
+        sample_q = "타법인 증권 취득이나 인수를 위해 자금을 조달한 기업과 조달 목적을 알려줘"
+    if col_q2.button("🏭 시설 투자 및 공장 증설 (CB/BW)", key="home_q2"):
+        sample_q = "시설 투자 및 공장 증설을 위해 전환사채(CB)나 신주인수권부사채(BW)를 발행한 기업"
+    if col_q3.button("⚠️ 운영자금 충당 및 채무상환 증자", key="home_q3"):
+        sample_q = "운영자금 조달 또는 채무상환을 목적으로 대규모 유상증자를 결의한 공시"
+
+    user_query = st.text_input(
+        "자본이벤트 관련 질문을 입력하세요",
+        value=sample_q if sample_q else "",
+        placeholder="예: 타법인 지분 인수 목적으로 자본을 조달한 기업과 자금용도를 분석해줘",
+        key="graphrag_home_query"
+    )
+
+    col_k, col_corp = st.columns([1, 2])
+    with col_k:
+        top_k_select = st.slider("검색 상위 건수 (top_k)", min_value=1, max_value=10, value=3, key="graphrag_home_topk")
+    with col_corp:
+        corp_filter_input = st.text_input("특정 기업 필터 (선택 사항)", value=default_corp_filter, key="graphrag_home_corp_filter")
+
+    if st.button("🚀 GraphRAG AI 분석 리포트 생성", type="primary", key="btn_graphrag_home"):
+        if not user_query:
+            st.warning("질문을 입력해주세요.")
+        else:
+            with st.spinner("512차원 벡터 검색 및 MinMax 70:30 리랭킹 연산 중..."):
+                from services.graphrag_service import generate_graphrag_response
+                c_filter = corp_filter_input.strip() if corp_filter_input.strip() else None
+                report = generate_graphrag_response(user_query, corp_filter=c_filter, top_k=top_k_select)
+
+                st.markdown("#### 🎯 하이브리드 리랭킹 검색 결과 (Top K)")
+                if report["hits"]:
+                    hit_rows = []
+                    for h in report["hits"]:
+                        hit_rows.append({
+                            "기업명": h.get("corp_name"),
+                            "유형": h.get("event_type"),
+                            "종합점수 (70:30)": f"{h.get('final_score', 0):.4f}",
+                            "코사인유사도": f"{h.get('score', 0):.4f}",
+                            "조달규모": f"{h.get('scale_amount', 0):,}원",
+                            "공시접수번호": h.get("rcept_no"),
+                            "결의일": h.get("decided_on")
+                        })
+                    st.dataframe(pd.DataFrame(hit_rows), use_container_width=True)
+
+                st.markdown("---")
+                st.markdown("### 📋 4단 의사결정 AI 리포트 (Fact vs Interpretation)")
+
+                c_fact, c_interp = st.columns(2)
+                with c_fact:
+                    st.markdown("#### 1. 📌 사실 (Fact)")
+                    st.info(report["fact"])
+                with c_interp:
+                    st.markdown("#### 2. 🧠 해석 (Interpretation)")
+                    st.success(report["interpretation"])
+
+                c_evid, c_next = st.columns(2)
+                with c_evid:
+                    st.markdown("#### 3. 🔍 원문 근거 (Evidence)")
+                    st.warning(report["evidence"])
+                with c_next:
+                    st.markdown("#### 4. 🧭 다음 확인 항목 (Next Action)")
+                    st.error(report["next_action"])
+
+
 if menu == "🌐 1. 상장사 지배구조 & 순환출자 탐색기":
     st.header("🌐 상장사 지배구조 네트워크 탐색기")
     st.caption("Neo4j 지식그래프에 적재된 지분율(%)과 순환출자 관계를 3D 물리 엔진 그래프로 직관적으로 시각화합니다.")
-    
+
+    render_graphrag_chat_section()
+    st.markdown("---")
+
     col1, col2 = st.columns([1, 3])
     with col1:
         st.subheader("🔍 분석 대상 선택")
@@ -439,30 +808,30 @@ if menu == "🌐 1. 상장사 지배구조 & 순환출자 탐색기":
         
         if search_mode == "💻 직접 Cypher 쿼리 실행":
             sample_choice = st.selectbox(
-                "⚡ 추천 샘플 쿼리 불러오기",
+                "⚡ 추천 실측 샘플 쿼리 불러오기",
                 [
                     "직접 입력",
-                    "1. 3-Hop 순환출자 루프 탐색",
-                    "2. 15% 이상 주요 지분 관계 조회",
-                    "3. 국민연금공단 10대 대기업 투자망",
-                    "4. 삼성그룹 전체 지배구조 네트워크",
-                    "5. 한화그룹 방산·우주 계열사 네트워크",
-                    "6. 코스닥(KOSDAQ) 전체 기업 목록 조회",
-                    "7. 코스닥 vs 코스피 상장사 수 집계"
+                    "1. 실측 승격 경제적 지분망 (19건 전체)",
+                    "2. 롯데그룹 지배구조 네트워크 (롯데지주 계열)",
+                    "3. 알루코-케이피티유 실측 지분 관계",
+                    "4. 현대홈쇼핑-현대퓨처넷 실측 지분 관계",
+                    "5. 최근 주요 자본이벤트(CB/BW/증자/합병) 연결망",
+                    "6. 20% 이상 주요 승격 지분 조회",
+                    "7. 시장별(KOSPI vs KOSDAQ) 상장사 수 집계"
                 ]
             )
             
             sample_queries = {
-                "1. 3-Hop 순환출자 루프 탐색": "MATCH (a)-[r:OWNS_STAKE]->(b)\nWHERE (a.name = '현대모비스' AND b.name = '현대자동차')\n   OR (a.name = '현대자동차' AND b.name = '기아')\n   OR (a.name = '기아' AND b.name = '현대모비스')\nRETURN a, b, properties(r) AS r_props, type(r) AS r_type",
-                "2. 15% 이상 주요 지분 관계 조회": "MATCH (a)-[r:OWNS_STAKE]->(b)\nWHERE r.stake >= 15.0\nRETURN a, b, properties(r) AS r_props, type(r) AS r_type\nLIMIT 35",
-                "3. 국민연금공단 10대 대기업 투자망": "MATCH (a:DART_Group {name: '국민연금공단'})-[r]->(b)\nRETURN a, b, properties(r) AS r_props, type(r) AS r_type",
-                "4. 삼성그룹 전체 지배구조 네트워크": "MATCH (a)-[r]->(b)\nWHERE (a.name STARTS WITH '삼성' OR a.name IN ['이재용', '이부진'])\n  AND (b.name STARTS WITH '삼성' OR b.name IN ['이재용', '이부진'])\nRETURN a, b, properties(r) AS r_props, type(r) AS r_type",
-                "5. 한화그룹 방산·우주 계열사 네트워크": "MATCH (a)-[r]->(b)\nWHERE (a.name STARTS WITH '한화' OR a.name IN ['김승연', '김동관'])\n  AND (b.name STARTS WITH '한화' OR b.name IN ['김승연', '김동관'])\nRETURN a, b, properties(r) AS r_props, type(r) AS r_type",
-                "6. 코스닥(KOSDAQ) 전체 기업 목록 조회": "MATCH (c:DART_Company)\nWHERE c.market = 'KOSDAQ'\nRETURN c.name AS 코스닥_기업명, c.stock_code AS 종목코드\nLIMIT 50",
-                "7. 코스닥 vs 코스피 상장사 수 집계": "MATCH (c:DART_Company)\nWHERE c.market IN ['KOSDAQ', 'KOSPI']\nRETURN c.market AS 시장구분, count(c) AS 상장사수"
+                "1. 실측 승격 경제적 지분망 (19건 전체)": "MATCH (a)-[r:HOLDS_ECONOMIC_STAKE]->(b)\nRETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id",
+                "2. 롯데그룹 지배구조 네트워크 (롯데지주 계열)": "MATCH (a)-[r:HOLDS_ECONOMIC_STAKE]->(b)\nWHERE a.name STARTS WITH '롯데' OR b.name STARTS WITH '롯데'\nRETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id",
+                "3. 알루코-케이피티유 실측 지분 관계": "MATCH (a)-[r:HOLDS_ECONOMIC_STAKE]->(b)\nWHERE a.name IN ['케이피티유', '알루코'] OR b.name IN ['케이피티유', '알루코']\nRETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id",
+                "4. 현대홈쇼핑-현대퓨처넷 실측 지분 관계": "MATCH (a)-[r:HOLDS_ECONOMIC_STAKE]->(b)\nWHERE a.name IN ['현대홈쇼핑', '현대퓨처넷'] OR b.name IN ['현대홈쇼핑', '현대퓨처넷']\nRETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id",
+                "5. 최근 주요 자본이벤트(CB/BW/증자/합병) 연결망": "MATCH (a:DART_Company)-[r:ANNOUNCED]->(b:DART_CapitalEvent)\nRETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id\nLIMIT 30",
+                "6. 20% 이상 주요 승격 지분 조회": "MATCH (a)-[r:HOLDS_ECONOMIC_STAKE]->(b)\nWHERE r.stake >= 20.0\nRETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id",
+                "7. 시장별(KOSPI vs KOSDAQ) 상장사 수 집계": "MATCH (c:DART_Company)\nWHERE c.market IN ['KOSPI', 'KOSDAQ']\nRETURN c.market AS 시장구분, count(c) AS 기업수"
             }
             
-            initial_val = sample_queries.get(sample_choice, "MATCH (a)-[r]->(b)\nWHERE type(r) STARTS WITH 'OWNS' OR type(r) STARTS WITH 'INVESTED' OR type(r) STARTS WITH 'ACQUIRED'\nRETURN a, b, properties(r) AS r_props, type(r) AS r_type\nLIMIT 30")
+            initial_val = sample_queries.get(sample_choice, "MATCH (a)-[r:HOLDS_ECONOMIC_STAKE]->(b)\nRETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id")
             custom_cypher_query = st.text_area("💻 Cypher 쿼리 입력창", value=initial_val, height=140)
             st.caption("💡 `RETURN a, b, properties(r) AS r_props, type(r) AS r_type` 형식으로 작성 시 3D 그래프로 즉시 렌더링됩니다.")
             selected_group = None
@@ -515,14 +884,17 @@ if menu == "🌐 1. 상장사 지배구조 & 순환출자 탐색기":
             selected_group = st.selectbox(
                 "대기업 집단 / 지배구조 유형",
                 [
-                    "현대자동차그룹 (순환출자)",
-                    "삼성그룹 (삼각 지배구조)",
-                    "SK그룹 (지주사 체제)",
-                    "LG그룹 (지주사 체제)",
-                    "한화그룹 (방산·우주 3세 승계)",
-                    "포스코 & 롯데 (지배구조)",
-                    "카카오 & 하이브 (플랫폼·엔터)",
-                    "국민연금 (NPS 10대 대기업 지분망)",
+                    "🏛️ 실측 승격 지분 네트워크 (19건 종합)",
+                    "롯데그룹 지배구조 (롯데지주➔칠성/웰푸드)",
+                    "알루코 지배구조 (케이피티유➔알루코)",
+                    "현대홈쇼핑 지배구조 (현대홈쇼핑➔현대퓨처넷)",
+                    "⚡ 최근 주요 자본이벤트 네트워크 (30건)",
+                    "현대자동차그룹 (순환출자 - 내일 대규모 수집 대상)",
+                    "삼성그룹 (삼각 지배구조 - 내일 대규모 수집 대상)",
+                    "SK그룹 (지주사 체제 - 내일 대규모 수집 대상)",
+                    "LG그룹 (지주사 체제 - 내일 대규모 수집 대상)",
+                    "한화그룹 (방산·우주 - 내일 대규모 수집 대상)",
+                    "국민연금 (NPS 10대 대기업 - 내일 대규모 수집 대상)",
                     "🌐 전체 상장사 통합 네트워크"
                 ]
             )
@@ -550,85 +922,55 @@ if menu == "🌐 1. 상장사 지배구조 & 순환출자 탐색기":
         if custom_cypher_query:
             query = custom_cypher_query
         elif selected_entity:
-            # 아직 지분 데이터가 없는 상장사인 경우 OpenDART에서 실시간 온디맨드 자동 수집
-            ensure_company_ownership_data(selected_entity)
-            
-            # 개별 기업/인물 맞춤 중심 지배구조 네트워크 (Ego-network, 공시제출 FILED 제외)
+            # 개별 기업/인물 맞춤 중심 지배구조 네트워크 (실측 승격 지분 및 자본이벤트 반영)
             query = f"""
             MATCH (a)-[r]->(b)
             WHERE (a.name = '{selected_entity}' OR b.name = '{selected_entity}')
-              AND type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
+              AND type(r) IN ['HOLDS_ECONOMIC_STAKE', 'ANNOUNCED', 'OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
             RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
             LIMIT 40
             """
-        elif selected_group == "현대자동차그룹 (순환출자)":
+        elif selected_group == "🏛️ 실측 승격 지분 네트워크 (19건 종합)":
             query = """
-            MATCH (a)-[r]->(b)
-            WHERE a.name IN ['정의선', '정몽구', '현대모비스', '현대자동차', '기아', '현대글로비스', '현대제철', '보스턴다이내믹스']
-              AND b.name IN ['정의선', '정몽구', '현대모비스', '현대자동차', '기아', '현대글로비스', '현대제철', '보스턴다이내믹스']
-              AND type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
+            MATCH (a)-[r:HOLDS_ECONOMIC_STAKE]->(b)
             RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
             """
-        elif selected_group == "삼성그룹 (삼각 지배구조)":
+        elif selected_group == "롯데그룹 지배구조 (롯데지주➔칠성/웰푸드)":
             query = """
-            MATCH (a)-[r]->(b)
-            WHERE (a.name STARTS WITH '삼성' OR a.name IN ['이재용', '이부진', '이서현'])
-              AND (b.name STARTS WITH '삼성' OR b.name IN ['이재용', '이부진', '이서현'])
-              AND type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
+            MATCH (a)-[r:HOLDS_ECONOMIC_STAKE]->(b)
+            WHERE a.name STARTS WITH '롯데' OR b.name STARTS WITH '롯데'
             RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
             """
-        elif selected_group == "SK그룹 (지주사 체제)":
+        elif selected_group == "알루코 지배구조 (케이피티유➔알루코)":
             query = """
-            MATCH (a)-[r]->(b)
-            WHERE (a.name STARTS WITH 'SK' OR a.name IN ['최태원', '노소영'])
-              AND (b.name STARTS WITH 'SK' OR b.name IN ['최태원', '노소영'])
-              AND type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
+            MATCH (a)-[r:HOLDS_ECONOMIC_STAKE]->(b)
+            WHERE a.name IN ['케이피티유', '알루코'] OR b.name IN ['케이피티유', '알루코']
             RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
             """
-        elif selected_group == "LG그룹 (지주사 체제)":
+        elif selected_group == "현대홈쇼핑 지배구조 (현대홈쇼핑➔현대퓨처넷)":
             query = """
-            MATCH (a)-[r]->(b)
-            WHERE (a.name STARTS WITH 'LG' OR a.name IN ['구광모', '(주)LG'])
-              AND (b.name STARTS WITH 'LG' OR b.name IN ['구광모', '(주)LG'])
-              AND type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
+            MATCH (a)-[r:HOLDS_ECONOMIC_STAKE]->(b)
+            WHERE a.name IN ['현대홈쇼핑', '현대퓨처넷'] OR b.name IN ['현대홈쇼핑', '현대퓨처넷']
             RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
             """
-        elif selected_group == "한화그룹 (방산·우주 3세 승계)":
+        elif selected_group == "⚡ 최근 주요 자본이벤트 네트워크 (30건)":
             query = """
-            MATCH (a)-[r]->(b)
-            WHERE (a.name STARTS WITH '한화' OR a.name IN ['김승연', '김동관', '(주)한화', '쎄트렉아이'])
-              AND (b.name STARTS WITH '한화' OR b.name IN ['김승연', '김동관', '(주)한화', '쎄트렉아이'])
-              AND type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
+            MATCH (a:DART_Company)-[r:ANNOUNCED]->(b:DART_CapitalEvent)
             RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
+            LIMIT 30
             """
-        elif selected_group == "포스코 & 롯데 (지배구조)":
+        elif selected_group and "수집 대상" in selected_group:
             query = """
-            MATCH (a)-[r]->(b)
-            WHERE (a.name STARTS WITH '포스코' OR a.name STARTS WITH '롯데' OR a.name IN ['신동빈'])
-              AND (b.name STARTS WITH '포스코' OR b.name STARTS WITH '롯데' OR b.name IN ['신동빈'])
-              AND type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
+            MATCH (a)-[r:HOLDS_ECONOMIC_STAKE]->(b)
             RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
-            """
-        elif selected_group == "카카오 & 하이브 (플랫폼·엔터)":
-            query = """
-            MATCH (a)-[r]->(b)
-            WHERE (a.name STARTS WITH '카카오' OR a.name STARTS WITH '하이브' OR a.name IN ['김범수', '방시혁', 'SM엔터테인먼트', '어도어'])
-              AND (b.name STARTS WITH '카카오' OR b.name STARTS WITH '하이브' OR b.name IN ['김범수', '방시혁', 'SM엔터테인먼트', '어도어'])
-              AND type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
-            RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
-            """
-        elif selected_group == "국민연금 (NPS 10대 대기업 지분망)":
-            query = """
-            MATCH (a:DART_Group {name: '국민연금공단'})-[r]->(b)
-            WHERE type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
-            RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
+            LIMIT 0
             """
         else:
             query = """
             MATCH (a)-[r]->(b)
-            WHERE type(r) IN ['OWNS_STAKE', 'HOLDS_5PCT', 'INVESTED_IN', 'REPRESENTS', 'ACQUIRED_STAKE']
+            WHERE type(r) IN ['HOLDS_ECONOMIC_STAKE', 'ANNOUNCED', 'OWNS_STAKE', 'INVESTED_IN']
             RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
-            LIMIT 70
+            LIMIT 50
             """
             
         raw_graph_data = run_cypher(query)
@@ -775,11 +1117,15 @@ if menu == "🌐 1. 상장사 지배구조 & 순환출자 탐색기":
                 html_content = net.generate_html()
                 components.html(html_content, height=540)
             else:
-                st.info("📊 실행하신 쿼리는 노드-관계(a->b) 그래프 형태가 아닌 **집계/단일 컬럼 조회 결과**입니다. 오른쪽 **[📋 데이터 테이블]** 탭에서 조회 결과를 확인하세요!")
-                if raw_graph_data and len(raw_graph_data) == 1:
-                    first_row = raw_graph_data[0]
-                    col_keys = list(first_row.keys())
-                    st.metric(label=col_keys[0], value=f"{first_row[col_keys[0]]:,}" if isinstance(first_row[col_keys[0]], (int, float)) else str(first_row[col_keys[0]]))
+                if not raw_graph_data:
+                    st.warning("⚠️ 선택하신 조건에 일치하는 지분/공시 관계가 라이브 DB에 존재하지 않습니다 (0건 조회).")
+                    st.info("💡 실측 지분 데이터를 즉시 확인하시려면 프리셋에서 **[🏛️ 실측 승격 지분 네트워크 (19건 종합)]**, **[롯데그룹 지배구조]**, 또는 **[알루코 지배구조]**를 선택해 보세요!")
+                else:
+                    st.info("📊 실행하신 쿼리는 노드-관계(a->b) 그래프 형태가 아닌 **집계/단일 컬럼 조회 결과**입니다. 오른쪽 **[📋 데이터 테이블]** 탭에서 조회 결과를 확인하세요!")
+                    if len(raw_graph_data) == 1:
+                        first_row = raw_graph_data[0]
+                        col_keys = list(first_row.keys())
+                        st.metric(label=col_keys[0], value=f"{first_row[col_keys[0]]:,}" if isinstance(first_row[col_keys[0]], (int, float)) else str(first_row[col_keys[0]]))
             
         with tab_table:
             import pandas as pd
@@ -795,7 +1141,7 @@ if menu == "🌐 1. 상장사 지배구조 & 순환출자 탐색기":
                 return (curr_score, rep_on, as_of, yr)
 
             stake_items = sorted(
-                [e for e in edges_map.values() if e['type'] in ['OWNS_STAKE', 'HOLDS_5PCT']],
+                [e for e in edges_map.values() if e['type'] in ['HOLDS_ECONOMIC_STAKE', 'ANNOUNCED', 'OWNS_STAKE', 'HOLDS_5PCT']],
                 key=get_stake_sort_key,
                 reverse=True
             )
@@ -1153,37 +1499,7 @@ if menu == "🌐 1. 상장사 지배구조 & 순환출자 탐색기":
                     st.info("좌측 테이블에서 분석할 항목을 선택하세요.")
 
         
-    # 리스크 진단 카드
-    st.markdown("---")
-    st.subheader("📊 핵심 지배구조 분석 지표")
-    m1, m2, m3 = st.columns(3)
-    
-    with m1:
-        st.markdown("""
-        <div class="metric-card">
-            <h4>🔄 순환출자 루프 탐지</h4>
-            <p class="risk-high">🚨 3-Hop 순환고리 발견</p>
-            <small>현대모비스 ➔ 현대차 ➔ 기아 ➔ 현대모비스</small>
-        </div>
-        """, unsafe_allow_html=True)
-        
-    with m2:
-        st.markdown("""
-        <div class="metric-card">
-            <h4>👑 최대주주 총괄 지배력</h4>
-            <p class="risk-low">✅ 안정적 (합산 지분 33.4%)</p>
-            <small>직접 지분 + 계열사 우회 지분 통합 판정</small>
-        </div>
-        """, unsafe_allow_html=True)
-        
-    with m3:
-        st.markdown("""
-        <div class="metric-card">
-            <h4>⚔️ 경영권 분쟁 위험도</h4>
-            <p class="risk-medium">⚠️ 주의 (사모펀드 2대주주 진입)</p>
-            <small>행동주의 펀드 지분 격차 4.2% 이내</small>
-        </div>
-        """, unsafe_allow_html=True)
+
 
 
 # ── 메뉴 2: 단일 기업 4단 의사결정 리포트 ──
@@ -1276,34 +1592,33 @@ elif menu == "👑 3. GDS 재계 권력 랭킹 (PageRank)":
     with col_gds1:
         st.subheader("🏆 [Top 10] 대한민국 재계 실질 영향력 파워 랭킹")
         
-        # 지분 관계 기반 가중치 PageRank 근사 계산 쿼리
+        # 지분 관계 기반 가중치 랭킹 계산 쿼리 (HOLDS_ECONOMIC_STAKE 기준 - 3중 교차검증 승격 완료분만)
         power_rank_data = run_cypher("""
-        MATCH (p:DART_Person)-[r:OWNS_STAKE]->(c:DART_Company)
-        OPTIONAL MATCH (c)-[sub_r:OWNS_STAKE]->(sub_c:DART_Company)
-        WITH p, 
-             count(DISTINCT c) AS direct_cnt,
-             count(DISTINCT sub_c) AS indirect_cnt,
-             round(sum(r.stake), 2) AS total_direct_stake,
-             round(sum(r.stake * coalesce(sub_r.stake, 100.0) / 100.0), 2) AS weighted_power_score,
-             collect(DISTINCT c.name) AS direct_companies
-        RETURN p.name AS 총수명,
+        MATCH (h:DART_Company)-[r:HOLDS_ECONOMIC_STAKE]->(t:DART_Company)
+        OPTIONAL MATCH (t)-[sub_r:HOLDS_ECONOMIC_STAKE]->(sub_t:DART_Company)
+        WITH h,
+             count(DISTINCT t) AS direct_cnt,
+             count(DISTINCT sub_t) AS indirect_cnt,
+             round(sum(DISTINCT r.stake_ratio), 2) AS total_direct_stake,
+             collect(DISTINCT t.name) AS direct_companies
+        RETURN h.name AS 지배기업명,
                direct_cnt AS 직접지배기업수,
                indirect_cnt AS 우회지배계열사수,
                direct_cnt + indirect_cnt AS 총지배기업수,
-               weighted_power_score AS 권력점수,
+               total_direct_stake AS 직접지분합계,
                direct_companies AS 핵심지배기업
-        ORDER BY 총지배기업수 DESC, 권력점수 DESC
+        ORDER BY 총지배기업수 DESC, 직접지분합계 DESC
         LIMIT 10
         """)
-        
+
         if power_rank_data:
             for i, row in enumerate(power_rank_data, 1):
                 with st.container():
                     st.markdown(f"""
                     <div class="metric-card" style="border-left: 5px solid {'#ff4081' if i<=3 else '#2196f3'};">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <h4 style="margin:0;">🎖️ #{i}위: <b>{row['총수명']}</b></h4>
-                            <span style="font-size:18px; font-weight:bold; color:#00e5ff;">파워 스코어: {row['권력점수']} pts</span>
+                            <h4 style="margin:0;">🎖️ #{i}위: <b>{row['지배기업명']}</b></h4>
+                            <span style="font-size:18px; font-weight:bold; color:#00e5ff;">직접 지분 합계: {row['직접지분합계']}%</span>
                         </div>
                         <p style="margin:6px 0 0 0; color:#bbbbbb;">
                             • 지배 계열사: 총 <b>{row['총지배기업수']}개사</b> (직접 {row['직접지배기업수']}개 + 우회 {row['우회지배계열사수']}개)<br>
@@ -1311,8 +1626,78 @@ elif menu == "👑 3. GDS 재계 권력 랭킹 (PageRank)":
                         </p>
                     </div>
                     """, unsafe_allow_html=True)
+
+                    with st.expander(f"🔍 #{i} {row['지배기업명']} - 직접 보유 관계 원문 근거 보기"):
+                        detail_rows_all = run_cypher("""
+                            MATCH (h:DART_Company {name: $hname})-[r:HOLDS_ECONOMIC_STAKE]->(t:DART_Company)
+                            RETURN t.name AS 피보유회사, r.stake_ratio AS 지분율,
+                                   r.reporting_obligation_date AS 보고의무발생일, r.rcept_no AS 접수번호
+                            ORDER BY r.reporting_obligation_date DESC
+                        """, hname=row["지배기업명"])
+                        # 우회 계열사(2단계, 직접 보유회사가 다시 보유한 회사) - 그래프 뷰에서만 사용
+                        indirect_rows = run_cypher("""
+                            MATCH (h:DART_Company {name: $hname})-[:HOLDS_ECONOMIC_STAKE]->(t:DART_Company)
+                            MATCH (t)-[r2:HOLDS_ECONOMIC_STAKE]->(sub:DART_Company)
+                            RETURN DISTINCT t.name AS 직접회사, sub.name AS 우회회사, r2.stake_ratio AS 지분율
+                        """, hname=row["지배기업명"])
+
+                        if detail_rows_all:
+                            view_mode = st.radio(
+                                "보기 방식", ["📋 표", "🌐 그래프 (직접+우회 2단계)"],
+                                horizontal=True, key=f"view_mode_{i}_{row['지배기업명']}"
+                            )
+                            show_full_history = st.checkbox(
+                                "과거 이력 전체 보기 (회사당 최신 1건만이 기본값)",
+                                value=False, key=f"full_hist_{i}_{row['지배기업명']}"
+                            )
+
+                            if show_full_history:
+                                display_rows = detail_rows_all
+                                st.caption(f"총 {len(detail_rows_all)}건의 공시 이력 (고유 {row['직접지배기업수']}개사) 전체 표시 중")
+                            else:
+                                # 회사별 최신(보고의무발생일 내림차순 첫 항목)만 남김
+                                seen = set()
+                                display_rows = []
+                                for r_ in detail_rows_all:
+                                    if r_["피보유회사"] not in seen:
+                                        seen.add(r_["피보유회사"])
+                                        display_rows.append(r_)
+                                st.caption(f"고유 {len(display_rows)}개사 최신 공시만 표시 중 (전체 이력 {len(detail_rows_all)}건은 위 체크박스로 확인)")
+
+                            if view_mode == "📋 표":
+                                st.dataframe(pd.DataFrame(display_rows), use_container_width=True, hide_index=True)
+                                first_rcp = display_rows[0].get("접수번호")
+                                if first_rcp:
+                                    c_l1, c_l2 = st.columns(2)
+                                    with c_l1:
+                                        st.link_button("📑 DART 원문 바로가기 (최신 건)", f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={first_rcp}", use_container_width=True)
+                                    with c_l2:
+                                        st.link_button("🏛️ KRX 상장공시 교차검증", f"https://kind.krx.co.kr/common/disclsviewer.do?acptno={first_rcp}&method=search", use_container_width=True)
+                            else:
+                                net_r = Network(height="420px", width="100%", bgcolor=canvas_bg, font_color=canvas_font, directed=True)
+                                net_r.add_node(row["지배기업명"], label=row["지배기업명"], color="#ff4081", shape="star", size=30, title="지배기업 (Top 랭킹)")
+                                added = {row["지배기업명"]}
+                                for r_ in display_rows:
+                                    tgt = r_["피보유회사"]
+                                    if tgt not in added:
+                                        net_r.add_node(tgt, label=tgt, color="#2196f3", shape="dot", size=22, title="직접 보유")
+                                        added.add(tgt)
+                                    net_r.add_edge(row["지배기업명"], tgt, label=f"{r_['지분율']}%", color="#78909c", arrows="to")
+                                for ir in indirect_rows:
+                                    if ir["우회회사"] not in added:
+                                        net_r.add_node(ir["우회회사"], label=ir["우회회사"], color="#00e676", shape="dot", size=18, title="우회(2단계) 보유")
+                                        added.add(ir["우회회사"])
+                                    net_r.add_edge(ir["직접회사"], ir["우회회사"], label=f"{ir['지분율']}%", color="#94a3b8", arrows="to")
+                                net_r.set_options('{"physics": {"solver": "barnesHut", "barnesHut": {"gravitationalConstant": -3000, "springLength": 140}, "stabilization": {"enabled": true, "iterations": 100}}}')
+                                components.html(net_r.generate_html(), height=440)
+                                st.caption("🔴 별: 지배기업 | 🔵 파랑: 직접 보유 계열사 | 🟢 초록: 우회(2단계) 보유 계열사")
+
+                            st.caption(f"💡 더 상세한 원문 좌표(XPath)·해시 단위 감사는 사이드바 '📋 2. 단일 기업 4단 의사결정 리포트'에서 '{row['지배기업명']}'을 검색하시면 확인 가능합니다.")
+                        else:
+                            st.info("상세 근거를 불러오지 못했습니다.")
+            st.caption("🛡️ 위 순위는 DART 5% 대량보유 공시 원문 3중 교차검증(사명·수치·일자)을 통과해 승격된 `:HOLDS_ECONOMIC_STAKE` 관계만 집계한 것으로, 경제적 지분 보유 사실이며 경영권·지배력을 단정하지 않습니다.")
         else:
-            st.info("🛡️ **[지분 무결성 격리 안내]**\n현재 Cloud Aura DB는 원시 증거 추출 계층(23,996건)과 3,988개 상장사 마스터의 100% 무결성을 위해 프로덕션 지분 관계(`:OWNS_STAKE`)를 안전 격리(0건) 상태로 유지하고 있습니다.\n\n엔티티 해소(Entity Resolution v1.1) 승인 후 지분 연결이 완료되면 실시간 GDS PageRank 파워 랭킹이 즉시 활성화됩니다.")
+            st.info("🛡️ 현재 승격된 경제적 보유 관계(`:HOLDS_ECONOMIC_STAKE`)가 없습니다.")
                 
     with col_gds2:
         st.subheader("🧠 GDS 알고리즘 원리")
@@ -1375,13 +1760,12 @@ elif menu == "⚡ 4. DS005 기업 주요 자본 이벤트 (CB·BW·증자·M&A)"
     if selected_corp_raw != "전체 상장사 종합 보기":
         selected_corp = selected_corp_raw.split(" (")[0]
 
-    # 3. 5대 탭 구성
-    tab_all, tab_cb, tab_pi, tab_mg, tab_graphrag = st.tabs([
+    # 3. 4대 탭 구성 (GraphRAG AI 분석기는 메뉴 1 홈으로 이동함 - 메뉴 개편 2단계)
+    tab_all, tab_cb, tab_pi, tab_mg = st.tabs([
         "📑 1. 전체 이벤트 타임라인",
         "💳 2. 전환사채(CB) & BW",
         "📈 3. 유상증자 발행 분석",
         "🤝 4. 회사합병 & 주식 양수도",
-        "🤖 5. 512차원 자본이벤트 GraphRAG AI 분석기 (v1.0)"
     ])
 
 
@@ -1482,80 +1866,6 @@ elif menu == "⚡ 4. DS005 기업 주요 자본 이벤트 (CB·BW·증자·M&A)"
         else:
             st.info("합병 및 주식 양수도 공시 내역이 없습니다.")
 
-    with tab_graphrag:
-        st.subheader("🤖 512차원 Vector Index + MinMax 70:30 하이브리드 GraphRAG 질의응답 (v1.0)")
-        st.caption("Day 35 하이브리드 리랭커 (유사도 70% + 자본규모/PageRank 30%)와 4단 의사결정 리포트(사실/해석/원문근거/다음확인)가 탑재된 공식 AI 분석기입니다.")
-
-        # 추천 질문 예시
-        st.markdown("##### 💡 추천 질의 예시 (클릭 시 자동 입력)")
-        col_q1, col_q2, col_q3 = st.columns(3)
-        sample_q = ""
-        if col_q1.button("🏢 타법인 인수 및 지분 투자"):
-            sample_q = "타법인 증권 취득이나 인수를 위해 자금을 조달한 기업과 조달 목적을 알려줘"
-        if col_q2.button("🏭 시설 투자 및 공장 증설 (CB/BW)"):
-            sample_q = "시설 투자 및 공장 증설을 위해 전환사채(CB)나 신주인수권부사채(BW)를 발행한 기업"
-        if col_q3.button("⚠️ 운영자금 충당 및 채무상환 증자"):
-            sample_q = "운영자금 조달 또는 채무상환을 목적으로 대규모 유상증자를 결의한 공시"
-
-        user_query = st.text_input(
-            "자본이벤트 관련 질문을 입력하세요",
-            value=sample_q if sample_q else "",
-            placeholder="예: 타법인 지분 인수 목적으로 자본을 조달한 기업과 자금용도를 분석해줘",
-            key="graphrag_v10_query"
-        )
-
-        col_k, col_corp = st.columns([1, 2])
-        with col_k:
-            top_k_select = st.slider("검색 상위 건수 (top_k)", min_value=1, max_value=10, value=3)
-        with col_corp:
-            corp_filter_input = st.text_input("특정 기업 필터 (선택 사항)", value=selected_corp if selected_corp else "")
-
-        if st.button("🚀 GraphRAG AI 분석 리포트 생성", type="primary", key="btn_graphrag_v10"):
-            if not user_query:
-                st.warning("질문을 입력해주세요.")
-            else:
-                with st.spinner("512차원 벡터 검색 및 MinMax 70:30 리랭킹 연산 중..."):
-                    from services.graphrag_service import generate_graphrag_response
-                    c_filter = corp_filter_input.strip() if corp_filter_input.strip() else None
-                    report = generate_graphrag_response(user_query, corp_filter=c_filter, top_k=top_k_select)
-
-                    # 1. 검색 적중 및 리랭킹 점수 테이블
-                    st.markdown("#### 🎯 하이브리드 리랭킹 검색 결과 (Top K)")
-                    if report["hits"]:
-                        hit_rows = []
-                        for h in report["hits"]:
-                            hit_rows.append({
-                                "기업명": h.get("corp_name"),
-                                "유형": h.get("event_type"),
-                                "종합점수 (70:30)": f"{h.get('final_score', 0):.4f}",
-                                "코사인유사도": f"{h.get('score', 0):.4f}",
-                                "조달규모": f"{h.get('scale_amount', 0):,}원",
-                                "공시접수번호": h.get("rcept_no"),
-                                "결의일": h.get("decided_on")
-                            })
-                        st.dataframe(pd.DataFrame(hit_rows), use_container_width=True)
-
-                    # 2. 4단 의사결정 리포트
-                    st.markdown("---")
-                    st.markdown("### 📋 4단 의사결정 AI 리포트 (Fact vs Interpretation)")
-
-                    c_fact, c_interp = st.columns(2)
-                    with c_fact:
-                        st.markdown("#### 1. 📌 사실 (Fact)")
-                        st.info(report["fact"])
-                    with c_interp:
-                        st.markdown("#### 2. 🧠 해석 (Interpretation)")
-                        st.success(report["interpretation"])
-
-                    c_evid, c_next = st.columns(2)
-                    with c_evid:
-                        st.markdown("#### 3. 🔍 원문 근거 (Evidence)")
-                        st.warning(report["evidence"])
-                    with c_next:
-                        st.markdown("#### 4. 🧭 다음 확인 항목 (Next Action)")
-                        st.error(report["next_action"])
-
-
 
 # ── 메뉴 5: 최근 5년 OpenDART 실시간 수집 & 스토리지 ──
 elif menu == "📥 5. 최근 5년 OpenDART 실시간 수집 & 스토리지":
@@ -1636,7 +1946,7 @@ elif menu == "📥 5. 최근 5년 OpenDART 실시간 수집 & 스토리지":
             else:
                 st.info("저장된 공시 파일이 없습니다.")
 
-elif "6." in menu:
+elif menu == "🔍 6. 5% 공시 원문 증거 감사기 (Evidence Audit Inspector)":
     # 1. 증거 계층 메트릭 실시간 사전 집계 (Zero DB Write / READ_ACCESS 모드)
     cand_stat = run_cypher("MATCH (c:RawEvidenceCandidate) RETURN count(c) AS cnt")[0]['cnt'] if driver else 0
     frag_stat = run_cypher("MATCH (f:EvidenceFragment) RETURN count(f) AS cnt")[0]['cnt'] if driver else 0
@@ -2110,6 +2420,240 @@ elif "6." in menu:
                 st.json(manifest)
         else:
             st.info("💡 상단의 '🎯 검증할 공시 문서 및 변조 시나리오 선택' 또는 '📂 외부 공시 XML 직접 업로드' 후, **[🚀 공시 원문 증거 감사 실행]** 버튼을 클릭하세요.")
+
+# ── 메뉴 7: 개발자/분석가 라이브 쿼리 콘솔 (FO Live Cypher Console) ──
+elif menu == "💻 7. 개발자/분석가 라이브 쿼리 콘솔 (FO Live Cypher Console)":
+    st.header("💻 개발자 / 분석가 FO 라이브 Cypher 콘솔")
+    st.caption("금융감독원 DART 지식그래프와 Cloud Neo4j Aura 실측 데이터를 FO 대시보드에서 직접 쿼리를 코딩·수정하여 실시간으로 조회하고 검증합니다.")
+    
+    # 1. 인프라 실시간 현황 배너
+    m1, m2, m3, m4 = st.columns(4)
+    with m1:
+        st.markdown("""
+        <div class='metric-card'>
+            <span style='font-size:12px; color:#64748b;'>DB 연결 모드</span>
+            <div style='font-size:18px; font-weight:bold; color:#0284c7;'>🔒 READ-ONLY</div>
+            <span style='font-size:11px; color:#16a34a;'>불변 헌법 100% 안전</span>
+        </div>
+        """, unsafe_allow_html=True)
+    with m2:
+        res_nodes = run_cypher("MATCH (n) RETURN count(n) AS c")
+        total_nodes = res_nodes[0]['c'] if res_nodes else 0
+        st.markdown(f"""
+        <div class='metric-card'>
+            <span style='font-size:12px; color:#64748b;'>라이브 노드 수</span>
+            <div style='font-size:18px; font-weight:bold; color:#0284c7;'>{total_nodes:,}개</div>
+            <span style='font-size:11px; color:#64748b;'>공시/기업/인물/이벤트</span>
+        </div>
+        """, unsafe_allow_html=True)
+    with m3:
+        res_rels = run_cypher("MATCH ()-[r]->() RETURN count(r) AS c")
+        total_rels = res_rels[0]['c'] if res_rels else 0
+        st.markdown(f"""
+        <div class='metric-card'>
+            <span style='font-size:12px; color:#64748b;'>라이브 관계 수</span>
+            <div style='font-size:18px; font-weight:bold; color:#0284c7;'>{total_rels:,}건</div>
+            <span style='font-size:11px; color:#64748b;'>승격지분/자본공시/원문증거</span>
+        </div>
+        """, unsafe_allow_html=True)
+    with m4:
+        st.markdown("""
+        <div class='metric-card'>
+            <span style='font-size:12px; color:#64748b;'>출력 모드</span>
+            <div style='font-size:18px; font-weight:bold; color:#0284c7;'>3D + 테이블 + JSON</div>
+            <span style='font-size:11px; color:#64748b;'>다각도 통합 검증</span>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    st.markdown("---")
+    
+    # 2. 추천 실측 템플릿 쿼리 목록
+    console_templates = {
+        "1. 🏛️ 실측 승격 지분 네트워크 (19건 전체 3D 뷰)": """// [실측 승격 지분] DART 공시 원문 100% 교차 검증 승격 지분 (19건)
+MATCH (a:DART_Company)-[r:HOLDS_ECONOMIC_STAKE]->(b:DART_Company)
+RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id""",
+        
+        "2. ⚡ 최근 5개년 5대 자본이벤트(CB·BW·증자·합병) 타임라인": """// [자본이벤트 시계열] DART 공식 DS005 공시 자본 이벤트 (상위 30건)
+MATCH (c:DART_Company)-[r:ANNOUNCED]->(e:DART_CapitalEvent)
+RETURN c.name AS 기업명, e.event_type AS 이벤트구분, e.total_amount_krw AS 조달금액_원, 
+       e.decided_on AS 결의일, e.rcept_no AS 공시접수번호
+ORDER BY e.decided_on DESC LIMIT 30""",
+        
+        "3. 👑 GDS PageRank 재계 권력 지수 상위 20대 기업": """// [GDS PageRank] 네트워크 중심성 권력 지수 랭킹
+MATCH (c:DART_Company)
+WHERE c.pagerank_score IS NOT NULL
+RETURN c.name AS 기업명, c.stock_code AS 종목코드, c.market AS 시장구분, 
+       round(c.pagerank_score * 10000) / 10000 AS PageRank점수, 
+       c.weighted_in_degree AS 내부유입출자수
+ORDER BY c.pagerank_score DESC LIMIT 20""",
+        
+        "4. 🧠 512차원 GraphRAG 벡터 임베딩 적재 현황 점검": """// [GraphRAG 벡터 인덱스] 512차원 자본이벤트 임베딩 보유 현황
+MATCH (e:DART_CapitalEvent)
+WHERE e.embedding_512 IS NOT NULL
+RETURN e.event_type AS 이벤트종류, count(e) AS 벡터임베딩_보유건수, 
+       min(e.decided_on) AS 최초일자, max(e.decided_on) AS 최근일자""",
+        
+        "5. 🔍 5% 공시 원문 증거(EVIDENCED_BY) 계층 역추적": """// [원문 증거 역추적] 감사 가능한 원시 증거 후보 및 공시 연결 (상위 25건)
+MATCH (cand:RawEvidenceCandidate)-[r:EVIDENCED_BY]->(d:DART_Disclosure)
+RETURN cand.reporter_name AS 보고자, cand.target_company_name AS 대상기업, 
+       cand.stake AS 지분율, cand.candidate_type AS 후보유형, 
+       d.rcept_no AS 공시접수번호, d.report_nm AS 보고서명
+LIMIT 25""",
+        
+        "6. 📊 전체 라이브 그래프 관계(Relationship) 타입별 건수 집계": """// [관계 타입별 집계] 실측 DB 내 모든 엣지 타입별 통계
+MATCH ()-[r]->()
+RETURN type(r) AS 관계타입, count(r) AS 건수
+ORDER BY count(r) DESC""",
+        
+        "7. 🏷️ 전체 라이브 그래프 노드(Node) 라벨별 건수 집계": """// [노드 라벨별 집계] 실측 DB 내 모든 엔티티 라벨별 통계
+MATCH (n)
+RETURN labels(n) AS 노드라벨, count(n) AS 노드수
+ORDER BY count(n) DESC"""
+    }
+    
+    col_t1, col_t2 = st.columns([2, 1])
+    with col_t1:
+        sel_tmpl = st.selectbox("⚡ 실측 추천 템플릿 쿼리 선택 (원클릭 로드)", list(console_templates.keys()), index=0)
+    with col_t2:
+        st.markdown("<div style='height:28px;'></div>", unsafe_allow_html=True)
+        if st.button("🔄 템플릿 기본값으로 재설정"):
+            st.session_state["live_cypher_input"] = console_templates[sel_tmpl]
+            st.rerun()
+            
+    # 에디터 세션 상태 관리
+    if "live_cypher_input" not in st.session_state:
+        st.session_state["live_cypher_input"] = console_templates[sel_tmpl]
+    elif st.session_state.get("last_selected_tmpl") != sel_tmpl:
+        st.session_state["live_cypher_input"] = console_templates[sel_tmpl]
+        st.session_state["last_selected_tmpl"] = sel_tmpl
+        
+    st.subheader("💻 Cypher 쿼리 에디터 (직접 코딩 및 수정 가능)")
+    user_cypher = st.text_area(
+        "직접 Cypher 코드를 작성하거나 수정하세요 (SQL형 Cypher 질의 지원):",
+        value=st.session_state["live_cypher_input"],
+        height=170,
+        key="cypher_code_editor"
+    )
+    st.caption("💡 `RETURN a, b, properties(r) AS r_props, type(r) AS r_type` 형태로 RETURN하면 [3D 인터랙티브 그래프]로 즉시 렌더링됩니다.")
+    
+    c_btn1, c_btn2, c_btn3 = st.columns([1, 1, 3])
+    with c_btn1:
+        run_exec = st.button("🚀 Cypher 쿼리 실행", type="primary", use_container_width=True)
+    with c_btn2:
+        if st.button("🧹 에디터 비우기", use_container_width=True):
+            st.session_state["live_cypher_input"] = "MATCH (n)\nRETURN n\nLIMIT 10"
+            st.rerun()
+            
+    # 쿼리 실행
+    if run_exec or st.session_state.get("last_executed_cypher") == user_cypher:
+        st.session_state["last_executed_cypher"] = user_cypher
+        
+        start_t = time.time()
+        try:
+            results = run_cypher(user_cypher)
+            elapsed_ms = round((time.time() - start_t) * 1000, 2)
+            
+            st.success(f"✅ 쿼리 실행 성공! | 반환 행 수: **{len(results):,}건** | 소요 시간: **{elapsed_ms} ms** | 모드: `READ_ACCESS`")
+            
+            # 결과 뷰어 탭
+            tab_c_graph, tab_c_table, tab_c_json = st.tabs([
+                "🌐 3D 인터랙티브 그래프 뷰", 
+                "📋 인터랙티브 데이터 테이블 뷰", 
+                "🧾 원시 JSON / 딕셔너리 뷰"
+            ])
+            
+            is_graph_res = bool(
+                results and isinstance(results[0], dict) and 
+                'a' in results[0] and 'b' in results[0]
+            )
+            
+            with tab_c_graph:
+                if is_graph_res:
+                    st.markdown(f"**🌐 3D 물리 엔진 그래프 (노드-관계 렌더링)** — 총 {len(results)}건의 엣지")
+                    
+                    net_c = Network(height="520px", width="100%", bgcolor=canvas_bg, font_color=canvas_font, directed=True)
+                    c_nodes = set()
+                    
+                    for row in results:
+                        a_obj = row['a']
+                        b_obj = row['b']
+                        r_type_val = row.get('r_type') or 'CONNECTED'
+                        r_props_val = row.get('r_props', {})
+                        
+                        a_lbl = a_obj.get('name') or a_obj.get('corp_name') or a_obj.get('rcept_no') or str(a_obj)
+                        b_lbl = b_obj.get('name') or b_obj.get('corp_name') or b_obj.get('rcept_no') or b_obj.get('event_type') or str(b_obj)
+                        
+                        for nid in [a_lbl, b_lbl]:
+                            if nid not in c_nodes:
+                                node_color = "#2196f3"
+                                if any(kw in nid for kw in ["이재용", "최태원", "정의선", "구광모", "신동빈", "김승연"]):
+                                    node_color = "#e11d48"
+                                elif "DART_CapitalEvent" in str(row) or "CB" in nid or "BW" in nid or "증자" in nid:
+                                    node_color = "#f59e0b"
+                                elif "국민연금" in nid:
+                                    node_color = "#8b5cf6"
+                                net_c.add_node(nid, label=nid, color=node_color, size=20)
+                                c_nodes.add(nid)
+                                
+                        stake_pct = r_props_val.get('stake', 0.0) if isinstance(r_props_val, dict) else 0.0
+                        edge_txt = f"{stake_pct}%" if stake_pct else r_type_val
+                        net_c.add_edge(a_lbl, b_lbl, label=str(edge_txt), title=f"타입: {r_type_val}", color="#94a3b8", arrows="to", width=2.0)
+                        
+                    net_c.set_options("""
+                    var options = {
+                      "physics": {
+                        "barnesHut": {
+                          "gravitationalConstant": -3200,
+                          "centralGravity": 0.25,
+                          "springLength": 150
+                        },
+                        "stabilization": {"enabled": true, "iterations": 100}
+                      }
+                    }
+                    """)
+                    html_graph = net_c.generate_html()
+                    components.html(html_graph, height=540)
+                else:
+                    st.info("ℹ️ 현재 쿼리는 노드 쌍(`a`, `b`)을 반환하지 않는 테이블/집계 조회 결과입니다. **[📋 인터랙티브 데이터 테이블 뷰]** 탭에서 확인하세요.")
+                    
+            with tab_c_table:
+                if results:
+                    import pandas as pd
+                    # 딕셔너리 내부 객체 평탄화
+                    flat_rows = []
+                    for r in results:
+                        flat_r = {}
+                        for k, v in r.items():
+                            if isinstance(v, dict):
+                                for sub_k, sub_v in v.items():
+                                    flat_r[f"{k}.{sub_k}"] = sub_v
+                            else:
+                                flat_r[k] = v
+                        flat_rows.append(flat_r)
+                        
+                    df_res = pd.DataFrame(flat_rows)
+                    st.dataframe(df_res, use_container_width=True)
+                    
+                    csv_data = df_res.to_csv(index=False).encode('utf-8-sig')
+                    st.download_button(
+                        label="📥 쿼리 결과 CSV 다운로드",
+                        data=csv_data,
+                        file_name=f"dart_trace_query_result_{int(time.time())}.csv",
+                        mime="text/csv"
+                    )
+                else:
+                    st.warning("⚠️ 조회된 데이터가 0건입니다 (Empty Result).")
+                    
+            with tab_c_json:
+                if results:
+                    st.caption("개발자용 원시 딕셔너리 / JSON 데이터 (상위 50건 미리보기)")
+                    st.json(results[:50])
+                else:
+                    st.write("결과 데이터 없음 (0건)")
+                    
+        except Exception as e:
+            st.error(f"❌ Cypher 실행 문법 에러:\n```\n{e}\n```")
+            st.info("💡 **작성 팁**: Neo4j Cypher는 대소문자를 구분합니다. 노드 라벨(`DART_Company`, `DART_CapitalEvent`)과 관계명(`HOLDS_ECONOMIC_STAKE`, `ANNOUNCED`, `EVIDENCED_BY`)을 확인하세요.")
 
 # ── 법적 고지 및 면책 조항 (Legal Disclaimer) ──
 st.markdown("""

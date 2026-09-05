@@ -40,7 +40,7 @@ class BatchCollector1500:
 
     def __init__(
         self,
-        base_runs_dir: str = "내작업폴더/data/raw_filings/batch_runs",
+        base_runs_dir: str = "data/raw_filings/batch_runs" if os.path.exists("data/raw_filings") else "내작업폴더/data/raw_filings/batch_runs",
         max_consecutive_failures: int = 5,
         rate_limit_delay_sec: float = 0.2,
         transport=None
@@ -486,7 +486,7 @@ def run_batch_deep_closure_audit(run_dir: str) -> Dict[str, Any]:
 def main():
     import argparse
     parser = argparse.ArgumentParser(description="DART-Trace 배치 수집 제어기")
-    parser.add_argument("--source-manifest", type=str, default="내작업폴더/data/raw_filings/input_manifest_1500.json", help="고정 입력 매니페스트 경로")
+    parser.add_argument("--source-manifest", type=str, default="data/raw_filings/input_manifest_15000.json" if os.path.exists("data/raw_filings/input_manifest_15000.json") else "data/raw_filings/input_manifest_1500.json", help="고정 입력 매니페스트 경로")
     parser.add_argument("--run-id-prefix", type=str, default="batch_1500", help="런 ID 접두어 (예: batch_1500, batch_15000)")
     parser.add_argument("--expected-target-count", type=int, default=None, help="기대 대상 건수 (미지정 시 자동 판정)")
     parser.add_argument("--resume", action="store_true", help="중단된 런 체크포인트에서 이어서 재개")
@@ -495,7 +495,7 @@ def main():
     parser.add_argument("--max-failures", type=int, default=5, help="서킷 브레이커 연속 실패 상한")
     args = parser.parse_args()
 
-    base_runs_dir = "내작업폴더/data/raw_filings/batch_runs"
+    base_runs_dir = "data/raw_filings/batch_runs" if os.path.exists("data/raw_filings") else "내작업폴더/data/raw_filings/batch_runs"
     collector = BatchCollector1500(
         base_runs_dir=base_runs_dir,
         max_consecutive_failures=args.max_failures,

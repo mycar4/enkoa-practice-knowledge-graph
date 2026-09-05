@@ -68,11 +68,11 @@ class RawEvidenceGraphLoader:
             self.driver = driver
         elif driver is None:
             load_dotenv(".env")
-            uri = os.getenv("NEO4J_URI")
-            user = os.getenv("NEO4J_USER")
-            pwd = os.getenv("NEO4J_PASSWORD")
+            uri = os.getenv("AURA_URI") or os.getenv("NEO4J_URI")
+            user = os.getenv("AURA_USER") or os.getenv("NEO4J_USER")
+            pwd = os.getenv("AURA_PASSWORD") or os.getenv("NEO4J_PASSWORD")
             if not uri or not user or not pwd:
-                raise ValueError("❌ [보안 오류] NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD 환경변수가 필수입니다.")
+                raise ValueError("❌ [보안 오류] AURA_URI, AURA_USER, AURA_PASSWORD 환경변수가 필수입니다.")
             self.driver = GraphDatabase.driver(uri, auth=(user, pwd))
 
     def close(self):

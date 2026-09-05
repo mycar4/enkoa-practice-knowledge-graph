@@ -1,16 +1,10 @@
 # -*- coding: utf-8 -*-
-"""
-🏛️ [DART-Trace Step 2 - 1차 배치] 코스피 200 & 코스닥 150 (350개 핵심 대형주) 5개년 마스터 적재 파이프라인
-==================================================================================================
-1. 대상: 코스피 200 + 코스닥 150 (총 350개 핵심 상장사)
-2. 시계열 범위: 2021-01-01 ~ 2026-09-02 (5개년 전수)
-3. 수집 파이프라인 3중 체인:
-   - [Step 1] DS001 공시 인덱스 (:DART_Disclosure 노드 & :FILED 관계)
-   - [Step 2] DS004 지분공시 + DS002 최대주주 & 타법인출자 (:OWNS_STAKE, :INVESTED_IN)
-   - [Step 3] DS005 주요 5대 자본이벤트 (:DART_CapitalEvent, :ANNOUNCED)
-4. 클라우드 타겟: Neo4j Aura (2fa50db4.databases.neo4j.io)
-==================================================================================================
-"""
+raise RuntimeError(
+    "🚨 [영구 폐기된 위험 스크립트 실행 차단]\n"
+    "본 스크립트는 DART-Trace의 'Claim-to-Fact' 거버넌스 헌법(원문 행 해시·2D XPath·3중 교차검증)을 거치지 않고\n"
+    "미검증 :OWNS_STAKE 관계를 직접 생성하여 프로덕션 DB를 오염시키는 중대한 결함으로 인해 영구 폐기(DISCARDED)되었습니다.\n"
+    "모든 지분 관계 생성은 반드시 'RawEvidenceCandidate -> EvidenceFragment -> 3중 교차검증 -> HOLDS_ECONOMIC_STAKE 승격' 파이프라인만 사용해야 합니다."
+)
 
 import os
 import sys
@@ -29,9 +23,9 @@ if hasattr(sys.stderr, "reconfigure"):
 
 load_dotenv(".env", override=True)
 
-NEO4J_URI = os.getenv("NEO4J_URI", "neo4j+ssc://2fa50db4.databases.neo4j.io")
-NEO4J_USER = os.getenv("NEO4J_USER", "2fa50db4")
-NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "")
+NEO4J_URI = os.getenv("AURA_URI") or os.getenv("NEO4J_URI", "neo4j+ssc://a8a048c8.databases.neo4j.io")
+NEO4J_USER = os.getenv("AURA_USER") or os.getenv("NEO4J_USER", "neo4j")
+NEO4J_PASSWORD = os.getenv("AURA_PASSWORD") or os.getenv("NEO4J_PASSWORD", "")
 DART_API_KEY = os.getenv("DART_API_KEY", "")
 
 if not DART_API_KEY:
@@ -104,37 +98,10 @@ def run_batch1():
         except Exception as e:
             pass
         
-        # 2. DS004 대량보유 지분 수집
-        try:
-            url_major = f"https://opendart.fss.or.kr/api/majorstock.json?crtfc_key={DART_API_KEY}&corp_code={corp_code}"
-            req_m = urllib.request.Request(url_major, headers={"User-Agent": "Mozilla/5.0"})
-            with urllib.request.urlopen(req_m, timeout=10) as resp:
-                data_m = json.loads(resp.read().decode("utf-8"))
-                major_list = data_m.get("list", [])
-                if major_list:
-                    for m in major_list:
-                        holder_name = m.get("repror_nm", "").strip()
-                        ratio_str = m.get("stkrt", "0").replace("%", "").strip()
-                        try:
-                            stake_val = float(ratio_str)
-                        except:
-                            stake_val = 0.0
-                            
-                        if holder_name and stake_val > 0:
-                            with driver.session() as s:
-                                s.run("""
-                                MERGE (h:DART_Person {name: $hname})
-                                WITH h
-                                MATCH (c:DART_Company {corp_code: $ccode})
-                                MERGE (h)-[r:OWNS_STAKE]->(c)
-                                SET r.stake = $stake,
-                                    r.source_rcept_no = $rcp,
-                                    r.reported_on = $rep_dt,
-                                    r.is_current = true,
-                                    r.verification_status = 'VERIFIED'
-                                """, hname=holder_name, ccode=corp_code, stake=stake_val, rcp=m.get("rcept_no", ""), rep_dt=m.get("rcept_dt", ""))
-        except Exception as e:
-            pass
+        # 2. [영구 무력화] DS004 대량보유 지분 직접 적재 영구 금지 (CLAUDE.md 거버넌스 헌법)
+        # ⚠️ 절대 활성화 금지: RawEvidenceCandidate -> EvidenceFragment -> 3중 교차검증 없는 직접 OWNS_STAKE 생성은 프로덕션 오염 유발.
+        # pass
+
         
         # 3. DS005 사모 CB 발행결정 수집
         try:
