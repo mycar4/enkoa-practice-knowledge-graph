@@ -1489,9 +1489,62 @@ if menu == "🌐 1. 상장사 지배구조 & 순환출자 탐색기":
                 else:
                     st.info("좌측 테이블에서 분석할 항목을 선택하세요.")
 
-        
+    st.markdown("---")
+    st.subheader("🔁 순환출자·상호출자 자동 탐지 (승격 지분 관계 기준)")
+    st.caption("승격된 `:HOLDS_ECONOMIC_STAKE` 관계만으로 그래프 순회 쿼리를 실행해, A→B→A(상호출자) 및 A→B→C→A(3단 순환출자) 구조를 실시간으로 찾아냅니다. "
+               "회사당 여러 시점 공시가 있으면 가장 최근 보고의무발생일 1건만 대표로 표시합니다.")
 
+    mutual_pairs = run_cypher("""
+        MATCH (a:DART_Company)-[r1:HOLDS_ECONOMIC_STAKE]->(b:DART_Company)-[r2:HOLDS_ECONOMIC_STAKE]->(a)
+        WHERE elementId(a) < elementId(b)
+        WITH a, b, r1, r2
+        ORDER BY r1.reporting_obligation_date DESC
+        WITH a, b, collect({r1: r1, r2: r2})[0] AS latest
+        RETURN a.name AS company_a, latest.r1.stake_ratio AS a_to_b_stake, latest.r1.rcept_no AS a_to_b_rcept,
+               b.name AS company_b, latest.r2.stake_ratio AS b_to_a_stake, latest.r2.rcept_no AS b_to_a_rcept
+    """) if driver else []
 
+    triangle_cycles = run_cypher("""
+        MATCH (a:DART_Company)-[r1:HOLDS_ECONOMIC_STAKE]->(b:DART_Company)-[r2:HOLDS_ECONOMIC_STAKE]->(c:DART_Company)-[r3:HOLDS_ECONOMIC_STAKE]->(a)
+        WHERE a <> b AND b <> c AND a <> c
+          AND elementId(a) < elementId(b) AND elementId(a) < elementId(c)
+        WITH a, b, c, r1, r2, r3
+        ORDER BY r1.reporting_obligation_date DESC
+        WITH a, b, c, collect({r1:r1, r2:r2, r3:r3})[0] AS latest
+        RETURN a.name AS company_a, b.name AS company_b, c.name AS company_c,
+               latest.r1.stake_ratio AS a_to_b, latest.r2.stake_ratio AS b_to_c, latest.r3.stake_ratio AS c_to_a,
+               latest.r1.rcept_no AS rcept_no
+    """) if driver else []
+
+    cyc_col1, cyc_col2 = st.columns(2)
+    with cyc_col1:
+        st.markdown(f"**🔗 상호출자 (2사 맞물림) — {len(mutual_pairs)}건**")
+        if mutual_pairs:
+            for m in mutual_pairs:
+                st.markdown(f"""
+                <div class="metric-card">
+                    <b>{m['company_a']}</b> ➔ <b>{m['company_b']}</b>: {m['a_to_b_stake']}%<br/>
+                    <b>{m['company_b']}</b> ➔ <b>{m['company_a']}</b>: {m['b_to_a_stake']}%
+                </div>
+                """, unsafe_allow_html=True)
+        else:
+            st.info("현재 승격된 지분 데이터에서 상호출자 구조가 탐지되지 않았습니다.")
+    with cyc_col2:
+        st.markdown(f"**🔺 3단 순환출자 (A→B→C→A) — {len(triangle_cycles)}건**")
+        if triangle_cycles:
+            for t in triangle_cycles:
+                rcp = t.get('rcept_no')
+                st.markdown(f"""
+                <div class="metric-card">
+                    <b>{t['company_a']}</b> ➔ {t['a_to_b']}% ➔ <b>{t['company_b']}</b> ➔ {t['b_to_c']}% ➔ <b>{t['company_c']}</b> ➔ {t['c_to_a']}% ➔ <b>{t['company_a']}</b>
+                </div>
+                """, unsafe_allow_html=True)
+                if rcp:
+                    st.link_button(f"📑 DART 원문 근거 ({t['company_a']})", f"https://dart.fss.or.kr/dsaf001/main.do?rcpNo={rcp}", key=f"cyc3_{t['company_a']}_{t['company_b']}_{t['company_c']}")
+        else:
+            st.info("현재 승격된 지분 데이터에서 3단 순환출자 구조가 탐지되지 않았습니다.")
+
+    st.caption("🛡️ 위 결과는 DART 5% 대량보유 공시 원문 3중 교차검증을 통과해 승격된 `:HOLDS_ECONOMIC_STAKE` 관계만 대상으로 하며, 경제적 지분 보유 사실이지 지배력·경영권을 단정하지 않습니다.")
 
 # ── 메뉴 2: 단일 기업 4단 의사결정 리포트 ──
 elif menu == "📋 2. 단일 기업 4단 의사결정 리포트":
@@ -1702,9 +1755,41 @@ elif menu == "👑 3. 승격 지분 기반 지배 계열사 랭킹":
         </div>
         <div class="metric-card">
             <h4>🛡️ 하지 않는 것</h4>
-            <p>PageRank의 재귀적 가중치 전파, Betweenness(매개 중심성), Degree(연결 중심성) 같은 그래프 알고리즘은 실행하지 않습니다. 어디까지나 <b>승격된 원문 증거 건수 집계</b>이며, 실질 지배력이나 경영권을 수학적으로 판정하지 않습니다.</p>
+            <p>Betweenness(매개 중심성), Degree(연결 중심성) 같은 그래프 알고리즘은 실행하지 않습니다. 아래 [Top 10] 랭킹은 <b>승격된 원문 증거 건수 집계</b>이며, 실질 지배력이나 경영권을 수학적으로 판정하지 않습니다. (실제 PageRank 연산 결과는 하단 별도 섹션 참고)</p>
         </div>
         """, unsafe_allow_html=True)
+
+    st.markdown("---")
+    st.subheader("🧮 실측 PageRank (networkx 실제 연산 — Neo4j GDS 클라우드 세션 미사용)")
+    st.caption("승격된 `:HOLDS_ECONOMIC_STAKE` 엣지 전량을 읽어와 Python `networkx` 라이브러리로 실제 PageRank 알고리즘(감쇠계수 0.85, 지분율 가중치)을 클라이언트에서 직접 연산합니다. "
+               "'피보유회사→보유회사' 방향으로 뒤집어 계산해, 더 많은 계열사를 지배할수록 점수가 높아지도록 구성했습니다. Neo4j Aura GDS 클라우드 세션은 비용이 발생할 수 있어 별도 동의 없이 호출하지 않습니다.")
+
+    pr_edges = run_cypher("""
+        MATCH (a:DART_Company)-[r:HOLDS_ECONOMIC_STAKE]->(b:DART_Company)
+        RETURN a.name AS src, b.name AS dst, r.stake_ratio AS w
+    """) if driver else []
+
+    if pr_edges:
+        import networkx as _nx_pr
+        _G_pr = _nx_pr.DiGraph()
+        for _e in pr_edges:
+            if _e.get('src') and _e.get('dst'):
+                _w = float(_e.get('w') or 0.0) + 0.01
+                if _G_pr.has_edge(_e['dst'], _e['src']):
+                    _G_pr[_e['dst']][_e['src']]['weight'] += _w
+                else:
+                    _G_pr.add_edge(_e['dst'], _e['src'], weight=_w)
+
+        _pr_scores = _nx_pr.pagerank(_G_pr, weight='weight')
+        _pr_top10 = sorted(_pr_scores.items(), key=lambda x: x[1], reverse=True)[:10]
+
+        pr_df = pd.DataFrame(
+            [{"순위": i, "기업명": name, "PageRank 점수": round(score, 5)} for i, (name, score) in enumerate(_pr_top10, 1)]
+        )
+        st.dataframe(pr_df, use_container_width=True, hide_index=True)
+        st.caption(f"💡 계산 대상 그래프: 노드 {_G_pr.number_of_nodes():,}개 / 엣지 {_G_pr.number_of_edges():,}개 (승격 지분 관계 전량 기준)")
+    else:
+        st.info("🛡️ 현재 승격된 경제적 보유 관계(`:HOLDS_ECONOMIC_STAKE`)가 없어 PageRank를 연산할 수 없습니다.")
 
 
 # ── 메뉴 4: DS005 기업 주요 자본 이벤트 (CB·BW·증자·M&A) ──
@@ -2473,13 +2558,15 @@ RETURN c.name AS 기업명, e.event_type AS 이벤트구분, e.total_amount_krw 
        e.decided_on AS 결의일, e.rcept_no AS 공시접수번호
 ORDER BY e.decided_on DESC LIMIT 30""",
         
-        "3. 👑 GDS PageRank 재계 권력 지수 상위 20대 기업": """// [GDS PageRank] 네트워크 중심성 권력 지수 랭킹
-MATCH (c:DART_Company)
-WHERE c.pagerank_score IS NOT NULL
-RETURN c.name AS 기업명, c.stock_code AS 종목코드, c.market AS 시장구분, 
-       round(c.pagerank_score * 10000) / 10000 AS PageRank점수, 
-       c.weighted_in_degree AS 내부유입출자수
-ORDER BY c.pagerank_score DESC LIMIT 20""",
+        "3. 👑 승격 지분 기반 지배 계열사 랭킹 상위 20대 기업": """// [지배 계열사 랭킹] 승격된 지분 관계 기준 직접+우회 계열사 수 집계
+// (참고: 실제 networkx PageRank 연산 결과는 사이드바 '3. 승격 지분 기반 지배 계열사 랭킹' 화면 하단에서 확인 가능합니다 - Cypher 단독으로는 PageRank를 표현할 수 없습니다)
+MATCH (h:DART_Company)-[r:HOLDS_ECONOMIC_STAKE]->(t:DART_Company)
+OPTIONAL MATCH (t)-[:HOLDS_ECONOMIC_STAKE]->(sub_t:DART_Company)
+WITH h, count(DISTINCT t) AS 직접지배기업수, count(DISTINCT sub_t) AS 우회지배계열사수,
+     round(sum(DISTINCT r.stake_ratio), 2) AS 직접지분합계
+RETURN h.name AS 기업명, 직접지배기업수, 우회지배계열사수,
+       직접지배기업수 + 우회지배계열사수 AS 총지배기업수, 직접지분합계
+ORDER BY 총지배기업수 DESC, 직접지분합계 DESC LIMIT 20""",
         
         "4. 🧠 512차원 GraphRAG 벡터 임베딩 적재 현황 점검": """// [GraphRAG 벡터 인덱스] 512차원 자본이벤트 임베딩 보유 현황
 MATCH (e:DART_CapitalEvent)

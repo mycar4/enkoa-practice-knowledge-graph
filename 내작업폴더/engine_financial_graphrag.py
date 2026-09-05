@@ -19,9 +19,19 @@ def analyze_financial_graphrag(prompt: str, driver, api_key_input: str = "") -> 
     control_keywords = [
         "지배력", "실질 지배", "실질지배", "실세", "누가 지배", "누가지배",
         "순환출자", "출자고리", "권력 랭킹", "권력랭킹", "파워랭킹", "파워 랭킹",
-        "지휘권", "그룹 총수", "총수 권력", "지배구조 순위"
+        "지휘권", "그룹 총수", "총수 권력", "지배구조 순위", "실소유", "실오너",
+        "진짜 주인", "진짜 오너"
     ]
-    is_blocked_control = any(kw in prompt_clean for kw in control_keywords)
+    # 키워드 사전에 없는 표현(예: "실질적인 지배구조는 누가 주인인지")도 잡아내기 위한
+    # 패턴 기반 보강 탐지 - "지배/소유"와 "누가/주인/오너/총수"가 근접해서 함께 나오면
+    # 지배력·소유주 단정을 요구하는 질의로 간주한다.
+    control_patterns = [
+        r"(누가|누구)[^?!.]{0,12}(지배|주인|오너|총수|소유)",
+        r"(지배|소유)[^?!.]{0,12}(누가|누구)",
+        r"실질\s*적?\s*인?\s*지배",
+    ]
+    is_blocked_control = any(kw in prompt_clean for kw in control_keywords) or \
+        any(re.search(p, prompt_clean) for p in control_patterns)
     
     detected_intent = "GENERAL"
     detected_entities = []
