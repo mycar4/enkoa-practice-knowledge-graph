@@ -103,7 +103,7 @@ with st.sidebar:
         [
             "🌐 1. 상장사 지배구조 & 순환출자 탐색기",
             "📋 2. 단일 기업 4단 의사결정 리포트",
-            "👑 3. GDS 재계 권력 랭킹 (PageRank)",
+            "👑 3. 승격 지분 기반 지배 계열사 랭킹",
             "⚡ 4. DS005 기업 주요 자본 이벤트 (CB·BW·증자·M&A)",
             "🔍 6. 5% 공시 원문 증거 감사기 (Evidence Audit Inspector)",
             "💼 8. 내 포트폴리오 (로컬 개인 보유종목 관리)",
@@ -884,22 +884,17 @@ if menu == "🌐 1. 상장사 지배구조 & 순환출자 탐색기":
             selected_group = None
         else:
             selected_group = st.selectbox(
-                "대기업 집단 / 지배구조 유형",
+                "대기업 집단 / 지배구조 유형 (실제로 승격·적재된 케이스만 표시)",
                 [
-                    "🏛️ 실측 승격 지분 네트워크 (19건 종합)",
+                    "🏛️ 실측 승격 지분 네트워크 (전체 종합)",
                     "롯데그룹 지배구조 (롯데지주➔칠성/웰푸드)",
                     "알루코 지배구조 (케이피티유➔알루코)",
                     "현대홈쇼핑 지배구조 (현대홈쇼핑➔현대퓨처넷)",
                     "⚡ 최근 주요 자본이벤트 네트워크 (30건)",
-                    "현대자동차그룹 (순환출자 - 내일 대규모 수집 대상)",
-                    "삼성그룹 (삼각 지배구조 - 내일 대규모 수집 대상)",
-                    "SK그룹 (지주사 체제 - 내일 대규모 수집 대상)",
-                    "LG그룹 (지주사 체제 - 내일 대규모 수집 대상)",
-                    "한화그룹 (방산·우주 - 내일 대규모 수집 대상)",
-                    "국민연금 (NPS 10대 대기업 - 내일 대규모 수집 대상)",
                     "🌐 전체 상장사 통합 네트워크"
                 ]
             )
+            st.caption("💡 삼성/현대차/SK/LG/한화/국민연금 등 미수집 대기업집단은 데이터가 없어 목록에서 제외했습니다 (수집 완료 후 추가 예정).")
         
         selected_year = st.selectbox(
             "📅 분석 시점 (연도별 지배구조)",
@@ -932,7 +927,7 @@ if menu == "🌐 1. 상장사 지배구조 & 순환출자 탐색기":
             RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
             LIMIT 40
             """
-        elif selected_group == "🏛️ 실측 승격 지분 네트워크 (19건 종합)":
+        elif selected_group == "🏛️ 실측 승격 지분 네트워크 (전체 종합)":
             query = """
             MATCH (a)-[r:HOLDS_ECONOMIC_STAKE]->(b)
             RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
@@ -960,12 +955,6 @@ if menu == "🌐 1. 상장사 지배구조 & 순환출자 탐색기":
             MATCH (a:DART_Company)-[r:ANNOUNCED]->(b:DART_CapitalEvent)
             RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
             LIMIT 30
-            """
-        elif selected_group and "수집 대상" in selected_group:
-            query = """
-            MATCH (a)-[r:HOLDS_ECONOMIC_STAKE]->(b)
-            RETURN a, b, properties(r) AS r_props, type(r) AS r_type, elementId(r) AS r_id
-            LIMIT 0
             """
         else:
             query = """
@@ -1511,13 +1500,15 @@ elif menu == "📋 2. 단일 기업 4단 의사결정 리포트":
     
     # 🤖 [컴패니언 도구] 공시 증거 기반 자유 대화형 GraphRAG 질의 패널
     with st.expander("🤖 [보조 도구] 기업 지배구조 & 공시 증거 자유 대화형 GraphRAG 어시스턴트", expanded=False):
-        st.caption("15,000건 공시 원문 증거(23,996건 후보)와 313건 주요 자본이벤트를 공시접수번호·2D XPath·SHA-256 해시 근거와 함께 100% 읽기 전용(READ_ACCESS)으로 실시간 질의합니다.")
-        
+        _cand_live_cnt = run_cypher("MATCH (c:RawEvidenceCandidate) RETURN count(c) AS c")[0]['c'] if driver else 0
+        _cap_live_cnt = run_cypher("MATCH (e:DART_CapitalEvent) RETURN count(e) AS c")[0]['c'] if driver else 0
+        st.caption(f"{_cand_live_cnt:,}건 5% 공시 원문 추출 후보(`RawEvidenceCandidate`)와 {_cap_live_cnt:,}건 주요 자본이벤트를 공시접수번호·2D XPath·SHA-256 해시 근거와 함께 100% 읽기 전용(READ_ACCESS)으로 실시간 질의합니다.")
+
         api_key_input = os.getenv("OPENAI_API_KEY", os.getenv("GEMINI_API_KEY", os.getenv("GOOGLE_API_KEY", "")))
-        
+
         if "messages" not in st.session_state:
             st.session_state.messages = [
-                {"role": "assistant", "content": "안녕하세요! **DART-Trace 원문 증거 기반 Cypher 질의 어시스턴트**입니다.\n\n금융감독원 15,000건 공시 원문 증거(`RawEvidenceCandidate` 23,996건)와 313건 주요 자본변동(CB·BW·증자·합병) 공시를 **접수번호·2D XPath·SHA-256 해시 근거**와 함께 100% 읽기 전용으로 투명하게 질의응답합니다.\n\n💡 **추천 질문 예시:**\n• `삼성전자의 5% 대량보유 공시 후보를 원문 근거와 함께 보여줘`\n• `파인메딕스 관련 5% 공시에서 보고자와 지분율 후보를 보여줘`\n• `최근 주요 상장사의 사모 CB 및 유상증자 공시 타임라인`\n• `접수번호 20241231000509 공시의 원문 XPath와 SHA-256 근거는?`\n• `(가드레일 시험) 홍하종 일가의 DSR제강 실질 지배력과 권력 순위는?`\n\n*(※ 실질 지배력 단정 및 순환출자망 해석은 2단계 엔티티 해소 전 단계로 가드레일에 의해 차단됩니다.)*"}
+                {"role": "assistant", "content": f"안녕하세요! **DART-Trace 원문 증거 기반 Cypher 질의 어시스턴트**입니다.\n\n금융감독원 5% 공시 원문 추출 후보(`RawEvidenceCandidate` {_cand_live_cnt:,}건)와 {_cap_live_cnt:,}건 주요 자본변동(CB·BW·증자·합병) 공시를 **접수번호·2D XPath·SHA-256 해시 근거**와 함께 100% 읽기 전용으로 투명하게 질의응답합니다.\n\n💡 **추천 질문 예시:**\n• `삼성전자의 5% 대량보유 공시 후보를 원문 근거와 함께 보여줘`\n• `파인메딕스 관련 5% 공시에서 보고자와 지분율 후보를 보여줘`\n• `최근 주요 상장사의 사모 CB 및 유상증자 공시 타임라인`\n• `접수번호 20241231000509 공시의 원문 XPath와 SHA-256 근거는?`\n• `(가드레일 시험) 홍하종 일가의 DSR제강 실질 지배력과 권력 순위는?`\n\n*(※ 실질 지배력 단정 및 순환출자망 해석은 2단계 엔티티 해소 전 단계로 가드레일에 의해 차단됩니다.)*"}
             ]
             
         for msg in st.session_state.messages:
@@ -1584,15 +1575,16 @@ elif menu == "📋 2. 단일 기업 4단 의사결정 리포트":
                     })
 
 
-# ── 메뉴 3: GDS 재계 권력 랭킹 (PageRank & 영향력 분석) ──
-elif menu == "👑 3. GDS 재계 권력 랭킹 (PageRank)":
-    st.header("👑 대한민국 재계 권력 랭킹 (GDS PageRank & 영향력 분석)")
-    st.caption("Day 34 그래프 데이터 사이언스(GDS) 알고리즘을 적용하여 지분 네트워크 내에서 가장 막강한 실질 지배력을 가진 총수/기업을 수학적으로 판정합니다.")
-    
+# ── 메뉴 3: 승격 지분 기반 지배 계열사 랭킹 ──
+elif menu == "👑 3. 승격 지분 기반 지배 계열사 랭킹":
+    st.header("👑 승격 지분 기반 지배 계열사 랭킹")
+    st.caption("DART 5% 대량보유 공시 원문 3중 교차검증(사명·수치·일자)을 통과해 승격된 `:HOLDS_ECONOMIC_STAKE` 관계만으로, 직접+2단계 우회 지배 계열사 수를 집계한 랭킹입니다. "
+               "(Neo4j GDS 라이브러리의 PageRank/Betweenness 알고리즘을 실행하는 것이 아니라, 승격된 지분 관계 개수를 세는 단순 집계입니다 — 오해 방지를 위해 명시합니다.)")
+
     col_gds1, col_gds2 = st.columns([2, 1])
-    
+
     with col_gds1:
-        st.subheader("🏆 [Top 10] 대한민국 재계 실질 영향력 파워 랭킹")
+        st.subheader("🏆 [Top 10] 지배 계열사 수 랭킹 (승격 지분 관계 기준)")
         
         # 지분 관계 기반 가중치 랭킹 계산 쿼리 (HOLDS_ECONOMIC_STAKE 기준 - 3중 교차검증 승격 완료분만)
         power_rank_data = run_cypher("""
@@ -1702,15 +1694,15 @@ elif menu == "👑 3. GDS 재계 권력 랭킹 (PageRank)":
             st.info("🛡️ 현재 승격된 경제적 보유 관계(`:HOLDS_ECONOMIC_STAKE`)가 없습니다.")
                 
     with col_gds2:
-        st.subheader("🧠 GDS 알고리즘 원리")
+        st.subheader("🧮 랭킹 산정 방식")
         st.markdown("""
         <div class="metric-card">
-            <h4>📈 PageRank 가중 지배력</h4>
-            <p>단순히 지분율 하나만 보는 것이 아니라, <b>"그 계열사가 지배하는 하위 계열사들의 크기와 엣지 가중치"</b>를 재귀적으로 합산하여 실질적인 그룹 지휘권을 측정합니다.</p>
+            <h4>📊 지배 계열사 수 집계</h4>
+            <p>승격된 <code>:HOLDS_ECONOMIC_STAKE</code> 관계를 기준으로, 각 회사가 <b>직접 보유한 계열사 수 + 그 계열사가 다시 보유한 2단계 우회 계열사 수</b>를 합산해 정렬합니다.</p>
         </div>
         <div class="metric-card">
-            <h4>🌐 매개 중심성 (Betweenness)</h4>
-            <p>자금과 지분이 통과하는 핵심 교두보(예: <code>삼성물산</code>, <code>현대모비스</code>, <code>SK(주)</code>)를 탐지합니다.</p>
+            <h4>🛡️ 하지 않는 것</h4>
+            <p>PageRank의 재귀적 가중치 전파, Betweenness(매개 중심성), Degree(연결 중심성) 같은 그래프 알고리즘은 실행하지 않습니다. 어디까지나 <b>승격된 원문 증거 건수 집계</b>이며, 실질 지배력이나 경영권을 수학적으로 판정하지 않습니다.</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -1972,7 +1964,7 @@ elif menu == "🔍 6. 5% 공시 원문 증거 감사기 (Evidence Audit Inspecto
     """, unsafe_allow_html=True)
     
     tab_graph_inspector, tab_file_sandbox = st.tabs([
-        "🏛️ Neo4j Raw 증거 그래프 탐색기 (1,500건 전수)",
+        f"🏛️ Neo4j Raw 증거 그래프 탐색기 ({cand_stat:,}건 전수)",
         "🧪 단일 XML 파서 시험기 (In-Memory Sandbox)"
     ])
 
