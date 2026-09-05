@@ -106,7 +106,9 @@ with st.sidebar:
             "👑 3. GDS 재계 권력 랭킹 (PageRank)",
             "⚡ 4. DS005 기업 주요 자본 이벤트 (CB·BW·증자·M&A)",
             "🔍 6. 5% 공시 원문 증거 감사기 (Evidence Audit Inspector)",
-        ]
+            "💼 8. 내 포트폴리오 (로컬 개인 보유종목 관리)",
+        ],
+        key="main_menu_select"
     )
 
     with st.expander("🛠️ 개발자 도구"):
@@ -2654,6 +2656,127 @@ ORDER BY count(n) DESC"""
         except Exception as e:
             st.error(f"❌ Cypher 실행 문법 에러:\n```\n{e}\n```")
             st.info("💡 **작성 팁**: Neo4j Cypher는 대소문자를 구분합니다. 노드 라벨(`DART_Company`, `DART_CapitalEvent`)과 관계명(`HOLDS_ECONOMIC_STAKE`, `ANNOUNCED`, `EVIDENCED_BY`)을 확인하세요.")
+
+
+# ── 메뉴 8: 내 포트폴리오 (v1.1 - 로컬 개인 보유종목 관리) ──
+elif menu == "💼 8. 내 포트폴리오 (로컬 개인 보유종목 관리)":
+    from services.portfolio_service import add_holding, delete_holding, get_portfolio_summary
+
+    def _goto_menu2_with_corp(code_or_name: str):
+        """포트폴리오 보유종목 1건을 메뉴2(4단 의사결정 리포트)로 바로 딥링크.
+        보유내역(수량·매수단가)은 여기 남기고, 조회 대상 기업만 넘긴다."""
+        st.session_state.main_menu_select = "📋 2. 단일 기업 4단 의사결정 리포트"
+        st.session_state.selected_report_corp = code_or_name
+        st.session_state.report_company_search_input = ""
+
+    st.header("💼 내 포트폴리오 (로컬 개인 관리)")
+    st.caption("보유종목·수량·매수단가는 이 컴퓨터의 로컬 SQLite 파일에만 저장됩니다 (Neo4j Aura 공유 클라우드와 완전히 분리, 절대 업로드/공유되지 않습니다). "
+               "다만 각 종목의 지배구조·자본이벤트 리스크 신호는 DART-Trace 공유 지식그래프를 조회 시점에만 실시간으로 조인해 함께 보여줍니다.")
+
+    st.markdown("---")
+    st.subheader("➕ 보유종목 추가")
+    with st.form("add_holding_form", clear_on_submit=True):
+        f1, f2, f3, f4 = st.columns([1.2, 2, 1, 1.5])
+        with f1:
+            in_code = st.text_input("종목코드", placeholder="예: 005930")
+        with f2:
+            in_name = st.text_input("종목명", placeholder="예: 삼성전자")
+        with f3:
+            in_qty = st.number_input("수량", min_value=1, step=1, value=1)
+        with f4:
+            in_price = st.number_input("매수단가(원)", min_value=0.0, step=100.0, value=0.0)
+        submitted = st.form_submit_button("추가", type="primary")
+        if submitted:
+            if not in_code.strip() or not in_name.strip() or in_price <= 0:
+                st.warning("종목코드·종목명·매수단가를 모두 입력해주세요.")
+            else:
+                add_holding(in_code, in_name, in_qty, in_price)
+                st.success(f"'{in_name}' 추가 완료!")
+                st.rerun()
+
+    st.markdown("---")
+    st.subheader("📊 보유종목 현황 및 평가손익")
+
+    with st.spinner("최근 거래일 시세를 조회하는 중..."):
+        summary = get_portfolio_summary()
+
+    if not summary["holdings"]:
+        st.info("아직 등록된 보유종목이 없습니다. 위에서 추가해보세요.")
+    else:
+        if summary["price_unavailable_count"] > 0:
+            st.warning(f"⚠️ {summary['price_unavailable_count']}개 종목의 최근 시세를 가져오지 못했습니다(상장폐지·잘못된 종목코드 등 확인 필요). 해당 종목은 평가손익 계산에서 제외됩니다.")
+
+        k1, k2, k3 = st.columns(3)
+        k1.metric("총 매수금액", f"{summary['total_buy_amount']:,.0f}원")
+        if summary["total_eval_amount"] is not None:
+            k2.metric("총 평가금액", f"{summary['total_eval_amount']:,.0f}원")
+            profit = summary["total_profit"]
+            profit_pct = (profit / summary["total_buy_amount"] * 100) if summary["total_buy_amount"] > 0 else 0
+            k3.metric("총 평가손익", f"{profit:,.0f}원", f"{profit_pct:+.2f}%")
+        else:
+            k2.metric("총 평가금액", "일부 종목 시세 조회 실패")
+            k3.metric("총 평가손익", "-")
+
+        st.markdown("<div style='margin-top:12px;'></div>", unsafe_allow_html=True)
+
+        for h in summary["holdings"]:
+            with st.container():
+                name_col, del_col = st.columns([5, 1])
+                with name_col:
+                    st.markdown(f"**{h['corp_name']}** (`{h['stock_code']}`) · {h['quantity']:,}주 @ {h['avg_buy_price']:,.0f}원")
+                with del_col:
+                    if st.button("🗑️ 삭제", key=f"del_{h['id']}", use_container_width=True):
+                        delete_holding(h["id"])
+                        st.rerun()
+
+                c2, c3, c4 = st.columns(3)
+                with c2:
+                    if h["current_price"] is not None:
+                        st.metric("현재가", f"{h['current_price']:,}원", help=f"기준일: {h['price_date']}")
+                    else:
+                        st.metric("현재가", "조회 실패")
+                with c3:
+                    if h["eval_amount"] is not None:
+                        st.metric("평가금액", f"{h['eval_amount']:,.0f}원")
+                    else:
+                        st.metric("평가금액", "-")
+                with c4:
+                    if h["profit"] is not None:
+                        st.metric("평가손익", f"{h['profit']:,.0f}원", f"{h['profit_pct']:+.2f}%")
+                    else:
+                        st.metric("평가손익", "-")
+
+                # DART-Trace 지식그래프 리스크 신호 (승격된 지분 관계 · 자본이벤트) - 조회 시점 실시간 조인
+                risk = h.get("risk_signal") or {"found": False}
+                badge_col, link_col = st.columns([4, 1.4])
+                with badge_col:
+                    if not risk.get("found"):
+                        st.caption("⚪ DART-Trace 수집 대상(상장사 마스터)에서 이 종목코드를 찾지 못했습니다 - 미수집/비상장 가능성.")
+                    else:
+                        badges = []
+                        if risk.get("capital_event_count", 0) > 0:
+                            latest = risk.get("latest_capital_event_type") or "자본이벤트"
+                            latest_date = risk.get("latest_capital_event_date") or "-"
+                            badges.append(f"🟠 자본이벤트 {risk['capital_event_count']}건 (최근: {latest}, {latest_date})")
+                        if risk.get("held_by_count", 0) > 0:
+                            badges.append(f"🔗 대주주 승격 지분 보유 {risk['held_by_count']}건")
+                        if risk.get("holds_count", 0) > 0:
+                            badges.append(f"🔗 타사 지분 보유 {risk['holds_count']}건")
+                        if badges:
+                            st.warning(" · ".join(badges))
+                        else:
+                            st.caption("🟢 수집 범위 내 자본이벤트·승격 지분 관계 없음 (특이사항 없음).")
+                with link_col:
+                    if risk.get("found"):
+                        st.button(
+                            "🔍 4단 리포트",
+                            key=f"goto2_{h['id']}",
+                            use_container_width=True,
+                            on_click=_goto_menu2_with_corp,
+                            args=(risk["corp_code"],)
+                        )
+                st.markdown("---")
+
 
 # ── 법적 고지 및 면책 조항 (Legal Disclaimer) ──
 st.markdown("""

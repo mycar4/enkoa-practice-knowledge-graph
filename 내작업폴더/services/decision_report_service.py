@@ -348,6 +348,50 @@ class DecisionReportService:
             "evidence_candidates": evidence_candidates,
         }
 
+    def get_portfolio_risk_signal(self, stock_code: str) -> Dict[str, Any]:
+        """
+        v1.1 포트폴리오 연동: 사용자가 로컬에 등록한 보유종목 1건을 DART-Trace
+        지식그래프의 실제 차별화 데이터(승격된 지분 관계·자본이벤트)와 조회 시점에만
+        조인한다. 개인 보유내역(수량·매수단가)은 로컬 SQLite에만 있으며 여기서는
+        절대 쓰기를 하지 않고, corp_code/이름 등 공개 마스터 정보만 읽어온다.
+        """
+        with self.driver.session(default_access_mode=READ_ACCESS) as session:
+            comp = session.run("""
+                MATCH (c:DART_Company {stock_code: $sc})
+                RETURN c.corp_code AS corp_code, c.name AS corp_name
+                LIMIT 1
+            """, sc=stock_code).single()
+            if not comp:
+                return {"found": False}
+
+            corp_code = comp["corp_code"]
+            corp_name = comp["corp_name"]
+
+            stake = session.run("""
+                OPTIONAL MATCH (holder:DART_Company)-[r_in:HOLDS_ECONOMIC_STAKE]->(t:DART_Company {corp_code: $cc})
+                WITH count(r_in) AS held_by_cnt
+                OPTIONAL MATCH (s:DART_Company {corp_code: $cc})-[r_out:HOLDS_ECONOMIC_STAKE]->(i:DART_Company)
+                RETURN held_by_cnt, count(r_out) AS holds_cnt
+            """, cc=corp_code).single()
+
+            cap = session.run("""
+                MATCH (c:DART_Company {corp_code: $cc})-[:ANNOUNCED]->(e:DART_CapitalEvent)
+                WITH e ORDER BY e.decided_on DESC
+                WITH collect(e)[0] AS latest, count(e) AS total_cnt
+                RETURN total_cnt, latest.event_type AS event_type, latest.decided_on AS decided_on
+            """, cc=corp_code).single()
+
+        return {
+            "found": True,
+            "corp_code": corp_code,
+            "corp_name": corp_name,
+            "held_by_count": stake["held_by_cnt"] if stake else 0,
+            "holds_count": stake["holds_cnt"] if stake else 0,
+            "capital_event_count": cap["total_cnt"] if cap else 0,
+            "latest_capital_event_type": (EVENT_TYPE_KR_MAP.get(cap["event_type"], cap["event_type"]) if cap and cap["event_type"] else None),
+            "latest_capital_event_date": cap["decided_on"] if cap else None,
+        }
+
     def find_companies(self, query: str, limit: int = 10) -> List[Dict[str, Any]]:
         """기업명, 종목코드, 법인코드 기반 검색"""
         q = query.strip()
