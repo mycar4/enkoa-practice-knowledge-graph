@@ -16,6 +16,7 @@
 """
 
 import os
+import re
 import sys
 import json
 import glob
@@ -23,6 +24,9 @@ import argparse
 from pathlib import Path
 from neo4j import GraphDatabase, WRITE_ACCESS, READ_ACCESS
 from dotenv import load_dotenv
+
+_YEAR_LABEL_RE = re.compile(r"(20\d{2})\s*학년도")
+_YEAR_TOKEN_RE = re.compile(r"20\d{2}")
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -52,6 +56,33 @@ def validate_record(rec: dict, filename: str) -> list:
             f"{filename}: official_facts.admission_year 누락 - 몇 학년도 모집요강인지 명시 필수 "
             f"(서로 다른 학년도 문서를 섞어 비교하는 사고를 막기 위한 필수값)"
         )
+        return errors
+
+    admission_year = of.get("admission_year")
+
+    # source_url / document_name 안에 "YYYY학년도"가 박혀 있는데 admission_year와 다르면
+    # 무조건 거부한다. 이건 "구 문서의 연도 라벨만 바꿔치기"하는 조작을 잡기 위한 장치다 —
+    # 실제 신규 원문을 재수집하지 않고 값만 세탁하면 필연적으로 source_url/파일명에
+    # 예전 학년도가 그대로 남기 때문에, 이 불일치 자체가 조작의 물증이 된다.
+    candidates = []
+    src = of.get("source_url")
+    if src:
+        candidates.append(("source_url", src))
+    for ds in (of.get("data_sources") or []):
+        if isinstance(ds, dict) and ds.get("document_name"):
+            candidates.append(("data_sources.document_name", ds["document_name"]))
+
+    for field_label, text in candidates:
+        for m in _YEAR_LABEL_RE.finditer(text):
+            found_year = int(m.group(1))
+            if found_year != admission_year:
+                errors.append(
+                    f"{filename}: official_facts.{field_label}에 '{found_year}학년도'가 명시되어 "
+                    f"있는데 admission_year={admission_year}과(와) 불일치 - "
+                    f"연도 라벨만 바꿔치기하고 실제 원문은 재수집하지 않은 조작으로 간주하여 적재 거부. "
+                    f"반드시 해당 학년도의 진짜 원문 PDF를 재다운로드하여 재추출할 것."
+                )
+
     return errors
 
 
@@ -76,18 +107,20 @@ def load_one_record_tx(tx, rec: dict):
             t.source_page = $source_page,
             t.admission_year = $admission_year
 
-        MERGE (e:Admission_ExamType {name: $exam_type_name, track_name: $track_name, university: $university})
+        MERGE (e:Admission_ExamType {name: $exam_type_name, track_name: $track_name, university: $university, department: $department})
         MERGE (t)-[:REQUIRES_EXAM]->(e)
         SET e.allowed_materials = $allowed_materials,
             e.paper_size = $paper_size,
             e.time_limit_minutes = $time_limit_minutes
 
-        MERGE (s:Admission_Schedule {track_name: $track_name, university: $university})
+        MERGE (s:Admission_Schedule {track_name: $track_name, university: $university, department: $department})
         MERGE (t)-[:HAS_SCHEDULE]->(s)
         SET s.application_start = $app_start,
             s.application_end = $app_end,
             s.exam_date = $exam_date,
-            s.result_date = $result_date
+            s.result_date = $result_date,
+            s.registration_start = $reg_start,
+            s.registration_end = $reg_end
     """, university=university, campus=campus, department=department, track_name=track_name,
          quota=of.get("quota"), ratio=of.get("ratio"), is_staged=of.get("is_staged"),
          source_url=of.get("source_url"), source_page=of.get("source_page"),
@@ -97,35 +130,37 @@ def load_one_record_tx(tx, rec: dict):
          paper_size=of.get("paper_size"), time_limit_minutes=of.get("time_limit_minutes"),
          app_start=(of.get("application_period") or {}).get("start"),
          app_end=(of.get("application_period") or {}).get("end"),
-         exam_date=of.get("exam_date"), result_date=of.get("result_date"))
+         exam_date=of.get("exam_date"), result_date=of.get("result_date"),
+         reg_start=(of.get("registration_period") or {}).get("start"),
+         reg_end=(of.get("registration_period") or {}).get("end"))
 
     for topic in of.get("past_topics", []) or []:
         tx.run("""
-            MATCH (e:Admission_ExamType {name: $exam_type_name, track_name: $track_name, university: $university})
-            MERGE (p:Admission_PastTopic {university: $university, track_name: $track_name, year: $year, topic_text: $topic_text})
+            MATCH (e:Admission_ExamType {name: $exam_type_name, track_name: $track_name, university: $university, department: $department})
+            MERGE (p:Admission_PastTopic {university: $university, department: $department, track_name: $track_name, year: $year, topic_text: $topic_text})
             MERGE (e)-[:HAD_PAST_TOPIC]->(p)
             SET p.source = $source, p.source_url = $source_url
-        """, university=university, track_name=track_name, exam_type_name=of.get("exam_type_name", "미지정"),
+        """, university=university, department=department, track_name=track_name, exam_type_name=of.get("exam_type_name", "미지정"),
              year=topic.get("year"), topic_text=topic.get("topic_text"),
              source=topic.get("source"), source_url=topic.get("source_url"))
 
     # 추정치/후기 - official_facts와 완전히 분리된 관계 타입으로만 연결 (Zero-Mixing)
     if est.get("cutoff_grade_estimate") is not None:
         tx.run("""
-            MATCH (t:Admission_Track {name: $track_name, university: $university})
-            MERGE (c:Admission_CutoffEstimate {track_name: $track_name, university: $university})
+            MATCH (t:Admission_Track {name: $track_name, university: $university, department: $department})
+            MERGE (c:Admission_CutoffEstimate {track_name: $track_name, university: $university, department: $department})
             MERGE (t)-[:ESTIMATED_CUTOFF]->(c)
             SET c.cutoff_grade_estimate = $cutoff, c.source_url = $source_url, c.data_tier = 'ESTIMATE_NOT_OFFICIAL'
-        """, university=university, track_name=track_name,
+        """, university=university, department=department, track_name=track_name,
              cutoff=est.get("cutoff_grade_estimate"), source_url=est.get("cutoff_source_url"))
 
     for interview in est.get("interview_summaries", []) or []:
         tx.run("""
-            MATCH (t:Admission_Track {name: $track_name, university: $university})
-            MERGE (i:Admission_InterviewSummary {university: $university, track_name: $track_name, url: $url})
+            MATCH (t:Admission_Track {name: $track_name, university: $university, department: $department})
+            MERGE (i:Admission_InterviewSummary {university: $university, department: $department, track_name: $track_name, url: $url})
             MERGE (t)-[:HAS_INTERVIEW_SUMMARY]->(i)
             SET i.title = $title, i.channel = $channel, i.summary = $summary, i.data_tier = 'ESTIMATE_NOT_OFFICIAL'
-        """, university=university, track_name=track_name,
+        """, university=university, department=department, track_name=track_name,
              url=interview.get("url"), title=interview.get("title"),
              channel=interview.get("channel"), summary=interview.get("summary"))
 

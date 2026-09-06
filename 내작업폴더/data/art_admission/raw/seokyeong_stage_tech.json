@@ -1,0 +1,48 @@
+{
+  "university": "서경대학교",
+  "campus": "서울",
+  "department": "공연예술학부 무대기술전공(무대,조명)",
+  "track_name": "실기우수자전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 7,
+    "ratio": "1단계: 실기 100% (선발비율 500%) -> 2단계: 학생부교과 20% + 실기 40% + 1단계성적 40%",
+    "is_staged": true,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-11"
+    },
+    "exam_date": "1단계: 2026-11-08(일), 2단계: 2026-11-15(일)",
+    "result_date": "2026-12-18",
+    "exam_type_name": "무대모델 제작(200점) 및 무대모델 색칠(200점) [1단계], 무대관련 질의응답(400점) [2단계]",
+    "allowed_materials": [
+      "필기도구",
+      "수채화 물감 및 용품",
+      "30cm 쇠자 및 스케일 자",
+      "지우개",
+      "접착제(록타이드401 20g)",
+      "커터칼(하드보드용)"
+    ],
+    "paper_size": "본교 제공 모델용 하드보드 및 컷팅매트",
+    "time_limit_minutes": 180,
+    "past_topics": [
+      {
+        "year": 2026,
+        "topic_text": "[2026학년도(전년도) 참고자료] 고사일 추첨된 도면을 보고 지정된 스케일로 무대모델 제작 및 지문 설명을 읽고 작화(색칠)로 표현 (2027학년도가 아닌 지난 회차 실측 수치)",
+        "source": "공식 입시결과(전년도)",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/서경대학교/서경대학교_2025학년도_수시입시결과.pdf"
+      }
+    ],
+    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서경대학교/서경대학교_2027학년도_수시모집요강.pdf",
+    "source_page": 23,
+    "registration_period": {
+      "start": "2027-02-10",
+      "end": "2027-02-12"
+    }
+  },
+  "estimates": {
+    "cutoff_grade_estimate": 4.5,
+    "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/서경대학교/서경대학교_2025학년도_수시입시결과.pdf",
+    "interview_summaries": []
+  }
+}

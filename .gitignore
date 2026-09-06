@@ -15,6 +15,14 @@ output/
 # DART 원문 대량 아카이브 및 임시 캐시 영구 격리 (Git 비오염 원칙)
 내작업폴더/data/raw_filings/
 내작업폴더/data/dart_raw_filings/
+
+# 미술 실기 입시 원천 PDF 대량 아카이브(수백MB) - 추출된 JSON(내작업폴더/data/art_admission/raw/)만
+# 커밋하고, 원본 PDF 원문 자체는 커밋하지 않는다 (저장소 비대화 방지).
+/data/
+
+# 사용자 개인 포트폴리오(보유종목·수량·매수단가) - 절대 공유 저장소에 커밋 금지
+내작업폴더/data/user_portfolio.db
+*.sqlite3
 *.xml.zip
 scratch/
 .playwright-mcp/

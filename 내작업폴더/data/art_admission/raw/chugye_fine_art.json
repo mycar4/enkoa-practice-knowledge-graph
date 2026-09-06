@@ -1,0 +1,46 @@
+{
+  "university": "추계예술대학교",
+  "campus": "서울",
+  "department": "미술창작학부(1학년말 동양화/서양화(현대미술 포함)/판화미디어전공 선택)",
+  "track_name": "실기/실적(일반학생전형)",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 45,
+    "ratio": "실기 80% + 학생부 20% (일괄합산, 수능최저 없음)",
+    "is_staged": false,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-11"
+    },
+    "exam_date": "2026-10-17(토) 소묘/수채화, 2026-10-24(토) 수묵담채화",
+    "result_date": "2026-11-13",
+    "exam_type_name": "택1: 수묵담채화(인물/정물) 15명 선발 또는 소묘·수채화(인물/정물 중 택1) 30명 선발",
+    "allowed_materials": [
+      "인물/정물은 사진(이미지)으로 출제",
+      "수묵담채(인물): 화선지 2절(켄트지 2절과 동일 사이즈)",
+      "수묵담채(정물): 화선지 반절(약 70x70cm)",
+      "소묘/수채화: 켄트지 2절"
+    ],
+    "paper_size": "켄트지 2절 또는 화선지 2절/반절 (종목별 상이)",
+    "time_limit_minutes": 300,
+    "past_topics": [
+      {
+        "year": 2026,
+        "topic_text": "[2026학년도(전년도) 참고자료] 미술창작학부 서양화과 실기고사 (2027학년도가 아닌 지난 회차 실측 수치)",
+        "source": "공식 실기출제문제(전년도)",
+        "source_url": "data/art_admission_raw/results/추계예술대학교_2026학년도_미술창작학부_실기출제문제.pdf"
+      }
+    ],
+    "source_url": "https://enter.chugye.ac.kr/file/fileDownLoad.do?seq=1684243353",
+    "source_page": 9,
+    "registration_period": {
+      "start": "2027-02-10",
+      "end": "2027-02-13"
+    }
+  },
+  "estimates": {
+    "cutoff_grade_estimate": null,
+    "cutoff_source_url": "https://admission.chugye.ac.kr/susi_result.php",
+    "interview_summaries": []
+  }
+}

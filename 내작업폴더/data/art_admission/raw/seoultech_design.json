@@ -1,0 +1,137 @@
+[
+  {
+    "university": "서울과학기술대학교",
+    "campus": "서울(공릉)",
+    "department": "조형예술학과",
+    "track_name": "실기위주(실기전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 19,
+      "ratio": "1단계(8배수): 학생부교과 100% -> 2단계: 실기 100%",
+      "is_staged": true,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-17",
+      "result_date": "2026-10-30",
+      "exam_type_name": "인물과 정물이 있는 상황 (주제는 시험당일 제시)",
+      "allowed_materials": ["수채화 도구 일체"],
+      "paper_size": "3절 켄트지",
+      "time_limit_minutes": 240,
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 50,
+      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+    },
+    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+  },
+  {
+    "university": "서울과학기술대학교",
+    "campus": "서울(공릉)",
+    "department": "산업디자인학과",
+    "track_name": "실기위주(실기전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 13,
+      "ratio": "1단계(8배수): 학생부교과 100% -> 2단계: 실기 100%",
+      "is_staged": true,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-17",
+      "result_date": "2026-10-30",
+      "exam_type_name": "기초디자인 (주제는 시험당일 제시)",
+      "allowed_materials": ["채색 도구 일체"],
+      "paper_size": "3절 켄트지",
+      "time_limit_minutes": 300,
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 50,
+      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+    },
+    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+  },
+  {
+    "university": "서울과학기술대학교",
+    "campus": "서울(공릉)",
+    "department": "시각디자인학과",
+    "track_name": "실기위주(실기전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 12,
+      "ratio": "1단계(8배수): 학생부교과 100% -> 2단계: 실기 100%",
+      "is_staged": true,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-17",
+      "result_date": "2026-10-30",
+      "exam_type_name": "기초디자인 (주제는 시험당일 제시)",
+      "allowed_materials": ["채색 도구 일체"],
+      "paper_size": "3절 켄트지",
+      "time_limit_minutes": 300,
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 50,
+      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+    },
+    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+  },
+  {
+    "university": "서울과학기술대학교",
+    "campus": "서울(공릉)",
+    "department": "도예학과",
+    "track_name": "실기위주(실기전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 14,
+      "ratio": "1단계(8배수): 학생부교과 100% -> 2단계: 실기 100%",
+      "is_staged": true,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-17",
+      "result_date": "2026-10-30",
+      "exam_type_name": "기초디자인 (주제는 시험당일 제시)",
+      "allowed_materials": ["채색 도구 일체"],
+      "paper_size": "3절 켄트지",
+      "time_limit_minutes": 300,
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 50,
+      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+    },
+    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+  },
+  {
+    "university": "서울과학기술대학교",
+    "campus": "서울(공릉)",
+    "department": "금속공예디자인학과",
+    "track_name": "실기위주(실기전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 15,
+      "ratio": "1단계(8배수): 학생부교과 100% -> 2단계: 실기 100%",
+      "is_staged": true,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-17",
+      "result_date": "2026-10-30",
+      "exam_type_name": "기초디자인 (주제는 시험당일 제시)",
+      "allowed_materials": ["채색 도구 일체"],
+      "paper_size": "3절 켄트지",
+      "time_limit_minutes": 300,
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 50,
+      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+    },
+    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+  }
+]

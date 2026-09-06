@@ -1,0 +1,38 @@
+{
+  "university": "홍익대학교",
+  "campus": "세종",
+  "department": "조형대학(디자인컨버전스학부/영상·애니메이션학부/게임그래픽디자인전공)",
+  "track_name": "미술우수자전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 182,
+    "ratio": "1단계(3배수): 학생부교과 20% + 서류(미활보) 80% -> 2단계: 1단계 서류성적 40% + 면접 60%",
+    "is_staged": true,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-11"
+    },
+    "exam_date": "면접고사: 디자인컨버전스학부 2026-11-28(토), 영상·애니메이션학부/게임그래픽디자인전공 2026-11-29(일) (세종캠퍼스)",
+    "result_date": "2026-12-18",
+    "exam_type_name": "미술활동보고서 서류평가 및 심층 면접평가",
+    "allowed_materials": [
+      "미술활동보고서 온라인 제출",
+      "신분증",
+      "수험표"
+    ],
+    "paper_size": "해당 없음 (비실기 서류/면접)",
+    "time_limit_minutes": 15,
+    "past_topics": [],
+    "source_url": "https://www.hongik.ac.kr/kr/admission/recruitment.do?mode=download&articleNo=152315&attachNo=91150",
+    "source_page": 105,
+    "registration_period": {
+      "start": "2027-02-10",
+      "end": "2027-02-12"
+    }
+  },
+  "estimates": {
+    "cutoff_grade_estimate": null,
+    "cutoff_source_url": "https://admission.hongik.ac.kr/susi/result.do",
+    "interview_summaries": []
+  }
+}

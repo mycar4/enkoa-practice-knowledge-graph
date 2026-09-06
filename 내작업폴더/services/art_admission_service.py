@@ -62,6 +62,14 @@ _UNIVERSITY_ALIASES = {
     "한예종": "한국예술종합학교",
     "중앙대": "중앙대학교",
     "가천대": "가천대학교",
+    "서경대": "서경대학교",
+    "용인대": "용인대학교",
+    "계원예대": "계원예술대학교",
+    "계원": "계원예술대학교",
+    "추계예대": "추계예술대학교",
+    "추계": "추계예술대학교",
+    "홍대": "홍익대학교",
+    "홍익대": "홍익대학교",
 }
 
 
@@ -102,17 +110,36 @@ class ArtAdmissionService:
             self.driver.close()
 
     def list_universities(self) -> List[Dict[str, Any]]:
+        """대학명이 같아도 캠퍼스가 다르면(예: 홍익대 서울/세종) 별개 University 노드로
+        적재되어 있으므로, 여기서 각 행마다 화면 표시용 display_name을 만들어준다 -
+        같은 이름이 2개 이상이면 자동으로 '대학명 (캠퍼스캠퍼스)'로 구분한다.
+        새 학교가 여러 캠퍼스로 추가돼도 코드 수정 없이 자동으로 같은 방식으로 처리된다."""
         with self.driver.session(default_access_mode=READ_ACCESS) as s:
-            return s.run("""
-                MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(d:Admission_Department)
+            rows = s.run("""
+                MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(d:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
+                WHERE t.is_superseded IS NULL OR t.is_superseded = false
                 RETURN u.name AS university, u.campus AS campus, collect(DISTINCT d.name) AS departments
-                ORDER BY university
+                ORDER BY university, campus
             """).data()
 
-    def get_university_detail(self, university: str) -> Dict[str, Any]:
+        name_counts: Dict[str, int] = {}
+        for r in rows:
+            name_counts[r["university"]] = name_counts.get(r["university"], 0) + 1
+        for r in rows:
+            if name_counts[r["university"]] > 1 and r.get("campus"):
+                r["display_name"] = f"{r['university']} ({r['campus']}캠퍼스)"
+            else:
+                r["display_name"] = r["university"]
+        return rows
+
+    def get_university_detail(self, university: str, campus: Optional[str] = None) -> Dict[str, Any]:
+        """campus를 주면 같은 이름의 다른 캠퍼스 데이터가 섞이지 않도록 그 캠퍼스로만
+        걸러서 조회한다 (예: 홍익대 서울 선택 시 세종 데이터가 같이 나오지 않게)."""
         with self.driver.session(default_access_mode=READ_ACCESS) as s:
             tracks = s.run("""
                 MATCH (u:Admission_University {name: $university})-[:HAS_DEPARTMENT]->(d:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
+                WHERE (t.is_superseded IS NULL OR t.is_superseded = false)
+                  AND ($campus IS NULL OR u.campus = $campus)
                 OPTIONAL MATCH (t)-[:REQUIRES_EXAM]->(e:Admission_ExamType)
                 OPTIONAL MATCH (e)-[:HAD_PAST_TOPIC]->(p:Admission_PastTopic)
                 OPTIONAL MATCH (t)-[:HAS_SCHEDULE]->(sch:Admission_Schedule)
@@ -124,17 +151,20 @@ class ArtAdmissionService:
                        e.paper_size AS paper_size, e.time_limit_minutes AS time_limit_minutes,
                        sch.application_start AS application_start, sch.application_end AS application_end,
                        sch.exam_date AS exam_date, sch.result_date AS result_date,
+                       sch.registration_start AS registration_start, sch.registration_end AS registration_end,
                        past_topics
-            """, university=university).data()
+            """, university=university, campus=campus).data()
 
             estimates = s.run("""
                 MATCH (u:Admission_University {name: $university})-[:HAS_DEPARTMENT]->(:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
+                WHERE (t.is_superseded IS NULL OR t.is_superseded = false)
+                  AND ($campus IS NULL OR u.campus = $campus)
                 OPTIONAL MATCH (t)-[:ESTIMATED_CUTOFF]->(c:Admission_CutoffEstimate)
                 OPTIONAL MATCH (t)-[:HAS_INTERVIEW_SUMMARY]->(iv:Admission_InterviewSummary)
                 WITH t, c, collect(DISTINCT {title: iv.title, url: iv.url, channel: iv.channel, summary: iv.summary}) AS interviews
                 RETURN t.name AS track_name, c.cutoff_grade_estimate AS cutoff_grade_estimate,
                        c.source_url AS cutoff_source_url, interviews
-            """, university=university).data()
+            """, university=university, campus=campus).data()
 
         return {"official_tracks": tracks, "estimates_by_track": estimates}
 
@@ -160,15 +190,17 @@ class ArtAdmissionService:
         with self.driver.session(default_access_mode=READ_ACCESS) as s:
             rows = s.run("""
                 MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(d:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
+                WHERE t.is_superseded IS NULL OR t.is_superseded = false
                 OPTIONAL MATCH (t)-[:REQUIRES_EXAM]->(e:Admission_ExamType)
                 OPTIONAL MATCH (t)-[:HAS_SCHEDULE]->(sch:Admission_Schedule)
-                RETURN u.name AS university, d.name AS department, t.name AS track_name,
+                RETURN u.name AS university, u.campus AS campus, d.name AS department, t.name AS track_name,
                        t.quota AS quota, t.ratio AS ratio, t.source_url AS source_url,
                        t.admission_year AS admission_year,
                        e.name AS exam_type_name, e.allowed_materials AS allowed_materials,
                        e.paper_size AS paper_size, e.time_limit_minutes AS time_limit_minutes,
                        sch.application_start AS application_start, sch.application_end AS application_end,
-                       sch.exam_date AS exam_date_raw, sch.result_date AS result_date
+                       sch.exam_date AS exam_date_raw, sch.result_date AS result_date,
+                       sch.registration_start AS registration_start, sch.registration_end AS registration_end
             """).data()
         for r in rows:
             r["exam_dates"] = _extract_dates(r.get("exam_date_raw"))
@@ -266,7 +298,8 @@ class ArtAdmissionService:
             query = """
                 MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(d:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
                           -[:REQUIRES_EXAM]->(e:Admission_ExamType)-[:HAD_PAST_TOPIC]->(p:Admission_PastTopic)
-                WHERE $university IS NULL OR u.name = $university
+                WHERE (t.is_superseded IS NULL OR t.is_superseded = false)
+                  AND ($university IS NULL OR u.name = $university)
                 RETURN u.name AS university, d.name AS department, t.name AS track_name,
                        e.name AS exam_type_name, p.year AS year, p.topic_text AS topic_text,
                        p.source AS source, p.source_url AS source_url
@@ -285,13 +318,81 @@ class ArtAdmissionService:
                 results.append(t)
         return results
 
+    def get_graph_view(self, university: Optional[str] = None, campus: Optional[str] = None) -> Dict[str, Any]:
+        """지식그래프 구조를 노드/엣지 목록으로 반환한다 (시각화 전용, 화면 표시용 가공 없이
+        그래프 형태 그대로). 공식 사실 계열(University->Department->Track->ExamType->PastTopic)과
+        추정치 계열(Track->CutoffEstimate/InterviewSummary)을 색으로 분리해서 Zero-Mixing을
+        그래프에서도 시각적으로 지킨다."""
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            rows = s.run("""
+                MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(d:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
+                WHERE (t.is_superseded IS NULL OR t.is_superseded = false)
+                  AND ($university IS NULL OR u.name = $university)
+                  AND ($campus IS NULL OR u.campus = $campus)
+                OPTIONAL MATCH (t)-[:REQUIRES_EXAM]->(e:Admission_ExamType)
+                OPTIONAL MATCH (e)-[:HAD_PAST_TOPIC]->(p:Admission_PastTopic)
+                OPTIONAL MATCH (t)-[:ESTIMATED_CUTOFF]->(c:Admission_CutoffEstimate)
+                RETURN u.name AS university, u.campus AS campus, d.name AS department,
+                       t.name AS track_name, t.admission_year AS admission_year,
+                       e.name AS exam_type_name,
+                       collect(DISTINCT p.topic_text) AS past_topics,
+                       c.cutoff_grade_estimate AS cutoff_grade_estimate
+            """, university=university, campus=campus).data()
+
+        nodes: Dict[str, Dict[str, Any]] = {}
+        edges: List[Dict[str, str]] = []
+
+        def add_node(node_id: str, label: str, kind: str, title: str = ""):
+            if node_id not in nodes:
+                nodes[node_id] = {"id": node_id, "label": label, "kind": kind, "title": title or label}
+
+        def add_edge(a: str, b: str):
+            edges.append({"from": a, "to": b})
+
+        for r in rows:
+            u_id = f"U::{r['university']}::{r.get('campus')}"
+            d_id = f"D::{r['university']}::{r.get('campus')}::{r['department']}"
+            t_id = f"T::{r['university']}::{r['department']}::{r['track_name']}"
+            add_node(u_id, r["university"], "university")
+            add_node(d_id, r["department"], "department")
+            add_node(t_id, f"{r['track_name']} ({r.get('admission_year') or '?'})", "track")
+            add_edge(u_id, d_id)
+            add_edge(d_id, t_id)
+
+            if r.get("exam_type_name"):
+                e_id = f"E::{t_id}::{r['exam_type_name']}"
+                topics = [x for x in (r.get("past_topics") or []) if x]
+                add_node(e_id, r["exam_type_name"], "exam_type", title="\n".join(topics[:3]) or r["exam_type_name"])
+                add_edge(t_id, e_id)
+                if topics:
+                    p_id = f"P::{e_id}"
+                    add_node(p_id, f"기출 {len(topics)}건", "past_topic", title="\n".join(topics))
+                    add_edge(e_id, p_id)
+
+            if r.get("cutoff_grade_estimate") is not None:
+                c_id = f"C::{t_id}"
+                add_node(c_id, f"추정컷 {r['cutoff_grade_estimate']}등급", "estimate")
+                add_edge(t_id, c_id)
+
+        return {"nodes": list(nodes.values()), "edges": edges}
+
     def get_calendar_events(self) -> List[Dict[str, Any]]:
         """전체 전형의 원서접수 기간·실기고사일·발표일을 타임라인 이벤트로 변환.
         exam_date는 여러 날짜가 섞여있을 수 있어 하루짜리 이벤트로 각각 쪼갠다."""
         tracks = self.list_all_tracks_full()
+
+        # 같은 대학명이 캠퍼스별로 여러 개면(예: 홍익대 서울/세종) 캘린더 태그에도
+        # 캠퍼스를 붙여 구분한다 - 학교 목록 display_name과 같은 규칙.
+        campuses_by_univ: Dict[str, set] = {}
+        for t in tracks:
+            campuses_by_univ.setdefault(t["university"], set()).add(t.get("campus"))
+
         events = []
         for t in tracks:
-            label = f"{t['university']} {t['department']}"
+            univ_label = t["university"]
+            if len(campuses_by_univ.get(t["university"], set())) > 1 and t.get("campus"):
+                univ_label = f"{t['university']}({t['campus']}캠퍼스)"
+            label = f"{univ_label} {t['department']}"
             if t.get("application_start") and t.get("application_end"):
                 events.append({
                     "school": label, "event_type": "원서접수", "detail": "원서접수 기간",
@@ -307,6 +408,12 @@ class ArtAdmissionService:
                 events.append({
                     "school": label, "event_type": "합격발표", "detail": "합격자 발표",
                     "start": d, "end": d, "admission_year": t.get("admission_year"),
+                })
+            if t.get("registration_start") and t.get("registration_end"):
+                events.append({
+                    "school": label, "event_type": "등록", "detail": "등록금 납부 기간",
+                    "start": t["registration_start"], "end": t["registration_end"],
+                    "admission_year": t.get("admission_year"),
                 })
         return events
 
@@ -440,3 +547,102 @@ class ArtAdmissionService:
             }
 
         return {"intent": "UNKNOWN", "answer": "질문을 이해하지 못했습니다. 학교명을 포함하거나 '일정 충돌', '호환' 같은 키워드를 사용해보세요.", "source_url": None}
+
+    def build_llm_context(self, query: str):
+        """LLM 그라운딩용 컨텍스트를 만든다. 질의에서 학교명이 인식되면 그 학교의
+        모든 학과/트랙만, 인식되지 않으면 적재된 전체 트랙(현재 규모상 소량)을 넘긴다.
+        LLM에게는 이 반환값만 사실로 주어지며, 그 밖의 어떤 것도 지어내지 못하게 한다."""
+        tracks = self.list_all_tracks_full()
+        universities = sorted({t["university"] for t in tracks})
+        mentioned = _resolve_university_mentions(query, universities)
+        subset = [t for t in tracks if t["university"] in mentioned] if mentioned else tracks
+
+        context_tracks = [{
+            "university": t["university"], "department": t["department"], "track_name": t["track_name"],
+            "admission_year": t.get("admission_year"), "quota": t.get("quota"), "ratio": t.get("ratio"),
+            "exam_type_name": t.get("exam_type_name"), "allowed_materials": t.get("allowed_materials"),
+            "paper_size": t.get("paper_size"), "time_limit_minutes": t.get("time_limit_minutes"),
+            "application_start": t.get("application_start"), "application_end": t.get("application_end"),
+            "exam_dates": t.get("exam_dates"), "result_date": t.get("result_date"),
+            "source_url": t.get("source_url"),
+        } for t in subset]
+
+        context_estimates = []
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            for t in subset:
+                rows = s.run("""
+                    MATCH (tr:Admission_Track {name: $tn, university: $u, department: $d})-[:ESTIMATED_CUTOFF]->(c:Admission_CutoffEstimate)
+                    RETURN c.cutoff_grade_estimate AS cutoff_grade_estimate, c.source_url AS source_url
+                """, tn=t["track_name"], u=t["university"], d=t["department"]).data()
+                for r in rows:
+                    context_estimates.append({"university": t["university"], "department": t["department"], **r})
+
+        return context_tracks, context_estimates
+
+    def vector_search(self, query: str, top_k: int = 5) -> List[Dict[str, Any]]:
+        """PDF 원문 청크(Admission_TextChunk)에 대한 순수 벡터 유사도 검색. hybrid_search가
+        기본값이지만, 벡터 인덱스만 단독으로 확인하고 싶을 때 쓴다."""
+        from services.art_admission_llm import embed_text
+        query_vec = embed_text(query)
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            rows = s.run("""
+                CALL db.index.vector.queryNodes('admission_chunk_embedding', $top_k, $vec)
+                YIELD node, score
+                RETURN node.university AS university, node.chunk_index AS chunk_index, node.text AS text,
+                       node.page_start AS page_start, node.page_end AS page_end,
+                       node.admission_year AS admission_year, node.source_file AS source_file,
+                       score
+                ORDER BY score DESC
+            """, top_k=top_k, vec=query_vec).data()
+        return rows
+
+    def hybrid_search(self, query: str, top_k: int = 5, candidate_pool: int = 15,
+                       rerank_model_id: str = "gpt-4o-mini") -> List[Dict[str, Any]]:
+        """벡터 유사도 검색 + 키워드(풀텍스트) 검색을 합쳐서 후보를 늘리고(재현율↑),
+        LLM 재순위화로 정말 관련 있는 것만 추려낸다(정확도↑). 벡터 단독은 뜻은 비슷한데
+        핵심 고유명사/숫자가 다른 문장을 헷갈릴 수 있고, 키워드 단독은 표현이 다르면
+        놓치므로 둘을 합친다."""
+        from services.art_admission_llm import embed_text, rerank_chunks
+        query_vec = embed_text(query)
+
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            vec_rows = s.run("""
+                CALL db.index.vector.queryNodes('admission_chunk_embedding', $pool, $vec)
+                YIELD node, score
+                RETURN node.university AS university, node.chunk_index AS chunk_index, node.text AS text,
+                       node.page_start AS page_start, node.page_end AS page_end,
+                       node.admission_year AS admission_year, score AS vec_score
+            """, pool=candidate_pool, vec=query_vec).data()
+
+            kw_rows = s.run("""
+                CALL db.index.fulltext.queryNodes('admission_chunk_fulltext', $q) YIELD node, score
+                RETURN node.university AS university, node.chunk_index AS chunk_index, node.text AS text,
+                       node.page_start AS page_start, node.page_end AS page_end,
+                       node.admission_year AS admission_year, score AS kw_score
+                LIMIT $pool
+            """, q=query, pool=candidate_pool).data()
+
+        max_vec = max((r["vec_score"] for r in vec_rows), default=1.0) or 1.0
+        max_kw = max((r["kw_score"] for r in kw_rows), default=1.0) or 1.0
+
+        merged: Dict[tuple, Dict[str, Any]] = {}
+        for r in vec_rows:
+            key = (r["university"], r["chunk_index"])
+            merged[key] = {**r, "vec_score_norm": r["vec_score"] / max_vec, "kw_score_norm": 0.0}
+        for r in kw_rows:
+            key = (r["university"], r["chunk_index"])
+            if key in merged:
+                merged[key]["kw_score_norm"] = r["kw_score"] / max_kw
+            else:
+                merged[key] = {**r, "vec_score_norm": 0.0, "kw_score_norm": r["kw_score"] / max_kw}
+
+        candidates = list(merged.values())
+        for c in candidates:
+            c["fusion_score"] = 0.7 * c["vec_score_norm"] + 0.3 * c["kw_score_norm"]
+        candidates.sort(key=lambda c: c["fusion_score"], reverse=True)
+        candidates = candidates[:candidate_pool]
+
+        try:
+            return rerank_chunks(query, candidates, model_id=rerank_model_id, top_k=top_k)
+        except Exception:
+            return candidates[:top_k]

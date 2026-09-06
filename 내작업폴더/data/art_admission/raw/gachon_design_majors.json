@@ -1,0 +1,154 @@
+[
+  {
+    "university": "가천대학교",
+    "campus": "글로벌(성남)",
+    "department": "조소전공",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 25,
+      "ratio": "실기 70% + 학생부교과 30% (일괄합산)",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-09",
+      "result_date": "2026-11-14",
+      "exam_type_name": "기초조형",
+      "allowed_materials": [
+        "풀",
+        "접착용 테이프",
+        "가위(길이 20cm 내외 일반 종이 절단용)",
+        "채색 도구"
+      ],
+      "paper_size": "켄트지 4절 4매",
+      "time_limit_minutes": 240,
+      "past_topics": [
+        {
+          "year": 2025,
+          "topic_text": "[2025학년도(전년도) 참고자료] 조소전공 기초조형 (2025학년도 수시 경쟁률 7.0:1, 학생부 70%컷 5.45등급 - 2027학년도가 아닌 지난 회차 실측 수치)",
+          "source": "공식 입시결과(전년도)",
+          "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/가천대학교/가천대학교_2025학년도_수시입시결과.pdf"
+        }
+      ],
+      "source_url": "https://admission.gachon.ac.kr/upload/BBS0021/20260901154909TB3M9B.PDF",
+      "source_page": 72,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      }
+    },
+    "estimates": {
+      "cutoff_grade_estimate": 5.45,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/가천대학교/가천대학교_2025학년도_수시입시결과.pdf",
+      "interview_summaries": []
+    }
+  },
+  {
+    "university": "가천대학교",
+    "campus": "글로벌(성남)",
+    "department": "시각디자인전공",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 30,
+      "ratio": "실기 70% + 학생부교과 30% (일괄합산)",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-10",
+      "result_date": "2026-11-14",
+      "exam_type_name": "기초디자인",
+      "allowed_materials": [
+        "연필",
+        "색연필",
+        "붓",
+        "각종 펜",
+        "크레용",
+        "크레파스",
+        "콩테",
+        "파스텔",
+        "수채화물감",
+        "아크릴칼라",
+        "포스터칼라"
+      ],
+      "paper_size": "켄트지 3절 1매",
+      "time_limit_minutes": 240,
+      "past_topics": [
+        {
+          "year": 2025,
+          "topic_text": "[2025학년도(전년도) 참고자료] 시각디자인전공 기초디자인 (2025학년도 수시 경쟁률 26.5:1, 학생부 70%컷 5.3등급 - 2027학년도가 아닌 지난 회차 실측 수치)",
+          "source": "공식 입시결과(전년도)",
+          "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/가천대학교/가천대학교_2025학년도_수시입시결과.pdf"
+        }
+      ],
+      "source_url": "https://admission.gachon.ac.kr/upload/BBS0021/20260901154909TB3M9B.PDF",
+      "source_page": 72,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      }
+    },
+    "estimates": {
+      "cutoff_grade_estimate": 5.3,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/가천대학교/가천대학교_2025학년도_수시입시결과.pdf",
+      "interview_summaries": []
+    }
+  },
+  {
+    "university": "가천대학교",
+    "campus": "글로벌(성남)",
+    "department": "산업디자인전공",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 30,
+      "ratio": "실기 70% + 학생부교과 30% (일괄합산)",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-09",
+      "result_date": "2026-11-14",
+      "exam_type_name": "기초디자인",
+      "allowed_materials": [
+        "연필",
+        "색연필",
+        "붓",
+        "각종 펜",
+        "크레용",
+        "크레파스",
+        "콩테",
+        "파스텔",
+        "수채화물감",
+        "아크릴칼라",
+        "포스터칼라"
+      ],
+      "paper_size": "켄트지 3절 1매",
+      "time_limit_minutes": 240,
+      "past_topics": [
+        {
+          "year": 2025,
+          "topic_text": "[2025학년도(전년도) 참고자료] 산업디자인전공 기초디자인 (2025학년도 수시 경쟁률 18.9:1, 학생부 70%컷 5.69등급 - 2027학년도가 아닌 지난 회차 실측 수치)",
+          "source": "공식 입시결과(전년도)",
+          "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/가천대학교/가천대학교_2025학년도_수시입시결과.pdf"
+        }
+      ],
+      "source_url": "https://admission.gachon.ac.kr/upload/BBS0021/20260901154909TB3M9B.PDF",
+      "source_page": 72,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      }
+    },
+    "estimates": {
+      "cutoff_grade_estimate": 5.69,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/가천대학교/가천대학교_2025학년도_수시입시결과.pdf",
+      "interview_summaries": []
+    }
+  }
+]

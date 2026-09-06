@@ -30,7 +30,11 @@
       }
     ],
     "source_url": "https://admission.cau.ac.kr/file/pdfDown.pdf?sfn=20260805051607003_0c37226bf7e64ad79adafec6f6fdc72c.pdf&ofn=%EC%A4%91%EC%95%99%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_%EC%97%85%EB%A1%9C%EB%93%9C%EC%9A%A9%28%EC%B5%9C%EC%A2%85%29.pdf",
-    "source_page": 72
+    "source_page": 72,
+    "registration_period": {
+      "start": "2027-02-10",
+      "end": "2027-02-12"
+    }
   },
   "estimates": {
     "cutoff_grade_estimate": 3.7,

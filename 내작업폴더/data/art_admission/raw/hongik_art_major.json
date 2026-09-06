@@ -1,0 +1,46 @@
+{
+  "university": "홍익대학교",
+  "campus": "서울",
+  "department": "미술대학(동양화/회화/판화/조소/디자인학부 등)",
+  "track_name": "미술우수자전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 289,
+    "ratio": "1단계(3배수): 학생부교과 20% + 서류(미활보) 80% -> 2단계: 1단계 서류성적 40% + 면접 60%",
+    "is_staged": true,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-11"
+    },
+    "exam_date": "면접고사: 2026-12-05(토) ~ 12-06(일) (서울캠퍼스)",
+    "result_date": "2026-12-18",
+    "exam_type_name": "미술활동보고서 서류평가 및 심층 면접평가",
+    "allowed_materials": [
+      "미술활동보고서 온라인 제출",
+      "신분증",
+      "수험표"
+    ],
+    "paper_size": "해당 없음 (비실기 서류/면접)",
+    "time_limit_minutes": 15,
+    "수능최저학력기준": "국어,수학,영어,탐구(사회/과학) 중 3개 영역 등급 합 9 이내, 한국사 4등급 이내 (구 2026학년도 자료의 '수능최저 없음'과 달라진 부분 - 2027학년도부터 신설된 것으로 원문에서 확인됨)",
+    "past_topics": [
+      {
+        "year": 2026,
+        "topic_text": "[2026학년도(전년도) 참고자료] 제출서류(미술활동보고서)의 진실성 확인 및 미술관련 소양, 창의성, 작품 제작 의도 구술 심층 면접 - 2026 선행학습영향평가 보고서 수록 (2027학년도가 아닌 지난 회차 실측 수치)",
+        "source": "공식 선행학습영향평가서(전년도)",
+        "source_url": "https://www.hongik.ac.kr/kr/admission/recruitment.do?mode=download&articleNo=148152&attachNo=104111"
+      }
+    ],
+    "source_url": "https://www.hongik.ac.kr/kr/admission/recruitment.do?mode=download&articleNo=152315&attachNo=91150",
+    "source_page": 61,
+    "registration_period": {
+      "start": "2027-02-10",
+      "end": "2027-02-12"
+    }
+  },
+  "estimates": {
+    "cutoff_grade_estimate": 2.3,
+    "cutoff_source_url": "https://admission.hongik.ac.kr/susi/result.do",
+    "interview_summaries": []
+  }
+}

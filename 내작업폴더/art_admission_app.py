@@ -20,10 +20,36 @@ sys.path.insert(0, os.path.abspath("내작업폴더"))
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from pyvis.network import Network
 from services.art_admission_service import ArtAdmissionService
+from services.art_admission_llm import get_available_models, answer_with_llm, review_document, chat_about_review, MODEL_PASSWORD
 
-_EVENT_COLOR = {"원서접수": "#2563eb", "실기고사": "#dc2626", "합격발표": "#16a34a"}
-_SCHOOL_ABBR_LEN = 6  # 셀 안에 다 안 들어가니 학교명 앞부분만 표시
+
+def _select_model_with_gate(models: list, key_prefix: str):
+    """모델 선택 드롭다운 + gated 모델이면 비밀번호 입력을 요구한다.
+    비밀번호가 한 번 맞으면 세션 내내(다른 탭 포함) 다시 안 물어본다.
+    반환값: (선택된 모델 dict, 실제 사용 가능 여부: bool)."""
+    labels = [f"{m['label']}" + ("" if m["available"] else " (API 키 없음)") for m in models]
+    idx = st.selectbox("AI 모델 선택", range(len(models)), format_func=lambda i: labels[i], key=f"{key_prefix}_model_select")
+    model = models[idx]
+
+    if not model["gated"]:
+        return model, model["available"]
+
+    if st.session_state.get("model_gate_unlocked"):
+        return model, model["available"]
+
+    pw = st.text_input("🔒 비밀번호", type="password", key=f"{key_prefix}_model_pw")
+    if pw:
+        if pw == MODEL_PASSWORD:
+            st.session_state.model_gate_unlocked = True
+            st.rerun()
+        else:
+            st.error("비밀번호가 올바르지 않습니다.")
+    return model, False
+
+_EVENT_COLOR = {"원서접수": "#2563eb", "실기고사": "#dc2626", "합격발표": "#16a34a", "등록": "#9333ea"}
+_SCHOOL_ABBR_LEN = 9  # 셀 안에 다 안 들어가니 학교명(+캠퍼스) 앞부분만 표시, 나머지는 ellipsis+툴팁
 
 
 def _render_month_calendar(events: list, year: int, month: int, today: datetime.date) -> str:
@@ -56,19 +82,62 @@ def _render_month_calendar(events: list, year: int, month: int, today: datetime.
             if is_today:
                 cell_style += "background:rgba(220,38,38,0.08); border:2px solid #dc2626;"
             day_num_style = "font-weight:bold; color:#dc2626;" if is_today else "font-weight:bold;"
+            # 같은 대학·같은 이벤트유형(예: 가천대 4개 학과 원서접수)은 태그 하나로 묶는다.
+            grouped = defaultdict(list)
+            for e in by_date.get(date_str, []):
+                univ = e["school"].split(" ")[0]
+                grouped[(univ, e["event_type"])].append(e)
+
             tags = ""
-            for e in sorted(by_date.get(date_str, []), key=lambda x: x["event_type"]):
-                color = _EVENT_COLOR.get(e["event_type"], "#666")
-                school_short = e["school"].split(" ")[0][:_SCHOOL_ABBR_LEN]
+            for (univ, event_type), es in sorted(grouped.items(), key=lambda kv: kv[0][1]):
+                color = _EVENT_COLOR.get(event_type, "#666")
+                school_short = univ[:_SCHOOL_ABBR_LEN]
+                count_suffix = f" ({len(es)})" if len(es) > 1 else ""
+                tooltip = "; ".join(f"{e['school']} - {e['detail']}" for e in es)
                 tags += (
                     f"<div style='background:{color}; color:#fff; border-radius:3px; padding:1px 3px; "
                     f"margin-top:2px; font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;' "
-                    f"title='{e['school']} - {e['detail']}'>{school_short} {e['event_type']}</div>"
+                    f"title='{tooltip}'>{school_short} {event_type}{count_suffix}</div>"
                 )
             html.append(f"<td style='{cell_style}'><span style='{day_num_style}'>{day}</span>{tags}</td>")
         html.append("</tr>")
     html.append("</table>")
     return "".join(html)
+
+
+_GRAPH_NODE_COLOR = {
+    "university": "#1d4ed8",
+    "department": "#0891b2",
+    "track": "#16a34a",
+    "exam_type": "#d97706",
+    "past_topic": "#7c3aed",
+    "estimate": "#6b7280",
+}
+_GRAPH_NODE_SHAPE = {
+    "university": "box",
+    "department": "box",
+    "track": "ellipse",
+    "exam_type": "diamond",
+    "past_topic": "dot",
+    "estimate": "dot",
+}
+
+
+def _render_graph_html(nodes: list, edges: list) -> str:
+    """지식그래프를 pyvis로 인터랙티브 네트워크 HTML로 만든다. 공식 사실 계열
+    (university/department/track/exam_type/past_topic)은 파란~보라 계열,
+    추정치(estimate)는 회색으로 완전히 다른 색을 써서 Zero-Mixing을 시각적으로도 지킨다."""
+    net = Network(height="600px", width="100%", directed=True, notebook=False, cdn_resources="in_line")
+    net.barnes_hut(gravity=-3000, spring_length=120)
+    for n in nodes:
+        net.add_node(
+            n["id"], label=n["label"], title=n.get("title", n["label"]),
+            color=_GRAPH_NODE_COLOR.get(n["kind"], "#94a3b8"),
+            shape=_GRAPH_NODE_SHAPE.get(n["kind"], "dot"),
+        )
+    for e in edges:
+        net.add_edge(e["from"], e["to"])
+    return net.generate_html(notebook=False)
 
 
 def render_art_admission_app():
@@ -88,7 +157,7 @@ def render_art_admission_app():
         page = st.radio(
             "📌 메뉴",
             ["🏫 학교/학과 목록", "🔍 학교 상세", "⚖️ 전형 비교", "📅 일정 캘린더", "🎯 동시지원 시뮬레이터",
-             "📝 기출문제", "🚦 데이터 정합성", "💬 질의응답"],
+             "📝 기출문제", "🚦 데이터 정합성", "💬 질의응답", "🖊️ 서류 AI 첨삭", "🕸️ 지식그래프 보기"],
             horizontal=True,
         )
         st.markdown("---")
@@ -107,9 +176,9 @@ def render_art_admission_app():
                     filtered_universities = [u for u in universities if u["university"] in matched_names]
                     st.caption(f"'{material_kw}' 검색 결과: {len(filtered_universities)}개 학교")
 
-                by_univ = {t["university"]: t for t in all_tracks}
+                by_univ_campus = {(t["university"], t.get("campus")): t for t in all_tracks}
                 for u in filtered_universities:
-                    t = by_univ.get(u["university"], {})
+                    t = by_univ_campus.get((u["university"], u.get("campus")), {})
                     dday = t.get("application_end_dday")
                     if dday is None:
                         dday_badge = ""
@@ -121,25 +190,30 @@ def render_art_admission_app():
                         dday_badge = f"<span style='background:#dc2626;color:#fff;border-radius:4px;padding:2px 6px;font-size:12px;'>접수마감 D-{dday}</span>"
                     tier_badge = f"<span style='font-size:12px;color:#666;'>{t.get('source_tier', '')}</span>" if t else ""
                     with st.container():
-                        st.markdown(f"**{u['university']}** ({u.get('campus') or '캠퍼스 미상'}) {dday_badge}", unsafe_allow_html=True)
+                        st.markdown(f"**{u['display_name']}** {dday_badge}", unsafe_allow_html=True)
                         st.caption(f"학과: {', '.join(u['departments'])}")
                         if tier_badge:
                             st.markdown(tier_badge, unsafe_allow_html=True)
                         st.markdown("---")
 
         elif page == "🔍 학교 상세":
-            names = [u["university"] for u in universities]
+            display_to_key = {u["display_name"]: (u["university"], u.get("campus")) for u in universities}
+            names = list(display_to_key.keys())
             if not names:
                 st.info("아직 적재된 학교 데이터가 없습니다.")
             else:
-                selected = st.selectbox("학교 선택", names)
-                detail = svc.get_university_detail(selected)
+                selected_display = st.selectbox("학교 선택", names)
+                selected, selected_campus = display_to_key[selected_display]
+                detail = svc.get_university_detail(selected, campus=selected_campus)
 
                 st.markdown("### 🔒 공식 모집요강 사실")
                 st.caption("아래 내용은 전부 공식 모집요강 원문에서 추출되었으며, 출처 링크가 함께 표시됩니다.")
-                track_full_by_name = {t["track_name"]: t for t in svc.list_all_tracks_full() if t["university"] == selected}
+                track_full_by_key = {
+                    (t["department"], t["track_name"]): t for t in svc.list_all_tracks_full()
+                    if t["university"] == selected and t.get("campus") == selected_campus
+                }
                 for t in detail["official_tracks"]:
-                    full = track_full_by_name.get(t["track_name"], {})
+                    full = track_full_by_key.get((t["department"], t["track_name"]), {})
                     dday = full.get("application_end_dday")
                     if dday is None:
                         dday_badge = ""
@@ -157,11 +231,12 @@ def render_art_admission_app():
                             | 규격: {t.get('paper_size') or '-'} | 시험시간: {t.get('time_limit_minutes') or '-'}분<br/>
                             원서접수: {t.get('application_start') or '-'} ~ {t.get('application_end') or '-'}
                             | 실기고사일: {t.get('exam_date') or '-'} | 발표일: {t.get('result_date') or '-'}<br/>
+                            등록(등록금납부): {t.get('registration_start') or '-'} ~ {t.get('registration_end') or '-'}<br/>
                             <span style='font-size:12px;color:#666;'>출처 신뢰도: {full.get('source_tier', '-')}</span>
                         </div>
                         """, unsafe_allow_html=True)
                         if t.get("source_url"):
-                            st.link_button("📑 공식 출처 원문 바로가기", t["source_url"], key=f"src_{t['track_name']}")
+                            st.link_button("📑 공식 출처 원문 바로가기", t["source_url"], key=f"src_{selected}_{t['department']}_{t['track_name']}")
 
                 st.markdown("### ⚪ 추정치 / 후기 (비공식, 참고용)")
                 st.caption("아래 내용은 공식 모집요강이 아닌 웹 검색·유튜브·입시업체 자료 기반 추정치입니다. 위 공식 사실과 절대 혼동하지 마세요.")
@@ -195,7 +270,9 @@ def render_art_admission_app():
                         ("admission_year", "학년도"), ("quota", "모집인원"), ("ratio", "반영비율"),
                         ("exam_type_name", "실기종목"), ("paper_size", "규격"), ("time_limit_minutes", "시험시간(분)"),
                         ("application_start", "원서접수 시작"), ("application_end", "원서접수 마감"),
-                        ("exam_date_raw", "실기고사일"), ("result_date", "발표일"), ("source_tier", "출처신뢰도"),
+                        ("exam_date_raw", "실기고사일"), ("result_date", "발표일"),
+                        ("registration_start", "등록 시작"), ("registration_end", "등록 마감"),
+                        ("source_tier", "출처신뢰도"),
                     ]
                     table_data = {}
                     for col_name, r in cols.items():
@@ -248,10 +325,10 @@ def render_art_admission_app():
             if not events:
                 st.info("적재된 일정이 없습니다.")
             else:
-                # 원서접수 기간은 시작~끝 매일 표시 (달력에서는 막대가 아니라 날짜별 태그이므로 기간 전체를 펼쳐야 함)
+                # 원서접수/등록 기간은 시작~끝 매일 표시 (달력에서는 막대가 아니라 날짜별 태그이므로 기간 전체를 펼쳐야 함)
                 expanded_events = []
                 for e in events:
-                    if e["event_type"] == "원서접수":
+                    if e["event_type"] in ("원서접수", "등록"):
                         start = datetime.date.fromisoformat(e["start"])
                         end = datetime.date.fromisoformat(e["end"])
                         d = start
@@ -270,7 +347,22 @@ def render_art_admission_app():
                     if (y, m) == (today.year, today.month):
                         default_idx = i
                         break
-                selected_month_label = st.selectbox("월 선택", month_labels, index=default_idx)
+
+                if st.session_state.get("cal_month_select") not in month_labels:
+                    st.session_state.cal_month_select = month_labels[default_idx]
+                current_idx = month_labels.index(st.session_state.cal_month_select)
+
+                col_prev, col_sel, col_next = st.columns([1, 3, 1])
+                with col_prev:
+                    if st.button("◀ 이전달", use_container_width=True, disabled=current_idx <= 0):
+                        st.session_state.cal_month_select = month_labels[current_idx - 1]
+                        st.rerun()
+                with col_next:
+                    if st.button("다음달 ▶", use_container_width=True, disabled=current_idx >= len(months) - 1):
+                        st.session_state.cal_month_select = month_labels[current_idx + 1]
+                        st.rerun()
+                with col_sel:
+                    selected_month_label = st.selectbox("월 선택", month_labels, key="cal_month_select")
                 sel_year, sel_month = months[month_labels.index(selected_month_label)]
 
                 legend = " ".join(
@@ -308,7 +400,7 @@ def render_art_admission_app():
         elif page == "📝 기출문제":
             st.markdown("### 📝 실기고사 기출문제 (원문 그대로, 출처 포함)")
             st.caption("모두 공식 모집요강 원문에서 발췌한 내용입니다.")
-            names = ["전체"] + [u["university"] for u in universities]
+            names = ["전체"] + sorted({u["university"] for u in universities})
             selected_school = st.selectbox("학교 선택", names)
             topics = svc.get_past_topics(university=None if selected_school == "전체" else selected_school)
             if not topics:
@@ -325,7 +417,7 @@ def render_art_admission_app():
                         </div>
                         """, unsafe_allow_html=True)
                         if p.get("source_url"):
-                            st.link_button("📑 출처 원문 바로가기", p["source_url"], key=f"topic_{p['university']}_{p.get('year')}_{p['topic_text'][:20]}")
+                            st.link_button("📑 출처 원문 바로가기", p["source_url"], key=f"topic_{p['university']}_{p['department']}_{p['track_name']}_{p.get('year')}_{p['topic_text'][:20]}")
 
         elif page == "🚦 데이터 정합성":
             st.markdown("### 🚦 데이터 정합성 자가진단")
@@ -350,16 +442,154 @@ def render_art_admission_app():
                     for i in info:
                         st.markdown(f"- **{i['track']}**: {i['issue']}")
 
-        else:  # 💬 질의응답
-            st.markdown("### 💬 규칙기반 질의응답 (LLM 미사용, 그래프 사실만으로 답변)")
-            st.caption("학교명을 포함하거나 '일정 충돌', '호환' 같은 키워드로 질문하세요. 모든 답변은 적재된 official_facts에서만 나오며, 근거 출처가 함께 표시됩니다.")
+        elif page == "💬 질의응답":
+            st.markdown("### 💬 질의응답")
+            st.caption("학교명을 포함하거나 '일정 충돌', '호환' 같은 키워드로 질문하세요. 규칙기반 답변은 항상 그래프 사실만으로 나오고, AI 답변은 그 같은 사실만 근거로 자연어로 다시 풀어줍니다 (없는 값은 지어내지 않도록 프롬프트로 제한).")
             query = st.text_input("질문 입력", placeholder="예: 한예종 알려줘 / 일정 충돌 있어? / 중앙대학교 호환되는 학교 있어?")
+
+            selected_model, model_usable = _select_model_with_gate(get_available_models(), key_prefix="qa")
+
             if query:
                 result = svc.answer_question(query)
+                st.markdown("#### 🔒 규칙기반 답변 (LLM 미사용)")
                 st.markdown(f"**[의도 분류: {result['intent']}]**")
                 st.markdown(result["answer"].replace("\n", "  \n"))
                 if result.get("source_url"):
-                    st.link_button("📑 근거 원문 바로가기", result["source_url"])
+                    st.link_button("📑 근거 원문 바로가기", result["source_url"], key="qa_rule_src")
+
+                st.markdown("---")
+                st.markdown("#### 🤖 AI 답변")
+                if not selected_model["available"]:
+                    st.warning(f"'{selected_model['label']}'는 API 키가 설정되어 있지 않아 사용할 수 없습니다. 위 규칙기반 답변을 참고해주세요.")
+                elif not model_usable:
+                    st.info("비밀번호를 입력하면 이 모델로 답변을 생성합니다.")
+                else:
+                    with st.spinner("AI가 그래프 사실 + 원문 검색(하이브리드+재순위화) 결과를 보고 답변을 작성 중입니다..."):
+                        context_tracks, context_estimates = svc.build_llm_context(query)
+                        try:
+                            context_raw = svc.hybrid_search(query, top_k=5)
+                        except Exception:
+                            context_raw = []  # 벡터/풀텍스트 인덱스가 아직 없거나 임베딩 실패 시 구조화 사실만으로 답변
+                        llm_result = answer_with_llm(
+                            context_tracks, context_estimates, query,
+                            model_id=selected_model["id"], context_raw_excerpts=context_raw,
+                        )
+                    st.markdown(llm_result["answer"].replace("\n", "  \n"))
+                    if llm_result.get("grounded_on"):
+                        st.caption(f"근거로 사용: {', '.join(llm_result['grounded_on'])}")
+                    if context_raw:
+                        with st.expander(f"🔎 원문 검색 결과 {len(context_raw)}건 (하이브리드 검색 + AI 재순위화, 참고용)"):
+                            for r in context_raw:
+                                rerank = r.get("rerank_score")
+                                score_label = f"재순위화 점수 {rerank}/10" if rerank is not None else f"융합점수 {r.get('fusion_score', 0):.2f}"
+                                st.markdown(
+                                    f"**{r['university']}** ({r.get('admission_year') or '?'}학년도, "
+                                    f"p.{r.get('page_start')}-{r.get('page_end')}, {score_label})"
+                                )
+                                st.caption(r["text"][:400] + ("..." if len(r["text"]) > 400 else ""))
+
+        elif page == "🖊️ 서류 AI 첨삭":
+            st.markdown("### 🖊️ 서류/자소서 AI 첨삭")
+            st.markdown(
+                "<div style='background:rgba(100,116,139,0.1); border:1px solid rgba(100,116,139,0.3); "
+                "border-radius:8px; padding:10px; font-size:13px;'>"
+                "⚪ <b>AI 추정 의견입니다 - 공식 평가/합격 가능성 판정이 아닙니다.</b> "
+                "홍익대 미술활동보고서, 계원예대 포트폴리오 설명 등 실기 없이 서류로 평가받는 전형을 "
+                "준비할 때 글쓰기 관점의 참고용 피드백만 제공합니다."
+                "</div>",
+                unsafe_allow_html=True,
+            )
+            st.markdown("")
+
+            doc_type = st.selectbox("문서 종류", ["자기소개서", "미술활동보고서", "포트폴리오 설명글", "기타 서류"])
+
+            selected_model2, model2_usable = _select_model_with_gate(get_available_models(), key_prefix="review")
+
+            uploaded = st.file_uploader("문서 파일 첨부 (.txt, .pdf)", type=["txt", "pdf"])
+            pasted_text = st.text_area("또는 텍스트를 직접 붙여넣으세요", height=200)
+
+            doc_text = ""
+            if uploaded is not None:
+                if uploaded.name.lower().endswith(".pdf"):
+                    try:
+                        import pypdf
+                        reader = pypdf.PdfReader(uploaded)
+                        doc_text = "\n".join((p.extract_text() or "") for p in reader.pages)
+                    except Exception as e:
+                        st.error(f"PDF 텍스트 추출 실패: {e}")
+                else:
+                    doc_text = uploaded.read().decode("utf-8", errors="ignore")
+            elif pasted_text.strip():
+                doc_text = pasted_text
+
+            if st.button("AI 첨삭 받기", disabled=not doc_text.strip()):
+                if not selected_model2["available"]:
+                    st.warning(f"'{selected_model2['label']}'는 API 키가 설정되어 있지 않아 사용할 수 없습니다. 다른 모델을 선택해주세요.")
+                elif not model2_usable:
+                    st.warning("이 모델은 비밀번호를 맞춰야 사용할 수 있습니다.")
+                else:
+                    with st.spinner("AI가 첨삭 중입니다..."):
+                        review = review_document(doc_text, model_id=selected_model2["id"], doc_type=doc_type)
+                    if review.get("error"):
+                        st.error(review["feedback"])
+                    else:
+                        # 새로 첨삭을 받으면 이전 대화는 초기화하고 새 대화를 시작한다.
+                        st.session_state.review_doc_text = doc_text
+                        st.session_state.review_doc_type = doc_type
+                        st.session_state.review_model_id = selected_model2["id"]
+                        st.session_state.review_history = [{"role": "assistant", "content": review["feedback"]}]
+
+            # 첫 첨삭 이후에는 이 대화 스레드가 계속 화면에 남아 이어서 물어볼 수 있다.
+            if st.session_state.get("review_history"):
+                st.markdown("---")
+                st.markdown("#### 💬 AI와 대화로 첨삭 보완하기")
+                for turn in st.session_state.review_history:
+                    with st.chat_message("assistant" if turn["role"] == "assistant" else "user"):
+                        st.markdown(turn["content"].replace("\n", "  \n"))
+
+                followup = st.chat_input("첨삭에 대해 궁금한 점이나 수정한 글을 입력하세요")
+                if followup:
+                    st.session_state.review_history.append({"role": "user", "content": followup})
+                    with st.chat_message("user"):
+                        st.markdown(followup)
+                    with st.chat_message("assistant"):
+                        with st.spinner("AI가 답변 중입니다..."):
+                            chat_result = chat_about_review(
+                                st.session_state.review_doc_text,
+                                st.session_state.review_doc_type,
+                                st.session_state.review_history,
+                                model_id=st.session_state.review_model_id,
+                            )
+                        st.markdown(chat_result["reply" if not chat_result.get("error") else "reply"].replace("\n", "  \n"))
+                    st.session_state.review_history.append({"role": "assistant", "content": chat_result["reply"]})
+
+                if st.button("🔄 새 대화 시작 (기존 첨삭 지우기)"):
+                    st.session_state.review_history = []
+                    st.rerun()
+
+        else:  # 🕸️ 지식그래프 보기
+            st.markdown("### 🕸️ 지식그래프 보기")
+            st.caption(
+                "University → Department → Track → ExamType → PastTopic (공식 사실, 파랑~보라 계열)과 "
+                "Track → CutoffEstimate (추정치, 회색)를 색으로 분리해서 보여줍니다. "
+                "점/노드를 드래그하거나 확대해서 관계를 직접 확인할 수 있습니다."
+            )
+            display_to_key_g = {u["display_name"]: (u["university"], u.get("campus")) for u in universities}
+            scope_labels = ["전체"] + list(display_to_key_g.keys())
+            scope = st.selectbox("범위 선택", scope_labels)
+
+            if scope == "전체":
+                graph = svc.get_graph_view()
+            else:
+                g_univ, g_campus = display_to_key_g[scope]
+                graph = svc.get_graph_view(university=g_univ, campus=g_campus)
+
+            if not graph["nodes"]:
+                st.info("표시할 그래프 데이터가 없습니다.")
+            else:
+                st.caption(f"노드 {len(graph['nodes'])}개 · 관계 {len(graph['edges'])}개")
+                html = _render_graph_html(graph["nodes"], graph["edges"])
+                st.components.v1.html(html, height=620, scrolling=True)
 
     finally:
         svc.close()

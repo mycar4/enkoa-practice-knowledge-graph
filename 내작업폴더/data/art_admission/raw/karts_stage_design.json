@@ -8,11 +8,17 @@
     "quota": 18,
     "ratio": "1차: 실기 80%+고교내신 20% -> 2차: 심층실기 60%+구술 40% (2단계 전형)",
     "is_staged": true,
-    "application_period": {"start": "2026-08-10", "end": "2026-08-13"},
+    "application_period": {
+      "start": "2026-08-10",
+      "end": "2026-08-13"
+    },
     "exam_date": "1차 2026-09-15~2026-09-22, 2차 2026-10-21~2026-10-29",
     "result_date": "2026-11-06",
     "exam_type_name": "1차: 사실적 소묘 / 2차: 심층실기+구술",
-    "allowed_materials": ["소묘용 연필", "지우개(개인지참)"],
+    "allowed_materials": [
+      "소묘용 연필",
+      "지우개(개인지참)"
+    ],
     "paper_size": "켄트지(학교 제공)",
     "time_limit_minutes": 180,
     "past_topics": [
@@ -30,7 +36,11 @@
       }
     ],
     "source_url": "https://www.karts.ac.kr/usr/gfa/guideline.do",
-    "source_page": 21
+    "source_page": 21,
+    "registration_period": {
+      "start": "2027-01-25",
+      "end": "2027-01-28"
+    }
   },
   "estimates": {
     "cutoff_grade_estimate": null,

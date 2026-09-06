@@ -1,0 +1,46 @@
+{
+  "university": "용인대학교",
+  "campus": "경기(용인)",
+  "department": "연극학과",
+  "track_name": "일반학생전형",
+  "_정정_안내": "구 2026학년도 stale 데이터에 있던 '무대기술/구술(희곡 지문 분석)' 실기내용은 진짜 2027학년도 원문과 다름 - 실제로는 연기 실기(1단계 지정대사, 2단계 자유연기+특기)임. 원문 재확인으로 바로잡음.",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 18,
+    "ratio": "1단계(10배수 선발): 실기 100%(500점) -> 2단계: 학생부(교과) 30%(150점) + 실기 70%(350점)",
+    "is_staged": true,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-11"
+    },
+    "exam_date": "1단계: 2026-09-18(금) ~ 09-19(토), 1단계합격발표: 2026-09-23(수), 2단계: 2026-10-02(금) ~ 10-05(월)",
+    "result_date": "2026-10-16",
+    "exam_type_name": "[연기] 1단계: 지정대사 연기(2분 이내), 2단계: 자유연기(2분 이내) 및 특기(1분 이내)",
+    "allowed_materials": [
+      "검은색 상·하의(검은색 레오타드/풀치마 허용)",
+      "특기용 소품(무기류·인화성 물질 제외)",
+      "특기 음악 USB(WAV 또는 MP3)"
+    ],
+    "paper_size": "해당 없음 (실기공연/구술)",
+    "time_limit_minutes": 5,
+    "past_topics": [
+      {
+        "year": 2026,
+        "topic_text": "[2026학년도(전년도) 참고자료] 지정대사 연기 평가 및 자유연기+특기(노래/춤/악기연주/마임/아크로바틱 등) 평가 - 무대기술 관련 실기가 아닌 연기 실기임 (2027학년도가 아닌 지난 회차 실측 수치, 종목 자체도 정정됨)",
+        "source": "공식 모집요강(전년도)",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/용인대학교/용인대학교_2025학년도_수시입시결과.pdf"
+      }
+    ],
+    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/용인대학교/용인대학교_2027학년도_수시모집요강.pdf",
+    "source_page": 27,
+    "registration_period": {
+      "start": "2027-02-10",
+      "end": "2027-02-12"
+    }
+  },
+  "estimates": {
+    "cutoff_grade_estimate": 4.8,
+    "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/용인대학교/용인대학교_2025학년도_수시입시결과.pdf",
+    "interview_summaries": []
+  }
+}

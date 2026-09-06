@@ -33,7 +33,18 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-load_dotenv(".env", override=True)
+# Streamlit Community Cloud에는 로컬 .env 파일이 없고 대신 st.secrets에
+# 배포용 비밀값을 넣는다. 이 저장소의 모든 코드는 os.getenv()로 읽으므로,
+# st.secrets에 있는 키를 최초 1회 os.environ에 복사해서 로컬(.env)/클라우드(st.secrets)
+# 양쪽에서 코드 수정 없이 동일하게 동작하게 한다 - 이미 os.environ에 있는 값은 덮지 않음.
+try:
+    for _key, _val in st.secrets.items():
+        if isinstance(_val, str) and _key not in os.environ:
+            os.environ[_key] = _val
+except Exception:
+    pass  # secrets.toml이 없는 로컬 환경(.env만 쓰는 경우)에서는 조용히 통과
+
+load_dotenv(".env", override=False)
 
 # 클라우드 Aura 전용 변수 1순위 탐색 (교안 실습용 NEO4J_URI와 완벽 격리)
 NEO4J_URI = os.getenv("AURA_URI") or os.getenv("NEO4J_URI", "neo4j+ssc://a8a048c8.databases.neo4j.io")
@@ -87,7 +98,7 @@ def generate_graphrag_response(prompt: str, api_key_input: str = "") -> dict:
 # 아래에서 "미술 실기 입시"를 고르면 이후 DART-Trace 코드는 전혀 실행되지 않고
 # (st.stop()으로 즉시 종료) art_admission_app.py의 화면만 렌더링된다.
 with st.sidebar:
-    service_mode = st.radio("🗂️ 서비스 선택", ["🏛️ DART-Trace (지배구조)", "🎨 미술 실기 입시 도우미"], key="top_service_mode")
+    service_mode = st.radio("🗂️ 서비스 선택", ["🎨 미술 실기 입시 도우미", "🏛️ DART-Trace (지배구조)"], key="top_service_mode")
     st.markdown("---")
 
 if service_mode == "🎨 미술 실기 입시 도우미":

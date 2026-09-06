@@ -1,0 +1,27 @@
+{
+  "university": "삼육대학교",
+  "campus": "서울",
+  "department": "아트앤디자인학과",
+  "track_name": "실기/실적(실기우수자전형)",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 27,
+    "ratio": "일괄합산: 서류 20% + 실기 80%",
+    "is_staged": false,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-11"
+    },
+    "exam_date": "2026-10-04",
+    "result_date": "2026-11-02",
+    "exam_type_name": "기초디자인 또는 발상과표현 중 택1 (주제는 고사 당일 발표)",
+    "allowed_materials": ["표현재료 자유(콜라주/부착물, 고착제 사용 금지)"],
+    "paper_size": "켄트지 4절",
+    "time_limit_minutes": 240,
+    "past_topics": [],
+    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/삼육대학교/삼육대학교_2027학년도_수시모집요강.pdf",
+    "source_page": 58,
+    "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+  },
+  "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+}

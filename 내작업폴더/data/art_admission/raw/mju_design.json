@@ -1,0 +1,137 @@
+[
+  {
+    "university": "명지대학교",
+    "campus": "용인(자연캠퍼스)",
+    "department": "비주얼커뮤니케이션디자인전공",
+    "track_name": "실기/실적(실기우수자전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 21,
+      "ratio": "일괄합산: 실기 70% + 학생부교과 20% + 출결 10%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-09",
+      "result_date": "2026-12-09",
+      "exam_type_name": "기초디자인 - 문제 주제의 해석과 표현 (입체적 첨가 형식 제외 모든 재료 허용)",
+      "allowed_materials": ["입체적 첨가 형식을 제외한 표현 가능한 모든 재료"],
+      "paper_size": "3절지",
+      "time_limit_minutes": 240,
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/명지대학교/명지대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 71,
+      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+    },
+    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+  },
+  {
+    "university": "명지대학교",
+    "campus": "용인(자연캠퍼스)",
+    "department": "인더스트리얼디자인전공",
+    "track_name": "실기/실적(실기우수자전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 21,
+      "ratio": "일괄합산: 실기 70% + 학생부교과 20% + 출결 10%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-10",
+      "result_date": "2026-12-09",
+      "exam_type_name": "기초디자인 - 문제 주제의 해석과 표현 (입체적 첨가 형식 제외 모든 재료 허용)",
+      "allowed_materials": ["입체적 첨가 형식을 제외한 표현 가능한 모든 재료"],
+      "paper_size": "3절지",
+      "time_limit_minutes": 240,
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/명지대학교/명지대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 71,
+      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+    },
+    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+  },
+  {
+    "university": "명지대학교",
+    "campus": "용인(자연캠퍼스)",
+    "department": "영상애니메이션디자인전공(상황표현)",
+    "track_name": "실기/실적(실기우수자전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 11,
+      "ratio": "일괄합산: 실기 70% + 학생부교과 20% + 출결 10%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-11",
+      "result_date": "2026-12-09",
+      "exam_type_name": "상황표현 - 주어진 상황주제에 대한 창의적 표현능력 평가",
+      "allowed_materials": ["연필", "색연필", "파스텔", "수채물감", "포스터칼라", "마카"],
+      "paper_size": "4절지",
+      "time_limit_minutes": 240,
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/명지대학교/명지대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 72,
+      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+    },
+    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+  },
+  {
+    "university": "명지대학교",
+    "campus": "용인(자연캠퍼스)",
+    "department": "영상애니메이션디자인전공(기초디자인)",
+    "track_name": "실기/실적(실기우수자전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 10,
+      "ratio": "일괄합산: 실기 70% + 학생부교과 20% + 출결 10%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-12",
+      "result_date": "2026-12-09",
+      "exam_type_name": "기초디자인 - 문제 주제의 해석과 표현 (입체적 첨가 형식 제외 모든 재료 허용)",
+      "allowed_materials": ["입체적 첨가 형식을 제외한 표현 가능한 모든 재료"],
+      "paper_size": "3절지",
+      "time_limit_minutes": 240,
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/명지대학교/명지대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 72,
+      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+    },
+    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+  },
+  {
+    "university": "명지대학교",
+    "campus": "용인(자연캠퍼스)",
+    "department": "패션디자인전공",
+    "track_name": "실기/실적(실기우수자전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 21,
+      "ratio": "일괄합산: 실기 70% + 학생부교과 20% + 출결 10%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-13",
+      "result_date": "2026-12-09",
+      "exam_type_name": "기초디자인 - 문제 주제의 해석과 표현 (입체적 첨가 형식 제외 모든 재료 허용)",
+      "allowed_materials": ["입체적 첨가 형식을 제외한 표현 가능한 모든 재료"],
+      "paper_size": "3절지",
+      "time_limit_minutes": 240,
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/명지대학교/명지대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 71,
+      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+    },
+    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+  }
+]

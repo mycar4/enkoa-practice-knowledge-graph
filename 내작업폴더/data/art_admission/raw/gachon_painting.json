@@ -40,7 +40,11 @@
       }
     ],
     "source_url": "https://admission.gachon.ac.kr/upload/BBS0021/20260901154909TB3M9B.PDF",
-    "source_page": 72
+    "source_page": 72,
+    "registration_period": {
+      "start": "2027-02-10",
+      "end": "2027-02-12"
+    }
   },
   "estimates": {
     "cutoff_grade_estimate": 5.86,

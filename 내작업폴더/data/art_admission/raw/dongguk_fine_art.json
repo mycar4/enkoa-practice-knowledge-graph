@@ -1,0 +1,89 @@
+[
+  {
+    "university": "동국대학교",
+    "campus": "서울",
+    "department": "불교미술전공",
+    "track_name": "실기(미술학부)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 15,
+      "ratio": "일괄합산: 실기 70% + 학생부교과 20% + 학생부출결 10% (수능최저 미적용)",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-09",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-03",
+      "result_date": "2026-12-01",
+      "exam_type_name": "정물(소묘) - 정물과 사진이미지 함께 제시",
+      "allowed_materials": [
+        "켄트지(대학 제공)", "이젤(대학 제공)"
+      ],
+      "paper_size": "켄트지 3절",
+      "time_limit_minutes": 240,
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/동국대학교/동국대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 59,
+      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+    },
+    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+  },
+  {
+    "university": "동국대학교",
+    "campus": "서울",
+    "department": "한국화전공",
+    "track_name": "실기(미술학부)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 15,
+      "ratio": "일괄합산: 실기 70% + 학생부교과 20% + 학생부출결 10% (수능최저 미적용)",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-09",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-03",
+      "result_date": "2026-12-01",
+      "exam_type_name": "정물(수묵담채화) - 정물과 사진이미지 함께 제시",
+      "allowed_materials": [
+        "화선지(대학 제공)", "모포(대학 제공)", "이젤(대학 제공)"
+      ],
+      "paper_size": "화선지 반절",
+      "time_limit_minutes": 240,
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/동국대학교/동국대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 59,
+      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+    },
+    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+  },
+  {
+    "university": "동국대학교",
+    "campus": "서울",
+    "department": "서양화전공",
+    "track_name": "실기(미술학부)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 15,
+      "ratio": "일괄합산: 실기 70% + 학생부교과 20% + 학생부출결 10% (수능최저 미적용)",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-09",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-03",
+      "result_date": "2026-12-01",
+      "exam_type_name": "인물(수채화) - 인물(착의, 전신) 이미지 제시",
+      "allowed_materials": [
+        "켄트지(대학 제공)", "이젤(대학 제공)"
+      ],
+      "paper_size": "켄트지 3절",
+      "time_limit_minutes": 240,
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/동국대학교/동국대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 59,
+      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+    },
+    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+  }
+]

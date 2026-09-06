@@ -1,0 +1,46 @@
+{
+  "university": "계원예술대학교",
+  "campus": "경기(의왕)",
+  "department": "공간연출과",
+  "track_name": "수시2차 일반전형(서류위주)",
+  "_정정_안내": "구 stale 데이터의 '수시 2차 실기 100% 선발' 전제 자체가 틀림. 진짜 2027학년도 원문 확인 결과 공간연출과 수시2차는 실기고사가 없고 서류(포트폴리오)60%+면접40%임. 실기 100% 전형은 이 학과에 존재하지 않음(정시에는 실기전형 있으나 수시2차는 서류위주).",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 18,
+    "ratio": "서류(포트폴리오) 60% + 면접 40% (실기고사 없음)",
+    "is_staged": false,
+    "application_period": {
+      "start": "2026-11-11",
+      "end": "2026-11-25"
+    },
+    "exam_date": "면접고사: 2026-12-04(금) ~ 12-13(일)",
+    "result_date": "2026-12-18",
+    "exam_type_name": "포트폴리오(평면작품 10작품) 서류평가 + 면접참고자료 작성(60분) 및 그룹면접",
+    "allowed_materials": [
+      "포트폴리오 제출용 평면작품(소묘/채색화/전통회화/펜화/그래픽 등, 원본 A2 또는 출력 A3)",
+      "면접 시 지참: 수험표, 신분증, 포트폴리오 작품 원본",
+      "면접참고자료 작성용 검정색 플러스펜(학교 제공)"
+    ],
+    "paper_size": "포트폴리오 원본 A2(수기 작품) 또는 A3(디지털 출력작품)",
+    "time_limit_minutes": 60,
+    "past_topics": [
+      {
+        "year": 2026,
+        "topic_text": "[2026학년도(전년도) 참고자료] 실기(공간표현/드로잉) 100% 전형으로 잘못 알려졌던 부분 정정 - 실제로는 매년 서류(포트폴리오)+면접 전형이었을 가능성이 높으나 2026학년도 원문 재확인은 아직 안 됨 (2027학년도가 아닌 지난 회차 추정 수치, 검증 미완)",
+        "source": "정정 필요 - 미검증",
+        "source_url": "https://ipsi.kaywon.ac.kr/dbimage/WebData/pdf/susi/2026_2/res/pages/pages.pdf"
+      }
+    ],
+    "source_url": "https://ipsi.kaywon.ac.kr/dbimage/WebData/pdf/susi/2027_1/res/pages/pages.pdf",
+    "source_page": 8,
+    "registration_period": {
+      "start": "2027-02-10",
+      "end": "2027-02-12"
+    }
+  },
+  "estimates": {
+    "cutoff_grade_estimate": null,
+    "cutoff_source_url": "https://ipsihogu.com/2026-%EA%B3%84%EC%9B%90%EC%98%88%EB%8C%80-%EC%88%98%EC%8B%9C%EB%93%B1%EA%B8%89/",
+    "interview_summaries": []
+  }
+}
