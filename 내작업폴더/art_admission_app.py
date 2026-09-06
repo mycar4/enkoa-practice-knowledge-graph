@@ -32,7 +32,7 @@ def render_art_admission_app():
     try:
         universities = svc.list_universities()
 
-        page = st.radio("📌 메뉴", ["🏫 학교/학과 목록", "🔍 학교 상세", "⚖️ 전형 비교"], horizontal=True)
+        page = st.radio("📌 메뉴", ["🏫 학교/학과 목록", "🔍 학교 상세", "⚖️ 전형 비교", "💬 질의응답"], horizontal=True)
         st.markdown("---")
 
         if page == "🏫 학교/학과 목록":
@@ -83,8 +83,51 @@ def render_art_admission_app():
                     </div>
                     """, unsafe_allow_html=True)
 
-        else:  # 전형 비교
-            st.info("여러 학교의 전형을 나란히 비교하는 기능입니다. 데이터가 2개교 이상 적재되면 선택 UI가 활성화됩니다.")
+        elif page == "⚖️ 전형 비교":
+            st.markdown("### 🚨 실기고사일 충돌 자동 감지")
+            st.caption("적재된 전형들의 실기고사일(공식 사실)만 비교합니다. 날짜는 원문 요강에서 정규식으로 그대로 추출한 값이며 추정하지 않습니다.")
+            conflicts = svc.detect_schedule_conflicts()
+            if not conflicts:
+                st.success("현재 적재된 전형 중 실기고사일이 겹치는 조합이 없습니다.")
+            else:
+                for c in conflicts:
+                    st.warning(
+                        f"**{', '.join(c['date'])}** 에 겹침: "
+                        f"{c['school_a']['university']} {c['school_a']['department']} ↔ "
+                        f"{c['school_b']['university']} {c['school_b']['department']}"
+                    )
+
+            st.markdown("---")
+            st.markdown("### 🔗 실기유형 호환 매칭")
+            st.caption("실기종목명·허용재료가 겹치는 다른 학교 전형을 찾습니다 (키워드/재료 완전일치 기준, 유사도 추정 아님).")
+            all_tracks = svc.list_all_tracks_full()
+            options = [f"{t['university']} - {t['department']}" for t in all_tracks]
+            if options:
+                selected_label = st.selectbox("기준 전형 선택", options)
+                idx = options.index(selected_label)
+                base = all_tracks[idx]
+                matches = svc.find_compatible_tracks(base["university"], base["department"])
+                if not matches:
+                    st.info("호환되는 다른 전형을 찾지 못했습니다 (적재된 데이터 범위 내).")
+                else:
+                    for m in matches:
+                        st.markdown(f"""
+                        <div style='background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.3); border-radius: 8px; padding: 12px; margin-bottom: 8px;'>
+                            <b>{m['university']} {m['department']}</b> ({m['track_name']})<br/>
+                            공통 실기유형 키워드: {', '.join(m['shared_keywords']) or '-'} | 공통 허용재료: {', '.join(m['shared_materials']) or '-'}
+                        </div>
+                        """, unsafe_allow_html=True)
+
+        else:  # 💬 질의응답
+            st.markdown("### 💬 규칙기반 질의응답 (LLM 미사용, 그래프 사실만으로 답변)")
+            st.caption("학교명을 포함하거나 '일정 충돌', '호환' 같은 키워드로 질문하세요. 모든 답변은 적재된 official_facts에서만 나오며, 근거 출처가 함께 표시됩니다.")
+            query = st.text_input("질문 입력", placeholder="예: 한예종 알려줘 / 일정 충돌 있어? / 중앙대학교 호환되는 학교 있어?")
+            if query:
+                result = svc.answer_question(query)
+                st.markdown(f"**[의도 분류: {result['intent']}]**")
+                st.markdown(result["answer"].replace("\n", "  \n"))
+                if result.get("source_url"):
+                    st.link_button("📑 근거 원문 바로가기", result["source_url"])
 
     finally:
         svc.close()

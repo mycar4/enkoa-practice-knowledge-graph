@@ -9,10 +9,40 @@
 """
 
 import os
+import re
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from neo4j import GraphDatabase, READ_ACCESS
 from dotenv import load_dotenv
+
+_DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
+
+# 사용자가 흔히 쓰는 약칭 -> 실제 university 노드명. 여기 없는 학교는 정식명으로만 인식된다.
+_UNIVERSITY_ALIASES = {
+    "한예종": "한국예술종합학교",
+    "중앙대": "중앙대학교",
+    "가천대": "가천대학교",
+}
+
+
+def _resolve_university_mentions(query: str, universities: List[str]) -> List[str]:
+    """질의문 안에서 언급된 university 정식명 목록을 찾는다 (정식명 부분일치 + 약칭 테이블)."""
+    found = []
+    for full_name in universities:
+        if full_name in query:
+            found.append(full_name)
+    for alias, full_name in _UNIVERSITY_ALIASES.items():
+        if alias in query and full_name in universities and full_name not in found:
+            found.append(full_name)
+    return found
+
+
+def _extract_dates(text: Optional[str]) -> List[str]:
+    """자유텍스트 일정 필드(예: '1단계: 2025-09-27, 2단계: 2025-11-01')에서
+    실제 ISO 날짜만 정규식으로 뽑아낸다 - 지어내지 않고 원문에 박힌 날짜 그대로."""
+    if not text:
+        return []
+    return sorted(set(_DATE_RE.findall(text)))
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 ENV_PATH = BASE_DIR.parent / ".env"
@@ -83,3 +113,126 @@ class ArtAdmissionService:
                 """, university=key["university"], track_name=key["track_name"]).data()
                 results.extend(row)
         return results
+
+    def list_all_tracks_full(self) -> List[Dict[str, Any]]:
+        """전형 비교/충돌감지/호환매칭의 공통 원천 데이터. 전부 official_facts에서만 가져온다."""
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            rows = s.run("""
+                MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(d:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
+                OPTIONAL MATCH (t)-[:REQUIRES_EXAM]->(e:Admission_ExamType)
+                OPTIONAL MATCH (t)-[:HAS_SCHEDULE]->(sch:Admission_Schedule)
+                RETURN u.name AS university, d.name AS department, t.name AS track_name,
+                       t.quota AS quota, t.ratio AS ratio, t.source_url AS source_url,
+                       e.name AS exam_type_name, e.allowed_materials AS allowed_materials,
+                       e.paper_size AS paper_size, e.time_limit_minutes AS time_limit_minutes,
+                       sch.application_start AS application_start, sch.application_end AS application_end,
+                       sch.exam_date AS exam_date_raw, sch.result_date AS result_date
+            """).data()
+        for r in rows:
+            r["exam_dates"] = _extract_dates(r.get("exam_date_raw"))
+        return rows
+
+    def detect_schedule_conflicts(self) -> List[Dict[str, Any]]:
+        """실기고사일이 겹치는 전형 쌍을 전부 찾는다. 날짜는 exam_date 원문에서
+        정규식으로 뽑은 것만 쓰고, 추정으로 보정하지 않는다."""
+        tracks = self.list_all_tracks_full()
+        conflicts = []
+        for i in range(len(tracks)):
+            for j in range(i + 1, len(tracks)):
+                a, b = tracks[i], tracks[j]
+                if a["university"] == b["university"]:
+                    continue
+                shared = sorted(set(a["exam_dates"]) & set(b["exam_dates"]))
+                if shared:
+                    conflicts.append({
+                        "date": shared,
+                        "school_a": {"university": a["university"], "department": a["department"],
+                                     "track_name": a["track_name"], "source_url": a["source_url"]},
+                        "school_b": {"university": b["university"], "department": b["department"],
+                                     "track_name": b["track_name"], "source_url": b["source_url"]},
+                    })
+        return conflicts
+
+    def find_compatible_tracks(self, university: str, department: str) -> List[Dict[str, Any]]:
+        """기준 전형과 실기 유형(키워드)·허용재료가 겹치는 다른 학교 전형을 찾는다.
+        키워드 매칭은 exam_type_name에 포함된 단어 교집합만 본다 - 유사도 추정 없음."""
+        tracks = self.list_all_tracks_full()
+        base = next((t for t in tracks if t["university"] == university and t["department"] == department), None)
+        if not base or not base.get("exam_type_name"):
+            return []
+
+        base_keywords = set(re.findall(r"[가-힣]{2,}", base["exam_type_name"]))
+        base_materials = set(base.get("allowed_materials") or [])
+
+        results = []
+        for t in tracks:
+            if t["university"] == university:
+                continue
+            if not t.get("exam_type_name"):
+                continue
+            kw = set(re.findall(r"[가-힣]{2,}", t["exam_type_name"]))
+            shared_kw = base_keywords & kw
+            shared_materials = base_materials & set(t.get("allowed_materials") or [])
+            if shared_kw or shared_materials:
+                results.append({
+                    "university": t["university"], "department": t["department"], "track_name": t["track_name"],
+                    "exam_type_name": t["exam_type_name"], "shared_keywords": sorted(shared_kw),
+                    "shared_materials": sorted(shared_materials), "source_url": t["source_url"],
+                })
+        return results
+
+    def answer_question(self, query: str) -> Dict[str, Any]:
+        """규칙기반 질의응답 - LLM 없이 그래프 사실만으로 답한다(할루시네이션 원천 차단).
+        DART-Trace의 evidence-chat과 동일한 설계: 의도를 키워드로 분류 후 정확한
+        Cypher 결과만 돌려주고, 답변에 근거(source_url)를 항상 포함한다."""
+        q = query.strip()
+        tracks = self.list_all_tracks_full()
+        universities = sorted({t["university"] for t in tracks})
+        mentioned = _resolve_university_mentions(q, universities)
+
+        is_conflict_intent = any(k in q for k in ["충돌", "겹치", "동시", "겹침"])
+        is_compat_intent = any(k in q for k in ["호환", "비슷", "추천"])
+
+        # 의도 1: 일정 충돌/겹침 질의 (학교명 언급 여부와 무관하게 최우선 처리)
+        if is_conflict_intent:
+            conflicts = self.detect_schedule_conflicts()
+            if not conflicts:
+                return {"intent": "SCHEDULE_CONFLICT", "answer": "현재 적재된 전형 중 실기고사일이 겹치는 조합이 없습니다.", "source_url": None}
+            lines = [
+                f"- {c['date']}: {c['school_a']['university']} {c['school_a']['department']} ↔ "
+                f"{c['school_b']['university']} {c['school_b']['department']}"
+                for c in conflicts
+            ]
+            return {"intent": "SCHEDULE_CONFLICT", "answer": "실기고사일이 겹치는 전형:\n" + "\n".join(lines), "source_url": None}
+
+        # 의도 2: 호환/추천 질의 (학교명이 언급되어야 기준을 잡을 수 있음)
+        if is_compat_intent:
+            if not mentioned:
+                return {"intent": "COMPATIBILITY", "answer": "어느 학교를 기준으로 비교할지 학교명을 함께 말씀해주세요.", "source_url": None}
+            university = mentioned[0]
+            track = next((t for t in tracks if t["university"] == university), None)
+            matches = self.find_compatible_tracks(university, track["department"])
+            if not matches:
+                return {"intent": "COMPATIBILITY", "answer": f"{university} {track['department']}과 실기유형/재료가 겹치는 다른 전형을 찾지 못했습니다 (적재된 데이터 범위 내).", "source_url": None}
+            lines = [f"- {m['university']} {m['department']}: 공통 키워드 {m['shared_keywords']}, 공통 재료 {m['shared_materials']}" for m in matches]
+            return {"intent": "COMPATIBILITY", "answer": "\n".join(lines), "source_url": None}
+
+        # 의도 3: 학교/학과 특정 언급 - 상세 사실 그대로 반환 (다른 의도 키워드가 없을 때만)
+        if mentioned:
+            t = next(t for t in tracks if t["university"] == mentioned[0])
+            return {
+                "intent": "SCHOOL_FACT",
+                "answer": (
+                    f"[{t['university']} {t['department']} - {t['track_name']}] (공식 사실)\n"
+                    f"모집인원: {t.get('quota') or '정보없음'}명 | 반영비율: {t.get('ratio') or '정보없음'}\n"
+                    f"실기종목: {t.get('exam_type_name') or '정보없음'} | 규격: {t.get('paper_size') or '정보없음'} | "
+                    f"시험시간: {t.get('time_limit_minutes') or '정보없음'}분\n"
+                    f"원서접수: {t.get('application_start') or '-'}~{t.get('application_end') or '-'} | "
+                    f"실기고사일: {', '.join(t['exam_dates']) or (t.get('exam_date_raw') or '-')} | "
+                    f"발표: {t.get('result_date') or '-'}\n"
+                    f"출처: {t.get('source_url') or '없음'}"
+                ),
+                "source_url": t.get("source_url"),
+            }
+
+        return {"intent": "UNKNOWN", "answer": "질문을 이해하지 못했습니다. 학교명을 포함하거나 '일정 충돌', '호환' 같은 키워드를 사용해보세요.", "source_url": None}
