@@ -10,10 +10,50 @@
 
 import os
 import re
+import datetime
+from urllib.parse import urlparse
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 from neo4j import GraphDatabase, READ_ACCESS
 from dotenv import load_dotenv
+
+# 학교 자체 공식 도메인(신뢰도 상) 목록 - 여기 없는 나머지(주로 CDN 미러)는
+# "제3자 미러"로 분류한다. 오늘(2026-09-07) 사고: CDN 미러는 최신 연도가
+# 없을 수 있어 학년도 확인을 대학 자체 사이트로 다시 해야 했음.
+_OFFICIAL_DOMAINS = {
+    "karts.ac.kr": "한국예술종합학교",
+    "admission.cau.ac.kr": "중앙대학교",
+    "admission.gachon.ac.kr": "가천대학교",
+}
+
+
+def _classify_source(url: Optional[str]) -> str:
+    if not url:
+        return "출처 없음"
+    try:
+        host = urlparse(url).netloc.lower()
+    except Exception:
+        return "판정 불가"
+    for domain in _OFFICIAL_DOMAINS:
+        if domain in host:
+            return "🟢 대학 자체 공식 사이트"
+    if "negagea.net" in host:
+        return "🟡 제3자 CDN 미러 (최신 연도 누락 위험 - 학년도 재확인 필수)"
+    return "⚪ 기타 출처"
+
+
+def _days_until(date_str: Optional[str]) -> Optional[int]:
+    """오늘(시스템 실제 날짜) 기준 D-day. 과거면 음수(마감 지남)."""
+    if not date_str:
+        return None
+    m = _DATE_RE.search(date_str)
+    if not m:
+        return None
+    try:
+        target = datetime.date.fromisoformat(m.group(0))
+    except ValueError:
+        return None
+    return (target - datetime.date.today()).days
 
 _DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
 
@@ -132,7 +172,120 @@ class ArtAdmissionService:
             """).data()
         for r in rows:
             r["exam_dates"] = _extract_dates(r.get("exam_date_raw"))
+            r["source_tier"] = _classify_source(r.get("source_url"))
+            r["application_end_dday"] = _days_until(r.get("application_end"))
+            r["exam_date_dday"] = _days_until(r.get("exam_date_raw"))
         return rows
+
+    def check_data_integrity(self) -> List[Dict[str, Any]]:
+        """오늘(2026-09-07) 겪은 '학년도 뒤섞임' 사고의 재발을 사람이 아니라
+        시스템이 자동으로 잡아내게 하는 자가진단. 전부 official_facts 필드만
+        기계적으로 검사하며, 추정하지 않는다."""
+        tracks = self.list_all_tracks_full()
+        issues = []
+
+        year_counts: Dict[Any, int] = {}
+        for t in tracks:
+            year_counts[t.get("admission_year")] = year_counts.get(t.get("admission_year"), 0) + 1
+        majority_year = max(year_counts, key=year_counts.get) if year_counts else None
+
+        for t in tracks:
+            label = f"{t['university']} {t['department']}"
+            if not t.get("admission_year"):
+                issues.append({"level": "CRITICAL", "track": label, "issue": "admission_year 누락"})
+            elif len(year_counts) > 1 and t.get("admission_year") != majority_year:
+                issues.append({
+                    "level": "WARNING", "track": label,
+                    "issue": f"다수({majority_year}학년도)와 다른 학년도({t.get('admission_year')}) - 최신 회차인지 재확인 필요",
+                })
+            if not t.get("source_url"):
+                issues.append({"level": "CRITICAL", "track": label, "issue": "source_url 누락"})
+
+            # 원서접수만 지난 건 정상(실기고사가 아직 안 끝났으면 진행 중인 회차).
+            # 전체 일정(원서접수·실기고사·발표)이 '전부' 과거면 그때만 완전히
+            # 끝난 회차로 판단한다 - 그래야 오늘 같은 오탐(false positive)이 안 남.
+            all_dates = list(t.get("exam_dates") or [])
+            if t.get("result_date"):
+                all_dates += _extract_dates(t["result_date"])
+            all_ddays = [d for d in (_days_until(x) for x in all_dates) if d is not None]
+            if t.get("application_end_dday") is not None and t["application_end_dday"] < 0:
+                if all_ddays and max(all_ddays) < 0:
+                    issues.append({
+                        "level": "CRITICAL", "track": label,
+                        "issue": f"원서접수·실기고사·발표일이 전부 지남(최신 실기고사일 기준 {abs(max(all_ddays))}일 전) - 완전히 끝난 회차 데이터일 가능성, 최신 요강 재확인 필요",
+                    })
+                elif not all_ddays:
+                    issues.append({
+                        "level": "WARNING", "track": label,
+                        "issue": "원서접수는 마감됐는데 실기고사일을 확인할 수 없음 - exam_date 필드 점검 필요",
+                    })
+                else:
+                    issues.append({
+                        "level": "INFO", "track": label,
+                        "issue": "원서접수 기간 종료 (실기고사는 아직 진행 전 - 정상적인 현재 회차)",
+                    })
+            if "negagea.net" in (t.get("source_url") or ""):
+                issues.append({
+                    "level": "INFO", "track": label,
+                    "issue": "제3자 CDN 미러 출처 - 최신 학년도 여부를 대학 자체 사이트에서 한 번 더 확인 권장",
+                })
+
+        return issues
+
+    def simulate_multi_apply(self, selections: List[Dict[str, str]]) -> Dict[str, Any]:
+        """selections: [{"university":..., "department":...}, ...] (최대 6개, 수시 6장 제한).
+        선택한 조합 안에서만 일정 충돌을 검사한다."""
+        tracks = self.list_all_tracks_full()
+        chosen = []
+        for sel in selections:
+            t = next((t for t in tracks if t["university"] == sel["university"] and t["department"] == sel["department"]), None)
+            if t:
+                chosen.append(t)
+
+        conflicts = []
+        for i in range(len(chosen)):
+            for j in range(i + 1, len(chosen)):
+                a, b = chosen[i], chosen[j]
+                if a.get("admission_year") != b.get("admission_year"):
+                    continue
+                shared = sorted(set(a["exam_dates"]) & set(b["exam_dates"]))
+                if shared:
+                    conflicts.append({"date": shared, "a": f"{a['university']} {a['department']}", "b": f"{b['university']} {b['department']}"})
+
+        return {
+            "count": len(chosen),
+            "over_limit": len(selections) > 6,
+            "conflicts": conflicts,
+            "verdict": "지원 가능 (일정 충돌 없음)" if not conflicts and len(selections) <= 6 else
+                       ("6개교 초과 - 수시는 최대 6장까지만 지원 가능합니다" if len(selections) > 6 else "일정 충돌 있음 - 아래 목록 확인"),
+        }
+
+    def get_past_topics(self, university: Optional[str] = None) -> List[Dict[str, Any]]:
+        """기출문제 원문(Admission_PastTopic)을 그대로 반환. 전부 공식 출처 링크 포함."""
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            query = """
+                MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(d:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
+                          -[:REQUIRES_EXAM]->(e:Admission_ExamType)-[:HAD_PAST_TOPIC]->(p:Admission_PastTopic)
+                WHERE $university IS NULL OR u.name = $university
+                RETURN u.name AS university, d.name AS department, t.name AS track_name,
+                       e.name AS exam_type_name, p.year AS year, p.topic_text AS topic_text,
+                       p.source AS source, p.source_url AS source_url
+                ORDER BY university, year DESC
+            """
+            return s.run(query, university=university).data()
+
+    def search_by_material(self, keyword: str) -> List[Dict[str, Any]]:
+        """허용재료·실기규격에 키워드가 포함된 전형을 찾는다 (완전 텍스트 매칭, 추정 없음)."""
+        tracks = self.list_all_tracks_full()
+        kw = keyword.strip()
+        if not kw:
+            return []
+        results = []
+        for t in tracks:
+            materials = t.get("allowed_materials") or []
+            if any(kw in m for m in materials) or kw in (t.get("paper_size") or "") or kw in (t.get("exam_type_name") or ""):
+                results.append(t)
+        return results
 
     def detect_schedule_conflicts(self) -> List[Dict[str, Any]]:
         """실기고사일이 겹치는 전형 쌍을 전부 찾는다. 날짜는 exam_date 원문에서

@@ -32,7 +32,12 @@ def render_art_admission_app():
     try:
         universities = svc.list_universities()
 
-        page = st.radio("📌 메뉴", ["🏫 학교/학과 목록", "🔍 학교 상세", "⚖️ 전형 비교", "💬 질의응답"], horizontal=True)
+        page = st.radio(
+            "📌 메뉴",
+            ["🏫 학교/학과 목록", "🔍 학교 상세", "⚖️ 전형 비교", "🎯 동시지원 시뮬레이터",
+             "📝 기출문제", "🚦 데이터 정합성", "💬 질의응답"],
+            horizontal=True,
+        )
         st.markdown("---")
 
         if page == "🏫 학교/학과 목록":
@@ -40,10 +45,33 @@ def render_art_admission_app():
             if not universities:
                 st.info("아직 적재된 데이터가 없습니다. 크롤링 결과가 준비되면 `00_Art_Admission_Graph_Loader.py`로 적재 후 여기에 표시됩니다.")
             else:
-                for u in universities:
+                material_kw = st.text_input("🔎 허용재료/규격/실기종목 키워드 검색 (예: 연필, 켄트지)", placeholder="비워두면 전체 표시")
+                all_tracks = svc.list_all_tracks_full()
+                filtered_universities = universities
+                if material_kw.strip():
+                    matched = svc.search_by_material(material_kw)
+                    matched_names = {t["university"] for t in matched}
+                    filtered_universities = [u for u in universities if u["university"] in matched_names]
+                    st.caption(f"'{material_kw}' 검색 결과: {len(filtered_universities)}개 학교")
+
+                by_univ = {t["university"]: t for t in all_tracks}
+                for u in filtered_universities:
+                    t = by_univ.get(u["university"], {})
+                    dday = t.get("application_end_dday")
+                    if dday is None:
+                        dday_badge = ""
+                    elif dday < 0:
+                        dday_badge = "<span style='background:#6b7280;color:#fff;border-radius:4px;padding:2px 6px;font-size:12px;'>접수마감</span>"
+                    elif dday == 0:
+                        dday_badge = "<span style='background:#dc2626;color:#fff;border-radius:4px;padding:2px 6px;font-size:12px;'>D-DAY</span>"
+                    else:
+                        dday_badge = f"<span style='background:#dc2626;color:#fff;border-radius:4px;padding:2px 6px;font-size:12px;'>접수마감 D-{dday}</span>"
+                    tier_badge = f"<span style='font-size:12px;color:#666;'>{t.get('source_tier', '')}</span>" if t else ""
                     with st.container():
-                        st.markdown(f"**{u['university']}** ({u.get('campus') or '캠퍼스 미상'})")
+                        st.markdown(f"**{u['university']}** ({u.get('campus') or '캠퍼스 미상'}) {dday_badge}", unsafe_allow_html=True)
                         st.caption(f"학과: {', '.join(u['departments'])}")
+                        if tier_badge:
+                            st.markdown(tier_badge, unsafe_allow_html=True)
                         st.markdown("---")
 
         elif page == "🔍 학교 상세":
@@ -56,17 +84,27 @@ def render_art_admission_app():
 
                 st.markdown("### 🔒 공식 모집요강 사실")
                 st.caption("아래 내용은 전부 공식 모집요강 원문에서 추출되었으며, 출처 링크가 함께 표시됩니다.")
+                track_full_by_name = {t["track_name"]: t for t in svc.list_all_tracks_full() if t["university"] == selected}
                 for t in detail["official_tracks"]:
+                    full = track_full_by_name.get(t["track_name"], {})
+                    dday = full.get("application_end_dday")
+                    if dday is None:
+                        dday_badge = ""
+                    elif dday < 0:
+                        dday_badge = "<span style='background:#6b7280;color:#fff;border-radius:4px;padding:2px 6px;font-size:12px;margin-left:6px;'>접수마감</span>"
+                    else:
+                        dday_badge = f"<span style='background:#dc2626;color:#fff;border-radius:4px;padding:2px 6px;font-size:12px;margin-left:6px;'>접수마감 D-{dday}</span>"
                     with st.container():
                         st.markdown(f"""
                         <div style='background: rgba(22,163,74,0.08); border: 1px solid rgba(22,163,74,0.3); border-radius: 8px; padding: 14px; margin-bottom: 10px;'>
                             <b>{t['department']} — {t['track_name']}</b>
-                            <span style='background:#166534;color:#fff;border-radius:4px;padding:2px 6px;font-size:12px;margin-left:6px;'>{t.get('admission_year') or '학년도 미상'}학년도</span><br/>
+                            <span style='background:#166534;color:#fff;border-radius:4px;padding:2px 6px;font-size:12px;margin-left:6px;'>{t.get('admission_year') or '학년도 미상'}학년도</span>{dday_badge}<br/>
                             모집인원: {t.get('quota') or '-'}명 | 반영비율: {t.get('ratio') or '-'}<br/>
                             실기종목: {t.get('exam_type_name') or '-'} | 허용재료: {', '.join(t.get('allowed_materials') or []) or '-'}
                             | 규격: {t.get('paper_size') or '-'} | 시험시간: {t.get('time_limit_minutes') or '-'}분<br/>
                             원서접수: {t.get('application_start') or '-'} ~ {t.get('application_end') or '-'}
-                            | 실기고사일: {t.get('exam_date') or '-'} | 발표일: {t.get('result_date') or '-'}
+                            | 실기고사일: {t.get('exam_date') or '-'} | 발표일: {t.get('result_date') or '-'}<br/>
+                            <span style='font-size:12px;color:#666;'>출처 신뢰도: {full.get('source_tier', '-')}</span>
                         </div>
                         """, unsafe_allow_html=True)
                         if t.get("source_url"):
@@ -118,6 +156,75 @@ def render_art_admission_app():
                             공통 실기유형 키워드: {', '.join(m['shared_keywords']) or '-'} | 공통 허용재료: {', '.join(m['shared_materials']) or '-'}
                         </div>
                         """, unsafe_allow_html=True)
+
+        elif page == "🎯 동시지원 시뮬레이터":
+            st.markdown("### 🎯 다중 학교 동시지원 시뮬레이터")
+            st.caption("수시는 최대 6개교까지 지원 가능합니다. 선택한 조합 안에서만 일정 충돌을 검사합니다 (학년도 다른 전형은 비교 대상에서 자동 제외).")
+            all_tracks = svc.list_all_tracks_full()
+            options = [f"{t['university']} - {t['department']}" for t in all_tracks]
+            if not options:
+                st.info("아직 적재된 전형이 없습니다.")
+            else:
+                selected_labels = st.multiselect("지원 희망 전형 선택 (최대 6개)", options)
+                if selected_labels:
+                    selections = []
+                    for label in selected_labels:
+                        idx = options.index(label)
+                        t = all_tracks[idx]
+                        selections.append({"university": t["university"], "department": t["department"]})
+                    result = svc.simulate_multi_apply(selections)
+                    if result["conflicts"] or result["over_limit"]:
+                        st.error(f"**판정: {result['verdict']}**")
+                    else:
+                        st.success(f"**판정: {result['verdict']}**")
+                    st.caption(f"선택 {len(selected_labels)}개교 (최대 6개교)")
+                    for c in result["conflicts"]:
+                        st.warning(f"{', '.join(c['date'])} 겹침: {c['a']} ↔ {c['b']}")
+
+        elif page == "📝 기출문제":
+            st.markdown("### 📝 실기고사 기출문제 (원문 그대로, 출처 포함)")
+            st.caption("모두 공식 모집요강 원문에서 발췌한 내용입니다.")
+            names = ["전체"] + [u["university"] for u in universities]
+            selected_school = st.selectbox("학교 선택", names)
+            topics = svc.get_past_topics(university=None if selected_school == "전체" else selected_school)
+            if not topics:
+                st.info("적재된 기출문제가 없습니다.")
+            else:
+                for p in topics:
+                    with st.container():
+                        st.markdown(f"""
+                        <div style='background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.3); border-radius: 8px; padding: 14px; margin-bottom: 10px;'>
+                            <b>{p['university']} {p['department']} - {p['track_name']}</b>
+                            <span style='background:#4338ca;color:#fff;border-radius:4px;padding:2px 6px;font-size:12px;margin-left:6px;'>{p.get('year') or '-'}학년도</span><br/>
+                            <span style='font-size:12px;color:#666;'>실기종목: {p.get('exam_type_name') or '-'} | 출처유형: {p.get('source') or '-'}</span><br/>
+                            {p.get('topic_text') or ''}
+                        </div>
+                        """, unsafe_allow_html=True)
+                        if p.get("source_url"):
+                            st.link_button("📑 출처 원문 바로가기", p["source_url"], key=f"topic_{p['university']}_{p.get('year')}_{p['topic_text'][:20]}")
+
+        elif page == "🚦 데이터 정합성":
+            st.markdown("### 🚦 데이터 정합성 자가진단")
+            st.caption("2026-09-07 '학년도 뒤섞임' 사고 재발 방지를 위한 자동 점검입니다. 사람이 매번 원문을 재대조하지 않아도 이 화면이 이상 징후를 자동으로 잡아냅니다.")
+            issues = svc.check_data_integrity()
+            if not issues:
+                st.success("이상 없음 - 전체 전형이 admission_year·source_url을 모두 갖추고 있고, 학년도도 서로 일치합니다.")
+            else:
+                critical = [i for i in issues if i["level"] == "CRITICAL"]
+                warning = [i for i in issues if i["level"] == "WARNING"]
+                info = [i for i in issues if i["level"] == "INFO"]
+                if critical:
+                    st.error(f"🔴 CRITICAL {len(critical)}건")
+                    for i in critical:
+                        st.markdown(f"- **{i['track']}**: {i['issue']}")
+                if warning:
+                    st.warning(f"🟡 WARNING {len(warning)}건")
+                    for i in warning:
+                        st.markdown(f"- **{i['track']}**: {i['issue']}")
+                if info:
+                    st.info(f"ℹ️ INFO {len(info)}건 (정상 참고사항)")
+                    for i in info:
+                        st.markdown(f"- **{i['track']}**: {i['issue']}")
 
         else:  # 💬 질의응답
             st.markdown("### 💬 규칙기반 질의응답 (LLM 미사용, 그래프 사실만으로 답변)")
