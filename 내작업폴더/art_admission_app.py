@@ -11,6 +11,9 @@
 
 import sys
 import os
+import calendar
+import datetime
+from collections import defaultdict
 
 sys.path.insert(0, os.path.abspath("내작업폴더"))
 
@@ -18,6 +21,54 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from services.art_admission_service import ArtAdmissionService
+
+_EVENT_COLOR = {"원서접수": "#2563eb", "실기고사": "#dc2626", "합격발표": "#16a34a"}
+_SCHOOL_ABBR_LEN = 6  # 셀 안에 다 안 들어가니 학교명 앞부분만 표시
+
+
+def _render_month_calendar(events: list, year: int, month: int, today: datetime.date) -> str:
+    """익숙한 달(月) 그리드 형태의 달력 HTML을 만든다. 일요일 시작, 각 날짜 칸에
+    해당일 이벤트(학교명+종류)를 색깔 태그로 표시한다."""
+    by_date = defaultdict(list)
+    for e in events:
+        by_date[e["start"]].append(e)
+
+    cal = calendar.Calendar(firstweekday=6)  # 일요일 시작
+    weeks = cal.monthdayscalendar(year, month)
+
+    weekday_labels = ["일", "월", "화", "수", "목", "금", "토"]
+    html = ["<table style='width:100%; border-collapse:collapse; table-layout:fixed;'>"]
+    html.append("<tr>" + "".join(
+        f"<th style='padding:4px; font-size:12px; color:#666; border-bottom:1px solid #ddd;'>{w}</th>"
+        for w in weekday_labels
+    ) + "</tr>")
+
+    for week in weeks:
+        html.append("<tr>")
+        for day in week:
+            if day == 0:
+                html.append("<td style='border:1px solid #eee; height:90px; background:#fafafa;'></td>")
+                continue
+            date_obj = datetime.date(year, month, day)
+            date_str = date_obj.isoformat()
+            is_today = date_obj == today
+            cell_style = "border:1px solid #eee; height:90px; vertical-align:top; padding:4px; font-size:11px;"
+            if is_today:
+                cell_style += "background:rgba(220,38,38,0.08); border:2px solid #dc2626;"
+            day_num_style = "font-weight:bold; color:#dc2626;" if is_today else "font-weight:bold;"
+            tags = ""
+            for e in sorted(by_date.get(date_str, []), key=lambda x: x["event_type"]):
+                color = _EVENT_COLOR.get(e["event_type"], "#666")
+                school_short = e["school"].split(" ")[0][:_SCHOOL_ABBR_LEN]
+                tags += (
+                    f"<div style='background:{color}; color:#fff; border-radius:3px; padding:1px 3px; "
+                    f"margin-top:2px; font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;' "
+                    f"title='{e['school']} - {e['detail']}'>{school_short} {e['event_type']}</div>"
+                )
+            html.append(f"<td style='{cell_style}'><span style='{day_num_style}'>{day}</span>{tags}</td>")
+        html.append("</tr>")
+    html.append("</table>")
+    return "".join(html)
 
 
 def render_art_admission_app():
@@ -191,26 +242,44 @@ def render_art_admission_app():
                         """, unsafe_allow_html=True)
 
         elif page == "📅 일정 캘린더":
-            st.markdown("### 📅 전체 학교 일정 타임라인 (한눈에 보기)")
-            st.caption("원서접수 기간(막대)·실기고사일·합격발표일을 한 화면에 표시합니다. 오늘 날짜에 빨간 세로선이 표시됩니다.")
+            st.markdown("### 📅 전체 학교 일정 캘린더 (한눈에 보기)")
+            st.caption("원서접수 시작일·실기고사일·합격발표일을 달력 위에 그대로 표시합니다. 오늘 날짜 칸은 빨간 테두리로 강조됩니다.")
             events = svc.get_calendar_events()
             if not events:
                 st.info("적재된 일정이 없습니다.")
             else:
-                df = pd.DataFrame(events)
-                df["start"] = pd.to_datetime(df["start"])
-                df["end"] = pd.to_datetime(df["end"]) + pd.Timedelta(days=1)  # 점 이벤트도 막대로 보이게 하루 폭 부여
-                color_map = {"원서접수": "#2563eb", "실기고사": "#dc2626", "합격발표": "#16a34a"}
-                fig = px.timeline(
-                    df, x_start="start", x_end="end", y="school", color="event_type",
-                    color_discrete_map=color_map, hover_data=["detail", "admission_year"],
+                # 원서접수 기간은 시작~끝 매일 표시 (달력에서는 막대가 아니라 날짜별 태그이므로 기간 전체를 펼쳐야 함)
+                expanded_events = []
+                for e in events:
+                    if e["event_type"] == "원서접수":
+                        start = datetime.date.fromisoformat(e["start"])
+                        end = datetime.date.fromisoformat(e["end"])
+                        d = start
+                        while d <= end:
+                            expanded_events.append({**e, "start": d.isoformat()})
+                            d += datetime.timedelta(days=1)
+                    else:
+                        expanded_events.append(e)
+
+                today = datetime.date.today()
+                all_dates = [datetime.date.fromisoformat(e["start"]) for e in expanded_events]
+                months = sorted({(d.year, d.month) for d in all_dates})
+                month_labels = [f"{y}년 {m}월" for y, m in months]
+                default_idx = 0
+                for i, (y, m) in enumerate(months):
+                    if (y, m) == (today.year, today.month):
+                        default_idx = i
+                        break
+                selected_month_label = st.selectbox("월 선택", month_labels, index=default_idx)
+                sel_year, sel_month = months[month_labels.index(selected_month_label)]
+
+                legend = " ".join(
+                    f"<span style='background:{color};color:#fff;border-radius:3px;padding:2px 6px;font-size:12px;margin-right:6px;'>{name}</span>"
+                    for name, color in _EVENT_COLOR.items()
                 )
-                fig.update_yaxes(autorange="reversed")
-                today = pd.Timestamp.today().normalize()
-                fig.add_vline(x=today, line_width=2, line_dash="dash", line_color="red")
-                fig.update_layout(height=120 + 60 * df["school"].nunique(), legend_title_text="일정 종류")
-                st.plotly_chart(fig, use_container_width=True)
-                st.caption(f"기준일(오늘): {today.date()}")
+                st.markdown(legend, unsafe_allow_html=True)
+                st.markdown(_render_month_calendar(expanded_events, sel_year, sel_month, today), unsafe_allow_html=True)
+                st.caption(f"기준일(오늘): {today.isoformat()} | 태그에 마우스를 올리면 학교명·전형 상세가 표시됩니다.")
 
         elif page == "🎯 동시지원 시뮬레이터":
             st.markdown("### 🎯 다중 학교 동시지원 시뮬레이터")
