@@ -1,0 +1,2367 @@
+{
+  "에스케이": [
+    {
+      "name": "(주)대한송유관공사",
+      "reg_no": 1101110671522,
+      "is_financial": false
+    },
+    {
+      "name": "(주)디디아이여주스마트프로젝트위탁관리부동산투자회사",
+      "reg_no": 1101110950776,
+      "is_financial": false
+    },
+    {
+      "name": "(주)디디아이오에스108위탁관리부동산투자회사",
+      "reg_no": 1101118092150,
+      "is_financial": false
+    },
+    {
+      "name": "(주)부산도시가스",
+      "reg_no": 1801110039495,
+      "is_financial": false
+    },
+    {
+      "name": "(주)신안증도태양광",
+      "reg_no": 2011110052938,
+      "is_financial": false
+    },
+    {
+      "name": "(주)쏠리스",
+      "reg_no": 2057110024452,
+      "is_financial": false
+    },
+    {
+      "name": "(주)아이에스시",
+      "reg_no": 1311110057876,
+      "is_financial": false
+    },
+    {
+      "name": "(주)애커튼테크놀로지서비스",
+      "reg_no": 1311110718676,
+      "is_financial": false
+    },
+    {
+      "name": "(주)엔코아",
+      "reg_no": 1101111484263,
+      "is_financial": false
+    },
+    {
+      "name": "(주)와이엘피",
+      "reg_no": 1101115969229,
+      "is_financial": false
+    },
+    {
+      "name": "(주)울산에너루트2호",
+      "reg_no": 2301110381522,
+      "is_financial": false
+    },
+    {
+      "name": "(주)유관",
+      "reg_no": 1101118856043,
+      "is_financial": false
+    },
+    {
+      "name": "(주)유엔에이디지탈",
+      "reg_no": 1101113066861,
+      "is_financial": false
+    },
+    {
+      "name": "(주)유엔에이엔지니어링",
+      "reg_no": 1351110077367,
+      "is_financial": false
+    },
+    {
+      "name": "(주)제이에스아이",
+      "reg_no": 1246110261880,
+      "is_financial": false
+    },
+    {
+      "name": "(주)휘찬",
+      "reg_no": 1101111225831,
+      "is_financial": false
+    },
+    {
+      "name": "강원도시가스(주)",
+      "reg_no": 1401110002010,
+      "is_financial": false
+    },
+    {
+      "name": "글로벌에이아이플랫폼코퍼레이션코리아(주)",
+      "reg_no": 1311110710903,
+      "is_financial": false
+    },
+    {
+      "name": "글로와이드(주)",
+      "reg_no": 1301111215523,
+      "is_financial": false
+    },
+    {
+      "name": "나래에너지서비스(주)",
+      "reg_no": 1101114926006,
+      "is_financial": false
+    },
+    {
+      "name": "내트럭(주)",
+      "reg_no": 1101113222570,
+      "is_financial": false
+    },
+    {
+      "name": "당진에코파워(주)",
+      "reg_no": 1650110069097,
+      "is_financial": false
+    },
+    {
+      "name": "당진행복솔라(주)",
+      "reg_no": 1101118022925,
+      "is_financial": false
+    },
+    {
+      "name": "동남해안해상풍력(주)",
+      "reg_no": 1101118180335,
+      "is_financial": false
+    },
+    {
+      "name": "디앤디인베스트먼트(주)",
+      "reg_no": 1101116618263,
+      "is_financial": false
+    },
+    {
+      "name": "디앤디프라퍼티솔루션(주)",
+      "reg_no": 1101118150924,
+      "is_financial": false
+    },
+    {
+      "name": "롯데에스케이에너루트(주)",
+      "reg_no": 1101118436374,
+      "is_financial": false
+    },
+    {
+      "name": "마인드노크(주)",
+      "reg_no": 1101116638873,
+      "is_financial": false
+    },
+    {
+      "name": "미디어에스(주)",
+      "reg_no": 1101117739191,
+      "is_financial": false
+    },
+    {
+      "name": "민팃(주)",
+      "reg_no": 1244110057457,
+      "is_financial": false
+    },
+    {
+      "name": "보령블루하이(주)",
+      "reg_no": 1645110042010,
+      "is_financial": false
+    },
+    {
+      "name": "부사호행복나눔솔라(주)",
+      "reg_no": 2001110654256,
+      "is_financial": false
+    },
+    {
+      "name": "블룸에스케이퓨얼셀(유)",
+      "reg_no": 1760140002163,
+      "is_financial": false
+    },
+    {
+      "name": "삼강에스앤씨(주)",
+      "reg_no": 1912110000681,
+      "is_financial": false
+    },
+    {
+      "name": "서비스에이스(주)",
+      "reg_no": 1101114368688,
+      "is_financial": false
+    },
+    {
+      "name": "서비스탑(주)",
+      "reg_no": 1601110281090,
+      "is_financial": false
+    },
+    {
+      "name": "성주테크(주)",
+      "reg_no": 2844110087386,
+      "is_financial": false
+    },
+    {
+      "name": "십일번가(주)",
+      "reg_no": 1101116861490,
+      "is_financial": false
+    },
+    {
+      "name": "아리울행복솔라(주)",
+      "reg_no": 1101117725041,
+      "is_financial": false
+    },
+    {
+      "name": "아이지이(주)",
+      "reg_no": 1201111134494,
+      "is_financial": false
+    },
+    {
+      "name": "아이파킹(주)",
+      "reg_no": 1101114221258,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이(주)",
+      "reg_no": 1101110769583,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이가스(주)",
+      "reg_no": 1101110413247,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이네트웍스(주)",
+      "reg_no": 1301110005199,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이네트웍스서비스(주)",
+      "reg_no": 1358110141788,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이넥실리스(주)",
+      "reg_no": 1101116480232,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이디스커버리(주)",
+      "reg_no": 1301110005727,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이디앤디(주)",
+      "reg_no": 1101113001685,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이레조낙(주)",
+      "reg_no": 1756110018553,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이리비오(주)",
+      "reg_no": 1358110433028,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이리츠운용(주)",
+      "reg_no": 1101117832127,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이머티리얼즈제이엔씨(주)",
+      "reg_no": 1348110595837,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이머티리얼즈퍼포먼스(주)",
+      "reg_no": 1647110095338,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이멀티유틸리티(주)",
+      "reg_no": 2301110363760,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이바이오사이언스(주)",
+      "reg_no": 1311110523736,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이바이오텍(주)",
+      "reg_no": 1601110395453,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이바이오팜(주)",
+      "reg_no": 1101114570720,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이브로드밴드(주)",
+      "reg_no": 1101111466659,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이스퀘어(주)",
+      "reg_no": 1101118077821,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이스토아(주)",
+      "reg_no": 1101116585884,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이스피드메이트(주)",
+      "reg_no": 1301111198836,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이실트론(주)",
+      "reg_no": 1753110001348,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이실트론씨에스에스코리아(주)",
+      "reg_no": 1101118298922,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이씨(주)",
+      "reg_no": 1301110001585,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이아이이테크놀로지(주)",
+      "reg_no": 1101117064217,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이어드밴스드(주)",
+      "reg_no": 2301110227982,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이어스온(주)",
+      "reg_no": 1101118042361,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이에너지(주)",
+      "reg_no": 1101114505967,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이에어코어(주)",
+      "reg_no": 1501110043288,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이에어플러스(주)",
+      "reg_no": 2301110134111,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이에코엔지니어링(주)",
+      "reg_no": 1101118061337,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이에코플랜트(주)",
+      "reg_no": 1101110038805,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이오션플랜트(주)",
+      "reg_no": 1913110003485,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이오앤에스(주)",
+      "reg_no": 1101114370708,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이온(주)",
+      "reg_no": 1101118042379,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이온테크플러스(주)",
+      "reg_no": 1615110076070,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이위탁관리부동산투자회사(주)",
+      "reg_no": 1101117815446,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이이노베이션(주)",
+      "reg_no": 1101113710385,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이이터닉스(주)",
+      "reg_no": 1311110729441,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이인천석유화학(주)",
+      "reg_no": 1201110666464,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이인텔릭스(주)",
+      "reg_no": 1101115125962,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이인텔릭스서비스(주)",
+      "reg_no": 1348110039752,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이임업(주)",
+      "reg_no": 1348110174045,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이지오센트릭(주)",
+      "reg_no": 1101114505975,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이케미칼(주)",
+      "reg_no": 1311110501021,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이케미칼대정(주)",
+      "reg_no": 1311110587675,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이키파운드리(주)",
+      "reg_no": 1501110285375,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이텔레콤(주)",
+      "reg_no": 1101110371346,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이텔레콤씨에스티원(주)",
+      "reg_no": 1101117170189,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이텔링크(주)",
+      "reg_no": 1101111533599,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이트리켐(주)",
+      "reg_no": 1647110060753,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이플라즈마(주)",
+      "reg_no": 1311110401875,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이플래닛(주)",
+      "reg_no": 1101114699794,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이피아이씨글로벌(주)",
+      "reg_no": 2301110324803,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이핀크스(주)",
+      "reg_no": 2241110003760,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이하이닉스(주)",
+      "reg_no": 1344110001387,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이하이닉스시스템아이씨(주)",
+      "reg_no": 1501110235586,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이하이닉스시스템아이씨우시솔루션스(주)",
+      "reg_no": 1501110371124,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이하이스텍(주)",
+      "reg_no": 1344110037746,
+      "is_financial": false
+    },
+    {
+      "name": "에스케이하이이엔지(주)",
+      "reg_no": 1344110017540,
+      "is_financial": false
+    },
+    {
+      "name": "에스티에이씨(주)",
+      "reg_no": 2301110379436,
+      "is_financial": false
+    },
+    {
+      "name": "에이피개발(주)",
+      "reg_no": 2011110068498,
+      "is_financial": false
+    },
+    {
+      "name": "에코마린(주)",
+      "reg_no": 1311110076009,
+      "is_financial": false
+    },
+    {
+      "name": "에프에스케이엘앤에스(주)",
+      "reg_no": 1311110462520,
+      "is_financial": false
+    },
+    {
+      "name": "엔솔브(주)",
+      "reg_no": 1801110484898,
+      "is_financial": false
+    },
+    {
+      "name": "엔티스(주)",
+      "reg_no": 1301110021658,
+      "is_financial": false
+    },
+    {
+      "name": "여주에너지서비스(주)",
+      "reg_no": 1101116897817,
+      "is_financial": false
+    },
+    {
+      "name": "영남에너지서비스(주)",
+      "reg_no": 1753110001570,
+      "is_financial": false
+    },
+    {
+      "name": "울산아로마틱스(주)",
+      "reg_no": 1101114499954,
+      "is_financial": false
+    },
+    {
+      "name": "울산지피에스(주)",
+      "reg_no": 1650110035072,
+      "is_financial": false
+    },
+    {
+      "name": "원스토어(주)",
+      "reg_no": 1311110439131,
+      "is_financial": false
+    },
+    {
+      "name": "유베이스매뉴팩처링아시아(주)",
+      "reg_no": 2301110168673,
+      "is_financial": false
+    },
+    {
+      "name": "이엔에스시티가스(주)",
+      "reg_no": 1101119019145,
+      "is_financial": false
+    },
+    {
+      "name": "이엔에스시티가스부산(주)",
+      "reg_no": 1101119019012,
+      "is_financial": false
+    },
+    {
+      "name": "인크로스(주)",
+      "reg_no": 1101113734955,
+      "is_financial": false
+    },
+    {
+      "name": "전남2해상풍력(주)",
+      "reg_no": 1101117985661,
+      "is_financial": false
+    },
+    {
+      "name": "전남3해상풍력(주)",
+      "reg_no": 1101117985934,
+      "is_financial": false
+    },
+    {
+      "name": "전남도시가스(주)",
+      "reg_no": 2013110000503,
+      "is_financial": false
+    },
+    {
+      "name": "전남해상풍력(주)",
+      "reg_no": 1101117400817,
+      "is_financial": false
+    },
+    {
+      "name": "전북에너지서비스(주)",
+      "reg_no": 2149110004699,
+      "is_financial": false
+    },
+    {
+      "name": "제이에스원(주)",
+      "reg_no": 2062110086790,
+      "is_financial": false
+    },
+    {
+      "name": "제주에스케이에프씨(주)",
+      "reg_no": 2241110015012,
+      "is_financial": false
+    },
+    {
+      "name": "지에너지(주)",
+      "reg_no": 1101117788750,
+      "is_financial": false
+    },
+    {
+      "name": "진도산월태양광발전(주)",
+      "reg_no": 2061110009926,
+      "is_financial": false
+    },
+    {
+      "name": "창원에스지에너지(주)",
+      "reg_no": 1942110370578,
+      "is_financial": false
+    },
+    {
+      "name": "충청에너지서비스(주)",
+      "reg_no": 1501110006200,
+      "is_financial": false
+    },
+    {
+      "name": "카티니(주)",
+      "reg_no": 1101117983392,
+      "is_financial": false
+    },
+    {
+      "name": "코원에너지서비스(주)",
+      "reg_no": 1101110235617,
+      "is_financial": false
+    },
+    {
+      "name": "클린에너지위탁관리부동산투자회사(주)",
+      "reg_no": 1101117815602,
+      "is_financial": false
+    },
+    {
+      "name": "클린인더스트리얼위탁관리부동산투자회사(주)",
+      "reg_no": 1101118665840,
+      "is_financial": false
+    },
+    {
+      "name": "테스에이엑스(주)",
+      "reg_no": 1301110126818,
+      "is_financial": false
+    },
+    {
+      "name": "토털밸류제1호위탁관리부동산투자회사(주)",
+      "reg_no": 1101118384672,
+      "is_financial": false
+    },
+    {
+      "name": "티맵모빌리티(주)",
+      "reg_no": 1101117733812,
+      "is_financial": false
+    },
+    {
+      "name": "티모르홀딩스(유)",
+      "reg_no": 1344140002628,
+      "is_financial": false
+    },
+    {
+      "name": "파주에너지서비스(주)",
+      "reg_no": 1101114629501,
+      "is_financial": false
+    },
+    {
+      "name": "프롭티어(주)",
+      "reg_no": 1101112493601,
+      "is_financial": false
+    },
+    {
+      "name": "피에스앤마케팅(주)",
+      "reg_no": 1101114072338,
+      "is_financial": false
+    },
+    {
+      "name": "하이버스(주)",
+      "reg_no": 1101118171657,
+      "is_financial": false
+    },
+    {
+      "name": "한국넥슬렌(유)",
+      "reg_no": 2301140003328,
+      "is_financial": false
+    },
+    {
+      "name": "해솔라에너지(주)",
+      "reg_no": 2011110050106,
+      "is_financial": false
+    },
+    {
+      "name": "해쌀태양광(주)",
+      "reg_no": 1614110049376,
+      "is_financial": false
+    },
+    {
+      "name": "행복나래(주)",
+      "reg_no": 1101112016940,
+      "is_financial": false
+    },
+    {
+      "name": "행복나무(주)",
+      "reg_no": 1301110125488,
+      "is_financial": false
+    },
+    {
+      "name": "행복디딤(주)",
+      "reg_no": 1101116984325,
+      "is_financial": false
+    },
+    {
+      "name": "행복모아(주)",
+      "reg_no": 1501110226204,
+      "is_financial": false
+    },
+    {
+      "name": "행복모음(주)",
+      "reg_no": 2301110318187,
+      "is_financial": false
+    },
+    {
+      "name": "행복믿음(주)",
+      "reg_no": 1101118079215,
+      "is_financial": false
+    },
+    {
+      "name": "행복채움(주)",
+      "reg_no": 1760110130902,
+      "is_financial": false
+    },
+    {
+      "name": "행복키움(주)",
+      "reg_no": 1101116984672,
+      "is_financial": false
+    },
+    {
+      "name": "행복한울(주)",
+      "reg_no": 1101117197167,
+      "is_financial": false
+    },
+    {
+      "name": "홈앤서비스(주)",
+      "reg_no": 1101116420460,
+      "is_financial": false
+    }
+  ],
+  "한화": [
+    {
+      "name": "(주)아이에프씨그룹",
+      "reg_no": 1801110505412,
+      "is_financial": true
+    },
+    {
+      "name": "(주)한화저축은행",
+      "reg_no": 1211110059436,
+      "is_financial": true
+    },
+    {
+      "name": "에이치글로벌파트너스(유)",
+      "reg_no": 1345140002931,
+      "is_financial": true
+    },
+    {
+      "name": "한화라이프랩(주)",
+      "reg_no": 1101113199349,
+      "is_financial": true
+    },
+    {
+      "name": "한화생명금융서비스(주)",
+      "reg_no": 1101117837226,
+      "is_financial": true
+    },
+    {
+      "name": "한화생명보험(주)",
+      "reg_no": 1101110003204,
+      "is_financial": true
+    },
+    {
+      "name": "한화손해보험(주)",
+      "reg_no": 1101110006456,
+      "is_financial": true
+    },
+    {
+      "name": "한화손해사정(주)",
+      "reg_no": 1101113192913,
+      "is_financial": true
+    },
+    {
+      "name": "한화에비에이션(주)",
+      "reg_no": 1942110381179,
+      "is_financial": true
+    },
+    {
+      "name": "한화인베스트먼트(주)",
+      "reg_no": 1101117915337,
+      "is_financial": true
+    },
+    {
+      "name": "한화자산운용(주)",
+      "reg_no": 1101110571201,
+      "is_financial": true
+    },
+    {
+      "name": "한화투자증권(주)",
+      "reg_no": 1101110003155,
+      "is_financial": true
+    },
+    {
+      "name": "한화피플라이프(주)",
+      "reg_no": 1101112913716,
+      "is_financial": true
+    },
+    {
+      "name": "히어로손해사정(주)",
+      "reg_no": 1101118204804,
+      "is_financial": true
+    },
+    {
+      "name": "(주)경기용인테크노밸리",
+      "reg_no": 1345110262242,
+      "is_financial": false
+    },
+    {
+      "name": "(주)그로들",
+      "reg_no": 1101118076302,
+      "is_financial": false
+    },
+    {
+      "name": "(주)김해테크노밸리",
+      "reg_no": 1955110120447,
+      "is_financial": false
+    },
+    {
+      "name": "(주)대전역세권개발피에프브이",
+      "reg_no": 1244110284620,
+      "is_financial": false
+    },
+    {
+      "name": "(주)베러스쿱크리머리",
+      "reg_no": 1101119152698,
+      "is_financial": false
+    },
+    {
+      "name": "(주)비노갤러리아",
+      "reg_no": 1101118652467,
+      "is_financial": false
+    },
+    {
+      "name": "(주)서오창테크노밸리",
+      "reg_no": 1501110292271,
+      "is_financial": false
+    },
+    {
+      "name": "(주)서울역북부역세권개발",
+      "reg_no": 1244110267337,
+      "is_financial": false
+    },
+    {
+      "name": "(주)수서역환승센터복합개발",
+      "reg_no": 1345110563749,
+      "is_financial": false
+    },
+    {
+      "name": "(주)아워홈",
+      "reg_no": 1101111862592,
+      "is_financial": false
+    },
+    {
+      "name": "(주)안성테크노로지스틱스",
+      "reg_no": 1346110123418,
+      "is_financial": false
+    },
+    {
+      "name": "(주)안성테크노밸리",
+      "reg_no": 1346110099669,
+      "is_financial": false
+    },
+    {
+      "name": "(주)알이씨데이터센터",
+      "reg_no": 1345110614279,
+      "is_financial": false
+    },
+    {
+      "name": "(주)에스아이티테크",
+      "reg_no": 1348110314477,
+      "is_financial": false
+    },
+    {
+      "name": "(주)에이치밸리",
+      "reg_no": 1348110187775,
+      "is_financial": false
+    },
+    {
+      "name": "(주)에이치씨앤디",
+      "reg_no": 1345110634467,
+      "is_financial": false
+    },
+    {
+      "name": "(주)에이치테크노로지스틱스",
+      "reg_no": 1348110772287,
+      "is_financial": false
+    },
+    {
+      "name": "(주)에이치테크노밸리",
+      "reg_no": 1348110608325,
+      "is_financial": false
+    },
+    {
+      "name": "(주)에프앤씨시스템",
+      "reg_no": 1101113277806,
+      "is_financial": false
+    },
+    {
+      "name": "(주)에프지코리아",
+      "reg_no": 1101118625703,
+      "is_financial": false
+    },
+    {
+      "name": "(주)여수씨월드",
+      "reg_no": 1101114284602,
+      "is_financial": false
+    },
+    {
+      "name": "(주)울산복합도시개발",
+      "reg_no": 2301110355824,
+      "is_financial": false
+    },
+    {
+      "name": "(주)일산씨월드",
+      "reg_no": 1101114368901,
+      "is_financial": false
+    },
+    {
+      "name": "(주)정상북한산리조트",
+      "reg_no": 1801111172765,
+      "is_financial": false
+    },
+    {
+      "name": "(주)제삼용인테크노밸리",
+      "reg_no": 1345110715069,
+      "is_financial": false
+    },
+    {
+      "name": "(주)제이용인테크노밸리",
+      "reg_no": 1345110438918,
+      "is_financial": false
+    },
+    {
+      "name": "(주)제주해양과학관",
+      "reg_no": 1101114143577,
+      "is_financial": false
+    },
+    {
+      "name": "(주)케이비부산오시리아호텔위탁관리부동산투자회사",
+      "reg_no": 1101118159512,
+      "is_financial": false
+    },
+    {
+      "name": "(주)크린누리",
+      "reg_no": 2849110161221,
+      "is_financial": false
+    },
+    {
+      "name": "(주)한화",
+      "reg_no": 1101110002959,
+      "is_financial": false
+    },
+    {
+      "name": "(주)한화갤러리아타임월드",
+      "reg_no": 1601110003410,
+      "is_financial": false
+    },
+    {
+      "name": "(주)한화도시개발",
+      "reg_no": 1101114231596,
+      "is_financial": false
+    },
+    {
+      "name": "(주)한화에스테이트서비스",
+      "reg_no": 1101117126249,
+      "is_financial": false
+    },
+    {
+      "name": "(주)한화육삼시티",
+      "reg_no": 1101110425622,
+      "is_financial": false
+    },
+    {
+      "name": "(주)한화이글스",
+      "reg_no": 1601110007214,
+      "is_financial": false
+    },
+    {
+      "name": "고군산해상풍력(주)",
+      "reg_no": 1101118915964,
+      "is_financial": false
+    },
+    {
+      "name": "고메드갤러리아(주)",
+      "reg_no": 1101110934694,
+      "is_financial": false
+    },
+    {
+      "name": "고북주민태양광발전(주)",
+      "reg_no": 1614110057501,
+      "is_financial": false
+    },
+    {
+      "name": "농업회사법인그린투모로우(주)",
+      "reg_no": 1345110150356,
+      "is_financial": false
+    },
+    {
+      "name": "대산그린에너지(주)",
+      "reg_no": 1614110041942,
+      "is_financial": false
+    },
+    {
+      "name": "대전에코텍(주)",
+      "reg_no": 1601110073980,
+      "is_financial": false
+    },
+    {
+      "name": "바닐라스튜디오(주)",
+      "reg_no": 1101118002456,
+      "is_financial": false
+    },
+    {
+      "name": "보령녹도해상풍력(주)",
+      "reg_no": 1645110039231,
+      "is_financial": false
+    },
+    {
+      "name": "부여바이오(주)",
+      "reg_no": 1643110030530,
+      "is_financial": false
+    },
+    {
+      "name": "석문호수상태양광(주)",
+      "reg_no": 1650110061928,
+      "is_financial": false
+    },
+    {
+      "name": "신안우이해상풍력(주)",
+      "reg_no": 2011110072019,
+      "is_financial": false
+    },
+    {
+      "name": "아산배방개발(주)",
+      "reg_no": 1345110531085,
+      "is_financial": false
+    },
+    {
+      "name": "아쿠아플라넷(주)",
+      "reg_no": 1101117839529,
+      "is_financial": false
+    },
+    {
+      "name": "알이100솔라팩토리1호(주)",
+      "reg_no": 2054110038334,
+      "is_financial": false
+    },
+    {
+      "name": "에이치씨씨홀딩스(주)",
+      "reg_no": 1101118204656,
+      "is_financial": false
+    },
+    {
+      "name": "에이치앤지케미칼(주)",
+      "reg_no": 2062110088209,
+      "is_financial": false
+    },
+    {
+      "name": "에이치헤리티지(주)",
+      "reg_no": 1244110405896,
+      "is_financial": false
+    },
+    {
+      "name": "에코이앤오(주)",
+      "reg_no": 1341110226874,
+      "is_financial": false
+    },
+    {
+      "name": "에프티아이피에프브이(주)",
+      "reg_no": 1345110076695,
+      "is_financial": false
+    },
+    {
+      "name": "엣지코어피에프브이(주)",
+      "reg_no": 1345110700945,
+      "is_financial": false
+    },
+    {
+      "name": "여수에코에너지(주)",
+      "reg_no": 2062110093000,
+      "is_financial": false
+    },
+    {
+      "name": "여수에코파워(주)",
+      "reg_no": 2062110093125,
+      "is_financial": false
+    },
+    {
+      "name": "여수퓨어파워(주)",
+      "reg_no": 2062110093133,
+      "is_financial": false
+    },
+    {
+      "name": "영광칠해해상풍력(주)",
+      "reg_no": 1101118590344,
+      "is_financial": false
+    },
+    {
+      "name": "영덕블루윈드(주)",
+      "reg_no": 1716110029653,
+      "is_financial": false
+    },
+    {
+      "name": "영암큐파워솔라팜1호(주)",
+      "reg_no": 2054110034374,
+      "is_financial": false
+    },
+    {
+      "name": "오션이앤아이(주)",
+      "reg_no": 1949110007767,
+      "is_financial": false
+    },
+    {
+      "name": "우리집에프앤비(주)",
+      "reg_no": 1101110918574,
+      "is_financial": false
+    },
+    {
+      "name": "원주그린(주)",
+      "reg_no": 1101114636431,
+      "is_financial": false
+    },
+    {
+      "name": "인사이트홀딩스(주)",
+      "reg_no": 2054110039738,
+      "is_financial": false
+    },
+    {
+      "name": "인천에이치투(주)",
+      "reg_no": 1614110061065,
+      "is_financial": false
+    },
+    {
+      "name": "천장산풍력(주)",
+      "reg_no": 1747110054879,
+      "is_financial": false
+    },
+    {
+      "name": "파워시스템즈엠에프지코리아(유)",
+      "reg_no": 1101140181252,
+      "is_financial": false
+    },
+    {
+      "name": "퓨어플러스(주)",
+      "reg_no": 1952110002451,
+      "is_financial": false
+    },
+    {
+      "name": "하동햇빛나눔태양광발전(주)",
+      "reg_no": 1501110337374,
+      "is_financial": false
+    },
+    {
+      "name": "하이패스태양광(주)",
+      "reg_no": 1101114974336,
+      "is_financial": false
+    },
+    {
+      "name": "한화갤러리아(주)",
+      "reg_no": 1101118570891,
+      "is_financial": false
+    },
+    {
+      "name": "한화넥스트(주)",
+      "reg_no": 1101118288337,
+      "is_financial": false
+    },
+    {
+      "name": "한화로보틱스(주)",
+      "reg_no": 1311110716977,
+      "is_financial": false
+    },
+    {
+      "name": "한화모멘텀(주)",
+      "reg_no": 1311110740447,
+      "is_financial": false
+    },
+    {
+      "name": "한화비전(주)",
+      "reg_no": 1311110745562,
+      "is_financial": false
+    },
+    {
+      "name": "한화세미텍(주)",
+      "reg_no": 1942110273326,
+      "is_financial": false
+    },
+    {
+      "name": "한화솔라파워(주)",
+      "reg_no": 1101116426434,
+      "is_financial": false
+    },
+    {
+      "name": "한화솔라파워글로벌(주)",
+      "reg_no": 1101116560745,
+      "is_financial": false
+    },
+    {
+      "name": "한화솔루션(주)",
+      "reg_no": 1101110360935,
+      "is_financial": false
+    },
+    {
+      "name": "한화시스템(주)",
+      "reg_no": 1760110020640,
+      "is_financial": false
+    },
+    {
+      "name": "한화신한테라와트아워(주)",
+      "reg_no": 1101118731964,
+      "is_financial": false
+    },
+    {
+      "name": "한화에너지(주)",
+      "reg_no": 1101113807223,
+      "is_financial": false
+    },
+    {
+      "name": "한화에어로스페이스(주)",
+      "reg_no": 1942110000480,
+      "is_financial": false
+    },
+    {
+      "name": "한화엔엑스엠디(주)",
+      "reg_no": 1311110661552,
+      "is_financial": false
+    },
+    {
+      "name": "한화엔진(주)",
+      "reg_no": 1942110038423,
+      "is_financial": false
+    },
+    {
+      "name": "한화오션(주)",
+      "reg_no": 1101112095837,
+      "is_financial": false
+    },
+    {
+      "name": "한화오션에코텍(주)",
+      "reg_no": 2046110025990,
+      "is_financial": false
+    },
+    {
+      "name": "한화오션엔지니어링(주)",
+      "reg_no": 1949110061264,
+      "is_financial": false
+    },
+    {
+      "name": "한화위탁관리부동산투자회사(주)",
+      "reg_no": 1101118294037,
+      "is_financial": false
+    },
+    {
+      "name": "한화이센셜(주)",
+      "reg_no": 1313110256721,
+      "is_financial": false
+    },
+    {
+      "name": "한화임팩트(주)",
+      "reg_no": 1614110001243,
+      "is_financial": false
+    },
+    {
+      "name": "한화임팩트글로벌(주)",
+      "reg_no": 1101116773687,
+      "is_financial": false
+    },
+    {
+      "name": "한화첨단소재(주)",
+      "reg_no": 1101118496279,
+      "is_financial": false
+    },
+    {
+      "name": "한화커넥트(주)",
+      "reg_no": 1101110544133,
+      "is_financial": false
+    },
+    {
+      "name": "한화컴파운드(주)",
+      "reg_no": 1615110001861,
+      "is_financial": false
+    },
+    {
+      "name": "한화케미칼오버시즈홀딩스(주)",
+      "reg_no": 1101114137207,
+      "is_financial": false
+    },
+    {
+      "name": "한화토탈에너지스(주)",
+      "reg_no": 1614110013066,
+      "is_financial": false
+    },
+    {
+      "name": "한화파워(주)",
+      "reg_no": 1942110273318,
+      "is_financial": false
+    },
+    {
+      "name": "한화푸드테크(주)",
+      "reg_no": 1101117942778,
+      "is_financial": false
+    },
+    {
+      "name": "한화호텔앤드리조트(주)",
+      "reg_no": 1101110249709,
+      "is_financial": false
+    },
+    {
+      "name": "해모둠태양광(주)",
+      "reg_no": 1614110047445,
+      "is_financial": false
+    }
+  ],
+  "삼성": [
+    {
+      "name": "(주)삼성생명금융서비스",
+      "reg_no": 1101115714533,
+      "is_financial": true
+    },
+    {
+      "name": "(주)삼성화재금융서비스보험대리점",
+      "reg_no": 1101116002424,
+      "is_financial": true
+    },
+    {
+      "name": "삼성벤처투자(주)",
+      "reg_no": 1101111785538,
+      "is_financial": true
+    },
+    {
+      "name": "삼성생명보험(주)",
+      "reg_no": 1101110005953,
+      "is_financial": true
+    },
+    {
+      "name": "삼성생명서비스손해사정(주)",
+      "reg_no": 1101111855414,
+      "is_financial": true
+    },
+    {
+      "name": "삼성선물(주)",
+      "reg_no": 1101110894520,
+      "is_financial": true
+    },
+    {
+      "name": "삼성액티브자산운용(주)",
+      "reg_no": 1101116277382,
+      "is_financial": true
+    },
+    {
+      "name": "삼성에스알에이자산운용(주)",
+      "reg_no": 1101115004322,
+      "is_financial": true
+    },
+    {
+      "name": "삼성자산운용(주)",
+      "reg_no": 1701110139833,
+      "is_financial": true
+    },
+    {
+      "name": "삼성증권(주)",
+      "reg_no": 1101110335649,
+      "is_financial": true
+    },
+    {
+      "name": "삼성카드(주)",
+      "reg_no": 1101110346901,
+      "is_financial": true
+    },
+    {
+      "name": "삼성카드고객서비스(주)",
+      "reg_no": 1101115291656,
+      "is_financial": true
+    },
+    {
+      "name": "삼성헤지자산운용(주)",
+      "reg_no": 1101116277390,
+      "is_financial": true
+    },
+    {
+      "name": "삼성화재서비스손해사정(주)",
+      "reg_no": 1101111237703,
+      "is_financial": true
+    },
+    {
+      "name": "삼성화재애니카손해사정(주)",
+      "reg_no": 1101111595680,
+      "is_financial": true
+    },
+    {
+      "name": "삼성화재해상보험(주)",
+      "reg_no": 1101110005078,
+      "is_financial": true
+    },
+    {
+      "name": "(주)멀티캠퍼스",
+      "reg_no": 1101111960792,
+      "is_financial": false
+    },
+    {
+      "name": "(주)미라콤아이앤씨",
+      "reg_no": 1101111617533,
+      "is_financial": false
+    },
+    {
+      "name": "(주)미래로시스템",
+      "reg_no": 1101111005366,
+      "is_financial": false
+    },
+    {
+      "name": "(주)삼성글로벌리서치",
+      "reg_no": 1101110766670,
+      "is_financial": false
+    },
+    {
+      "name": "(주)삼성라이온즈",
+      "reg_no": 1701110015786,
+      "is_financial": false
+    },
+    {
+      "name": "(주)삼우종합건축사사무소",
+      "reg_no": 1101115494151,
+      "is_financial": false
+    },
+    {
+      "name": "(주)서울레이크사이드",
+      "reg_no": 1101110504070,
+      "is_financial": false
+    },
+    {
+      "name": "(주)시큐아이",
+      "reg_no": 1101111912503,
+      "is_financial": false
+    },
+    {
+      "name": "(주)씨브이네트",
+      "reg_no": 1101111931686,
+      "is_financial": false
+    },
+    {
+      "name": "(주)에스에이치피코퍼레이션",
+      "reg_no": 1101118151310,
+      "is_financial": false
+    },
+    {
+      "name": "(주)에스원",
+      "reg_no": 1101110221939,
+      "is_financial": false
+    },
+    {
+      "name": "(주)제일기획",
+      "reg_no": 1101110139017,
+      "is_financial": false
+    },
+    {
+      "name": "(주)하만인터내셔널코리아",
+      "reg_no": 1101113145673,
+      "is_financial": false
+    },
+    {
+      "name": "(주)호텔신라",
+      "reg_no": 1101110145519,
+      "is_financial": false
+    },
+    {
+      "name": "(주)휴먼티에스에스",
+      "reg_no": 1101114272706,
+      "is_financial": false
+    },
+    {
+      "name": "(주)희망별숲",
+      "reg_no": 1345110611259,
+      "is_financial": false
+    },
+    {
+      "name": "디앤엠세일즈앤마케팅코리아(주)",
+      "reg_no": 1101111237844,
+      "is_financial": false
+    },
+    {
+      "name": "삼성노블라이프(주)",
+      "reg_no": 1345110074503,
+      "is_financial": false
+    },
+    {
+      "name": "삼성디스플레이(주)",
+      "reg_no": 1345110187812,
+      "is_financial": false
+    },
+    {
+      "name": "삼성메디슨(주)",
+      "reg_no": 1346110001036,
+      "is_financial": false
+    },
+    {
+      "name": "삼성물산(주)",
+      "reg_no": 1101110015762,
+      "is_financial": false
+    },
+    {
+      "name": "삼성바이오로직스(주)",
+      "reg_no": 1201110566317,
+      "is_financial": false
+    },
+    {
+      "name": "삼성바이오에피스(주)",
+      "reg_no": 1201110601501,
+      "is_financial": false
+    },
+    {
+      "name": "삼성에스디아이(주)",
+      "reg_no": 1101110394174,
+      "is_financial": false
+    },
+    {
+      "name": "삼성에스디에스(주)",
+      "reg_no": 1101110398556,
+      "is_financial": false
+    },
+    {
+      "name": "삼성에프엔위탁관리부동산투자회사(주)",
+      "reg_no": 1101118376893,
+      "is_financial": false
+    },
+    {
+      "name": "삼성에피스홀딩스(주)",
+      "reg_no": 1201110149508,
+      "is_financial": false
+    },
+    {
+      "name": "삼성웰스토리(주)",
+      "reg_no": 1101115282077,
+      "is_financial": false
+    },
+    {
+      "name": "삼성이앤에이(주)",
+      "reg_no": 1101110240509,
+      "is_financial": false
+    },
+    {
+      "name": "삼성전기(주)",
+      "reg_no": 1301110001626,
+      "is_financial": false
+    },
+    {
+      "name": "삼성전자(주)",
+      "reg_no": 1301110006246,
+      "is_financial": false
+    },
+    {
+      "name": "삼성전자로지텍(주)",
+      "reg_no": 1301110046797,
+      "is_financial": false
+    },
+    {
+      "name": "삼성전자서비스(주)",
+      "reg_no": 1301110049139,
+      "is_financial": false
+    },
+    {
+      "name": "삼성전자서비스씨에스(주)",
+      "reg_no": 1358110352541,
+      "is_financial": false
+    },
+    {
+      "name": "삼성전자판매(주)",
+      "reg_no": 1801110210300,
+      "is_financial": false
+    },
+    {
+      "name": "삼성중공업(주)",
+      "reg_no": 1101110168595,
+      "is_financial": false
+    },
+    {
+      "name": "삼성코닝어드밴스드글라스(유)",
+      "reg_no": 1648140003466,
+      "is_financial": false
+    },
+    {
+      "name": "세메스(주)",
+      "reg_no": 1615110011795,
+      "is_financial": false
+    },
+    {
+      "name": "수원삼성축구단(주)",
+      "reg_no": 1358110160126,
+      "is_financial": false
+    },
+    {
+      "name": "스테코(주)",
+      "reg_no": 1647110003490,
+      "is_financial": false
+    },
+    {
+      "name": "신라에이치엠(주)",
+      "reg_no": 1101115433927,
+      "is_financial": false
+    },
+    {
+      "name": "에스디플렉스(주)",
+      "reg_no": 1760110039005,
+      "is_financial": false
+    },
+    {
+      "name": "에스비티엠(주)",
+      "reg_no": 1101116536556,
+      "is_financial": false
+    },
+    {
+      "name": "에스원씨알엠(주)",
+      "reg_no": 1358110190199,
+      "is_financial": false
+    },
+    {
+      "name": "에스유머티리얼스(주)",
+      "reg_no": 1648110061337,
+      "is_financial": false
+    },
+    {
+      "name": "에스코어(주)",
+      "reg_no": 1101113681031,
+      "is_financial": false
+    },
+    {
+      "name": "에스티엠(주)",
+      "reg_no": 2301110176840,
+      "is_financial": false
+    },
+    {
+      "name": "에이치디씨신라면세점(주)",
+      "reg_no": 1101115722916,
+      "is_financial": false
+    },
+    {
+      "name": "에피스넥스랩(주)",
+      "reg_no": 1201110149652,
+      "is_financial": false
+    },
+    {
+      "name": "오픈핸즈(주)",
+      "reg_no": 1311110266146,
+      "is_financial": false
+    },
+    {
+      "name": "제일패션리테일(주)",
+      "reg_no": 1101114736934,
+      "is_financial": false
+    }
+  ],
+  "엘지": [
+    {
+      "name": "(주)고운누리",
+      "reg_no": 1341110575239,
+      "is_financial": false
+    },
+    {
+      "name": "(주)나눔누리",
+      "reg_no": 1760110075546,
+      "is_financial": false
+    },
+    {
+      "name": "(주)데이콤크로싱",
+      "reg_no": 1101112234683,
+      "is_financial": false
+    },
+    {
+      "name": "(주)디앤오",
+      "reg_no": 1101112411520,
+      "is_financial": false
+    },
+    {
+      "name": "(주)디앤오리츠운용",
+      "reg_no": 1101110920152,
+      "is_financial": false
+    },
+    {
+      "name": "(주)디앤오씨엠",
+      "reg_no": 1101117030507,
+      "is_financial": false
+    },
+    {
+      "name": "(주)라이트브레인",
+      "reg_no": 1101113550179,
+      "is_financial": false
+    },
+    {
+      "name": "(주)로보스타",
+      "reg_no": 1101111655393,
+      "is_financial": false
+    },
+    {
+      "name": "(주)루치펠로코리아",
+      "reg_no": 1101115089316,
+      "is_financial": false
+    },
+    {
+      "name": "(주)미디어로그",
+      "reg_no": 1101111905441,
+      "is_financial": false
+    },
+    {
+      "name": "(주)미래엠",
+      "reg_no": 1342110190259,
+      "is_financial": false
+    },
+    {
+      "name": "(주)밝은누리",
+      "reg_no": 1501110206876,
+      "is_financial": false
+    },
+    {
+      "name": "(주)베어로보틱스코리아",
+      "reg_no": 1101116516532,
+      "is_financial": false
+    },
+    {
+      "name": "(주)비바웨이브",
+      "reg_no": 1101116753796,
+      "is_financial": false
+    },
+    {
+      "name": "(주)비즈테크아이",
+      "reg_no": 1101112689507,
+      "is_financial": false
+    },
+    {
+      "name": "(주)비즈테크온",
+      "reg_no": 1101118355178,
+      "is_financial": false
+    },
+    {
+      "name": "(주)씨브이파트너스",
+      "reg_no": 1101117687027,
+      "is_financial": false
+    },
+    {
+      "name": "(주)씨에스리더",
+      "reg_no": 1101112271924,
+      "is_financial": false
+    },
+    {
+      "name": "(주)씨에스원파트너",
+      "reg_no": 1101113961756,
+      "is_financial": false
+    },
+    {
+      "name": "(주)씨텍",
+      "reg_no": 1101110589171,
+      "is_financial": false
+    },
+    {
+      "name": "(주)아름누리",
+      "reg_no": 1501110302103,
+      "is_financial": false
+    },
+    {
+      "name": "(주)아인텔레서비스",
+      "reg_no": 1801110367581,
+      "is_financial": false
+    },
+    {
+      "name": "(주)에이치에스애드",
+      "reg_no": 1101110375398,
+      "is_financial": false
+    },
+    {
+      "name": "(주)에프엠지",
+      "reg_no": 1401110020096,
+      "is_financial": false
+    },
+    {
+      "name": "(주)엘지",
+      "reg_no": 1101110003543,
+      "is_financial": false
+    },
+    {
+      "name": "(주)엘지경영개발원",
+      "reg_no": 1101110423494,
+      "is_financial": false
+    },
+    {
+      "name": "(주)엘지생활건강",
+      "reg_no": 1101112208000,
+      "is_financial": false
+    },
+    {
+      "name": "(주)엘지스포츠",
+      "reg_no": 1101110359300,
+      "is_financial": false
+    },
+    {
+      "name": "(주)엘지씨엔에스",
+      "reg_no": 1101110516695,
+      "is_financial": false
+    },
+    {
+      "name": "(주)엘지에너지솔루션",
+      "reg_no": 1101117701356,
+      "is_financial": false
+    },
+    {
+      "name": "(주)엘지에니바이오리파이닝",
+      "reg_no": 1614110064259,
+      "is_financial": false
+    },
+    {
+      "name": "(주)엘지에이치와이비씨엠",
+      "reg_no": 1760110152534,
+      "is_financial": false
+    },
+    {
+      "name": "(주)엘지유플러스",
+      "reg_no": 1101111296676,
+      "is_financial": false
+    },
+    {
+      "name": "(주)엘지유플러스볼트업",
+      "reg_no": 1101118966933,
+      "is_financial": false
+    },
+    {
+      "name": "(주)엘지헬로비전",
+      "reg_no": 1101111144297,
+      "is_financial": false
+    },
+    {
+      "name": "(주)엘지화학",
+      "reg_no": 1101112207995,
+      "is_financial": false
+    },
+    {
+      "name": "(주)울릉샘물",
+      "reg_no": 1758110003526,
+      "is_financial": false
+    },
+    {
+      "name": "(주)위드유",
+      "reg_no": 1101115145556,
+      "is_financial": false
+    },
+    {
+      "name": "(주)유플러스홈서비스",
+      "reg_no": 1101117343215,
+      "is_financial": false
+    },
+    {
+      "name": "(주)팜한농",
+      "reg_no": 1101114362482,
+      "is_financial": false
+    },
+    {
+      "name": "(주)하누리",
+      "reg_no": 1348110262254,
+      "is_financial": false
+    },
+    {
+      "name": "(주)하이텔레서비스",
+      "reg_no": 1101114251552,
+      "is_financial": false
+    },
+    {
+      "name": "(주)하이프라자",
+      "reg_no": 1311110028801,
+      "is_financial": false
+    },
+    {
+      "name": "(주)한국음료",
+      "reg_no": 2113110005197,
+      "is_financial": false
+    },
+    {
+      "name": "(주)행복누리",
+      "reg_no": 1501110172829,
+      "is_financial": false
+    },
+    {
+      "name": "(주)행복마루",
+      "reg_no": 1101116140993,
+      "is_financial": false
+    },
+    {
+      "name": "(주)헬로커넥트앤",
+      "reg_no": 1211110475070,
+      "is_financial": false
+    },
+    {
+      "name": "농업회사법인 (주)에프앤아이",
+      "reg_no": 1342110111354,
+      "is_financial": false
+    },
+    {
+      "name": "동남태양광발전(주)",
+      "reg_no": 1942110213489,
+      "is_financial": false
+    },
+    {
+      "name": "에이스냉동공조(주)",
+      "reg_no": 1351110047493,
+      "is_financial": false
+    },
+    {
+      "name": "엘지디스플레이(주)",
+      "reg_no": 1101110393134,
+      "is_financial": false
+    },
+    {
+      "name": "엘지마그나이파워트레인(주)",
+      "reg_no": 1201111161330,
+      "is_financial": false
+    },
+    {
+      "name": "엘지이노텍(주)",
+      "reg_no": 1101110192180,
+      "is_financial": false
+    },
+    {
+      "name": "엘지전자(주)",
+      "reg_no": 1101112487050,
+      "is_financial": false
+    },
+    {
+      "name": "엘지파루크(주)",
+      "reg_no": 1101116210647,
+      "is_financial": false
+    },
+    {
+      "name": "이노위드(주)",
+      "reg_no": 2001110343156,
+      "is_financial": false
+    },
+    {
+      "name": "지케이더블유라이팅시스템즈코리아(주)",
+      "reg_no": 1201111013094,
+      "is_financial": false
+    },
+    {
+      "name": "코카콜라음료(주)",
+      "reg_no": 1101111342130,
+      "is_financial": false
+    },
+    {
+      "name": "태극제약(주)",
+      "reg_no": 1348110004367,
+      "is_financial": false
+    },
+    {
+      "name": "티더블유바이오매스에너지(주)",
+      "reg_no": 2062110088192,
+      "is_financial": false
+    },
+    {
+      "name": "하이엠솔루텍(주)",
+      "reg_no": 1101113371989,
+      "is_financial": false
+    },
+    {
+      "name": "하이케어솔루션(주)",
+      "reg_no": 1101117737070,
+      "is_financial": false
+    },
+    {
+      "name": "해태에이치티비(주)",
+      "reg_no": 1101110900004,
+      "is_financial": false
+    }
+  ],
+  "현대자동차": [
+    {
+      "name": "블루월넛(주)",
+      "reg_no": 1101116254562,
+      "is_financial": true
+    },
+    {
+      "name": "현대얼터너티브(주)",
+      "reg_no": 1101119146138,
+      "is_financial": true
+    },
+    {
+      "name": "현대차증권(주)",
+      "reg_no": 1101110019962,
+      "is_financial": true
+    },
+    {
+      "name": "현대카드(주)",
+      "reg_no": 1101110377203,
+      "is_financial": true
+    },
+    {
+      "name": "현대캐피탈(주)",
+      "reg_no": 1101110995378,
+      "is_financial": true
+    },
+    {
+      "name": "현대커머셜(주)",
+      "reg_no": 1101113646697,
+      "is_financial": true
+    },
+    {
+      "name": "(주)서림환경기술",
+      "reg_no": 1342110099493,
+      "is_financial": false
+    },
+    {
+      "name": "(주)서울피엠씨",
+      "reg_no": 1101110109060,
+      "is_financial": false
+    },
+    {
+      "name": "(주)스튜디오어빗",
+      "reg_no": 1101118713839,
+      "is_financial": false
+    },
+    {
+      "name": "(주)이노션",
+      "reg_no": 1101113229097,
+      "is_financial": false
+    },
+    {
+      "name": "(주)이노션에스",
+      "reg_no": 1101118806246,
+      "is_financial": false
+    },
+    {
+      "name": "(주)인천스마트에너지",
+      "reg_no": 1201111365966,
+      "is_financial": false
+    },
+    {
+      "name": "(주)지마린서비스",
+      "reg_no": 1801110566133,
+      "is_financial": false
+    },
+    {
+      "name": "(주)지아이티",
+      "reg_no": 1311110028900,
+      "is_financial": false
+    },
+    {
+      "name": "(주)현대서산농장",
+      "reg_no": 1614110015129,
+      "is_financial": false
+    },
+    {
+      "name": "(주)현대케피코",
+      "reg_no": 1101110543169,
+      "is_financial": false
+    },
+    {
+      "name": "그린에어(주)",
+      "reg_no": 1650110026005,
+      "is_financial": false
+    },
+    {
+      "name": "기아(주)",
+      "reg_no": 1101110037998,
+      "is_financial": false
+    },
+    {
+      "name": "기아타이거즈(주)",
+      "reg_no": 2001110003883,
+      "is_financial": false
+    },
+    {
+      "name": "김포골드라인에스알에스(주)",
+      "reg_no": 1244110385981,
+      "is_financial": false
+    },
+    {
+      "name": "나주호배꽃품은햇빛발전소(주)",
+      "reg_no": 2055110090811,
+      "is_financial": false
+    },
+    {
+      "name": "로템에스알에스(주)",
+      "reg_no": 1101117722435,
+      "is_financial": false
+    },
+    {
+      "name": "메인트란스(주)",
+      "reg_no": 1101113920520,
+      "is_financial": false
+    },
+    {
+      "name": "모비언트(주)",
+      "reg_no": 2001110713060,
+      "is_financial": false
+    },
+    {
+      "name": "모아빛(주)",
+      "reg_no": 1101110944380,
+      "is_financial": false
+    },
+    {
+      "name": "모트라스(주)",
+      "reg_no": 1648110162961,
+      "is_financial": false
+    },
+    {
+      "name": "서림개발(주)",
+      "reg_no": 1342110002264,
+      "is_financial": false
+    },
+    {
+      "name": "서부광역메트로(주)",
+      "reg_no": 1101118982616,
+      "is_financial": false
+    },
+    {
+      "name": "서부산도시고속도로(주)",
+      "reg_no": 1101118647898,
+      "is_financial": false
+    },
+    {
+      "name": "송도랜드마크시티(유)",
+      "reg_no": 1101140065167,
+      "is_financial": false
+    },
+    {
+      "name": "수소에너지네트워크(주)",
+      "reg_no": 1101117032800,
+      "is_financial": false
+    },
+    {
+      "name": "에스트랜스(주)",
+      "reg_no": 1101118724000,
+      "is_financial": false
+    },
+    {
+      "name": "에이치그린파워(주)",
+      "reg_no": 1352110027542,
+      "is_financial": false
+    },
+    {
+      "name": "에이치엠지에스(유)",
+      "reg_no": 1101140338473,
+      "is_financial": false
+    },
+    {
+      "name": "위아마그나파워트레인(주)",
+      "reg_no": 1648110048707,
+      "is_financial": false
+    },
+    {
+      "name": "유니투스(주)",
+      "reg_no": 1615110328330,
+      "is_financial": false
+    },
+    {
+      "name": "이음(주)",
+      "reg_no": 1101110926302,
+      "is_financial": false
+    },
+    {
+      "name": "전북현대모터스에프씨(주)",
+      "reg_no": 2101110062829,
+      "is_financial": false
+    },
+    {
+      "name": "지티엑스씨(주)",
+      "reg_no": 1101118726246,
+      "is_financial": false
+    },
+    {
+      "name": "케이스퀘어용산피에프브이(주)",
+      "reg_no": 1345110555720,
+      "is_financial": false
+    },
+    {
+      "name": "테크젠(주)",
+      "reg_no": 1942110377110,
+      "is_financial": false
+    },
+    {
+      "name": "통영미래해상풍력(주)",
+      "reg_no": 1101110921127,
+      "is_financial": false
+    },
+    {
+      "name": "트라닉스(주)",
+      "reg_no": 1614110058947,
+      "is_financial": false
+    },
+    {
+      "name": "한국전기차충전서비스(주)",
+      "reg_no": 2201110133090,
+      "is_financial": false
+    },
+    {
+      "name": "해비치컨트리클럽(주)",
+      "reg_no": 1101110616049,
+      "is_financial": false
+    },
+    {
+      "name": "해비치호텔앤드리조트(주)",
+      "reg_no": 2241110006681,
+      "is_financial": false
+    },
+    {
+      "name": "현대건설(주)",
+      "reg_no": 1101110007909,
+      "is_financial": false
+    },
+    {
+      "name": "현대글로비스(주)",
+      "reg_no": 1101112177388,
+      "is_financial": false
+    },
+    {
+      "name": "현대도시개발(주)",
+      "reg_no": 1651110006964,
+      "is_financial": false
+    },
+    {
+      "name": "현대로템(주)",
+      "reg_no": 1942110036336,
+      "is_financial": false
+    },
+    {
+      "name": "현대머티리얼(주)",
+      "reg_no": 1101114364008,
+      "is_financial": false
+    },
+    {
+      "name": "현대모비스(주)",
+      "reg_no": 1101110215536,
+      "is_financial": false
+    },
+    {
+      "name": "현대무브(주)",
+      "reg_no": 1341110071160,
+      "is_financial": false
+    },
+    {
+      "name": "현대비앤지스틸(주)",
+      "reg_no": 1101110065395,
+      "is_financial": false
+    },
+    {
+      "name": "현대스틸산업(주)",
+      "reg_no": 1614110009437,
+      "is_financial": false
+    },
+    {
+      "name": "현대스틸파이프 (주)",
+      "reg_no": 2301110399905,
+      "is_financial": false
+    },
+    {
+      "name": "현대아이에스씨(주)",
+      "reg_no": 1201111163295,
+      "is_financial": false
+    },
+    {
+      "name": "현대아이에이치엘(주)",
+      "reg_no": 1712110007722,
+      "is_financial": false
+    },
+    {
+      "name": "현대아이엠씨(주)",
+      "reg_no": 1717110165314,
+      "is_financial": false
+    },
+    {
+      "name": "현대아이이씨(주)",
+      "reg_no": 2013110099308,
+      "is_financial": false
+    },
+    {
+      "name": "현대아이티씨(주)",
+      "reg_no": 1650110079319,
+      "is_financial": false
+    },
+    {
+      "name": "현대에코에너지(주)",
+      "reg_no": 1614110040506,
+      "is_financial": false
+    },
+    {
+      "name": "현대엔지니어링(주)",
+      "reg_no": 1101112153015,
+      "is_financial": false
+    },
+    {
+      "name": "현대엔지비(주)",
+      "reg_no": 1101112094201,
+      "is_financial": false
+    },
+    {
+      "name": "현대엔터프라이즈(주)",
+      "reg_no": 1101117590345,
+      "is_financial": false
+    },
+    {
+      "name": "현대엠시트(주)",
+      "reg_no": 1101112410366,
+      "is_financial": false
+    },
+    {
+      "name": "현대오토에버(주)",
+      "reg_no": 1101111935638,
+      "is_financial": false
+    },
+    {
+      "name": "현대위아(주)",
+      "reg_no": 1942110000125,
+      "is_financial": false
+    },
+    {
+      "name": "현대자동차(주)",
+      "reg_no": 1101110085450,
+      "is_financial": false
+    },
+    {
+      "name": "현대제철(주)",
+      "reg_no": 1201110001743,
+      "is_financial": false
+    },
+    {
+      "name": "현대종합특수강(주)",
+      "reg_no": 1101114505595,
+      "is_financial": false
+    },
+    {
+      "name": "현대첨단소재(주)",
+      "reg_no": 1101111929102,
+      "is_financial": false
+    },
+    {
+      "name": "현대트랜시스(주)",
+      "reg_no": 1614110008562,
+      "is_financial": false
+    },
+    {
+      "name": "현대파텍스(주)",
+      "reg_no": 1614110015955,
+      "is_financial": false
+    }
+  ]
+}
