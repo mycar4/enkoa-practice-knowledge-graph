@@ -1,0 +1,49 @@
+{
+  "university": "가천대학교",
+  "campus": "글로벌(성남)",
+  "department": "회화전공",
+  "track_name": "실기우수자전형",
+  "official_facts": {
+    "quota": 30,
+    "ratio": "실기 70% + 학생부교과 30% (일괄합산)",
+    "is_staged": false,
+    "application_period": {
+      "start": "2025-09-08",
+      "end": "2025-09-12"
+    },
+    "exam_date": "2025-10-11",
+    "result_date": "2025-11-08",
+    "exam_type_name": "자유표현",
+    "allowed_materials": [
+      "연필",
+      "색연필",
+      "붓",
+      "각종 펜",
+      "크레용",
+      "크레파스",
+      "콩테",
+      "파스텔",
+      "수채화물감",
+      "아크릴칼라",
+      "포스터칼라",
+      "먹물"
+    ],
+    "paper_size": "켄트지 4절 1매 (이젤)",
+    "time_limit_minutes": 240,
+    "past_topics": [
+      {
+        "year": 2025,
+        "topic_text": "자유표현 - 제시된 조건과 재료를 활용하여 자유롭게 표현하기 (2025 수시 경쟁률 7.8:1, 학생부 70%컷 5.86등급, 90%컷 6.8등급)",
+        "source": "공식 입시결과",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/가천대학교/가천대학교_2025학년도_수시입시결과.pdf"
+      }
+    ],
+    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/가천대학교/가천대학교_2026학년도_수시모집요강.pdf",
+    "source_page": 42
+  },
+  "estimates": {
+    "cutoff_grade_estimate": 5.86,
+    "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/가천대학교/가천대학교_2025학년도_수시입시결과.pdf",
+    "interview_summaries": []
+  }
+}
