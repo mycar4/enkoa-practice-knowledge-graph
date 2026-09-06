@@ -274,6 +274,42 @@ class ArtAdmissionService:
             """
             return s.run(query, university=university).data()
 
+    def get_comparison_table(self, selections: List[Dict[str, str]]) -> List[Dict[str, Any]]:
+        """selections: [{"university":..., "department":...}, ...]
+        전형 나란히 비교표용 원천 데이터. 전부 official_facts 그대로, 가공/추정 없음."""
+        tracks = self.list_all_tracks_full()
+        results = []
+        for sel in selections:
+            t = next((t for t in tracks if t["university"] == sel["university"] and t["department"] == sel["department"]), None)
+            if t:
+                results.append(t)
+        return results
+
+    def get_calendar_events(self) -> List[Dict[str, Any]]:
+        """전체 전형의 원서접수 기간·실기고사일·발표일을 타임라인 이벤트로 변환.
+        exam_date는 여러 날짜가 섞여있을 수 있어 하루짜리 이벤트로 각각 쪼갠다."""
+        tracks = self.list_all_tracks_full()
+        events = []
+        for t in tracks:
+            label = f"{t['university']} {t['department']}"
+            if t.get("application_start") and t.get("application_end"):
+                events.append({
+                    "school": label, "event_type": "원서접수", "detail": "원서접수 기간",
+                    "start": t["application_start"], "end": t["application_end"],
+                    "admission_year": t.get("admission_year"),
+                })
+            for d in t.get("exam_dates") or []:
+                events.append({
+                    "school": label, "event_type": "실기고사", "detail": "실기고사일",
+                    "start": d, "end": d, "admission_year": t.get("admission_year"),
+                })
+            for d in _extract_dates(t.get("result_date")):
+                events.append({
+                    "school": label, "event_type": "합격발표", "detail": "합격자 발표",
+                    "start": d, "end": d, "admission_year": t.get("admission_year"),
+                })
+        return events
+
     def search_by_material(self, keyword: str) -> List[Dict[str, Any]]:
         """허용재료·실기규격에 키워드가 포함된 전형을 찾는다 (완전 텍스트 매칭, 추정 없음)."""
         tracks = self.list_all_tracks_full()

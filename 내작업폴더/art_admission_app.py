@@ -15,6 +15,8 @@ import os
 sys.path.insert(0, os.path.abspath("내작업폴더"))
 
 import streamlit as st
+import pandas as pd
+import plotly.express as px
 from services.art_admission_service import ArtAdmissionService
 
 
@@ -34,7 +36,7 @@ def render_art_admission_app():
 
         page = st.radio(
             "📌 메뉴",
-            ["🏫 학교/학과 목록", "🔍 학교 상세", "⚖️ 전형 비교", "🎯 동시지원 시뮬레이터",
+            ["🏫 학교/학과 목록", "🔍 학교 상세", "⚖️ 전형 비교", "📅 일정 캘린더", "🎯 동시지원 시뮬레이터",
              "📝 기출문제", "🚦 데이터 정합성", "💬 질의응답"],
             horizontal=True,
         )
@@ -123,6 +125,37 @@ def render_art_admission_app():
                     """, unsafe_allow_html=True)
 
         elif page == "⚖️ 전형 비교":
+            st.markdown("### 📊 전형 나란히 비교표")
+            st.caption("여러 학교 전형을 표 하나로 나란히 놓고 비교합니다. 전부 official_facts 원문 값 그대로입니다.")
+            all_tracks_cmp = svc.list_all_tracks_full()
+            cmp_options = [f"{t['university']} - {t['department']}" for t in all_tracks_cmp]
+            cmp_labels = st.multiselect("비교할 전형 선택 (2개 이상 권장)", cmp_options, key="cmp_multiselect")
+            if cmp_labels:
+                selections = []
+                for label in cmp_labels:
+                    idx = cmp_options.index(label)
+                    t = all_tracks_cmp[idx]
+                    selections.append({"university": t["university"], "department": t["department"]})
+                rows = svc.get_comparison_table(selections)
+                if rows:
+                    # 항목별로 행을 쌓아서 만듦 (학교가 열, 항목이 행)
+                    cols = {f"{r['university']}\n{r['department']}": r for r in rows}
+                    field_labels = [
+                        ("admission_year", "학년도"), ("quota", "모집인원"), ("ratio", "반영비율"),
+                        ("exam_type_name", "실기종목"), ("paper_size", "규격"), ("time_limit_minutes", "시험시간(분)"),
+                        ("application_start", "원서접수 시작"), ("application_end", "원서접수 마감"),
+                        ("exam_date_raw", "실기고사일"), ("result_date", "발표일"), ("source_tier", "출처신뢰도"),
+                    ]
+                    table_data = {}
+                    for col_name, r in cols.items():
+                        table_data[col_name] = [r.get(key) for key, _ in field_labels]
+                    df = pd.DataFrame(table_data, index=[label for _, label in field_labels])
+                    st.dataframe(df, use_container_width=True)
+                    for r in rows:
+                        if r.get("source_url"):
+                            st.link_button(f"📑 {r['university']} 출처", r["source_url"], key=f"cmp_src_{r['university']}_{r['department']}")
+
+            st.markdown("---")
             st.markdown("### 🚨 실기고사일 충돌 자동 감지")
             st.caption("적재된 전형들의 실기고사일(공식 사실)만 비교합니다. 날짜는 원문 요강에서 정규식으로 그대로 추출한 값이며 추정하지 않습니다.")
             conflicts = svc.detect_schedule_conflicts()
@@ -156,6 +189,28 @@ def render_art_admission_app():
                             공통 실기유형 키워드: {', '.join(m['shared_keywords']) or '-'} | 공통 허용재료: {', '.join(m['shared_materials']) or '-'}
                         </div>
                         """, unsafe_allow_html=True)
+
+        elif page == "📅 일정 캘린더":
+            st.markdown("### 📅 전체 학교 일정 타임라인 (한눈에 보기)")
+            st.caption("원서접수 기간(막대)·실기고사일·합격발표일을 한 화면에 표시합니다. 오늘 날짜에 빨간 세로선이 표시됩니다.")
+            events = svc.get_calendar_events()
+            if not events:
+                st.info("적재된 일정이 없습니다.")
+            else:
+                df = pd.DataFrame(events)
+                df["start"] = pd.to_datetime(df["start"])
+                df["end"] = pd.to_datetime(df["end"]) + pd.Timedelta(days=1)  # 점 이벤트도 막대로 보이게 하루 폭 부여
+                color_map = {"원서접수": "#2563eb", "실기고사": "#dc2626", "합격발표": "#16a34a"}
+                fig = px.timeline(
+                    df, x_start="start", x_end="end", y="school", color="event_type",
+                    color_discrete_map=color_map, hover_data=["detail", "admission_year"],
+                )
+                fig.update_yaxes(autorange="reversed")
+                today = pd.Timestamp.today().normalize()
+                fig.add_vline(x=today, line_width=2, line_dash="dash", line_color="red")
+                fig.update_layout(height=120 + 60 * df["school"].nunique(), legend_title_text="일정 종류")
+                st.plotly_chart(fig, use_container_width=True)
+                st.caption(f"기준일(오늘): {today.date()}")
 
         elif page == "🎯 동시지원 시뮬레이터":
             st.markdown("### 🎯 다중 학교 동시지원 시뮬레이터")

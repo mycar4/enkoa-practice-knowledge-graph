@@ -46,4 +46,5 @@ dependencies = [
     "email-validator>=2.3.0",
     "bcrypt>=5.0.0",
     "playwright>=1.62.0",
+    "plotly>=7.0.0",
 ]
