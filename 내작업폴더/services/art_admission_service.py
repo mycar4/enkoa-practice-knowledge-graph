@@ -190,20 +190,27 @@ class ArtAdmissionService:
         universities = sorted({t["university"] for t in tracks})
         mentioned = _resolve_university_mentions(q, universities)
 
+        # "일정"/"비교"/"스케줄" 등은 특정 학교를 콕 집지 않은 일반 질의일 때만 일정 의도로 본다
+        # (학교명이 있으면 SCHOOL_FACT가 우선이어야 하므로 mentioned 여부로 분기)
         is_conflict_intent = any(k in q for k in ["충돌", "겹치", "동시", "겹침"])
+        is_schedule_list_intent = (not mentioned) and any(k in q for k in ["일정", "스케줄", "날짜"])
         is_compat_intent = any(k in q for k in ["호환", "비슷", "추천"])
 
-        # 의도 1: 일정 충돌/겹침 질의 (학교명 언급 여부와 무관하게 최우선 처리)
-        if is_conflict_intent:
+        # 의도 1: 일정 충돌/전체비교 질의 (학교명 언급 여부와 무관하게 최우선 처리)
+        if is_conflict_intent or is_schedule_list_intent:
             conflicts = self.detect_schedule_conflicts()
-            if not conflicts:
-                return {"intent": "SCHEDULE_CONFLICT", "answer": "현재 적재된 전형 중 실기고사일이 겹치는 조합이 없습니다.", "source_url": None}
-            lines = [
-                f"- {c['date']}: {c['school_a']['university']} {c['school_a']['department']} ↔ "
-                f"{c['school_b']['university']} {c['school_b']['department']}"
-                for c in conflicts
-            ]
-            return {"intent": "SCHEDULE_CONFLICT", "answer": "실기고사일이 겹치는 전형:\n" + "\n".join(lines), "source_url": None}
+            lines = [f"- {t['university']} {t['department']}: {', '.join(t['exam_dates']) or '일정 정보 없음'}" for t in tracks]
+            answer = "적재된 전형별 실기고사일:\n" + "\n".join(lines)
+            if conflicts:
+                clines = [
+                    f"- {c['date']}: {c['school_a']['university']} {c['school_a']['department']} ↔ "
+                    f"{c['school_b']['university']} {c['school_b']['department']}"
+                    for c in conflicts
+                ]
+                answer += "\n\n⚠️ 겹치는 날짜:\n" + "\n".join(clines)
+            else:
+                answer += "\n\n현재 겹치는 날짜는 없습니다."
+            return {"intent": "SCHEDULE_CONFLICT", "answer": answer, "source_url": None}
 
         # 의도 2: 호환/추천 질의 (학교명이 언급되어야 기준을 잡을 수 있음)
         if is_compat_intent:
