@@ -82,6 +82,19 @@ def generate_graphrag_response(prompt: str, api_key_input: str = "") -> dict:
         }
     return analyze_financial_graphrag(prompt, drv, api_key_input)
 
+# ── 서비스 선택 스위치 (메인 진입점 분리) ──
+# DART-Trace(지배구조)와 미술 실기 입시 도우미는 완전히 별개 서비스다.
+# 아래에서 "미술 실기 입시"를 고르면 이후 DART-Trace 코드는 전혀 실행되지 않고
+# (st.stop()으로 즉시 종료) art_admission_app.py의 화면만 렌더링된다.
+with st.sidebar:
+    service_mode = st.radio("🗂️ 서비스 선택", ["🏛️ DART-Trace (지배구조)", "🎨 미술 실기 입시 도우미"], key="top_service_mode")
+    st.markdown("---")
+
+if service_mode == "🎨 미술 실기 입시 도우미":
+    from art_admission_app import render_art_admission_app
+    render_art_admission_app()
+    st.stop()
+
 # 사이드바
 with st.sidebar:
     st.markdown("""
@@ -91,7 +104,7 @@ with st.sidebar:
         <p style='font-size: 13px; color: #90a4ae !important; margin: 0;'>AI 지식그래프 & GraphRAG 지배구조 분석</p>
     </div>
     """, unsafe_allow_html=True)
-    
+
     # 🎨 다크 / 화이트 모드 선택기 (기본값: ☀️ 화이트 모드)
     theme_mode = st.radio("🎨 화면 테마 선택", ["☀️ 화이트 모드 (Light)", "🌙 다크 모드 (Dark)"], index=0, horizontal=True)
     st.markdown("---")
