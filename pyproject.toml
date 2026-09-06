@@ -25,6 +25,7 @@ dependencies = [
     # day35: 벡터 검색·GraphRAG(리트리버). 임베딩과 답변 모두 OpenAI 를 쓴다
     "neo4j-graphrag>=1.18",
     "langchain>=1.0",
+    "langchain-core>=0.3",
     "langchain-openai>=0.3",
     # day36~41: 정보추출·트리플·관계추출·엔티티 정규화·KG 파이프라인
     #   추출 결과를 스키마로 받는다.
@@ -32,6 +33,13 @@ dependencies = [
     #   day40 SimpleKGPipeline 은 google-genai 를 직접 쓴다.
     "google-genai>=1.0",
     "langchain-google-genai>=4.0",
+    # day36 4절: 학습된 NER 모델(dslim/bert-base-NER)을 돌리고, 허브에서 모델 설정을 읽는다.
+    #   transformers 가 torch 를 함께 끌어온다. 모델 가중치는 첫 실행 때 약 430MB 를 내려받는다.
+    "transformers>=4.57",
+    "huggingface-hub>=0.30",
+    #   transformers 는 torch 를 필수 의존성으로 걸지 않는다(실측: 5.x 의 requires 에 없다).
+    #   빼먹으면 uv sync 는 통과하고 pipeline() 호출에서 "None of PyTorch ... found" 로 죽는다.
+    "torch>=2.0",
     # day42: 도메인 GraphRAG(Text2Cypher 체인)
     "langchain-neo4j>=0.10",
 ]
