@@ -1,0 +1,39 @@
+{
+  "university": "한국예술종합학교",
+  "campus": "서울(석관동)",
+  "department": "무대미술과",
+  "track_name": "일반전형",
+  "official_facts": {
+    "quota": 18,
+    "ratio": "1차: 실기 80%+고교내신 20% -> 2차: 심층실기 60%+구술 40% (2단계 전형)",
+    "is_staged": true,
+    "application_period": {"start": "2026-08-10", "end": "2026-08-13"},
+    "exam_date": "1차 2026-09-15~2026-09-22, 2차 2026-10-21~2026-10-29",
+    "result_date": "2026-11-06",
+    "exam_type_name": "1차: 사실적 소묘 / 2차: 심층실기+구술",
+    "allowed_materials": ["소묘용 연필", "지우개(개인지참)"],
+    "paper_size": "켄트지(학교 제공)",
+    "time_limit_minutes": 180,
+    "past_topics": [
+      {
+        "year": 2026,
+        "topic_text": "1차 전공실기: 비스와바 쉼보르스카의 시 '빈 아파트의 고양이'에 나타난 상황을 사실적 기법으로 소묘. 조건: 고양이 얼굴과 몸이 다 보이게, 도화지의 1/3 이상을 고양이가 차지하도록, 소묘용 연필만 사용(볼펜 불가)",
+        "source": "공식",
+        "source_url": "https://www.karts.ac.kr/usr/gfa/guideline.do"
+      },
+      {
+        "year": 2026,
+        "topic_text": "2차 심층실기: 내셔널지오그래픽 제공 사진 속 인물들이 무엇을 보고 있는지 상상하여 사실적으로 그리기. 사람 반드시 등장, 반드시 채색",
+        "source": "공식",
+        "source_url": "https://www.karts.ac.kr/usr/gfa/guideline.do"
+      }
+    ],
+    "source_url": "https://www.karts.ac.kr/usr/gfa/guideline.do",
+    "source_page": 21
+  },
+  "estimates": {
+    "cutoff_grade_estimate": null,
+    "cutoff_source_url": "",
+    "interview_summaries": []
+  }
+}
