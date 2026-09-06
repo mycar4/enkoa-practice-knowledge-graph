@@ -47,6 +47,11 @@ def validate_record(rec: dict, filename: str) -> list:
     of = rec.get("official_facts", {})
     if "source_url" not in of or not of.get("source_url"):
         errors.append(f"{filename}: official_facts.source_url 누락 (출처 없는 데이터는 적재 거부)")
+    if not of.get("admission_year"):
+        errors.append(
+            f"{filename}: official_facts.admission_year 누락 - 몇 학년도 모집요강인지 명시 필수 "
+            f"(서로 다른 학년도 문서를 섞어 비교하는 사고를 막기 위한 필수값)"
+        )
     return errors
 
 
@@ -68,7 +73,8 @@ def load_one_record_tx(tx, rec: dict):
             t.ratio = $ratio,
             t.is_staged = $is_staged,
             t.source_url = $source_url,
-            t.source_page = $source_page
+            t.source_page = $source_page,
+            t.admission_year = $admission_year
 
         MERGE (e:Admission_ExamType {name: $exam_type_name, track_name: $track_name, university: $university})
         MERGE (t)-[:REQUIRES_EXAM]->(e)
@@ -85,6 +91,7 @@ def load_one_record_tx(tx, rec: dict):
     """, university=university, campus=campus, department=department, track_name=track_name,
          quota=of.get("quota"), ratio=of.get("ratio"), is_staged=of.get("is_staged"),
          source_url=of.get("source_url"), source_page=of.get("source_page"),
+         admission_year=of.get("admission_year"),
          exam_type_name=of.get("exam_type_name", "미지정"),
          allowed_materials=of.get("allowed_materials", []),
          paper_size=of.get("paper_size"), time_limit_minutes=of.get("time_limit_minutes"),

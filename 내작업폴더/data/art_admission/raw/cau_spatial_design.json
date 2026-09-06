@@ -4,15 +4,16 @@
   "department": "공간연출전공",
   "track_name": "실기형",
   "official_facts": {
+    "admission_year": 2027,
     "quota": 7,
     "ratio": "1단계(5배수): 학생부 20%(교과 15%+출결 5%)+실기 80% -> 2단계: 1단계 성적 70%+2단계 실기(질의응답) 30% (단계별 전형)",
     "is_staged": true,
     "application_period": {
-      "start": "2025-09-09",
-      "end": "2025-09-12"
+      "start": "2026-09-08",
+      "end": "2026-09-11"
     },
-    "exam_date": "1단계: 2025-09-27(토), 2단계: 2025-11-01(토)",
-    "result_date": "2025-11-14",
+    "exam_date": "1단계: 2026-10-03(토), 2단계: 2026-10-31(토)",
+    "result_date": "2026-11-17",
     "exam_type_name": "1단계: 소묘(공간구성과 묘사) / 2단계: 질의응답",
     "allowed_materials": [
       "소묘용 연필",
@@ -23,13 +24,13 @@
     "past_topics": [
       {
         "year": 2025,
-        "topic_text": "소묘(공간구성과 묘사) - 주어진 상황 및 주제를 보고 분석한 후 구체적으로 묘사하기 (2025 수시 경쟁률 46.0:1, 실기평균 89.3점, 교과평균 3.7등급)",
-        "source": "공식 입시결과",
+        "topic_text": "[2025학년도(전년도) 참고자료] 소묘(공간구성과 묘사) - 주어진 상황 및 주제를 보고 분석한 후 구체적으로 묘사하기 (2025학년도 수시 경쟁률 46.0:1, 실기평균 89.3점, 교과평균 3.7등급 - 2027학년도가 아닌 지난 회차 실측 수치)",
+        "source": "공식 입시결과(전년도)",
         "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/중앙대학교/중앙대학교_2025학년도_수시입시결과.pdf"
       }
     ],
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/중앙대학교/중앙대학교_2026학년도_수시모집요강.pdf",
-    "source_page": 55
+    "source_url": "https://admission.cau.ac.kr/file/pdfDown.pdf?sfn=20260805051607003_0c37226bf7e64ad79adafec6f6fdc72c.pdf&ofn=%EC%A4%91%EC%95%99%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_%EC%97%85%EB%A1%9C%EB%93%9C%EC%9A%A9%28%EC%B5%9C%EC%A2%85%29.pdf",
+    "source_page": 72
   },
   "estimates": {
     "cutoff_grade_estimate": 3.7,

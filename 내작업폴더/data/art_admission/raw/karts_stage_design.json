@@ -4,6 +4,7 @@
   "department": "무대미술과",
   "track_name": "일반전형",
   "official_facts": {
+    "admission_year": 2027,
     "quota": 18,
     "ratio": "1차: 실기 80%+고교내신 20% -> 2차: 심층실기 60%+구술 40% (2단계 전형)",
     "is_staged": true,

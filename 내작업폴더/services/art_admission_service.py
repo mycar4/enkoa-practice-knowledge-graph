@@ -79,6 +79,7 @@ class ArtAdmissionService:
                 WITH d, t, e, sch, collect(DISTINCT {year: p.year, topic_text: p.topic_text, source: p.source, source_url: p.source_url}) AS past_topics
                 RETURN d.name AS department, t.name AS track_name, t.quota AS quota, t.ratio AS ratio,
                        t.is_staged AS is_staged, t.source_url AS source_url, t.source_page AS source_page,
+                       t.admission_year AS admission_year,
                        e.name AS exam_type_name, e.allowed_materials AS allowed_materials,
                        e.paper_size AS paper_size, e.time_limit_minutes AS time_limit_minutes,
                        sch.application_start AS application_start, sch.application_end AS application_end,
@@ -123,6 +124,7 @@ class ArtAdmissionService:
                 OPTIONAL MATCH (t)-[:HAS_SCHEDULE]->(sch:Admission_Schedule)
                 RETURN u.name AS university, d.name AS department, t.name AS track_name,
                        t.quota AS quota, t.ratio AS ratio, t.source_url AS source_url,
+                       t.admission_year AS admission_year,
                        e.name AS exam_type_name, e.allowed_materials AS allowed_materials,
                        e.paper_size AS paper_size, e.time_limit_minutes AS time_limit_minutes,
                        sch.application_start AS application_start, sch.application_end AS application_end,
@@ -134,7 +136,9 @@ class ArtAdmissionService:
 
     def detect_schedule_conflicts(self) -> List[Dict[str, Any]]:
         """실기고사일이 겹치는 전형 쌍을 전부 찾는다. 날짜는 exam_date 원문에서
-        정규식으로 뽑은 것만 쓰고, 추정으로 보정하지 않는다."""
+        정규식으로 뽑은 것만 쓰고, 추정으로 보정하지 않는다.
+        admission_year가 다른 전형끼리는 애초에 비교 대상이 아니다(서로 다른
+        입시 연도를 겹침으로 오판하는 사고를 구조적으로 차단)."""
         tracks = self.list_all_tracks_full()
         conflicts = []
         for i in range(len(tracks)):
@@ -142,10 +146,13 @@ class ArtAdmissionService:
                 a, b = tracks[i], tracks[j]
                 if a["university"] == b["university"]:
                     continue
+                if a.get("admission_year") != b.get("admission_year"):
+                    continue
                 shared = sorted(set(a["exam_dates"]) & set(b["exam_dates"]))
                 if shared:
                     conflicts.append({
                         "date": shared,
+                        "admission_year": a.get("admission_year"),
                         "school_a": {"university": a["university"], "department": a["department"],
                                      "track_name": a["track_name"], "source_url": a["source_url"]},
                         "school_b": {"university": b["university"], "department": b["department"],
@@ -176,6 +183,7 @@ class ArtAdmissionService:
             if shared_kw or shared_materials:
                 results.append({
                     "university": t["university"], "department": t["department"], "track_name": t["track_name"],
+                    "admission_year": t.get("admission_year"),
                     "exam_type_name": t["exam_type_name"], "shared_keywords": sorted(shared_kw),
                     "shared_materials": sorted(shared_materials), "source_url": t["source_url"],
                 })
@@ -199,8 +207,8 @@ class ArtAdmissionService:
         # 의도 1: 일정 충돌/전체비교 질의 (학교명 언급 여부와 무관하게 최우선 처리)
         if is_conflict_intent or is_schedule_list_intent:
             conflicts = self.detect_schedule_conflicts()
-            lines = [f"- {t['university']} {t['department']}: {', '.join(t['exam_dates']) or '일정 정보 없음'}" for t in tracks]
-            answer = "적재된 전형별 실기고사일:\n" + "\n".join(lines)
+            lines = [f"- [{t.get('admission_year') or '학년도 미상'}] {t['university']} {t['department']}: {', '.join(t['exam_dates']) or '일정 정보 없음'}" for t in tracks]
+            answer = "적재된 전형별 실기고사일 (학년도 다르면 서로 비교 대상 아님):\n" + "\n".join(lines)
             if conflicts:
                 clines = [
                     f"- {c['date']}: {c['school_a']['university']} {c['school_a']['department']} ↔ "
@@ -230,7 +238,7 @@ class ArtAdmissionService:
             return {
                 "intent": "SCHOOL_FACT",
                 "answer": (
-                    f"[{t['university']} {t['department']} - {t['track_name']}] (공식 사실)\n"
+                    f"[{t['university']} {t['department']} - {t['track_name']}] ({t.get('admission_year') or '학년도 미상'}학년도 공식 사실)\n"
                     f"모집인원: {t.get('quota') or '정보없음'}명 | 반영비율: {t.get('ratio') or '정보없음'}\n"
                     f"실기종목: {t.get('exam_type_name') or '정보없음'} | 규격: {t.get('paper_size') or '정보없음'} | "
                     f"시험시간: {t.get('time_limit_minutes') or '정보없음'}분\n"

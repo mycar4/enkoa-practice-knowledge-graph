@@ -60,7 +60,8 @@ def render_art_admission_app():
                     with st.container():
                         st.markdown(f"""
                         <div style='background: rgba(22,163,74,0.08); border: 1px solid rgba(22,163,74,0.3); border-radius: 8px; padding: 14px; margin-bottom: 10px;'>
-                            <b>{t['department']} — {t['track_name']}</b><br/>
+                            <b>{t['department']} — {t['track_name']}</b>
+                            <span style='background:#166534;color:#fff;border-radius:4px;padding:2px 6px;font-size:12px;margin-left:6px;'>{t.get('admission_year') or '학년도 미상'}학년도</span><br/>
                             모집인원: {t.get('quota') or '-'}명 | 반영비율: {t.get('ratio') or '-'}<br/>
                             실기종목: {t.get('exam_type_name') or '-'} | 허용재료: {', '.join(t.get('allowed_materials') or []) or '-'}
                             | 규격: {t.get('paper_size') or '-'} | 시험시간: {t.get('time_limit_minutes') or '-'}분<br/>
@@ -92,7 +93,7 @@ def render_art_admission_app():
             else:
                 for c in conflicts:
                     st.warning(
-                        f"**{', '.join(c['date'])}** 에 겹침: "
+                        f"**{c.get('admission_year') or '학년도 미상'}학년도 {', '.join(c['date'])}** 에 겹침: "
                         f"{c['school_a']['university']} {c['school_a']['department']} ↔ "
                         f"{c['school_b']['university']} {c['school_b']['department']}"
                     )
@@ -101,7 +102,7 @@ def render_art_admission_app():
             st.markdown("### 🔗 실기유형 호환 매칭")
             st.caption("실기종목명·허용재료가 겹치는 다른 학교 전형을 찾습니다 (키워드/재료 완전일치 기준, 유사도 추정 아님).")
             all_tracks = svc.list_all_tracks_full()
-            options = [f"{t['university']} - {t['department']}" for t in all_tracks]
+            options = [f"{t['university']} - {t['department']} ({t.get('admission_year') or '학년도 미상'}학년도)" for t in all_tracks]
             if options:
                 selected_label = st.selectbox("기준 전형 선택", options)
                 idx = options.index(selected_label)
@@ -113,7 +114,7 @@ def render_art_admission_app():
                     for m in matches:
                         st.markdown(f"""
                         <div style='background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.3); border-radius: 8px; padding: 12px; margin-bottom: 8px;'>
-                            <b>{m['university']} {m['department']}</b> ({m['track_name']})<br/>
+                            <b>{m['university']} {m['department']}</b> ({m['track_name']}, {m.get('admission_year') or '학년도 미상'}학년도)<br/>
                             공통 실기유형 키워드: {', '.join(m['shared_keywords']) or '-'} | 공통 허용재료: {', '.join(m['shared_materials']) or '-'}
                         </div>
                         """, unsafe_allow_html=True)
