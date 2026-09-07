@@ -215,17 +215,26 @@ _QA_SYSTEM_PROMPT = """당신은 "미술 실기 입시 도우미"의 답변 생�
 5. 답변 끝에 반드시 "출처:" 항목으로, 답변에 사용한 각 트랙의 source_url 또는
    원문 발췌의 (대학명, 페이지)를 context에 있는 값 그대로(가공하지 말고) 나열하십시오.
    context에 없는 URL/페이지는 쓰지 마십시오.
-6. 간결하고 친절한 한국어로, 수험생에게 답하듯 작성하십시오.
+6. "context_graph_related"는 질문에 나온 학교/학과와 같은 커뮤니티(동시출현 그래프
+   상 자주 함께 언급되는 군집)로 묶인 다른 학교/학과 이름 목록입니다. 이것은
+   사실이 아니라 구조적 힌트일 뿐입니다 - 여기 나온 학교에 대한 날짜/점수/조건 등
+   구체적 사실은 그 학교가 context_tracks나 context_raw_excerpts에도 실제로 나올
+   때만 말하십시오. 목록에만 있고 다른 context에 없다면 "○○대학교도 같은 계열이라
+   비교해볼 만합니다" 정도의 제안으로만 언급하고, 세부 사실을 지어내지 마십시오.
+7. 간결하고 친절한 한국어로, 수험생에게 답하듯 작성하십시오.
 """
 
 
 def answer_with_llm(context_tracks: List[Dict[str, Any]], context_estimates: List[Dict[str, Any]],
                      query: str, model_id: str = "gpt-4o-mini",
-                     context_raw_excerpts: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
-    """조회된 그래프 사실(context_tracks/estimates)과, 있다면 PDF 원문 벡터검색 결과
-    (context_raw_excerpts)만 근거로 LLM이 자연어 답변을 생성한다. 셋 다 비어 있으면
-    LLM 호출 없이 바로 '정보 없음'을 반환한다 (환각 방지)."""
+                     context_raw_excerpts: Optional[List[Dict[str, Any]]] = None,
+                     context_graph_related: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
+    """조회된 그래프 사실(context_tracks/estimates), PDF 원문 벡터검색 결과
+    (context_raw_excerpts), 그리고 개체 동시출현 그래프에서 뽑은 관련 학교 힌트
+    (context_graph_related, GraphRAG 연동)를 근거로 LLM이 자연어 답변을 생성한다.
+    셋 다 비어 있으면 LLM 호출 없이 바로 '정보 없음'을 반환한다 (환각 방지)."""
     context_raw_excerpts = context_raw_excerpts or []
+    context_graph_related = context_graph_related or []
     if not context_tracks and not context_estimates and not context_raw_excerpts:
         return {
             "answer": "적재된 데이터 중에 관련된 학교/학과를 찾지 못했습니다. 학교명을 정확히 포함해서 다시 질문해주세요.",
@@ -238,6 +247,7 @@ def answer_with_llm(context_tracks: List[Dict[str, Any]], context_estimates: Lis
         "context_tracks": context_tracks,
         "context_estimates": context_estimates,
         "context_raw_excerpts": context_raw_excerpts,
+        "context_graph_related": context_graph_related,
     }
     user_prompt = json.dumps(user_payload, ensure_ascii=False, indent=2)
 
@@ -270,17 +280,30 @@ _REVIEW_SYSTEM_PROMPT = """당신은 대학 미술 실기 입시 수험생의 �
 3. 글쓰기 관점(논리 구성, 구체성, 진정성, 분량, 반복/상투적 표현 여부)에서만
    강점과 개선점을 제시하고, 개선점마다 구체적인 수정 방향을 제안하십시오.
 4. 한국어로, 존중하는 어조로 작성하십시오.
+5. "감지된 계열 정보"가 주어지면, 이 지원자가 어떤 실기/전형 계열(예: 회화 계열,
+   디자인 계열, 서류/면접 중심 전형)에 해당하는지 참고해서 그 계열에 맞는 어조와
+   강조점으로 피드백하십시오. 단, 이 정보만으로 특정 대학/학과에 대한 사실을
+   단정하지 말고 어디까지나 글쓰기 방향을 잡는 참고용으로만 쓰십시오.
 """
 
 
-def review_document(text: str, model_id: str = "gpt-4o-mini", doc_type: str = "자기소개서/활동보고서") -> Dict[str, Any]:
+def review_document(text: str, model_id: str = "gpt-4o-mini", doc_type: str = "자기소개서/활동보고서",
+                     graph_hint: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
     """서류/자소서 텍스트를 AI가 글쓰기 관점에서 첨삭한다. 사실 판정이 아니라
-    의견이므로 화면에서도 반드시 '공식 평가 아님' 라벨을 별도로 붙여야 한다."""
+    의견이므로 화면에서도 반드시 '공식 평가 아님' 라벨을 별도로 붙여야 한다.
+    graph_hint(GraphRAG 연동): 개체 동시출현 그래프에서 이름매칭으로 감지된
+    학교/학과와 그 커뮤니티 라벨 - 어떤 계열 글인지 감을 잡는 참고 정보로만 쓴다."""
     text = (text or "").strip()
     if not text:
         return {"feedback": "첨삭할 텍스트가 비어 있습니다.", "model": model_id, "error": True}
 
-    user_prompt = f"문서 종류: {doc_type}\n\n--- 첨삭할 텍스트 ---\n{text[:12000]}"
+    hint_line = ""
+    if graph_hint:
+        labels = sorted({h["community_label"] for h in graph_hint if h.get("community_label")})
+        names = [h["name"] for h in graph_hint]
+        hint_line = f"\n\n감지된 계열 정보(참고용, 사실 단정 금지): 언급된 개체 {names} / 계열 {labels}"
+
+    user_prompt = f"문서 종류: {doc_type}\n\n--- 첨삭할 텍스트 ---\n{text[:12000]}{hint_line}"
 
     try:
         feedback = _call_llm(_REVIEW_SYSTEM_PROMPT, user_prompt, model_id, temperature=0.3)

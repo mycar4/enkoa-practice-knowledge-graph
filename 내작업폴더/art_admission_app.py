@@ -476,19 +476,28 @@ def render_art_admission_app():
                 elif not model_usable:
                     st.info("비밀번호를 입력하면 이 모델로 답변을 생성합니다.")
                 else:
-                    with st.spinner("AI가 그래프 사실 + 원문 검색(하이브리드+재순위화) 결과를 보고 답변을 작성 중입니다..."):
+                    with st.spinner("AI가 그래프 사실 + 원문 검색(하이브리드+재순위화) + 개체 그래프 연관 정보를 보고 답변을 작성 중입니다..."):
                         context_tracks, context_estimates = svc.build_llm_context(query)
                         try:
                             context_raw = svc.hybrid_search(query, top_k=5)
                         except Exception:
                             context_raw = []  # 벡터/풀텍스트 인덱스가 아직 없거나 임베딩 실패 시 구조화 사실만으로 답변
+                        exclude_names = [t["university"] for t in context_tracks] + [t["department"] for t in context_tracks]
+                        try:
+                            context_graph_related = svc.get_graph_related_context(query, exclude_names=exclude_names, top_n=5)
+                        except Exception:
+                            context_graph_related = []
                         llm_result = answer_with_llm(
                             context_tracks, context_estimates, query,
                             model_id=selected_model["id"], context_raw_excerpts=context_raw,
+                            context_graph_related=context_graph_related,
                         )
                     st.markdown(llm_result["answer"].replace("\n", "  \n"))
                     if llm_result.get("grounded_on"):
                         st.caption(f"근거로 사용: {', '.join(llm_result['grounded_on'])}")
+                    if context_graph_related:
+                        related_str = ", ".join(f"{r['name']}({r['community_label']})" if r["community_label"] else r["name"] for r in context_graph_related)
+                        st.caption(f"🕸️ 그래프 연관 정보(참고용, 사실 근거 아님): {related_str}")
                     if context_raw:
                         with st.expander(f"🔎 원문 검색 결과 {len(context_raw)}건 (하이브리드 검색 + AI 재순위화, 참고용)"):
                             for r in context_raw:
@@ -540,8 +549,12 @@ def render_art_admission_app():
                 elif not model2_usable:
                     st.warning("이 모델은 비밀번호를 맞춰야 사용할 수 있습니다.")
                 else:
-                    with st.spinner("AI가 첨삭 중입니다..."):
-                        review = review_document(doc_text, model_id=selected_model2["id"], doc_type=doc_type)
+                    with st.spinner("AI가 개체 그래프로 계열을 파악하고 첨삭 중입니다..."):
+                        try:
+                            graph_hint = svc.detect_entities_in_text(doc_text)
+                        except Exception:
+                            graph_hint = []
+                        review = review_document(doc_text, model_id=selected_model2["id"], doc_type=doc_type, graph_hint=graph_hint)
                     if review.get("error"):
                         st.error(review["feedback"])
                     else:
@@ -550,6 +563,10 @@ def render_art_admission_app():
                         st.session_state.review_doc_type = doc_type
                         st.session_state.review_model_id = selected_model2["id"]
                         st.session_state.review_history = [{"role": "assistant", "content": review["feedback"]}]
+                        if graph_hint:
+                            labels = sorted({h["community_label"] for h in graph_hint if h.get("community_label")})
+                            st.caption(f"🕸️ 감지된 계열(참고용): {', '.join(labels) if labels else '(라벨 없음)'} "
+                                       f"— 언급 개체: {', '.join(h['name'] for h in graph_hint)}")
 
             # 첫 첨삭 이후에는 이 대화 스레드가 계속 화면에 남아 이어서 물어볼 수 있다.
             if st.session_state.get("review_history"):

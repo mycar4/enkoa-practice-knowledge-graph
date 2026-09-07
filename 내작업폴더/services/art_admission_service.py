@@ -403,6 +403,60 @@ class ArtAdmissionService:
         edges = [{"from": r["a"], "to": r["b"], "weight": r["weight"]} for r in edge_rows]
         return {"nodes": nodes, "edges": edges}
 
+    def _all_entities(self) -> List[Dict[str, Any]]:
+        """Admission_Entity 전체를 이름/타입/커뮤니티/PageRank와 함께 가져온다.
+        403건 규모라 매번 전체 조회해도 비용이 작다 - 캐싱은 하지 않는다
+        (개체 링커를 재실행하면 바로 최신값을 봐야 하므로)."""
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            return s.run("""
+                MATCH (e:Admission_Entity)
+                RETURN e.name AS name, e.type AS type, e.pagerank AS pagerank,
+                       e.community AS community, e.community_label AS community_label
+            """).data()
+
+    def get_graph_related_context(self, query: str, exclude_names: Optional[List[str]] = None,
+                                   top_n: int = 5) -> List[Dict[str, Any]]:
+        """GraphRAG 연동: 질문 문자열에 언급된 개체를 찾아 그 개체가 속한 커뮤니티
+        (동시출현 기반 자동 군집)에서, PageRank가 높은 다른 학교/학과를 "관련 사례"로
+        뽑아온다. 여기 나온 학교에 대한 세부 사실(날짜/점수 등)은 이 함수가 보장하지
+        않는다 - 어디까지나 "같이 자주 언급되는 계열"이라는 구조적 힌트일 뿐이므로,
+        LLM 프롬프트에서도 반드시 참고용으로만 쓰고 사실 근거로 쓰지 말라고 못박는다."""
+        exclude = set(exclude_names or [])
+        entities = self._all_entities()
+        matched = [e for e in entities if e["name"] and e["name"] in query]
+        if not matched:
+            return []
+        matched_names = {e["name"] for e in matched}
+        communities = {e["community"] for e in matched if e.get("community") not in (None, -1)}
+        if not communities:
+            return []
+
+        related = [
+            e for e in entities
+            if e.get("community") in communities
+            and e["name"] not in matched_names
+            and e["name"] not in exclude
+            and e["type"] in ("university", "department")
+        ]
+        related.sort(key=lambda e: -(e.get("pagerank") or 0))
+        return [
+            {"name": e["name"], "type": e["type"], "community_label": e.get("community_label") or ""}
+            for e in related[:top_n]
+        ]
+
+    def detect_entities_in_text(self, text: str, top_n: int = 8) -> List[Dict[str, Any]]:
+        """GraphRAG 연동(서류 첨삭용): 사용자가 붙여넣은 자소서/활동보고서 문장에서
+        어떤 학교/학과/실기종목 개체가 언급됐는지 이름매칭으로 찾고, 그 개체가 속한
+        커뮤니티 라벨(예: '회화 계열 실기')을 함께 반환한다. 첨삭 자체의 사실판정에는
+        쓰지 않고, 어떤 계열 글인지 감을 잡아 첨삭 톤을 맞추는 참고 정보로만 쓴다."""
+        entities = self._all_entities()
+        matched = [e for e in entities if e["name"] and len(e["name"]) >= 2 and e["name"] in text]
+        matched.sort(key=lambda e: -(e.get("pagerank") or 0))
+        return [
+            {"name": e["name"], "type": e["type"], "community_label": e.get("community_label") or ""}
+            for e in matched[:top_n]
+        ]
+
     def get_entity_mismatch_candidates(self, top_n: int = 10) -> List[Dict[str, Any]]:
         """사전(구조화 데이터)에 없다가 LLM 구조화 추출이 새로 찾아낸 개체를 노출한다
         (day36 교안_02가 목표했던 지점: 규칙/사전 기반으로는 놓치는 걸 LLM이 잡아냄).
