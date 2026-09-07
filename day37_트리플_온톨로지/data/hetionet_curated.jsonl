@@ -1,0 +1,18 @@
+{"subject_id": "Disease::DOID:10652", "subject": "Alzheimer's disease", "subject_type": "Disease", "relation": "ASSOCIATES", "object_id": "Gene::1565", "object": "CYP2D6", "object_type": "Gene"}
+{"subject_id": "Disease::DOID:14330", "subject": "Parkinson's disease", "subject_type": "Disease", "relation": "ASSOCIATES", "object_id": "Gene::1565", "object": "CYP2D6", "object_type": "Gene"}
+{"subject_id": "Disease::DOID:3393", "subject": "coronary artery disease", "subject_type": "Disease", "relation": "ASSOCIATES", "object_id": "Gene::1557", "object": "CYP2C19", "object_type": "Gene"}
+{"subject_id": "Disease::DOID:3393", "subject": "coronary artery disease", "subject_type": "Disease", "relation": "ASSOCIATES", "object_id": "Gene::79001", "object": "VKORC1", "object_type": "Gene"}
+{"subject_id": "Compound::DB00193", "subject": "Tramadol", "subject_type": "Compound", "relation": "BINDS", "object_id": "Gene::1565", "object": "CYP2D6", "object_type": "Gene"}
+{"subject_id": "Compound::DB00641", "subject": "Simvastatin", "subject_type": "Compound", "relation": "BINDS", "object_id": "Gene::10599", "object": "SLCO1B1", "object_type": "Gene"}
+{"subject_id": "Compound::DB00641", "subject": "Simvastatin", "subject_type": "Compound", "relation": "BINDS", "object_id": "Gene::1557", "object": "CYP2C19", "object_type": "Gene"}
+{"subject_id": "Compound::DB00641", "subject": "Simvastatin", "subject_type": "Compound", "relation": "BINDS", "object_id": "Gene::1565", "object": "CYP2D6", "object_type": "Gene"}
+{"subject_id": "Compound::DB00758", "subject": "Clopidogrel", "subject_type": "Compound", "relation": "BINDS", "object_id": "Gene::1557", "object": "CYP2C19", "object_type": "Gene"}
+{"subject_id": "Compound::DB00946", "subject": "Phenprocoumon", "subject_type": "Compound", "relation": "BINDS", "object_id": "Gene::79001", "object": "VKORC1", "object_type": "Gene"}
+{"subject_id": "Compound::DB00190", "subject": "Carbidopa", "subject_type": "Compound", "relation": "PALLIATES", "object_id": "Disease::DOID:0050425", "object": "restless legs syndrome", "object_type": "Disease"}
+{"subject_id": "Compound::DB00190", "subject": "Carbidopa", "subject_type": "Compound", "relation": "PALLIATES", "object_id": "Disease::DOID:14330", "object": "Parkinson's disease", "object_type": "Disease"}
+{"subject_id": "Compound::DB00193", "subject": "Tramadol", "subject_type": "Compound", "relation": "PALLIATES", "object_id": "Disease::DOID:0050425", "object": "restless legs syndrome", "object_type": "Disease"}
+{"subject_id": "Disease::DOID:10652", "subject": "Alzheimer's disease", "subject_type": "Disease", "relation": "PRESENTS", "object_id": "Symptom::D008569", "object": "Memory Disorders", "object_type": "Symptom"}
+{"subject_id": "Disease::DOID:14330", "subject": "Parkinson's disease", "subject_type": "Disease", "relation": "PRESENTS", "object_id": "Symptom::D008569", "object": "Memory Disorders", "object_type": "Symptom"}
+{"subject_id": "Compound::DB00641", "subject": "Simvastatin", "subject_type": "Compound", "relation": "TREATS", "object_id": "Disease::DOID:1936", "object": "atherosclerosis", "object_type": "Disease"}
+{"subject_id": "Compound::DB00641", "subject": "Simvastatin", "subject_type": "Compound", "relation": "TREATS", "object_id": "Disease::DOID:3393", "object": "coronary artery disease", "object_type": "Disease"}
+{"subject_id": "Compound::DB00758", "subject": "Clopidogrel", "subject_type": "Compound", "relation": "TREATS", "object_id": "Disease::DOID:3393", "object": "coronary artery disease", "object_type": "Disease"}
