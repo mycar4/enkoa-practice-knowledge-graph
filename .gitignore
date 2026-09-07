@@ -28,3 +28,7 @@ scratch/
 .playwright-mcp/
 lib/
 *.html
+# 위 *.html은 생성되는 리포트/스크린샷 HTML 무시용 - 아래는 직접 작성한
+# 진짜 소스코드라 예외로 커밋한다 (검증용 FO + Stitch 디자인 원본).
+!내작업폴더/fo/*.html
+!내작업폴더/stitch_art_admissions_intelligence_fo/**/code.html

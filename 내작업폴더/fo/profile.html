@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>ART BAUHAUS - 학생 조건 입력</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+<style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"surface-container-lowest":"#ffffff","outline":"#747686","surface-variant":"#e5e2e1","surface-container-low":"#f6f3f2","primary-container":"#1647d8","on-background":"#1c1b1b","background":"#fcf9f8","on-primary":"#ffffff","primary":"#0031ab","on-surface":"#1c1b1b","error":"#ba1a1a","surface-container-highest":"#e5e2e1","surface-container":"#f0edec","on-surface-variant":"#434655","secondary":"#b72119","on-secondary":"#ffffff","surface-container-high":"#eae7e7","surface":"#fcf9f8"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"gutter-mobile":"1rem","unit-md":"1rem","margin-desktop":"3rem","unit-xl":"2rem","unit-3xl":"4rem","unit-lg":"1.5rem","unit-xs":"0.25rem","unit-sm":"0.5rem","gutter-desktop":"1.5rem","margin-mobile":"1.25rem","unit-2xl":"3rem","unit-2xs":"0.125rem"},"fontFamily":{"label-lg":["Space Grotesk"],"headline-md":["Noto Sans"],"body-lg":["Noto Sans"],"label-md":["Space Grotesk"],"headline-lg":["Noto Sans"],"body-md":["Noto Sans"],"headline-sm":["Noto Sans"],"display-xl-mobile":["Space Grotesk"],"body-sm":["Noto Sans"],"label-sm":["Space Grotesk"],"display-xl":["Space Grotesk"],"headline-lg-mobile":["Noto Sans"]},"fontSize":{"label-lg":["14px",{"lineHeight":"18px","letterSpacing":"0.05em","fontWeight":"700"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"700"}],"body-lg":["17px",{"lineHeight":"26px","letterSpacing":"-0.01em","fontWeight":"400"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.06em","fontWeight":"600"}],"headline-lg":["36px",{"lineHeight":"46px","letterSpacing":"-0.02em","fontWeight":"700"}],"body-md":["15px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"400"}],"headline-sm":["20px",{"lineHeight":"28px","letterSpacing":"0em","fontWeight":"600"}],"display-xl-mobile":["38px",{"lineHeight":"44px","letterSpacing":"-0.02em","fontWeight":"700"}],"body-sm":["13px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"400"}],"label-sm":["10px",{"lineHeight":"14px","letterSpacing":"0.08em","fontWeight":"700"}],"display-xl":["56px",{"lineHeight":"64px","letterSpacing":"-0.03em","fontWeight":"700"}],"headline-lg-mobile":["26px",{"lineHeight":"34px","letterSpacing":"-0.01em","fontWeight":"700"}]}}}}</script>
+<script src="config.js"></script>
+</head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen">
+<header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-gutter-mobile flex items-center justify-between"><div class="flex items-center gap-unit-sm"><svg width="28" height="20" viewBox="0 0 72 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#1647D8"/><rect x="26" y="2" width="20" height="20" fill="#151515"/><polygon points="60,2 70,22 50,22" fill="#E34234"/></svg><div class="flex flex-col"><span class="font-label-md text-label-md text-on-surface uppercase tracking-wider">ART BAUHAUS</span><span class="font-label-sm text-label-sm text-on-surface-variant font-bold">Student Profile And Match</span></div></div></div></header>
+
+<main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen">
+<section class="px-margin-mobile pt-unit-md pb-unit-sm">
+<div class="flex items-center justify-between gap-unit-xs mb-unit-xs">
+<div class="inline-flex items-center gap-unit-xs px-unit-sm py-unit-2xs bg-surface-container-high rounded text-on-surface"><span class="w-2 h-2 rounded-full bg-primary inline-block"></span><span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">프로필 조건 수립</span></div>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight">학생 조건을 알려주세요.</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">준비 중인 실기 종목을 선택하면 실제 모집요강 데이터에서 호환되는 대학을 찾아드립니다.</p>
+<div class="mt-unit-md bg-surface-container-low p-unit-sm rounded flex items-center justify-between">
+<div class="flex items-center gap-unit-xs"><span class="material-symbols-outlined text-primary text-[18px]">verified</span><span class="font-label-sm text-label-sm text-on-surface">모집요강 데이터베이스 동기화됨</span></div>
+<span id="db-count" class="font-label-sm text-label-sm text-on-surface-variant">- 개교 연동중</span>
+</div>
+</section>
+
+<form class="px-margin-mobile space-y-unit-lg pb-unit-xl" id="profileForm" onsubmit="event.preventDefault(); runAnalysis();">
+<fieldset class="space-y-unit-sm">
+<div class="flex items-baseline justify-between"><legend class="font-label-lg text-label-lg text-on-surface flex items-center gap-unit-xs"><span class="font-label-md text-label-md px-1.5 py-0.5 bg-on-surface text-surface rounded">01</span>고교 유형</legend><span class="font-label-sm text-label-sm text-on-surface-variant">참고용 (매칭에는 아직 반영 안 됨)</span></div>
+<div class="flex flex-wrap gap-unit-xs" id="schoolTypeGroup">
+<button class="school-type-btn h-10 px-unit-md rounded bg-on-surface text-surface font-label-md text-label-md shadow-sm transition-all" data-val="일반고" type="button">일반고</button>
+<button class="school-type-btn h-10 px-unit-md rounded bg-surface-container-high text-on-surface font-label-md text-label-md shadow-sm transition-all" data-val="예술고" type="button">예술고</button>
+<button class="school-type-btn h-10 px-unit-md rounded bg-surface-container-high text-on-surface font-label-md text-label-md shadow-sm transition-all" data-val="미술중점고" type="button">미술중점고</button>
+</div>
+</fieldset>
+
+<fieldset class="space-y-unit-sm">
+<div class="flex items-baseline justify-between"><legend class="font-label-lg text-label-lg text-on-surface flex items-center gap-unit-xs"><span class="font-label-md text-label-md px-1.5 py-0.5 bg-on-surface text-surface rounded">02</span>실기 종목 (복수 선택)</legend><span class="font-label-sm text-label-sm text-primary font-bold">실제 모집요강 원문 키워드</span></div>
+<div class="grid grid-cols-2 gap-unit-xs" id="practicalExamGroup">
+<!-- data-exam 값은 실제 실기유형 원문 키워드 (list_exam_topic_keywords) -->
+<button class="exam-btn relative p-unit-md rounded bg-surface-container-low text-left shadow-sm flex flex-col justify-between h-20 hover:bg-surface-container-high transition-all" data-exam="기초디자인" type="button"><span class="font-label-md text-label-md text-on-surface font-bold">기초디자인</span></button>
+<button class="exam-btn relative p-unit-md rounded bg-surface-container-low text-left shadow-sm flex flex-col justify-between h-20 hover:bg-surface-container-high transition-all" data-exam="소묘" type="button"><span class="font-label-md text-label-md text-on-surface font-bold">소묘</span></button>
+<button class="exam-btn relative p-unit-md rounded bg-surface-container-low text-left shadow-sm flex flex-col justify-between h-20 hover:bg-surface-container-high transition-all" data-exam="수채화" type="button"><span class="font-label-md text-label-md text-on-surface font-bold">수채화</span></button>
+<button class="exam-btn relative p-unit-md rounded bg-surface-container-low text-left shadow-sm flex flex-col justify-between h-20 hover:bg-surface-container-high transition-all" data-exam="인체수채화" type="button"><span class="font-label-md text-label-md text-on-surface font-bold">인체수채화</span></button>
+<button class="exam-btn relative p-unit-md rounded bg-surface-container-low text-left shadow-sm flex flex-col justify-between h-20 hover:bg-surface-container-high transition-all" data-exam="수묵담채화" type="button"><span class="font-label-md text-label-md text-on-surface font-bold">한국화 (수묵담채화)</span></button>
+<button class="exam-btn relative p-unit-md rounded bg-surface-container-low text-left shadow-sm flex flex-col justify-between h-20 hover:bg-surface-container-high transition-all" data-exam="자유표현" type="button"><span class="font-label-md text-label-md text-on-surface font-bold">자유표현</span></button>
+<button class="exam-btn relative p-unit-md rounded bg-surface-container-low text-left shadow-sm flex flex-col justify-between h-20 hover:bg-surface-container-high transition-all" data-exam="입체적" type="button"><span class="font-label-md text-label-md text-on-surface font-bold">입체/조형</span></button>
+<button class="exam-btn relative p-unit-md rounded bg-surface-container-low text-left shadow-sm flex flex-col justify-between h-20 hover:bg-surface-container-high transition-all" data-exam="특기" type="button"><span class="font-label-md text-label-md text-on-surface font-bold">특기(연기 등)</span></button>
+</div>
+</fieldset>
+
+<fieldset class="space-y-unit-sm">
+<div class="flex items-baseline justify-between"><legend class="font-label-lg text-label-lg text-on-surface flex items-center gap-unit-xs"><span class="font-label-md text-label-md px-1.5 py-0.5 bg-on-surface text-surface rounded">03</span>세부 재료 검색 (선택)</legend></div>
+<input class="w-full h-11 px-unit-sm bg-surface-container-lowest border border-outline-variant rounded font-body-md text-body-md" id="materialQuery" placeholder="예: 연필, 화선지, 점토 (부분일치)" type="text"/>
+</fieldset>
+
+<fieldset class="space-y-unit-sm">
+<div class="flex items-baseline justify-between"><legend class="font-label-lg text-label-lg text-on-surface flex items-center gap-unit-xs"><span class="font-label-md text-label-md px-1.5 py-0.5 bg-on-surface text-surface rounded">04</span>서류전형만 보기</legend></div>
+<label class="flex items-center gap-unit-xs"><input id="documentOnly" type="checkbox" class="w-5 h-5"/><span class="font-body-sm text-body-sm text-on-surface-variant">실기 없이 미술활동보고서/포트폴리오로 평가받는 전형만</span></label>
+</fieldset>
+
+<button class="w-full h-13 py-unit-sm bg-on-surface text-surface font-label-lg text-label-lg rounded flex items-center justify-center gap-unit-xs shadow-md" type="submit" id="submitBtn">
+<span>내게 맞는 미대 찾기</span><span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<p id="formError" class="font-body-sm text-body-sm text-error hidden"></p>
+</form>
+</main>
+
+<nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.04)]"><div class="grid grid-cols-4 h-16 items-stretch">
+<a class="flex flex-col items-center justify-center gap-unit-2xs text-on-surface-variant hover:text-on-surface transition-colors min-h-[44px]" href="index.html"><span class="material-symbols-outlined text-[22px]">view_quilt</span><span class="font-label-sm text-label-sm">홈</span></a>
+<a class="flex flex-col items-center justify-center gap-unit-2xs text-primary bg-surface-container-low font-bold transition-colors min-h-[44px]" href="profile.html"><span class="material-symbols-outlined text-[22px]">school</span><span class="font-label-sm text-label-sm">대학 찾기</span></a>
+<a class="flex flex-col items-center justify-center gap-unit-2xs text-on-surface-variant hover:text-on-surface transition-colors min-h-[44px]" href="qa.html"><span class="material-symbols-outlined text-[22px]">forum</span><span class="font-label-sm text-label-sm">입시 질문</span></a>
+<a class="flex flex-col items-center justify-center gap-unit-2xs text-on-surface-variant hover:text-on-surface transition-colors min-h-[44px]" href="review.html"><span class="material-symbols-outlined text-[22px]">edit_document</span><span class="font-label-sm text-label-sm">서류 첨삭</span></a>
+</div></nav>
+
+<script>
+fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
+  document.getElementById("db-count").textContent = list.length + "개교 연동됨";
+}).catch(() => { document.getElementById("db-count").textContent = "API 연결 실패"; });
+
+document.querySelectorAll(".school-type-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".school-type-btn").forEach(b => b.classList.replace("bg-on-surface", "bg-surface-container-high") || b.classList.replace("text-surface", "text-on-surface"));
+    btn.classList.remove("bg-surface-container-high", "text-on-surface");
+    btn.classList.add("bg-on-surface", "text-surface");
+  });
+});
+
+const selectedExams = new Set();
+document.querySelectorAll(".exam-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const val = btn.dataset.exam;
+    if (selectedExams.has(val)) {
+      selectedExams.delete(val);
+      btn.classList.remove("bg-primary-fixed", "shadow-md");
+      btn.classList.add("bg-surface-container-low");
+    } else {
+      selectedExams.add(val);
+      btn.classList.remove("bg-surface-container-low");
+      btn.classList.add("bg-primary-fixed", "shadow-md");
+    }
+  });
+});
+
+function runAnalysis() {
+  const errEl = document.getElementById("formError");
+  const materialQuery = document.getElementById("materialQuery").value.trim();
+  const documentOnly = document.getElementById("documentOnly").checked;
+  if (!documentOnly && selectedExams.size === 0 && !materialQuery) {
+    errEl.textContent = "실기 종목을 1개 이상 선택하거나 재료를 입력해주세요.";
+    errEl.classList.remove("hidden");
+    return;
+  }
+  errEl.classList.add("hidden");
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true;
+  btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span><span>17개 대학 실측 데이터 분석 중...</span>';
+
+  fetch(window.API_BASE_URL + "/prep-search", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      topic_keywords: Array.from(selectedExams),
+      material_query: materialQuery,
+      document_only: documentOnly,
+    }),
+  }).then(r => r.json()).then(results => {
+    sessionStorage.setItem("art_bauhaus_results", JSON.stringify(results));
+    sessionStorage.setItem("art_bauhaus_profile", JSON.stringify({
+      examTypes: Array.from(selectedExams), materialQuery, documentOnly,
+    }));
+    window.location.href = "results.html";
+  }).catch(err => {
+    errEl.textContent = "API 연결에 실패했습니다 (" + err + "). config.js의 API_BASE_URL을 확인하세요.";
+    errEl.classList.remove("hidden");
+    btn.disabled = false;
+    btn.innerHTML = '<span>내게 맞는 미대 찾기</span><span class="material-symbols-outlined">arrow_forward</span>';
+  });
+}
+</script>
+</body></html>
