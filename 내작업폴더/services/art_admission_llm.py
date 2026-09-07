@@ -221,21 +221,32 @@ _QA_SYSTEM_PROMPT = """당신은 "미술 실기 입시 도우미"의 답변 생�
    구체적 사실은 그 학교가 context_tracks나 context_raw_excerpts에도 실제로 나올
    때만 말하십시오. 목록에만 있고 다른 context에 없다면 "○○대학교도 같은 계열이라
    비교해볼 만합니다" 정도의 제안으로만 언급하고, 세부 사실을 지어내지 마십시오.
-7. 간결하고 친절한 한국어로, 수험생에게 답하듯 작성하십시오.
+7. "context_compatible_tracks"는 질문에서 인식된 기준 학교/학과와 실기유형·허용재료
+   단어가 겹치는 다른 학교/학과를 실제 구조화 데이터로 계산한 결과입니다(각 항목의
+   shared_keywords/shared_materials가 겹치는 근거). "동일한 실기로 지원 가능한
+   학교", "호환되는 학교" 같은 질문에는 반드시 이 목록을 근거로 답하고, 목록에
+   있는 학교/학과명과 shared_keywords/shared_materials를 그대로 인용하십시오.
+   이 목록이 비어 있으면 "적재된 데이터 범위 내에서는 실기유형/재료가 겹치는
+   다른 학교를 찾지 못했습니다"라고 명확히 답하고, 지어내지 마십시오.
+8. 간결하고 친절한 한국어로, 수험생에게 답하듯 작성하십시오.
 """
 
 
 def answer_with_llm(context_tracks: List[Dict[str, Any]], context_estimates: List[Dict[str, Any]],
                      query: str, model_id: str = "gpt-4o-mini",
                      context_raw_excerpts: Optional[List[Dict[str, Any]]] = None,
-                     context_graph_related: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
+                     context_graph_related: Optional[List[Dict[str, Any]]] = None,
+                     context_compatible_tracks: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
     """조회된 그래프 사실(context_tracks/estimates), PDF 원문 벡터검색 결과
-    (context_raw_excerpts), 그리고 개체 동시출현 그래프에서 뽑은 관련 학교 힌트
-    (context_graph_related, GraphRAG 연동)를 근거로 LLM이 자연어 답변을 생성한다.
-    셋 다 비어 있으면 LLM 호출 없이 바로 '정보 없음'을 반환한다 (환각 방지)."""
+    (context_raw_excerpts), 개체 동시출현 그래프에서 뽑은 관련 학교 힌트
+    (context_graph_related, GraphRAG 연동), 그리고 실기유형/재료 키워드가 겹치는
+    구조화 호환학교 검색 결과(context_compatible_tracks, find_compatible_tracks)를
+    근거로 LLM이 자연어 답변을 생성한다. 넷 다 비어 있으면 LLM 호출 없이 바로
+    '정보 없음'을 반환한다 (환각 방지)."""
     context_raw_excerpts = context_raw_excerpts or []
     context_graph_related = context_graph_related or []
-    if not context_tracks and not context_estimates and not context_raw_excerpts:
+    context_compatible_tracks = context_compatible_tracks or []
+    if not context_tracks and not context_estimates and not context_raw_excerpts and not context_compatible_tracks:
         return {
             "answer": "적재된 데이터 중에 관련된 학교/학과를 찾지 못했습니다. 학교명을 정확히 포함해서 다시 질문해주세요.",
             "model": model_id,
@@ -248,6 +259,7 @@ def answer_with_llm(context_tracks: List[Dict[str, Any]], context_estimates: Lis
         "context_estimates": context_estimates,
         "context_raw_excerpts": context_raw_excerpts,
         "context_graph_related": context_graph_related,
+        "context_compatible_tracks": context_compatible_tracks,
     }
     user_prompt = json.dumps(user_payload, ensure_ascii=False, indent=2)
 

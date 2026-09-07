@@ -608,6 +608,26 @@ class ArtAdmissionService:
         results.sort(key=lambda m: -(len(m["shared_keywords"]) + len(m["shared_materials"])))
         return results
 
+    def get_compatible_tracks_for_query(self, query: str) -> List[Dict[str, Any]]:
+        """AI 답변(LLM) 경로용 호환학교 조회. 규칙기반 answer_question의 호환 분기와
+        같은 학교/학과 해석을 쓰지만, "호환/지원가능" 같은 의도 키워드가 있어야만
+        도는 게 아니라 학교(+가능하면 학과)가 인식되기만 하면 항상 계산해서 LLM에게
+        참고자료로 준다 - 사용자가 자연어로 아무리 다르게 물어도(예: "동일한 실기로
+        지원 가능한 학교") AI 답변이 실제 매칭 데이터를 보고 답하게 하기 위함."""
+        q = query.strip()
+        tracks = self.list_all_tracks_full()
+        universities = sorted({t["university"] for t in tracks})
+        mentioned = _resolve_university_mentions(q, universities)
+        if not mentioned:
+            return []
+        university = mentioned[0]
+        univ_tracks = [t for t in tracks if t["university"] == university]
+        dept_track = next((t for t in univ_tracks if t["department"] and t["department"] in q), None)
+        track = dept_track or (univ_tracks[0] if len(univ_tracks) == 1 else None)
+        if not track:
+            return []
+        return self.find_compatible_tracks(university, track["department"])
+
     def answer_question(self, query: str) -> Dict[str, Any]:
         """규칙기반 질의응답 - LLM 없이 그래프 사실만으로 답한다(할루시네이션 원천 차단).
         DART-Trace의 evidence-chat과 동일한 설계: 의도를 키워드로 분류 후 정확한

@@ -490,10 +490,15 @@ def render_art_admission_app():
                             )
                         except Exception:
                             context_graph_related = []
+                        try:
+                            context_compatible = svc.get_compatible_tracks_for_query(query)
+                        except Exception:
+                            context_compatible = []
                         llm_result = answer_with_llm(
                             context_tracks, context_estimates, query,
                             model_id=selected_model["id"], context_raw_excerpts=context_raw,
                             context_graph_related=context_graph_related,
+                            context_compatible_tracks=context_compatible,
                         )
                     st.markdown(llm_result["answer"].replace("\n", "  \n"))
                     if llm_result.get("grounded_on"):
@@ -501,6 +506,13 @@ def render_art_admission_app():
                     if context_graph_related:
                         related_str = ", ".join(f"{r['name']}({r['community_label']})" if r["community_label"] else r["name"] for r in context_graph_related)
                         st.caption(f"🕸️ 그래프 연관 정보(참고용, 사실 근거 아님): {related_str}")
+                    if context_compatible:
+                        with st.expander(f"🎯 실기유형/재료 키워드 호환학교 {len(context_compatible)}건 (구조화 데이터, 근거로 사용됨)"):
+                            for m in context_compatible:
+                                st.markdown(
+                                    f"- **{m['university']} {m['department']}** ({m.get('exam_type_name')}): "
+                                    f"공통 실기 키워드 {m['shared_keywords'] or '-'}, 공통 재료 키워드 {m['shared_materials'] or '-'}"
+                                )
                     if context_raw:
                         with st.expander(f"🔎 원문 검색 결과 {len(context_raw)}건 (하이브리드 검색 + AI 재순위화, 참고용)"):
                             for r in context_raw:
