@@ -1,0 +1,32 @@
+name: Deploy Art Admission API
+
+# main에 푸시될 때 art-admission-api 관련 파일이 바뀐 경우에만 배포한다.
+# 이 워크플로우는 딱 하나의 systemd 서비스(art-admission-api, 포트 8001)만
+# 재시작한다 - 같은 서버의 unsuzone-api(포트 8000)는 절대 안 건드린다.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "내작업폴더/api_art_admission.py"
+      - "내작업폴더/services/art_admission_service.py"
+      - "내작업폴더/services/art_admission_llm.py"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH (git pull + restart art-admission-api only)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.ART_API_DEPLOY_HOST }}
+          username: ${{ secrets.ART_API_DEPLOY_USER }}
+          key: ${{ secrets.ART_API_DEPLOY_SSH_KEY }}
+          script: |
+            set -e
+            cd ~/art-admission-api
+            git pull origin main
+            source venv/bin/activate
+            pip install -q fastapi "uvicorn[standard]" neo4j python-dotenv
+            sudo systemctl restart art-admission-api
+            sleep 2
+            curl -sf http://127.0.0.1:8001/health
