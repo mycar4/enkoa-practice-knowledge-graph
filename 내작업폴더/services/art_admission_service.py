@@ -414,16 +414,24 @@ class ArtAdmissionService:
                        e.community AS community, e.community_label AS community_label
             """).data()
 
-    def get_graph_related_context(self, query: str, exclude_names: Optional[List[str]] = None,
+    def get_graph_related_context(self, query: str, anchor_names: Optional[List[str]] = None,
+                                   exclude_names: Optional[List[str]] = None,
                                    top_n: int = 5) -> List[Dict[str, Any]]:
-        """GraphRAG 연동: 질문 문자열에 언급된 개체를 찾아 그 개체가 속한 커뮤니티
+        """GraphRAG 연동: 질문에 언급된 개체를 찾아 그 개체가 속한 커뮤니티
         (동시출현 기반 자동 군집)에서, PageRank가 높은 다른 학교/학과를 "관련 사례"로
         뽑아온다. 여기 나온 학교에 대한 세부 사실(날짜/점수 등)은 이 함수가 보장하지
         않는다 - 어디까지나 "같이 자주 언급되는 계열"이라는 구조적 힌트일 뿐이므로,
-        LLM 프롬프트에서도 반드시 참고용으로만 쓰고 사실 근거로 쓰지 말라고 못박는다."""
+        LLM 프롬프트에서도 반드시 참고용으로만 쓰고 사실 근거로 쓰지 말라고 못박는다.
+
+        anchor_names: build_llm_context 등에서 이미 약칭("중앙대"→"중앙대학교")까지
+        해소한 정식 university/department명. 이걸 안 받고 질문 원문 문자열에 개체명이
+        그대로 있는지만 보면, 사용자가 약칭을 쓸 때(예: "중앙대") 개체명("중앙대학교")이
+        원문에 없어서 매칭이 통째로 실패한다 - 실제로 겪은 버그라 정식명은 anchor_names로
+        직접 받고, 질문 원문 부분일치는 보조 수단으로만 쓴다."""
         exclude = set(exclude_names or [])
+        anchors = set(anchor_names or [])
         entities = self._all_entities()
-        matched = [e for e in entities if e["name"] and e["name"] in query]
+        matched = [e for e in entities if e["name"] and (e["name"] in anchors or e["name"] in query)]
         if not matched:
             return []
         matched_names = {e["name"] for e in matched}

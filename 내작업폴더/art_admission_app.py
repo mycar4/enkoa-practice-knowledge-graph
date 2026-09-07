@@ -482,9 +482,12 @@ def render_art_admission_app():
                             context_raw = svc.hybrid_search(query, top_k=5)
                         except Exception:
                             context_raw = []  # 벡터/풀텍스트 인덱스가 아직 없거나 임베딩 실패 시 구조화 사실만으로 답변
-                        exclude_names = [t["university"] for t in context_tracks] + [t["department"] for t in context_tracks]
+                        anchor_names = [t["university"] for t in context_tracks]
+                        exclude_names = anchor_names + [t["department"] for t in context_tracks]
                         try:
-                            context_graph_related = svc.get_graph_related_context(query, exclude_names=exclude_names, top_n=5)
+                            context_graph_related = svc.get_graph_related_context(
+                                query, anchor_names=anchor_names, exclude_names=exclude_names, top_n=5,
+                            )
                         except Exception:
                             context_graph_related = []
                         llm_result = answer_with_llm(
