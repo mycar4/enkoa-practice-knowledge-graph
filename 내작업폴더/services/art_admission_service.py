@@ -913,11 +913,28 @@ class ArtAdmissionService:
         # 질의 문장 자체에 등장하는 실기유형 키워드(예: "소묘")를 뽑아, 각 트랙의
         # exam_type_name과 실제로 겹치는지 미리 계산해 LLM에게 넘긴다. 이게 없으면
         # LLM이 재료(연필 등)만 보고 스스로 "비슷한 실기"라고 짐작해버리는 문제가 있었다.
-        # 질의는 자유 문장이라 "소묘로"처럼 조사가 붙으므로, 토큰 완전일치가 아니라
-        # exam_type_name 쪽 키워드가 질의 원문에 부분 문자열로 포함되는지로 판정한다
-        # ("소묘" in "연필 소묘로 시험 볼 수 있는 학교는?" == True).
-        def _keyword_in_query(exam_type_name: str) -> bool:
-            return any(kw in query for kw in self._exam_keywords(exam_type_name or ""))
+        # search_tracks_by_prep과 완전히 같은 판정(topic_set & exam_kw 완전일치)을
+        # 쓰기 위해, 질의 문장에서 실제 실기종목 키워드를 뽑아낸다. 단순 substring
+        # 검사(kw in query)는 "수채화"가 "인체수채화"의 부분 문자열이라 서로 다른
+        # 종목을 같은 것으로 오탐지했었다(상명대 "인체수채화" 질문에 동국대 "수채화"
+        # 전형이 잘못 섞여 나옴) - 그래서 데이터에 실제 존재하는 실기종목 키워드
+        # 전체를 대상으로, 긴 키워드부터 먼저 매칭해 겹치는 문자를 "소비"하는
+        # 최장일치 방식으로 질의에서 실기종목 키워드를 뽑는다. 조사가 붙은 경우
+        # ("소묘로")도 "소묘"가 그 안의 substring이므로 여전히 잡힌다.
+        canonical_topics = sorted(set(self.list_exam_topic_keywords(min_schools=1)), key=len, reverse=True)
+        consumed = [False] * len(query)
+        query_topic_kw: set = set()
+        for kw in canonical_topics:
+            start = 0
+            while True:
+                idx = query.find(kw, start)
+                if idx == -1:
+                    break
+                if not any(consumed[idx:idx + len(kw)]):
+                    query_topic_kw.add(kw)
+                    for i in range(idx, idx + len(kw)):
+                        consumed[i] = True
+                start = idx + 1
 
         context_tracks = [{
             "university": t["university"], "department": t["department"], "track_name": t["track_name"],
@@ -927,7 +944,7 @@ class ArtAdmissionService:
             "application_start": t.get("application_start"), "application_end": t.get("application_end"),
             "exam_dates": t.get("exam_dates"), "result_date": t.get("result_date"),
             "source_url": t.get("source_url"),
-            "exam_type_keyword_match": _keyword_in_query(t.get("exam_type_name")),
+            "exam_type_keyword_match": bool(query_topic_kw & self._exam_keywords(t.get("exam_type_name") or "")),
         } for t in subset]
 
         context_estimates = []
