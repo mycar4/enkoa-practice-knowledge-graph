@@ -29,34 +29,62 @@
 <div>
 <div class="flex items-center gap-unit-xs mb-unit-sm"><span class="inline-block w-2.5 h-2.5 bg-primary-container"></span><span class="font-label-sm text-label-sm text-primary uppercase tracking-wider">ART:READY 2026</span></div>
 <h1 class="font-headline-lg-mobile text-headline-lg-mobile lg:font-display-xl lg:text-display-xl text-on-surface tracking-tight">감으로 상담하던<br/>미술입시를 데이터로.</h1>
-<p class="font-body-md text-body-md lg:font-body-lg lg:text-body-lg text-on-surface-variant mt-unit-sm leading-relaxed max-w-lg">학생의 조건과 실기를 분석해 지원 가능한 미술대학과 전형을 <strong id="univ-count-text">17개교</strong> 공식 모집요강 근거와 함께 확인합니다.</p>
+<p class="font-body-md text-body-md lg:font-body-lg lg:text-body-lg text-on-surface-variant mt-unit-sm leading-relaxed max-w-lg">학생의 조건과 실기를 분석해 지원 가능한 미술대학과 전형을 <strong id="univ-count-text">실측 검증된 대학</strong> 공식 모집요강 근거와 함께 확인합니다.</p>
+
+<!-- 모바일에서도 도형 아이덴티티가 바로 보이게: 컴팩트 가로 배지 -->
+<div class="flex lg:hidden items-center gap-unit-md mt-unit-md p-unit-sm bg-surface-container-lowest rounded shadow-sm">
+<div class="flex items-center gap-unit-xs"><span class="w-5 h-5 rounded-full bg-primary inline-block shrink-0"></span><span class="font-label-sm text-label-sm text-on-surface-variant">학생 조건</span></div>
+<span class="material-symbols-outlined text-outline text-[16px]">arrow_forward</span>
+<div class="flex items-center gap-unit-xs"><span class="w-5 h-5 bg-on-surface inline-block shrink-0"></span><span class="font-label-sm text-label-sm text-on-surface-variant">실측 데이터</span></div>
+<span class="material-symbols-outlined text-outline text-[16px]">arrow_forward</span>
+<div class="flex items-center gap-unit-xs"><svg width="18" height="18" viewBox="0 0 18 18" class="shrink-0"><polygon points="9,1 17,17 1,17" fill="#E34234"/></svg><span class="font-label-sm text-label-sm text-on-surface-variant">판단 신호</span></div>
+</div>
+
 <div class="flex flex-col sm:flex-row lg:flex-col gap-unit-xs mt-unit-lg max-w-md">
 <a class="w-full h-13 px-unit-md py-unit-sm bg-on-surface text-surface flex items-center justify-between shadow-md rounded transition-all active:translate-x-0.5 active:translate-y-0.5 hover:bg-primary-container" href="profile.html">
 <span class="font-label-lg text-label-lg">학생 조건 분석 시작하기</span><span class="material-symbols-outlined">arrow_forward</span>
 </a>
 <a class="w-full h-11 px-unit-md bg-surface-container text-on-surface flex items-center justify-between rounded transition-colors hover:bg-surface-container-high" href="qa.html">
-<span class="font-label-md text-label-md">17개 대학 입시 데이터 물어보기</span><span class="material-symbols-outlined text-[18px]">forum</span>
+<span id="qa-cta-text" class="font-label-md text-label-md">대학 입시 데이터 물어보기</span><span class="material-symbols-outlined text-[18px]">forum</span>
 </a>
 </div>
 </div>
-<div class="hidden lg:flex items-center justify-center">
-<svg width="280" height="200" viewBox="0 0 280 200" xmlns="http://www.w3.org/2000/svg">
-<circle cx="70" cy="100" r="60" fill="#1647D8" opacity="0.9"/>
-<rect x="150" y="40" width="110" height="110" fill="#151515"/>
-<polygon points="215,155 150,20 280,20" fill="#E34234" opacity="0.85"/>
+
+<!-- 데스크톱 히어로 비주얼: 도형 크기/의미를 크게 부각 (Kandinsky Point/Line/Plane 원칙 그대로) -->
+<div class="hidden lg:flex flex-col items-center justify-center gap-unit-lg">
+<svg width="380" height="280" viewBox="0 0 380 280" xmlns="http://www.w3.org/2000/svg">
+<rect x="190" y="50" width="160" height="160" fill="#151515"/>
+<polygon points="290,215 190,20 380,20" fill="#E34234" opacity="0.92"/>
+<circle cx="90" cy="150" r="85" fill="#1647D8"/>
 </svg>
+<div class="grid grid-cols-3 gap-unit-md w-full max-w-md">
+<div class="flex flex-col items-center gap-unit-2xs text-center"><span class="w-4 h-4 rounded-full bg-primary inline-block"></span><span class="font-label-sm text-label-sm text-on-surface font-bold">학생 프로필</span><span class="font-label-sm text-label-sm text-on-surface-variant">Point</span></div>
+<div class="flex flex-col items-center gap-unit-2xs text-center"><span class="w-4 h-4 bg-on-surface inline-block"></span><span class="font-label-sm text-label-sm text-on-surface font-bold">대학 실측 데이터</span><span class="font-label-sm text-label-sm text-on-surface-variant">Plane</span></div>
+<div class="flex flex-col items-center gap-unit-2xs text-center"><svg width="16" height="16" viewBox="0 0 16 16"><polygon points="8,1 15,15 1,15" fill="#E34234"/></svg><span class="font-label-sm text-label-sm text-on-surface font-bold">판단·리스크 신호</span><span class="font-label-sm text-label-sm text-on-surface-variant">Line</span></div>
+</div>
 </div>
 </section>
 
 <section class="px-margin-mobile lg:px-12 py-unit-lg lg:pb-unit-3xl">
 <div class="grid grid-cols-4 lg:grid-cols-3 lg:max-w-2xl gap-unit-xs pt-unit-xs">
-<div class="bg-surface-container-lowest p-unit-sm rounded shadow-sm text-center"><div id="stat-univ" class="font-headline-sm text-headline-sm text-primary">17</div><div class="font-label-sm text-label-sm text-on-surface-variant">실측 대학</div></div>
+<div class="bg-surface-container-lowest p-unit-sm rounded shadow-sm text-center"><div id="stat-univ" class="font-headline-sm text-headline-sm text-primary">-</div><div class="font-label-sm text-label-sm text-on-surface-variant">실측 대학</div></div>
 <div class="bg-surface-container-lowest p-unit-sm rounded shadow-sm text-center"><div class="font-headline-sm text-headline-sm text-primary">100%</div><div class="font-label-sm text-label-sm text-on-surface-variant">공식 요강 근거</div></div>
 <div class="bg-surface-container-lowest p-unit-sm rounded shadow-sm text-center"><div class="font-headline-sm text-headline-sm text-secondary">2027</div><div class="font-label-sm text-label-sm text-on-surface-variant">학년도 데이터</div></div>
 </div>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-md leading-relaxed lg:max-w-xl">
 AI는 대학을 결정하지 않습니다. 공식 모집요강 원문 데이터를 검토할 가치가 있는 대학과 전형을 찾아 학원장과 학부모 상담을 지원합니다.
 </p>
+</section>
+
+<!-- 신빙성: 실제 등록된 대학명을 그대로 노출 (숫자만 말하지 않고 "어디"인지 보여줌) -->
+<section class="px-margin-mobile lg:px-12 pb-unit-2xl">
+<div class="flex items-center justify-between mb-unit-sm">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">실측 검증된 등록 대학</h2>
+<a href="profile.html" class="font-label-sm text-label-sm text-primary underline">전체로 검색하기</a>
+</div>
+<div id="univListChips" class="flex flex-wrap gap-unit-xs">
+<span class="font-body-sm text-body-sm text-on-surface-variant">불러오는 중...</span>
+</div>
 </section>
 </div>
 </main>
@@ -69,11 +97,23 @@ AI는 대학을 결정하지 않습니다. 공식 모집요강 원문 데이터�
 </div></nav>
 
 <script>
-// 홈 화면의 "17개 대학" 같은 숫자는 실제 API 값으로 갱신한다 - Stitch 원본
-// 목업에는 서울대/이화여대 등 우리 데이터에 없는 학교명이 있었는데 전부 제거했다.
+// 홈 화면의 학교 수/목록은 전부 실제 API 값으로 채운다 - 하드코딩된 "17개" 같은
+// 숫자는 데이터가 바뀌면 바로 틀린 정보가 되므로 절대 정적 텍스트로 안 둔다.
+// Stitch 원본 목업에는 서울대/이화여대 등 우리 데이터에 없는 학교명이 있었는데
+// 전부 제거했다.
 fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
-  document.getElementById("stat-univ").textContent = list.length;
-  document.getElementById("univ-count-text").textContent = list.length + "개";
-}).catch(() => {});
+  const count = list.length;
+  document.getElementById("stat-univ").textContent = count;
+  document.getElementById("univ-count-text").textContent = `실측 검증된 ${count}개교`;
+  document.getElementById("qa-cta-text").textContent = `${count}개 대학 입시 데이터 물어보기`;
+
+  const uniqueNames = [...new Set(list.map(u => u.university))].sort();
+  const chipsEl = document.getElementById("univListChips");
+  chipsEl.innerHTML = uniqueNames.map(name =>
+    `<span class="px-unit-sm py-unit-xs bg-surface-container-lowest border border-outline-variant/40 rounded font-label-md text-label-md text-on-surface shadow-sm">${name}</span>`
+  ).join("");
+}).catch(() => {
+  document.getElementById("univListChips").innerHTML = '<span class="font-body-sm text-body-sm text-error">API 연결 실패 - 학교 목록을 불러오지 못했습니다.</span>';
+});
 </script>
 </body></html>

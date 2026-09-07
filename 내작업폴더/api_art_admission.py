@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(BASE_DIR))
 
 from services.art_admission_service import ArtAdmissionService  # noqa: E402
-from services.art_admission_llm import answer_with_llm, review_document  # noqa: E402
+from services.art_admission_llm import answer_with_llm, review_document, chat_about_review  # noqa: E402
 
 DEFAULT_MODEL = "gpt-4o-mini"  # 공개 API는 항상 이 모델만 쓴다 - gated 모델 노출 안 함
 
@@ -148,6 +148,8 @@ def qa(req: QARequest):
             **result,
             "context_tracks": context_tracks,
             "context_compatible_tracks": context_compatible,
+            "context_graph_related": context_graph_related,
+            "context_raw_excerpts": context_raw,
         }
     finally:
         svc.close()
@@ -175,9 +177,23 @@ def review_document_endpoint(req: ReviewRequest):
                 doc_rules = svc.get_document_rule_excerpts(req.university, req.doc_type)
             except Exception:
                 pass
-        return review_document(
+        result = review_document(
             req.text, model_id=DEFAULT_MODEL, doc_type=req.doc_type,
             graph_hint=graph_hint, university=req.university, context_doc_rules=doc_rules,
         )
+        return {**result, "doc_rules": doc_rules, "graph_hint": graph_hint}
     finally:
         svc.close()
+
+
+class ReviewChatRequest(BaseModel):
+    doc_text: str
+    doc_type: str = "자기소개서"
+    history: List[dict]
+
+
+@app.post("/review-chat")
+def review_chat_endpoint(req: ReviewChatRequest):
+    """첨삭 후 이어지는 대화. history는 최초 첨삭(assistant)부터 이후 주고받은
+    턴을 [{'role': 'user'|'assistant', 'content': ...}] 그대로 담아 보낸다."""
+    return chat_about_review(req.doc_text, req.doc_type, req.history, model_id=DEFAULT_MODEL)

@@ -66,7 +66,47 @@ askBtn.addEventListener("click", askQuestion);
 queryInput.addEventListener("keydown", e => { if (e.key === "Enter") askQuestion(); });
 
 function formatAnswer(text) {
-  return text.replace(/</g, "&lt;").replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  return text
+    .replace(/</g, "&lt;")
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a class="underline text-primary" href="$2" target="_blank" rel="noopener">$1</a>');
+}
+
+// 지식그래프 근거 추적 패널 - "AI가 답을 지어낸 게 아니라 그래프에서 이렇게
+// 찾아냈다"를 사용자가 직접 눈으로 확인하게 하는 게 핵심 차별화 포인트.
+// context_compatible_tracks(실기유형/재료 키워드 구조적 매칭)와
+// context_graph_related(동시출현 커뮤니티 연관 학교) 둘 다 순수 그래프 쿼리
+// 결과이고 LLM이 만든 게 아니다.
+function buildGraphTrace(res) {
+  const compatible = res.context_compatible_tracks || [];
+  const related = res.context_graph_related || [];
+  if (!compatible.length && !related.length) return "";
+
+  const compatRows = compatible.slice(0, 8).map(m => `
+    <div class="flex items-start gap-unit-xs">
+      <span class="w-2 h-2 rounded-full bg-primary shrink-0 mt-1.5"></span>
+      <span class="font-body-sm text-body-sm text-on-surface"><strong>${m.university} ${m.department}</strong> - 공통 키워드 ${(m.shared_keywords || []).concat(m.shared_materials || []).join(", ") || "-"}</span>
+    </div>`).join("");
+
+  const relatedChips = related.slice(0, 8).map(r =>
+    `<span class="px-unit-xs py-0.5 bg-surface-container text-on-surface font-label-sm text-label-sm rounded">${r.name}${r.community_label ? ` · ${r.community_label}` : ""}</span>`
+  ).join("");
+
+  return `
+    <div class="border border-outline-variant/40 rounded-lg overflow-hidden">
+      <button type="button" class="graph-trace-toggle w-full flex items-center justify-between p-unit-sm bg-surface-container hover:bg-surface-container-high transition-colors">
+        <span class="flex items-center gap-unit-xs font-label-md text-label-md text-on-surface font-bold">
+          <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="4" cy="8" r="3" fill="#1647D8"/><rect x="10" y="5" width="6" height="6" fill="#151515"/><line x1="7" y1="8" x2="10" y2="8" stroke="#151515" stroke-width="1.5"/></svg>
+          <span>🧬 지식그래프가 이 답을 찾아낸 경로</span>
+        </span>
+        <span class="material-symbols-outlined toggle-icon text-outline">expand_more</span>
+      </button>
+      <div class="graph-trace-panel hidden p-unit-md space-y-unit-sm bg-surface-container-lowest">
+        ${compatRows ? `<div><div class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-unit-xs">① 실기유형·재료 키워드로 구조적 매칭된 학교</div><div class="space-y-1">${compatRows}</div></div>` : ""}
+        ${relatedChips ? `<div><div class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-unit-xs">② 동시출현 그래프에서 같은 커뮤니티로 연관된 학교/개체</div><div class="flex flex-wrap gap-unit-2xs">${relatedChips}</div></div>` : ""}
+        <p class="font-body-sm text-body-sm text-outline">이 목록은 LLM이 아니라 Neo4j 그래프 쿼리 결과 그대로입니다 - AI는 이 결과를 문장으로 풀어 설명했을 뿐, 목록 자체를 만들어내지 않았습니다.</p>
+      </div>
+    </div>`;
 }
 
 function askQuestion() {
@@ -80,7 +120,7 @@ function askQuestion() {
 
   const aiBox = document.createElement("div");
   aiBox.className = "flex flex-col gap-unit-md bg-surface-container-lowest p-unit-md rounded-xl shadow-md";
-  aiBox.innerHTML = `<div class="flex items-center gap-unit-xs"><div class="w-7 h-7 rounded-lg bg-primary-container flex items-center justify-center text-on-primary"><span class="material-symbols-outlined text-[18px]">auto_awesome</span></div><span class="font-label-md text-label-md text-on-surface font-bold">BAUHAUS ADMISSION AI</span><span class="material-symbols-outlined animate-spin text-outline text-[18px] ml-auto">progress_activity</span></div>`;
+  aiBox.innerHTML = `<div class="flex items-center gap-unit-xs"><div class="w-7 h-7 rounded-lg bg-primary-container flex items-center justify-center text-on-primary"><span class="material-symbols-outlined text-[18px]">auto_awesome</span></div><span class="font-label-md text-label-md text-on-surface font-bold">ART:READY AI</span><span class="material-symbols-outlined animate-spin text-outline text-[18px] ml-auto">progress_activity</span></div>`;
   thread.appendChild(aiBox);
   askBtn.disabled = true;
 
@@ -94,13 +134,26 @@ function askQuestion() {
     ).join("");
     aiBox.innerHTML = `
       <div class="flex items-center justify-between pb-unit-xs">
-        <div class="flex items-center gap-unit-xs"><div class="w-7 h-7 rounded-lg bg-primary-container flex items-center justify-center text-on-primary"><span class="material-symbols-outlined text-[18px]">auto_awesome</span></div><span class="font-label-md text-label-md text-on-surface font-bold">BAUHAUS ADMISSION AI</span></div>
-        <div class="flex items-center gap-1.5 px-unit-xs py-0.5 bg-primary-fixed text-on-primary-fixed rounded"><span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span><span class="font-label-sm text-label-sm font-bold">RAG VERIFIED</span></div>
+        <div class="flex items-center gap-unit-xs"><div class="w-7 h-7 rounded-lg bg-primary-container flex items-center justify-center text-on-primary"><span class="material-symbols-outlined text-[18px]">auto_awesome</span></div><span class="font-label-md text-label-md text-on-surface font-bold">ART:READY AI</span></div>
+        <div class="flex items-center gap-unit-xs">
+          <span class="font-label-sm text-label-sm text-outline">${res.model || ""}</span>
+          <div class="flex items-center gap-1.5 px-unit-xs py-0.5 bg-primary text-on-primary rounded"><span class="w-2 h-2 rounded-full bg-on-primary animate-pulse"></span><span class="font-label-sm text-label-sm font-bold">RAG VERIFIED</span></div>
+        </div>
       </div>
       <div class="bg-surface-container-low p-unit-md rounded-lg font-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-line">${formatAnswer(res.answer || "응답 없음")}</div>
       ${citations ? `<div class="flex flex-col gap-unit-xs bg-surface-container p-unit-md rounded-lg"><div class="flex items-center gap-unit-xs text-primary font-bold font-label-sm text-label-sm"><span class="material-symbols-outlined text-[18px]">verified</span><span>공식 모집요강 추출 근거</span></div><div class="flex flex-col gap-unit-2xs font-body-sm text-body-sm text-on-surface">${citations}</div></div>` : ""}
+      ${buildGraphTrace(res)}
       <p class="font-body-sm text-body-sm text-error bg-error-container/30 p-unit-xs rounded">※ 주의: 최종 세부 요강은 해당 대학 입학처의 공식 공지를 반드시 재확인하십시오.</p>
     `;
+    const traceToggle = aiBox.querySelector(".graph-trace-toggle");
+    if (traceToggle) {
+      traceToggle.addEventListener("click", () => {
+        const panel = aiBox.querySelector(".graph-trace-panel");
+        const open = !panel.classList.contains("hidden");
+        panel.classList.toggle("hidden", open);
+        traceToggle.querySelector(".toggle-icon").textContent = open ? "expand_more" : "expand_less";
+      });
+    }
   }).catch(err => {
     aiBox.innerHTML = `<p class="font-body-sm text-body-sm text-error">API 연결 실패: ${err}</p>`;
   }).finally(() => {

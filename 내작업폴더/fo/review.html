@@ -45,7 +45,18 @@
 </div>
 <button class="w-full h-13 py-unit-sm bg-on-surface text-surface font-label-lg text-label-lg rounded flex items-center justify-center gap-unit-xs shadow-md" id="reviewBtn"><span>AI 첨삭 받기</span><span class="material-symbols-outlined">arrow_forward</span></button>
 </div>
-<div id="reviewResult" class="hidden mt-unit-md lg:mt-0 bg-surface-container-lowest p-unit-md rounded-lg shadow-md font-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-line lg:sticky lg:top-24"></div>
+<div id="reviewResult" class="hidden mt-unit-md lg:mt-0 flex flex-col gap-unit-md lg:sticky lg:top-24">
+<div id="docRulesBox" class="hidden flex flex-col gap-unit-xs bg-surface-container p-unit-md rounded-lg">
+<div class="flex items-center gap-unit-xs text-primary font-bold font-label-sm text-label-sm"><span class="material-symbols-outlined text-[18px]">verified</span><span>이 학교 서류 규정 원문 근거</span></div>
+<div id="docRulesList" class="flex flex-col gap-unit-2xs font-body-sm text-body-sm text-on-surface"></div>
+</div>
+<div id="feedbackBox" class="bg-surface-container-lowest p-unit-md rounded-lg shadow-md font-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-line"></div>
+<div id="chatThread" class="flex flex-col gap-unit-sm"></div>
+<div id="chatInputBox" class="hidden flex items-center gap-unit-xs bg-surface-container-lowest rounded-lg p-unit-xs shadow-sm">
+<input class="w-full bg-transparent px-unit-sm py-unit-xs font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none" id="chatInput" placeholder="첨삭에 대해 더 물어보세요 (예: 이 문장 더 구체적으로 고쳐줘)" type="text"/>
+<button class="h-10 px-unit-md bg-primary text-on-primary font-label-md text-label-md rounded-lg flex items-center gap-unit-xs shrink-0" id="chatSendBtn"><span class="material-symbols-outlined text-[18px]">send</span></button>
+</div>
+</div>
 </section>
 </div>
 </main>
@@ -67,31 +78,99 @@ fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
   });
 }).catch(() => {});
 
+let chatHistory = [];
+let currentDocText = "";
+let currentDocType = "자기소개서";
+
+function appendChatBubble(role, content) {
+  const thread = document.getElementById("chatThread");
+  const bubble = document.createElement("div");
+  if (role === "user") {
+    bubble.className = "flex items-start gap-unit-sm bg-surface-container-low p-unit-sm rounded-xl self-end max-w-[90%]";
+    bubble.innerHTML = `<p class="font-body-md text-body-md text-on-surface">${content.replace(/</g, "&lt;")}</p>`;
+  } else {
+    bubble.className = "bg-surface-container-lowest p-unit-sm rounded-xl shadow-sm font-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-line";
+    bubble.textContent = content;
+  }
+  thread.appendChild(bubble);
+  return bubble;
+}
+
 document.getElementById("reviewBtn").addEventListener("click", () => {
   const text = document.getElementById("docText").value.trim();
   const university = document.getElementById("univSelect").value;
   const docType = document.getElementById("docType").value;
   const resultBox = document.getElementById("reviewResult");
+  const feedbackBox = document.getElementById("feedbackBox");
+  const docRulesBox = document.getElementById("docRulesBox");
+  const docRulesList = document.getElementById("docRulesList");
   if (!text) { alert("첨삭할 텍스트를 입력해주세요."); return; }
 
   const btn = document.getElementById("reviewBtn");
   btn.disabled = true;
   btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span><span>AI 첨삭 중...</span>';
+  resultBox.classList.remove("hidden");
+  document.getElementById("chatThread").innerHTML = "";
+  document.getElementById("chatInputBox").classList.add("hidden");
 
   fetch(window.API_BASE_URL + "/review-document", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text, doc_type: docType, university: university || null }),
   }).then(r => r.json()).then(res => {
-    resultBox.textContent = res.feedback || "응답 없음";
-    resultBox.classList.remove("hidden");
+    feedbackBox.textContent = res.feedback || "응답 없음";
+
+    const rules = res.doc_rules || [];
+    if (rules.length) {
+      docRulesList.innerHTML = rules.map(r =>
+        `<div class="flex items-start gap-unit-xs bg-surface-container-lowest p-unit-xs rounded"><span class="material-symbols-outlined text-[16px] text-primary shrink-0 mt-0.5">menu_book</span><span>p.${r.page_start}-${r.page_end}: ${(r.text || "").slice(0, 200).replace(/</g, "&lt;")}...</span></div>`
+      ).join("");
+      docRulesBox.classList.remove("hidden");
+    } else if (university) {
+      docRulesList.innerHTML = `<span class="text-on-surface-variant">이 학교의 서류 규정 원문을 색인에서 찾지 못해 일반 글쓰기 관점으로만 첨삭했습니다.</span>`;
+      docRulesBox.classList.remove("hidden");
+    } else {
+      docRulesBox.classList.add("hidden");
+    }
+
+    currentDocText = text;
+    currentDocType = docType;
+    chatHistory = [{ role: "assistant", content: res.feedback || "" }];
+    document.getElementById("chatInputBox").classList.remove("hidden");
   }).catch(err => {
-    resultBox.textContent = "API 연결 실패: " + err;
-    resultBox.classList.remove("hidden");
+    feedbackBox.textContent = "API 연결 실패: " + err;
   }).finally(() => {
     btn.disabled = false;
     btn.innerHTML = '<span>AI 첨삭 받기</span><span class="material-symbols-outlined">arrow_forward</span>';
   });
 });
+
+function sendChatMessage() {
+  const input = document.getElementById("chatInput");
+  const msg = input.value.trim();
+  if (!msg) return;
+  appendChatBubble("user", msg);
+  chatHistory.push({ role: "user", content: msg });
+  input.value = "";
+  const sendBtn = document.getElementById("chatSendBtn");
+  sendBtn.disabled = true;
+  const aiBubble = appendChatBubble("assistant", "…생각 중");
+
+  fetch(window.API_BASE_URL + "/review-chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ doc_text: currentDocText, doc_type: currentDocType, history: chatHistory }),
+  }).then(r => r.json()).then(res => {
+    const reply = res.reply || "응답 없음";
+    aiBubble.textContent = reply;
+    chatHistory.push({ role: "assistant", content: reply });
+  }).catch(err => {
+    aiBubble.textContent = "API 연결 실패: " + err;
+  }).finally(() => {
+    sendBtn.disabled = false;
+  });
+}
+document.getElementById("chatSendBtn").addEventListener("click", sendChatMessage);
+document.getElementById("chatInput").addEventListener("keydown", e => { if (e.key === "Enter") sendChatMessage(); });
 </script>
 </body></html>
