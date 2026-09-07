@@ -95,11 +95,20 @@ def generate_graphrag_response(prompt: str, api_key_input: str = "") -> dict:
 
 # ── 서비스 선택 스위치 (메인 진입점 분리) ──
 # DART-Trace(지배구조)와 미술 실기 입시 도우미는 완전히 별개 서비스다.
-# 아래에서 "미술 실기 입시"를 고르면 이후 DART-Trace 코드는 전혀 실행되지 않고
-# (st.stop()으로 즉시 종료) art_admission_app.py의 화면만 렌더링된다.
-with st.sidebar:
-    service_mode = st.radio("🗂️ 서비스 선택", ["🎨 미술 실기 입시 도우미", "🏛️ DART-Trace (지배구조)"], key="top_service_mode")
-    st.markdown("---")
+# 메인 링크(쿼리파라미터 없음)로 들어오면 미술 입시 도우미가 곧바로 뜨고
+# 사이드바에 DART-Trace 선택지 자체가 안 보인다 - 학원 등 외부에 공유할 링크가
+# DART-Trace 존재를 노출하지 않게 하기 위함. DART-Trace는 URL에
+# "?internal=darttrace" 를 붙인 비공개 링크로만 접근한다(뒤 숫자 없는 평문
+# 파라미터라 추측하긴 쉽지만, 이건 보안 차단이 아니라 "메인에 안 보이게" 하는
+# 용도일 뿐 - 진짜 민감정보라면 별도 인증이 필요).
+_is_internal_access = st.query_params.get("internal") == "darttrace"
+
+if _is_internal_access:
+    with st.sidebar:
+        service_mode = st.radio("🗂️ 서비스 선택", ["🎨 미술 실기 입시 도우미", "🏛️ DART-Trace (지배구조)"], key="top_service_mode")
+        st.markdown("---")
+else:
+    service_mode = "🎨 미술 실기 입시 도우미"
 
 if service_mode == "🎨 미술 실기 입시 도우미":
     from art_admission_app import render_art_admission_app
