@@ -376,6 +376,46 @@ class ArtAdmissionService:
 
         return {"nodes": list(nodes.values()), "edges": edges}
 
+    def get_entity_graph_view(self, min_weight: int = 1) -> Dict[str, Any]:
+        """LLM 구조화 추출(원문검증+신뢰도필터 통과분만)로 만든 Admission_Entity +
+        CO_OCCURS_WITH 그래프를 pyvis 시각화용 노드/엣지로 변환한다. PageRank/
+        Louvain 커뮤니티 + LLM이 붙인 커뮤니티 라벨을 함께 담는다."""
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            node_rows = s.run("""
+                MATCH (e:Admission_Entity)
+                RETURN e.name AS name, e.type AS type, e.pagerank AS pagerank,
+                       e.community AS community, e.community_label AS community_label,
+                       e.llm_discovered AS llm_discovered
+            """).data()
+            edge_rows = s.run("""
+                MATCH (a:Admission_Entity)-[r:CO_OCCURS_WITH]-(b:Admission_Entity)
+                WHERE a.name < b.name AND r.weight >= $min_weight
+                RETURN a.name AS a, b.name AS b, r.weight AS weight
+            """, min_weight=min_weight).data()
+
+        nodes = [{
+            "id": r["name"], "label": r["name"],
+            "kind": f"entity_{r['type']}" if not r.get("llm_discovered") else "entity_llm_new",
+            "title": (f"{r['name']} ({r['type']}) pagerank={r.get('pagerank') or 0:.4f} "
+                      f"community={r.get('community')} [{r.get('community_label') or ''}]"
+                      + (" 🆕 LLM 신규발견" if r.get("llm_discovered") else "")),
+        } for r in node_rows]
+        edges = [{"from": r["a"], "to": r["b"], "weight": r["weight"]} for r in edge_rows]
+        return {"nodes": nodes, "edges": edges}
+
+    def get_entity_mismatch_candidates(self, top_n: int = 10) -> List[Dict[str, Any]]:
+        """사전(구조화 데이터)에 없다가 LLM 구조화 추출이 새로 찾아낸 개체를 노출한다
+        (day36 교안_02가 목표했던 지점: 규칙/사전 기반으로는 놓치는 걸 LLM이 잡아냄).
+        원문검증+신뢰도필터를 이미 통과한 것들만 여기 올라온다."""
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            rows = s.run("""
+                MATCH (c:Admission_TextChunk)-[:MENTIONS]->(e:Admission_Entity {llm_discovered: true})
+                WITH e, count(DISTINCT c) AS chunk_count
+                RETURN e.name AS name, e.type AS type, e.pagerank AS pagerank, chunk_count
+                ORDER BY chunk_count DESC LIMIT $top_n
+            """, top_n=top_n).data()
+        return rows
+
     def get_calendar_events(self) -> List[Dict[str, Any]]:
         """전체 전형의 원서접수 기간·실기고사일·발표일을 타임라인 이벤트로 변환.
         exam_date는 여러 날짜가 섞여있을 수 있어 하루짜리 이벤트로 각각 쪼갠다."""

@@ -112,6 +112,12 @@ _GRAPH_NODE_COLOR = {
     "exam_type": "#d97706",
     "past_topic": "#7c3aed",
     "estimate": "#6b7280",
+    "entity_university": "#1d4ed8",
+    "entity_department": "#0891b2",
+    "entity_exam_type": "#d97706",
+    "entity_material": "#be123c",
+    "entity_llm_new": "#16a34a",
+    "entity_other": "#16a34a",
 }
 _GRAPH_NODE_SHAPE = {
     "university": "box",
@@ -120,6 +126,12 @@ _GRAPH_NODE_SHAPE = {
     "exam_type": "diamond",
     "past_topic": "dot",
     "estimate": "dot",
+    "entity_university": "box",
+    "entity_department": "box",
+    "entity_exam_type": "diamond",
+    "entity_material": "triangle",
+    "entity_llm_new": "star",
+    "entity_other": "star",
 }
 
 
@@ -569,27 +581,61 @@ def render_art_admission_app():
 
         else:  # 🕸️ 지식그래프 보기
             st.markdown("### 🕸️ 지식그래프 보기")
-            st.caption(
-                "University → Department → Track → ExamType → PastTopic (공식 사실, 파랑~보라 계열)과 "
-                "Track → CutoffEstimate (추정치, 회색)를 색으로 분리해서 보여줍니다. "
-                "점/노드를 드래그하거나 확대해서 관계를 직접 확인할 수 있습니다."
-            )
-            display_to_key_g = {u["display_name"]: (u["university"], u.get("campus")) for u in universities}
-            scope_labels = ["전체"] + list(display_to_key_g.keys())
-            scope = st.selectbox("범위 선택", scope_labels)
+            view = st.radio("보기 종류", ["구조 그래프 (공식사실/추정치)", "LLM 개체 추출 그래프 (구조화 추출+PageRank/커뮤니티)"], horizontal=True)
 
-            if scope == "전체":
-                graph = svc.get_graph_view()
-            else:
-                g_univ, g_campus = display_to_key_g[scope]
-                graph = svc.get_graph_view(university=g_univ, campus=g_campus)
+            if view == "구조 그래프 (공식사실/추정치)":
+                st.caption(
+                    "University → Department → Track → ExamType → PastTopic (공식 사실, 파랑~보라 계열)과 "
+                    "Track → CutoffEstimate (추정치, 회색)를 색으로 분리해서 보여줍니다. "
+                    "점/노드를 드래그하거나 확대해서 관계를 직접 확인할 수 있습니다."
+                )
+                display_to_key_g = {u["display_name"]: (u["university"], u.get("campus")) for u in universities}
+                scope_labels = ["전체"] + list(display_to_key_g.keys())
+                scope = st.selectbox("범위 선택", scope_labels)
 
-            if not graph["nodes"]:
-                st.info("표시할 그래프 데이터가 없습니다.")
-            else:
-                st.caption(f"노드 {len(graph['nodes'])}개 · 관계 {len(graph['edges'])}개")
-                html = _render_graph_html(graph["nodes"], graph["edges"])
-                st.components.v1.html(html, height=620, scrolling=True)
+                if scope == "전체":
+                    graph = svc.get_graph_view()
+                else:
+                    g_univ, g_campus = display_to_key_g[scope]
+                    graph = svc.get_graph_view(university=g_univ, campus=g_campus)
+
+                if not graph["nodes"]:
+                    st.info("표시할 그래프 데이터가 없습니다.")
+                else:
+                    st.caption(f"노드 {len(graph['nodes'])}개 · 관계 {len(graph['edges'])}개")
+                    html = _render_graph_html(graph["nodes"], graph["edges"])
+                    st.components.v1.html(html, height=620, scrolling=True)
+
+            else:  # LLM 개체 추출 그래프
+                st.markdown(
+                    "<div style='background:rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.3); "
+                    "border-radius:8px; padding:10px; font-size:13px;'>"
+                    "🔵 <b>LLM 구조화 추출로 만든 그래프입니다.</b> 문자열이 겹친다고 무조건 연결하지 않고, "
+                    "① LLM이 문맥을 보고 개체를 뽑고 → ② 뽑힌 표현이 실제 원문에 그대로 있는지 검증하고 "
+                    "→ ③ 신뢰도 0.5 미만은 버리는 3단계를 거칩니다. 🆕 표시는 학교 모집요강에는 없던, "
+                    "LLM이 원문에서 새로 찾아낸 개체(사전 매칭만으로는 놓쳤을 것들)입니다."
+                    "</div>",
+                    unsafe_allow_html=True,
+                )
+                st.caption("점 크기·PageRank가 높을수록 다른 개체와 자주 같은 문서 조각(청크)에 동시 등장한 개체입니다. 색 = 커뮤니티(자동 군집, LLM이 붙인 한글 라벨 포함).")
+
+                min_weight = st.slider("동시출현 최소 횟수(엣지 필터)", 1, 10, 1)
+                egraph = svc.get_entity_graph_view(min_weight=min_weight)
+                if not egraph["nodes"]:
+                    st.info("개체 추출 그래프가 아직 없습니다. 내작업폴더/02_Art_Admission_Entity_Linker.py --commit 을 먼저 실행하세요.")
+                else:
+                    st.caption(f"개체 {len(egraph['nodes'])}개 · 동시출현 관계 {len(egraph['edges'])}개")
+                    html = _render_graph_html(egraph["nodes"], egraph["edges"])
+                    st.components.v1.html(html, height=620, scrolling=True)
+
+                st.markdown("#### 🆕 사전에 없던, LLM이 새로 찾아낸 개체 Top 10")
+                st.caption("모집요강 구조화 데이터(대학/학과/실기종목/재료)에는 없지만, PDF 원문에서 LLM이 문맥으로 찾아낸 개체입니다.")
+                mismatches = svc.get_entity_mismatch_candidates(top_n=10)
+                if mismatches:
+                    df_mismatch = pd.DataFrame(mismatches)
+                    st.dataframe(df_mismatch, use_container_width=True)
+                else:
+                    st.info("데이터 없음 - 개체 추출기를 먼저 실행하세요.")
 
     finally:
         svc.close()

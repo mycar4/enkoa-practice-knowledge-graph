@@ -112,6 +112,26 @@ def test_vector_index_populated():
         svc.close()
 
 
+def test_entity_mentions_and_communities_populated():
+    """LLM 구조화 추출(원문검증+신뢰도필터) 방식 - Admission_Entity/MENTIONS/
+    CO_OCCURS_WITH가 실제로 채워져 있고, PageRank/커뮤니티 값이 계산돼 있는지 확인한다.
+    (내작업폴더/02_Art_Admission_Entity_Linker.py --commit 으로 생성됨.
+    학교를 새로 추가한 뒤에는 이 스크립트도 다시 실행해야 신규 학교의 청크가
+    이 그래프에 반영된다 - 안 하면 조용히 낡은 상태로 남는다.)"""
+    svc = ArtAdmissionService()
+    try:
+        with svc.driver.session(default_access_mode="READ") as s:
+            entity_count = s.run("MATCH (e:Admission_Entity) RETURN count(e) AS c").single()["c"]
+            mentions_count = s.run("MATCH ()-[r:MENTIONS]->() RETURN count(r) AS c").single()["c"]
+            with_pagerank = s.run("MATCH (e:Admission_Entity) WHERE e.pagerank IS NOT NULL RETURN count(e) AS c").single()["c"]
+        assert entity_count > 0, "Admission_Entity가 하나도 없음 - 엔티티 링커를 먼저 실행해야 함"
+        assert mentions_count > 0, "MENTIONS 관계가 하나도 없음"
+        assert with_pagerank == entity_count, f"PageRank 미계산 개체 존재: {entity_count - with_pagerank}건"
+        print(f"✅ test_entity_mentions_and_communities_populated passed! (개체 {entity_count}건, MENTIONS {mentions_count}건, 전부 PageRank 계산됨)")
+    finally:
+        svc.close()
+
+
 def _ensure_streamlit_running() -> bool:
     """8501 포트에 이미 떠있으면 그대로 쓰고, 없으면 새로 띄운다.
     반환값: 이 함수가 새로 띄웠으면 True (테스트 종료 후 정리 여부 판단용)."""
@@ -170,5 +190,6 @@ if __name__ == "__main__":
     test_no_shared_exam_or_schedule_nodes()
     test_admission_year_consistent_within_active_tracks()
     test_vector_index_populated()
+    test_entity_mentions_and_communities_populated()
     test_streamlit_tabs_render_without_exception()
     print("🎉 ALL ART ADMISSION QA REGRESSION TESTS PASSED!")
