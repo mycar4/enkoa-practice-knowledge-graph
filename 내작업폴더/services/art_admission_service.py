@@ -154,6 +154,9 @@ class ArtAdmissionService:
                        sch.registration_start AS registration_start, sch.registration_end AS registration_end,
                        past_topics
             """, university=university, campus=campus).data()
+            for t in tracks:
+                t["source_tier"] = _classify_source(t.get("source_url"))
+                t["exam_dates"] = _extract_dates(t.get("exam_date"))
 
             estimates = s.run("""
                 MATCH (u:Admission_University {name: $university})-[:HAS_DEPARTMENT]->(:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
@@ -670,20 +673,28 @@ class ArtAdmissionService:
     _DOCUMENT_BASED_MARKERS = ("서류평가", "미술활동보고서")
 
     def list_tracks_with_estimates(self) -> List[Dict[str, Any]]:
-        """실기 역탐색용 원천 데이터 - 트랙마다 exam_type/재료/컷라인 추정치를
-        한 번의 쿼리로 합쳐서 가져온다 (N+1 방지)."""
+        """실기 역탐색용 원천 데이터 - 트랙마다 exam_type/재료/일정/컷라인 추정치를
+        한 번의 쿼리로 합쳐서 가져온다 (N+1 방지). FO 결과 카드에 필요한 필드를
+        전부 여기서 채운다 - quota/ratio/time_limit_minutes/원서접수·실기고사·발표일까지."""
         with self.driver.session(default_access_mode=READ_ACCESS) as s:
             rows = s.run("""
                 MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(d:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
                 WHERE t.is_superseded IS NULL OR t.is_superseded = false
                 OPTIONAL MATCH (t)-[:REQUIRES_EXAM]->(e:Admission_ExamType)
+                OPTIONAL MATCH (t)-[:HAS_SCHEDULE]->(sch:Admission_Schedule)
                 OPTIONAL MATCH (t)-[:ESTIMATED_CUTOFF]->(c:Admission_CutoffEstimate)
                 RETURN u.name AS university, u.campus AS campus, d.name AS department,
                        t.name AS track_name, t.admission_year AS admission_year,
-                       t.source_url AS source_url,
+                       t.quota AS quota, t.ratio AS ratio, t.source_url AS source_url,
                        e.name AS exam_type_name, e.allowed_materials AS allowed_materials,
+                       e.paper_size AS paper_size, e.time_limit_minutes AS time_limit_minutes,
+                       sch.application_start AS application_start, sch.application_end AS application_end,
+                       sch.exam_date AS exam_date_raw, sch.result_date AS result_date,
                        c.cutoff_grade_estimate AS cutoff_grade_estimate, c.source_url AS cutoff_source_url
             """).data()
+        for r in rows:
+            r["exam_dates"] = _extract_dates(r.get("exam_date_raw"))
+            r["source_tier"] = _classify_source(r.get("source_url"))
         return rows
 
     def list_exam_topic_keywords(self, min_schools: int = 2) -> List[str]:
@@ -718,11 +729,18 @@ class ArtAdmissionService:
     def search_tracks_by_prep(self, topic_keywords: Optional[List[str]] = None,
                                material_query: str = "", document_only: bool = False) -> List[Dict[str, Any]]:
         """수험생이 고른 '큰 주제'(실기종목 키워드)와 자유 검색한 재료 문구로
-        겹치는 학교/학과를 찾아 예상등급(추정치)까지 함께 반환한다. 재료는 200개+
-        세부 항목이 있어 선택지 나열 대신 부분일치 검색으로 처리한다 - 예를 들어
-        "연필"로 검색하면 "소묘용 연필", "4B연필" 등을 전부 잡는다.
+        겹치는 학교/학과를 찾는다. 재료는 200개+ 세부 항목이 있어 선택지 나열
+        대신 부분일치 검색으로 처리한다 - 예를 들어 "연필"로 검색하면
+        "소묘용 연필", "4B연필" 등을 전부 잡는다.
         document_only=True면 실기 없이 서류(미술활동보고서 등)로 평가받는
-        전형만 따로 보여준다."""
+        전형만 따로 보여준다.
+
+        match_status 3단계로 반드시 분리한다 - 재료만 겹치는 걸 "실기종목 일치"
+        라고 부르면 안 된다는 게 이 함수의 핵심 불변조건이다:
+          - "exact"    : 선택한 실기종목 키워드가 전형의 실기유형과 실제로 겹침
+          - "partial"  : 재료/규격만 겹치거나 일부 키워드만 겹침 (준비 내용 확인 필요)
+          - "document" : 실기 없이 서류로 평가 (document_only일 때만)
+        """
         topic_set = set(topic_keywords or [])
         material_query = (material_query or "").strip()
         rows = self.list_tracks_with_estimates()
@@ -733,12 +751,17 @@ class ArtAdmissionService:
             if document_only:
                 if not is_doc:
                     continue
-                results.append({**r, "matched_keywords": [], "is_document_based": True})
+                results.append({
+                    **r, "matched_keywords": [], "is_document_based": True,
+                    "match_status": "document", "exact_match_reasons": [],
+                    "partial_match_reasons": [], "warnings": [],
+                })
                 continue
             if is_doc:
                 continue  # 서류전형은 재료/실기 키워드 비교 대상이 아니므로 일반 검색에서는 제외
 
-            matched_topics = topic_set & self._exam_keywords(exam_name) if topic_set else set()
+            exam_kw = self._exam_keywords(exam_name)
+            matched_topics = topic_set & exam_kw if topic_set else set()
             matched_materials = set()
             if material_query:
                 for m in (r.get("allowed_materials") or []):
@@ -746,9 +769,28 @@ class ArtAdmissionService:
                         matched_materials.add(m)
 
             matched = matched_topics | matched_materials
-            if matched:
-                results.append({**r, "matched_keywords": sorted(matched), "is_document_based": False})
-        results.sort(key=lambda r: -len(r["matched_keywords"]))
+            if not matched:
+                continue
+
+            if matched_topics:
+                match_status = "exact"
+                exact_reasons = sorted(matched_topics)
+                partial_reasons = sorted(matched_materials)
+                warnings: List[str] = []
+            else:
+                match_status = "partial"
+                exact_reasons = []
+                partial_reasons = sorted(matched_materials)
+                warnings = ["실기유형이 아니라 재료·규격만 겹치는 결과입니다. 실제 준비 내용을 공식 모집요강에서 반드시 확인하세요."]
+
+            results.append({
+                **r, "matched_keywords": sorted(matched), "is_document_based": False,
+                "match_status": match_status, "exact_match_reasons": exact_reasons,
+                "partial_match_reasons": partial_reasons, "warnings": warnings,
+            })
+
+        # exact를 항상 앞에, 그 안에서는 겹치는 키워드가 많은 순
+        results.sort(key=lambda r: (r["match_status"] != "exact", -len(r["matched_keywords"])))
         return results
 
     def get_compatible_tracks_for_query(self, query: str) -> List[Dict[str, Any]]:

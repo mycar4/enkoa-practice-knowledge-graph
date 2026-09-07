@@ -96,6 +96,75 @@ def prep_topics():
         svc.close()
 
 
+@app.get("/stats")
+def stats():
+    """홈 화면 통계용 - 고유 대학 수와 전형(트랙) 수를 분리해서 반환한다.
+    캠퍼스가 여러 개인 대학(홍익대 등)을 두 번 세지 않도록 university 집합은
+    이름으로만 dedup한다. 새 비즈니스 로직 없음 - list_all_tracks_full() 결과를
+    그냥 집계만 한다."""
+    svc = get_service()
+    try:
+        tracks = svc.list_all_tracks_full()
+        universities = {t["university"] for t in tracks}
+        years = sorted({t.get("admission_year") for t in tracks if t.get("admission_year")})
+        return {
+            "university_count": len(universities),
+            "track_count": len(tracks),
+            "admission_years": years,
+        }
+    finally:
+        svc.close()
+
+
+class CompareRequest(BaseModel):
+    selections: List[dict]  # [{"university": ..., "department": ...}, ...]
+
+
+@app.post("/compare-tracks")
+def compare_tracks_endpoint(req: CompareRequest):
+    """대학 찾기 결과에서 2~6개 전형을 선택했을 때 나란히 비교표를 만든다.
+    기존 Streamlit '전형 비교' 탭이 쓰던 get_comparison_table() 그대로 재사용."""
+    svc = get_service()
+    try:
+        return svc.get_comparison_table(req.selections)
+    finally:
+        svc.close()
+
+
+@app.post("/simulate-multi-apply")
+def simulate_multi_apply_endpoint(req: CompareRequest):
+    """선택한 조합 안에서만 일정(실기고사일) 충돌을 검사한다. 기존 '동시지원
+    시뮬레이터' 탭이 쓰던 simulate_multi_apply() 그대로 재사용 - 새 로직 없음."""
+    svc = get_service()
+    try:
+        return svc.simulate_multi_apply(req.selections)
+    finally:
+        svc.close()
+
+
+@app.get("/calendar-events")
+def calendar_events_endpoint():
+    """전체 전형의 원서접수/실기고사/발표/등록 일정. FO에서 선택된 학교만
+    클라이언트 쪽에서 골라 타임라인으로 그린다. 기존 '일정 캘린더' 탭이 쓰던
+    get_calendar_events() 그대로 재사용."""
+    svc = get_service()
+    try:
+        return svc.get_calendar_events()
+    finally:
+        svc.close()
+
+
+@app.get("/past-topics")
+def past_topics_endpoint(university: Optional[str] = None):
+    """Evidence Drawer에서 기출문제가 있으면 같이 보여주기 위한 조회.
+    기존 '기출문제' 탭이 쓰던 get_past_topics() 그대로 재사용."""
+    svc = get_service()
+    try:
+        return svc.get_past_topics(university=university)
+    finally:
+        svc.close()
+
+
 @app.post("/prep-search")
 def prep_search(req: PrepSearchRequest):
     """03 RESULT 화면 - 학생이 선택한 실기종목/재료로 호환 학교 찾기.

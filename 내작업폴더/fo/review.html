@@ -47,6 +47,7 @@
 </div>
 <textarea class="w-full h-48 lg:h-64 p-unit-sm bg-surface-container-lowest border border-outline-variant rounded font-body-md text-body-md" id="docText" placeholder="자기소개서/활동보고서 텍스트를 붙여넣거나, 위에서 .txt 파일을 불러오세요"></textarea>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">PDF/한글(.hwp) 파일은 아직 지원하지 않습니다 - 텍스트로 붙여넣거나 .txt로 저장해서 올려주세요.</p>
+<p id="docTextError" class="font-body-sm text-body-sm text-error mt-unit-2xs hidden">첨삭할 텍스트를 입력해주세요.</p>
 </div>
 <button class="w-full h-13 py-unit-sm bg-on-surface text-surface font-label-lg text-label-lg rounded flex items-center justify-center gap-unit-xs shadow-md" id="reviewBtn"><span>AI 첨삭 받기</span><span class="material-symbols-outlined">arrow_forward</span></button>
 </div>
@@ -124,7 +125,9 @@ document.getElementById("reviewBtn").addEventListener("click", () => {
   const feedbackBox = document.getElementById("feedbackBox");
   const docRulesBox = document.getElementById("docRulesBox");
   const docRulesList = document.getElementById("docRulesList");
-  if (!text) { alert("첨삭할 텍스트를 입력해주세요."); return; }
+  const textError = document.getElementById("docTextError");
+  if (!text) { textError.classList.remove("hidden"); return; }
+  textError.classList.add("hidden");
 
   const btn = document.getElementById("reviewBtn");
   btn.disabled = true;
@@ -147,7 +150,7 @@ document.getElementById("reviewBtn").addEventListener("click", () => {
       ).join("");
       docRulesBox.classList.remove("hidden");
     } else if (university) {
-      docRulesList.innerHTML = `<span class="text-on-surface-variant">이 학교의 서류 규정 원문을 색인에서 찾지 못해 일반 글쓰기 관점으로만 첨삭했습니다.</span>`;
+      docRulesList.innerHTML = `<span class="text-on-surface-variant">해당 학교의 서류 규정을 현재 데이터에서 확인하지 못했습니다. 일반적인 글쓰기 관점의 피드백입니다.</span>`;
       docRulesBox.classList.remove("hidden");
     } else {
       docRulesBox.classList.add("hidden");

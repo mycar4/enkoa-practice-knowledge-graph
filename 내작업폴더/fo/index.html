@@ -27,9 +27,9 @@
 <div class="w-full max-w-[1440px] mx-auto">
 <section class="px-margin-mobile lg:px-12 pt-unit-lg pb-unit-md lg:py-unit-3xl lg:grid lg:grid-cols-2 lg:gap-unit-3xl lg:items-center">
 <div>
-<div class="flex items-center gap-unit-xs mb-unit-sm"><span class="inline-block w-2.5 h-2.5 bg-primary-container"></span><span class="font-label-sm text-label-sm text-primary uppercase tracking-wider">ART:READY 2026</span></div>
+<div class="flex items-center gap-unit-xs mb-unit-sm"><span class="inline-block w-2.5 h-2.5 bg-primary-container"></span><span class="font-label-sm text-label-sm text-primary uppercase tracking-wider">ART:READY</span></div>
 <h1 class="font-headline-lg-mobile text-headline-lg-mobile lg:font-display-xl lg:text-display-xl text-on-surface tracking-tight">감으로 상담하던<br/>미술입시를 데이터로.</h1>
-<p class="font-body-md text-body-md lg:font-body-lg lg:text-body-lg text-on-surface-variant mt-unit-sm leading-relaxed max-w-lg">학생의 조건과 실기를 분석해 지원 가능한 미술대학과 전형을 <strong id="univ-count-text">실측 검증된 대학</strong> 공식 모집요강 근거와 함께 확인합니다.</p>
+<p class="font-body-md text-body-md lg:font-body-lg lg:text-body-lg text-on-surface-variant mt-unit-sm leading-relaxed max-w-lg">준비 중인 실기와 공식 모집요강을 비교해<br/>상담에서 검토할 전형과 확인할 일정을 찾습니다.</p>
 
 <!-- 모바일에서도 도형 아이덴티티가 바로 보이게: 컴팩트 가로 배지 -->
 <div class="flex lg:hidden items-center gap-unit-md mt-unit-md p-unit-sm bg-surface-container-lowest rounded shadow-sm">
@@ -42,10 +42,10 @@
 
 <div class="flex flex-col sm:flex-row lg:flex-col gap-unit-xs mt-unit-lg max-w-md">
 <a class="w-full h-13 px-unit-md py-unit-sm bg-on-surface text-surface flex items-center justify-between shadow-md rounded transition-all active:translate-x-0.5 active:translate-y-0.5 hover:bg-primary-container" href="profile.html">
-<span class="font-label-lg text-label-lg">학생 조건 분석 시작하기</span><span class="material-symbols-outlined">arrow_forward</span>
+<span class="font-label-lg text-label-lg">준비한 실기로 전형 찾기</span><span class="material-symbols-outlined">arrow_forward</span>
 </a>
 <a class="w-full h-11 px-unit-md bg-surface-container text-on-surface flex items-center justify-between rounded transition-colors hover:bg-surface-container-high" href="qa.html">
-<span id="qa-cta-text" class="font-label-md text-label-md">대학 입시 데이터 물어보기</span><span class="material-symbols-outlined text-[18px]">forum</span>
+<span class="font-label-md text-label-md">입시 질문하기</span><span class="material-symbols-outlined text-[18px]">forum</span>
 </a>
 </div>
 </div>
@@ -66,20 +66,16 @@
 </section>
 
 <section class="px-margin-mobile lg:px-12 py-unit-lg lg:pb-unit-3xl">
-<div class="grid grid-cols-4 lg:grid-cols-3 lg:max-w-2xl gap-unit-xs pt-unit-xs">
-<div class="bg-surface-container-lowest p-unit-sm rounded shadow-sm text-center"><div id="stat-univ" class="font-headline-sm text-headline-sm text-primary">-</div><div class="font-label-sm text-label-sm text-on-surface-variant">실측 대학</div></div>
-<div class="bg-surface-container-lowest p-unit-sm rounded shadow-sm text-center"><div class="font-headline-sm text-headline-sm text-primary">100%</div><div class="font-label-sm text-label-sm text-on-surface-variant">공식 요강 근거</div></div>
-<div class="bg-surface-container-lowest p-unit-sm rounded shadow-sm text-center"><div class="font-headline-sm text-headline-sm text-secondary">2027</div><div class="font-label-sm text-label-sm text-on-surface-variant">학년도 데이터</div></div>
-</div>
+<p id="statSummary" class="font-label-md text-label-md text-on-surface-variant">불러오는 중...</p>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-md leading-relaxed lg:max-w-xl">
-AI는 대학을 결정하지 않습니다. 공식 모집요강 원문 데이터를 검토할 가치가 있는 대학과 전형을 찾아 학원장과 학부모 상담을 지원합니다.
+AI는 대학을 결정하지 않습니다. 공식 모집요강 원문 데이터를 검토할 가치가 있는 전형을 찾아 학원장과 학부모 상담을 지원합니다.
 </p>
 </section>
 
-<!-- 신빙성: 실제 등록된 대학명을 그대로 노출 (숫자만 말하지 않고 "어디"인지 보여줌) -->
+<!-- 실제 등록된 대학명을 그대로 노출 (숫자만 말하지 않고 "어디"인지 보여줌) -->
 <section class="px-margin-mobile lg:px-12 pb-unit-2xl">
 <div class="flex items-center justify-between mb-unit-sm">
-<h2 class="font-headline-sm text-headline-sm text-on-surface">실측 검증된 등록 대학</h2>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">등록 대학</h2>
 <a href="profile.html" class="font-label-sm text-label-sm text-primary underline">전체로 검색하기</a>
 </div>
 <div id="univListChips" class="flex flex-wrap gap-unit-xs">
@@ -97,16 +93,19 @@ AI는 대학을 결정하지 않습니다. 공식 모집요강 원문 데이터�
 </div></nav>
 
 <script>
-// 홈 화면의 학교 수/목록은 전부 실제 API 값으로 채운다 - 하드코딩된 "17개" 같은
-// 숫자는 데이터가 바뀌면 바로 틀린 정보가 되므로 절대 정적 텍스트로 안 둔다.
-// Stitch 원본 목업에는 서울대/이화여대 등 우리 데이터에 없는 학교명이 있었는데
-// 전부 제거했다.
-fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
-  const count = list.length;
-  document.getElementById("stat-univ").textContent = count;
-  document.getElementById("univ-count-text").textContent = `실측 검증된 ${count}개교`;
-  document.getElementById("qa-cta-text").textContent = `${count}개 대학 입시 데이터 물어보기`;
+// 홈 화면의 학교/전형 수는 전부 실제 API 값으로 채운다 - 하드코딩된 숫자는
+// 데이터가 바뀌면 바로 틀린 정보가 되므로 절대 정적 텍스트로 안 둔다.
+// 고유 대학 수(university_count)와 전형(트랙) 레코드 수(track_count)가
+// 다르면 반드시 분리해서 표기한다 - "15개 대학 · 31개 전형 데이터" 형태.
+fetch(window.API_BASE_URL + "/stats").then(r => r.json()).then(stats => {
+  const years = (stats.admission_years || []).join("·");
+  document.getElementById("statSummary").textContent =
+    `${stats.university_count}개 대학 · ${stats.track_count}개 전형 데이터` + (years ? ` · ${years}학년도` : "");
+}).catch(() => {
+  document.getElementById("statSummary").textContent = "API 연결 실패 - 통계를 불러오지 못했습니다.";
+});
 
+fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
   const uniqueNames = [...new Set(list.map(u => u.university))].sort();
   const chipsEl = document.getElementById("univListChips");
   chipsEl.innerHTML = uniqueNames.map(name =>

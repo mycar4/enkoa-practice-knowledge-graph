@@ -23,9 +23,9 @@
 <main class="flex flex-col relative w-full pt-16 lg:pt-20 pb-24 md:pb-16 bg-surface min-h-screen">
 <div class="flex flex-col w-full max-w-3xl mx-auto px-gutter-mobile lg:px-12 gap-unit-lg pb-unit-xl">
 <section class="flex flex-col gap-unit-xs pt-unit-sm">
-<div class="flex items-center gap-unit-xs"><span class="inline-block w-2.5 h-2.5 bg-primary-container"></span><span class="font-label-sm text-label-sm text-primary uppercase tracking-wider">RAG Evidence Engine 2026</span></div>
+<div class="flex items-center gap-unit-xs"><span class="inline-block w-2.5 h-2.5 bg-primary-container"></span><span class="font-label-sm text-label-sm text-primary uppercase tracking-wider">ART:READY</span></div>
 <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">미술입시 질문</h1>
-<p class="font-body-md text-body-md text-on-surface-variant">실측 검증된 대학 공식 모집요강 원문 데이터를 기반으로 답변합니다. 답변에 없는 학교/숫자는 지어내지 않도록 시스템이 제한합니다.</p>
+<p class="font-body-md text-body-md text-on-surface-variant">공식 모집요강 원문 데이터를 근거로 답변합니다. 데이터에 없는 학교/숫자는 지어내지 않고 "확인하지 못했습니다"라고 답합니다.</p>
 </section>
 
 <section class="flex flex-col gap-unit-sm bg-surface-container p-unit-md rounded-xl shadow-sm">
@@ -82,11 +82,19 @@ function buildGraphTrace(res) {
   const related = res.context_graph_related || [];
   if (!compatible.length && !related.length) return "";
 
-  const compatRows = compatible.slice(0, 8).map(m => `
+  // shared_keywords(실기유형 자체가 겹침)와 shared_materials(재료만 겹침)는
+  // 신뢰도가 다르므로 절대 같은 문구로 섞어 보여주지 않는다.
+  const compatRows = compatible.slice(0, 8).map(m => {
+    const hasExact = (m.shared_keywords || []).length > 0;
+    const label = hasExact
+      ? `실기유형 일치: ${m.shared_keywords.join(", ")}`
+      : `재료만 겹침(실기유형 다름): ${(m.shared_materials || []).join(", ") || "-"}`;
+    return `
     <div class="flex items-start gap-unit-xs">
-      <span class="w-2 h-2 rounded-full bg-primary shrink-0 mt-1.5"></span>
-      <span class="font-body-sm text-body-sm text-on-surface"><strong>${m.university} ${m.department}</strong> - 공통 키워드 ${(m.shared_keywords || []).concat(m.shared_materials || []).join(", ") || "-"}</span>
-    </div>`).join("");
+      <span class="w-2 h-2 rounded-full ${hasExact ? "bg-primary" : "bg-outline"} shrink-0 mt-1.5"></span>
+      <span class="font-body-sm text-body-sm text-on-surface"><strong>${m.university} ${m.department}</strong> - ${label}</span>
+    </div>`;
+  }).join("");
 
   const relatedChips = related.slice(0, 8).map(r =>
     `<span class="px-unit-xs py-0.5 bg-surface-container text-on-surface font-label-sm text-label-sm rounded">${r.name}${r.community_label ? ` · ${r.community_label}` : ""}</span>`
@@ -135,10 +143,7 @@ function askQuestion() {
     aiBox.innerHTML = `
       <div class="flex items-center justify-between pb-unit-xs">
         <div class="flex items-center gap-unit-xs"><div class="w-7 h-7 rounded-lg bg-primary-container flex items-center justify-center text-on-primary"><span class="material-symbols-outlined text-[18px]">auto_awesome</span></div><span class="font-label-md text-label-md text-on-surface font-bold">ART:READY AI</span></div>
-        <div class="flex items-center gap-unit-xs">
-          <span class="font-label-sm text-label-sm text-outline">${res.model || ""}</span>
-          <div class="flex items-center gap-1.5 px-unit-xs py-0.5 bg-primary text-on-primary rounded"><span class="w-2 h-2 rounded-full bg-on-primary animate-pulse"></span><span class="font-label-sm text-label-sm font-bold">RAG VERIFIED</span></div>
-        </div>
+        <span class="font-label-sm text-label-sm text-outline">${res.model || ""}</span>
       </div>
       <div class="bg-surface-container-low p-unit-md rounded-lg font-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-line">${formatAnswer(res.answer || "응답 없음")}</div>
       ${citations ? `<div class="flex flex-col gap-unit-xs bg-surface-container p-unit-md rounded-lg"><div class="flex items-center gap-unit-xs text-primary font-bold font-label-sm text-label-sm"><span class="material-symbols-outlined text-[18px]">verified</span><span>공식 모집요강 추출 근거</span></div><div class="flex flex-col gap-unit-2xs font-body-sm text-body-sm text-on-surface">${citations}</div></div>` : ""}
