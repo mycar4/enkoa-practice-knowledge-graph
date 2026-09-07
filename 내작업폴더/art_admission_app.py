@@ -413,24 +413,28 @@ def render_art_admission_app():
             st.markdown("### 🧭 준비한 실기 종목/재료로 지원 가능한 학교 찾기")
             st.caption(
                 "수험생은 보통 '어느 학교 갈까'가 아니라 '내가 학원에서 준비해온 실기 종목·재료'가 먼저 정해져 있습니다. "
-                "여기 선택지는 실제 적재된 모집요강 원문(실기종목명/허용재료)에서 그대로 뽑은 단어입니다 - 임의로 분류한 카테고리가 아닙니다."
+                "큰 주제(실기 종목)는 선택지에서 고르고, 세부 재료(연필/붓/화선지 등 200개+ 항목)는 검색으로 찾으세요 - "
+                "둘 다 실제 적재된 모집요강 원문에서 그대로 뽑은 값입니다."
             )
-            all_keywords = svc.list_available_prep_keywords()
-            selected_kw = st.multiselect(
-                "준비한 실기 종목/재료 키워드 선택 (예: 소묘, 연필, 수채화, 한국화)",
-                all_keywords,
+            topic_keywords_all = svc.list_exam_topic_keywords()
+            selected_topics = st.multiselect(
+                "큰 주제: 준비한 실기 종목 선택 (예: 소묘, 수채화, 한국화, 기초디자인)",
+                topic_keywords_all,
             )
+            material_query = st.text_input(
+                "세부 재료 검색 (예: 연필, 화선지, 점토 - 부분일치, 비워두면 검색 안 함)",
+            ).strip()
             doc_only = st.checkbox("실기 없이 서류(미술활동보고서/포트폴리오 등)로만 평가받는 전형만 보기")
 
             if doc_only:
-                results = svc.search_tracks_by_prep([], document_only=True)
-            elif selected_kw:
-                results = svc.search_tracks_by_prep(selected_kw)
+                results = svc.search_tracks_by_prep(document_only=True)
+            elif selected_topics or material_query:
+                results = svc.search_tracks_by_prep(topic_keywords=selected_topics, material_query=material_query)
             else:
                 results = []
 
-            if not selected_kw and not doc_only:
-                st.info("키워드를 선택하거나 '서류전형만 보기'를 체크하면 결과가 나옵니다.")
+            if not selected_topics and not material_query and not doc_only:
+                st.info("실기 종목을 선택하거나 재료를 검색하거나 '서류전형만 보기'를 체크하면 결과가 나옵니다.")
             elif not results:
                 st.info("적재된 데이터 범위 내에서는 조건에 맞는 학교를 찾지 못했습니다.")
             else:

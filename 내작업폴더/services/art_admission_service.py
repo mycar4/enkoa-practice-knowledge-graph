@@ -563,6 +563,12 @@ class ArtAdmissionService:
     _GENERIC_EXAM_KEYWORDS = {
         "실기", "면접", "서류", "평가", "심사", "질의응답", "전형", "발표", "제출",
         "작성", "참고자료", "단계", "선발", "제시", "이미지", "사진", "당일",
+        # 실기종목명이 완결된 문장형으로 적힌 학교(예: 명지대 "문제 주제의 해석과
+        # 표현 (입체적 첨가 형식 제외 모든 재료 허용)")에서 나오는 조사/연결어/
+        # 상투어 - "큰 주제" 선택지에서 이런 문법 부스러기까지 뜨는 걸 막는다.
+        "또는", "주제는", "주제의", "시험당일", "모든", "형식", "재료", "제외",
+        "문제", "첨가", "허용", "해석과", "표현", "함께", "이내", "방향", "선택",
+        "있는", "대한", "내외", "정물과",
     }
 
     @staticmethod
@@ -630,9 +636,28 @@ class ArtAdmissionService:
             """).data()
         return rows
 
+    def list_exam_topic_keywords(self, min_schools: int = 2) -> List[str]:
+        """'큰 주제' 선택지 - exam_type_name(실기종목명)에서만 뽑은 키워드.
+        재료명(색연필/가위/고착제 등 200개+ 세부 항목)과 섞이지 않게 분리해서,
+        UI 멀티셀렉트가 소묘/수채화/한국화/기초디자인처럼 굵직한 실기 종목
+        위주로만 나오게 한다. 카테고리를 수작업으로 만든 게 아니라, 이미 데이터
+        모델에 있는 exam_type vs material 구분을 그대로 활용한 것.
+        min_schools: 이 개수 미만으로만 등장하는 단어(특정 학교 지정작품 제목 -
+        예: '돈키호테'/'브레히트' 같은 서울예대 연극 지정작품명 - 는 '실기 종목'이
+        아니라 그 학교만의 세부 사항이므로 큰 주제 목록에서 제외)."""
+        rows = self.list_tracks_with_estimates()
+        counts: Dict[str, int] = {}
+        for r in rows:
+            exam_name = r.get("exam_type_name") or ""
+            if any(marker in exam_name for marker in self._DOCUMENT_BASED_MARKERS):
+                continue  # 서류전형 표시어("서류평가"/"면접평가" 등)는 실기 종목이 아니므로 제외
+            for kw in self._exam_keywords(exam_name):
+                counts[kw] = counts.get(kw, 0) + 1
+        return sorted(kw for kw, cnt in counts.items() if cnt >= min_schools)
+
     def list_available_prep_keywords(self) -> List[str]:
-        """멀티셀렉트 UI에 뿌릴 선택지 - 실제 적재된 exam_type/재료 문구에서
-        직접 뽑은 단어만 쓴다(수작업으로 카테고리를 만들지 않음, 실측 기반)."""
+        """(레거시) exam_type+재료 전체 키워드 - 새 UI는 주제/재료를 분리해서
+        list_exam_topic_keywords()를 쓰지만, 다른 곳에서 필요할 수 있어 남겨둔다."""
         rows = self.list_tracks_with_estimates()
         kws: set = set()
         for r in rows:
@@ -640,11 +665,16 @@ class ArtAdmissionService:
             kws |= self._material_keywords(r.get("allowed_materials"))
         return sorted(kws)
 
-    def search_tracks_by_prep(self, keywords: List[str], document_only: bool = False) -> List[Dict[str, Any]]:
-        """수험생이 이미 준비한 실기유형/재료 키워드를 입력하면, 그 키워드와 겹치는
-        학교/학과를 찾아 예상등급(추정치)까지 함께 반환한다. document_only=True면
-        실기 없이 서류(미술활동보고서 등)로 평가받는 전형만 따로 보여준다."""
-        kw_set = set(keywords)
+    def search_tracks_by_prep(self, topic_keywords: Optional[List[str]] = None,
+                               material_query: str = "", document_only: bool = False) -> List[Dict[str, Any]]:
+        """수험생이 고른 '큰 주제'(실기종목 키워드)와 자유 검색한 재료 문구로
+        겹치는 학교/학과를 찾아 예상등급(추정치)까지 함께 반환한다. 재료는 200개+
+        세부 항목이 있어 선택지 나열 대신 부분일치 검색으로 처리한다 - 예를 들어
+        "연필"로 검색하면 "소묘용 연필", "4B연필" 등을 전부 잡는다.
+        document_only=True면 실기 없이 서류(미술활동보고서 등)로 평가받는
+        전형만 따로 보여준다."""
+        topic_set = set(topic_keywords or [])
+        material_query = (material_query or "").strip()
         rows = self.list_tracks_with_estimates()
         results = []
         for r in rows:
@@ -657,7 +687,15 @@ class ArtAdmissionService:
                 continue
             if is_doc:
                 continue  # 서류전형은 재료/실기 키워드 비교 대상이 아니므로 일반 검색에서는 제외
-            matched = (self._exam_keywords(exam_name) | self._material_keywords(r.get("allowed_materials"))) & kw_set
+
+            matched_topics = topic_set & self._exam_keywords(exam_name) if topic_set else set()
+            matched_materials = set()
+            if material_query:
+                for m in (r.get("allowed_materials") or []):
+                    if material_query in m:
+                        matched_materials.add(m)
+
+            matched = matched_topics | matched_materials
             if matched:
                 results.append({**r, "matched_keywords": sorted(matched), "is_document_based": False})
         results.sort(key=lambda r: -len(r["matched_keywords"]))
