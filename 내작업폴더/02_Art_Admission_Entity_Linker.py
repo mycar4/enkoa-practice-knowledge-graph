@@ -153,6 +153,44 @@ def extract_entities_llm(chunk_text: str, known_entities: dict) -> list:
     return result
 
 
+# 학과명 표기 차이 정규화용 접미사 - 긴 것부터 검사해야 "학전공"이 "전공"보다 먼저 잘림
+_DEPT_SUFFIXES = ["학전공", "전공", "학과", "학부", "과"]
+
+
+def _normalize_dept_name(name: str) -> str:
+    for suf in _DEPT_SUFFIXES:
+        if name.endswith(suf) and len(name) > len(suf):
+            return name[: -len(suf)]
+    return name
+
+
+def resolve_aliases(known_entities: dict, entity_types: dict) -> dict:
+    """LLM이 사전 개체를 다른 표기로 뽑아서 "새 개체"로 잘못 분리되는 걸 병합한다
+    (실제로 겪은 사례: "조소"/"한국화"가 "조소전공"/"한국화전공"과 안 합쳐짐).
+
+    학과명만 병합한다 - 전공/학과/학부/과 접미사 차이를 문자열 정규화로 결정론적
+    판정(API 호출 없음, 오판정 불가능). 대학명은 임베딩 코사인 유사도로도 시도해
+    봤으나, 직접 실측해보니 "CHUGYE UNIVERSITY FOR THE ARTS"(추계예술대학교)가
+    "계원예술대학교"(전혀 다른 학교)와 0.5093으로 더 가깝게 나와 실제로 오병합이
+    발생했다(정답 0.4962와 마진이 0.013뿐 - 노이즈 수준). "OO예술대학교"류 이름은
+    임베딩이 기관 고유성보다 공통 접미사에 더 민감해서 안전하게 구분이 안 되므로,
+    잘못 합치느니 "새 개체"로 남겨두는 쪽(과소병합)이 안전해서 대학명 병합은 뺐다.
+    반환: {새로 뽑힌 표기: 사전 정식 표기}"""
+    alias_map: dict = {}
+    new_entities = [n for n in entity_types if n not in known_entities]
+
+    known_depts = [n for n, t in known_entities.items() if t == "department"]
+    norm_to_known = {_normalize_dept_name(n): n for n in known_depts}
+    for name in new_entities:
+        if entity_types.get(name) != "department":
+            continue
+        norm = _normalize_dept_name(name)
+        if norm in norm_to_known and norm_to_known[norm] != name:
+            alias_map[name] = norm_to_known[norm]
+
+    return alias_map
+
+
 _COMMUNITY_LABEL_SYSTEM_PROMPT = """다음은 그래프에서 자주 함께 언급되는(동시출현) 개체명
 묶음입니다. 이 묶음을 대표하는 아주 짧은 한글 라벨(10자 이내, 예: "회화 계열 실기",
 "서류/면접 전형")을 하나만 응답하십시오. 다른 말은 절대 덧붙이지 마십시오."""
@@ -209,6 +247,34 @@ def main():
                 done += 1
                 if done % 100 == 0:
                     print(f"  진행: {done}/{len(chunks)}")
+
+        # 표기 차이 병합(예: "CHUGYE UNIVERSITY FOR THE ARTS"->"추계예술대학교",
+        # "조소"->"조소전공") - 실제 서비스 정확도를 위해 필수. 이걸 안 하면 같은
+        # 대상이 서로 다른 개체로 쪼개져 커뮤니티/PageRank가 왜곡된다.
+        alias_map = resolve_aliases(known_entities, entity_types)
+        if alias_map:
+            print(f"\n표기 차이로 병합된 개체 {len(alias_map)}건 (학과명 접미사 정규화):")
+            for new_name, canon in alias_map.items():
+                print(f"  '{new_name}' -> '{canon}'")
+            for key, found in chunk_mentions.items():
+                remapped, seen_names = [], set()
+                for item in found:
+                    canon_name = alias_map.get(item["name"], item["name"])
+                    if canon_name in seen_names:
+                        continue
+                    seen_names.add(canon_name)
+                    remapped.append({
+                        "name": canon_name,
+                        "type": entity_types.get(canon_name, item["type"]),
+                        "is_new": canon_name not in known_entities,
+                    })
+                chunk_mentions[key] = remapped
+            for new_name in alias_map:
+                entity_types.pop(new_name, None)
+            entity_chunk_map = defaultdict(set)
+            for key, found in chunk_mentions.items():
+                for item in found:
+                    entity_chunk_map[item["name"]].add(key)
 
         total_mentions = sum(len(v) for v in chunk_mentions.values())
         new_entities = {n for n, t in entity_types.items() if n not in known_entities}
