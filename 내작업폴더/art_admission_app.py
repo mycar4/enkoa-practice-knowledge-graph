@@ -148,7 +148,7 @@ def _render_graph_html(nodes: list, edges: list) -> str:
             shape=_GRAPH_NODE_SHAPE.get(n["kind"], "dot"),
         )
     for e in edges:
-        net.add_edge(e["from"], e["to"])
+        net.add_edge(e["from"], e["to"], title=e.get("title", ""))
     return net.generate_html(notebook=False)
 
 
@@ -577,6 +577,19 @@ def render_art_admission_app():
                                 )
                                 st.caption(r["text"][:400] + ("..." if len(r["text"]) > 400 else ""))
 
+                    with st.expander("🔬 이 답변에 실제로 전달된 근거 원본 (지식그래프 → AI 순서 그대로)"):
+                        st.caption("AI는 아래 JSON에 있는 값만 근거로 답했습니다. 여기 없는 학교/날짜/등급은 AI가 절대 지어내지 않도록 프롬프트로 강제돼 있습니다.")
+                        st.markdown("**① 구조화 사실 (context_tracks)**")
+                        st.json(context_tracks, expanded=False)
+                        st.markdown("**② 비공식 추정치 (context_estimates)**")
+                        st.json(context_estimates, expanded=False)
+                        st.markdown("**③ PDF 원문 발췌 (context_raw_excerpts, 하이브리드검색+재순위화)**")
+                        st.json(context_raw, expanded=False)
+                        st.markdown("**④ 개체그래프 연관 힌트 (context_graph_related)**")
+                        st.json(context_graph_related, expanded=False)
+                        st.markdown("**⑤ 호환학교 구조화 검색 (context_compatible_tracks)**")
+                        st.json(context_compatible, expanded=False)
+
         elif page == "🖊️ 서류 AI 첨삭":
             st.markdown("### 🖊️ 서류/자소서 AI 첨삭")
             st.markdown(
@@ -690,9 +703,39 @@ def render_art_admission_app():
 
         else:  # 🕸️ 지식그래프 보기
             st.markdown("### 🕸️ 지식그래프 보기")
-            view = st.radio("보기 종류", ["구조 그래프 (공식사실/추정치)", "LLM 개체 추출 그래프 (구조화 추출+PageRank/커뮤니티)"], horizontal=True)
+            view = st.radio(
+                "보기 종류",
+                ["🗺️ 전체 아키텍처 한눈에 보기", "구조 그래프 (공식사실/추정치)", "LLM 개체 추출 그래프 (구조화 추출+PageRank/커뮤니티)"],
+                horizontal=True,
+            )
 
-            if view == "구조 그래프 (공식사실/추정치)":
+            if view == "🗺️ 전체 아키텍처 한눈에 보기":
+                st.caption(
+                    "이 서비스의 지식그래프가 실제로 무엇으로 구성돼 있고 어떤 스크립트로 만들어졌는지 보여줍니다. "
+                    "노드에 적힌 개수는 전부 지금 이 순간 DB에서 직접 센 값이고, 화살표에 마우스를 올리면 어느 단계에서 "
+                    "만들어졌는지(LLM이 관여했는지 여부 포함) 나옵니다."
+                )
+                overview = svc.get_architecture_overview()
+                html = _render_graph_html(overview["nodes"], overview["edges"])
+                st.components.v1.html(html, height=500, scrolling=True)
+
+                c = overview["counts"]
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.markdown("**① 구조화 사실 그래프**")
+                    st.caption(f"University {c['university']} · Department {c['department']} · Track {c['track']} · ExamType {c['exam_type']}")
+                    st.caption("00_Art_Admission_Graph_Loader.py — PDF에서 원문 그대로 파싱. LLM 관여 없음.")
+                with col2:
+                    st.markdown("**② PDF 원문 청크 (RAG용)**")
+                    st.caption(f"TextChunk {c['text_chunk']}건 (임베딩 완료)")
+                    st.caption("01_Art_Admission_Vector_Indexer.py — 청크화 + text-embedding-3-small 임베딩. 질의응답 하이브리드 검색이 여기서 검색함.")
+                with col3:
+                    st.markdown("**③ LLM 개체/커뮤니티 그래프**")
+                    st.caption(f"Entity {c['entity']}개(신규발견 {c['entity_llm_discovered']}개) · 커뮤니티 {c['community']}개")
+                    st.caption("02_Art_Admission_Entity_Linker.py — ②의 청크를 LLM이 읽고 개체 추출 + PageRank/Louvain 계산.")
+                st.info("💡 이 세 계층은 서로 다른 스크립트가 서로 다른 시점에 만듭니다. 학교를 새로 추가하면 ①→②→③ 순서로 전부 다시 실행해야 셋 다 최신 상태가 됩니다.")
+
+            elif view == "구조 그래프 (공식사실/추정치)":
                 st.caption(
                     "University → Department → Track → ExamType → PastTopic (공식 사실, 파랑~보라 계열)과 "
                     "Track → CutoffEstimate (추정치, 회색)를 색으로 분리해서 보여줍니다. "

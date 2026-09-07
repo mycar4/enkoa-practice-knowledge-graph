@@ -403,6 +403,56 @@ class ArtAdmissionService:
         edges = [{"from": r["a"], "to": r["b"], "weight": r["weight"]} for r in edge_rows]
         return {"nodes": nodes, "edges": edges}
 
+    def get_architecture_overview(self) -> Dict[str, Any]:
+        """'지식그래프가 실제로 뭐고 어떻게 만들어졌는지'를 보여주는 메타 그래프.
+        노드/엣지 개수는 전부 지금 이 순간 DB에서 직접 센 실측치다 - 어떤 값도
+        하드코딩하지 않는다. 세 계층(구조화 사실 / PDF 원문 청크 / LLM 개체그래프)이
+        어느 스크립트로 만들어졌는지까지 엣지 라벨에 명시한다."""
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            counts = s.run("""
+                RETURN
+                  count { (:Admission_University) } AS university,
+                  count { (:Admission_Department) } AS department,
+                  count { (t:Admission_Track) WHERE t.is_superseded IS NULL OR t.is_superseded = false } AS track,
+                  count { (:Admission_ExamType) } AS exam_type,
+                  count { (:Admission_CutoffEstimate) } AS cutoff_estimate,
+                  count { (:Admission_PastTopic) } AS past_topic,
+                  count { (:Admission_TextChunk) } AS text_chunk,
+                  count { (:Admission_Entity) } AS entity,
+                  count { (:Admission_Entity {llm_discovered: true}) } AS entity_llm_discovered,
+                  count { ()-[:MENTIONS]->() } AS mentions,
+                  count { ()-[:CO_OCCURS_WITH]-() } AS cooccurs
+            """).single().data()
+            community_count = s.run(
+                "MATCH (e:Admission_Entity) WHERE e.community IS NOT NULL RETURN count(DISTINCT e.community) AS c"
+            ).single()["c"]
+        counts["cooccurs"] = counts["cooccurs"] // 2  # 무방향 관계라 MATCH가 양방향으로 2번씩 셈
+        counts["community"] = community_count
+
+        nodes = [
+            {"id": "university", "label": f"University\n({counts['university']}개)", "kind": "university"},
+            {"id": "department", "label": f"Department\n({counts['department']}개)", "kind": "department"},
+            {"id": "track", "label": f"Track\n({counts['track']}개, 활성)", "kind": "track"},
+            {"id": "exam_type", "label": f"ExamType\n({counts['exam_type']}개)", "kind": "exam_type"},
+            {"id": "past_topic", "label": f"PastTopic\n({counts['past_topic']}건)", "kind": "past_topic"},
+            {"id": "cutoff", "label": f"CutoffEstimate\n({counts['cutoff_estimate']}건, 추정치)", "kind": "estimate"},
+            {"id": "pdf", "label": "PDF 원문", "kind": "entity_material"},
+            {"id": "textchunk", "label": f"TextChunk\n({counts['text_chunk']}건, 임베딩)", "kind": "entity_llm_new"},
+            {"id": "entity", "label": f"Entity\n({counts['entity']}개, LLM추출 {counts['entity_llm_discovered']}개)", "kind": "entity_llm_new"},
+            {"id": "community", "label": f"커뮤니티\n({counts['community']}개, PageRank/Louvain)", "kind": "entity_llm_new"},
+        ]
+        edges = [
+            {"from": "university", "to": "department", "title": "00_Art_Admission_Graph_Loader.py (구조화 추출, LLM 관여 없음)"},
+            {"from": "department", "to": "track", "title": "00_Art_Admission_Graph_Loader.py"},
+            {"from": "track", "to": "exam_type", "title": "00_Art_Admission_Graph_Loader.py"},
+            {"from": "exam_type", "to": "past_topic", "title": "HAD_PAST_TOPIC (원문 그대로 발췌)"},
+            {"from": "track", "to": "cutoff", "title": "ESTIMATED_CUTOFF (작년 입시결과 기반 추정치, 공식 아님)"},
+            {"from": "pdf", "to": "textchunk", "title": "01_Art_Admission_Vector_Indexer.py (청크화+임베딩, text-embedding-3-small)"},
+            {"from": "textchunk", "to": "entity", "title": "MENTIONS - 02_Art_Admission_Entity_Linker.py (LLM 구조화 추출+원문검증+신뢰도필터)"},
+            {"from": "entity", "to": "community", "title": "CO_OCCURS_WITH 위 PageRank/Louvain (networkx 로컬 계산) + LLM 커뮤니티 라벨"},
+        ]
+        return {"nodes": nodes, "edges": edges, "counts": counts}
+
     def _all_entities(self) -> List[Dict[str, Any]]:
         """Admission_Entity 전체를 이름/타입/커뮤니티/PageRank와 함께 가져온다.
         403건 규모라 매번 전체 조회해도 비용이 작다 - 캐싱은 하지 않는다
