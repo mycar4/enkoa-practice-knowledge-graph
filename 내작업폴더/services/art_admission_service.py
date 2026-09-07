@@ -558,16 +558,37 @@ class ArtAdmissionService:
                     })
         return conflicts
 
+    # 실기유형 문구에 흔히 끼어드는 일반 행정 용어 - "무엇으로 준비했는지"(소묘/연필/수채화 등)와
+    # 무관해서 겹쳐도 실기 준비 과정이 같다는 신호가 아니므로 키워드 매칭에서 제외한다.
+    _GENERIC_EXAM_KEYWORDS = {
+        "실기", "면접", "서류", "평가", "심사", "질의응답", "전형", "발표", "제출",
+        "작성", "참고자료", "단계", "선발", "제시", "이미지", "사진", "당일",
+    }
+
+    @staticmethod
+    def _exam_keywords(text: str) -> set:
+        return set(re.findall(r"[가-힣]{2,}", text or "")) - ArtAdmissionService._GENERIC_EXAM_KEYWORDS
+
+    @staticmethod
+    def _material_keywords(materials: List[str]) -> set:
+        """재료 문자열은 학교마다 표기가 제각각이라("소묘용 연필" vs "연필") 완전일치로는
+        거의 안 겹친다 - 재료명 안의 단어 단위로 쪼개서 겹치는지 본다."""
+        kws = set()
+        for m in materials or []:
+            kws |= set(re.findall(r"[가-힣]{2,}", m))
+        return kws
+
     def find_compatible_tracks(self, university: str, department: str) -> List[Dict[str, Any]]:
-        """기준 전형과 실기 유형(키워드)·허용재료가 겹치는 다른 학교 전형을 찾는다.
-        키워드 매칭은 exam_type_name에 포함된 단어 교집합만 본다 - 유사도 추정 없음."""
+        """기준 전형과 실기 유형(키워드)·허용재료(키워드)가 겹치는 다른 학교 전형을 찾는다.
+        즉 '소묘/연필로 준비한 과정'이 통하는 다른 학교를 찾는 게 목적이므로, 재료명도
+        전체 문자열이 아니라 단어 단위로 비교한다 - 유사도 추정(임베딩)은 쓰지 않는다."""
         tracks = self.list_all_tracks_full()
         base = next((t for t in tracks if t["university"] == university and t["department"] == department), None)
         if not base or not base.get("exam_type_name"):
             return []
 
-        base_keywords = set(re.findall(r"[가-힣]{2,}", base["exam_type_name"]))
-        base_materials = set(base.get("allowed_materials") or [])
+        base_keywords = self._exam_keywords(base["exam_type_name"])
+        base_material_kw = self._material_keywords(base.get("allowed_materials"))
 
         results = []
         for t in tracks:
@@ -575,9 +596,8 @@ class ArtAdmissionService:
                 continue
             if not t.get("exam_type_name"):
                 continue
-            kw = set(re.findall(r"[가-힣]{2,}", t["exam_type_name"]))
-            shared_kw = base_keywords & kw
-            shared_materials = base_materials & set(t.get("allowed_materials") or [])
+            shared_kw = base_keywords & self._exam_keywords(t["exam_type_name"])
+            shared_materials = base_material_kw & self._material_keywords(t.get("allowed_materials"))
             if shared_kw or shared_materials:
                 results.append({
                     "university": t["university"], "department": t["department"], "track_name": t["track_name"],
@@ -585,6 +605,7 @@ class ArtAdmissionService:
                     "exam_type_name": t["exam_type_name"], "shared_keywords": sorted(shared_kw),
                     "shared_materials": sorted(shared_materials), "source_url": t["source_url"],
                 })
+        results.sort(key=lambda m: -(len(m["shared_keywords"]) + len(m["shared_materials"])))
         return results
 
     def answer_question(self, query: str) -> Dict[str, Any]:
@@ -600,7 +621,10 @@ class ArtAdmissionService:
         # (학교명이 있으면 SCHOOL_FACT가 우선이어야 하므로 mentioned 여부로 분기)
         is_conflict_intent = any(k in q for k in ["충돌", "겹치", "동시", "겹침"])
         is_schedule_list_intent = (not mentioned) and any(k in q for k in ["일정", "스케줄", "날짜"])
-        is_compat_intent = any(k in q for k in ["호환", "비슷", "추천"])
+        is_compat_intent = any(k in q for k in [
+            "호환", "비슷", "추천", "동일한 실기", "같은 실기", "동일 실기",
+            "지원가능", "지원 가능", "지원할 수 있는", "같이 준비",
+        ])
 
         # 의도 1: 일정 충돌/전체비교 질의 (학교명 언급 여부와 무관하게 최우선 처리)
         if is_conflict_intent or is_schedule_list_intent:
@@ -623,11 +647,33 @@ class ArtAdmissionService:
             if not mentioned:
                 return {"intent": "COMPATIBILITY", "answer": "어느 학교를 기준으로 비교할지 학교명을 함께 말씀해주세요.", "source_url": None}
             university = mentioned[0]
-            track = next((t for t in tracks if t["university"] == university), None)
+            univ_tracks = [t for t in tracks if t["university"] == university]
+            # 질문에 학과명이 같이 언급되면 그 학과를 기준으로 삼는다 - 안 그러면 그 학교의
+            # 아무 트랙이나(목록의 첫 번째) 기준이 돼서, 여러 학과가 있는 학교는 사용자가
+            # 물어본 학과와 무관한 결과가 나올 수 있다 (실제로 겪은 버그).
+            dept_track = next((t for t in univ_tracks if t["department"] and t["department"] in q), None)
+            if dept_track:
+                track = dept_track
+            elif len(univ_tracks) > 1:
+                dept_list = ", ".join(sorted({t["department"] for t in univ_tracks}))
+                return {
+                    "intent": "COMPATIBILITY",
+                    "answer": f"{university}에는 학과가 여러 개 있습니다({dept_list}). 어느 학과 기준인지 학과명을 함께 말씀해주세요.",
+                    "source_url": None,
+                }
+            else:
+                track = univ_tracks[0]
             matches = self.find_compatible_tracks(university, track["department"])
             if not matches:
-                return {"intent": "COMPATIBILITY", "answer": f"{university} {track['department']}과 실기유형/재료가 겹치는 다른 전형을 찾지 못했습니다 (적재된 데이터 범위 내).", "source_url": None}
-            lines = [f"- {m['university']} {m['department']}: 공통 키워드 {m['shared_keywords']}, 공통 재료 {m['shared_materials']}" for m in matches]
+                return {"intent": "COMPATIBILITY", "answer": f"{university} {track['department']}과(와) 실기유형/재료가 겹치는 다른 전형을 찾지 못했습니다 (적재된 데이터 범위 내).", "source_url": None}
+            lines = [
+                f"[기준: {university} {track['department']} - {track.get('exam_type_name')}]",
+                "",
+            ] + [
+                f"- {m['university']} {m['department']} ({m.get('exam_type_name')}): "
+                f"공통 실기 키워드 {m['shared_keywords'] or '-'}, 공통 재료 키워드 {m['shared_materials'] or '-'}"
+                for m in matches
+            ]
             return {"intent": "COMPATIBILITY", "answer": "\n".join(lines), "source_url": None}
 
         # 의도 3: 학교/학과 특정 언급 - 상세 사실 그대로 반환 (다른 의도 키워드가 없을 때만)
