@@ -34,7 +34,7 @@ DEFAULT_MODEL = "gpt-4o-mini"  # 공개 API는 항상 이 모델만 쓴다 - gat
 app = FastAPI(
     title="Art Admission Validation API",
     description="검증용 FO 연동을 위한 최소 API - 새 비즈니스 로직 없음, 기존 엔진 그대로 노출",
-    version="0.1.1",
+    version="0.1.2",
 )
 
 # 새 브랜드 도메인(예: artready.kr)에서 호출할 것이므로 CORS를 열어야 한다.
