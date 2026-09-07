@@ -121,15 +121,21 @@ function askQuestion() {
   const val = queryInput.value.trim();
   if (!val) return;
 
+  const pair = document.createElement("div");
+  pair.className = "flex flex-col gap-unit-md";
+
   const userBubble = document.createElement("div");
   userBubble.className = "flex items-start gap-unit-sm bg-surface-container-low p-unit-md rounded-xl";
   userBubble.innerHTML = `<div class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-[20px]">person</span></div><p class="font-body-md text-body-md text-on-surface font-semibold">${val}</p>`;
-  thread.appendChild(userBubble);
+  pair.appendChild(userBubble);
 
   const aiBox = document.createElement("div");
   aiBox.className = "flex flex-col gap-unit-md bg-surface-container-lowest p-unit-md rounded-xl shadow-md";
   aiBox.innerHTML = `<div class="flex items-center gap-unit-xs"><div class="w-7 h-7 rounded-lg bg-primary-container flex items-center justify-center text-on-primary"><span class="material-symbols-outlined text-[18px]">auto_awesome</span></div><span class="font-label-md text-label-md text-on-surface font-bold">ART:READY AI</span><span class="material-symbols-outlined animate-spin text-outline text-[18px] ml-auto">progress_activity</span></div>`;
-  thread.appendChild(aiBox);
+  pair.appendChild(aiBox);
+
+  thread.prepend(pair);
+  pair.scrollIntoView({ behavior: "smooth", block: "start" });
   askBtn.disabled = true;
 
   fetch(window.API_BASE_URL + "/qa", {
