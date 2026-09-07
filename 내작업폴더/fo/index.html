@@ -28,18 +28,19 @@
 <div>
 <div class="flex items-center justify-between gap-unit-sm mb-unit-sm">
 <div class="flex items-center gap-unit-xs"><span class="inline-block w-2.5 h-2.5 bg-primary-container"></span><span class="font-label-sm text-label-sm text-primary uppercase tracking-wider">ART:READY</span></div>
-<a href="profile.html" class="h-9 px-unit-sm rounded bg-primary text-on-primary font-label-sm text-label-sm flex items-center gap-unit-2xs shrink-0 transition-colors hover:bg-primary-container"><span>학생 분석 시작</span></a>
+<a href="profile.html" class="lg:hidden h-9 px-unit-sm rounded bg-primary text-on-primary font-label-sm text-label-sm flex items-center gap-unit-2xs shrink-0 transition-colors hover:bg-primary-container"><span>학생 분석 시작</span></a>
 </div>
-<h1 class="font-headline-lg-mobile text-headline-lg-mobile lg:font-display-xl lg:text-display-xl text-on-surface tracking-tight">감으로 상담하던<br/>미술입시를 데이터로.</h1>
-<p class="font-body-md text-body-md lg:font-body-lg lg:text-body-lg text-on-surface-variant mt-unit-sm leading-relaxed max-w-lg">준비 중인 실기와 공식 모집요강을 비교해<br/>상담에서 검토할 전형과 확인할 일정을 찾습니다.</p>
-
-<!-- 모바일에서도 브랜드 도형(Point/Plane/Line)을 크게 부각 -->
-<div class="flex lg:hidden justify-center my-unit-md">
-<svg width="150" height="110" viewBox="0 0 380 280" xmlns="http://www.w3.org/2000/svg">
+<div class="relative">
+<!-- 모바일 전용: 브랜드 도형(원/사각형/삼각형)을 헤드라인 뒤에 옅은 배경으로 깔아 아이덴티티를 은은하게 부각 -->
+<div class="lg:hidden absolute -inset-x-2 -inset-y-1 z-0 flex items-center justify-center opacity-20 pointer-events-none overflow-hidden" aria-hidden="true">
+<svg width="240" height="240" viewBox="0 0 380 280" xmlns="http://www.w3.org/2000/svg">
 <rect x="190" y="50" width="160" height="160" fill="#151515"/>
-<polygon points="290,215 190,20 380,20" fill="#E34234" opacity="0.92"/>
+<polygon points="290,215 190,20 380,20" fill="#E34234"/>
 <circle cx="90" cy="150" r="85" fill="#1647D8"/>
 </svg>
+</div>
+<h1 class="relative z-10 font-headline-lg-mobile text-headline-lg-mobile lg:font-display-xl lg:text-display-xl text-on-surface tracking-tight">감으로 상담하던<br/>미술입시를 데이터로.</h1>
+<p class="relative z-10 font-body-md text-body-md lg:font-body-lg lg:text-body-lg text-on-surface-variant mt-unit-sm leading-relaxed max-w-lg">준비 중인 실기와 공식 모집요강을 비교해<br/>상담에서 검토할 전형과 확인할 일정을 찾습니다.</p>
 </div>
 
 <!-- 모바일에서도 도형 아이덴티티가 바로 보이게: 컴팩트 가로 배지 -->
