@@ -40,8 +40,13 @@
 </select>
 </div>
 <div>
-<label class="font-label-lg text-label-lg text-on-surface block mb-unit-xs" for="docText">첨삭받을 텍스트</label>
-<textarea class="w-full h-48 lg:h-64 p-unit-sm bg-surface-container-lowest border border-outline-variant rounded font-body-md text-body-md" id="docText" placeholder="자기소개서/활동보고서 텍스트를 붙여넣으세요"></textarea>
+<div class="flex items-center justify-between mb-unit-xs">
+<label class="font-label-lg text-label-lg text-on-surface" for="docText">첨삭받을 텍스트</label>
+<label class="font-label-sm text-label-sm text-primary underline cursor-pointer" for="docFile">파일에서 불러오기 (.txt)</label>
+<input type="file" id="docFile" accept=".txt,text/plain" class="hidden"/>
+</div>
+<textarea class="w-full h-48 lg:h-64 p-unit-sm bg-surface-container-lowest border border-outline-variant rounded font-body-md text-body-md" id="docText" placeholder="자기소개서/활동보고서 텍스트를 붙여넣거나, 위에서 .txt 파일을 불러오세요"></textarea>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">PDF/한글(.hwp) 파일은 아직 지원하지 않습니다 - 텍스트로 붙여넣거나 .txt로 저장해서 올려주세요.</p>
 </div>
 <button class="w-full h-13 py-unit-sm bg-on-surface text-surface font-label-lg text-label-lg rounded flex items-center justify-center gap-unit-xs shadow-md" id="reviewBtn"><span>AI 첨삭 받기</span><span class="material-symbols-outlined">arrow_forward</span></button>
 </div>
@@ -78,9 +83,24 @@ fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
   });
 }).catch(() => {});
 
+document.getElementById("docFile").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => { document.getElementById("docText").value = reader.result; };
+  reader.readAsText(file, "utf-8");
+});
+
 let chatHistory = [];
 let currentDocText = "";
 let currentDocType = "자기소개서";
+
+function formatFeedback(text) {
+  return (text || "")
+    .replace(/</g, "&lt;")
+    .replace(/^### (.+)$/gm, '<strong class="block mt-unit-sm">$1</strong>')
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+}
 
 function appendChatBubble(role, content) {
   const thread = document.getElementById("chatThread");
@@ -90,7 +110,7 @@ function appendChatBubble(role, content) {
     bubble.innerHTML = `<p class="font-body-md text-body-md text-on-surface">${content.replace(/</g, "&lt;")}</p>`;
   } else {
     bubble.className = "bg-surface-container-lowest p-unit-sm rounded-xl shadow-sm font-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-line";
-    bubble.textContent = content;
+    bubble.innerHTML = formatFeedback(content);
   }
   thread.appendChild(bubble);
   return bubble;
@@ -118,7 +138,7 @@ document.getElementById("reviewBtn").addEventListener("click", () => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text, doc_type: docType, university: university || null }),
   }).then(r => r.json()).then(res => {
-    feedbackBox.textContent = res.feedback || "응답 없음";
+    feedbackBox.innerHTML = formatFeedback(res.feedback || "응답 없음");
 
     const rules = res.doc_rules || [];
     if (rules.length) {
