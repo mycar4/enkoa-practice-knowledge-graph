@@ -437,7 +437,7 @@ def render_art_admission_app():
                 st.caption(f"{len(results)}건 (겹치는 키워드가 많은 순)")
                 for r in results:
                     cutoff = r.get("cutoff_grade_estimate")
-                    cutoff_label = f"예상 {cutoff}등급 (추정치, 공식 아님)" if cutoff is not None else "예상등급 정보 없음"
+                    cutoff_label = f"작년 입시결과 기준 예상 {cutoff}등급 (추정치, 공식 아님)" if cutoff is not None else "예상등급 정보 없음"
                     matched_str = ", ".join(r["matched_keywords"]) if r["matched_keywords"] else "-"
                     campus_str = f" ({r['campus']}캠퍼스)" if r.get("campus") else ""
                     with st.container():
@@ -449,8 +449,13 @@ def render_art_admission_app():
                         st.caption(f"실기안내: {r.get('exam_type_name') or '-'}")
                         if not r["is_document_based"]:
                             st.caption(f"겹치는 키워드: {matched_str}")
-                        if r.get("source_url"):
-                            st.link_button("📑 출처 원문 바로가기", r["source_url"], key=f"prep_{r['university']}_{r['department']}_{r.get('campus')}")
+                        link_col1, link_col2 = st.columns(2)
+                        with link_col1:
+                            if r.get("source_url"):
+                                st.link_button("📑 모집요강 원문", r["source_url"], key=f"prep_src_{r['university']}_{r['department']}_{r.get('campus')}")
+                        with link_col2:
+                            if r.get("cutoff_source_url"):
+                                st.link_button("📊 예상등급 근거(작년 수시결과)", r["cutoff_source_url"], key=f"prep_cutoff_{r['university']}_{r['department']}_{r.get('campus')}")
                         st.markdown("---")
 
         elif page == "📝 기출문제":
