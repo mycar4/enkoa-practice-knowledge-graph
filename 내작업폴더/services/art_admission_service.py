@@ -913,7 +913,12 @@ class ArtAdmissionService:
         # 질의 문장 자체에 등장하는 실기유형 키워드(예: "소묘")를 뽑아, 각 트랙의
         # exam_type_name과 실제로 겹치는지 미리 계산해 LLM에게 넘긴다. 이게 없으면
         # LLM이 재료(연필 등)만 보고 스스로 "비슷한 실기"라고 짐작해버리는 문제가 있었다.
-        query_kw = self._exam_keywords(query)
+        # 질의는 자유 문장이라 "소묘로"처럼 조사가 붙으므로, 토큰 완전일치가 아니라
+        # exam_type_name 쪽 키워드가 질의 원문에 부분 문자열로 포함되는지로 판정한다
+        # ("소묘" in "연필 소묘로 시험 볼 수 있는 학교는?" == True).
+        def _keyword_in_query(exam_type_name: str) -> bool:
+            return any(kw in query for kw in self._exam_keywords(exam_type_name or ""))
+
         context_tracks = [{
             "university": t["university"], "department": t["department"], "track_name": t["track_name"],
             "admission_year": t.get("admission_year"), "quota": t.get("quota"), "ratio": t.get("ratio"),
@@ -922,7 +927,7 @@ class ArtAdmissionService:
             "application_start": t.get("application_start"), "application_end": t.get("application_end"),
             "exam_dates": t.get("exam_dates"), "result_date": t.get("result_date"),
             "source_url": t.get("source_url"),
-            "exam_type_keyword_match": bool(query_kw & self._exam_keywords(t.get("exam_type_name") or "")),
+            "exam_type_keyword_match": _keyword_in_query(t.get("exam_type_name")),
         } for t in subset]
 
         context_estimates = []
