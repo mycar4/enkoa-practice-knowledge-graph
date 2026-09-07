@@ -33,7 +33,7 @@ from services.art_admission_service import ArtAdmissionService  # noqa: E402
 APP_URL = "http://localhost:8501"
 TABS = [
     "🏫 학교/학과 목록", "🔍 학교 상세", "⚖️ 전형 비교", "📅 일정 캘린더",
-    "🎯 동시지원 시뮬레이터", "📝 기출문제", "🚦 데이터 정합성",
+    "🎯 동시지원 시뮬레이터", "🧭 준비한 실기로 학교 찾기", "📝 기출문제", "🚦 데이터 정합성",
     "💬 질의응답", "🖊️ 서류 AI 첨삭", "🕸️ 지식그래프 보기",
 ]
 

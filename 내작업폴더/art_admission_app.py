@@ -169,7 +169,7 @@ def render_art_admission_app():
         page = st.radio(
             "📌 메뉴",
             ["🏫 학교/학과 목록", "🔍 학교 상세", "⚖️ 전형 비교", "📅 일정 캘린더", "🎯 동시지원 시뮬레이터",
-             "📝 기출문제", "🚦 데이터 정합성", "💬 질의응답", "🖊️ 서류 AI 첨삭", "🕸️ 지식그래프 보기"],
+             "🧭 준비한 실기로 학교 찾기", "📝 기출문제", "🚦 데이터 정합성", "💬 질의응답", "🖊️ 서류 AI 첨삭", "🕸️ 지식그래프 보기"],
             horizontal=True,
         )
         st.markdown("---")
@@ -408,6 +408,50 @@ def render_art_admission_app():
                     st.caption(f"선택 {len(selected_labels)}개교 (최대 6개교)")
                     for c in result["conflicts"]:
                         st.warning(f"{', '.join(c['date'])} 겹침: {c['a']} ↔ {c['b']}")
+
+        elif page == "🧭 준비한 실기로 학교 찾기":
+            st.markdown("### 🧭 준비한 실기 종목/재료로 지원 가능한 학교 찾기")
+            st.caption(
+                "수험생은 보통 '어느 학교 갈까'가 아니라 '내가 학원에서 준비해온 실기 종목·재료'가 먼저 정해져 있습니다. "
+                "여기 선택지는 실제 적재된 모집요강 원문(실기종목명/허용재료)에서 그대로 뽑은 단어입니다 - 임의로 분류한 카테고리가 아닙니다."
+            )
+            all_keywords = svc.list_available_prep_keywords()
+            selected_kw = st.multiselect(
+                "준비한 실기 종목/재료 키워드 선택 (예: 소묘, 연필, 수채화, 한국화)",
+                all_keywords,
+            )
+            doc_only = st.checkbox("실기 없이 서류(미술활동보고서/포트폴리오 등)로만 평가받는 전형만 보기")
+
+            if doc_only:
+                results = svc.search_tracks_by_prep([], document_only=True)
+            elif selected_kw:
+                results = svc.search_tracks_by_prep(selected_kw)
+            else:
+                results = []
+
+            if not selected_kw and not doc_only:
+                st.info("키워드를 선택하거나 '서류전형만 보기'를 체크하면 결과가 나옵니다.")
+            elif not results:
+                st.info("적재된 데이터 범위 내에서는 조건에 맞는 학교를 찾지 못했습니다.")
+            else:
+                st.caption(f"{len(results)}건 (겹치는 키워드가 많은 순)")
+                for r in results:
+                    cutoff = r.get("cutoff_grade_estimate")
+                    cutoff_label = f"예상 {cutoff}등급 (추정치, 공식 아님)" if cutoff is not None else "예상등급 정보 없음"
+                    matched_str = ", ".join(r["matched_keywords"]) if r["matched_keywords"] else "-"
+                    campus_str = f" ({r['campus']}캠퍼스)" if r.get("campus") else ""
+                    with st.container():
+                        st.markdown(
+                            f"**{r['university']}{campus_str} - {r['department']}** "
+                            f"<span style='background:#0891b2;color:#fff;border-radius:4px;padding:2px 6px;font-size:12px;'>{cutoff_label}</span>",
+                            unsafe_allow_html=True,
+                        )
+                        st.caption(f"실기안내: {r.get('exam_type_name') or '-'}")
+                        if not r["is_document_based"]:
+                            st.caption(f"겹치는 키워드: {matched_str}")
+                        if r.get("source_url"):
+                            st.link_button("📑 출처 원문 바로가기", r["source_url"], key=f"prep_{r['university']}_{r['department']}_{r.get('campus')}")
+                        st.markdown("---")
 
         elif page == "📝 기출문제":
             st.markdown("### 📝 실기고사 기출문제 (원문 그대로, 출처 포함)")

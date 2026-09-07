@@ -608,6 +608,61 @@ class ArtAdmissionService:
         results.sort(key=lambda m: -(len(m["shared_keywords"]) + len(m["shared_materials"])))
         return results
 
+    # 실기 유형/재료 문구에 이 단어가 있으면 실기시험이 아니라 서류로 평가받는
+    # 전형이다 - 실측 데이터에 실제로 있는 표현("미술활동보고서 서류평가...",
+    # "포트폴리오... 서류평가...")만 근거로 판정한다. 임의 카테고리 추정 아님.
+    _DOCUMENT_BASED_MARKERS = ("서류평가", "미술활동보고서")
+
+    def list_tracks_with_estimates(self) -> List[Dict[str, Any]]:
+        """실기 역탐색용 원천 데이터 - 트랙마다 exam_type/재료/컷라인 추정치를
+        한 번의 쿼리로 합쳐서 가져온다 (N+1 방지)."""
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            rows = s.run("""
+                MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(d:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
+                WHERE t.is_superseded IS NULL OR t.is_superseded = false
+                OPTIONAL MATCH (t)-[:REQUIRES_EXAM]->(e:Admission_ExamType)
+                OPTIONAL MATCH (t)-[:ESTIMATED_CUTOFF]->(c:Admission_CutoffEstimate)
+                RETURN u.name AS university, u.campus AS campus, d.name AS department,
+                       t.name AS track_name, t.admission_year AS admission_year,
+                       t.source_url AS source_url,
+                       e.name AS exam_type_name, e.allowed_materials AS allowed_materials,
+                       c.cutoff_grade_estimate AS cutoff_grade_estimate, c.source_url AS cutoff_source_url
+            """).data()
+        return rows
+
+    def list_available_prep_keywords(self) -> List[str]:
+        """멀티셀렉트 UI에 뿌릴 선택지 - 실제 적재된 exam_type/재료 문구에서
+        직접 뽑은 단어만 쓴다(수작업으로 카테고리를 만들지 않음, 실측 기반)."""
+        rows = self.list_tracks_with_estimates()
+        kws: set = set()
+        for r in rows:
+            kws |= self._exam_keywords(r.get("exam_type_name") or "")
+            kws |= self._material_keywords(r.get("allowed_materials"))
+        return sorted(kws)
+
+    def search_tracks_by_prep(self, keywords: List[str], document_only: bool = False) -> List[Dict[str, Any]]:
+        """수험생이 이미 준비한 실기유형/재료 키워드를 입력하면, 그 키워드와 겹치는
+        학교/학과를 찾아 예상등급(추정치)까지 함께 반환한다. document_only=True면
+        실기 없이 서류(미술활동보고서 등)로 평가받는 전형만 따로 보여준다."""
+        kw_set = set(keywords)
+        rows = self.list_tracks_with_estimates()
+        results = []
+        for r in rows:
+            exam_name = r.get("exam_type_name") or ""
+            is_doc = any(marker in exam_name for marker in self._DOCUMENT_BASED_MARKERS)
+            if document_only:
+                if not is_doc:
+                    continue
+                results.append({**r, "matched_keywords": [], "is_document_based": True})
+                continue
+            if is_doc:
+                continue  # 서류전형은 재료/실기 키워드 비교 대상이 아니므로 일반 검색에서는 제외
+            matched = (self._exam_keywords(exam_name) | self._material_keywords(r.get("allowed_materials"))) & kw_set
+            if matched:
+                results.append({**r, "matched_keywords": sorted(matched), "is_document_based": False})
+        results.sort(key=lambda r: -len(r["matched_keywords"]))
+        return results
+
     def get_compatible_tracks_for_query(self, query: str) -> List[Dict[str, Any]]:
         """AI 답변(LLM) 경로용 호환학교 조회. 규칙기반 answer_question의 호환 분기와
         같은 학교/학과 해석을 쓰지만, "호환/지원가능" 같은 의도 키워드가 있어야만
