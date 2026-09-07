@@ -119,11 +119,16 @@ document.querySelectorAll(".exam-btn").forEach(btn => {
     } else {
       selectedExams.delete(val);
     }
-    btn.classList.toggle("bg-primary", nowSelected);
-    btn.classList.toggle("border-primary", nowSelected);
+    // Tailwind CDN 런타임 JIT가 나중에 토글되는 유틸리티 클래스를 매번
+    // 안정적으로 재생성하지 못하는 걸 실측으로 확인했다(선택 해제 후 재선택
+    // 시 hover 스타일이 안 살아남는 경우가 있었음). 그래서 hover 클래스는
+    // 정적으로 항상 켜두고, 대신 선택 시 "!" (important) 접두사를 써서
+    // hover:bg-surface-container-high보다 항상 확실히 이기게 만든다.
+    btn.classList.toggle("!bg-primary", nowSelected);
+    btn.classList.toggle("!border-primary", nowSelected);
     btn.classList.toggle("shadow-md", nowSelected);
     btn.classList.toggle("bg-surface-container-low", !nowSelected);
-    btn.querySelector("span.font-label-md").classList.toggle("text-on-primary", nowSelected);
+    btn.querySelector("span.font-label-md").classList.toggle("!text-on-primary", nowSelected);
     check.classList.toggle("hidden", !nowSelected);
     updateDocumentOnlyState();
   });
