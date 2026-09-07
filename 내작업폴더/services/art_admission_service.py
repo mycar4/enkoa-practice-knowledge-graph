@@ -910,6 +910,10 @@ class ArtAdmissionService:
         mentioned = _resolve_university_mentions(query, universities)
         subset = [t for t in tracks if t["university"] in mentioned] if mentioned else tracks
 
+        # 질의 문장 자체에 등장하는 실기유형 키워드(예: "소묘")를 뽑아, 각 트랙의
+        # exam_type_name과 실제로 겹치는지 미리 계산해 LLM에게 넘긴다. 이게 없으면
+        # LLM이 재료(연필 등)만 보고 스스로 "비슷한 실기"라고 짐작해버리는 문제가 있었다.
+        query_kw = self._exam_keywords(query)
         context_tracks = [{
             "university": t["university"], "department": t["department"], "track_name": t["track_name"],
             "admission_year": t.get("admission_year"), "quota": t.get("quota"), "ratio": t.get("ratio"),
@@ -918,6 +922,7 @@ class ArtAdmissionService:
             "application_start": t.get("application_start"), "application_end": t.get("application_end"),
             "exam_dates": t.get("exam_dates"), "result_date": t.get("result_date"),
             "source_url": t.get("source_url"),
+            "exam_type_keyword_match": bool(query_kw & self._exam_keywords(t.get("exam_type_name") or "")),
         } for t in subset]
 
         context_estimates = []
