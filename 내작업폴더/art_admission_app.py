@@ -522,6 +522,16 @@ def render_art_admission_app():
             )
             st.markdown("")
 
+            univ_labels = ["학교 미선택 (일반 첨삭)"] + [u["display_name"] for u in universities]
+            univ_choice = st.selectbox(
+                "지원 학교 선택 (학교마다 분량 제한·블라인드 평가·표절 금지 등 서류 규정이 다릅니다)",
+                univ_labels,
+            )
+            selected_university = None
+            if univ_choice != "학교 미선택 (일반 첨삭)":
+                display_to_univ = {u["display_name"]: u["university"] for u in universities}
+                selected_university = display_to_univ[univ_choice]
+
             doc_type = st.selectbox("문서 종류", ["자기소개서", "미술활동보고서", "포트폴리오 설명글", "기타 서류"])
 
             selected_model2, model2_usable = _select_model_with_gate(get_available_models(), key_prefix="review")
@@ -549,12 +559,21 @@ def render_art_admission_app():
                 elif not model2_usable:
                     st.warning("이 모델은 비밀번호를 맞춰야 사용할 수 있습니다.")
                 else:
-                    with st.spinner("AI가 개체 그래프로 계열을 파악하고 첨삭 중입니다..."):
+                    with st.spinner("AI가 개체 그래프 + 학교별 서류 규정 원문을 확인하며 첨삭 중입니다..."):
                         try:
                             graph_hint = svc.detect_entities_in_text(doc_text)
                         except Exception:
                             graph_hint = []
-                        review = review_document(doc_text, model_id=selected_model2["id"], doc_type=doc_type, graph_hint=graph_hint)
+                        doc_rules = []
+                        if selected_university:
+                            try:
+                                doc_rules = svc.get_document_rule_excerpts(selected_university, doc_type)
+                            except Exception:
+                                doc_rules = []
+                        review = review_document(
+                            doc_text, model_id=selected_model2["id"], doc_type=doc_type, graph_hint=graph_hint,
+                            university=selected_university, context_doc_rules=doc_rules,
+                        )
                     if review.get("error"):
                         st.error(review["feedback"])
                     else:
@@ -567,6 +586,11 @@ def render_art_admission_app():
                             labels = sorted({h["community_label"] for h in graph_hint if h.get("community_label")})
                             st.caption(f"🕸️ 감지된 계열(참고용): {', '.join(labels) if labels else '(라벨 없음)'} "
                                        f"— 언급 개체: {', '.join(h['name'] for h in graph_hint)}")
+                        if selected_university:
+                            if doc_rules:
+                                st.caption(f"📄 {selected_university}의 서류 규정 원문 {len(doc_rules)}건을 근거로 첨삭에 반영했습니다.")
+                            else:
+                                st.caption(f"⚠️ {selected_university}의 서류 규정 원문을 색인에서 찾지 못해 일반 글쓰기 관점으로만 첨삭했습니다.")
 
             # 첫 첨삭 이후에는 이 대화 스레드가 계속 화면에 남아 이어서 물어볼 수 있다.
             if st.session_state.get("review_history"):

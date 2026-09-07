@@ -284,15 +284,27 @@ _REVIEW_SYSTEM_PROMPT = """당신은 대학 미술 실기 입시 수험생의 �
    디자인 계열, 서류/면접 중심 전형)에 해당하는지 참고해서 그 계열에 맞는 어조와
    강조점으로 피드백하십시오. 단, 이 정보만으로 특정 대학/학과에 대한 사실을
    단정하지 말고 어디까지나 글쓰기 방향을 잡는 참고용으로만 쓰십시오.
+6. "해당 학교 서류 규정 원문 발췌"가 주어지면, 그 학교는 다른 학교와 서류 규정이
+   다를 수 있으므로 반드시 그 발췌 안에 실제로 있는 규정(분량/글자수 제한, 블라인드
+   평가로 인한 특정 정보 기재 금지, 표절·대필 금지 등)만 근거로 지원자의 글이
+   그 규정을 어기고 있지 않은지 구체적으로 짚어주십시오. 발췌에 없는 규정을
+   그 학교 규정인 것처럼 지어내지 마십시오. 발췌가 비어 있으면 "이 학교의 서류
+   작성 규정 원문을 찾지 못해 일반적인 글쓰기 관점으로만 첨삭합니다"라고 답변
+   맨 앞에 명시하십시오.
 """
 
 
 def review_document(text: str, model_id: str = "gpt-4o-mini", doc_type: str = "자기소개서/활동보고서",
-                     graph_hint: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
+                     graph_hint: Optional[List[Dict[str, Any]]] = None,
+                     university: Optional[str] = None,
+                     context_doc_rules: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
     """서류/자소서 텍스트를 AI가 글쓰기 관점에서 첨삭한다. 사실 판정이 아니라
     의견이므로 화면에서도 반드시 '공식 평가 아님' 라벨을 별도로 붙여야 한다.
     graph_hint(GraphRAG 연동): 개체 동시출현 그래프에서 이름매칭으로 감지된
-    학교/학과와 그 커뮤니티 라벨 - 어떤 계열 글인지 감을 잡는 참고 정보로만 쓴다."""
+    학교/학과와 그 커뮤니티 라벨 - 어떤 계열 글인지 감을 잡는 참고 정보로만 쓴다.
+    context_doc_rules: 학교마다 다른 서류 규정을 실제 PDF 원문에서 찾아온 발췌
+    (get_document_rule_excerpts) - 학교를 지정했는데 발췌가 비어 있으면 그 학교의
+    규정 원문을 못 찾았다는 뜻이고, LLM이 규정을 지어내지 않도록 프롬프트에서 못박는다."""
     text = (text or "").strip()
     if not text:
         return {"feedback": "첨삭할 텍스트가 비어 있습니다.", "model": model_id, "error": True}
@@ -303,7 +315,18 @@ def review_document(text: str, model_id: str = "gpt-4o-mini", doc_type: str = "�
         names = [h["name"] for h in graph_hint]
         hint_line = f"\n\n감지된 계열 정보(참고용, 사실 단정 금지): 언급된 개체 {names} / 계열 {labels}"
 
-    user_prompt = f"문서 종류: {doc_type}\n\n--- 첨삭할 텍스트 ---\n{text[:12000]}{hint_line}"
+    context_doc_rules = context_doc_rules or []
+    rules_block = ""
+    if university:
+        if context_doc_rules:
+            excerpts = "\n\n".join(
+                f"[p.{r.get('page_start')}-{r.get('page_end')}] {r['text'][:600]}" for r in context_doc_rules
+            )
+            rules_block = f"\n\n해당 학교({university}) 서류 규정 원문 발췌:\n{excerpts}"
+        else:
+            rules_block = f"\n\n해당 학교({university}) 서류 규정 원문 발췌: (찾지 못함 - 빈 목록)"
+
+    user_prompt = f"문서 종류: {doc_type}\n\n--- 첨삭할 텍스트 ---\n{text[:12000]}{hint_line}{rules_block}"
 
     try:
         feedback = _call_llm(_REVIEW_SYSTEM_PROMPT, user_prompt, model_id, temperature=0.3)

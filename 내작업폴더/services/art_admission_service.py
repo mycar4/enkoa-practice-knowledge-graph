@@ -740,3 +740,33 @@ class ArtAdmissionService:
             return rerank_chunks(query, candidates, model_id=rerank_model_id, top_k=top_k)
         except Exception:
             return candidates[:top_k]
+
+    _DOC_RULE_KEYWORDS: Dict[str, List[str]] = {
+        "자기소개서": ["자기소개서", "블라인드", "분량", "글자", "표절", "대필", "유의사항"],
+        "미술활동보고서": ["미술활동보고서", "블라인드", "분량", "글자", "표절", "대필", "유의사항"],
+        "포트폴리오 설명글": ["포트폴리오", "블라인드", "분량", "글자", "유의사항"],
+        "기타 서류": ["블라인드", "분량", "글자", "표절", "대필", "유의사항"],
+    }
+
+    def get_document_rule_excerpts(self, university: str, doc_type: str, top_k: int = 6) -> List[Dict[str, Any]]:
+        """서류 첨삭 학교별 규정 반영: 학교마다 서류 규정(블라인드 평가, 분량/글자 제한,
+        표절·대필 금지 등)이 실제로 다르므로, 이미 색인된 PDF 원문에서 해당 학교·문서종류
+        관련 키워드가 들어간 청크를 직접 찾아온다. 임의로 규정을 만들지 않고, 못 찾으면
+        빈 리스트를 반환한다 - 그 경우 첨삭은 일반 글쓰기 관점으로만 진행되며 UI에서도
+        '이 학교 규정 원문을 못 찾음'을 명시해야 한다."""
+        if not university:
+            return []
+        keywords = self._DOC_RULE_KEYWORDS.get(doc_type, self._DOC_RULE_KEYWORDS["기타 서류"])
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            rows = s.run("""
+                MATCH (c:Admission_TextChunk {university: $university})
+                WHERE any(kw IN $keywords WHERE c.text CONTAINS kw)
+                RETURN c.university AS university, c.chunk_index AS chunk_index, c.text AS text,
+                       c.page_start AS page_start, c.page_end AS page_end,
+                       c.admission_year AS admission_year, c.source_file AS source_file
+                LIMIT $top_k
+            """, university=university, keywords=keywords, top_k=top_k * 3).data()
+        # 목차 페이지(점선 leader "....." 같은 표기가 많은 페이지)는 실제 규정 문장이
+        # 아니므로 걸러낸다 - 실측해보니 키워드 매칭에 이런 노이즈가 자주 걸림.
+        real_rows = [r for r in rows if r["text"].count("..") < 10]
+        return (real_rows or rows)[:top_k]
