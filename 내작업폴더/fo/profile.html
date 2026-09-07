@@ -29,7 +29,7 @@
 <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight">학생 조건을<br class="hidden lg:block"/> 알려주세요.</h1>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">실기 종목은 전형의 실기유형과 비교합니다.<br/>재료·규격은 보조 조건으로만 사용합니다.</p>
 <div class="mt-unit-md bg-surface-container-low p-unit-sm rounded flex items-center justify-between">
-<div class="flex items-center gap-unit-xs"><span class="material-symbols-outlined text-primary text-[18px]">verified</span><span class="font-label-sm text-label-sm text-on-surface">모집요강 데이터베이스 동기화됨</span></div>
+<div class="flex items-center gap-unit-xs"><span class="material-symbols-outlined text-primary text-[18px]">verified</span><span class="font-label-sm text-label-sm text-on-surface">등록된 모집요강 데이터 불러오기 완료</span></div>
 <span id="db-count" class="font-label-sm text-label-sm text-on-surface-variant">- 개교 연동중</span>
 </div>
 </section>
@@ -139,7 +139,7 @@ function runAnalysis() {
   errEl.classList.add("hidden");
   const btn = document.getElementById("submitBtn");
   btn.disabled = true;
-  btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span><span>실측 데이터 분석 중...</span>';
+  btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span><span>전형 데이터 분석 중...</span>';
 
   fetch(window.API_BASE_URL + "/prep-search", {
     method: "POST",
@@ -150,8 +150,8 @@ function runAnalysis() {
       document_only: documentOnly,
     }),
   }).then(r => r.json()).then(results => {
-    sessionStorage.setItem("art_bauhaus_results", JSON.stringify(results));
-    sessionStorage.setItem("art_bauhaus_profile", JSON.stringify({
+    sessionStorage.setItem("artready_results", JSON.stringify(results));
+    sessionStorage.setItem("artready_profile", JSON.stringify({
       examTypes: Array.from(selectedExams), materialQuery, documentOnly,
     }));
     window.location.href = "results.html";
