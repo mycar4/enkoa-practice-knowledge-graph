@@ -159,13 +159,13 @@ class ArtAdmissionService:
                 t["exam_dates"] = _extract_dates(t.get("exam_date"))
 
             estimates = s.run("""
-                MATCH (u:Admission_University {name: $university})-[:HAS_DEPARTMENT]->(:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
+                MATCH (u:Admission_University {name: $university})-[:HAS_DEPARTMENT]->(d:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
                 WHERE (t.is_superseded IS NULL OR t.is_superseded = false)
                   AND ($campus IS NULL OR u.campus = $campus)
                 OPTIONAL MATCH (t)-[:ESTIMATED_CUTOFF]->(c:Admission_CutoffEstimate)
                 OPTIONAL MATCH (t)-[:HAS_INTERVIEW_SUMMARY]->(iv:Admission_InterviewSummary)
-                WITH t, c, collect(DISTINCT {title: iv.title, url: iv.url, channel: iv.channel, summary: iv.summary}) AS interviews
-                RETURN t.name AS track_name, c.cutoff_grade_estimate AS cutoff_grade_estimate,
+                WITH d, t, c, collect(DISTINCT {title: iv.title, url: iv.url, channel: iv.channel, summary: iv.summary}) AS interviews
+                RETURN d.name AS department, t.name AS track_name, c.cutoff_grade_estimate AS cutoff_grade_estimate,
                        c.source_url AS cutoff_source_url, interviews
             """, university=university, campus=campus).data()
 
@@ -267,13 +267,28 @@ class ArtAdmissionService:
 
         return issues
 
+    @staticmethod
+    def _match_selected_track(tracks: List[Dict[str, Any]], sel: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """비교/일정/근거 화면이 공유하는 전형 식별 로직. track_name(전형명, 예: "실기우수자전형")은
+        같은 대학 안 여러 학과가 그대로 공유하는 카테고리 이름이라 식별자로 쓰면 안 되고 - 실제로
+        이 버그 때문에 Evidence 패널이 엉뚱한 학과 근거를 보여준 적이 있다 - university+campus+department
+        조합만 이 데이터셋 전체(31건)에서 유일함이 확인됐다. campus는 selections에 없을 수도 있으므로
+        (구버전 클라이언트 호환) 넘어온 경우에만 비교한다."""
+        for t in tracks:
+            if t["university"] != sel.get("university") or t["department"] != sel.get("department"):
+                continue
+            if sel.get("campus") and t.get("campus") != sel.get("campus"):
+                continue
+            return t
+        return None
+
     def simulate_multi_apply(self, selections: List[Dict[str, str]]) -> Dict[str, Any]:
-        """selections: [{"university":..., "department":...}, ...] (최대 6개, 수시 6장 제한).
+        """selections: [{"university":..., "campus":..., "department":...}, ...] (최대 6개, 수시 6장 제한).
         선택한 조합 안에서만 일정 충돌을 검사한다."""
         tracks = self.list_all_tracks_full()
         chosen = []
         for sel in selections:
-            t = next((t for t in tracks if t["university"] == sel["university"] and t["department"] == sel["department"]), None)
+            t = self._match_selected_track(tracks, sel)
             if t:
                 chosen.append(t)
 
@@ -311,12 +326,12 @@ class ArtAdmissionService:
             return s.run(query, university=university).data()
 
     def get_comparison_table(self, selections: List[Dict[str, str]]) -> List[Dict[str, Any]]:
-        """selections: [{"university":..., "department":...}, ...]
+        """selections: [{"university":..., "campus":..., "department":...}, ...]
         전형 나란히 비교표용 원천 데이터. 전부 official_facts 그대로, 가공/추정 없음."""
         tracks = self.list_all_tracks_full()
         results = []
         for sel in selections:
-            t = next((t for t in tracks if t["university"] == sel["university"] and t["department"] == sel["department"]), None)
+            t = self._match_selected_track(tracks, sel)
             if t:
                 results.append(t)
         return results

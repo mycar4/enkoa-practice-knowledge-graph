@@ -250,7 +250,10 @@ def review_document_endpoint(req: ReviewRequest):
             req.text, model_id=DEFAULT_MODEL, doc_type=req.doc_type,
             graph_hint=graph_hint, university=req.university, context_doc_rules=doc_rules,
         )
-        return {**result, "doc_rules": doc_rules, "graph_hint": graph_hint}
+        # rules_found는 LLM 판단이 아니라 실제로 발췌를 찾았는지(doc_rules 존재 여부) 그대로
+        # 반영한 결정론적 값 - 화면이 이 값만 보고 안내 배너를 그리게 해서, LLM이 자체적으로
+        # "규정을 확인/확인못함" 문구를 잘못 말해도 화면 표시와 어긋나지 않게 한다.
+        return {**result, "doc_rules": doc_rules, "graph_hint": graph_hint, "rules_found": bool(doc_rules)}
     finally:
         svc.close()
 

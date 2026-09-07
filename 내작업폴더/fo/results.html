@@ -169,7 +169,7 @@ if (results.length === 0) {
           <input type="checkbox" class="compare-check w-4 h-4" data-key="${key}"/>비교 목록에 담기
         </label>
         <div class="flex items-center gap-unit-sm">
-          <button class="evidence-btn font-label-sm text-label-sm text-primary underline" data-university="${r.university}" data-campus="${r.campus || ""}" data-track="${r.track_name || ""}">공식 모집요강 근거 보기</button>
+          <button class="evidence-btn font-label-sm text-label-sm text-primary underline" data-university="${r.university}" data-campus="${r.campus || ""}" data-department="${r.department || ""}">공식 모집요강 근거 보기</button>
         </div>
       </div>
     `;
@@ -187,7 +187,7 @@ if (results.length === 0) {
   });
 
   document.querySelectorAll(".evidence-btn").forEach(btn => {
-    btn.addEventListener("click", () => openEvidence(btn.dataset.university, btn.dataset.campus, btn.dataset.track));
+    btn.addEventListener("click", () => openEvidence(btn.dataset.university, btn.dataset.campus, btn.dataset.department));
   });
 }
 
@@ -204,7 +204,7 @@ function updateCompareBar() {
 }
 
 document.getElementById("compareBtn").addEventListener("click", async () => {
-  const selections = Array.from(selected.values()).map(s => ({ university: s.university, department: s.department }));
+  const selections = Array.from(selected.values()).map(s => ({ university: s.university, campus: s.campus, department: s.department }));
   const section = document.getElementById("compareSection");
   section.classList.remove("hidden");
   section.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -260,7 +260,7 @@ document.getElementById("compareBtn").addEventListener("click", async () => {
   }
 });
 
-async function openEvidence(university, campus, trackName) {
+async function openEvidence(university, campus, department) {
   const overlay = document.getElementById("evidenceOverlay");
   const body = document.getElementById("evidenceBody");
   overlay.classList.remove("hidden");
@@ -268,8 +268,10 @@ async function openEvidence(university, campus, trackName) {
   try {
     const url = window.API_BASE_URL + "/universities/" + encodeURIComponent(university) + (campus ? "?campus=" + encodeURIComponent(campus) : "");
     const detail = await fetch(url).then(r => r.json());
-    const track = (detail.official_tracks || []).find(t => t.track_name === trackName);
-    const est = (detail.estimates_by_track || []).find(t => t.track_name === trackName);
+    // track_name(전형명, 예: "실기우수자전형")은 한 대학의 여러 학과가 그대로 공유하는
+    // 카테고리 이름이라 식별자로 쓰면 안 된다 - department(university+campus 안에서 유일)로 찾는다.
+    const track = (detail.official_tracks || []).find(t => t.department === department);
+    const est = (detail.estimates_by_track || []).find(t => t.department === department);
     if (!track) { body.innerHTML = `<p class="text-on-surface-variant">해당 전형의 상세 근거를 찾지 못했습니다.</p>`; return; }
     const topics = (track.past_topics || []).filter(p => p && p.topic_text);
     body.innerHTML = `
