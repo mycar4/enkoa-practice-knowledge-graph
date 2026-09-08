@@ -1,0 +1,83 @@
+[
+{
+  "university": "한성대학교",
+  "campus": "서울",
+  "department": "예술학부(동양화전공)",
+  "track_name": "실기우수자전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 7,
+    "ratio": "실기고사 80% (800점) + 학생부교과 20% (200점), 전형총점 1,000점",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 80,
+    "school_record_ratio_pct": 20,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-11"
+    },
+    "exam_date": "2026-10-24",
+    "result_date": "2026-11-06",
+    "exam_type_name": "인물수묵담채화 / 정물수묵담채화 / 인물수채화 중 택1",
+    "allowed_materials": ["수묵담채화 도구 일체(모포 포함) 또는 수채화 도구 일체", "개인용 화판 사용 금지"],
+    "paper_size": "화선지 70x90cm(수묵담채화) 또는 켄트지 2절(인물수채화)",
+    "time_limit_minutes": 240,
+    "source_url": "https://enter.hansung.ac.kr",
+    "source_page": 22
+  }
+},
+{
+  "university": "한성대학교",
+  "campus": "서울",
+  "department": "예술학부(서양화전공)",
+  "track_name": "실기우수자전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 7,
+    "ratio": "실기고사 80% (800점) + 학생부교과 20% (200점), 전형총점 1,000점",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 80,
+    "school_record_ratio_pct": 20,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-11"
+    },
+    "exam_date": "2026-10-24",
+    "result_date": "2026-11-06",
+    "exam_type_name": "인물수채화",
+    "allowed_materials": ["수채화 도구 일체", "개인용 화판 사용 금지"],
+    "paper_size": "켄트지 2절",
+    "time_limit_minutes": 240,
+    "source_url": "https://enter.hansung.ac.kr",
+    "source_page": 22
+  }
+},
+{
+  "university": "한성대학교",
+  "campus": "서울",
+  "department": "AI융합디자인학부",
+  "track_name": "실기우수자전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 86,
+    "ratio": "실기고사 80% (800점) + 학생부교과 20% (200점), 전형총점 1,000점",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 80,
+    "school_record_ratio_pct": 20,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-11"
+    },
+    "exam_date": "2026-10-18",
+    "result_date": "2026-11-06",
+    "exam_type_name": "기초디자인 - 무작위 사물 3가지를 제시하여 조형적 특징을 이용한 화면 구성(사진 이미지 제공)",
+    "allowed_materials": ["채색재료 제한 없음"],
+    "paper_size": "켄트지 4절 (가로 방향)",
+    "time_limit_minutes": 240,
+    "source_url": "https://enter.hansung.ac.kr",
+    "source_page": 28
+  }
+}
+]

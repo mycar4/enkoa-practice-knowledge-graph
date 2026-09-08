@@ -1,0 +1,83 @@
+[
+{
+  "university": "인하대학교",
+  "campus": "인천(본교)",
+  "department": "조형예술학과",
+  "track_name": "실기/실적(조형예술학과-인물수채화)",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 15,
+    "ratio": "실기 70% (700점/250점) + 학생부교과 30% (300점/100점), 일괄합산",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 70,
+    "school_record_ratio_pct": 30,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-11"
+    },
+    "exam_date": "2026-10-09",
+    "result_date": "2026-11-17",
+    "exam_type_name": "인물수채화 - 고사 당일 주어진 주제에 대한 수채화(인물 이미지 제시)",
+    "allowed_materials": ["연필", "지우개", "집게", "붓", "수채물감", "팔레트", "물통", "기타 실기고사에 필요한 물품"],
+    "paper_size": "3절지",
+    "time_limit_minutes": 240,
+    "source_url": "https://ipsi.inha.ac.kr",
+    "source_page": 37
+  }
+},
+{
+  "university": "인하대학교",
+  "campus": "인천(본교)",
+  "department": "디자인융합학과",
+  "track_name": "실기/실적(디자인융합학과)",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 23,
+    "ratio": "실기 70% (700점/250점) + 학생부교과 30% (300점/100점), 일괄합산",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 70,
+    "school_record_ratio_pct": 30,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-11"
+    },
+    "exam_date": "2026-10-11",
+    "result_date": "2026-11-17",
+    "exam_type_name": "기초디자인 - 고사 당일 주어진 주제를 해석하여 표현",
+    "allowed_materials": ["색채표현 가능한 모든 재료(입체적 첨가재료 불허)", "자(도형자 포함)", "지우개(전동지우개 포함)"],
+    "paper_size": "3절지",
+    "time_limit_minutes": 300,
+    "source_url": "https://ipsi.inha.ac.kr",
+    "source_page": 38
+  }
+},
+{
+  "university": "인하대학교",
+  "campus": "인천(본교)",
+  "department": "의류디자인학과",
+  "track_name": "실기/실적(의류디자인학과-실기)",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 10,
+    "ratio": "실기 70% (700점/250점) + 학생부교과 30% (300점/100점), 일괄합산",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 70,
+    "school_record_ratio_pct": 30,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-11"
+    },
+    "exam_date": "2026-10-10",
+    "result_date": "2026-11-17",
+    "exam_type_name": "기초디자인 - 고사 당일 주어진 주제를 해석하여 표현",
+    "allowed_materials": ["색채표현 가능한 모든 재료(입체적 첨가재료 불허)", "자(도형자 포함)", "지우개(전동지우개 포함)"],
+    "paper_size": "3절지",
+    "time_limit_minutes": 300,
+    "source_url": "https://ipsi.inha.ac.kr",
+    "source_page": 40
+  }
+}
+]
