@@ -1,0 +1,172 @@
+[
+{
+  "university": "단국대학교",
+  "campus": "죽전",
+  "department": "도예과",
+  "track_name": "실기우수자전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 21,
+    "ratio": "1단계(15배수): 교과 95% + 비교과(출결) 5% -> 2단계: 1단계 성적 20% + 실기 80%",
+    "is_staged": true,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 80,
+    "exam_type_name": "기초디자인 - 디자인 조형 요소를 이용하여 제시된 사물의 이미지를 창의력 있게 공간에 표현",
+    "allowed_materials": [],
+    "paper_size": "켄트지 3절 (대학제공)",
+    "time_limit_minutes": 300,
+    "exam_date": "2026-11-13",
+    "result_date": null,
+    "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
+    "source_page": 48,
+    "stages": [
+      {"description": "1단계 학생부(교과+출결)", "ratio_desc": "교과 95% + 비교과(출결) 5%", "multiplier": 15},
+      {"description": "2단계 실기", "ratio_desc": "1단계 성적 20% + 실기 80%", "multiplier": null}
+    ]
+  }
+},
+{
+  "university": "단국대학교",
+  "campus": "죽전",
+  "department": "디자인학부-커뮤니케이션디자인전공",
+  "track_name": "실기우수자전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 30,
+    "ratio": "1단계(15배수): 교과 95% + 비교과(출결) 5% -> 2단계: 1단계 성적 20% + 실기 80%",
+    "is_staged": true,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 80,
+    "exam_type_name": "기초디자인 - 디자인 조형 요소를 이용하여 제시된 사물의 이미지를 창의력 있게 공간에 표현",
+    "allowed_materials": [],
+    "paper_size": "켄트지 3절 (대학제공)",
+    "time_limit_minutes": 300,
+    "exam_date": "2026-11-14",
+    "result_date": null,
+    "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
+    "source_page": 48,
+    "stages": [
+      {"description": "1단계 학생부(교과+출결)", "ratio_desc": "교과 95% + 비교과(출결) 5%", "multiplier": 15},
+      {"description": "2단계 실기", "ratio_desc": "1단계 성적 20% + 실기 80%", "multiplier": null}
+    ]
+  }
+},
+{
+  "university": "단국대학교",
+  "campus": "죽전",
+  "department": "디자인학부-패션산업디자인전공",
+  "track_name": "실기우수자전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 27,
+    "ratio": "1단계(15배수): 교과 95% + 비교과(출결) 5% -> 2단계: 1단계 성적 20% + 실기 80%",
+    "is_staged": true,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 80,
+    "exam_type_name": "기초디자인 - 디자인 조형 요소를 이용하여 제시된 사물의 이미지를 창의력 있게 공간에 표현",
+    "allowed_materials": [],
+    "paper_size": "켄트지 3절 (대학제공)",
+    "time_limit_minutes": 300,
+    "exam_date": "2026-11-15",
+    "result_date": null,
+    "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
+    "source_page": 48,
+    "stages": [
+      {"description": "1단계 학생부(교과+출결)", "ratio_desc": "교과 95% + 비교과(출결) 5%", "multiplier": 15},
+      {"description": "2단계 실기", "ratio_desc": "1단계 성적 20% + 실기 80%", "multiplier": null}
+    ]
+  }
+},
+{
+  "university": "단국대학교",
+  "campus": "천안",
+  "department": "미술학부-공예(금속섬유)전공",
+  "track_name": "실기우수자전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 25,
+    "ratio": "일괄합산: 실기 80% + 교과 15% + 비교과(출결) 5%",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 80,
+    "school_record_ratio_pct": 15,
+    "exam_type_name": "기초디자인",
+    "allowed_materials": [],
+    "paper_size": "켄트지 3절",
+    "time_limit_minutes": 300,
+    "exam_date": "2026-09-19",
+    "result_date": null,
+    "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
+    "source_page": 76
+  }
+},
+{
+  "university": "단국대학교",
+  "campus": "천안",
+  "department": "미술학부-동양화전공",
+  "track_name": "실기우수자전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 20,
+    "ratio": "일괄합산: 실기 80% + 교과 15% + 비교과(출결) 5%",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 80,
+    "school_record_ratio_pct": 15,
+    "exam_type_name": "택1: 인물수묵담채화, 정물수묵담채화, 인물소묘",
+    "allowed_materials": [],
+    "paper_size": "화선지 전지 2/3절(인물수묵담채화) 또는 화선지 전지 1/2절(정물수묵담채화) 또는 켄트지 2절(인물소묘)",
+    "time_limit_minutes": null,
+    "exam_date": "2026-10-11",
+    "result_date": null,
+    "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
+    "source_page": 76
+  }
+},
+{
+  "university": "단국대학교",
+  "campus": "천안",
+  "department": "미술학부-서양화전공",
+  "track_name": "실기우수자전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 21,
+    "ratio": "일괄합산: 실기 80% + 교과 15% + 비교과(출결) 5%",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 80,
+    "school_record_ratio_pct": 15,
+    "exam_type_name": "택1: 인물 수채화, 정물 수채화",
+    "allowed_materials": [],
+    "paper_size": "켄트지 2절(인물) 또는 켄트지 3절(정물)",
+    "time_limit_minutes": null,
+    "exam_date": "2026-10-11",
+    "result_date": null,
+    "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
+    "source_page": 76
+  }
+},
+{
+  "university": "단국대학교",
+  "campus": "천안",
+  "department": "미술학부-조소전공",
+  "track_name": "실기우수자전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 11,
+    "ratio": "일괄합산: 실기 80% + 교과 15% + 비교과(출결) 5%",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 80,
+    "school_record_ratio_pct": 15,
+    "exam_type_name": "두상소조 - 택1: 사진 모델링(8방향 촬영 사진 제시) 또는 주제가 있는 두상(문장 제시, 모델 없음)",
+    "allowed_materials": [],
+    "paper_size": "실제크기",
+    "time_limit_minutes": 240,
+    "exam_date": "2026-09-16",
+    "result_date": null,
+    "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
+    "source_page": 76
+  }
+}
+]
