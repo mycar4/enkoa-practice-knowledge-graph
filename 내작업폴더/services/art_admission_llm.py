@@ -168,6 +168,51 @@ _RERANK_SYSTEM_PROMPT = """당신은 검색 결과 재순위화기입니다. 주
 새로운 사실을 만들지 말고, 오직 관련도 점수만 매기십시오."""
 
 
+_cross_encoder = None
+_cross_encoder_failed = False
+
+
+def _get_cross_encoder():
+    """BGE-Reranker(다국어 크로스인코더)를 지연 로딩한다. GPU 없이 CPU로 돌아가고,
+    한 번 로드하면 프로세스 생존 기간 내내 재사용한다(모듈 전역 싱글턴). 모델을
+    못 받거나 로드에 실패하면 이후 호출에서는 재시도하지 않고 바로 LLM 재순위화로
+    폴백한다 - 매 요청마다 다시 실패하며 지연시간만 잡아먹지 않기 위함."""
+    global _cross_encoder, _cross_encoder_failed
+    if _cross_encoder_failed:
+        return None
+    if _cross_encoder is None:
+        try:
+            from sentence_transformers import CrossEncoder
+            _cross_encoder = CrossEncoder("BAAI/bge-reranker-base", max_length=512, device="cpu")
+        except Exception:
+            _cross_encoder_failed = True
+            return None
+    return _cross_encoder
+
+
+def cross_encoder_rerank(query: str, candidates: List[Dict[str, Any]], top_k: int = 5) -> Optional[List[Dict[str, Any]]]:
+    """전용 크로스인코더 리랭커(day48). LLM에게 "몇 점이야?"라고 채팅으로 물어보던
+    기존 rerank_chunks와 달리, 애초에 "질문-문서 쌍 관련도 점수"만 내도록 학습된
+    작은 모델이라 GPU 없이도 빠르고(수백 ms), 결정적이고(같은 입력엔 같은 점수),
+    LLM 호출 비용이 전혀 없다. 모델 로드나 추론이 실패하면 None을 반환해서 호출부가
+    기존 LLM 재순위화로 폴백하게 한다."""
+    if not candidates:
+        return []
+    encoder = _get_cross_encoder()
+    if encoder is None:
+        return None
+    try:
+        pairs = [[query, c["text"][:512]] for c in candidates]
+        scores = encoder.predict(pairs)
+        for c, score in zip(candidates, scores):
+            c["rerank_score"] = float(score)
+            c["rerank_method"] = "cross_encoder"
+        candidates = sorted(candidates, key=lambda c: c["rerank_score"], reverse=True)
+        return candidates[:top_k]
+    except Exception:
+        return None
+
+
 def rerank_chunks(query: str, candidates: List[Dict[str, Any]], model_id: str = "gpt-4o-mini",
                    top_k: int = 5) -> List[Dict[str, Any]]:
     """하이브리드 검색 후보를 LLM으로 재순위화한다 (cross-encoder 대용 - 전용 rerank API가
@@ -192,6 +237,7 @@ def rerank_chunks(query: str, candidates: List[Dict[str, Any]], model_id: str = 
         score_map = {item["index"]: item["score"] for item in scores if "index" in item}
         for i, c in enumerate(candidates):
             c["rerank_score"] = score_map.get(i, 0)
+            c["rerank_method"] = "llm"
         candidates = sorted(candidates, key=lambda c: c.get("rerank_score", 0), reverse=True)
     except Exception:
         pass
@@ -254,11 +300,64 @@ _QA_SYSTEM_PROMPT = """당신은 "미술 실기 입시 도우미"의 답변 생�
 """
 
 
+# day62~64: 코드 레벨 가드레일. 프롬프트에 "쓰지 마라"고 적어두는 것만으로는 LLM이
+# 언젠가 규칙을 어길 수 있다(프롬프트는 강제력이 없다) - 그래서 답변이 나온 뒤 문자열
+# 자체를 코드로 검사하는 마지막 방어선을 둔다.
+_BANNED_PHRASES = [
+    "RAG VERIFIED", "RAG 검증됨", "실측 검증", "실측 검증된", "AI가 찾았다",
+    "100% 정확", "100% 무환각", "다른 AI는 거짓말", "합격 예측", "합격을 보장",
+    "내신 역전 보장", "합격할 것 같다", "떨어질 것 같다",
+]
+
+
+def _strip_banned_phrases(answer: str) -> tuple:
+    """금지 문구가 실제로 있으면 그 문구만 지우고(문장 전체를 버리지 않음), 무엇을
+    지웠는지 로그용으로 같이 돌려준다."""
+    hit = [p for p in _BANNED_PHRASES if p in answer]
+    cleaned = answer
+    for p in hit:
+        cleaned = cleaned.replace(p, "")
+    return cleaned, hit
+
+
+def _self_check_grounding(answer: str, context_tracks: List[Dict[str, Any]],
+                           context_compatible_tracks: List[Dict[str, Any]],
+                           context_graph_related: List[Dict[str, Any]],
+                           all_universities: Optional[List[str]]) -> List[str]:
+    """Self-RAG류 자기검증(day53~54): 답변에 등장하는 학교명이 이번 요청에 실제로
+    근거로 준 context 안에 있었는지 대조한다. all_universities(전체 등록 대학 목록)
+    중 하나가 답변 텍스트에 등장했는데 이번 context_tracks/compatible/graph_related
+    어디에도 없다면, LLM이 아예 다른 학교를 지어냈거나 착각한 것일 위험이 있다."""
+    if not all_universities:
+        return []
+    grounded_names = {t["university"] for t in context_tracks}
+    grounded_names |= {t["university"] for t in context_compatible_tracks}
+    grounded_names |= {r.get("name") for r in context_graph_related if r.get("name")}
+    issues = []
+    for name in all_universities:
+        if name in answer and name not in grounded_names:
+            issues.append(f"'{name}'가 답변에 등장하지만 이번 조회의 근거 데이터에는 없었습니다(환각 의심)")
+    return issues
+
+
+def _self_check_compat_claim(answer: str, context_compatible_tracks: List[Dict[str, Any]]) -> List[str]:
+    """재료만 겹치는 걸 '같은 실기'/'호환'이라고 부르면 안 된다는 규칙(§4)을 코드로 재검증.
+    답변에 '호환'/'같은 실기' 표현이 있는데 shared_keywords(실기유형 자체 일치)가 있는
+    후보가 하나도 없으면, 근거 없이 그 표현을 썼다는 뜻이다."""
+    if "호환" not in answer and "같은 실기" not in answer:
+        return []
+    has_exact_match = any((c.get("shared_keywords") or []) for c in context_compatible_tracks)
+    if not has_exact_match:
+        return ["'호환'/'같은 실기' 표현이 쓰였지만 실기유형 자체가 일치하는(shared_keywords) 근거가 없습니다"]
+    return []
+
+
 def answer_with_llm(context_tracks: List[Dict[str, Any]], context_estimates: List[Dict[str, Any]],
                      query: str, model_id: str = "gpt-4o-mini",
                      context_raw_excerpts: Optional[List[Dict[str, Any]]] = None,
                      context_graph_related: Optional[List[Dict[str, Any]]] = None,
-                     context_compatible_tracks: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
+                     context_compatible_tracks: Optional[List[Dict[str, Any]]] = None,
+                     all_universities: Optional[List[str]] = None) -> Dict[str, Any]:
     """조회된 그래프 사실(context_tracks/estimates), PDF 원문 벡터검색 결과
     (context_raw_excerpts), 개체 동시출현 그래프에서 뽑은 관련 학교 힌트
     (context_graph_related, GraphRAG 연동), 그리고 실기유형/재료 키워드가 겹치는
@@ -295,13 +394,44 @@ def answer_with_llm(context_tracks: List[Dict[str, Any]], context_estimates: Lis
             "error": True,
         }
 
+    # Self-RAG류 자기검증 루프(day53~54): 생성된 답변을 코드로 재검사해서 문제가
+    # 있으면 그 문제를 구체적으로 지적하며 딱 한 번만 재생성을 시도한다(무한루프 방지 -
+    # 비용은 최대 2배로만 늘어남). 재시도 후에도 문제가 남으면 경고를 붙여서라도
+    # 투명하게 알린다 - 조용히 숨기지 않는다.
+    self_check_warnings = (
+        _self_check_grounding(answer, context_tracks, context_compatible_tracks, context_graph_related, all_universities)
+        + _self_check_compat_claim(answer, context_compatible_tracks)
+    )
+    if self_check_warnings:
+        retry_prompt = (
+            user_prompt
+            + "\n\n[자기검증 실패 - 재작성 필요]\n이전 답변에서 다음 문제가 발견되었습니다:\n- "
+            + "\n- ".join(self_check_warnings)
+            + "\n위 문제를 고쳐서 규칙을 지키는 답변으로 다시 작성하십시오."
+        )
+        try:
+            retried = _call_llm(_QA_SYSTEM_PROMPT, retry_prompt, model_id, temperature=0.0)
+            retry_issues = (
+                _self_check_grounding(retried, context_tracks, context_compatible_tracks, context_graph_related, all_universities)
+                + _self_check_compat_claim(retried, context_compatible_tracks)
+            )
+            answer = retried
+            self_check_warnings = retry_issues
+        except Exception:
+            pass  # 재시도 실패하면 원래 답변 유지, 아래에서 경고만 표시
+
+    answer, banned_hit = _strip_banned_phrases(answer)
+
     grounded_on = [f"{t['university']} {t['department']}" for t in context_tracks]
     grounded_on += [f"{e['university']} p.{e.get('page_start')}-{e.get('page_end')}" for e in context_raw_excerpts]
-    return {
+    result = {
         "answer": answer,
         "model": model_id,
         "grounded_on": grounded_on,
     }
+    if self_check_warnings or banned_hit:
+        result["self_check_warnings"] = self_check_warnings + [f"금지 문구 제거됨: {p}" for p in banned_hit]
+    return result
 
 
 _REVIEW_SYSTEM_PROMPT = """당신은 대학 미술 실기 입시 수험생의 서류(자소서/미술활동보고서 등)를

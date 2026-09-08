@@ -10,6 +10,7 @@ on:
       - "내작업폴더/api_art_admission.py"
       - "내작업폴더/services/art_admission_service.py"
       - "내작업폴더/services/art_admission_llm.py"
+      - "내작업폴더/services/art_admission_agent.py"
 
 jobs:
   deploy:
@@ -26,7 +27,12 @@ jobs:
             cd ~/art-admission-api
             git pull origin main
             source venv/bin/activate
-            pip install -q fastapi "uvicorn[standard]" neo4j python-dotenv
+            pip install -q fastapi "uvicorn[standard]" neo4j python-dotenv langgraph langchain-core langchain-openai sentence-transformers
+            # day59~64 품질 게이트: 무거운(torch/transformers 리랭커, LLM 채점) 테스트는
+            # 배포마다 비용/시간이 들어 제외하고, 결정적이고 무료인 회귀만 배포 전에
+            # 강제한다 - 이번 세션에서 실제로 두 번 터진 "재료만 겹침을 실기종목 일치로
+            # 오판" 버그가 재발하면 여기서 막혀 배포 자체가 실패한다.
+            python 내작업폴더/tests/ci_quality_gate.py
             sudo systemctl restart art-admission-api
             sleep 2
             curl -sf http://127.0.0.1:8001/health

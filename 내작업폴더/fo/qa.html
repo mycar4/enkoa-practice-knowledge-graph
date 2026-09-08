@@ -72,50 +72,45 @@ function formatAnswer(text) {
     .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a class="underline text-primary" href="$2" target="_blank" rel="noopener">$1</a>');
 }
 
-// 지식그래프 근거 추적 패널 - "AI가 답을 지어낸 게 아니라 그래프에서 이렇게
-// 찾아냈다"를 사용자가 직접 눈으로 확인하게 하는 게 핵심 차별화 포인트.
-// context_compatible_tracks(실기유형/재료 키워드 구조적 매칭)와
-// context_graph_related(동시출현 커뮤니티 연관 학교) 둘 다 순수 그래프 쿼리
-// 결과이고 LLM이 만든 게 아니다.
-function buildGraphTrace(res) {
-  const compatible = res.context_compatible_tracks || [];
-  const related = res.context_graph_related || [];
-  if (!compatible.length && !related.length) return "";
+// day50~56 에이전트 도구 호출 트레이스 - 예전 "그래프 추적 패널"을 대체한다.
+// 이번엔 진짜 함수 호출 로그다: 에이전트가 이 질문에 어떤 도구를 어떤 인자로
+// 몇 번 불렀는지 그대로 보여준다 - LLM이 답을 지어낸 게 아니라 실제 서비스
+// 함수(search_tracks/compare_tracks/check_schedule_conflicts/get_calendar)를
+// 호출해서 받은 결과로 답했다는 걸 사용자가 직접 확인할 수 있다.
+const TOOL_LABELS = {
+  search_tracks: "🔍 실기 조건으로 전형 검색",
+  compare_tracks: "⚖️ 전형 비교표 조회",
+  check_schedule_conflicts: "📅 실기고사 일정 충돌 확인",
+  get_calendar: "🗓️ 일정 캘린더 조회",
+};
 
-  // shared_keywords(실기유형 자체가 겹침)와 shared_materials(재료만 겹침)는
-  // 신뢰도가 다르므로 절대 같은 문구로 섞어 보여주지 않는다.
-  const compatRows = compatible.slice(0, 8).map(m => {
-    const hasExact = (m.shared_keywords || []).length > 0;
-    const label = hasExact
-      ? `실기유형 일치: ${m.shared_keywords.join(", ")}`
-      : `재료만 겹침(실기유형 다름): ${(m.shared_materials || []).join(", ") || "-"}`;
-    return `
+function buildToolTrace(res) {
+  const trace = res.tool_trace || [];
+  if (!trace.length) return "";
+
+  const rows = trace.map((t, i) => `
     <div class="flex items-start gap-unit-xs">
-      <span class="w-2 h-2 rounded-full ${hasExact ? "bg-primary" : "bg-outline"} shrink-0 mt-1.5"></span>
-      <span class="font-body-sm text-body-sm text-on-surface"><strong>${m.university} ${m.department}</strong> - ${label}</span>
-    </div>`;
-  }).join("");
-
-  const relatedChips = related.slice(0, 8).map(r =>
-    `<span class="px-unit-xs py-0.5 bg-surface-container text-on-surface font-label-sm text-label-sm rounded">${r.name}${r.community_label ? ` · ${r.community_label}` : ""}</span>`
-  ).join("");
+      <span class="w-5 h-5 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-sm text-label-sm shrink-0">${i + 1}</span>
+      <span class="font-body-sm text-body-sm text-on-surface"><strong>${TOOL_LABELS[t.tool] || t.tool}</strong><br/><span class="text-on-surface-variant">${JSON.stringify(t.args)}</span></span>
+    </div>`).join("");
 
   return `
     <div class="border border-outline-variant/40 rounded-lg overflow-hidden">
       <button type="button" class="graph-trace-toggle w-full flex items-center justify-between p-unit-sm bg-surface-container hover:bg-surface-container-high transition-colors">
         <span class="flex items-center gap-unit-xs font-label-md text-label-md text-on-surface font-bold">
           <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="4" cy="8" r="3" fill="#1647D8"/><rect x="10" y="5" width="6" height="6" fill="#151515"/><line x1="7" y1="8" x2="10" y2="8" stroke="#151515" stroke-width="1.5"/></svg>
-          <span>🧬 지식그래프가 이 답을 찾아낸 경로</span>
+          <span>🤖 에이전트가 실제로 호출한 도구 (${trace.length}건)</span>
         </span>
         <span class="material-symbols-outlined toggle-icon text-outline">expand_more</span>
       </button>
       <div class="graph-trace-panel hidden p-unit-md space-y-unit-sm bg-surface-container-lowest">
-        ${compatRows ? `<div><div class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-unit-xs">① 실기유형·재료 키워드로 구조적 매칭된 학교</div><div class="space-y-1">${compatRows}</div></div>` : ""}
-        ${relatedChips ? `<div><div class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-unit-xs">② 동시출현 그래프에서 같은 커뮤니티로 연관된 학교/개체</div><div class="flex flex-wrap gap-unit-2xs">${relatedChips}</div></div>` : ""}
-        <p class="font-body-sm text-body-sm text-outline">이 목록은 LLM이 아니라 Neo4j 그래프 쿼리 결과 그대로입니다 - AI는 이 결과를 문장으로 풀어 설명했을 뿐, 목록 자체를 만들어내지 않았습니다.</p>
+        <div class="space-y-2">${rows}</div>
+        <p class="font-body-sm text-body-sm text-outline">이 목록은 실제 함수 호출 로그입니다 - AI는 이 도구들이 반환한 결과만으로 답했고, 도구를 거치지 않은 사실은 답변에 넣지 않도록 규칙으로 강제됩니다.</p>
       </div>
     </div>`;
 }
+
+const chatHistory = [];  // day50~56 에이전트 멀티턴 - [{role, content}, ...]
 
 function askQuestion() {
   const val = queryInput.value.trim();
@@ -138,22 +133,23 @@ function askQuestion() {
   pair.scrollIntoView({ behavior: "smooth", block: "start" });
   askBtn.disabled = true;
 
-  fetch(window.API_BASE_URL + "/qa", {
+  fetch(window.API_BASE_URL + "/agent-chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query: val }),
+    body: JSON.stringify({ query: val, history: chatHistory }),
   }).then(r => r.json()).then(res => {
-    const citations = (res.context_tracks || []).map(t =>
-      `<div class="flex items-start gap-unit-xs bg-surface-container-lowest p-unit-xs rounded"><span class="material-symbols-outlined text-[16px] text-primary shrink-0 mt-0.5">menu_book</span><span><strong>${t.university} ${t.department}</strong>${t.source_url ? ` - <a class="underline text-primary" href="${t.source_url}" target="_blank" rel="noopener">원문</a>` : ""}</span></div>`
-    ).join("");
+    const warnings = res.self_check_warnings || [];
+    const warningBlock = warnings.length
+      ? `<div class="font-body-sm text-body-sm text-error bg-error-container/30 p-unit-xs rounded">⚠️ 자기검증 경고: ${warnings.join(" / ")}</div>`
+      : "";
     aiBox.innerHTML = `
       <div class="flex items-center justify-between pb-unit-xs">
         <div class="flex items-center gap-unit-xs"><div class="w-7 h-7 rounded-lg bg-primary-container flex items-center justify-center text-on-primary"><span class="material-symbols-outlined text-[18px]">auto_awesome</span></div><span class="font-label-md text-label-md text-on-surface font-bold">ART:READY AI</span></div>
         <span class="font-label-sm text-label-sm text-outline">${res.model || ""}</span>
       </div>
       <div class="bg-surface-container-low p-unit-md rounded-lg font-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-line">${formatAnswer(res.answer || "응답 없음")}</div>
-      ${citations ? `<div class="flex flex-col gap-unit-xs bg-surface-container p-unit-md rounded-lg"><div class="flex items-center gap-unit-xs text-primary font-bold font-label-sm text-label-sm"><span class="material-symbols-outlined text-[18px]">verified</span><span>공식 모집요강 추출 근거</span></div><div class="flex flex-col gap-unit-2xs font-body-sm text-body-sm text-on-surface">${citations}</div></div>` : ""}
-      ${buildGraphTrace(res)}
+      ${warningBlock}
+      ${buildToolTrace(res)}
       <p class="font-body-sm text-body-sm text-error bg-error-container/30 p-unit-xs rounded">※ 주의: 최종 세부 요강은 해당 대학 입학처의 공식 공지를 반드시 재확인하십시오.</p>
     `;
     const traceToggle = aiBox.querySelector(".graph-trace-toggle");
@@ -164,6 +160,10 @@ function askQuestion() {
         panel.classList.toggle("hidden", open);
         traceToggle.querySelector(".toggle-icon").textContent = open ? "expand_more" : "expand_less";
       });
+    }
+    if (!res.error) {
+      chatHistory.push({ role: "user", content: val });
+      chatHistory.push({ role: "assistant", content: res.answer || "" });
     }
   }).catch(err => {
     aiBox.innerHTML = `<p class="font-body-sm text-body-sm text-error">API 연결 실패: ${err}</p>`;

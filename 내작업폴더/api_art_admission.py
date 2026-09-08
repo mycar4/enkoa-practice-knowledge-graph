@@ -206,12 +206,17 @@ def qa(req: QARequest):
             context_compatible = svc.get_compatible_tracks_for_query(req.query)
         except Exception:
             context_compatible = []
+        try:
+            all_universities = sorted({u["university"] for u in svc.list_universities()})
+        except Exception:
+            all_universities = []
 
         result = answer_with_llm(
             context_tracks, context_estimates, req.query,
             model_id=DEFAULT_MODEL, context_raw_excerpts=context_raw,
             context_graph_related=context_graph_related,
             context_compatible_tracks=context_compatible,
+            all_universities=all_universities,
         )
         return {
             **result,
@@ -222,6 +227,29 @@ def qa(req: QARequest):
         }
     finally:
         svc.close()
+
+
+class AgentChatRequest(BaseModel):
+    query: str
+    history: List[dict] = []
+
+
+@app.post("/agent-chat")
+def agent_chat_endpoint(req: AgentChatRequest):
+    """day50~56 LangGraph 에이전트 오케스트레이션. 기존 /prep-search·/compare-tracks·
+    /simulate-multi-apply·/calendar-events 4개를 프론트가 미리 정해둔 순서로 부르는 대신,
+    이 엔드포인트 하나에 자연어로 물어보면 에이전트가 필요한 도구를 스스로 골라 호출한다.
+    새 서비스 로직 없음 - 기존 4개 함수를 tool로 감싼 것뿐."""
+    from services.art_admission_agent import run_agent
+    try:
+        return run_agent(req.query, req.history)
+    except Exception as e:
+        return {
+            "answer": f"⚠️ 에이전트 답변 생성 실패: {e}",
+            "model": "gpt-4o-mini",
+            "tool_trace": [],
+            "error": True,
+        }
 
 
 class ReviewRequest(BaseModel):

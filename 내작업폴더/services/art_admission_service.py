@@ -62,6 +62,11 @@ _UNIVERSITY_ALIASES = {
     "한예종": "한국예술종합학교",
     "중앙대": "중앙대학교",
     "가천대": "가천대학교",
+    "경희대": "경희대학교",
+    "동국대": "동국대학교",
+    "명지대": "명지대학교",
+    "삼육대": "삼육대학교",
+    "상명대": "상명대학교",
     "서경대": "서경대학교",
     "용인대": "용인대학교",
     "계원예대": "계원예술대학교",
@@ -70,19 +75,62 @@ _UNIVERSITY_ALIASES = {
     "추계": "추계예술대학교",
     "홍대": "홍익대학교",
     "홍익대": "홍익대학교",
+    "서울과기대": "서울과학기술대학교",
+    "서울과학기술대": "서울과학기술대학교",
+    "서울예대": "서울예술대학교",
 }
 
 
-def _resolve_university_mentions(query: str, universities: List[str]) -> List[str]:
-    """질의문 안에서 언급된 university 정식명 목록을 찾는다 (정식명 부분일치 + 약칭 테이블)."""
-    found = []
+def _auto_short_forms(full_name: str) -> List[str]:
+    """별칭 표에 없는 학교도 놓치지 않도록, "OO대학교"/"OO대"에서 "학교"/"대학교" 접미사를
+    떼서 자동으로 짧은 형태 후보를 만든다(day39 엔티티 해소: 사전에 없다고 바로 포기하지
+    않고, 규칙으로 한 번 더 정규화를 시도한 뒤에야 miss 처리한다)."""
+    forms = [full_name]
+    for suffix in ("대학교", "대학"):
+        if full_name.endswith(suffix):
+            forms.append(full_name[: -len(suffix)])
+    return forms
+
+
+def resolve_university_mentions_detailed(query: str, universities: List[str]) -> Dict[str, Any]:
+    """day39 엔티티 해소 방식 그대로: 질의문에서 학교명을 (miss/exact/ambiguous)로 가른다.
+    - exact: 정식명·별칭·자동단축형 중 하나가 유일한 학교에만 걸림
+    - ambiguous: 같은 짧은 표현이 서로 다른 학교 여러 곳에 동시에 걸림 (예: 짧은 표현이
+      두 학교의 자동단축형과 동시에 겹치는 경우) - 이때는 아무거나 골라잡지 않고 후보를
+      전부 보여줘서, 상위 호출자(에이전트/Q&A)가 사용자에게 "어느 학교요?"라고 되물을 수
+      있게 한다.
+    - miss: 아무 후보도 안 걸림."""
+    # 후보 표현 -> 그 표현이 가리킬 수 있는 학교(들) 매핑을 먼저 만든다.
+    surface_to_universities: Dict[str, set] = {}
     for full_name in universities:
-        if full_name in query:
-            found.append(full_name)
+        for form in _auto_short_forms(full_name):
+            surface_to_universities.setdefault(form, set()).add(full_name)
     for alias, full_name in _UNIVERSITY_ALIASES.items():
-        if alias in query and full_name in universities and full_name not in found:
-            found.append(full_name)
-    return found
+        if full_name in universities:
+            surface_to_universities.setdefault(alias, set()).add(full_name)
+
+    matched: Dict[str, set] = {}
+    for surface, cand_universities in surface_to_universities.items():
+        if surface and surface in query:
+            for u in cand_universities:
+                matched.setdefault(u, set()).add(surface)
+
+    exact = sorted(u for u, surfaces in matched.items())
+    # 같은 표현이 정말로 여러 학교에 동시에 매칭된 경우만 ambiguous로 별도 표시.
+    ambiguous_surfaces = {s: us for s, us in surface_to_universities.items() if s in query and len(us) > 1}
+
+    return {
+        "status": "miss" if not exact else ("ambiguous" if ambiguous_surfaces else "exact"),
+        "universities": exact,
+        "ambiguous_surfaces": {s: sorted(us) for s, us in ambiguous_surfaces.items()},
+    }
+
+
+def _resolve_university_mentions(query: str, universities: List[str]) -> List[str]:
+    """질의문 안에서 언급된 university 정식명 목록을 찾는다 (정식명·별칭·자동단축형 부분일치).
+    기존 호출부와의 호환을 위해 List[str]만 반환 - 애매함/미스 정보가 필요하면
+    resolve_university_mentions_detailed()를 쓴다."""
+    return resolve_university_mentions_detailed(query, universities)["universities"]
 
 
 def _extract_dates(text: Optional[str]) -> List[str]:
@@ -997,7 +1045,7 @@ class ArtAdmissionService:
         LLM 재순위화로 정말 관련 있는 것만 추려낸다(정확도↑). 벡터 단독은 뜻은 비슷한데
         핵심 고유명사/숫자가 다른 문장을 헷갈릴 수 있고, 키워드 단독은 표현이 다르면
         놓치므로 둘을 합친다."""
-        from services.art_admission_llm import embed_text, rerank_chunks
+        from services.art_admission_llm import embed_text, rerank_chunks, cross_encoder_rerank
         query_vec = embed_text(query)
 
         with self.driver.session(default_access_mode=READ_ACCESS) as s:
@@ -1037,6 +1085,11 @@ class ArtAdmissionService:
         candidates.sort(key=lambda c: c["fusion_score"], reverse=True)
         candidates = candidates[:candidate_pool]
 
+        # day48: 전용 크로스인코더가 있으면 그걸 먼저 쓴다(빠르고·결정적이고·LLM 호출비 없음).
+        # 모델을 못 받았거나 실패하면 기존 LLM 재순위화로 자동 폴백 - 검색 자체는 절대 안 죽는다.
+        ce_result = cross_encoder_rerank(query, candidates, top_k=top_k)
+        if ce_result is not None:
+            return ce_result
         try:
             return rerank_chunks(query, candidates, model_id=rerank_model_id, top_k=top_k)
         except Exception:
