@@ -33,6 +33,11 @@ AGENT_MODEL = "gpt-4o-mini"  # 공개 API 원칙과 동일하게 항상 이 모�
 _SYSTEM_PROMPT = """당신은 "미술 실기 입시 도우미"의 에이전트입니다. 학생·학원장·학부모의
 질문 하나에 대해, 아래 도구들을 필요한 만큼 여러 번, 필요한 순서로 호출해서 답하십시오.
 
+특정 대학 하나만 언급하고 실기종목/재료를 특정하지 않은 질문(예: "가천대 실기는 뭐야?")
+이면 반드시 get_university_info를 먼저 쓰십시오. search_tracks는 실기종목·재료 키워드가
+있어야만 결과가 나오는 도구라, 키워드 없이 부르면 항상 0건이 나옵니다 - 그 0건을
+"데이터가 없다"고 오해하지 말고, 대학 전체를 물었다면 get_university_info를 쓰십시오.
+
 도구가 반환한 JSON 안에 있는 사실(학교/학과/실기유형/재료/일정/충돌여부)만 사용하고,
 그 안에 없는 학교·숫자·날짜는 절대 새로 만들어내지 마십시오. 도구 호출로 확인이 안 되면
 "현재 적재된 공식 모집요강 데이터에서 확인하지 못했습니다. 최종 지원 전 해당 대학 입학처
@@ -60,6 +65,37 @@ match_status가 "exact"인 것만 그렇게 부르고, "partial"인 것은 "재�
 def _get_service():
     from services.art_admission_service import ArtAdmissionService
     return ArtAdmissionService()
+
+
+def _all_universities() -> List[str]:
+    """Self-RAG 그라운딩 체크용 전체 대학 목록. 실패해도 그라운딩 체크가 그냥
+    스킵되게(빈 리스트) 하고, 에이전트 답변 자체는 절대 막지 않는다."""
+    svc = _get_service()
+    try:
+        return sorted({u["university"] for u in svc.list_universities()})
+    except Exception:
+        return []
+    finally:
+        svc.close()
+
+
+@tool
+def get_university_info(university: str, campus: str = "") -> str:
+    """특정 대학 하나에 대해 실기유형을 특정하지 않고 전반적으로 물을 때 쓴다
+    (예: "가천대 실기는 뭐야?", "중앙대 전형 알려줘"). search_tracks는 실기종목/재료
+    키워드가 있어야만 결과가 나오므로, 그런 키워드 없이 대학 하나만 언급된 질문에는
+    이 도구를 써야 한다. 그 대학의 모든 학과·전형·실기유형을 전부 반환한다."""
+    svc = _get_service()
+    try:
+        detail = svc.get_university_detail(university, campus=campus or None)
+        tracks = [{
+            "department": t.get("department"), "track_name": t.get("track_name"),
+            "exam_type_name": t.get("exam_type_name"), "allowed_materials": t.get("allowed_materials"),
+            "quota": t.get("quota"), "exam_dates": t.get("exam_dates"), "source_url": t.get("source_url"),
+        } for t in detail.get("official_tracks", [])]
+        return json.dumps({"university": university, "count": len(tracks), "tracks": tracks}, ensure_ascii=False)
+    finally:
+        svc.close()
 
 
 @tool
@@ -125,7 +161,7 @@ def get_calendar(selections: List[Dict[str, str]]) -> str:
         svc.close()
 
 
-TOOLS = [search_tracks, compare_tracks, check_schedule_conflicts, get_calendar]
+TOOLS = [get_university_info, search_tracks, compare_tracks, check_schedule_conflicts, get_calendar]
 
 
 def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dict[str, Any]:
@@ -143,26 +179,52 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
     out_messages = result["messages"]
 
     tool_trace = []
+    grounded_universities = set()
     for m in out_messages:
         if isinstance(m, AIMessage) and getattr(m, "tool_calls", None):
             for tc in m.tool_calls:
                 tool_trace.append({"tool": tc["name"], "args": tc["args"]})
         if isinstance(m, ToolMessage):
+            content = m.content if isinstance(m.content, str) else json.dumps(m.content, ensure_ascii=False)
+            # Self-RAG 그라운딩용: 이 도구 호출이 실제로 반환한 학교명을 전부 모아둔다
+            # (트레이스 패널에 보여줄 미리보기는 300자로 자르지만, 그라운딩 판정은
+            # 잘리지 않은 전체 내용으로 해야 한다 - 안 그러면 뒷부분에 있는 학교가
+            # 누락돼서 정상 답변까지 "환각 의심"으로 오탐할 수 있다).
+            try:
+                parsed = json.loads(content)
+                for row in parsed.get("results", []) or parsed.get("tracks", []) or []:
+                    if isinstance(row, dict) and row.get("university"):
+                        grounded_universities.add(row["university"])
+                if parsed.get("university"):
+                    grounded_universities.add(parsed["university"])
+                for c in parsed.get("conflicts", []) or []:
+                    pass  # 충돌 항목은 "대학 학과" 합쳐진 문자열이라 이름 추출은 생략
+            except Exception:
+                pass
             if tool_trace and "result_preview" not in tool_trace[-1]:
-                content = m.content if isinstance(m.content, str) else json.dumps(m.content, ensure_ascii=False)
                 tool_trace[-1]["result_preview"] = content[:300]
 
     final_answer = out_messages[-1].content if out_messages else ""
     if not isinstance(final_answer, str):
         final_answer = json.dumps(final_answer, ensure_ascii=False)
 
+    # Self-RAG류 자기검증(day53~54): /qa와 동일한 원칙 - 답변에 등장하는 학교명이
+    # 실제로 이번 도구 호출 결과 안에 있었는지 코드로 재검사한다.
+    all_universities = _all_universities()
+    grounding_issues = [
+        f"'{name}'가 답변에 등장하지만 이번 도구 호출 결과에는 없었습니다(환각 의심)"
+        for name in all_universities if name in final_answer and name not in grounded_universities
+    ]
+
     # 에이전트 답변에도 동일한 코드 레벨 가드레일을 적용한다(§ 절대원칙 - 화면마다
     # 따로 지키는 게 아니라 답변 생성 공통 경로 전체에 걸쳐야 한다).
     final_answer, banned_hit = _strip_banned_phrases(final_answer)
 
-    return {
+    result_payload = {
         "answer": final_answer,
         "model": AGENT_MODEL,
         "tool_trace": tool_trace,
-        "banned_phrases_removed": banned_hit,
     }
+    if grounding_issues or banned_hit:
+        result_payload["self_check_warnings"] = grounding_issues + [f"금지 문구 제거됨: {p}" for p in banned_hit]
+    return result_payload
