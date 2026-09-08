@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(BASE_DIR))
 
 from services.art_admission_service import ArtAdmissionService  # noqa: E402
-from services.art_admission_llm import answer_with_llm, review_document, chat_about_review  # noqa: E402
+from services.art_admission_llm import review_document, chat_about_review  # noqa: E402
 
 DEFAULT_MODEL = "gpt-4o-mini"  # 공개 API는 항상 이 모델만 쓴다 - gated 모델 노출 안 함
 
@@ -187,44 +187,10 @@ class QARequest(BaseModel):
 def qa(req: QARequest):
     """04 EVIDENCE 화면 - 기존 질의응답 탭의 AI 답변 파이프라인 그대로.
     항상 gpt-4o-mini만 쓴다(공개 API에서 프리미엄 모델 비용 노출 방지)."""
+    from services.art_admission_agent import run_qa_pipeline
     svc = get_service()
     try:
-        context_tracks, context_estimates = svc.build_llm_context(req.query)
-        try:
-            context_raw = svc.hybrid_search(req.query, top_k=5)
-        except Exception:
-            context_raw = []
-        anchor_names = [t["university"] for t in context_tracks]
-        exclude_names = anchor_names + [t["department"] for t in context_tracks]
-        try:
-            context_graph_related = svc.get_graph_related_context(
-                req.query, anchor_names=anchor_names, exclude_names=exclude_names, top_n=5,
-            )
-        except Exception:
-            context_graph_related = []
-        try:
-            context_compatible = svc.get_compatible_tracks_for_query(req.query)
-        except Exception:
-            context_compatible = []
-        try:
-            all_universities = sorted({u["university"] for u in svc.list_universities()})
-        except Exception:
-            all_universities = []
-
-        result = answer_with_llm(
-            context_tracks, context_estimates, req.query,
-            model_id=DEFAULT_MODEL, context_raw_excerpts=context_raw,
-            context_graph_related=context_graph_related,
-            context_compatible_tracks=context_compatible,
-            all_universities=all_universities,
-        )
-        return {
-            **result,
-            "context_tracks": context_tracks,
-            "context_compatible_tracks": context_compatible,
-            "context_graph_related": context_graph_related,
-            "context_raw_excerpts": context_raw,
-        }
+        return run_qa_pipeline(svc, req.query, model_id=DEFAULT_MODEL)
     finally:
         svc.close()
 
@@ -236,13 +202,13 @@ class AgentChatRequest(BaseModel):
 
 @app.post("/agent-chat")
 def agent_chat_endpoint(req: AgentChatRequest):
-    """day50~56 LangGraph 에이전트 오케스트레이션. 기존 /prep-search·/compare-tracks·
-    /simulate-multi-apply·/calendar-events 4개를 프론트가 미리 정해둔 순서로 부르는 대신,
-    이 엔드포인트 하나에 자연어로 물어보면 에이전트가 필요한 도구를 스스로 골라 호출한다.
-    새 서비스 로직 없음 - 기존 4개 함수를 tool로 감싼 것뿐."""
-    from services.art_admission_agent import run_agent
+    """day54 질의 라우팅 + day50~56 LangGraph 에이전트. 의도가 명확한 단순 질의
+    (대학 하나 전체 조회, 실기종목 검색)는 기존 /qa 파이프라인으로 즉시 처리하고,
+    비교·일정충돌처럼 도구 여러 개를 순서대로 조합해야 하는 복합 질의만 에이전트로
+    넘긴다 - 모든 질문을 에이전트 도구선택에 맡기지 않는다(day54 Adaptive RAG)."""
+    from services.art_admission_agent import route_and_answer
     try:
-        return run_agent(req.query, req.history)
+        return route_and_answer(req.query, req.history)
     except Exception as e:
         return {
             "answer": f"⚠️ 에이전트 답변 생성 실패: {e}",

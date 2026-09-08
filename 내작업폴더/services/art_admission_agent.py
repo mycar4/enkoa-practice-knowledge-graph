@@ -26,9 +26,27 @@ from langchain_core.tools import tool
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
 
-from services.art_admission_llm import _strip_banned_phrases, _self_check_grounding
+from services.art_admission_llm import _strip_banned_phrases, _self_check_grounding, answer_with_llm
 
 AGENT_MODEL = "gpt-4o-mini"  # 공개 API 원칙과 동일하게 항상 이 모델만 쓴다.
+
+# day54 Adaptive RAG(질의 라우팅) 개념: 모든 질문을 LLM 에이전트 도구선택에 맡기지
+# 않는다. ART:READY의 실제 질문 유형은 몇 가지로 다 나열 가능하다(대학 하나 전체
+# 조회 / 실기종목으로 검색 / 여러 전형 비교·일정충돌). 의도가 명확한 두 경우는
+# 규칙으로 즉시 기존 /qa 파이프라인(build_llm_context+answer_with_llm, 그래프
+# 쿼리 + LLM 호출 1번)으로 보내고, "비교/충돌/여러 학교 동시 언급"처럼 도구를
+# 여러 개 순서대로 조합해야 하는 진짜 복합 질의만 LangGraph 에이전트로 넘긴다.
+# 이렇게 하면 (1) 단순 질의에서 "LLM이 엉뚱한 도구를 고르는" 이번 세션의 버그
+# 유형 자체가 구조적으로 안 생기고, (2) LLM 왕복 횟수가 줄어 더 빠르고 싸다.
+_COMPOUND_SIGNAL_WORDS = ["비교", "겹치", "충돌", "동시", "같이 지원", "함께 지원", "캘린더", "일정표"]
+
+
+def _is_compound_query(query: str, all_universities: List[str]) -> bool:
+    if any(w in query for w in _COMPOUND_SIGNAL_WORDS):
+        return True
+    from services.art_admission_service import resolve_university_mentions_detailed
+    detail = resolve_university_mentions_detailed(query, all_universities)
+    return len(detail["universities"]) >= 2
 
 _SYSTEM_PROMPT = """당신은 "미술 실기 입시 도우미"의 에이전트입니다. 학생·학원장·학부모의
 질문 하나에 대해, 아래 도구들을 필요한 만큼 여러 번, 필요한 순서로 호출해서 답하십시오.
@@ -162,6 +180,75 @@ def get_calendar(selections: List[Dict[str, str]]) -> str:
 
 
 TOOLS = [get_university_info, search_tracks, compare_tracks, check_schedule_conflicts, get_calendar]
+
+
+def run_qa_pipeline(svc, query: str, model_id: str = AGENT_MODEL) -> Dict[str, Any]:
+    """기존 /qa 엔드포인트와 완전히 같은 파이프라인(그래프 조회 + LLM 답변 생성 1회).
+    도구를 여러 개 조합할 필요 없는 단순 질의(대학 하나 전체 조회, 실기종목 검색)에
+    쓴다 - LLM이 "어떤 도구를 쓸지" 고민할 필요 자체가 없어서 더 빠르고 저렴하고,
+    도구 선택 실수(이번 세션의 get_university_info 누락 버그류)가 원천적으로 안 생긴다."""
+    context_tracks, context_estimates = svc.build_llm_context(query)
+    try:
+        context_raw = svc.hybrid_search(query, top_k=5)
+    except Exception:
+        context_raw = []
+    anchor_names = [t["university"] for t in context_tracks]
+    exclude_names = anchor_names + [t["department"] for t in context_tracks]
+    try:
+        context_graph_related = svc.get_graph_related_context(
+            query, anchor_names=anchor_names, exclude_names=exclude_names, top_n=5,
+        )
+    except Exception:
+        context_graph_related = []
+    try:
+        context_compatible = svc.get_compatible_tracks_for_query(query)
+    except Exception:
+        context_compatible = []
+    try:
+        all_universities = sorted({u["university"] for u in svc.list_universities()})
+    except Exception:
+        all_universities = []
+
+    result = answer_with_llm(
+        context_tracks, context_estimates, query, model_id=model_id,
+        context_raw_excerpts=context_raw, context_graph_related=context_graph_related,
+        context_compatible_tracks=context_compatible, all_universities=all_universities,
+    )
+    result["context_tracks"] = context_tracks
+    result["context_compatible_tracks"] = context_compatible
+    result["context_graph_related"] = context_graph_related
+    result["context_raw_excerpts"] = context_raw
+    return result
+
+
+def route_and_answer(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dict[str, Any]:
+    """day54 질의 라우팅 진입점. /agent-chat이 이 함수를 호출한다 - 단순 질의는
+    기존 /qa 파이프라인으로, 복합 질의(비교·일정충돌·여러 학교 동시 언급)만
+    LangGraph 에이전트로 보낸다."""
+    svc = _get_service()
+    try:
+        all_universities = sorted({u["university"] for u in svc.list_universities()})
+    except Exception:
+        all_universities = []
+    finally:
+        svc.close()
+
+    if _is_compound_query(query, all_universities):
+        return run_agent(query, history)
+
+    svc = _get_service()
+    try:
+        result = run_qa_pipeline(svc, query)
+    finally:
+        svc.close()
+    # 프론트(qa.html)의 트레이스 패널과 형식을 맞추되, "도구 선택 없이 즉시 처리했다"는
+    # 걸 투명하게 보여준다 - 라우팅 자체도 숨기지 않는다.
+    result["tool_trace"] = [{
+        "tool": "qa_pipeline",
+        "args": {"query": query},
+        "result_preview": f"단순 질의로 판단 - 도구 선택 없이 그래프 조회 {len(result.get('context_tracks', []))}건으로 즉시 답변",
+    }]
+    return result
 
 
 def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dict[str, Any]:
