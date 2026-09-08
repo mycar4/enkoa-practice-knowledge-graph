@@ -1,0 +1,39 @@
+{
+ "corpus_docs": 519,
+ "corpus_valid": 15391,
+ "corpus_rejected": 506,
+ "corpus_rate": 0.9682,
+ "corpus_reasons": {
+  "근거가 원문에 없음": 458,
+  "목적어가 [이상반응] 절 원문에 없음": 17,
+  "목적어가 [효능] 절 원문에 없음": 31
+ },
+ "sample_docs": 8,
+ "sample_valid": 140,
+ "sample_rejected": 9,
+ "sample_rate": 0.9396,
+ "sample_reasons": {
+  "근거가 원문에 없음": 3,
+  "목적어가 [이상반응] 절 원문에 없음": 5,
+  "목적어가 [효능] 절 원문에 없음": 1
+ },
+ "sample_relations": {
+  "CAUTION_FOR": 36,
+  "CONTAINS": 5,
+  "HAS_SIDE_EFFECT": 42,
+  "INTERACTS_WITH": 12,
+  "TREATS": 45
+ },
+ "exclusive_pairs": 6,
+ "exclusive_pairs_backed": 6,
+ "gold": 44,
+ "gold_docs_empty": 1,
+ "side_effect_extracted": 42,
+ "side_effect_hit": 40,
+ "recall": 0.9091,
+ "precision": 0.9524,
+ "spot_rows": 50,
+ "spot_ok": 45,
+ "spot_precision": 0.9,
+ "f1": 0.9302
+}

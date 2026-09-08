@@ -1,0 +1,59 @@
+{"source": "Clopidogrel", "relation": "BINDS", "target": "CYP2C9", "doc_id": "PMC13368705", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Clopidogrel", "relation": "BINDS", "target": "CYP3A4", "doc_id": "PMC13368705", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Clopidogrel", "relation": "BINDS", "target": "CYP3A5", "doc_id": "PMC13368705", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Phenprocoumon", "relation": "BINDS", "target": "CYP2C9", "doc_id": "PMC13368705", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Phenprocoumon", "relation": "BINDS", "target": "CYP3A4", "doc_id": "PMC13368705", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Quetiapine", "relation": "BINDS", "target": "CYP2C19", "doc_id": "PMC13368705", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Quetiapine", "relation": "BINDS", "target": "CYP2D6", "doc_id": "PMC13368705", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Quetiapine", "relation": "BINDS", "target": "CYP3A5", "doc_id": "PMC13368705", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Simvastatin", "relation": "BINDS", "target": "CYP2C19", "doc_id": "PMC13368705", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Simvastatin", "relation": "BINDS", "target": "CYP2C9", "doc_id": "PMC13368705", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Simvastatin", "relation": "BINDS", "target": "CYP2D6", "doc_id": "PMC13368705", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Simvastatin", "relation": "BINDS", "target": "CYP3A4", "doc_id": "PMC13368705", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Simvastatin", "relation": "BINDS", "target": "CYP3A5", "doc_id": "PMC13368705", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Tacrolimus", "relation": "BINDS", "target": "CYP3A4", "doc_id": "PMC13368705", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Tramadol", "relation": "BINDS", "target": "CYP3A4", "doc_id": "PMC13368705", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Amitriptyline", "relation": "BINDS", "target": "CYP2B6", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Amitriptyline", "relation": "BINDS", "target": "CYP2C9", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Amitriptyline", "relation": "BINDS", "target": "CYP3A5", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Atorvastatin", "relation": "BINDS", "target": "CYP2B6", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Atorvastatin", "relation": "BINDS", "target": "CYP2C19", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Atorvastatin", "relation": "BINDS", "target": "CYP2C9", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Atorvastatin", "relation": "BINDS", "target": "CYP3A5", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Atorvastatin", "relation": "BINDS", "target": "UGT1A1", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Clopidogrel", "relation": "BINDS", "target": "CYP2B6", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Clopidogrel", "relation": "BINDS", "target": "CYP2C9", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Clopidogrel", "relation": "BINDS", "target": "CYP3A5", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Ibuprofen", "relation": "BINDS", "target": "CYP2C19", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Ibuprofen", "relation": "BINDS", "target": "UGT1A1", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Lansoprazole", "relation": "BINDS", "target": "ABCG2", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Lansoprazole", "relation": "BINDS", "target": "CYP2C9", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Omeprazole", "relation": "BINDS", "target": "ABCG2", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Omeprazole", "relation": "BINDS", "target": "CYP2C9", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Rosuvastatin", "relation": "BINDS", "target": "CYP2C19", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Rosuvastatin", "relation": "BINDS", "target": "CYP2C9", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Rosuvastatin", "relation": "BINDS", "target": "CYP3A5", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Simvastatin", "relation": "BINDS", "target": "CYP2B6", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Simvastatin", "relation": "BINDS", "target": "CYP2C19", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Simvastatin", "relation": "BINDS", "target": "CYP2C9", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Simvastatin", "relation": "BINDS", "target": "CYP3A5", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Simvastatin", "relation": "BINDS", "target": "UGT1A1", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Warfarin", "relation": "BINDS", "target": "CYP2C19", "doc_id": "PMC13432136", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "breast cancer", "relation": "PRESENTS", "target": "Pain", "doc_id": "PMC13461326", "verdict": "그래프에만 있는 사실", "note": "문서는 수술 전후 통증에 쓰는 약을 말한다. 유방암이 통증으로 나타난다고 하지 않았다"}
+{"source": "Abacavir", "relation": "BINDS", "target": "UGT1A1", "doc_id": "PMC13473732", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Atazanavir", "relation": "BINDS", "target": "CYP2C9", "doc_id": "PMC13473732", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Capecitabine", "relation": "BINDS", "target": "CYP2C9", "doc_id": "PMC13473732", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Carbamazepine", "relation": "BINDS", "target": "CYP2B6", "doc_id": "PMC13473732", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Carbamazepine", "relation": "BINDS", "target": "CYP2C9", "doc_id": "PMC13473732", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Efavirenz", "relation": "BINDS", "target": "CYP2C9", "doc_id": "PMC13473732", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Efavirenz", "relation": "BINDS", "target": "CYP2D6", "doc_id": "PMC13473732", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Fluorouracil", "relation": "BINDS", "target": "CYP2C9", "doc_id": "PMC13473732", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Irinotecan", "relation": "BINDS", "target": "CYP2B6", "doc_id": "PMC13473732", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Irinotecan", "relation": "UPREGULATES_CG", "target": "HLA-A", "doc_id": "PMC13473732", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Irinotecan", "relation": "UPREGULATES_CG", "target": "HLA-B", "doc_id": "PMC13473732", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "Phenytoin", "relation": "BINDS", "target": "CYP2B6", "doc_id": "PMC13473732", "verdict": "그래프에만 있는 사실", "note": "이 문서가 말하지 않았으므로 이 문서의 골드가 아니다"}
+{"source": "colon cancer", "relation": "ASSOCIATES", "target": "TP53", "doc_id": "PMC13494139", "verdict": "이름 대조 오탐", "note": "발췌의 Colon Cancer Associated Transcript 2 에서 앞 두 낱말만 맞았다"}
+{"source": "Carbidopa", "relation": "PALLIATES", "target": "Parkinson's disease", "doc_id": "PMC13494208", "verdict": "문서가 다른 관계로 말함", "note": "문서는 used to treat 라고 썼다. 모순 검증 절에서 다룬다"}
+{"source": "Omeprazole", "relation": "BINDS", "target": "CYP1A1", "doc_id": "PMC13494208", "verdict": "그래프에만 있는 사실", "note": "그래프에는 있고 문서는 말하지 않았다. day41 이 보면 이미 아는 사실이다"}
+{"source": "Parkinson's disease", "relation": "PRESENTS", "target": "Huntington Disease", "doc_id": "PMC13494208", "verdict": "그래프에만 있는 사실", "note": "위와 같다"}
+{"source": "multiple sclerosis", "relation": "PRESENTS", "target": "Huntington Disease", "doc_id": "PMC13494208", "verdict": "그래프에만 있는 사실", "note": "그래프가 헌팅턴병을 증상 노드로 담고 있어 나온 관계다. 문서는 두 이름을 나란히 언급했을 뿐이다"}
