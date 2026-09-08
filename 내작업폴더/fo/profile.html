@@ -163,5 +163,28 @@ function runAnalysis() {
     btn.innerHTML = '<span>내게 맞는 미대 찾기</span><span class="material-symbols-outlined">arrow_forward</span>';
   });
 }
+
+// results.html로 넘어갈 때 버튼을 "분석 중..." 상태로 바꿔놓고 페이지를 떠나는데,
+// 브라우저 뒤로가기로 돌아오면 새로 로드되는 게 아니라 bfcache에서 그 얼어붙은
+// DOM 그대로 복원돼서 무한 로딩처럼 보인다(실측 확인된 버그). 뒤로 돌아왔을 땐
+// 이전 선택을 이어가는 게 아니라 완전히 초기화하는 게 맞다고 판단해 폼 전체를 리셋한다.
+window.addEventListener("pageshow", (e) => {
+  if (!e.persisted) return;
+  selectedExams.clear();
+  document.querySelectorAll(".exam-btn").forEach(btn => {
+    btn.classList.remove("!bg-primary", "!border-primary", "shadow-md");
+    btn.classList.add("bg-surface-container-low");
+    btn.querySelector("span.font-label-md").classList.remove("!text-on-primary");
+    const check = btn.querySelector(".material-symbols-outlined");
+    if (check) check.classList.add("hidden");
+  });
+  document.getElementById("materialQuery").value = "";
+  document.getElementById("documentOnly").checked = false;
+  updateDocumentOnlyState();
+  document.getElementById("formError").classList.add("hidden");
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = false;
+  btn.innerHTML = '<span>내게 맞는 미대 찾기</span><span class="material-symbols-outlined">arrow_forward</span>';
+});
 </script>
 </body></html>
