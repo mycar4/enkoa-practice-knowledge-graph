@@ -1,0 +1,137 @@
+[
+{
+  "university": "경기대학교",
+  "campus": "수원",
+  "department": "입체조형학과",
+  "track_name": "실기/실적(예능실기우수자전형)",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 21,
+    "ratio": "실기 70% (70점) + 학교생활기록부(교과) 30% (30점), 합계 100점",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 70,
+    "school_record_ratio_pct": 30,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-11"
+    },
+    "exam_date": "기초디자인: 2026-10-04, 소조(인체두상): 2026-10-05 (택1)",
+    "result_date": "2026-11-20",
+    "exam_type_name": "택1: 기초디자인(고사 당일 제시, 4시간) / 소조-인체두상(고사 당일 제시, 4시간)",
+    "allowed_materials": ["[기초디자인] 화판, 아크릴물감, 수채화물감, 포스터물감, 파스텔, 색연필, 연필, 펜 등(유화물감 사용불가)", "[소조] 소조용 도구, 앞치마, 수건, 면장갑, 발받침대, 흙절단용기구(철사 등, 개인 노끈·고정용 도구 사용 불가)"],
+    "paper_size": "켄트지 3절(기초디자인)",
+    "time_limit_minutes": 240,
+    "source_url": "https://enter.kyonggi.ac.kr",
+    "source_page": 47
+  }
+},
+{
+  "university": "경기대학교",
+  "campus": "수원",
+  "department": "디자인학부",
+  "track_name": "실기/실적(예능실기우수자전형)",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 33,
+    "ratio": "실기 70% (70점) + 학교생활기록부(교과) 30% (30점), 합계 100점",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 70,
+    "school_record_ratio_pct": 30,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-11"
+    },
+    "exam_date": "2026-10-11",
+    "result_date": "2026-11-20",
+    "exam_type_name": "기초디자인 - 고사 당일 제시",
+    "allowed_materials": ["화판", "아크릴물감", "수채화물감", "포스터물감", "파스텔", "색연필", "연필", "펜 등", "유화물감 사용불가"],
+    "paper_size": "켄트지 3절",
+    "time_limit_minutes": 240,
+    "source_url": "https://enter.kyonggi.ac.kr",
+    "source_page": 47
+  }
+},
+{
+  "university": "경기대학교",
+  "campus": "수원",
+  "department": "Fine Arts학부",
+  "track_name": "실기/실적(예능실기우수자전형)",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 50,
+    "ratio": "실기 70% (70점) + 학교생활기록부(교과) 30% (30점), 합계 100점",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 70,
+    "school_record_ratio_pct": 30,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-11"
+    },
+    "exam_date": "2026-10-04",
+    "result_date": "2026-11-20",
+    "exam_type_name": "택1: 인물수채화 / 정물수묵(담채)화 / 서예(한글서예·한문서예·캘리그라피 중 택1)",
+    "allowed_materials": ["[인물수채화] 수채화물감, 붓, 팔레트, 물통, 연필, 지우개, 압정 등", "[정물수묵담채] 붓, 먹, 벼루, 물통, 물감그릇, 물감(한국화용) 등", "[서예] 붓, 먹, 벼루, 서진, 자전 등"],
+    "paper_size": "켄트지 3절(인물수채화) / 화선지 전지1/2(정물수묵담채·서예)",
+    "time_limit_minutes": 240,
+    "source_url": "https://enter.kyonggi.ac.kr",
+    "source_page": 47
+  }
+},
+{
+  "university": "경기대학교",
+  "campus": "수원",
+  "department": "애니메이션학과(상상과표현)",
+  "track_name": "실기/실적(예능실기우수자전형)",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 11,
+    "ratio": "실기 60% (60점) + 학교생활기록부(교과) 40% (40점), 합계 100점",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 60,
+    "school_record_ratio_pct": 40,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-11"
+    },
+    "exam_date": "2026-10-18",
+    "result_date": "2026-11-20",
+    "exam_type_name": "상상으로 4컷 표현하기 - 고사 당일 제시",
+    "allowed_materials": ["아크릴물감", "수채화물감", "포스터물감", "파스텔", "색연필", "연필", "펜 등", "정착액(픽서티브)/편화사전/(밑)그림/사진 등 이미지 사용 금지"],
+    "paper_size": "켄트지 30cm x 90cm",
+    "time_limit_minutes": 240,
+    "source_url": "https://enter.kyonggi.ac.kr",
+    "source_page": 47
+  }
+},
+{
+  "university": "경기대학교",
+  "campus": "수원",
+  "department": "애니메이션학과(웹툰)",
+  "track_name": "실기/실적(예능실기우수자전형)",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 5,
+    "ratio": "실기 60% (60점) + 학교생활기록부(교과) 40% (40점), 합계 100점",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 60,
+    "school_record_ratio_pct": 40,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-11"
+    },
+    "exam_date": "2026-10-18",
+    "result_date": "2026-11-20",
+    "exam_type_name": "4컷 웹툰 - 고사 당일 제시",
+    "allowed_materials": [],
+    "paper_size": "켄트지 4절",
+    "time_limit_minutes": 240,
+    "source_url": "https://enter.kyonggi.ac.kr",
+    "source_page": 47
+  }
+}
+]

@@ -59,4 +59,6 @@ dependencies = [
     "ragas>=0.4.3",
     "langchain-google-vertexai>=3.2.4",
     "langgraph>=1.2.11",
+    "pyhwp>=0.1b15",
+    "olefile>=0.47",
 ]
