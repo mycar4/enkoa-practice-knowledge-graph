@@ -1,0 +1,25 @@
+{
+  "university": "한양대학교",
+  "campus": "ERICA(안산)",
+  "department": "디자인계열",
+  "track_name": "재능우수자(디자인)전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 40,
+    "ratio": "1단계(10배수): 학생부 종합평가 100% -> 2단계: 실기 80% + 1단계 성적 20%",
+    "is_staged": true,
+    "csat_minimum_required": false,
+    "exam_type_name": "미지정",
+    "allowed_materials": [],
+    "paper_size": null,
+    "time_limit_minutes": null,
+    "exam_date": "2026-10-24",
+    "result_date": null,
+    "source_url": "https://goerica.hanyang.ac.kr/upload/BBS0061/20260907093813DY9RUL.PDF",
+    "source_page": 81,
+    "stages": [
+      {"description": "1단계 학생부 종합평가", "ratio_desc": "학생부 종합평가 100%", "multiplier": 10},
+      {"description": "2단계 실기", "ratio_desc": "실기 80% + 1단계 성적 20%", "multiplier": null}
+    ]
+  }
+}

@@ -1,0 +1,52 @@
+[
+{
+  "university": "숙명여자대학교",
+  "campus": "서울",
+  "department": "회화과(한국화)",
+  "track_name": "예능창의인재전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 13,
+    "ratio": "1단계(20배수): 학생부(교과) 100% -> 2단계: 실기 100%",
+    "is_staged": true,
+    "csat_minimum_required": false,
+    "exam_type_name": "택1: 인체(사진) 수묵담채<코스츔>(5시간, 화선지 2/3지) 또는 정물 수묵담채화(5시간, 화선지 반절)",
+    "allowed_materials": ["연필", "지우개", "붓", "벼루", "먹", "문진", "팔레트", "물통", "동양화 화판", "한국화 채색물감"],
+    "paper_size": "화선지 2/3지 또는 화선지 반절",
+    "time_limit_minutes": 300,
+    "exam_date": "2026-10-18",
+    "result_date": null,
+    "source_url": "https://admission.sookmyung.ac.kr/upload/BBS0021/20260907095555QDLVUJ.PDF",
+    "source_page": 36,
+    "stages": [
+      {"description": "1단계 학생부(교과)", "ratio_desc": "학생부(교과) 100%", "multiplier": 20},
+      {"description": "2단계 실기", "ratio_desc": "실기 100%", "multiplier": null}
+    ]
+  }
+},
+{
+  "university": "숙명여자대학교",
+  "campus": "서울",
+  "department": "회화과(서양화)",
+  "track_name": "예능창의인재전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 14,
+    "ratio": "1단계(20배수): 학생부(교과) 100% -> 2단계: 실기 100%",
+    "is_staged": true,
+    "csat_minimum_required": false,
+    "exam_type_name": "인체(사진) 수채화<코스츔> (5시간, 켄트지 2절)",
+    "allowed_materials": ["수채화도구 일체(물감, 팔레트, 물통, 붓 등)"],
+    "paper_size": "켄트지 2절",
+    "time_limit_minutes": 300,
+    "exam_date": "2026-10-18",
+    "result_date": null,
+    "source_url": "https://admission.sookmyung.ac.kr/upload/BBS0021/20260907095555QDLVUJ.PDF",
+    "source_page": 36,
+    "stages": [
+      {"description": "1단계 학생부(교과)", "ratio_desc": "학생부(교과) 100%", "multiplier": 20},
+      {"description": "2단계 실기", "ratio_desc": "실기 100%", "multiplier": null}
+    ]
+  }
+}
+]

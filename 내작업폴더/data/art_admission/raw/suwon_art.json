@@ -1,0 +1,94 @@
+[
+{
+  "university": "수원대학교",
+  "campus": "수원",
+  "department": "조형예술학부",
+  "track_name": "실기우수자(미술)전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 60,
+    "ratio": "일괄합산(실질반영비율): 학생부 11.1%(명목20%) + 실기 88.9%(명목80%)",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 80,
+    "school_record_ratio_pct": 20,
+    "exam_type_name": "미지정",
+    "allowed_materials": [],
+    "paper_size": null,
+    "time_limit_minutes": null,
+    "exam_date": null,
+    "result_date": null,
+    "source_url": "https://ipsi.suwon.ac.kr/upload_data/guide/1787878393_6045.pdf",
+    "source_page": 45
+  }
+},
+{
+  "university": "수원대학교",
+  "campus": "수원",
+  "department": "디자인학부-커뮤니케이션디자인",
+  "track_name": "실기우수자(미술)전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 33,
+    "ratio": "일괄합산(실질반영비율): 학생부 11.1%(명목20%) + 실기 88.9%(명목80%)",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 80,
+    "school_record_ratio_pct": 20,
+    "exam_type_name": "미지정",
+    "allowed_materials": [],
+    "paper_size": null,
+    "time_limit_minutes": null,
+    "exam_date": null,
+    "result_date": null,
+    "source_url": "https://ipsi.suwon.ac.kr/upload_data/guide/1787878393_6045.pdf",
+    "source_page": 45
+  }
+},
+{
+  "university": "수원대학교",
+  "campus": "수원",
+  "department": "디자인학부-패션디자인",
+  "track_name": "실기우수자(미술)전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 20,
+    "ratio": "일괄합산(실질반영비율): 학생부 11.1%(명목20%) + 실기 88.9%(명목80%)",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 80,
+    "school_record_ratio_pct": 20,
+    "exam_type_name": "미지정",
+    "allowed_materials": [],
+    "paper_size": null,
+    "time_limit_minutes": null,
+    "exam_date": null,
+    "result_date": null,
+    "source_url": "https://ipsi.suwon.ac.kr/upload_data/guide/1787878393_6045.pdf",
+    "source_page": 45
+  }
+},
+{
+  "university": "수원대학교",
+  "campus": "수원",
+  "department": "디자인학부-공예디자인",
+  "track_name": "실기우수자(미술)전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 17,
+    "ratio": "일괄합산(실질반영비율): 학생부 11.1%(명목20%) + 실기 88.9%(명목80%)",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 80,
+    "school_record_ratio_pct": 20,
+    "exam_type_name": "미지정",
+    "allowed_materials": [],
+    "paper_size": null,
+    "time_limit_minutes": null,
+    "exam_date": null,
+    "result_date": null,
+    "source_url": "https://ipsi.suwon.ac.kr/upload_data/guide/1787878393_6045.pdf",
+    "source_page": 45
+  }
+}
+]

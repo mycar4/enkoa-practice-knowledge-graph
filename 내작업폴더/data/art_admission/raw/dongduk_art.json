@@ -1,0 +1,117 @@
+[
+{
+  "university": "동덕여자대학교",
+  "campus": "서울",
+  "department": "회화전공",
+  "track_name": "실기우수자전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 31,
+    "ratio": "일괄합산: 실기 80%(실질87%) + 학생부교과 20%(실질13%)",
+    "is_staged": false,
+    "csat_minimum_required": null,
+    "practical_ratio_pct": 80,
+    "school_record_ratio_pct": 20,
+    "exam_type_name": "미지정",
+    "allowed_materials": [],
+    "paper_size": null,
+    "time_limit_minutes": null,
+    "exam_date": null,
+    "result_date": null,
+    "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
+    "source_page": 20
+  }
+},
+{
+  "university": "동덕여자대학교",
+  "campus": "서울",
+  "department": "디지털공예전공",
+  "track_name": "실기우수자전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 24,
+    "ratio": "일괄합산: 실기 80%(실질87%) + 학생부교과 20%(실질13%)",
+    "is_staged": false,
+    "csat_minimum_required": null,
+    "practical_ratio_pct": 80,
+    "school_record_ratio_pct": 20,
+    "exam_type_name": "미지정",
+    "allowed_materials": [],
+    "paper_size": null,
+    "time_limit_minutes": null,
+    "exam_date": null,
+    "result_date": null,
+    "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
+    "source_page": 20
+  }
+},
+{
+  "university": "동덕여자대학교",
+  "campus": "서울",
+  "department": "패션디자인전공",
+  "track_name": "실기우수자전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 42,
+    "ratio": "일괄합산: 실기 80%(실질87%) + 학생부교과 20%(실질13%)",
+    "is_staged": false,
+    "csat_minimum_required": null,
+    "practical_ratio_pct": 80,
+    "school_record_ratio_pct": 20,
+    "exam_type_name": "미지정",
+    "allowed_materials": [],
+    "paper_size": null,
+    "time_limit_minutes": null,
+    "exam_date": null,
+    "result_date": null,
+    "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
+    "source_page": 20
+  }
+},
+{
+  "university": "동덕여자대학교",
+  "campus": "서울",
+  "department": "시각&실내디자인전공",
+  "track_name": "실기우수자전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 63,
+    "ratio": "일괄합산: 실기 80%(실질87%) + 학생부교과 20%(실질13%)",
+    "is_staged": false,
+    "csat_minimum_required": null,
+    "practical_ratio_pct": 80,
+    "school_record_ratio_pct": 20,
+    "exam_type_name": "미지정",
+    "allowed_materials": [],
+    "paper_size": null,
+    "time_limit_minutes": null,
+    "exam_date": null,
+    "result_date": null,
+    "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
+    "source_page": 20
+  }
+},
+{
+  "university": "동덕여자대학교",
+  "campus": "서울",
+  "department": "미디어디자인전공",
+  "track_name": "실기우수자전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 36,
+    "ratio": "일괄합산: 실기 80%(실질87%) + 학생부교과 20%(실질13%)",
+    "is_staged": false,
+    "csat_minimum_required": null,
+    "practical_ratio_pct": 80,
+    "school_record_ratio_pct": 20,
+    "exam_type_name": "미지정",
+    "allowed_materials": [],
+    "paper_size": null,
+    "time_limit_minutes": null,
+    "exam_date": null,
+    "result_date": null,
+    "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
+    "source_page": 20
+  }
+}
+]

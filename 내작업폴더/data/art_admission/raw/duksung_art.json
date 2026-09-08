@@ -1,0 +1,90 @@
+[
+{
+  "university": "덕성여자대학교",
+  "campus": "서울",
+  "department": "Art&Design대학(수묵담채화)",
+  "track_name": "미술실기전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 17,
+    "ratio": "일괄합산: 실기 100%",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 100,
+    "exam_type_name": "수묵담채화 - 제시된 정물을 수묵담채화로 표현(사진 제공)",
+    "allowed_materials": ["동양화 물감", "붓", "벼루", "먹(먹물 사용 가능)", "접시", "물통", "연필", "지우개"],
+    "paper_size": "옥당지(전지 1/2)",
+    "time_limit_minutes": 300,
+    "exam_date": "2026-10-18",
+    "result_date": null,
+    "source_url": "https://enter.duksung.ac.kr/_common/new_download_file.php?menu=boardfile&file_no=971",
+    "source_page": 39
+  }
+},
+{
+  "university": "덕성여자대학교",
+  "campus": "서울",
+  "department": "Art&Design대학(인체수채화)",
+  "track_name": "미술실기전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 18,
+    "ratio": "일괄합산: 실기 100%",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 100,
+    "exam_type_name": "인체수채화 - 인체와 제시된 조건에 의한 표현(사진 제공)",
+    "allowed_materials": ["수채화 물감", "팔레트", "붓", "물통", "연필", "지우개", "집게"],
+    "paper_size": "켄트지 2절",
+    "time_limit_minutes": 300,
+    "exam_date": "2026-10-18",
+    "result_date": null,
+    "source_url": "https://enter.duksung.ac.kr/_common/new_download_file.php?menu=boardfile&file_no=971",
+    "source_page": 39
+  }
+},
+{
+  "university": "덕성여자대학교",
+  "campus": "서울",
+  "department": "Art&Design대학(기초디자인)",
+  "track_name": "미술실기전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 26,
+    "ratio": "일괄합산: 실기 100%",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 100,
+    "exam_type_name": "기초디자인 - 제시된 사진의 사물이미지를 적용하여 자유롭게 표현(사진 제공)",
+    "allowed_materials": [],
+    "paper_size": "켄트지 3절",
+    "time_limit_minutes": 300,
+    "exam_date": "2026-10-17",
+    "result_date": null,
+    "source_url": "https://enter.duksung.ac.kr/_common/new_download_file.php?menu=boardfile&file_no=971",
+    "source_page": 39
+  }
+},
+{
+  "university": "덕성여자대학교",
+  "campus": "서울",
+  "department": "Art&Design대학(기초소양)",
+  "track_name": "미술실기전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 10,
+    "ratio": "일괄합산: 실기 100%",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 100,
+    "exam_type_name": "기초소양 - 제시된 사진의 사물이미지를 적용하여 주어진 주제를 구성하여 묘사(사진 제공)",
+    "allowed_materials": ["흑백연필"],
+    "paper_size": "켄트지 3절",
+    "time_limit_minutes": 300,
+    "exam_date": "2026-10-18",
+    "result_date": null,
+    "source_url": "https://enter.duksung.ac.kr/_common/new_download_file.php?menu=boardfile&file_no=971",
+    "source_page": 39
+  }
+}
+]

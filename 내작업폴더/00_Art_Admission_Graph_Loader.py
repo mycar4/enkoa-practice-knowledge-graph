@@ -105,7 +105,13 @@ def load_one_record_tx(tx, rec: dict):
             t.is_staged = $is_staged,
             t.source_url = $source_url,
             t.source_page = $source_page,
-            t.admission_year = $admission_year
+            t.admission_year = $admission_year,
+            t.csat_minimum_required = $csat_minimum_required,
+            t.csat_minimum_rule = $csat_minimum_rule,
+            t.school_record_ratio_pct = $school_record_ratio_pct,
+            t.practical_ratio_pct = $practical_ratio_pct,
+            t.document_ratio_pct = $document_ratio_pct,
+            t.interview_ratio_pct = $interview_ratio_pct
 
         MERGE (e:Admission_ExamType {name: $exam_type_name, track_name: $track_name, university: $university, department: $department})
         MERGE (t)-[:REQUIRES_EXAM]->(e)
@@ -125,6 +131,12 @@ def load_one_record_tx(tx, rec: dict):
          quota=of.get("quota"), ratio=of.get("ratio"), is_staged=of.get("is_staged"),
          source_url=of.get("source_url"), source_page=of.get("source_page"),
          admission_year=of.get("admission_year"),
+         csat_minimum_required=of.get("csat_minimum_required"),
+         csat_minimum_rule=of.get("csat_minimum_rule"),
+         school_record_ratio_pct=of.get("school_record_ratio_pct"),
+         practical_ratio_pct=of.get("practical_ratio_pct"),
+         document_ratio_pct=of.get("document_ratio_pct"),
+         interview_ratio_pct=of.get("interview_ratio_pct"),
          exam_type_name=of.get("exam_type_name", "미지정"),
          allowed_materials=of.get("allowed_materials", []),
          paper_size=of.get("paper_size"), time_limit_minutes=of.get("time_limit_minutes"),
@@ -133,6 +145,20 @@ def load_one_record_tx(tx, rec: dict):
          exam_date=of.get("exam_date"), result_date=of.get("result_date"),
          reg_start=(of.get("registration_period") or {}).get("start"),
          reg_end=(of.get("registration_period") or {}).get("end"))
+
+    # day37 온톨로지 확장: 단계형 전형(예: 이화 1단계 서류100%→2단계 서류80%+면접20%)을
+    # 표현하는 별도 노드. 기존 Track -[:HAS_SCHEDULE]-> Schedule 패턴과 동일하게,
+    # Track 안에 flat 필드로 욱여넣지 않고 독립 노드로 분리한다 - 단계 수가 학교마다
+    # 다르고(1~2단계), 나중에 단계를 더 세분화해도 Track 스키마 자체는 안 바뀐다.
+    for idx, stage in enumerate(of.get("stages", []) or [], start=1):
+        tx.run("""
+            MATCH (t:Admission_Track {name: $track_name, university: $university, department: $department})
+            MERGE (st:Admission_SelectionStage {track_name: $track_name, university: $university, department: $department, stage_number: $stage_number})
+            MERGE (t)-[:HAS_STAGE]->(st)
+            SET st.description = $description, st.ratio_desc = $ratio_desc, st.multiplier = $multiplier
+        """, university=university, department=department, track_name=track_name,
+             stage_number=idx, description=stage.get("description"),
+             ratio_desc=stage.get("ratio_desc"), multiplier=stage.get("multiplier"))
 
     for topic in of.get("past_topics", []) or []:
         tx.run("""

@@ -1,0 +1,122 @@
+[
+{
+  "university": "성신여자대학교",
+  "campus": "서울",
+  "department": "동양화과",
+  "track_name": "실기/실적(일반학생전형)",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 21,
+    "ratio": "일괄합산: 실기 70%(교과27%+출결3% 별도) + 학생부 30%",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 70,
+    "school_record_ratio_pct": 30,
+    "exam_type_name": "택1: 정물수묵담채화 또는 인물수묵담채화",
+    "allowed_materials": [],
+    "paper_size": "화선지(반절/2·3절)",
+    "time_limit_minutes": 270,
+    "application_period": {"start": "2026-09-08", "end": "2026-09-15"},
+    "exam_date": "2026-10-17",
+    "result_date": null,
+    "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
+    "source_page": 50
+  }
+},
+{
+  "university": "성신여자대학교",
+  "campus": "서울",
+  "department": "서양화과",
+  "track_name": "실기/실적(일반학생전형)",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 22,
+    "ratio": "일괄합산: 실기 70%(교과27%+출결3% 별도) + 학생부 30%",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 70,
+    "school_record_ratio_pct": 30,
+    "exam_type_name": "택1: 인체 표현 또는 정물 표현",
+    "allowed_materials": ["연필", "목탄", "파스텔", "콘테", "크레용", "색연필", "수채물감", "아크릴물감"],
+    "paper_size": "켄트지 2절",
+    "time_limit_minutes": 300,
+    "application_period": {"start": "2026-09-08", "end": "2026-09-15"},
+    "exam_date": "2026-10-17",
+    "result_date": null,
+    "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
+    "source_page": 50
+  }
+},
+{
+  "university": "성신여자대학교",
+  "campus": "서울",
+  "department": "조소과",
+  "track_name": "실기/실적(일반학생전형)",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 24,
+    "ratio": "일괄합산: 실기 70%(교과27%+출결3% 별도) + 학생부 30%",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 70,
+    "school_record_ratio_pct": 30,
+    "exam_type_name": "소조(인물두상)",
+    "allowed_materials": [],
+    "paper_size": "실제 크기",
+    "time_limit_minutes": 300,
+    "application_period": {"start": "2026-09-08", "end": "2026-09-15"},
+    "exam_date": "2026-10-17",
+    "result_date": null,
+    "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
+    "source_page": 50
+  }
+},
+{
+  "university": "성신여자대학교",
+  "campus": "서울",
+  "department": "공예과",
+  "track_name": "실기/실적(일반학생전형)",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 31,
+    "ratio": "일괄합산: 실기 70%(교과27%+출결3% 별도) + 학생부 30%",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 70,
+    "school_record_ratio_pct": 30,
+    "exam_type_name": "기초디자인 (소묘, 기초조형 중 택1)",
+    "allowed_materials": [],
+    "paper_size": "켄트지 4절",
+    "time_limit_minutes": 240,
+    "application_period": {"start": "2026-09-08", "end": "2026-09-15"},
+    "exam_date": "2026-10-11",
+    "result_date": null,
+    "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
+    "source_page": 50
+  }
+},
+{
+  "university": "성신여자대학교",
+  "campus": "서울",
+  "department": "디자인과",
+  "track_name": "실기/실적(일반학생전형)",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 16,
+    "ratio": "일괄합산: 실기 70%(교과27%+출결3% 별도) + 학생부 30%",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "practical_ratio_pct": 70,
+    "school_record_ratio_pct": 30,
+    "exam_type_name": "기초디자인 (소묘, 기초조형 중 택1)",
+    "allowed_materials": [],
+    "paper_size": "켄트지 4절",
+    "time_limit_minutes": 240,
+    "application_period": {"start": "2026-09-08", "end": "2026-09-15"},
+    "exam_date": "2026-10-10",
+    "result_date": null,
+    "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
+    "source_page": 50
+  }
+}
+]

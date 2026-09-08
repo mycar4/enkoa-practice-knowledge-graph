@@ -1,0 +1,27 @@
+{
+  "university": "이화여자대학교",
+  "campus": "서울",
+  "department": "디자인학부",
+  "track_name": "예체능서류전형",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 24,
+    "ratio": "1단계(4배수): 서류 100% -> 2단계: 1단계 성적 80% + 면접 20%",
+    "is_staged": true,
+    "csat_minimum_required": true,
+    "csat_minimum_rule": "국어, 수학, 영어, 탐구(사회/과학) 4개 영역 중 2개 영역 등급 합 7 이내",
+    "document_ratio_pct": null,
+    "exam_type_name": "학생부종합 서류평가 및 면접평가 (실기시험 없음)",
+    "allowed_materials": [],
+    "paper_size": null,
+    "time_limit_minutes": null,
+    "exam_date": null,
+    "result_date": null,
+    "source_url": "https://admission.ewha.ac.kr/upload/GUIDES/20260602125244F7AFE4.pdf",
+    "source_page": 35,
+    "stages": [
+      {"description": "1단계 서류평가", "ratio_desc": "서류 100%", "multiplier": 4},
+      {"description": "2단계 면접평가", "ratio_desc": "1단계 성적 80% + 면접 20%", "multiplier": null}
+    ]
+  }
+}

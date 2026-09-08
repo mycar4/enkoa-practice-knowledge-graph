@@ -38,7 +38,14 @@ TABS = [
 ]
 
 # 원문을 확보 못해 의도적으로 벡터 색인을 안 한 학교(known exception).
-VECTOR_INDEX_EXPECTED_MISSING = {"서울예술대학교"}
+# 신규 9개교(2027-09-08 추가)는 그래프 구조 데이터(전형/실기/일정)만 적재했고
+# PDF 원문 청크 임베딩(hybrid_search·Q&A 원문 인용용)은 아직 별도 작업 - 완료 시
+# 이 목록에서 빼야 한다.
+VECTOR_INDEX_EXPECTED_MISSING = {
+    "서울예술대학교",
+    "이화여자대학교", "숙명여자대학교", "성신여자대학교", "동덕여자대학교",
+    "서울여자대학교", "덕성여자대학교", "건국대학교", "한양대학교", "수원대학교",
+}
 
 
 def test_no_critical_or_warning_integrity_issues():
