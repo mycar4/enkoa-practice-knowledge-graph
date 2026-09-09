@@ -371,6 +371,21 @@
       "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
       "source_page": 50,
       "gender_restriction": "female_only"
+    },
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": null,
+        "competition_rate": null,
+        "school_record_grade_typical": null,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "no_matching_2026_track (2026학년도에 동일한 수시 일반학생 실기전형이 개설되지 않았음 - 자료 미발견이 아니라 전형 자체가 없었음)",
+        "methodology_note": "성신여대 디자인과는 2026학년도 수시모집에서 이 전형(일반학생-실기/실적)으로 학생을 선발하지 않았다. 2026학년도에는 정시모집 디자인과(42명/경쟁률14.14:1)만 존재했으나 전형 성격이 달라 수시 실기전형의 전년도 비교 자료로 쓸 수 없다.",
+        "source_url": null,
+        "source_page": null
+      }
     }
   }
 ]

@@ -52,6 +52,16 @@
   "estimates": {
     "cutoff_grade_estimate": null,
     "cutoff_source_url": "https://admission.chugye.ac.kr/susi_result.php",
-    "interview_summaries": []
+    "interview_summaries": [],
+    "prior_year_result": {
+      "admission_year": 2026,
+      "competition_rate": 8.47,
+      "school_record_grade_typical": null,
+      "school_record_grade_floor": null,
+      "grade_stat_type": "competition_rate_only (합격자 학생부 등급 미공개)",
+      "methodology_note": "추계예술대 공식 입시결과 게시판(2026학년도 수시 미술창작학부, 일반학생전형)에서 확인(모집32명/지원271명/경쟁률8.47:1). 대입정보포털에서도 동일 수치 확인. 합격선 학생부 등급은 공식 공개자료에 없어 미공개로 유지한다.",
+      "source_url": "https://enter.chugye.ac.kr/ArticleList.do?dataSeq=497&menuSeq=128",
+      "source_page": 1
+    }
   }
 }

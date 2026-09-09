@@ -32,6 +32,21 @@
     },
     "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%EC%9D%B8%ED%95%98%EB%8C%80%ED%95%99%EA%B5%90/%EC%9D%B8%ED%95%98%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
     "source_page": 37
+  },
+  "estimates": {
+    "cutoff_grade_estimate": null,
+    "cutoff_source_url": null,
+    "interview_summaries": [],
+    "prior_year_result": {
+      "admission_year": 2026,
+      "competition_rate": 8.13,
+      "school_record_grade_typical": null,
+      "school_record_grade_floor": null,
+      "grade_stat_type": "competition_rate_only (합격자 학생부 등급 미공개)",
+      "methodology_note": "인하대 미술계열 전년도(2026) 경쟁률 정리 자료에서 확인(모집15명/지원122명/경쟁률8.13:1). 합격선 학생부 등급은 공식 공개자료에 없어 미공개로 유지한다.",
+      "source_url": "https://grinalda.net/inha-midae-susi-2027/",
+      "source_page": 1
+    }
   }
 },
 {
@@ -67,6 +82,21 @@
     },
     "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%EC%9D%B8%ED%95%98%EB%8C%80%ED%95%99%EA%B5%90/%EC%9D%B8%ED%95%98%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
     "source_page": 38
+  },
+  "estimates": {
+    "cutoff_grade_estimate": null,
+    "cutoff_source_url": null,
+    "interview_summaries": [],
+    "prior_year_result": {
+      "admission_year": 2026,
+      "competition_rate": 35.91,
+      "school_record_grade_typical": null,
+      "school_record_grade_floor": null,
+      "grade_stat_type": "competition_rate_only (합격자 학생부 등급 미공개)",
+      "methodology_note": "인하대 미술계열 전년도(2026) 경쟁률 정리 자료에서 확인(모집23명/지원826명/경쟁률35.91:1). 합격선 학생부 등급은 공식 공개자료에 없어 미공개로 유지한다.",
+      "source_url": "https://grinalda.net/inha-midae-susi-2027/",
+      "source_page": 1
+    }
   }
 },
 {
@@ -102,6 +132,21 @@
     },
     "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%EC%9D%B8%ED%95%98%EB%8C%80%ED%95%99%EA%B5%90/%EC%9D%B8%ED%95%98%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
     "source_page": 40
+  },
+  "estimates": {
+    "cutoff_grade_estimate": null,
+    "cutoff_source_url": null,
+    "interview_summaries": [],
+    "prior_year_result": {
+      "admission_year": 2026,
+      "competition_rate": 25.30,
+      "school_record_grade_typical": null,
+      "school_record_grade_floor": null,
+      "grade_stat_type": "competition_rate_only (합격자 학생부 등급 미공개)",
+      "methodology_note": "인하대 미술계열 전년도(2026) 경쟁률 정리 자료에서 확인(모집10명/지원253명/경쟁률25.30:1, 실기우수자전형 기준). 주의: 동일 자료에 나오는 '4.50:1'은 의류디자인학과 일반전형(지역균형)의 경쟁률이며 실기전형과 다른 값이므로 혼동하지 않는다. 합격선 학생부 등급은 공식 공개자료에 없어 미공개로 유지한다.",
+      "source_url": "https://grinalda.net/inha-midae-susi-2027/",
+      "source_page": 1
+    }
   }
 }
 ]

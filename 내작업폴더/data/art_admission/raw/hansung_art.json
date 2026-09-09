@@ -32,6 +32,21 @@
     },
     "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%ED%95%9C%EC%84%B1%EB%8C%80%ED%95%99%EA%B5%90/%ED%95%9C%EC%84%B1%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
     "source_page": 22
+  },
+  "estimates": {
+    "cutoff_grade_estimate": null,
+    "cutoff_source_url": null,
+    "interview_summaries": [],
+    "prior_year_result": {
+      "admission_year": 2026,
+      "competition_rate": 8.70,
+      "school_record_grade_typical": null,
+      "school_record_grade_floor": null,
+      "grade_stat_type": "competition_rate_only (합격자 학생부 등급 미공개)",
+      "methodology_note": "한성대 2026학년도 실기우수자전형 동양화전공 경쟁률(모집7명/지원61명/약8.70:1). 합격선 학생부 등급은 공식 공개자료에 없어 미공개로 유지한다.",
+      "source_url": null,
+      "source_page": null
+    }
   }
 },
 {
@@ -67,6 +82,21 @@
     },
     "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%ED%95%9C%EC%84%B1%EB%8C%80%ED%95%99%EA%B5%90/%ED%95%9C%EC%84%B1%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
     "source_page": 22
+  },
+  "estimates": {
+    "cutoff_grade_estimate": null,
+    "cutoff_source_url": null,
+    "interview_summaries": [],
+    "prior_year_result": {
+      "admission_year": 2026,
+      "competition_rate": 14.29,
+      "school_record_grade_typical": null,
+      "school_record_grade_floor": null,
+      "grade_stat_type": "competition_rate_only (합격자 학생부 등급 미공개)",
+      "methodology_note": "한성대 2026학년도 실기우수자전형 서양화전공 경쟁률(모집7명/지원100명/14.29:1). 합격선 학생부 등급은 공식 공개자료에 없어 미공개로 유지한다.",
+      "source_url": null,
+      "source_page": null
+    }
   }
 },
 {
@@ -102,6 +132,21 @@
     },
     "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%ED%95%9C%EC%84%B1%EB%8C%80%ED%95%99%EA%B5%90/%ED%95%9C%EC%84%B1%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
     "source_page": 28
+  },
+  "estimates": {
+    "cutoff_grade_estimate": null,
+    "cutoff_source_url": null,
+    "interview_summaries": [],
+    "prior_year_result": {
+      "admission_year": 2026,
+      "competition_rate": 35.22,
+      "school_record_grade_typical": null,
+      "school_record_grade_floor": null,
+      "grade_stat_type": "competition_rate_only (합격자 학생부 등급 미공개)",
+      "methodology_note": "주의: 이 학과의 2026학년도 공식 명칭은 'ICT디자인학부'이며(대입정보포털 확인), 2027학년도부터 'AI융합디자인학부'로 개편되었다. 경쟁률(모집64명/지원2,254명/35.22:1)은 대입정보포털에서도 동일하게 확인됨. 합격선 학생부 등급은 공식 공개자료에 없어 미공개로 유지한다.",
+      "source_url": "https://www.adiga.kr/ucp/uvt/uni/univDetail.do?menuId=PCUVTINF2000&searchSyr=2026&unvCd=0000200",
+      "source_page": null
+    }
   }
 }
 ]
