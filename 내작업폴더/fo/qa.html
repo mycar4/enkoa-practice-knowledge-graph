@@ -219,7 +219,11 @@ function askQuestion() {
       });
     }
     if (!res.error) {
-      chatHistory.push({ role: "user", content: val });
+      // val이 아니라 queryToSend(컨텍스트가 붙은 버전)를 기록해야 한다 - 그래야
+      // 다음 턴부터도 history를 통해 "성적 추천 결과" 컨텍스트가 계속 남아있는다.
+      // val만 기록하면 배너/컨텍스트는 1턴에만 실제로 전달되고 그 이후 턴부터는
+      // AI가 그 맥락을 완전히 잃어버린다(실측 제보로 확인된 버그).
+      chatHistory.push({ role: "user", content: queryToSend });
       chatHistory.push({ role: "assistant", content: res.answer || "" });
     }
   }).catch(err => {
