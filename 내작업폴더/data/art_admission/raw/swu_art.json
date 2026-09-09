@@ -1,102 +1,118 @@
 [
-{
-  "university": "서울여자대학교",
-  "campus": "서울",
-  "department": "산업디자인학과",
-  "track_name": "실기/실적(실기우수자전형_미술)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 13,
-    "ratio": "일괄합산: 실기 100%",
-    "is_staged": false,
-    "school_record_status": "not_applicable",
-    "school_record_status_note": "실기/실적(실기우수자전형_미술)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 - 학생부교과 반영대상 전형 목록에 이 전형이 없음을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 100,
-    "exam_type_name": "기초 디자인",
-    "allowed_materials": [],
-    "paper_size": "켄트지 4절",
-    "time_limit_minutes": 240,
-    "application_period": {"start": "2026-09-08", "end": "2026-09-15"},
-    "exam_date": "2026-09-19",
-    "result_date": null,
-    "source_url": "https://admission.swu.ac.kr/data_new/file/flashpaper/3530441950_QWEkLXsC_afd192bd1ed533958883e87936630143e98821cc.pdf",
-    "source_page": 43
+  {
+    "university": "서울여자대학교",
+    "campus": "서울",
+    "department": "산업디자인학과",
+    "track_name": "실기/실적(실기우수자전형_미술)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 13,
+      "ratio": "일괄합산: 실기 100%",
+      "is_staged": false,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "실기/실적(실기우수자전형_미술)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 - 학생부교과 반영대상 전형 목록에 이 전형이 없음을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 100,
+      "exam_type_name": "기초 디자인",
+      "allowed_materials": [],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-15"
+      },
+      "exam_date": "2026-09-19",
+      "result_date": null,
+      "source_url": "https://admission.swu.ac.kr/data_new/file/flashpaper/3530441950_QWEkLXsC_afd192bd1ed533958883e87936630143e98821cc.pdf",
+      "source_page": 43,
+      "gender_restriction": "female_only"
+    }
+  },
+  {
+    "university": "서울여자대학교",
+    "campus": "서울",
+    "department": "공예_컬렉터블디자인전공",
+    "track_name": "실기/실적(실기우수자전형_미술)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 19,
+      "ratio": "일괄합산: 실기 100%",
+      "is_staged": false,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "실기/실적(실기우수자전형_미술)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 - 학생부교과 반영대상 전형 목록에 이 전형이 없음을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 100,
+      "exam_type_name": "기초 디자인",
+      "allowed_materials": [],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-15"
+      },
+      "exam_date": "2026-09-19",
+      "result_date": null,
+      "source_url": "https://admission.swu.ac.kr/data_new/file/flashpaper/3530441950_QWEkLXsC_afd192bd1ed533958883e87936630143e98821cc.pdf",
+      "source_page": 43,
+      "gender_restriction": "female_only"
+    }
+  },
+  {
+    "university": "서울여자대학교",
+    "campus": "서울",
+    "department": "시각디자인전공",
+    "track_name": "실기/실적(실기우수자전형_미술)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 12,
+      "ratio": "일괄합산: 실기 100%",
+      "is_staged": false,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "실기/실적(실기우수자전형_미술)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 - 학생부교과 반영대상 전형 목록에 이 전형이 없음을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 100,
+      "exam_type_name": "기초 디자인",
+      "allowed_materials": [],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-15"
+      },
+      "exam_date": "2026-09-19",
+      "result_date": null,
+      "source_url": "https://admission.swu.ac.kr/data_new/file/flashpaper/3530441950_QWEkLXsC_afd192bd1ed533958883e87936630143e98821cc.pdf",
+      "source_page": 43,
+      "gender_restriction": "female_only"
+    }
+  },
+  {
+    "university": "서울여자대학교",
+    "campus": "서울",
+    "department": "현대미술전공",
+    "track_name": "실기/실적(실기우수자전형_미술)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 21,
+      "ratio": "일괄합산: 실기 100%",
+      "is_staged": false,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "실기/실적(실기우수자전형_미술)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 - 학생부교과 반영대상 전형 목록에 이 전형이 없음을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 100,
+      "exam_type_name": "택1: [발상과 묘사(색채)]-정물 이미지 또는 [발상과 묘사(색채)]-인물 이미지",
+      "allowed_materials": [],
+      "paper_size": "켄트지 2절",
+      "time_limit_minutes": 240,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-15"
+      },
+      "exam_date": "2026-09-19",
+      "result_date": null,
+      "source_url": "https://admission.swu.ac.kr/data_new/file/flashpaper/3530441950_QWEkLXsC_afd192bd1ed533958883e87936630143e98821cc.pdf",
+      "source_page": 43,
+      "gender_restriction": "female_only"
+    }
   }
-},
-{
-  "university": "서울여자대학교",
-  "campus": "서울",
-  "department": "공예_컬렉터블디자인전공",
-  "track_name": "실기/실적(실기우수자전형_미술)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 19,
-    "ratio": "일괄합산: 실기 100%",
-    "is_staged": false,
-    "school_record_status": "not_applicable",
-    "school_record_status_note": "실기/실적(실기우수자전형_미술)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 - 학생부교과 반영대상 전형 목록에 이 전형이 없음을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 100,
-    "exam_type_name": "기초 디자인",
-    "allowed_materials": [],
-    "paper_size": "켄트지 4절",
-    "time_limit_minutes": 240,
-    "application_period": {"start": "2026-09-08", "end": "2026-09-15"},
-    "exam_date": "2026-09-19",
-    "result_date": null,
-    "source_url": "https://admission.swu.ac.kr/data_new/file/flashpaper/3530441950_QWEkLXsC_afd192bd1ed533958883e87936630143e98821cc.pdf",
-    "source_page": 43
-  }
-},
-{
-  "university": "서울여자대학교",
-  "campus": "서울",
-  "department": "시각디자인전공",
-  "track_name": "실기/실적(실기우수자전형_미술)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 12,
-    "ratio": "일괄합산: 실기 100%",
-    "is_staged": false,
-    "school_record_status": "not_applicable",
-    "school_record_status_note": "실기/실적(실기우수자전형_미술)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 - 학생부교과 반영대상 전형 목록에 이 전형이 없음을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 100,
-    "exam_type_name": "기초 디자인",
-    "allowed_materials": [],
-    "paper_size": "켄트지 4절",
-    "time_limit_minutes": 240,
-    "application_period": {"start": "2026-09-08", "end": "2026-09-15"},
-    "exam_date": "2026-09-19",
-    "result_date": null,
-    "source_url": "https://admission.swu.ac.kr/data_new/file/flashpaper/3530441950_QWEkLXsC_afd192bd1ed533958883e87936630143e98821cc.pdf",
-    "source_page": 43
-  }
-},
-{
-  "university": "서울여자대학교",
-  "campus": "서울",
-  "department": "현대미술전공",
-  "track_name": "실기/실적(실기우수자전형_미술)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 21,
-    "ratio": "일괄합산: 실기 100%",
-    "is_staged": false,
-    "school_record_status": "not_applicable",
-    "school_record_status_note": "실기/실적(실기우수자전형_미술)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 - 학생부교과 반영대상 전형 목록에 이 전형이 없음을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 100,
-    "exam_type_name": "택1: [발상과 묘사(색채)]-정물 이미지 또는 [발상과 묘사(색채)]-인물 이미지",
-    "allowed_materials": [],
-    "paper_size": "켄트지 2절",
-    "time_limit_minutes": 240,
-    "application_period": {"start": "2026-09-08", "end": "2026-09-15"},
-    "exam_date": "2026-09-19",
-    "result_date": null,
-    "source_url": "https://admission.swu.ac.kr/data_new/file/flashpaper/3530441950_QWEkLXsC_afd192bd1ed533958883e87936630143e98821cc.pdf",
-    "source_page": 43
-  }
-}
 ]

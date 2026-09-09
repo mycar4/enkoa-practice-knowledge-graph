@@ -211,8 +211,12 @@ def test_estimated_grade_equivalent_matches_raw_grade_not_inflated_score():
 def test_breakdown_and_reason_summary_and_fit_label_present():
     """UI 요청사항: (1) 계산 상세보기 팝업에 실제 대입값을 보여줘야 하므로
     calculate_school_record_score가 breakdown(과목별 등급/이수단위/환산점수)을
-    반환해야 한다. (2) recommend_universities는 추천 이유(reason_summary)와
-    GOOD_FIT/CHECK 판정(fit_label)을 정밀 계산된 항목에 부여해야 한다."""
+    반환해야 한다. (2) recommend_universities는 추천 이유(reason_summary)를 정밀
+    계산된 항목에 부여해야 한다. (3) GOOD_FIT/CHECK 판정(fit_label)은 사용자
+    확정 기준대로 "배점표 환산 점수가 높다"가 아니라 "이 학생의 원 석차등급이
+    전년도 등록자보다 좋은가"(prior_year_tier)로만 정해져야 하며, 전년도 비교
+    자료가 없는 학교(NO_DATA)는 판정 자체가 없어야 한다(자료 없이 임의 판정하면
+    안 됨)."""
     svc = ArtAdmissionService()
     try:
         grades = [
@@ -228,12 +232,25 @@ def test_breakdown_and_reason_summary_and_fit_label_present():
         recs = svc.recommend_universities(grades)
         exact_with_pct = [r for r in recs if r["calc_precision"] == "exact" and r["school_record_percentage"] is not None]
         assert exact_with_pct, "정밀 계산 결과가 하나도 없음"
-        assert all(r["fit_label"] in ("GOOD_FIT", "CHECK") for r in exact_with_pct), "정밀 계산 항목엔 fit_label이 있어야 함"
         assert all(r.get("reason_summary") for r in exact_with_pct), "정밀 계산 항목엔 추천 이유가 있어야 함"
-        # fit_label은 학교 배점표 환산 percentage가 아니라 원 석차등급(estimated_grade_equivalent,
-        # 학교마다 환산표 관대함이 달라 percentage만으로는 학교 간 비교가 왜곡되기 때문) 기준이다.
-        best = min(exact_with_pct, key=lambda r: r["estimated_grade_equivalent"])
-        assert best["fit_label"] == "GOOD_FIT", "원 석차등급이 가장 좋은 학교는 GOOD_FIT이어야 함"
+
+        # fit_label <-> prior_year_tier 매핑이 정확히 일치하는지 전수 검사 (구조적 검증).
+        expected_map = {"REGISTRANT_TOP": "GOOD_FIT", "REGISTRANT_MID": "CHECK", "REGISTRANT_BELOW": "CHECK", "NO_DATA": None}
+        for r in exact_with_pct:
+            assert r["fit_label"] == expected_map[r["prior_year_tier"]], (
+                f"{r['university']} {r['department']}: fit_label={r['fit_label']} "
+                f"but prior_year_tier={r['prior_year_tier']}"
+            )
+
+        # 가천대 회화전공(전년도 typical=4.92, floor=6.19)은 이 학생 원등급 5.5로
+        # REGISTRANT_MID(전년도 평균~최저 사이) -> CHECK가 나와야 한다(GOOD_FIT 아님).
+        gachon = next(r for r in exact_with_pct if r["university"] == "가천대학교" and r["department"] == "회화전공")
+        assert gachon["prior_year_tier"] == "REGISTRANT_MID", gachon["prior_year_tier"]
+        assert gachon["fit_label"] == "CHECK", gachon["fit_label"]
+
+        no_data_entries = [r for r in exact_with_pct if r["prior_year_tier"] == "NO_DATA"]
+        assert no_data_entries, "NO_DATA 항목이 하나도 없음 - 테스트 전제 성립 안 함"
+        assert all(r["fit_label"] is None for r in no_data_entries), "전년도 비교자료가 없는데 fit_label이 매겨짐(임의 판정 위험)"
         print("✅ test_breakdown_and_reason_summary_and_fit_label_present passed!")
     finally:
         svc.close()
@@ -380,6 +397,28 @@ def test_prior_year_result_batch2_image_based_schools():
         assert gyeonggi["school_record_grade_typical"] == 5.083
         assert gyeonggi["school_record_grade_floor"] == 5.707
         print("✅ test_prior_year_result_batch2_image_based_schools passed!")
+    finally:
+        svc.close()
+
+
+def test_gender_restriction_flags_womens_universities():
+    """사용자 요청('남/여 구분' = 여대 필터링): 여자대학교는 남학생이 지원 자체를
+    할 수 없으므로 FO에서 걸러낼 수 있어야 한다. gender_restriction 필드가
+    데이터에 없으면 이 필터 자체가 불가능하므로, 확인된 6개 여대(덕성·동덕·
+    서울여대·성신·숙명·이화) 전 트랙에 "female_only"가 정확히 붙어있는지,
+    그 외 대학(공학 - 남녀공학)에는 붙어있지 않은지 확인한다."""
+    svc = ArtAdmissionService()
+    try:
+        grades = [{"subject_group": "국어", "grade": 3, "credit": 4}, {"subject_group": "영어", "grade": 4, "credit": 4}]
+        results = svc.recommend_universities(grades)
+        expected_female_only = {"덕성여자대학교", "동덕여자대학교", "서울여자대학교", "성신여자대학교", "숙명여자대학교", "이화여자대학교"}
+        female_only_unis = set(r["university"] for r in results if r.get("gender_restriction") == "female_only")
+        assert female_only_unis == expected_female_only, female_only_unis
+
+        # 공학(남녀공학) 대학은 gender_restriction이 없어야 함(허위 표시 금지)
+        coed = next(r for r in results if r["university"] == "중앙대학교")
+        assert coed.get("gender_restriction") is None
+        print("✅ test_gender_restriction_flags_womens_universities passed!")
     finally:
         svc.close()
 
@@ -572,6 +611,7 @@ if __name__ == "__main__":
     test_not_applicable_schools_get_no_score_not_approximate_guess()
     test_recommend_sorts_by_raw_grade_not_schools_own_generous_curve()
     test_prior_year_comparison_tier_drives_primary_sort()
+    test_gender_restriction_flags_womens_universities()
     test_school_record_impact_score_matches_hand_computed()
     test_prior_year_result_batch2_image_based_schools()
     test_non_priority_school_returns_unavailable_not_fake_number()

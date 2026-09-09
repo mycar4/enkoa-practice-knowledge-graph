@@ -824,6 +824,7 @@ class ArtAdmissionService:
                        t.school_record_rule_json AS school_record_rule_json,
                        t.school_record_status AS school_record_status,
                        t.school_record_status_note AS school_record_status_note,
+                       t.gender_restriction AS gender_restriction,
                        e.name AS exam_type_name, e.allowed_materials AS allowed_materials,
                        e.paper_size AS paper_size, e.time_limit_minutes AS time_limit_minutes,
                        sch.application_start AS application_start, sch.application_end AS application_end,
@@ -1822,6 +1823,7 @@ class ArtAdmissionService:
                 "practical_ratio_pct": t.get("practical_ratio_pct"),
                 "school_record_ratio_pct": t.get("school_record_ratio_pct"),
                 "csat_minimum_required": t.get("csat_minimum_required"),
+                "gender_restriction": t.get("gender_restriction"),
                 "source_url": t.get("source_url"),
             }
             rule = t.get("school_record_rule")
@@ -1878,23 +1880,22 @@ class ArtAdmissionService:
 
             results.append(entry)
 
-        # 정렬/판정 기준: school_record_percentage(학교 자체 배점표 통과 후 환산점수)가
-        # 아니라 estimated_grade_equivalent(원 석차등급, 학교 배점표를 거치지 않은 값)를
-        # 쓴다. 학교마다 등급→점수 환산표의 "관대함"이 전혀 달라서(예: 상위 등급을
-        # 널찍하게 압축하는 학교 vs 촘촘하게 벌리는 학교), percentage로 학교 간 순위를
-        # 매기면 실제 성적 경쟁력과 무관하게 "환산표가 후한 학교"가 항상 위로 올라오는
-        # 착시가 생긴다(실측: 같은 성적 입력값 기준 가천대 98.75%/원등급3.5가 서울과기대
-        # 98.2%/원등급2.8보다 위로 나옴 - 원등급은 서울과기대가 더 좋은데도 순위가 뒤집힘).
-        # 원 석차등급은 "이 학교가 실제로 반영하는 과목 조합"에서의 내 진짜 등급이라
-        # 학교 간 비교가 가능하다(반영 과목 자체가 다른 것은 착시가 아니라 실제 유불리).
-        exact_grades = [e["estimated_grade_equivalent"] for e in results if e["calc_precision"] == "exact" and e["estimated_grade_equivalent"] is not None]
-        best_exact_grade = min(exact_grades) if exact_grades else None  # 원 석차등급은 낮을수록(1등급에 가까울수록) 좋음
+        # GOOD_FIT/CHECK 판정(사용자 확정 기준): "배점표 기준 환산 점수가 높다"가 아니라
+        # "이 학생의 원 석차등급이 전년도 등록자보다 좋은가"로 판정한다 - 즉 prior_year_tier
+        # 그대로 반영한다(다른 상대비교식을 별도로 만들지 않는다). 학교 간에 서로 비교해서
+        # "이 학생이 상대적으로 어디서 잘 나오는지"를 보는 게 아니라, 그 학교 자체의 전년도
+        # 등록자 기준으로 판단해야 의미가 있다(반영교과가 학교마다 달라 학교 간 원등급
+        # 비교는 애초에 절대적 우열이 아니라 참고용일 뿐임).
+        # REGISTRANT_TOP(전년도 등록자 평균보다 좋음) -> GOOD_FIT
+        # REGISTRANT_MID/BELOW -> CHECK
+        # NO_DATA(비교자료 없음) -> 판정 불가(None) - 자료가 없는데 판정을 매기면 안 됨
         for e in results:
-            if e["calc_precision"] == "exact" and e["estimated_grade_equivalent"] is not None and best_exact_grade is not None:
-                # 임계값 0.5등급은 공식 기준이 아니라 서비스 자체 설계 기준(원 석차등급 반
-                # 등급 이내면 사실상 동급으로 본다) - UI에 반드시 "참고용 상대 판정"이라고
-                # 명시해야 한다.
-                e["fit_label"] = "GOOD_FIT" if (e["estimated_grade_equivalent"] - best_exact_grade) <= 0.5 else "CHECK"
+            if e["calc_precision"] != "exact":
+                e["fit_label"] = None
+            elif e["prior_year_tier"] == "REGISTRANT_TOP":
+                e["fit_label"] = "GOOD_FIT"
+            elif e["prior_year_tier"] in ("REGISTRANT_MID", "REGISTRANT_BELOW"):
+                e["fit_label"] = "CHECK"
             else:
                 e["fit_label"] = None
 

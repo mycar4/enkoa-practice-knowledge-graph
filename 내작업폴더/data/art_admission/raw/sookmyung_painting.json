@@ -75,7 +75,8 @@
           "ratio_desc": "실기 100%",
           "multiplier": null
         }
-      ]
+      ],
+      "gender_restriction": "female_only"
     },
     "estimates": {
       "cutoff_grade_estimate": 4.9,
@@ -160,7 +161,8 @@
           "ratio_desc": "실기 100%",
           "multiplier": null
         }
-      ]
+      ],
+      "gender_restriction": "female_only"
     },
     "estimates": {
       "cutoff_grade_estimate": 3.07,

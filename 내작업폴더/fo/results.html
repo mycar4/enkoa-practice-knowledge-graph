@@ -46,8 +46,27 @@
 <div id="recommendDisclaimer" class="hidden px-margin-mobile lg:px-12 pt-unit-sm">
   <div class="bg-tertiary-container/40 border border-tertiary/40 rounded-lg p-unit-sm font-body-sm text-body-sm text-on-surface flex items-start gap-unit-xs">
     <span class="material-symbols-outlined text-tertiary text-[20px] shrink-0">info</span>
-    <span><strong>학생부 환산 점수는 각 학교 배점표 기준 100점(또는 해당 학교 만점) 환산 결과일 뿐, 합격선·합격 가능성과는 무관합니다.</strong> 실기 점수는 전혀 반영되지 않은 값이며, "100점(만점)"이 나와도 합격이 확정되는 것이 아닙니다. 정렬은 임의 가중치로 합친 종합점수가 아니라 (1) 전년도 등록자 성적 대비 위치 → (2) 내신 실질영향이 낮은 순 → (3) 실기비중이 높은 순으로 이뤄지며, 각 기준의 의미는 카드에서 개별적으로 확인하세요.</span>
+    <span><strong>학생부 환산 점수는 각 학교 배점표 기준 100점(또는 해당 학교 만점) 환산 결과일 뿐, 합격선·합격 가능성과는 무관합니다.</strong> 실기 점수는 전혀 반영되지 않은 값이며, "100점(만점)"이 나와도 합격이 확정되는 것이 아닙니다. 기본 정렬은 임의 가중치로 합친 종합점수가 아니라 (1) 전년도 등록자 성적 대비 위치 → (2) 내신 실질영향이 낮은 순 → (3) 실기비중이 높은 순으로 이뤄지며, 아래에서 직접 다른 기준으로 바꿔볼 수 있습니다.</span>
   </div>
+</div>
+<div id="recommendControls" class="hidden px-margin-mobile lg:px-12 pt-unit-sm flex flex-wrap items-center gap-unit-sm">
+  <label class="flex items-center gap-unit-2xs font-body-sm text-body-sm text-on-surface-variant">
+    정렬 기준
+    <select id="sortSelect" class="ml-unit-2xs h-9 px-unit-xs rounded border border-outline-variant bg-surface-container-lowest text-on-surface font-body-sm text-body-sm">
+      <option value="default">기본(전년도 비교 → 내신영향 → 실기비중)</option>
+      <option value="grade">원 석차등급 낮은 순</option>
+      <option value="score">학교 배점표 환산점수 높은 순</option>
+      <option value="competition">2026년 경쟁률 낮은 순</option>
+    </select>
+  </label>
+  <label class="flex items-center gap-unit-2xs font-body-sm text-body-sm text-on-surface-variant cursor-pointer">
+    <input type="checkbox" id="hideNotApplicableCheck" class="w-4 h-4">
+    학생부 미반영 전형 숨기기
+  </label>
+  <label class="flex items-center gap-unit-2xs font-body-sm text-body-sm text-on-surface-variant cursor-pointer">
+    <input type="checkbox" id="excludeFemaleOnlyCheck" class="w-4 h-4">
+    여자대학교 제외
+  </label>
 </div>
 <section id="recommendSection" class="hidden px-margin-mobile lg:px-12 pt-unit-sm gap-unit-sm grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"></section>
 
@@ -396,6 +415,7 @@ function renderRecommendResults() {
   const section = document.getElementById("recommendSection");
   section.classList.remove("hidden");
   document.getElementById("recommendDisclaimer").classList.remove("hidden");
+  document.getElementById("recommendControls").classList.remove("hidden");
 
   document.getElementById("profileSummary").textContent = "내신 성적 기반 대학 추천";
   const exactCount = recommendResults.filter(r => r.calc_precision === "exact").length;
@@ -404,14 +424,66 @@ function renderRecommendResults() {
     `총 ${recommendResults.length}개 전형 중 <span class="text-primary font-medium">${exactCount}개교는 공식 모집요강 원문 규정으로 정밀 계산</span>, ` +
     `실기/학생부 반영 비율 기반 근사 추정이 나머지 중 일부, ` +
     (naCount > 0 ? `<span class="font-medium">${naCount}개교는 학생부를 아예 반영하지 않는 전형(실기 100% 또는 서류종합 정성평가)이라 계산 대상에서 제외</span>됩니다. ` : "") +
-    `정렬 기준은 학교 배점표를 통과한 환산 점수가 아니라 <span class="font-medium">원 석차등급(학교마다 배점표 관대함이 달라 환산 점수만으로는 순위가 왜곡될 수 있어서)</span>입니다. 합격 가능성을 단정하지 않으며, 학생부 축의 상대적 유불리 참고용입니다.`;
+    `합격 가능성을 단정하지 않으며, 학생부 축의 상대적 유불리 참고용입니다. 정렬 기준은 아래에서 바꿀 수 있습니다.`;
 
   if (recommendResults.length === 0) {
     section.innerHTML = `<p class="col-span-full font-body-md text-body-md text-on-surface-variant py-unit-2xl text-center">추천할 전형 데이터를 찾지 못했습니다.</p>`;
     return;
   }
 
-  section.innerHTML = recommendResults.map((r, idx) => {
+  // 정렬 기준 select / 필터 체크박스가 바뀔 때마다 recommendResults 원본을 복사해서
+  // 다시 필터·정렬 후 렌더링한다 - 서버 재호출 없이 클라이언트에서만 처리(이미 전체
+  // 데이터를 한 번에 받아왔으므로).
+  function applyControlsAndRender() {
+    const sortBy = document.getElementById("sortSelect").value;
+    const hideNA = document.getElementById("hideNotApplicableCheck").checked;
+    const excludeFemale = document.getElementById("excludeFemaleOnlyCheck").checked;
+
+    let list = recommendResults.slice();
+    if (hideNA) list = list.filter(r => r.calc_precision !== "not_applicable");
+    if (excludeFemale) list = list.filter(r => r.gender_restriction !== "female_only");
+
+    if (sortBy === "grade") {
+      list.sort((a, b) => {
+        const ag = a.estimated_grade_equivalent, bg = b.estimated_grade_equivalent;
+        if (ag == null && bg == null) return 0;
+        if (ag == null) return 1;
+        if (bg == null) return -1;
+        return ag - bg;
+      });
+    } else if (sortBy === "score") {
+      list.sort((a, b) => {
+        const ap = a.school_record_percentage, bp = b.school_record_percentage;
+        if (ap == null && bp == null) return 0;
+        if (ap == null) return 1;
+        if (bp == null) return -1;
+        return bp - ap;
+      });
+    } else if (sortBy === "competition") {
+      list.sort((a, b) => {
+        const ar = a.prior_year_result?.competition_rate, br = b.prior_year_result?.competition_rate;
+        if (ar == null && br == null) return 0;
+        if (ar == null) return 1;
+        if (br == null) return -1;
+        return ar - br;
+      });
+    }
+    // sortBy === "default"는 서버가 이미 정렬해서 내려준 순서(전년도tier -> 내신영향
+    // -> 실기비중 -> 원등급) 그대로 유지하되, 필터만 다시 적용한 상태를 그대로 쓴다.
+
+    renderCards(list);
+  }
+
+  document.getElementById("sortSelect").addEventListener("change", applyControlsAndRender);
+  document.getElementById("hideNotApplicableCheck").addEventListener("change", applyControlsAndRender);
+  document.getElementById("excludeFemaleOnlyCheck").addEventListener("change", applyControlsAndRender);
+
+  function renderCards(list) {
+  if (list.length === 0) {
+    section.innerHTML = `<p class="col-span-full font-body-md text-body-md text-on-surface-variant py-unit-2xl text-center">선택한 조건에 맞는 전형이 없습니다. 필터를 해제해보세요.</p>`;
+    return;
+  }
+  section.innerHTML = list.map((r, idx) => {
     const campusStr = r.campus ? ` (${r.campus}캠퍼스)` : "";
     const isExact = r.calc_precision === "exact";
     const isNotApplicable = r.calc_precision === "not_applicable";
@@ -421,9 +493,9 @@ function renderRecommendResults() {
         ? `<span class="px-unit-xs py-0.5 bg-primary text-on-primary font-label-sm text-label-sm rounded">정밀 계산 (모집요강 원문 확인됨)</span>`
         : `<span class="px-unit-xs py-0.5 bg-surface-variant text-on-surface-variant font-label-sm text-label-sm rounded">근사 추정 (비율 기반, 참고용)</span>`;
     const fitBadge = r.fit_label === "GOOD_FIT"
-      ? `<span class="px-unit-xs py-0.5 bg-secondary text-on-secondary font-label-sm text-label-sm rounded">GOOD FIT</span>`
+      ? `<span title="배점표 환산 점수가 아니라, 원 석차등급이 전년도 등록자 평균보다 좋다는 뜻입니다" class="px-unit-xs py-0.5 bg-secondary text-on-secondary font-label-sm text-label-sm rounded">GOOD FIT</span>`
       : r.fit_label === "CHECK"
-        ? `<span class="px-unit-xs py-0.5 bg-tertiary text-on-tertiary font-label-sm text-label-sm rounded">CHECK</span>`
+        ? `<span title="원 석차등급이 전년도 등록자 평균~최저 사이이거나 더 낮다는 뜻입니다" class="px-unit-xs py-0.5 bg-tertiary text-on-tertiary font-label-sm text-label-sm rounded">CHECK</span>`
         : "";
     const tierLabelMap = {
       REGISTRANT_TOP: ["전년도 등록자 평균보다 좋음", "bg-secondary text-on-secondary"],
@@ -445,7 +517,7 @@ function renderRecommendResults() {
         : `<div class="font-body-sm text-body-sm text-on-surface-variant">${r.note || "계산 불가"}</div>`);
     const gradeEq = r.estimated_grade_equivalent;
     const gradeEqLine = (!isNotApplicable && gradeEq !== null && gradeEq !== undefined)
-      ? `<div class="font-body-md text-body-md text-on-surface font-medium">이 학교 반영교과 기준 원 석차등급: 약 <span class="text-primary">${gradeEq}등급</span> <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">- 정렬·GOOD FIT/CHECK 판정 기준(학교 배점표를 거치지 않은 값이라 학교 간 비교 가능)</span></div>` : "";
+      ? `<div class="font-body-md text-body-md text-on-surface font-medium">이 학교 반영교과 기준 원 석차등급: 약 <span class="text-primary">${gradeEq}등급</span> <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">- 학교 배점표를 거치지 않은 값이라 학교 간 비교 가능(정렬 타이브레이커로 사용)</span></div>` : "";
     const ratioLine = (!isNotApplicable && (r.practical_ratio_pct != null || r.school_record_ratio_pct != null))
       ? `<div class="font-body-sm text-body-sm text-on-surface-variant">반영비율: 실기 ${r.practical_ratio_pct ?? "-"}% · 학생부 ${r.school_record_ratio_pct ?? "-"}%` +
         (r.practical_ratio_pct != null && r.practical_ratio_pct >= 70
@@ -473,7 +545,7 @@ function renderRecommendResults() {
           <span class="font-label-sm text-label-sm text-on-surface-variant">#${idx + 1}</span>
           <div class="flex items-center gap-unit-2xs flex-wrap justify-end">${tierBadge}${fitBadge}${badge}</div>
         </div>
-        <span class="font-headline-sm text-headline-sm text-on-surface">${r.university}${campusStr}</span>
+        <span class="font-headline-sm text-headline-sm text-on-surface">${r.university}${campusStr}${r.gender_restriction === "female_only" ? ` <span class="font-label-sm text-label-sm text-error align-middle">(여자대학교)</span>` : ""}</span>
         <div class="font-body-md text-body-md text-on-surface font-medium">${r.department} · ${r.track_name || ""}</div>
         ${gradeEqLine}
         ${pctLine}
@@ -493,6 +565,9 @@ function renderRecommendResults() {
   document.querySelectorAll(".breakdown-btn").forEach(btn => {
     btn.addEventListener("click", () => openBreakdown(btn.dataset.university, btn.dataset.campus, btn.dataset.department));
   });
+  } // renderCards
+
+  applyControlsAndRender();
 }
 </script>
 </body></html>

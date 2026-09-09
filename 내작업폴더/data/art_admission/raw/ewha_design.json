@@ -22,8 +22,17 @@
     "source_url": "https://admission.ewha.ac.kr/upload/GUIDES/20260602125244F7AFE4.pdf",
     "source_page": 35,
     "stages": [
-      {"description": "1단계 서류평가", "ratio_desc": "서류 100%", "multiplier": 4},
-      {"description": "2단계 면접평가", "ratio_desc": "1단계 성적 80% + 면접 20%", "multiplier": null}
-    ]
+      {
+        "description": "1단계 서류평가",
+        "ratio_desc": "서류 100%",
+        "multiplier": 4
+      },
+      {
+        "description": "2단계 면접평가",
+        "ratio_desc": "1단계 성적 80% + 면접 20%",
+        "multiplier": null
+      }
+    ],
+    "gender_restriction": "female_only"
   }
 }

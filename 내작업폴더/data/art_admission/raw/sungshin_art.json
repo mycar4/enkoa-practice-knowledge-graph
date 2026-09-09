@@ -56,7 +56,8 @@
         "rule_source_page": "55-57"
       },
       "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
-      "source_page": 50
+      "source_page": 50,
+      "gender_restriction": "female_only"
     },
     "estimates": {
       "cutoff_grade_estimate": 4.31,
@@ -140,7 +141,8 @@
         "rule_source_page": "55-57"
       },
       "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
-      "source_page": 50
+      "source_page": 50,
+      "gender_restriction": "female_only"
     },
     "estimates": {
       "cutoff_grade_estimate": 4.57,
@@ -215,7 +217,8 @@
         "rule_source_page": "55-57"
       },
       "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
-      "source_page": 50
+      "source_page": 50,
+      "gender_restriction": "female_only"
     },
     "estimates": {
       "cutoff_grade_estimate": 4.03,
@@ -290,7 +293,8 @@
         "rule_source_page": "55-57"
       },
       "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
-      "source_page": 50
+      "source_page": 50,
+      "gender_restriction": "female_only"
     },
     "estimates": {
       "cutoff_grade_estimate": 3.62,
@@ -365,7 +369,8 @@
         "rule_source_page": "55-57"
       },
       "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
-      "source_page": 50
+      "source_page": 50,
+      "gender_restriction": "female_only"
     }
   }
 ]
