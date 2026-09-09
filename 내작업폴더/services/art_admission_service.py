@@ -196,10 +196,13 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
         return conv.get(str(g)) if g is not None else None
 
     if mode == "simple_weighted_average":
+        # top_n + credit_weighted:false 조합으로 "전체 반영교과 중 석차등급 상위 N과목을
+        # 이수단위 적용 없이 단순평균"하는 학교(예: 동국대 - 국어/수학/사회/과학/영어/
+        # 한국사 중 상위 10과목, 이수단위 미적용)까지 코드 수정 없이 흡수한다.
         subjects = set(rule.get("subjects") or [])
-        pool = []
-        raw_pool = []
-        details = []
+        top_n = rule.get("top_n")
+        credit_weighted = rule.get("credit_weighted", True)
+        candidates = []
         for g in grades:
             if g.get("career_elective"):
                 continue  # 이 모드는 진로선택과목 미반영 (원문 규정 그대로)
@@ -208,9 +211,20 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
             s = _score_for_grade(g.get("grade"))
             if s is None:
                 continue
+            candidates.append(g)
+        candidates = sorted(candidates, key=lambda g: -_score_for_grade(g.get("grade")))
+        if top_n:
+            candidates = candidates[:top_n]
+
+        pool = []
+        raw_pool = []
+        details = []
+        for g in candidates:
+            s = _score_for_grade(g.get("grade"))
             credit = g.get("credit") or 1
-            pool.append((s, credit))
-            raw_pool.append((credit, g.get("grade")))
+            weight = credit if credit_weighted else 1
+            pool.append((s, weight))
+            raw_pool.append((weight, g.get("grade")))
             details.append({"subject_group": g.get("subject_group"), "grade": g.get("grade"), "credit": credit, "score": s})
         avg = _weighted_avg(pool) if pool else None
         if avg is None:
@@ -309,6 +323,11 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
         return {"raw_score": total, "max_score": max_score, "matched_subject_count": matched, "missing_subject_groups": missing_groups, "raw_grade_average": raw_grade_average, "breakdown": details}
 
     if mode == "all_subjects_plus_career_elective":
+        # subjects가 비어있으면(기본값) 상명대처럼 전 교과목 반영, subjects를 채우면
+        # 명지대(예체능계열: 국어·영어만 + 진로선택 전부 반영 + 이수학점 가산점)처럼
+        # 특정 교과로 제한된 "전체 반영" 학교도 코드 분기 없이 흡수한다.
+        subjects = set(rule.get("subjects") or [])
+        credit_bonus_factor = rule.get("credit_bonus_factor")  # 예: 명지대 0.05
         pool = []
         raw_pool = []
         details = []
@@ -316,6 +335,8 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
         ce_items = []
         ce_details = []
         for g in grades:
+            if subjects and g.get("subject_group") not in subjects:
+                continue
             if g.get("career_elective"):
                 s = ce_conv.get(str(g.get("achievement")))
                 if s is not None:
@@ -336,18 +357,41 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
             ce_details = [p[1] for p in paired]
         pool.extend(ce_items)
         details.extend(ce_details)
-        avg = _weighted_avg(pool) if pool else None
+        if not pool:
+            return None
+        total_credit = sum(c for _, c in pool)
+        numerator = sum(s * c for s, c in pool)
+        if credit_bonus_factor:
+            # 명지대: 분자에 "반영교과 내 모든 이수과목 이수학점 합 × 0.05"를 가산점으로 더함
+            numerator += total_credit * credit_bonus_factor
+        avg = numerator / total_credit if total_credit else None
         if avg is None:
             return None
-        return {"raw_score": avg, "max_score": max_score, "matched_subject_count": len(pool), "raw_grade_average": _raw_grade_avg(raw_pool), "breakdown": details}
+        # 가산점(credit_bonus_factor)은 이수학점 분포와 무관하게 평균에 상수로 더해지므로
+        # (Σsc + 합×f)/합 = weighted_avg(s) + f, 이론상 만점도 그만큼 올라간다.
+        effective_max = (max_score + credit_bonus_factor) if credit_bonus_factor and max_score else max_score
+        return {"raw_score": avg, "max_score": effective_max, "matched_subject_count": len(pool), "raw_grade_average": _raw_grade_avg(raw_pool), "breakdown": details}
 
     if mode == "common_and_career_split_scaled":
-        # 홍익대 세종 학생부교과(교과우수자전형 등) 방식: 공통·일반선택과목 평균과
-        # 진로선택과목 평균을 각각 0.9배해 더한 뒤, "반영교과 이수학점 합"에 따른
-        # 배율(학점합/1000 + 0.9, 학점합은 credit_cap으로 상한)을 곱한다.
-        # (원문 2027 모집요강 p.112-113, 반영과목 이수학점 합의 최대값 100)
+        # 공통·일반선택과목 평균과 진로선택과목 평균을 각각 가중치로 합산하는 학교들의
+        # 공통 패턴. 학교마다 다른 부분(가중치 자체, 이수학점에 따른 배율 적용 여부,
+        # 진로선택 상위 N과목 제한, 진로선택 자체가 없을 때 공통 가중치를 올려주는지)을
+        # 전부 rule 파라미터로 빼뒀다 - 새 학교가 이 패턴과 조금만 다르다고 코드를 새로
+        # 분기하지 않고, 파라미터 조합으로 흡수하기 위함:
+        #   - common_weight/career_weight: 기본 0.9/0.9 (홍익세종). 경희대처럼 0.8/0.2인
+        #     학교도 있음(반영비율 자체가 다름, 0.9/0.9 더블카운팅이 아니라 진짜 8:2 분할)
+        #   - use_credit_scale: 홍익세종은 이수학점 합에 따른 추가 배율(학점합/1000+0.9)이
+        #     있지만(True, 기본값), 경희대처럼 그런 배율 자체가 없는 학교는 False
+        #   - common_weight_if_no_career: 경희대는 "진로선택 성취평가등급이 1개도 없으면
+        #     공통·일반선택만 100% 반영"이라 이 경우 가중치가 0.8->1.0으로 올라간다
+        #   - career_elective_max_count: 상위 N개 진로선택과목만 반영(경희대=3, 홍익세종=제한없음)
         subjects = set(rule.get("subjects") or [])
         credit_cap = rule.get("credit_cap", 100)
+        use_credit_scale = rule.get("use_credit_scale", True)
+        common_weight = rule.get("common_weight", 0.9)
+        career_weight = rule.get("career_weight", 0.9)
+        common_weight_if_no_career = rule.get("common_weight_if_no_career", common_weight)
+        career_max_count = rule.get("career_elective_max_count")
         ce_conv = {str(k): v for k, v in (rule.get("career_elective_conversion_table") or {}).items()}
 
         common_pool = [
@@ -355,23 +399,28 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
             for g in grades
             if not g.get("career_elective") and (not subjects or g.get("subject_group") in subjects) and _score_for_grade(g.get("grade")) is not None
         ]
-        career_pool = [
-            (ce_conv.get(str(g.get("achievement"))), g.get("credit") or 1)
-            for g in grades
+        career_candidates = [
+            g for g in grades
             if g.get("career_elective") and (not subjects or g.get("subject_group") in subjects) and ce_conv.get(str(g.get("achievement"))) is not None
         ]
+        career_candidates = sorted(career_candidates, key=lambda g: -ce_conv[str(g.get("achievement"))])
+        if career_max_count is not None:
+            career_candidates = career_candidates[:career_max_count]
+        career_pool = [(ce_conv[str(g.get("achievement"))], g.get("credit") or 1) for g in career_candidates]
         if not common_pool and not career_pool:
             return None
 
         common_avg = _weighted_avg(common_pool) or 0
         career_avg = _weighted_avg(career_pool) or 0
+        effective_common_weight = common_weight if career_pool else common_weight_if_no_career
         total_credit = sum(c for _, c in common_pool) + sum(c for _, c in career_pool)
-        scale = min(total_credit, credit_cap) / 1000 + 0.9
-        raw_score = (common_avg * 0.9 + career_avg * 0.9) * scale
+        scale = (min(total_credit, credit_cap) / 1000 + 0.9) if use_credit_scale else 1.0
+        raw_score = (common_avg * effective_common_weight + (career_avg * career_weight if career_pool else 0)) * scale
 
         common_max = max(conv.values()) if conv else 0
         career_max = max(ce_conv.values()) if ce_conv else 0
-        theoretical_max = (common_max * 0.9 + career_max * 0.9) * (credit_cap / 1000 + 0.9)
+        theoretical_scale = (credit_cap / 1000 + 0.9) if use_credit_scale else 1.0
+        theoretical_max = (common_max * common_weight + career_max * career_weight) * theoretical_scale
         raw_grade_pool = [
             (g.get("credit") or 1, g.get("grade"))
             for g in grades
@@ -383,8 +432,7 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
             if not g.get("career_elective") and (not subjects or g.get("subject_group") in subjects) and _score_for_grade(g.get("grade")) is not None
         ] + [
             {"subject_group": g.get("subject_group"), "achievement": g.get("achievement"), "credit": g.get("credit") or 1, "score": ce_conv.get(str(g.get("achievement")))}
-            for g in grades
-            if g.get("career_elective") and (not subjects or g.get("subject_group") in subjects) and ce_conv.get(str(g.get("achievement"))) is not None
+            for g in career_candidates
         ]
         return {
             "raw_score": raw_score, "max_score": round(theoretical_max, 4),

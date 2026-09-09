@@ -17,16 +17,64 @@
       "result_date": "2026-11-25",
       "exam_type_name": "정물수묵담채화 또는 인체수묵담채화 중 택1",
       "allowed_materials": [
-        "붓", "연필", "담요", "문진", "팔레트", "물통", "먹", "한국화 채색물감"
+        "붓",
+        "연필",
+        "담요",
+        "문진",
+        "팔레트",
+        "물통",
+        "먹",
+        "한국화 채색물감"
       ],
       "paper_size": "정물: 화선지 반절 / 인체: 화선지 2/3절",
       "time_limit_minutes": 300,
       "past_topics": [],
       "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/경희대학교/경희대학교_2027학년도_수시모집요강.pdf",
       "source_page": 72,
-      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "school_record_rule": {
+        "mode": "common_and_career_split_scaled",
+        "subjects": [
+          "국어",
+          "영어"
+        ],
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "common_weight": 0.8,
+        "career_weight": 0.2,
+        "common_weight_if_no_career": 1.0,
+        "use_credit_scale": false,
+        "career_elective_max_count": 3,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 97,
+          "4": 94,
+          "5": 90,
+          "6": 85,
+          "7": 73,
+          "8": 49,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 80,
+          "C": 60
+        },
+        "formula_note": "반영교과: 국어·영어(전 과목) + 국어·영어 진로선택과목 중 우수 상위 3개. 교과성적 = (공통·일반선택 이수단위가중평균×0.8) + (진로선택 이수단위가중평균×0.2). 진로선택 성취평가등급이 1개도 없으면 공통·일반선택만 100% 반영 (2027 모집요강 p.111-112, 실기우수자전형 기준).",
+        "rule_source_page": "111-112"
+      },
+      "practical_ratio_pct": 90,
+      "school_record_ratio_pct": 10
     },
-    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": []
+    }
   },
   {
     "university": "경희대학교",
@@ -46,16 +94,63 @@
       "result_date": "2026-11-25",
       "exam_type_name": "정물수채화 또는 인체수채화 중 택1",
       "allowed_materials": [
-        "붓", "연필", "지우개", "압정", "물통", "팔레트", "수채화 물감"
+        "붓",
+        "연필",
+        "지우개",
+        "압정",
+        "물통",
+        "팔레트",
+        "수채화 물감"
       ],
       "paper_size": "2절 켄트지",
       "time_limit_minutes": 300,
       "past_topics": [],
       "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/경희대학교/경희대학교_2027학년도_수시모집요강.pdf",
       "source_page": 72,
-      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "school_record_rule": {
+        "mode": "common_and_career_split_scaled",
+        "subjects": [
+          "국어",
+          "영어"
+        ],
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "common_weight": 0.8,
+        "career_weight": 0.2,
+        "common_weight_if_no_career": 1.0,
+        "use_credit_scale": false,
+        "career_elective_max_count": 3,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 97,
+          "4": 94,
+          "5": 90,
+          "6": 85,
+          "7": 73,
+          "8": 49,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 80,
+          "C": 60
+        },
+        "formula_note": "반영교과: 국어·영어(전 과목) + 국어·영어 진로선택과목 중 우수 상위 3개. 교과성적 = (공통·일반선택 이수단위가중평균×0.8) + (진로선택 이수단위가중평균×0.2). 진로선택 성취평가등급이 1개도 없으면 공통·일반선택만 100% 반영 (2027 모집요강 p.111-112, 실기우수자전형 기준).",
+        "rule_source_page": "111-112"
+      },
+      "practical_ratio_pct": 90,
+      "school_record_ratio_pct": 10
     },
-    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": []
+    }
   },
   {
     "university": "경희대학교",
@@ -75,15 +170,64 @@
       "result_date": "2026-11-25",
       "exam_type_name": "소조(인물 두상, 쇄골 부위까지) - 모델 8방향 사진 제시 또는 문장제시 자유표현 중 택1",
       "allowed_materials": [
-        "헤라", "도련주걱", "흙뜯개(와이어/스테인레스)", "긁개", "노끈", "나무젓가락", "각목 3개(15cm 이내)", "분무기", "수건"
+        "헤라",
+        "도련주걱",
+        "흙뜯개(와이어/스테인레스)",
+        "긁개",
+        "노끈",
+        "나무젓가락",
+        "각목 3개(15cm 이내)",
+        "분무기",
+        "수건"
       ],
       "paper_size": "인물두상 사이즈 (점토/심봉대는 대학 제공)",
       "time_limit_minutes": 240,
       "past_topics": [],
       "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/경희대학교/경희대학교_2027학년도_수시모집요강.pdf",
       "source_page": 72,
-      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "school_record_rule": {
+        "mode": "common_and_career_split_scaled",
+        "subjects": [
+          "국어",
+          "영어"
+        ],
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "common_weight": 0.8,
+        "career_weight": 0.2,
+        "common_weight_if_no_career": 1.0,
+        "use_credit_scale": false,
+        "career_elective_max_count": 3,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 97,
+          "4": 94,
+          "5": 90,
+          "6": 85,
+          "7": 73,
+          "8": 49,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 80,
+          "C": 60
+        },
+        "formula_note": "반영교과: 국어·영어(전 과목) + 국어·영어 진로선택과목 중 우수 상위 3개. 교과성적 = (공통·일반선택 이수단위가중평균×0.8) + (진로선택 이수단위가중평균×0.2). 진로선택 성취평가등급이 1개도 없으면 공통·일반선택만 100% 반영 (2027 모집요강 p.111-112, 실기우수자전형 기준).",
+        "rule_source_page": "111-112"
+      },
+      "practical_ratio_pct": 90,
+      "school_record_ratio_pct": 10
     },
-    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": []
+    }
   }
 ]

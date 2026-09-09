@@ -16,15 +16,48 @@
       "exam_date": "2026-10-17",
       "result_date": "2026-10-30",
       "exam_type_name": "인물과 정물이 있는 상황 (주제는 시험당일 제시)",
-      "allowed_materials": ["수채화 도구 일체"],
+      "allowed_materials": [
+        "수채화 도구 일체"
+      ],
       "paper_size": "3절 켄트지",
       "time_limit_minutes": 240,
       "past_topics": [],
       "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2027학년도_수시모집요강.pdf",
       "source_page": 50,
-      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "사회",
+          "한국사"
+        ],
+        "career_elective_included": false,
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 1000,
+          "2": 990,
+          "3": 980,
+          "4": 970,
+          "5": 960,
+          "6": 800,
+          "7": 500,
+          "8": 250,
+          "9": 0
+        },
+        "formula_note": "반영교과(국어/영어/사회/한국사) 전 과목의 석차등급을 이수단위 가중평균 (진로선택과목은 실기위주전형에서는 반영하지 않음, 학년별 가중치 없음). 이 전형은 1단계(8배수)에서 학생부교과 100%로 선발한 뒤, 2단계 최종 점수는 실기 100%로만 결정되므로 이 환산점수는 1단계 통과 여부에만 영향을 준다 (2027 모집요강 p.53, 56-57).",
+        "rule_source_page": "53, 56-57"
+      }
     },
-    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": []
+    }
   },
   {
     "university": "서울과학기술대학교",
@@ -43,15 +76,48 @@
       "exam_date": "2026-10-17",
       "result_date": "2026-10-30",
       "exam_type_name": "기초디자인 (주제는 시험당일 제시)",
-      "allowed_materials": ["채색 도구 일체"],
+      "allowed_materials": [
+        "채색 도구 일체"
+      ],
       "paper_size": "3절 켄트지",
       "time_limit_minutes": 300,
       "past_topics": [],
       "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2027학년도_수시모집요강.pdf",
       "source_page": 50,
-      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "사회",
+          "한국사"
+        ],
+        "career_elective_included": false,
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 1000,
+          "2": 990,
+          "3": 980,
+          "4": 970,
+          "5": 960,
+          "6": 800,
+          "7": 500,
+          "8": 250,
+          "9": 0
+        },
+        "formula_note": "반영교과(국어/영어/사회/한국사) 전 과목의 석차등급을 이수단위 가중평균 (진로선택과목은 실기위주전형에서는 반영하지 않음, 학년별 가중치 없음). 이 전형은 1단계(8배수)에서 학생부교과 100%로 선발한 뒤, 2단계 최종 점수는 실기 100%로만 결정되므로 이 환산점수는 1단계 통과 여부에만 영향을 준다 (2027 모집요강 p.53, 56-57).",
+        "rule_source_page": "53, 56-57"
+      }
     },
-    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": []
+    }
   },
   {
     "university": "서울과학기술대학교",
@@ -70,15 +136,48 @@
       "exam_date": "2026-10-17",
       "result_date": "2026-10-30",
       "exam_type_name": "기초디자인 (주제는 시험당일 제시)",
-      "allowed_materials": ["채색 도구 일체"],
+      "allowed_materials": [
+        "채색 도구 일체"
+      ],
       "paper_size": "3절 켄트지",
       "time_limit_minutes": 300,
       "past_topics": [],
       "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2027학년도_수시모집요강.pdf",
       "source_page": 50,
-      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "사회",
+          "한국사"
+        ],
+        "career_elective_included": false,
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 1000,
+          "2": 990,
+          "3": 980,
+          "4": 970,
+          "5": 960,
+          "6": 800,
+          "7": 500,
+          "8": 250,
+          "9": 0
+        },
+        "formula_note": "반영교과(국어/영어/사회/한국사) 전 과목의 석차등급을 이수단위 가중평균 (진로선택과목은 실기위주전형에서는 반영하지 않음, 학년별 가중치 없음). 이 전형은 1단계(8배수)에서 학생부교과 100%로 선발한 뒤, 2단계 최종 점수는 실기 100%로만 결정되므로 이 환산점수는 1단계 통과 여부에만 영향을 준다 (2027 모집요강 p.53, 56-57).",
+        "rule_source_page": "53, 56-57"
+      }
     },
-    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": []
+    }
   },
   {
     "university": "서울과학기술대학교",
@@ -97,15 +196,48 @@
       "exam_date": "2026-10-17",
       "result_date": "2026-10-30",
       "exam_type_name": "기초디자인 (주제는 시험당일 제시)",
-      "allowed_materials": ["채색 도구 일체"],
+      "allowed_materials": [
+        "채색 도구 일체"
+      ],
       "paper_size": "3절 켄트지",
       "time_limit_minutes": 300,
       "past_topics": [],
       "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2027학년도_수시모집요강.pdf",
       "source_page": 50,
-      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "사회",
+          "한국사"
+        ],
+        "career_elective_included": false,
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 1000,
+          "2": 990,
+          "3": 980,
+          "4": 970,
+          "5": 960,
+          "6": 800,
+          "7": 500,
+          "8": 250,
+          "9": 0
+        },
+        "formula_note": "반영교과(국어/영어/사회/한국사) 전 과목의 석차등급을 이수단위 가중평균 (진로선택과목은 실기위주전형에서는 반영하지 않음, 학년별 가중치 없음). 이 전형은 1단계(8배수)에서 학생부교과 100%로 선발한 뒤, 2단계 최종 점수는 실기 100%로만 결정되므로 이 환산점수는 1단계 통과 여부에만 영향을 준다 (2027 모집요강 p.53, 56-57).",
+        "rule_source_page": "53, 56-57"
+      }
     },
-    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": []
+    }
   },
   {
     "university": "서울과학기술대학교",
@@ -124,14 +256,47 @@
       "exam_date": "2026-10-17",
       "result_date": "2026-10-30",
       "exam_type_name": "기초디자인 (주제는 시험당일 제시)",
-      "allowed_materials": ["채색 도구 일체"],
+      "allowed_materials": [
+        "채색 도구 일체"
+      ],
       "paper_size": "3절 켄트지",
       "time_limit_minutes": 300,
       "past_topics": [],
       "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2027학년도_수시모집요강.pdf",
       "source_page": 50,
-      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "사회",
+          "한국사"
+        ],
+        "career_elective_included": false,
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 1000,
+          "2": 990,
+          "3": 980,
+          "4": 970,
+          "5": 960,
+          "6": 800,
+          "7": 500,
+          "8": 250,
+          "9": 0
+        },
+        "formula_note": "반영교과(국어/영어/사회/한국사) 전 과목의 석차등급을 이수단위 가중평균 (진로선택과목은 실기위주전형에서는 반영하지 않음, 학년별 가중치 없음). 이 전형은 1단계(8배수)에서 학생부교과 100%로 선발한 뒤, 2단계 최종 점수는 실기 100%로만 결정되므로 이 환산점수는 1단계 통과 여부에만 영향을 준다 (2027 모집요강 p.53, 56-57).",
+        "rule_source_page": "53, 56-57"
+      }
     },
-    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": []
+    }
   }
 ]

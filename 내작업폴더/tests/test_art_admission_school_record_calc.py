@@ -237,6 +237,44 @@ def test_breakdown_and_reason_summary_and_fit_label_present():
         svc.close()
 
 
+def test_original_15_batch2_schools_use_generalized_modes_not_hardcoding():
+    """30개교 확장 원칙 검증: 경희대(공통0.8+진로0.2 분할, 크레딧스케일 없음)·
+    동국대(상위10과목 단순평균, 이수단위 미반영)·명지대(국영만+진로선택+이수학점
+    가산점 0.05)·서울과기대(국영사한국사 단순 이수단위가중평균)는 전부 새로운
+    if-university 분기 없이, 기존 5개 모드에 파라미터(common_weight/career_weight/
+    use_credit_scale/top_n/credit_weighted/credit_bonus_factor/subjects)만 추가해서
+    처리된다. 손계산 값과 일치하는지 확인."""
+    svc = ArtAdmissionService()
+    try:
+        grades = [
+            {"subject_group": "국어", "grade": 4, "credit": 3},
+            {"subject_group": "영어", "grade": 5, "credit": 3},
+            {"subject_group": "수학", "grade": 4, "credit": 3},
+            {"subject_group": "사회", "grade": 3, "credit": 3},
+            {"subject_group": "과학", "grade": 2, "credit": 3},
+            {"subject_group": "한국사", "grade": 2, "credit": 1},
+        ]
+        cases = [
+            ("경희대학교", "회화전공", 92.0),
+            ("동국대학교", "한국화전공", 99.12),
+            ("명지대학교", "비주얼커뮤니케이션디자인전공", 92.0),
+            ("서울과학기술대학교", "조형예술학과", 97.2),
+        ]
+        for uni, dept, expected_pct in cases:
+            r = svc.calculate_school_record_score(uni, dept, grades)
+            assert r.get("available") is True, f"{uni} {dept}: {r.get('reason')}"
+            assert abs(r["percentage"] - expected_pct) < 0.05, f"{uni} {dept}: {r['percentage']} != {expected_pct}"
+
+        # 삼육대 아트앤디자인학과는 "서류 20%"가 정성평가(학생부+인성검사 종합)라
+        # 애초에 정량 공식이 없다 - 규정 미확인이 아니라 규정 자체가 존재하지 않는
+        # 케이스이므로 available=False가 맞다(허위로 계산값을 만들면 안 됨).
+        syu = svc.calculate_school_record_score("삼육대학교", "아트앤디자인학과", grades)
+        assert syu.get("available") is False
+        print("✅ test_original_15_batch2_schools_use_generalized_modes_not_hardcoding passed!")
+    finally:
+        svc.close()
+
+
 def test_non_priority_school_returns_unavailable_not_fake_number():
     """정밀 반영교과 규정을 원문으로 확보하지 못한 학교(예: 경기대)는 있지도 않은
     환산표를 지어내지 말고 반드시 available=False로 명시해야 한다."""
@@ -272,6 +310,7 @@ if __name__ == "__main__":
     test_korean_history_subject_alias_matches_official_rule_per_school()
     test_estimated_grade_equivalent_matches_raw_grade_not_inflated_score()
     test_breakdown_and_reason_summary_and_fit_label_present()
+    test_original_15_batch2_schools_use_generalized_modes_not_hardcoding()
     test_non_priority_school_returns_unavailable_not_fake_number()
     test_recommend_universities_ranks_exact_before_approximate()
     print("🎉 ALL SCHOOL RECORD CALC TESTS PASSED!")

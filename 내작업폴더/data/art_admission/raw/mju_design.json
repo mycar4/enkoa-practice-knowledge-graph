@@ -16,15 +16,54 @@
       "exam_date": "2026-10-09",
       "result_date": "2026-12-09",
       "exam_type_name": "기초디자인 - 문제 주제의 해석과 표현 (입체적 첨가 형식 제외 모든 재료 허용)",
-      "allowed_materials": ["입체적 첨가 형식을 제외한 표현 가능한 모든 재료"],
+      "allowed_materials": [
+        "입체적 첨가 형식을 제외한 표현 가능한 모든 재료"
+      ],
       "paper_size": "3절지",
       "time_limit_minutes": 240,
       "past_topics": [],
       "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/명지대학교/명지대학교_2027학년도_수시모집요강.pdf",
       "source_page": 71,
-      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "school_record_rule": {
+        "mode": "all_subjects_plus_career_elective",
+        "subjects": [
+          "국어",
+          "영어"
+        ],
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "credit_bonus_factor": 0.05,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 94,
+          "5": 90,
+          "6": 80,
+          "7": 60,
+          "8": 30,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 99,
+          "C": 94
+        },
+        "formula_note": "반영교과: 예체능계열은 국어·영어 전 과목(공통·일반선택+진로선택 모두, 상한 없음). 교과성적 = [Σ(과목별 환산점수×이수학점) + (반영교과 내 모든 이수과목 이수학점 합×0.05)] / Σ(이수학점). 실기70%+학생부교과20%(200점)+출결10%(100점, 무결석 가정) (2027 모집요강 p.83-84).",
+        "rule_source_page": "83-84"
+      },
+      "practical_ratio_pct": 70,
+      "school_record_ratio_pct": 30
     },
-    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": []
+    }
   },
   {
     "university": "명지대학교",
@@ -43,15 +82,54 @@
       "exam_date": "2026-10-10",
       "result_date": "2026-12-09",
       "exam_type_name": "기초디자인 - 문제 주제의 해석과 표현 (입체적 첨가 형식 제외 모든 재료 허용)",
-      "allowed_materials": ["입체적 첨가 형식을 제외한 표현 가능한 모든 재료"],
+      "allowed_materials": [
+        "입체적 첨가 형식을 제외한 표현 가능한 모든 재료"
+      ],
       "paper_size": "3절지",
       "time_limit_minutes": 240,
       "past_topics": [],
       "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/명지대학교/명지대학교_2027학년도_수시모집요강.pdf",
       "source_page": 71,
-      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "school_record_rule": {
+        "mode": "all_subjects_plus_career_elective",
+        "subjects": [
+          "국어",
+          "영어"
+        ],
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "credit_bonus_factor": 0.05,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 94,
+          "5": 90,
+          "6": 80,
+          "7": 60,
+          "8": 30,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 99,
+          "C": 94
+        },
+        "formula_note": "반영교과: 예체능계열은 국어·영어 전 과목(공통·일반선택+진로선택 모두, 상한 없음). 교과성적 = [Σ(과목별 환산점수×이수학점) + (반영교과 내 모든 이수과목 이수학점 합×0.05)] / Σ(이수학점). 실기70%+학생부교과20%(200점)+출결10%(100점, 무결석 가정) (2027 모집요강 p.83-84).",
+        "rule_source_page": "83-84"
+      },
+      "practical_ratio_pct": 70,
+      "school_record_ratio_pct": 30
     },
-    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": []
+    }
   },
   {
     "university": "명지대학교",
@@ -70,15 +148,59 @@
       "exam_date": "2026-10-11",
       "result_date": "2026-12-09",
       "exam_type_name": "상황표현 - 주어진 상황주제에 대한 창의적 표현능력 평가",
-      "allowed_materials": ["연필", "색연필", "파스텔", "수채물감", "포스터칼라", "마카"],
+      "allowed_materials": [
+        "연필",
+        "색연필",
+        "파스텔",
+        "수채물감",
+        "포스터칼라",
+        "마카"
+      ],
       "paper_size": "4절지",
       "time_limit_minutes": 240,
       "past_topics": [],
       "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/명지대학교/명지대학교_2027학년도_수시모집요강.pdf",
       "source_page": 72,
-      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "school_record_rule": {
+        "mode": "all_subjects_plus_career_elective",
+        "subjects": [
+          "국어",
+          "영어"
+        ],
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "credit_bonus_factor": 0.05,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 94,
+          "5": 90,
+          "6": 80,
+          "7": 60,
+          "8": 30,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 99,
+          "C": 94
+        },
+        "formula_note": "반영교과: 예체능계열은 국어·영어 전 과목(공통·일반선택+진로선택 모두, 상한 없음). 교과성적 = [Σ(과목별 환산점수×이수학점) + (반영교과 내 모든 이수과목 이수학점 합×0.05)] / Σ(이수학점). 실기70%+학생부교과20%(200점)+출결10%(100점, 무결석 가정) (2027 모집요강 p.83-84).",
+        "rule_source_page": "83-84"
+      },
+      "practical_ratio_pct": 70,
+      "school_record_ratio_pct": 30
     },
-    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": []
+    }
   },
   {
     "university": "명지대학교",
@@ -97,15 +219,54 @@
       "exam_date": "2026-10-12",
       "result_date": "2026-12-09",
       "exam_type_name": "기초디자인 - 문제 주제의 해석과 표현 (입체적 첨가 형식 제외 모든 재료 허용)",
-      "allowed_materials": ["입체적 첨가 형식을 제외한 표현 가능한 모든 재료"],
+      "allowed_materials": [
+        "입체적 첨가 형식을 제외한 표현 가능한 모든 재료"
+      ],
       "paper_size": "3절지",
       "time_limit_minutes": 240,
       "past_topics": [],
       "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/명지대학교/명지대학교_2027학년도_수시모집요강.pdf",
       "source_page": 72,
-      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "school_record_rule": {
+        "mode": "all_subjects_plus_career_elective",
+        "subjects": [
+          "국어",
+          "영어"
+        ],
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "credit_bonus_factor": 0.05,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 94,
+          "5": 90,
+          "6": 80,
+          "7": 60,
+          "8": 30,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 99,
+          "C": 94
+        },
+        "formula_note": "반영교과: 예체능계열은 국어·영어 전 과목(공통·일반선택+진로선택 모두, 상한 없음). 교과성적 = [Σ(과목별 환산점수×이수학점) + (반영교과 내 모든 이수과목 이수학점 합×0.05)] / Σ(이수학점). 실기70%+학생부교과20%(200점)+출결10%(100점, 무결석 가정) (2027 모집요강 p.83-84).",
+        "rule_source_page": "83-84"
+      },
+      "practical_ratio_pct": 70,
+      "school_record_ratio_pct": 30
     },
-    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": []
+    }
   },
   {
     "university": "명지대학교",
@@ -124,14 +285,53 @@
       "exam_date": "2026-10-13",
       "result_date": "2026-12-09",
       "exam_type_name": "기초디자인 - 문제 주제의 해석과 표현 (입체적 첨가 형식 제외 모든 재료 허용)",
-      "allowed_materials": ["입체적 첨가 형식을 제외한 표현 가능한 모든 재료"],
+      "allowed_materials": [
+        "입체적 첨가 형식을 제외한 표현 가능한 모든 재료"
+      ],
       "paper_size": "3절지",
       "time_limit_minutes": 240,
       "past_topics": [],
       "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/명지대학교/명지대학교_2027학년도_수시모집요강.pdf",
       "source_page": 71,
-      "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "school_record_rule": {
+        "mode": "all_subjects_plus_career_elective",
+        "subjects": [
+          "국어",
+          "영어"
+        ],
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "credit_bonus_factor": 0.05,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 94,
+          "5": 90,
+          "6": 80,
+          "7": 60,
+          "8": 30,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 99,
+          "C": 94
+        },
+        "formula_note": "반영교과: 예체능계열은 국어·영어 전 과목(공통·일반선택+진로선택 모두, 상한 없음). 교과성적 = [Σ(과목별 환산점수×이수학점) + (반영교과 내 모든 이수과목 이수학점 합×0.05)] / Σ(이수학점). 실기70%+학생부교과20%(200점)+출결10%(100점, 무결석 가정) (2027 모집요강 p.83-84).",
+        "rule_source_page": "83-84"
+      },
+      "practical_ratio_pct": 70,
+      "school_record_ratio_pct": 30
     },
-    "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": []
+    }
   }
 ]
