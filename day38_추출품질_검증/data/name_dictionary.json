@@ -1,0 +1,426 @@
+{
+ "note": "다음 단원이 만드는 이름-ID 사전에서 이 단원에 나오는 이름만 추린 것",
+ "normalize": "소문자 / 앞뒤 공백 제거 / 연속 공백 한 칸 / 끝의 괄호 주석 제거",
+ "entries": {
+  "cannabinoids": {
+   "id": "Pharmacologic Class::N0000008010",
+   "label": "PharmacologicClass",
+   "canonical": "Cannabinoids",
+   "source": "hetionet"
+  },
+  "carbidopa": {
+   "id": "Compound::DB00190",
+   "label": "Compound",
+   "canonical": "Carbidopa",
+   "source": "hetionet"
+  },
+  "crohn's disease": {
+   "id": "Disease::DOID:8778",
+   "label": "Disease",
+   "canonical": "Crohn's disease",
+   "source": "hetionet"
+  },
+  "huntington disease": {
+   "id": "Symptom::D006816",
+   "label": "Symptom",
+   "canonical": "Huntington Disease",
+   "source": "hetionet"
+  },
+  "methotrexate": {
+   "id": "Compound::DB00563",
+   "label": "Compound",
+   "canonical": "Methotrexate",
+   "source": "hetionet"
+  },
+  "nabumetone": {
+   "id": "Compound::DB00461",
+   "label": "Compound",
+   "canonical": "Nabumetone",
+   "source": "hetionet"
+  },
+  "omeprazole": {
+   "id": "Compound::DB00338",
+   "label": "Compound",
+   "canonical": "Omeprazole",
+   "source": "hetionet"
+  },
+  "ponatinib": {
+   "id": "Compound::DB08901",
+   "label": "Compound",
+   "canonical": "Ponatinib",
+   "source": "hetionet"
+  },
+  "prednisone": {
+   "id": "Compound::DB00635",
+   "label": "Compound",
+   "canonical": "Prednisone",
+   "source": "hetionet"
+  },
+  "psoriasis": {
+   "id": "Disease::DOID:8893",
+   "label": "Disease",
+   "canonical": "psoriasis",
+   "source": "hetionet"
+  },
+  "psoriatic arthritis": {
+   "id": "Disease::DOID:9008",
+   "label": "Disease",
+   "canonical": "psoriatic arthritis",
+   "source": "hetionet"
+  },
+  "warfarin": {
+   "id": "Compound::DB00682",
+   "label": "Compound",
+   "canonical": "Warfarin",
+   "source": "hetionet"
+  },
+  "abacavir": {
+   "id": "Compound::DB01048",
+   "label": "Compound",
+   "canonical": "Abacavir",
+   "source": "hetionet"
+  },
+  "amitriptyline": {
+   "id": "Compound::DB00321",
+   "label": "Compound",
+   "canonical": "Amitriptyline",
+   "source": "hetionet"
+  },
+  "atazanavir": {
+   "id": "Compound::DB01072",
+   "label": "Compound",
+   "canonical": "Atazanavir",
+   "source": "hetionet"
+  },
+  "atopic dermatitis": {
+   "id": "Disease::DOID:3310",
+   "label": "Disease",
+   "canonical": "atopic dermatitis",
+   "source": "hetionet"
+  },
+  "atorvastatin": {
+   "id": "Compound::DB01076",
+   "label": "Compound",
+   "canonical": "Atorvastatin",
+   "source": "hetionet"
+  },
+  "azathioprine": {
+   "id": "Compound::DB00993",
+   "label": "Compound",
+   "canonical": "Azathioprine",
+   "source": "hetionet"
+  },
+  "capecitabine": {
+   "id": "Compound::DB01101",
+   "label": "Compound",
+   "canonical": "Capecitabine",
+   "source": "hetionet"
+  },
+  "carbamazepine": {
+   "id": "Compound::DB00564",
+   "label": "Compound",
+   "canonical": "Carbamazepine",
+   "source": "hetionet"
+  },
+  "celecoxib": {
+   "id": "Compound::DB00482",
+   "label": "Compound",
+   "canonical": "Celecoxib",
+   "source": "hetionet"
+  },
+  "cervical cancer": {
+   "id": "Disease::DOID:4362",
+   "label": "Disease",
+   "canonical": "cervical cancer",
+   "source": "hetionet"
+  },
+  "clopidogrel": {
+   "id": "Compound::DB00758",
+   "label": "Compound",
+   "canonical": "Clopidogrel",
+   "source": "hetionet"
+  },
+  "codeine": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "hetionet"
+  },
+  "constipation": {
+   "id": "Symptom::D003248",
+   "label": "Symptom",
+   "canonical": "Constipation",
+   "source": "hetionet"
+  },
+  "diphenhydramine": {
+   "id": "Compound::DB01075",
+   "label": "Compound",
+   "canonical": "Diphenhydramine",
+   "source": "hetionet"
+  },
+  "doxorubicin": {
+   "id": "Compound::DB00997",
+   "label": "Compound",
+   "canonical": "Doxorubicin",
+   "source": "hetionet"
+  },
+  "doxylamine": {
+   "id": "Compound::DB00366",
+   "label": "Compound",
+   "canonical": "Doxylamine",
+   "source": "hetionet"
+  },
+  "efavirenz": {
+   "id": "Compound::DB00625",
+   "label": "Compound",
+   "canonical": "Efavirenz",
+   "source": "hetionet"
+  },
+  "fluorouracil": {
+   "id": "Compound::DB00544",
+   "label": "Compound",
+   "canonical": "Fluorouracil",
+   "source": "hetionet"
+  },
+  "gabapentin": {
+   "id": "Compound::DB00996",
+   "label": "Compound",
+   "canonical": "Gabapentin",
+   "source": "hetionet"
+  },
+  "hydroxychloroquine": {
+   "id": "Compound::DB01611",
+   "label": "Compound",
+   "canonical": "Hydroxychloroquine",
+   "source": "hetionet"
+  },
+  "hydroxyzine": {
+   "id": "Compound::DB00557",
+   "label": "Compound",
+   "canonical": "Hydroxyzine",
+   "source": "hetionet"
+  },
+  "ibuprofen": {
+   "id": "Compound::DB01050",
+   "label": "Compound",
+   "canonical": "Ibuprofen",
+   "source": "hetionet"
+  },
+  "irinotecan": {
+   "id": "Compound::DB00762",
+   "label": "Compound",
+   "canonical": "Irinotecan",
+   "source": "hetionet"
+  },
+  "lamotrigine": {
+   "id": "Compound::DB00555",
+   "label": "Compound",
+   "canonical": "Lamotrigine",
+   "source": "hetionet"
+  },
+  "lansoprazole": {
+   "id": "Compound::DB00448",
+   "label": "Compound",
+   "canonical": "Lansoprazole",
+   "source": "hetionet"
+  },
+  "low back pain": {
+   "id": "Symptom::D017116",
+   "label": "Symptom",
+   "canonical": "Low Back Pain",
+   "source": "hetionet"
+  },
+  "mercaptopurine": {
+   "id": "Compound::DB01033",
+   "label": "Compound",
+   "canonical": "Mercaptopurine",
+   "source": "hetionet"
+  },
+  "multiple sclerosis": {
+   "id": "Disease::DOID:2377",
+   "label": "Disease",
+   "canonical": "multiple sclerosis",
+   "source": "hetionet"
+  },
+  "pain": {
+   "id": "Symptom::D010146",
+   "label": "Symptom",
+   "canonical": "Pain",
+   "source": "hetionet"
+  },
+  "phenprocoumon": {
+   "id": "Compound::DB00946",
+   "label": "Compound",
+   "canonical": "Phenprocoumon",
+   "source": "hetionet"
+  },
+  "phenytoin": {
+   "id": "Compound::DB00252",
+   "label": "Compound",
+   "canonical": "Phenytoin",
+   "source": "hetionet"
+  },
+  "prednisolone": {
+   "id": "Compound::DB00860",
+   "label": "Compound",
+   "canonical": "Prednisolone",
+   "source": "hetionet"
+  },
+  "pregabalin": {
+   "id": "Compound::DB00230",
+   "label": "Compound",
+   "canonical": "Pregabalin",
+   "source": "hetionet"
+  },
+  "quetiapine": {
+   "id": "Compound::DB01224",
+   "label": "Compound",
+   "canonical": "Quetiapine",
+   "source": "hetionet"
+  },
+  "rheumatoid arthritis": {
+   "id": "Disease::DOID:7148",
+   "label": "Disease",
+   "canonical": "rheumatoid arthritis",
+   "source": "hetionet"
+  },
+  "rosuvastatin": {
+   "id": "Compound::DB01098",
+   "label": "Compound",
+   "canonical": "Rosuvastatin",
+   "source": "hetionet"
+  },
+  "simvastatin": {
+   "id": "Compound::DB00641",
+   "label": "Compound",
+   "canonical": "Simvastatin",
+   "source": "hetionet"
+  },
+  "tacrolimus": {
+   "id": "Compound::DB00864",
+   "label": "Compound",
+   "canonical": "Tacrolimus",
+   "source": "hetionet"
+  },
+  "tramadol": {
+   "id": "Compound::DB00193",
+   "label": "Compound",
+   "canonical": "Tramadol",
+   "source": "hetionet"
+  }
+ },
+ "genes": {
+  "ABCG2": "Gene::9429",
+  "ACAT1": "Gene::38",
+  "ADORA2A": "Gene::135",
+  "AHR": "Gene::196",
+  "AKR1C1": "Gene::1645",
+  "AKR1C3": "Gene::8644",
+  "ALDH3A2": "Gene::224",
+  "ASF1A": "Gene::25842",
+  "ASXL1": "Gene::171023",
+  "ATG16L1": "Gene::55054",
+  "CACNA1C": "Gene::775",
+  "CACNA1D": "Gene::776",
+  "CACNA2D3": "Gene::55799",
+  "CACNB1": "Gene::782",
+  "CCL20": "Gene::6364",
+  "CES1": "Gene::1066",
+  "COMT": "Gene::1312",
+  "CUL5": "Gene::8065",
+  "CXCL1": "Gene::2919",
+  "CXCL8": "Gene::3576",
+  "CYP1A1": "Gene::1543",
+  "CYP20A1": "Gene::57404",
+  "CYP2B6": "Gene::1555",
+  "CYP2C19": "Gene::1557",
+  "CYP2C9": "Gene::1559",
+  "CYP2D6": "Gene::1565",
+  "CYP3A4": "Gene::1576",
+  "CYP3A5": "Gene::1577",
+  "CYP4F2": "Gene::8529",
+  "DPYD": "Gene::1806",
+  "ENO1": "Gene::2023",
+  "EPHX2": "Gene::2053",
+  "ESR2": "Gene::2100",
+  "FDFT1": "Gene::2222",
+  "FPGS": "Gene::2356",
+  "GPX1": "Gene::2876",
+  "GPX7": "Gene::2882",
+  "GSTM3": "Gene::2947",
+  "GSTM4": "Gene::2948",
+  "GSTP1": "Gene::2950",
+  "HLA-A": "Gene::3105",
+  "HLA-B": "Gene::3106",
+  "HOXA4": "Gene::3201",
+  "HSD11B1": "Gene::3290",
+  "HSD11B2": "Gene::3291",
+  "IL36G": "Gene::56300",
+  "KMT2D": "Gene::8085",
+  "MDM2": "Gene::4193",
+  "NOD2": "Gene::64127",
+  "NPC1L1": "Gene::29881",
+  "NUDT15": "Gene::55270",
+  "PAH": "Gene::5053",
+  "PDGFB": "Gene::5155",
+  "PSD": "Gene::5662",
+  "PTGES": "Gene::9536",
+  "PTGS2": "Gene::5743",
+  "RFC1": "Gene::5981",
+  "S100A7": "Gene::6278",
+  "SLC9A3": "Gene::6550",
+  "SLCO1B1": "Gene::10599",
+  "STK39": "Gene::27347",
+  "TLR9": "Gene::54106",
+  "TNF": "Gene::7124",
+  "TP53": "Gene::7157",
+  "TPMT": "Gene::7172",
+  "UGT1A1": "Gene::54658",
+  "VKORC1": "Gene::79001"
+ },
+ "gene_stopwords": [
+  "ACT",
+  "ARC",
+  "BAD",
+  "CAD",
+  "CAMP",
+  "CARS",
+  "CAST",
+  "CAT",
+  "CLOCK",
+  "COPE",
+  "CS",
+  "FAS",
+  "HR",
+  "IMPACT",
+  "JUN",
+  "KIT",
+  "LARGE",
+  "MAX",
+  "MSN",
+  "PIP",
+  "POLE",
+  "RAN",
+  "REN",
+  "REST",
+  "SARS",
+  "SDS",
+  "SELL",
+  "SET",
+  "SHE",
+  "SON",
+  "STAR",
+  "TANK",
+  "WARS"
+ ],
+ "brand_stopwords": [
+  "correct",
+  "lactate",
+  "perform",
+  "react",
+  "rebalance",
+  "reconcile",
+  "sustain",
+  "today"
+ ]
+}
