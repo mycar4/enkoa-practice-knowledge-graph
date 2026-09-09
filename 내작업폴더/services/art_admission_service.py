@@ -660,6 +660,48 @@ def _approximate_school_record_score(grades: List[Dict[str, Any]]) -> Optional[f
     return round(avg, 2) if avg is not None else None
 
 
+def _school_record_impact_score(rule: Optional[Dict[str, Any]], school_record_ratio_pct: Optional[float]) -> Optional[float]:
+    """"내신 실질영향" 지표(사용자 확정 설계). 등급 하나 차이가 실제로 몇 점 깎이는지를
+    보되, 등급 구간별로 관대함이 다른 학교(예: 동국대 1~5등급은 완만하다가 6등급부터
+    급락)가 흔해서, 모든 학교에 같은 "6등급"을 대입해 학교 간 비교가 가능하게 한다
+    (student 개인 등급이 아니라 학교 고유 배점표만 보는 지표라 학생 성적과 무관하게
+    학교마다 고정값). 값 = (1등급 환산점수 - 6등급 환산점수) / 만점 × (학생부 반영비율/100).
+    반영비율까지 곱하는 이유: 등급 격차가 커도 반영비율이 낮으면 총점에 미치는 실제
+    영향은 작기 때문 - "환산표 기울기"와 "총점 기여도"를 함께 봐야 '실질' 영향이 된다.
+    conversion_table이 없는 모드(예: 한국예종의 구간표 방식)나 subjects/그룹형 모드에서
+    1·6등급 값이 없으면 비교 불가(None)로 정직하게 반환한다 - 지어내지 않는다."""
+    if not rule or school_record_ratio_pct is None:
+        return None
+    conv = {str(k): v for k, v in (rule.get("conversion_table") or {}).items()}
+    s1, s6 = conv.get("1"), conv.get("6")
+    if s1 is None or s6 is None:
+        return None
+    max_score = max(conv.values()) if conv else None
+    if not max_score:
+        return None
+    return round((s1 - s6) / max_score * (school_record_ratio_pct / 100), 4)
+
+
+def _prior_year_tier(student_grade: Optional[float], pyr: Optional[Dict[str, Any]]) -> str:
+    """전년도 등록자 학생부 성적과 이 학생의 원 석차등급(estimated_grade_equivalent)을
+    비교해 4단계 버킷으로 나눈다 - 순위나 합격 확률이 아니라 "전년도 등록자 대비 어디쯤"
+    인지만 보여준다. typical/floor 두 값 다 있으면 3단계, typical만 있으면(학교 원문이
+    범위가 아니라 단일 평균값만 제공한 경우) 2단계로 갈린다. 학교마다 typical/floor가
+    정확히 무엇을 의미하는지(50%컷/평균/1단계합격자 등)는 pyr["grade_stat_type"]에 그대로
+    남겨두고 이 함수는 대소 비교만 한다 - 절대 "합격 가능성"으로 해석하면 안 된다."""
+    if student_grade is None or not pyr:
+        return "NO_DATA"
+    typical = pyr.get("school_record_grade_typical")
+    floor = pyr.get("school_record_grade_floor")
+    if typical is None:
+        return "NO_DATA"
+    if student_grade <= typical:
+        return "REGISTRANT_TOP"
+    if floor is not None:
+        return "REGISTRANT_MID" if student_grade <= floor else "REGISTRANT_BELOW"
+    return "REGISTRANT_BELOW"
+
+
 # 2026-09-09 실측으로 발견한 사고: 처음엔 "환산 백분율을 표준 9등급 곡선에 역산"하는
 # 방식(_percentage_to_grade_equivalent, 삭제됨)을 썼는데, 타 입시업체 실측 데이터
 # (내등급 4.92)와 비교해보니 완전히 다른 값(1.29)이 나왔다. 원인: 학교 공식 배점표가
@@ -796,6 +838,31 @@ class ArtAdmissionService:
             raw_rule = r.pop("school_record_rule_json", None)
             r["school_record_rule"] = json.loads(raw_rule) if raw_rule else None
         return rows
+
+    def _get_prior_year_results_by_track(self) -> Dict[tuple, Dict[str, Any]]:
+        """전년도 등록자 성적 추정치(Admission_CutoffEstimate) 전용 조회 - list_all_tracks_full()과
+        의도적으로 분리된 별도 쿼리다. list_all_tracks_full()은 official_facts만 반환한다고
+        문서화돼 있는데(Zero-Mixing), 이 추정치는 대학 자체 CDN에 공개된 '전년도 입시결과'
+        문서에서 뽑은 값이라 official_facts가 아니라 estimates 계열이다. 호출부(recommend_
+        universities)에서 반드시 별도 키(prior_year_result)로 붙여서 절대 같은 카드에서
+        공식 사실과 섞어 표시하지 않게 한다."""
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            rows = s.run("""
+                MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(d:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
+                      -[:ESTIMATED_CUTOFF]->(c:Admission_CutoffEstimate)
+                WHERE c.prior_year_admission_year IS NOT NULL
+                RETURN u.name AS university, u.campus AS campus, d.name AS department, t.name AS track_name,
+                       c.prior_year_admission_year AS admission_year,
+                       c.prior_year_competition_rate AS competition_rate,
+                       c.prior_year_grade_typical AS school_record_grade_typical,
+                       c.prior_year_grade_floor AS school_record_grade_floor,
+                       c.prior_year_grade_stat_type AS grade_stat_type,
+                       c.prior_year_fill_rate_pct AS fill_rate_pct,
+                       c.prior_year_methodology_note AS methodology_note,
+                       c.prior_year_source_url AS source_url,
+                       c.prior_year_source_page AS source_page
+            """).data()
+        return {(r["university"], r.get("campus"), r["department"], r["track_name"]): r for r in rows}
 
     def check_data_integrity(self) -> List[Dict[str, Any]]:
         """오늘(2026-09-07) 겪은 '학년도 뒤섞임' 사고의 재발을 사람이 아니라
@@ -1740,6 +1807,7 @@ class ArtAdmissionService:
         근사치를 매겨 항상 구분해서 내려준다 - "합격 가능성"을 단정하지 않고, 학생부
         축의 상대적 유불리 정보만 제공한다 (실기 원점수는 알 수 없으므로 총점 확정 불가)."""
         tracks = self.list_all_tracks_full()
+        prior_year_by_track = self._get_prior_year_results_by_track()
 
         if topic_keywords or material_query:
             prep_matches = self.search_tracks_by_prep(topic_keywords=topic_keywords, material_query=material_query or "")
@@ -1800,6 +1868,14 @@ class ArtAdmissionService:
                 ])
                 entry["reason_summary"] = "반영교과·환산표가 원문으로 확인되지 않아 실기/학생부 반영 비율만으로 근사 추정한 결과입니다."
 
+            # 전년도 등록자 성적 비교(estimates 계열 - official_facts와 분리된 별도 키로만
+            # 붙인다. Zero-Mixing: 이 값은 "공식 반영 규정"이 아니라 대학 자체 CDN에 공개된
+            # "전년도 입시결과" 문서에서 뽑은 참고 자료다).
+            pyr = prior_year_by_track.get((t["university"], t.get("campus"), t["department"], t.get("track_name")))
+            entry["prior_year_result"] = pyr
+            entry["prior_year_tier"] = _prior_year_tier(entry.get("estimated_grade_equivalent"), pyr)
+            entry["school_record_impact_score"] = _school_record_impact_score(rule, t.get("school_record_ratio_pct"))
+
             results.append(entry)
 
         # 정렬/판정 기준: school_record_percentage(학교 자체 배점표 통과 후 환산점수)가
@@ -1822,15 +1898,28 @@ class ArtAdmissionService:
             else:
                 e["fit_label"] = None
 
-        # 정렬 순서: 정밀 계산(exact) -> 근사 추정(approximate) -> 해당 없음(not_applicable).
-        # not_applicable은 점수 자체가 없는 게 정상이므로 맨 뒤로 보내되 목록에서 빼지는
-        # 않는다(그 학교/전형이 존재한다는 사실과 "왜 점수가 없는지"는 계속 보여줘야 함).
-        # 그룹 내부는 원 석차등급 오름차순(좋은 등급 먼저) -> 동률이면 학교 배점표 환산
-        # percentage 내림차순으로 2차 정렬한다.
+        # 정렬 기준(사용자 설계 확정안 - 임의 가중치로 합친 "종합점수"는 만들지 않는다):
+        # ① 기본 정렬 - 전년도 등록자 성적 대비 위치(4단계 버킷: REGISTRANT_TOP/MID/
+        #    BELOW/NO_DATA). 같은 버킷 안에서만 아래 순서로 2차 정렬:
+        #    1) 실기유형 일치 - topic_keywords/material_query가 주어지면 이미 그 필터링
+        #       단계에서 걸러지므로 여기서는 별도 키가 필요 없다.
+        #    2) 내신 실질영향이 낮은 학교 우선 (school_record_impact_score 오름차순 -
+        #       값이 작을수록 등급 하나 차이의 총점 영향이 작다는 뜻).
+        #    3) 실기비중이 높은 학교 우선 (practical_ratio_pct 내림차순).
+        #    경쟁률·모집인원은 참고정보로만 노출하고 정렬에는 넣지 않는다(경쟁률이 낮다고
+        #    합격이 쉬운 게 아니라는 게 사용자가 명시한 이유). 마지막 타이브레이커로만
+        #    원 석차등급 오름차순을 남겨 정렬을 안정적으로 만든다(위 3개 기준이 전부
+        #    동률/None인 극히 드문 경우에만 영향을 준다).
+        # 정밀 계산(exact) -> 근사 추정(approximate) -> 해당 없음(not_applicable) 순서는
+        # 그대로 유지 - not_applicable은 점수 자체가 없는 게 정상이므로 맨 뒤로 보내되
+        # 목록에서 빼지는 않는다.
         _precision_rank = {"exact": 0, "approximate": 1, "not_applicable": 2}
+        _tier_rank = {"REGISTRANT_TOP": 0, "REGISTRANT_MID": 1, "REGISTRANT_BELOW": 2, "NO_DATA": 3}
         results.sort(key=lambda e: (
             _precision_rank.get(e["calc_precision"], 3),
+            _tier_rank.get(e["prior_year_tier"], 3),
+            e["school_record_impact_score"] if e["school_record_impact_score"] is not None else float("inf"),
+            -(e["practical_ratio_pct"] if e["practical_ratio_pct"] is not None else -1),
             e["estimated_grade_equivalent"] if e["estimated_grade_equivalent"] is not None else 99,
-            -(e["school_record_percentage"] if e["school_record_percentage"] is not None else -1),
         ))
         return results

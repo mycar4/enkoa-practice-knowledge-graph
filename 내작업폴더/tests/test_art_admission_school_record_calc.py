@@ -345,6 +345,26 @@ def test_batch4_remaining_15_schools_use_generalized_modes_not_hardcoding():
         svc.close()
 
 
+def test_school_record_impact_score_matches_hand_computed():
+    """'내신 실질영향' 지표(사용자 확정 공식) = (1등급 환산점수-6등급 환산점수)/만점
+    × 학생부반영비율. 동국대 한국화전공(conv: 1등급=10점,6등급=8.7점,만점10, 학생부
+    반영비율30%)로 손계산: (10-8.7)/10 × 0.3 = 0.039. 6등급을 공통 기준점으로 삼는
+    이유는 학교마다 등급 구간별 관대함이 다른데(동국대는 1~5등급은 완만하다가 6등급부터
+    급락) 모든 학교에 같은 등급을 대입해야 학교 간 비교가 가능하기 때문이다."""
+    svc = ArtAdmissionService()
+    try:
+        grades = [
+            {"subject_group": "국어", "grade": 3, "credit": 4},
+            {"subject_group": "영어", "grade": 4, "credit": 4},
+        ]
+        results = svc.recommend_universities(grades)
+        dongguk = next(r for r in results if r["university"] == "동국대학교" and r["department"] == "한국화전공")
+        assert abs(dongguk["school_record_impact_score"] - 0.039) < 1e-6, dongguk["school_record_impact_score"]
+        print("✅ test_school_record_impact_score_matches_hand_computed passed!")
+    finally:
+        svc.close()
+
+
 def test_non_priority_school_returns_unavailable_not_fake_number():
     """학생부 반영 자체가 정성평가(서류종합전형)라 정량 공식이 존재하지 않는 학교
     (이화여대 디자인학부 예체능서류전형 - 원문 확인 결과 100% 학생부종합 정성평가)는
@@ -395,14 +415,15 @@ def test_not_applicable_schools_get_no_score_not_approximate_guess():
 
 
 def test_recommend_sorts_by_raw_grade_not_schools_own_generous_curve():
-    """사용자 피드백: 학교마다 등급→점수 환산표의 관대함이 달라서(어떤 학교는 상위
-    등급을 널찍하게 압축, 어떤 학교는 촘촘하게 벌림) school_record_percentage로
-    학교 간 순위를 매기면 "환산표가 후한 학교"가 실제 성적 경쟁력과 무관하게 항상
-    위로 올라오는 착시가 생긴다(실측: 이 테스트 성적 기준 가천대 98.75%/원등급3.5가
-    서울과기대 98.2%/원등급2.8보다 원래 순위가 위였음 - 원등급은 서울과기대가 더
-    좋은데도 뒤집힘). 따라서 exact 그룹 내 정렬과 GOOD_FIT 판정은 학교 배점표를
-    거치지 않은 원 석차등급(estimated_grade_equivalent, 학교 간 비교 가능) 기준이어야
-    하고, 학교 자체 환산 percentage 기준으로 정렬해서는 안 된다."""
+    """사용자 피드백 1차: 학교마다 등급→점수 환산표의 관대함이 달라서(어떤 학교는 상위
+    등급을 널찍하게 압축, 어떤 학교는 촘촘하게 벌림) school_record_percentage로 학교 간
+    순위를 매기면 "환산표가 후한 학교"가 실제 성적 경쟁력과 무관하게 항상 위로 올라오는
+    착시가 생긴다(실측: 가천대 98.75%/원등급3.5가 서울과기대 98.2%/원등급2.8보다 원래
+    순위가 위였음 - 원등급은 서울과기대가 더 좋은데도 뒤집힘). 이후 사용자 피드백 2차로
+    정렬 기준이 다시 한번 바뀌어(전년도 등록자 비교 -> 내신 실질영향 -> 실기비중, 원
+    석차등급은 최종 타이브레이커로만 남음) 이 테스트는 "NO_DATA 구간(전년도 비교자료도
+    없고 내신영향/실기비중도 동률인 좁은 부분집합)에서 school_record_percentage가
+    아니라 다른 기준으로 정렬된다"는 최소 불변식만 검증한다."""
     svc = ArtAdmissionService()
     try:
         grades = [
@@ -417,23 +438,69 @@ def test_recommend_sorts_by_raw_grade_not_schools_own_generous_curve():
         exact = [r for r in results if r["calc_precision"] == "exact" and r["estimated_grade_equivalent"] is not None]
         assert exact, "정밀 계산 결과가 하나도 없음"
 
-        # exact 그룹 내부가 원 석차등급 오름차순(좋은 등급 먼저)인지 확인 - percentage
-        # 오름차순이 아님에 주의(오히려 서로 순서가 다를 수 있는 게 정상).
-        exact_grades_in_order = [r["estimated_grade_equivalent"] for r in exact]
-        assert exact_grades_in_order == sorted(exact_grades_in_order), (
-            "exact 그룹이 원 석차등급 오름차순으로 정렬돼 있지 않음 - "
-            "school_record_percentage 기준으로 되돌아갔을 위험"
+        # exact 전체가 (tier, 내신실질영향 오름차순, 실기비중 내림차순, 원등급 오름차순)
+        # 기준으로 정확히 정렬돼 있는지 재계산해서 대조한다 - percentage 기준이 아님을
+        # 구조적으로 검증(특정 두 학교 하드코딩 비교가 아니라 전체 리스트 재계산 대조).
+        _tier_rank = {"REGISTRANT_TOP": 0, "REGISTRANT_MID": 1, "REGISTRANT_BELOW": 2, "NO_DATA": 3}
+        expected_keys = [
+            (
+                _tier_rank.get(r["prior_year_tier"], 3),
+                r["school_record_impact_score"] if r["school_record_impact_score"] is not None else float("inf"),
+                -(r["practical_ratio_pct"] if r["practical_ratio_pct"] is not None else -1),
+                r["estimated_grade_equivalent"],
+            )
+            for r in exact
+        ]
+        assert expected_keys == sorted(expected_keys), (
+            "exact 그룹이 (전년도등록자tier, 내신실질영향, 실기비중, 원등급) 기준으로 "
+            "정렬돼 있지 않음 - school_record_percentage 기준으로 되돌아갔을 위험"
         )
-
-        # 동일한 성적 입력에서, 학교 배점표 환산 percentage는 더 낮지만 원 석차등급이
-        # 더 좋은 학교가 percentage는 더 높지만 원 석차등급이 더 나쁜 학교보다 반드시
-        # 앞에 와야 한다(퍼센트만으로 정렬했다면 이 관계가 뒤집힌다).
-        for i in range(len(exact) - 1):
-            better, worse = exact[i], exact[i + 1]
-            assert better["estimated_grade_equivalent"] <= worse["estimated_grade_equivalent"], \
-                f"{better['university']}({better['estimated_grade_equivalent']}등급)가 " \
-                f"{worse['university']}({worse['estimated_grade_equivalent']}등급)보다 뒤에 옴"
         print("✅ test_recommend_sorts_by_raw_grade_not_schools_own_generous_curve passed!")
+    finally:
+        svc.close()
+
+
+def test_prior_year_comparison_tier_drives_primary_sort():
+    """사용자 최종 설계안: 임의 가중치로 합친 종합점수 대신, 기본 정렬은 '전년도 등록자
+    성적 대비 위치'(4단계 버킷: REGISTRANT_TOP/MID/BELOW/NO_DATA) - 이게 원 석차등급보다
+    우선한다. 즉 원 석차등급이 더 안 좋아도 전년도 등록자 대비 더 높은 버킷에 있으면
+    앞에 온다(반영교과가 다른 학교 간 비교이므로 원 석차등급 자체보다 "그 학교 기준으로
+    작년 등록자보다 나은가"가 더 직접적인 신호). 대학 자체 CDN(negagea.net)에 공개된
+    2026학년도 수시입시결과 문서에서 확인한 실측 데이터(가천대·동국대·중앙대 등)로
+    검증한다."""
+    svc = ArtAdmissionService()
+    try:
+        # 이 학생은 원 석차등급이 나쁜 편(6~8등급대)이라 대부분 학교에서
+        # REGISTRANT_BELOW가 나오지만, 극소수 학교는 그래도 TOP/MID에 들 수 있다.
+        grades = [
+            {"subject_group": "국어", "grade": 6, "credit": 4},
+            {"subject_group": "영어", "grade": 7, "credit": 4},
+            {"subject_group": "수학", "grade": 8, "credit": 4},
+            {"subject_group": "사회", "grade": 6, "credit": 4},
+        ]
+        results = svc.recommend_universities(grades)
+        with_data = [r for r in results if r["prior_year_tier"] != "NO_DATA" and r["calc_precision"] == "exact"]
+        assert with_data, "전년도 비교자료가 있는 exact 항목이 하나도 없음"
+
+        tiers_in_order = [r["prior_year_tier"] for r in with_data]
+        tier_rank = {"REGISTRANT_TOP": 0, "REGISTRANT_MID": 1, "REGISTRANT_BELOW": 2}
+        ranks = [tier_rank[t] for t in tiers_in_order]
+        assert ranks == sorted(ranks), "prior_year_tier 기준으로 정렬돼 있지 않음(TOP -> MID -> BELOW 순이어야 함)"
+
+        # 가천대 조소전공(전년도 typical=5.6, floor=6.78)은 이 학생 원등급과 비교했을 때
+        # MID에 들어야 한다(가천대 반영교과는 국어·영어만이라 계산: 국어6/영어7 각
+        # credit4 -> 원등급 (6*4+7*4)/8 = 6.5, typical 5.6보다 나쁘고 floor 6.78보다 좋음).
+        gachon_josso = next((r for r in results if r["university"] == "가천대학교" and r["department"] == "조소전공"), None)
+        assert gachon_josso is not None
+        assert gachon_josso["prior_year_tier"] == "REGISTRANT_MID", (
+            f"가천대 조소전공 tier={gachon_josso['prior_year_tier']} (기대: REGISTRANT_MID, "
+            f"원등급={gachon_josso['estimated_grade_equivalent']}, typical=5.6, floor=6.78)"
+        )
+        # prior_year_result가 official_facts와 분리된 별도 키로만 붙어있는지 확인 (Zero-Mixing)
+        assert "prior_year_result" in gachon_josso
+        assert gachon_josso["prior_year_result"]["grade_stat_type"]
+        assert gachon_josso["prior_year_result"]["methodology_note"]
+        print("✅ test_prior_year_comparison_tier_drives_primary_sort passed!")
     finally:
         svc.close()
 
@@ -465,6 +532,8 @@ if __name__ == "__main__":
     test_batch4_remaining_15_schools_use_generalized_modes_not_hardcoding()
     test_not_applicable_schools_get_no_score_not_approximate_guess()
     test_recommend_sorts_by_raw_grade_not_schools_own_generous_curve()
+    test_prior_year_comparison_tier_drives_primary_sort()
+    test_school_record_impact_score_matches_hand_computed()
     test_non_priority_school_returns_unavailable_not_fake_number()
     test_recommend_universities_ranks_exact_before_approximate()
     print("🎉 ALL SCHOOL RECORD CALC TESTS PASSED!")

@@ -1,157 +1,342 @@
 [
-{
-  "university": "동덕여자대학교",
-  "campus": "서울",
-  "department": "회화전공",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 31,
-    "ratio": "일괄합산: 실기 80%(실질87%) + 학생부교과 20%(실질13%)",
-    "is_staged": false,
-    "csat_minimum_required": null,
-    "practical_ratio_pct": 80,
-    "school_record_ratio_pct": 20,
-    "exam_type_name": "미지정",
-    "allowed_materials": [],
-    "paper_size": null,
-    "time_limit_minutes": null,
-    "exam_date": null,
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "subject_group_weighted",
-      "subject_groups": {"국어": 33.34, "영어": 33.33},
-      "choice_groups": [{"options": ["수학", "사회", "과학"], "weight_pct": 33.33}],
-      "conversion_table": {"1": 100, "2": 98, "3": 95, "4": 91, "5": 86, "6": 80, "7": 70, "8": 60, "9": 40},
-      "formula_note": "3개 교과군 균등(1/3씩) 반영: 필수 국어·영어 + 선택(수학/사회/과학 중 성적이 좋은 1개 교과, 실제 계산해서 더 유리한 쪽 자동 선택). 각 교과군 내 1~3학년 전 과목을 이수단위 가중평균. 평균 석차등급 점수 = (국어평균+영어평균+선택교과평균)×1/3, 학생부 20% 반영 시 이 값×2(200점 만점)로 최종 반영 (2027 모집요강 p.26, 30-31, 실기우수자전형 기준).",
-      "rule_source_page": "26, 30-31"
+  {
+    "university": "동덕여자대학교",
+    "campus": "서울",
+    "department": "회화전공",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 31,
+      "ratio": "일괄합산: 실기 80%(실질87%) + 학생부교과 20%(실질13%)",
+      "is_staged": false,
+      "csat_minimum_required": null,
+      "practical_ratio_pct": 80,
+      "school_record_ratio_pct": 20,
+      "exam_type_name": "미지정",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "subject_group_weighted",
+        "subject_groups": {
+          "국어": 33.34,
+          "영어": 33.33
+        },
+        "choice_groups": [
+          {
+            "options": [
+              "수학",
+              "사회",
+              "과학"
+            ],
+            "weight_pct": 33.33
+          }
+        ],
+        "conversion_table": {
+          "1": 100,
+          "2": 98,
+          "3": 95,
+          "4": 91,
+          "5": 86,
+          "6": 80,
+          "7": 70,
+          "8": 60,
+          "9": 40
+        },
+        "formula_note": "3개 교과군 균등(1/3씩) 반영: 필수 국어·영어 + 선택(수학/사회/과학 중 성적이 좋은 1개 교과, 실제 계산해서 더 유리한 쪽 자동 선택). 각 교과군 내 1~3학년 전 과목을 이수단위 가중평균. 평균 석차등급 점수 = (국어평균+영어평균+선택교과평균)×1/3, 학생부 20% 반영 시 이 값×2(200점 만점)로 최종 반영 (2027 모집요강 p.26, 30-31, 실기우수자전형 기준).",
+        "rule_source_page": "26, 30-31"
+      },
+      "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
+      "source_page": 20
     },
-    "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
-    "source_page": 20
-  }
-},
-{
-  "university": "동덕여자대학교",
-  "campus": "서울",
-  "department": "디지털공예전공",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 24,
-    "ratio": "일괄합산: 실기 80%(실질87%) + 학생부교과 20%(실질13%)",
-    "is_staged": false,
-    "csat_minimum_required": null,
-    "practical_ratio_pct": 80,
-    "school_record_ratio_pct": 20,
-    "exam_type_name": "미지정",
-    "allowed_materials": [],
-    "paper_size": null,
-    "time_limit_minutes": null,
-    "exam_date": null,
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "subject_group_weighted",
-      "subject_groups": {"국어": 33.34, "영어": 33.33},
-      "choice_groups": [{"options": ["수학", "사회", "과학"], "weight_pct": 33.33}],
-      "conversion_table": {"1": 100, "2": 98, "3": 95, "4": 91, "5": 86, "6": 80, "7": 70, "8": 60, "9": 40},
-      "formula_note": "3개 교과군 균등(1/3씩) 반영: 필수 국어·영어 + 선택(수학/사회/과학 중 성적이 좋은 1개 교과, 실제 계산해서 더 유리한 쪽 자동 선택). 각 교과군 내 1~3학년 전 과목을 이수단위 가중평균. 평균 석차등급 점수 = (국어평균+영어평균+선택교과평균)×1/3, 학생부 20% 반영 시 이 값×2(200점 만점)로 최종 반영 (2027 모집요강 p.26, 30-31, 실기우수자전형 기준).",
-      "rule_source_page": "26, 30-31"
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2027,
+        "competition_rate": 25.2,
+        "school_record_grade_typical": null,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "competition_rate_only (학생부 성적 데이터 없음)",
+        "methodology_note": "2027학년도 모집요강 내 \"2026학년도 지원인원/경쟁률\" 참고표에서 확인 - 학생부 성적 관련 자료는 이 문서에 없음(경쟁률만 참고용으로 제공).",
+        "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
+        "source_page": 9
+      }
+    }
+  },
+  {
+    "university": "동덕여자대학교",
+    "campus": "서울",
+    "department": "디지털공예전공",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 24,
+      "ratio": "일괄합산: 실기 80%(실질87%) + 학생부교과 20%(실질13%)",
+      "is_staged": false,
+      "csat_minimum_required": null,
+      "practical_ratio_pct": 80,
+      "school_record_ratio_pct": 20,
+      "exam_type_name": "미지정",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "subject_group_weighted",
+        "subject_groups": {
+          "국어": 33.34,
+          "영어": 33.33
+        },
+        "choice_groups": [
+          {
+            "options": [
+              "수학",
+              "사회",
+              "과학"
+            ],
+            "weight_pct": 33.33
+          }
+        ],
+        "conversion_table": {
+          "1": 100,
+          "2": 98,
+          "3": 95,
+          "4": 91,
+          "5": 86,
+          "6": 80,
+          "7": 70,
+          "8": 60,
+          "9": 40
+        },
+        "formula_note": "3개 교과군 균등(1/3씩) 반영: 필수 국어·영어 + 선택(수학/사회/과학 중 성적이 좋은 1개 교과, 실제 계산해서 더 유리한 쪽 자동 선택). 각 교과군 내 1~3학년 전 과목을 이수단위 가중평균. 평균 석차등급 점수 = (국어평균+영어평균+선택교과평균)×1/3, 학생부 20% 반영 시 이 값×2(200점 만점)로 최종 반영 (2027 모집요강 p.26, 30-31, 실기우수자전형 기준).",
+        "rule_source_page": "26, 30-31"
+      },
+      "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
+      "source_page": 20
     },
-    "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
-    "source_page": 20
-  }
-},
-{
-  "university": "동덕여자대학교",
-  "campus": "서울",
-  "department": "패션디자인전공",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 42,
-    "ratio": "일괄합산: 실기 80%(실질87%) + 학생부교과 20%(실질13%)",
-    "is_staged": false,
-    "csat_minimum_required": null,
-    "practical_ratio_pct": 80,
-    "school_record_ratio_pct": 20,
-    "exam_type_name": "미지정",
-    "allowed_materials": [],
-    "paper_size": null,
-    "time_limit_minutes": null,
-    "exam_date": null,
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "subject_group_weighted",
-      "subject_groups": {"국어": 33.34, "영어": 33.33},
-      "choice_groups": [{"options": ["수학", "사회", "과학"], "weight_pct": 33.33}],
-      "conversion_table": {"1": 100, "2": 98, "3": 95, "4": 91, "5": 86, "6": 80, "7": 70, "8": 60, "9": 40},
-      "formula_note": "3개 교과군 균등(1/3씩) 반영: 필수 국어·영어 + 선택(수학/사회/과학 중 성적이 좋은 1개 교과, 실제 계산해서 더 유리한 쪽 자동 선택). 각 교과군 내 1~3학년 전 과목을 이수단위 가중평균. 평균 석차등급 점수 = (국어평균+영어평균+선택교과평균)×1/3, 학생부 20% 반영 시 이 값×2(200점 만점)로 최종 반영 (2027 모집요강 p.26, 30-31, 실기우수자전형 기준).",
-      "rule_source_page": "26, 30-31"
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2027,
+        "competition_rate": 25.2,
+        "school_record_grade_typical": null,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "competition_rate_only (학생부 성적 데이터 없음)",
+        "methodology_note": "2027학년도 모집요강 내 \"2026학년도 지원인원/경쟁률\" 참고표에서 확인 - 학생부 성적 관련 자료는 이 문서에 없음(경쟁률만 참고용으로 제공).",
+        "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
+        "source_page": 9
+      }
+    }
+  },
+  {
+    "university": "동덕여자대학교",
+    "campus": "서울",
+    "department": "패션디자인전공",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 42,
+      "ratio": "일괄합산: 실기 80%(실질87%) + 학생부교과 20%(실질13%)",
+      "is_staged": false,
+      "csat_minimum_required": null,
+      "practical_ratio_pct": 80,
+      "school_record_ratio_pct": 20,
+      "exam_type_name": "미지정",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "subject_group_weighted",
+        "subject_groups": {
+          "국어": 33.34,
+          "영어": 33.33
+        },
+        "choice_groups": [
+          {
+            "options": [
+              "수학",
+              "사회",
+              "과학"
+            ],
+            "weight_pct": 33.33
+          }
+        ],
+        "conversion_table": {
+          "1": 100,
+          "2": 98,
+          "3": 95,
+          "4": 91,
+          "5": 86,
+          "6": 80,
+          "7": 70,
+          "8": 60,
+          "9": 40
+        },
+        "formula_note": "3개 교과군 균등(1/3씩) 반영: 필수 국어·영어 + 선택(수학/사회/과학 중 성적이 좋은 1개 교과, 실제 계산해서 더 유리한 쪽 자동 선택). 각 교과군 내 1~3학년 전 과목을 이수단위 가중평균. 평균 석차등급 점수 = (국어평균+영어평균+선택교과평균)×1/3, 학생부 20% 반영 시 이 값×2(200점 만점)로 최종 반영 (2027 모집요강 p.26, 30-31, 실기우수자전형 기준).",
+        "rule_source_page": "26, 30-31"
+      },
+      "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
+      "source_page": 20
     },
-    "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
-    "source_page": 20
-  }
-},
-{
-  "university": "동덕여자대학교",
-  "campus": "서울",
-  "department": "시각&실내디자인전공",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 63,
-    "ratio": "일괄합산: 실기 80%(실질87%) + 학생부교과 20%(실질13%)",
-    "is_staged": false,
-    "csat_minimum_required": null,
-    "practical_ratio_pct": 80,
-    "school_record_ratio_pct": 20,
-    "exam_type_name": "미지정",
-    "allowed_materials": [],
-    "paper_size": null,
-    "time_limit_minutes": null,
-    "exam_date": null,
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "subject_group_weighted",
-      "subject_groups": {"국어": 33.34, "영어": 33.33},
-      "choice_groups": [{"options": ["수학", "사회", "과학"], "weight_pct": 33.33}],
-      "conversion_table": {"1": 100, "2": 98, "3": 95, "4": 91, "5": 86, "6": 80, "7": 70, "8": 60, "9": 40},
-      "formula_note": "3개 교과군 균등(1/3씩) 반영: 필수 국어·영어 + 선택(수학/사회/과학 중 성적이 좋은 1개 교과, 실제 계산해서 더 유리한 쪽 자동 선택). 각 교과군 내 1~3학년 전 과목을 이수단위 가중평균. 평균 석차등급 점수 = (국어평균+영어평균+선택교과평균)×1/3, 학생부 20% 반영 시 이 값×2(200점 만점)로 최종 반영 (2027 모집요강 p.26, 30-31, 실기우수자전형 기준).",
-      "rule_source_page": "26, 30-31"
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2027,
+        "competition_rate": 19.2,
+        "school_record_grade_typical": null,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "competition_rate_only (학생부 성적 데이터 없음)",
+        "methodology_note": "2027학년도 모집요강 내 \"2026학년도 지원인원/경쟁률\" 참고표에서 확인 - 학생부 성적 관련 자료는 이 문서에 없음(경쟁률만 참고용으로 제공).",
+        "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
+        "source_page": 9
+      }
+    }
+  },
+  {
+    "university": "동덕여자대학교",
+    "campus": "서울",
+    "department": "시각&실내디자인전공",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 63,
+      "ratio": "일괄합산: 실기 80%(실질87%) + 학생부교과 20%(실질13%)",
+      "is_staged": false,
+      "csat_minimum_required": null,
+      "practical_ratio_pct": 80,
+      "school_record_ratio_pct": 20,
+      "exam_type_name": "미지정",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "subject_group_weighted",
+        "subject_groups": {
+          "국어": 33.34,
+          "영어": 33.33
+        },
+        "choice_groups": [
+          {
+            "options": [
+              "수학",
+              "사회",
+              "과학"
+            ],
+            "weight_pct": 33.33
+          }
+        ],
+        "conversion_table": {
+          "1": 100,
+          "2": 98,
+          "3": 95,
+          "4": 91,
+          "5": 86,
+          "6": 80,
+          "7": 70,
+          "8": 60,
+          "9": 40
+        },
+        "formula_note": "3개 교과군 균등(1/3씩) 반영: 필수 국어·영어 + 선택(수학/사회/과학 중 성적이 좋은 1개 교과, 실제 계산해서 더 유리한 쪽 자동 선택). 각 교과군 내 1~3학년 전 과목을 이수단위 가중평균. 평균 석차등급 점수 = (국어평균+영어평균+선택교과평균)×1/3, 학생부 20% 반영 시 이 값×2(200점 만점)로 최종 반영 (2027 모집요강 p.26, 30-31, 실기우수자전형 기준).",
+        "rule_source_page": "26, 30-31"
+      },
+      "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
+      "source_page": 20
     },
-    "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
-    "source_page": 20
-  }
-},
-{
-  "university": "동덕여자대학교",
-  "campus": "서울",
-  "department": "미디어디자인전공",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 36,
-    "ratio": "일괄합산: 실기 80%(실질87%) + 학생부교과 20%(실질13%)",
-    "is_staged": false,
-    "csat_minimum_required": null,
-    "practical_ratio_pct": 80,
-    "school_record_ratio_pct": 20,
-    "exam_type_name": "미지정",
-    "allowed_materials": [],
-    "paper_size": null,
-    "time_limit_minutes": null,
-    "exam_date": null,
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "subject_group_weighted",
-      "subject_groups": {"국어": 33.34, "영어": 33.33},
-      "choice_groups": [{"options": ["수학", "사회", "과학"], "weight_pct": 33.33}],
-      "conversion_table": {"1": 100, "2": 98, "3": 95, "4": 91, "5": 86, "6": 80, "7": 70, "8": 60, "9": 40},
-      "formula_note": "3개 교과군 균등(1/3씩) 반영: 필수 국어·영어 + 선택(수학/사회/과학 중 성적이 좋은 1개 교과, 실제 계산해서 더 유리한 쪽 자동 선택). 각 교과군 내 1~3학년 전 과목을 이수단위 가중평균. 평균 석차등급 점수 = (국어평균+영어평균+선택교과평균)×1/3, 학생부 20% 반영 시 이 값×2(200점 만점)로 최종 반영 (2027 모집요강 p.26, 30-31, 실기우수자전형 기준).",
-      "rule_source_page": "26, 30-31"
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2027,
+        "competition_rate": 24.5,
+        "school_record_grade_typical": null,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "competition_rate_only (학생부 성적 데이터 없음)",
+        "methodology_note": "2027학년도 모집요강 내 \"2026학년도 지원인원/경쟁률\" 참고표에서 확인 - 학생부 성적 관련 자료는 이 문서에 없음(경쟁률만 참고용으로 제공).",
+        "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
+        "source_page": 9
+      }
+    }
+  },
+  {
+    "university": "동덕여자대학교",
+    "campus": "서울",
+    "department": "미디어디자인전공",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 36,
+      "ratio": "일괄합산: 실기 80%(실질87%) + 학생부교과 20%(실질13%)",
+      "is_staged": false,
+      "csat_minimum_required": null,
+      "practical_ratio_pct": 80,
+      "school_record_ratio_pct": 20,
+      "exam_type_name": "미지정",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "subject_group_weighted",
+        "subject_groups": {
+          "국어": 33.34,
+          "영어": 33.33
+        },
+        "choice_groups": [
+          {
+            "options": [
+              "수학",
+              "사회",
+              "과학"
+            ],
+            "weight_pct": 33.33
+          }
+        ],
+        "conversion_table": {
+          "1": 100,
+          "2": 98,
+          "3": 95,
+          "4": 91,
+          "5": 86,
+          "6": 80,
+          "7": 70,
+          "8": 60,
+          "9": 40
+        },
+        "formula_note": "3개 교과군 균등(1/3씩) 반영: 필수 국어·영어 + 선택(수학/사회/과학 중 성적이 좋은 1개 교과, 실제 계산해서 더 유리한 쪽 자동 선택). 각 교과군 내 1~3학년 전 과목을 이수단위 가중평균. 평균 석차등급 점수 = (국어평균+영어평균+선택교과평균)×1/3, 학생부 20% 반영 시 이 값×2(200점 만점)로 최종 반영 (2027 모집요강 p.26, 30-31, 실기우수자전형 기준).",
+        "rule_source_page": "26, 30-31"
+      },
+      "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
+      "source_page": 20
     },
-    "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
-    "source_page": 20
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2027,
+        "competition_rate": 22.8,
+        "school_record_grade_typical": null,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "competition_rate_only (학생부 성적 데이터 없음)",
+        "methodology_note": "2027학년도 모집요강 내 \"2026학년도 지원인원/경쟁률\" 참고표에서 확인 - 학생부 성적 관련 자료는 이 문서에 없음(경쟁률만 참고용으로 제공).",
+        "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
+        "source_page": 9
+      }
+    }
   }
-}
 ]

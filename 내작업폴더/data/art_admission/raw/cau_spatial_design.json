@@ -23,10 +23,24 @@
     "time_limit_minutes": 120,
     "school_record_rule": {
       "mode": "simple_weighted_average",
-      "subjects": ["국어", "영어", "사회"],
+      "subjects": [
+        "국어",
+        "영어",
+        "사회"
+      ],
       "career_elective_included": false,
       "credit_weighted": true,
-      "conversion_table": {"1": 10.00, "2": 9.60, "3": 9.20, "4": 8.80, "5": 8.20, "6": 7.60, "7": 7.00, "8": 6.00, "9": 3.00},
+      "conversion_table": {
+        "1": 10.0,
+        "2": 9.6,
+        "3": 9.2,
+        "4": 8.8,
+        "5": 8.2,
+        "6": 7.6,
+        "7": 7.0,
+        "8": 6.0,
+        "9": 3.0
+      },
       "formula_note": "교과 환산점수 평균 = Σ(반영과목별 석차등급 환산점수×이수단위) / Σ(반영과목별 이수단위) (2027 모집요강 p.87-88 [표3] 실기형 환산점수표 기준). 석차등급 없는 과목/진로선택과목은 반영하지 않음. 산출된 평균에 모집단위·단계별 교과 반영비율(%)을 곱해 사용 - 공간연출전공은 1단계 교과15%. 비교과(출결) 5%는 미인정 결석일수 기준 별도 산출(p.89 [표5], 무결석 시 만점 10.0)이라 이 계산기에서는 무결석으로 가정함.",
       "rule_source_page": "87-89"
     },
@@ -46,8 +60,19 @@
     }
   },
   "estimates": {
-    "cutoff_grade_estimate": 3.7,
-    "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/중앙대학교/중앙대학교_2025학년도_수시입시결과.pdf",
-    "interview_summaries": []
+    "cutoff_grade_estimate": 3.3,
+    "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/중앙대학교/중앙대학교_2026학년도_수시입시결과.pdf",
+    "interview_summaries": [],
+    "prior_year_result": {
+      "admission_year": 2026,
+      "competition_rate": 42.9,
+      "school_record_grade_typical": 3.3,
+      "school_record_grade_floor": null,
+      "grade_stat_type": "final_registrant_avg_only (typical=합격자 교과등급 평균, 범위 데이터 없음)",
+      "fill_rate_pct": 28.6,
+      "methodology_note": "합격자(등록자 명시 없음) 교과등급 평균 - 원문은 실기전형 요약표에서 경쟁률/충원율/교과등급평균/실기점수평균만 제공, 50%/70%cut 등 세부 범위는 없음.",
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/중앙대학교/중앙대학교_2026학년도_수시입시결과.pdf",
+      "source_page": 1
+    }
   }
 }

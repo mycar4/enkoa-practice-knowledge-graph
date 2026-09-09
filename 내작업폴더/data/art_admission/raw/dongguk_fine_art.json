@@ -60,9 +60,20 @@
       "school_record_ratio_pct": 30
     },
     "estimates": {
-      "cutoff_grade_estimate": null,
-      "cutoff_source_url": null,
-      "interview_summaries": []
+      "cutoff_grade_estimate": 4.6,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/동국대학교/동국대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 11.8,
+        "school_record_grade_typical": 3.88,
+        "school_record_grade_floor": 4.6,
+        "grade_stat_type": "final_registrant_avg_min (typical=평균, floor=최저)",
+        "fill_rate_pct": 0,
+        "methodology_note": "최종등록자 기준. 학생부: 반영교과(국어/수학/사회/과학/영어/한국사) 상위 10과목 이수단위 가중평균 - 본교 school_record_rule과 동일 방법론이라 직접 비교 가능.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/동국대학교/동국대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 14
+      }
     }
   },
   {
@@ -127,9 +138,20 @@
       "school_record_ratio_pct": 30
     },
     "estimates": {
-      "cutoff_grade_estimate": null,
-      "cutoff_source_url": null,
-      "interview_summaries": []
+      "cutoff_grade_estimate": 5.7,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/동국대학교/동국대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 13.67,
+        "school_record_grade_typical": 3.85,
+        "school_record_grade_floor": 5.7,
+        "grade_stat_type": "final_registrant_avg_min (typical=평균, floor=최저)",
+        "fill_rate_pct": 33,
+        "methodology_note": "최종등록자 기준. 학생부: 반영교과(국어/수학/사회/과학/영어/한국사) 상위 10과목 이수단위 가중평균 - 본교 school_record_rule과 동일 방법론이라 직접 비교 가능.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/동국대학교/동국대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 14
+      }
     }
   },
   {
@@ -193,9 +215,20 @@
       "school_record_ratio_pct": 30
     },
     "estimates": {
-      "cutoff_grade_estimate": null,
-      "cutoff_source_url": null,
-      "interview_summaries": []
+      "cutoff_grade_estimate": 5.7,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/동국대학교/동국대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 41.2,
+        "school_record_grade_typical": 3.97,
+        "school_record_grade_floor": 5.7,
+        "grade_stat_type": "final_registrant_avg_min (typical=평균, floor=최저)",
+        "fill_rate_pct": 27,
+        "methodology_note": "최종등록자 기준. 학생부: 반영교과(국어/수학/사회/과학/영어/한국사) 상위 10과목 이수단위 가중평균 - 본교 school_record_rule과 동일 방법론이라 직접 비교 가능.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/동국대학교/동국대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 14
+      }
     }
   }
 ]

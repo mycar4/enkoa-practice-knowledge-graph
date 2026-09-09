@@ -1,82 +1,181 @@
 [
-{
-  "university": "숙명여자대학교",
-  "campus": "서울",
-  "department": "회화과(한국화)",
-  "track_name": "예능창의인재전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 13,
-    "ratio": "1단계(20배수): 학생부(교과) 100% -> 2단계: 실기 100%",
-    "is_staged": true,
-    "csat_minimum_required": false,
-    "exam_type_name": "택1: 인체(사진) 수묵담채<코스츔>(5시간, 화선지 2/3지) 또는 정물 수묵담채화(5시간, 화선지 반절)",
-    "allowed_materials": ["연필", "지우개", "붓", "벼루", "먹", "문진", "팔레트", "물통", "동양화 화판", "한국화 채색물감"],
-    "paper_size": "화선지 2/3지 또는 화선지 반절",
-    "time_limit_minutes": 300,
-    "exam_date": "2026-10-18",
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "common_and_career_split_scaled",
-      "subjects": ["국어", "영어", "사회"],
-      "subject_aliases": {"한국사": "사회"},
-      "career_elective_included": true,
-      "credit_weighted": true,
-      "common_weight": 0.8,
-      "career_weight": 0.2,
-      "common_weight_if_no_career": 1.0,
-      "use_credit_scale": false,
-      "conversion_table": {"1": 1000, "2": 900, "3": 800, "4": 700, "5": 600, "6": 500, "7": 400, "8": 300, "9": 200},
-      "career_elective_conversion_table": {"A": 1000, "B": 800, "C": 600},
-      "formula_note": "반영교과: 국어, 영어, 사회(한국사 포함) - 예체능계 기준. 환산석차등급 = (공통·일반선택 이수단위가중평균×0.8) + (진로선택 성취도 등급환산 이수단위가중평균×0.2, A=1등급/B=3등급/C=5등급 상당). 진로선택과목이 없으면 공통·일반선택만 100% 반영. 학생부(교과) 성적 = (11-환산석차등급)×100, 1,000점 만점 (2027 모집요강 p.44, 48, 예능창의인재전형 미술대학 1단계 기준). 1단계(20배수)에서 학생부 100%로 선발한 뒤, 2단계 최종합격은 실기 100%로만 결정되므로 이 환산점수는 1단계 통과 여부에만 영향을 준다.",
-      "rule_source_page": "44, 48, 54"
+  {
+    "university": "숙명여자대학교",
+    "campus": "서울",
+    "department": "회화과(한국화)",
+    "track_name": "예능창의인재전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 13,
+      "ratio": "1단계(20배수): 학생부(교과) 100% -> 2단계: 실기 100%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "exam_type_name": "택1: 인체(사진) 수묵담채<코스츔>(5시간, 화선지 2/3지) 또는 정물 수묵담채화(5시간, 화선지 반절)",
+      "allowed_materials": [
+        "연필",
+        "지우개",
+        "붓",
+        "벼루",
+        "먹",
+        "문진",
+        "팔레트",
+        "물통",
+        "동양화 화판",
+        "한국화 채색물감"
+      ],
+      "paper_size": "화선지 2/3지 또는 화선지 반절",
+      "time_limit_minutes": 300,
+      "exam_date": "2026-10-18",
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "common_and_career_split_scaled",
+        "subjects": [
+          "국어",
+          "영어",
+          "사회"
+        ],
+        "subject_aliases": {
+          "한국사": "사회"
+        },
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "common_weight": 0.8,
+        "career_weight": 0.2,
+        "common_weight_if_no_career": 1.0,
+        "use_credit_scale": false,
+        "conversion_table": {
+          "1": 1000,
+          "2": 900,
+          "3": 800,
+          "4": 700,
+          "5": 600,
+          "6": 500,
+          "7": 400,
+          "8": 300,
+          "9": 200
+        },
+        "career_elective_conversion_table": {
+          "A": 1000,
+          "B": 800,
+          "C": 600
+        },
+        "formula_note": "반영교과: 국어, 영어, 사회(한국사 포함) - 예체능계 기준. 환산석차등급 = (공통·일반선택 이수단위가중평균×0.8) + (진로선택 성취도 등급환산 이수단위가중평균×0.2, A=1등급/B=3등급/C=5등급 상당). 진로선택과목이 없으면 공통·일반선택만 100% 반영. 학생부(교과) 성적 = (11-환산석차등급)×100, 1,000점 만점 (2027 모집요강 p.44, 48, 예능창의인재전형 미술대학 1단계 기준). 1단계(20배수)에서 학생부 100%로 선발한 뒤, 2단계 최종합격은 실기 100%로만 결정되므로 이 환산점수는 1단계 통과 여부에만 영향을 준다.",
+        "rule_source_page": "44, 48, 54"
+      },
+      "source_url": "https://admission.sookmyung.ac.kr/upload/BBS0021/20260907095555QDLVUJ.PDF",
+      "source_page": 36,
+      "stages": [
+        {
+          "description": "1단계 학생부(교과)",
+          "ratio_desc": "학생부(교과) 100%",
+          "multiplier": 20
+        },
+        {
+          "description": "2단계 실기",
+          "ratio_desc": "실기 100%",
+          "multiplier": null
+        }
+      ]
     },
-    "source_url": "https://admission.sookmyung.ac.kr/upload/BBS0021/20260907095555QDLVUJ.PDF",
-    "source_page": 36,
-    "stages": [
-      {"description": "1단계 학생부(교과)", "ratio_desc": "학생부(교과) 100%", "multiplier": 20},
-      {"description": "2단계 실기", "ratio_desc": "실기 100%", "multiplier": null}
-    ]
-  }
-},
-{
-  "university": "숙명여자대학교",
-  "campus": "서울",
-  "department": "회화과(서양화)",
-  "track_name": "예능창의인재전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 14,
-    "ratio": "1단계(20배수): 학생부(교과) 100% -> 2단계: 실기 100%",
-    "is_staged": true,
-    "csat_minimum_required": false,
-    "exam_type_name": "인체(사진) 수채화<코스츔> (5시간, 켄트지 2절)",
-    "allowed_materials": ["수채화도구 일체(물감, 팔레트, 물통, 붓 등)"],
-    "paper_size": "켄트지 2절",
-    "time_limit_minutes": 300,
-    "exam_date": "2026-10-18",
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "common_and_career_split_scaled",
-      "subjects": ["국어", "영어", "사회"],
-      "subject_aliases": {"한국사": "사회"},
-      "career_elective_included": true,
-      "credit_weighted": true,
-      "common_weight": 0.8,
-      "career_weight": 0.2,
-      "common_weight_if_no_career": 1.0,
-      "use_credit_scale": false,
-      "conversion_table": {"1": 1000, "2": 900, "3": 800, "4": 700, "5": 600, "6": 500, "7": 400, "8": 300, "9": 200},
-      "career_elective_conversion_table": {"A": 1000, "B": 800, "C": 600},
-      "formula_note": "반영교과: 국어, 영어, 사회(한국사 포함) - 예체능계 기준. 환산석차등급 = (공통·일반선택 이수단위가중평균×0.8) + (진로선택 성취도 등급환산 이수단위가중평균×0.2, A=1등급/B=3등급/C=5등급 상당). 진로선택과목이 없으면 공통·일반선택만 100% 반영. 학생부(교과) 성적 = (11-환산석차등급)×100, 1,000점 만점 (2027 모집요강 p.44, 48, 예능창의인재전형 미술대학 1단계 기준). 1단계(20배수)에서 학생부 100%로 선발한 뒤, 2단계 최종합격은 실기 100%로만 결정되므로 이 환산점수는 1단계 통과 여부에만 영향을 준다.",
-      "rule_source_page": "44, 48, 54"
+    "estimates": {
+      "cutoff_grade_estimate": 4.9,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/숙명여자대학교/숙명여자대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 23.14,
+        "school_record_grade_typical": 4.9,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "stage1_pass_avg_only (1단계 합격자 교과등급 평균 - 최종등록자 아님)",
+        "methodology_note": "주의: 이 수치는 \"1단계 합격자\" 평균이라 최종등록자(실기 반영 후 확정)와는 다른 모집단이다. 예능창의인재전형은 1단계 학생부 100%로 선발 후 2단계 실기 100%로 최종 확정되므로, 1단계 통과선 참고로만 활용.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/숙명여자대학교/숙명여자대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 5
+      }
+    }
+  },
+  {
+    "university": "숙명여자대학교",
+    "campus": "서울",
+    "department": "회화과(서양화)",
+    "track_name": "예능창의인재전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 14,
+      "ratio": "1단계(20배수): 학생부(교과) 100% -> 2단계: 실기 100%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "exam_type_name": "인체(사진) 수채화<코스츔> (5시간, 켄트지 2절)",
+      "allowed_materials": [
+        "수채화도구 일체(물감, 팔레트, 물통, 붓 등)"
+      ],
+      "paper_size": "켄트지 2절",
+      "time_limit_minutes": 300,
+      "exam_date": "2026-10-18",
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "common_and_career_split_scaled",
+        "subjects": [
+          "국어",
+          "영어",
+          "사회"
+        ],
+        "subject_aliases": {
+          "한국사": "사회"
+        },
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "common_weight": 0.8,
+        "career_weight": 0.2,
+        "common_weight_if_no_career": 1.0,
+        "use_credit_scale": false,
+        "conversion_table": {
+          "1": 1000,
+          "2": 900,
+          "3": 800,
+          "4": 700,
+          "5": 600,
+          "6": 500,
+          "7": 400,
+          "8": 300,
+          "9": 200
+        },
+        "career_elective_conversion_table": {
+          "A": 1000,
+          "B": 800,
+          "C": 600
+        },
+        "formula_note": "반영교과: 국어, 영어, 사회(한국사 포함) - 예체능계 기준. 환산석차등급 = (공통·일반선택 이수단위가중평균×0.8) + (진로선택 성취도 등급환산 이수단위가중평균×0.2, A=1등급/B=3등급/C=5등급 상당). 진로선택과목이 없으면 공통·일반선택만 100% 반영. 학생부(교과) 성적 = (11-환산석차등급)×100, 1,000점 만점 (2027 모집요강 p.44, 48, 예능창의인재전형 미술대학 1단계 기준). 1단계(20배수)에서 학생부 100%로 선발한 뒤, 2단계 최종합격은 실기 100%로만 결정되므로 이 환산점수는 1단계 통과 여부에만 영향을 준다.",
+        "rule_source_page": "44, 48, 54"
+      },
+      "source_url": "https://admission.sookmyung.ac.kr/upload/BBS0021/20260907095555QDLVUJ.PDF",
+      "source_page": 36,
+      "stages": [
+        {
+          "description": "1단계 학생부(교과)",
+          "ratio_desc": "학생부(교과) 100%",
+          "multiplier": 20
+        },
+        {
+          "description": "2단계 실기",
+          "ratio_desc": "실기 100%",
+          "multiplier": null
+        }
+      ]
     },
-    "source_url": "https://admission.sookmyung.ac.kr/upload/BBS0021/20260907095555QDLVUJ.PDF",
-    "source_page": 36,
-    "stages": [
-      {"description": "1단계 학생부(교과)", "ratio_desc": "학생부(교과) 100%", "multiplier": 20},
-      {"description": "2단계 실기", "ratio_desc": "실기 100%", "multiplier": null}
-    ]
+    "estimates": {
+      "cutoff_grade_estimate": 3.07,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/숙명여자대학교/숙명여자대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 37.29,
+        "school_record_grade_typical": 3.07,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "stage1_pass_avg_only (1단계 합격자 교과등급 평균 - 최종등록자 아님)",
+        "methodology_note": "주의: 이 수치는 \"1단계 합격자\" 평균이라 최종등록자(실기 반영 후 확정)와는 다른 모집단이다. 예능창의인재전형은 1단계 학생부 100%로 선발 후 2단계 실기 100%로 최종 확정되므로, 1단계 통과선 참고로만 활용.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/숙명여자대학교/숙명여자대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 5
+      }
+    }
   }
-}
 ]

@@ -180,14 +180,33 @@ def load_one_record_tx(tx, rec: dict):
              source=topic.get("source"), source_url=topic.get("source_url"))
 
     # 추정치/후기 - official_facts와 완전히 분리된 관계 타입으로만 연결 (Zero-Mixing)
-    if est.get("cutoff_grade_estimate") is not None:
+    pyr = est.get("prior_year_result") or {}
+    if est.get("cutoff_grade_estimate") is not None or pyr:
         tx.run("""
             MATCH (t:Admission_Track {name: $track_name, university: $university, department: $department})
             MERGE (c:Admission_CutoffEstimate {track_name: $track_name, university: $university, department: $department})
             MERGE (t)-[:ESTIMATED_CUTOFF]->(c)
-            SET c.cutoff_grade_estimate = $cutoff, c.source_url = $source_url, c.data_tier = 'ESTIMATE_NOT_OFFICIAL'
+            SET c.cutoff_grade_estimate = $cutoff, c.source_url = $source_url, c.data_tier = 'ESTIMATE_NOT_OFFICIAL',
+                c.prior_year_admission_year = $pyr_year,
+                c.prior_year_competition_rate = $pyr_competition_rate,
+                c.prior_year_grade_typical = $pyr_grade_typical,
+                c.prior_year_grade_floor = $pyr_grade_floor,
+                c.prior_year_grade_stat_type = $pyr_grade_stat_type,
+                c.prior_year_fill_rate_pct = $pyr_fill_rate_pct,
+                c.prior_year_methodology_note = $pyr_methodology_note,
+                c.prior_year_source_url = $pyr_source_url,
+                c.prior_year_source_page = $pyr_source_page
         """, university=university, department=department, track_name=track_name,
-             cutoff=est.get("cutoff_grade_estimate"), source_url=est.get("cutoff_source_url"))
+             cutoff=est.get("cutoff_grade_estimate"), source_url=est.get("cutoff_source_url"),
+             pyr_year=pyr.get("admission_year"),
+             pyr_competition_rate=pyr.get("competition_rate"),
+             pyr_grade_typical=pyr.get("school_record_grade_typical"),
+             pyr_grade_floor=pyr.get("school_record_grade_floor"),
+             pyr_grade_stat_type=pyr.get("grade_stat_type"),
+             pyr_fill_rate_pct=pyr.get("fill_rate_pct"),
+             pyr_methodology_note=pyr.get("methodology_note"),
+             pyr_source_url=pyr.get("source_url"),
+             pyr_source_page=pyr.get("source_page"))
 
     for interview in est.get("interview_summaries", []) or []:
         tx.run("""

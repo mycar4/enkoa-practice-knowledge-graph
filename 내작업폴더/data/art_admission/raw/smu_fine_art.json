@@ -55,8 +55,18 @@
     "school_record_ratio_pct": 30
   },
   "estimates": {
-    "cutoff_grade_estimate": null,
-    "cutoff_source_url": null,
-    "interview_summaries": []
+    "cutoff_grade_estimate": 5.97,
+    "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/상명대학교/상명대학교_2026학년도_수시입시결과.pdf",
+    "interview_summaries": [],
+    "prior_year_result": {
+      "admission_year": 2026,
+      "competition_rate": null,
+      "school_record_grade_typical": 4.45,
+      "school_record_grade_floor": 5.97,
+      "grade_stat_type": "final_registrant_max_avg_min (typical=평균, floor=최저)",
+      "methodology_note": "최종등록자 기준(실기/실적 실기전형). 원문에 경쟁률은 별도 기재 없음(최초합격자 평균3.81/최저4.91, 최종등록자 평균4.45/최저5.97 - 최종등록자 기준 채택).",
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/상명대학교/상명대학교_2026학년도_수시입시결과.pdf",
+      "source_page": 5
+    }
   }
 }

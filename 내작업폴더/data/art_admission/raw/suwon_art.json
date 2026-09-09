@@ -1,126 +1,262 @@
 [
-{
-  "university": "수원대학교",
-  "campus": "수원",
-  "department": "조형예술학부",
-  "track_name": "실기우수자(미술)전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 60,
-    "ratio": "일괄합산(실질반영비율): 학생부 11.1%(명목20%) + 실기 88.9%(명목80%)",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 80,
-    "school_record_ratio_pct": 20,
-    "exam_type_name": "미지정",
-    "allowed_materials": [],
-    "paper_size": null,
-    "time_limit_minutes": null,
-    "exam_date": null,
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "subject_group_weighted",
-      "top_k_groups": {"options": ["국어", "수학", "영어", "사회"], "k": 2, "weight_pct_each": 50},
-      "top_n_per_group": 5,
-      "conversion_table": {"1": 100, "2": 98, "3": 96, "4": 94, "5": 92, "6": 88, "7": 78, "8": 68, "9": 50},
-      "formula_note": "예체능계열: 국어/수학/영어/사회(또는 과학) 4개 교과 중 교과별 상위 5과목 이수단위가중평균을 낸 뒤, 점수가 높은 2개 교과만 50%씩 반영(나머지 2개 교과는 미반영). 진로선택과목은 반영하지 않음, 학년별 가중치 없음, 3학년 1학기까지 반영 ('미술'실기우수자전형 적용표 기준, 2027 모집요강 p.20-21).",
-      "rule_source_page": "20-21"
+  {
+    "university": "수원대학교",
+    "campus": "수원",
+    "department": "조형예술학부",
+    "track_name": "실기우수자(미술)전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 60,
+      "ratio": "일괄합산(실질반영비율): 학생부 11.1%(명목20%) + 실기 88.9%(명목80%)",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 80,
+      "school_record_ratio_pct": 20,
+      "exam_type_name": "미지정",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "subject_group_weighted",
+        "top_k_groups": {
+          "options": [
+            "국어",
+            "수학",
+            "영어",
+            "사회"
+          ],
+          "k": 2,
+          "weight_pct_each": 50
+        },
+        "top_n_per_group": 5,
+        "conversion_table": {
+          "1": 100,
+          "2": 98,
+          "3": 96,
+          "4": 94,
+          "5": 92,
+          "6": 88,
+          "7": 78,
+          "8": 68,
+          "9": 50
+        },
+        "formula_note": "예체능계열: 국어/수학/영어/사회(또는 과학) 4개 교과 중 교과별 상위 5과목 이수단위가중평균을 낸 뒤, 점수가 높은 2개 교과만 50%씩 반영(나머지 2개 교과는 미반영). 진로선택과목은 반영하지 않음, 학년별 가중치 없음, 3학년 1학기까지 반영 ('미술'실기우수자전형 적용표 기준, 2027 모집요강 p.20-21).",
+        "rule_source_page": "20-21"
+      },
+      "source_url": "https://ipsi.suwon.ac.kr/upload_data/guide/1787878393_6045.pdf",
+      "source_page": 45
     },
-    "source_url": "https://ipsi.suwon.ac.kr/upload_data/guide/1787878393_6045.pdf",
-    "source_page": 45
-  }
-},
-{
-  "university": "수원대학교",
-  "campus": "수원",
-  "department": "디자인학부-커뮤니케이션디자인",
-  "track_name": "실기우수자(미술)전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 33,
-    "ratio": "일괄합산(실질반영비율): 학생부 11.1%(명목20%) + 실기 88.9%(명목80%)",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 80,
-    "school_record_ratio_pct": 20,
-    "exam_type_name": "미지정",
-    "allowed_materials": [],
-    "paper_size": null,
-    "time_limit_minutes": null,
-    "exam_date": null,
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "subject_group_weighted",
-      "top_k_groups": {"options": ["국어", "수학", "영어", "사회"], "k": 2, "weight_pct_each": 50},
-      "top_n_per_group": 5,
-      "conversion_table": {"1": 100, "2": 98, "3": 96, "4": 94, "5": 92, "6": 88, "7": 78, "8": 68, "9": 50},
-      "formula_note": "예체능계열: 국어/수학/영어/사회(또는 과학) 4개 교과 중 교과별 상위 5과목 이수단위가중평균을 낸 뒤, 점수가 높은 2개 교과만 50%씩 반영(나머지 2개 교과는 미반영). 진로선택과목은 반영하지 않음, 학년별 가중치 없음, 3학년 1학기까지 반영 ('미술'실기우수자전형 적용표 기준, 2027 모집요강 p.20-21).",
-      "rule_source_page": "20-21"
+    "estimates": {
+      "cutoff_grade_estimate": 5.9,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/수원대학교/수원대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 9.07,
+        "school_record_grade_typical": 5.9,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "avg_only (typical=학생부성적 평균, 범위 데이터 없음)",
+        "methodology_note": "원문에 최종등록자/합격자 구분 명시 없이 \"학생부성적(평균)\" 단일값만 제공 - 정확한 산출 방법론(원등급 vs 자체 환산등급) 불명확, 참고용으로만 사용.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/수원대학교/수원대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 7
+      }
+    }
+  },
+  {
+    "university": "수원대학교",
+    "campus": "수원",
+    "department": "디자인학부-커뮤니케이션디자인",
+    "track_name": "실기우수자(미술)전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 33,
+      "ratio": "일괄합산(실질반영비율): 학생부 11.1%(명목20%) + 실기 88.9%(명목80%)",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 80,
+      "school_record_ratio_pct": 20,
+      "exam_type_name": "미지정",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "subject_group_weighted",
+        "top_k_groups": {
+          "options": [
+            "국어",
+            "수학",
+            "영어",
+            "사회"
+          ],
+          "k": 2,
+          "weight_pct_each": 50
+        },
+        "top_n_per_group": 5,
+        "conversion_table": {
+          "1": 100,
+          "2": 98,
+          "3": 96,
+          "4": 94,
+          "5": 92,
+          "6": 88,
+          "7": 78,
+          "8": 68,
+          "9": 50
+        },
+        "formula_note": "예체능계열: 국어/수학/영어/사회(또는 과학) 4개 교과 중 교과별 상위 5과목 이수단위가중평균을 낸 뒤, 점수가 높은 2개 교과만 50%씩 반영(나머지 2개 교과는 미반영). 진로선택과목은 반영하지 않음, 학년별 가중치 없음, 3학년 1학기까지 반영 ('미술'실기우수자전형 적용표 기준, 2027 모집요강 p.20-21).",
+        "rule_source_page": "20-21"
+      },
+      "source_url": "https://ipsi.suwon.ac.kr/upload_data/guide/1787878393_6045.pdf",
+      "source_page": 45
     },
-    "source_url": "https://ipsi.suwon.ac.kr/upload_data/guide/1787878393_6045.pdf",
-    "source_page": 45
-  }
-},
-{
-  "university": "수원대학교",
-  "campus": "수원",
-  "department": "디자인학부-패션디자인",
-  "track_name": "실기우수자(미술)전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 20,
-    "ratio": "일괄합산(실질반영비율): 학생부 11.1%(명목20%) + 실기 88.9%(명목80%)",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 80,
-    "school_record_ratio_pct": 20,
-    "exam_type_name": "미지정",
-    "allowed_materials": [],
-    "paper_size": null,
-    "time_limit_minutes": null,
-    "exam_date": null,
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "subject_group_weighted",
-      "top_k_groups": {"options": ["국어", "수학", "영어", "사회"], "k": 2, "weight_pct_each": 50},
-      "top_n_per_group": 5,
-      "conversion_table": {"1": 100, "2": 98, "3": 96, "4": 94, "5": 92, "6": 88, "7": 78, "8": 68, "9": 50},
-      "formula_note": "예체능계열: 국어/수학/영어/사회(또는 과학) 4개 교과 중 교과별 상위 5과목 이수단위가중평균을 낸 뒤, 점수가 높은 2개 교과만 50%씩 반영(나머지 2개 교과는 미반영). 진로선택과목은 반영하지 않음, 학년별 가중치 없음, 3학년 1학기까지 반영 ('미술'실기우수자전형 적용표 기준, 2027 모집요강 p.20-21).",
-      "rule_source_page": "20-21"
+    "estimates": {
+      "cutoff_grade_estimate": 6.0,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/수원대학교/수원대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 33.15,
+        "school_record_grade_typical": 6.0,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "avg_only (typical=학생부성적 평균, 범위 데이터 없음)",
+        "methodology_note": "원문에 최종등록자/합격자 구분 명시 없이 \"학생부성적(평균)\" 단일값만 제공 - 정확한 산출 방법론(원등급 vs 자체 환산등급) 불명확, 참고용으로만 사용.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/수원대학교/수원대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 7
+      }
+    }
+  },
+  {
+    "university": "수원대학교",
+    "campus": "수원",
+    "department": "디자인학부-패션디자인",
+    "track_name": "실기우수자(미술)전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 20,
+      "ratio": "일괄합산(실질반영비율): 학생부 11.1%(명목20%) + 실기 88.9%(명목80%)",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 80,
+      "school_record_ratio_pct": 20,
+      "exam_type_name": "미지정",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "subject_group_weighted",
+        "top_k_groups": {
+          "options": [
+            "국어",
+            "수학",
+            "영어",
+            "사회"
+          ],
+          "k": 2,
+          "weight_pct_each": 50
+        },
+        "top_n_per_group": 5,
+        "conversion_table": {
+          "1": 100,
+          "2": 98,
+          "3": 96,
+          "4": 94,
+          "5": 92,
+          "6": 88,
+          "7": 78,
+          "8": 68,
+          "9": 50
+        },
+        "formula_note": "예체능계열: 국어/수학/영어/사회(또는 과학) 4개 교과 중 교과별 상위 5과목 이수단위가중평균을 낸 뒤, 점수가 높은 2개 교과만 50%씩 반영(나머지 2개 교과는 미반영). 진로선택과목은 반영하지 않음, 학년별 가중치 없음, 3학년 1학기까지 반영 ('미술'실기우수자전형 적용표 기준, 2027 모집요강 p.20-21).",
+        "rule_source_page": "20-21"
+      },
+      "source_url": "https://ipsi.suwon.ac.kr/upload_data/guide/1787878393_6045.pdf",
+      "source_page": 45
     },
-    "source_url": "https://ipsi.suwon.ac.kr/upload_data/guide/1787878393_6045.pdf",
-    "source_page": 45
-  }
-},
-{
-  "university": "수원대학교",
-  "campus": "수원",
-  "department": "디자인학부-공예디자인",
-  "track_name": "실기우수자(미술)전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 17,
-    "ratio": "일괄합산(실질반영비율): 학생부 11.1%(명목20%) + 실기 88.9%(명목80%)",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 80,
-    "school_record_ratio_pct": 20,
-    "exam_type_name": "미지정",
-    "allowed_materials": [],
-    "paper_size": null,
-    "time_limit_minutes": null,
-    "exam_date": null,
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "subject_group_weighted",
-      "top_k_groups": {"options": ["국어", "수학", "영어", "사회"], "k": 2, "weight_pct_each": 50},
-      "top_n_per_group": 5,
-      "conversion_table": {"1": 100, "2": 98, "3": 96, "4": 94, "5": 92, "6": 88, "7": 78, "8": 68, "9": 50},
-      "formula_note": "예체능계열: 국어/수학/영어/사회(또는 과학) 4개 교과 중 교과별 상위 5과목 이수단위가중평균을 낸 뒤, 점수가 높은 2개 교과만 50%씩 반영(나머지 2개 교과는 미반영). 진로선택과목은 반영하지 않음, 학년별 가중치 없음, 3학년 1학기까지 반영 ('미술'실기우수자전형 적용표 기준, 2027 모집요강 p.20-21).",
-      "rule_source_page": "20-21"
+    "estimates": {
+      "cutoff_grade_estimate": 5.9,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/수원대학교/수원대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 23.7,
+        "school_record_grade_typical": 5.9,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "avg_only (typical=학생부성적 평균, 범위 데이터 없음)",
+        "methodology_note": "원문에 최종등록자/합격자 구분 명시 없이 \"학생부성적(평균)\" 단일값만 제공 - 정확한 산출 방법론(원등급 vs 자체 환산등급) 불명확, 참고용으로만 사용.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/수원대학교/수원대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 7
+      }
+    }
+  },
+  {
+    "university": "수원대학교",
+    "campus": "수원",
+    "department": "디자인학부-공예디자인",
+    "track_name": "실기우수자(미술)전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 17,
+      "ratio": "일괄합산(실질반영비율): 학생부 11.1%(명목20%) + 실기 88.9%(명목80%)",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 80,
+      "school_record_ratio_pct": 20,
+      "exam_type_name": "미지정",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "subject_group_weighted",
+        "top_k_groups": {
+          "options": [
+            "국어",
+            "수학",
+            "영어",
+            "사회"
+          ],
+          "k": 2,
+          "weight_pct_each": 50
+        },
+        "top_n_per_group": 5,
+        "conversion_table": {
+          "1": 100,
+          "2": 98,
+          "3": 96,
+          "4": 94,
+          "5": 92,
+          "6": 88,
+          "7": 78,
+          "8": 68,
+          "9": 50
+        },
+        "formula_note": "예체능계열: 국어/수학/영어/사회(또는 과학) 4개 교과 중 교과별 상위 5과목 이수단위가중평균을 낸 뒤, 점수가 높은 2개 교과만 50%씩 반영(나머지 2개 교과는 미반영). 진로선택과목은 반영하지 않음, 학년별 가중치 없음, 3학년 1학기까지 반영 ('미술'실기우수자전형 적용표 기준, 2027 모집요강 p.20-21).",
+        "rule_source_page": "20-21"
+      },
+      "source_url": "https://ipsi.suwon.ac.kr/upload_data/guide/1787878393_6045.pdf",
+      "source_page": 45
     },
-    "source_url": "https://ipsi.suwon.ac.kr/upload_data/guide/1787878393_6045.pdf",
-    "source_page": 45
+    "estimates": {
+      "cutoff_grade_estimate": 5.9,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/수원대학교/수원대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 25.29,
+        "school_record_grade_typical": 5.9,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "avg_only (typical=학생부성적 평균, 범위 데이터 없음)",
+        "methodology_note": "원문에 최종등록자/합격자 구분 명시 없이 \"학생부성적(평균)\" 단일값만 제공 - 정확한 산출 방법론(원등급 vs 자체 환산등급) 불명확, 참고용으로만 사용.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/수원대학교/수원대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 7
+      }
+    }
   }
-}
 ]

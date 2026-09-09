@@ -64,8 +64,18 @@
       "school_record_ratio_pct": 30
     },
     "estimates": {
-      "cutoff_grade_estimate": 5.45,
-      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/가천대학교/가천대학교_2025학년도_수시입시결과.pdf",
+      "cutoff_grade_estimate": 6.0,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/가천대학교/가천대학교_2026학년도_수시입시결과.pdf",
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 7.28,
+        "school_record_grade_typical": 5.6,
+        "school_record_grade_floor": 6.78,
+        "grade_stat_type": "50_70_90_cut (typical=50%cut, floor=90%cut)",
+        "methodology_note": "최종등록자 기준. 학생부등급 산출방식: 해당 학년도 전형별 반영 교과/과목의 이수단위 가중평균(진로선택과목 미반영, 9등급 원등급 그대로) - 본 서비스의 estimated_grade_equivalent(원 석차등급)와 동일한 방법론이라 직접 비교 가능.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/가천대학교/가천대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 1
+      },
       "interview_summaries": []
     }
   },
@@ -141,8 +151,18 @@
       "school_record_ratio_pct": 30
     },
     "estimates": {
-      "cutoff_grade_estimate": 5.3,
-      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/가천대학교/가천대학교_2025학년도_수시입시결과.pdf",
+      "cutoff_grade_estimate": 5.0,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/가천대학교/가천대학교_2026학년도_수시입시결과.pdf",
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 40.13,
+        "school_record_grade_typical": 4.71,
+        "school_record_grade_floor": 5.5,
+        "grade_stat_type": "50_70_90_cut (typical=50%cut, floor=90%cut)",
+        "methodology_note": "최종등록자 기준. 학생부등급 산출방식: 해당 학년도 전형별 반영 교과/과목의 이수단위 가중평균(진로선택과목 미반영, 9등급 원등급 그대로) - 본 서비스의 estimated_grade_equivalent(원 석차등급)와 동일한 방법론이라 직접 비교 가능.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/가천대학교/가천대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 1
+      },
       "interview_summaries": []
     }
   },
@@ -218,8 +238,18 @@
       "school_record_ratio_pct": 30
     },
     "estimates": {
-      "cutoff_grade_estimate": 5.69,
-      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/가천대학교/가천대학교_2025학년도_수시입시결과.pdf",
+      "cutoff_grade_estimate": 5.39,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/가천대학교/가천대학교_2026학년도_수시입시결과.pdf",
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 23.37,
+        "school_record_grade_typical": 5.07,
+        "school_record_grade_floor": 5.75,
+        "grade_stat_type": "50_70_90_cut (typical=50%cut, floor=90%cut)",
+        "methodology_note": "최종등록자 기준. 학생부등급 산출방식: 해당 학년도 전형별 반영 교과/과목의 이수단위 가중평균(진로선택과목 미반영, 9등급 원등급 그대로) - 본 서비스의 estimated_grade_equivalent(원 석차등급)와 동일한 방법론이라 직접 비교 가능.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/가천대학교/가천대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 1
+      },
       "interview_summaries": []
     }
   }

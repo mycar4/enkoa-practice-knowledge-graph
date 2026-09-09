@@ -60,9 +60,19 @@
       "school_record_ratio_pct": 30
     },
     "estimates": {
-      "cutoff_grade_estimate": null,
-      "cutoff_source_url": null,
-      "interview_summaries": []
+      "cutoff_grade_estimate": 5.42,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/명지대학교/명지대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 21.62,
+        "school_record_grade_typical": 4.12,
+        "school_record_grade_floor": 5.42,
+        "grade_stat_type": "max_avg_70cut_min_stddev (typical=평균, floor=최저)",
+        "methodology_note": "최종등록자 기준. 표에 명시된 학생부성적 산출 방법론은 원문에 별도 기재 없음 - 원등급인지 본교 자체 환산등급인지 불명확하여 참고용으로만 사용.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/명지대학교/명지대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 15
+      }
     }
   },
   {
@@ -126,9 +136,19 @@
       "school_record_ratio_pct": 30
     },
     "estimates": {
-      "cutoff_grade_estimate": null,
-      "cutoff_source_url": null,
-      "interview_summaries": []
+      "cutoff_grade_estimate": 4.93,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/명지대학교/명지대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 20.0,
+        "school_record_grade_typical": 4.02,
+        "school_record_grade_floor": 4.93,
+        "grade_stat_type": "max_avg_70cut_min_stddev (typical=평균, floor=최저)",
+        "methodology_note": "최종등록자 기준. 표에 명시된 학생부성적 산출 방법론은 원문에 별도 기재 없음 - 원등급인지 본교 자체 환산등급인지 불명확하여 참고용으로만 사용.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/명지대학교/명지대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 15
+      }
     }
   },
   {
@@ -197,9 +217,19 @@
       "school_record_ratio_pct": 30
     },
     "estimates": {
-      "cutoff_grade_estimate": null,
-      "cutoff_source_url": null,
-      "interview_summaries": []
+      "cutoff_grade_estimate": 5.27,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/명지대학교/명지대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 40.73,
+        "school_record_grade_typical": 4.12,
+        "school_record_grade_floor": 5.27,
+        "grade_stat_type": "max_avg_70cut_min_stddev (typical=평균, floor=최저)",
+        "methodology_note": "최종등록자 기준. 표에 명시된 학생부성적 산출 방법론은 원문에 별도 기재 없음 - 원등급인지 본교 자체 환산등급인지 불명확하여 참고용으로만 사용. 영상애니메이션디자인전공은 실기 종목(상황표현/기초디자인)별 구분 없이 학과 전체 수치로 표기됨.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/명지대학교/명지대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 15
+      }
     }
   },
   {
@@ -263,9 +293,19 @@
       "school_record_ratio_pct": 30
     },
     "estimates": {
-      "cutoff_grade_estimate": null,
-      "cutoff_source_url": null,
-      "interview_summaries": []
+      "cutoff_grade_estimate": 5.27,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/명지대학교/명지대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 40.73,
+        "school_record_grade_typical": 4.12,
+        "school_record_grade_floor": 5.27,
+        "grade_stat_type": "max_avg_70cut_min_stddev (typical=평균, floor=최저)",
+        "methodology_note": "최종등록자 기준. 표에 명시된 학생부성적 산출 방법론은 원문에 별도 기재 없음 - 원등급인지 본교 자체 환산등급인지 불명확하여 참고용으로만 사용. 영상애니메이션디자인전공은 실기 종목(상황표현/기초디자인)별 구분 없이 학과 전체 수치로 표기됨.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/명지대학교/명지대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 15
+      }
     }
   },
   {
@@ -329,9 +369,19 @@
       "school_record_ratio_pct": 30
     },
     "estimates": {
-      "cutoff_grade_estimate": null,
-      "cutoff_source_url": null,
-      "interview_summaries": []
+      "cutoff_grade_estimate": 6.18,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/명지대학교/명지대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 24.86,
+        "school_record_grade_typical": 4.63,
+        "school_record_grade_floor": 6.18,
+        "grade_stat_type": "max_avg_70cut_min_stddev (typical=평균, floor=최저)",
+        "methodology_note": "최종등록자 기준. 표에 명시된 학생부성적 산출 방법론은 원문에 별도 기재 없음 - 원등급인지 본교 자체 환산등급인지 불명확하여 참고용으로만 사용.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/명지대학교/명지대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 15
+      }
     }
   }
 ]
