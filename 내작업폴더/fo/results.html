@@ -14,8 +14,8 @@
 <a href="index.html" class="flex items-center gap-unit-sm shrink-0"><svg width="28" height="20" viewBox="0 0 72 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#1647D8"/><rect x="26" y="2" width="20" height="20" fill="#151515"/><polygon points="60,2 70,22 50,22" fill="#E34234"/></svg><span class="font-label-lg text-label-lg text-on-surface tracking-wider">ART:READY</span></a>
 <nav class="hidden md:flex items-center gap-unit-xl">
 <a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" href="index.html">홈</a>
-<a class="font-label-md text-label-md text-primary" href="profile.html">대학 찾기</a>
-<a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" href="grades.html">성적 추천</a>
+<a id="navProfile" class="font-label-md text-label-md text-primary" href="profile.html">대학 찾기</a>
+<a id="navGrades" class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" href="grades.html">성적 추천</a>
 <a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" href="qa.html">입시 질문</a>
 <a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" href="review.html">서류 첨삭</a>
 </nav>
@@ -84,9 +84,10 @@
 </div>
 </div>
 
-<nav class="md:hidden fixed bottom-0 w-full z-50 pb-safe bg-surface/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.04)]"><div class="grid grid-cols-4 h-16 items-stretch">
+<nav class="md:hidden fixed bottom-0 w-full z-50 pb-safe bg-surface/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.04)]"><div class="grid grid-cols-5 h-16 items-stretch">
 <a class="flex flex-col items-center justify-center gap-unit-2xs text-on-surface-variant hover:text-on-surface transition-colors min-h-[44px]" href="index.html"><span class="material-symbols-outlined text-[22px]">view_quilt</span><span class="font-label-sm text-label-sm">홈</span></a>
-<a class="flex flex-col items-center justify-center gap-unit-2xs text-primary bg-surface-container-low font-bold transition-colors min-h-[44px]" href="profile.html"><span class="material-symbols-outlined text-[22px]">school</span><span class="font-label-sm text-label-sm">대학 찾기</span></a>
+<a id="navProfileMobile" class="flex flex-col items-center justify-center gap-unit-2xs text-primary bg-surface-container-low font-bold transition-colors min-h-[44px]" href="profile.html"><span class="material-symbols-outlined text-[22px]">school</span><span class="font-label-sm text-label-sm">대학 찾기</span></a>
+<a id="navGradesMobile" class="flex flex-col items-center justify-center gap-unit-2xs text-on-surface-variant hover:text-on-surface transition-colors min-h-[44px]" href="grades.html"><span class="material-symbols-outlined text-[22px]">calculate</span><span class="font-label-sm text-label-sm">성적 추천</span></a>
 <a class="flex flex-col items-center justify-center gap-unit-2xs text-on-surface-variant hover:text-on-surface transition-colors min-h-[44px]" href="qa.html"><span class="material-symbols-outlined text-[22px]">forum</span><span class="font-label-sm text-label-sm">입시 질문</span></a>
 <a class="flex flex-col items-center justify-center gap-unit-2xs text-on-surface-variant hover:text-on-surface transition-colors min-h-[44px]" href="review.html"><span class="material-symbols-outlined text-[22px]">edit_document</span><span class="font-label-sm text-label-sm">서류 첨삭</span></a>
 </div></nav>
@@ -311,6 +312,20 @@ function renderRecommendResults() {
   document.querySelector('a[href="profile.html"].h-11').textContent = "다시 입력";
   document.querySelector('a[href="profile.html"].h-11').href = "grades.html";
 
+  // 상단/하단 네비게이션에서 "대학 찾기"가 아니라 "성적 추천"이 현재 메뉴로
+  // 유지되도록 활성 표시를 옮긴다 (성적 추천 결과 화면에서도 대학찾기가 켜져
+  // 있으면 지금 어느 메뉴에 있는지 헷갈린다는 피드백 반영).
+  const activate = (el) => el && el.classList.remove("text-on-surface-variant", "hover:text-on-surface", "transition-colors");
+  const deactivate = (el) => { if (!el) return; el.classList.remove("text-primary"); el.classList.add("text-on-surface-variant", "hover:text-on-surface", "transition-colors"); };
+  deactivate(document.getElementById("navProfile"));
+  activate(document.getElementById("navGrades"));
+  document.getElementById("navGrades")?.classList.add("text-primary");
+
+  const navProfileMobile = document.getElementById("navProfileMobile");
+  const navGradesMobile = document.getElementById("navGradesMobile");
+  if (navProfileMobile) { navProfileMobile.classList.remove("text-primary", "bg-surface-container-low", "font-bold"); navProfileMobile.classList.add("text-on-surface-variant", "hover:text-on-surface", "transition-colors"); }
+  if (navGradesMobile) { navGradesMobile.classList.remove("text-on-surface-variant", "hover:text-on-surface", "transition-colors"); navGradesMobile.classList.add("text-primary", "bg-surface-container-low", "font-bold"); }
+
   const recommendRaw = sessionStorage.getItem("artready_recommend_results");
   const recommendResults = recommendRaw ? JSON.parse(recommendRaw) : [];
   const section = document.getElementById("recommendSection");
@@ -334,9 +349,15 @@ function renderRecommendResults() {
       ? `<span class="px-unit-xs py-0.5 bg-primary text-on-primary font-label-sm text-label-sm rounded">정밀 계산 (모집요강 원문 확인됨)</span>`
       : `<span class="px-unit-xs py-0.5 bg-surface-variant text-on-surface-variant font-label-sm text-label-sm rounded">근사 추정 (비율 기반, 참고용)</span>`;
     const pct = r.school_record_percentage;
+    const scaleNote = (isExact && r.max_score != null)
+      ? ` <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">(${r.raw_score}점 / ${r.max_score}점 만점 기준 환산)</span>`
+      : ` <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">(100점 만점 환산)</span>`;
     const pctLine = pct !== null && pct !== undefined
-      ? `<div class="font-headline-sm text-headline-sm ${isExact ? "text-primary" : "text-on-surface"}">학생부 환산 ${pct}점 <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">(100점 만점 환산)</span></div>`
+      ? `<div class="font-headline-sm text-headline-sm ${isExact ? "text-primary" : "text-on-surface"}">학생부 환산 ${pct}점${scaleNote}</div>`
       : `<div class="font-body-sm text-body-sm text-on-surface-variant">${r.note || "계산 불가"}</div>`;
+    const gradeEq = r.estimated_grade_equivalent;
+    const gradeEqLine = gradeEq !== null && gradeEq !== undefined
+      ? `<div class="font-body-sm text-body-sm text-on-surface-variant">참고용 환산등급(추정): 약 ${gradeEq}등급 <span class="text-outline">- 실제 등급이 아니라 백분위를 표준 9등급 곡선에 역산한 참고치입니다</span></div>` : "";
     const ratioLine = (r.practical_ratio_pct != null || r.school_record_ratio_pct != null)
       ? `<div class="font-body-sm text-body-sm text-on-surface-variant">반영비율: 실기 ${r.practical_ratio_pct ?? "-"}% · 학생부 ${r.school_record_ratio_pct ?? "-"}%</div>` : "";
 
@@ -349,9 +370,10 @@ function renderRecommendResults() {
         <span class="font-headline-sm text-headline-sm text-on-surface">${r.university}${campusStr}</span>
         <div class="font-body-md text-body-md text-on-surface font-medium">${r.department} · ${r.track_name || ""}</div>
         ${pctLine}
+        ${gradeEqLine}
         ${ratioLine}
         ${r.csat_minimum_required ? `<div class="font-body-sm text-body-sm text-error">수능최저학력기준 있음 - 별도 확인 필요</div>` : ""}
-        ${r.formula_note ? `<details class="mt-unit-2xs"><summary class="font-label-sm text-label-sm text-outline cursor-pointer">환산 공식 보기</summary><p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">${r.formula_note}</p></details>` : ""}
+        ${r.formula_note ? `<div class="mt-unit-2xs pt-unit-2xs border-t border-outline-variant/20"><p class="font-label-sm text-label-sm text-on-surface-variant uppercase">환산 공식 (원문 그대로)</p><p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">${r.formula_note}</p></div>` : ""}
         ${r.source_url ? `<a class="font-label-sm text-label-sm text-primary underline mt-unit-xs" href="${r.source_url}" target="_blank" rel="noopener">공식 모집요강 원문</a>` : ""}
       </div>
     `;

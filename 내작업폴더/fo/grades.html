@@ -55,9 +55,15 @@
 <input class="w-full h-11 px-unit-sm bg-surface-container-lowest border border-outline-variant rounded font-body-md text-body-md" id="materialQuery" placeholder="예: 연필, 화선지, 점토 (부분일치, 비워두면 전체 대상)" type="text"/>
 </fieldset>
 
-<button class="w-full h-13 mt-unit-lg py-unit-sm bg-on-surface text-surface font-label-lg text-label-lg rounded flex items-center justify-center gap-unit-xs shadow-md" type="button" id="submitBtn">
+<div class="flex gap-unit-xs mt-unit-lg">
+<button class="flex-1 h-13 py-unit-sm bg-on-surface text-surface font-label-lg text-label-lg rounded flex items-center justify-center gap-unit-xs shadow-md" type="button" id="submitBtn">
 <span>성적으로 대학 추천받기</span><span class="material-symbols-outlined">arrow_forward</span>
 </button>
+<button class="h-13 px-unit-md bg-surface-container text-on-surface-variant font-label-md text-label-md rounded flex items-center justify-center gap-unit-2xs shrink-0" type="button" id="resetBtn">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span><span>초기화</span>
+</button>
+</div>
+<p id="draftNotice" class="font-label-sm text-label-sm text-on-surface-variant mt-unit-xs hidden">이전에 입력하던 성적이 자동으로 불러와졌습니다.</p>
 <p id="formError" class="font-body-sm text-body-sm text-error hidden mt-unit-xs"></p>
 </div>
 </main>
@@ -72,34 +78,60 @@
 <script>
 const SUBJECTS = ["국어", "영어", "수학", "사회", "과학"];
 const rowsBody = document.getElementById("gradeRows");
+const DRAFT_KEY = "artready_grades_draft";
 let rowSeq = 0;
 
-function addRow(subject) {
+// row 상태 하나가 바뀔 때마다(과목/진로선택/등급/성취도/이수단위 변경, 행 추가/삭제)
+// 세션 동안 잃어버리지 않게 sessionStorage에 즉시 저장한다 - 다른 페이지 갔다와도
+// 입력하던 성적이 남아있어야 한다는 요청.
+function saveDraft() {
+  try {
+    sessionStorage.setItem(DRAFT_KEY, JSON.stringify(collectRowStates()));
+  } catch (e) { /* 저장 실패해도 기능엔 영향 없음 */ }
+}
+
+function collectRowStates() {
+  const states = [];
+  rowsBody.querySelectorAll("tr").forEach(tr => {
+    states.push({
+      subject: tr.querySelector(".subject-select").value,
+      career_elective: tr.querySelector(".career-elective").checked,
+      grade: tr.querySelector(".grade-select").value,
+      achievement: tr.querySelector(".achievement-select").value,
+      credit: tr.querySelector(".credit-input").value,
+    });
+  });
+  return states;
+}
+
+function addRow(subject, state) {
   const id = "row" + (rowSeq++);
   const tr = document.createElement("tr");
   tr.className = "border-b border-outline-variant/20";
   tr.dataset.rowId = id;
+  const isCareer = !!(state && state.career_elective);
+  const credit = (state && state.credit) || "4";
   tr.innerHTML = `
     <td class="py-unit-2xs px-unit-sm">
       <select class="subject-select h-10 px-unit-xs bg-surface-container-lowest border border-outline-variant rounded w-24">
         ${SUBJECTS.map(s => `<option value="${s}" ${s === subject ? "selected" : ""}>${s}</option>`).join("")}
       </select>
     </td>
-    <td class="py-unit-2xs px-unit-sm text-center"><input type="checkbox" class="career-elective w-4 h-4"/></td>
+    <td class="py-unit-2xs px-unit-sm text-center"><input type="checkbox" class="career-elective w-4 h-4" ${isCareer ? "checked" : ""}/></td>
     <td class="py-unit-2xs px-unit-sm">
-      <select class="grade-select h-10 px-unit-xs bg-surface-container-lowest border border-outline-variant rounded w-20">
+      <select class="grade-select h-10 px-unit-xs bg-surface-container-lowest border border-outline-variant rounded w-20" ${isCareer ? "disabled" : ""}>
         <option value="">-</option>
-        ${[1,2,3,4,5,6,7,8,9].map(g => `<option value="${g}">${g}등급</option>`).join("")}
+        ${[1,2,3,4,5,6,7,8,9].map(g => `<option value="${g}" ${state && String(state.grade) === String(g) ? "selected" : ""}>${g}등급</option>`).join("")}
       </select>
     </td>
     <td class="py-unit-2xs px-unit-sm">
-      <select class="achievement-select h-10 px-unit-xs bg-surface-container-lowest border border-outline-variant rounded w-20" disabled>
+      <select class="achievement-select h-10 px-unit-xs bg-surface-container-lowest border border-outline-variant rounded w-20" ${isCareer ? "" : "disabled"}>
         <option value="">-</option>
-        <option value="A">A</option><option value="B">B</option><option value="C">C</option>
+        ${["A","B","C"].map(a => `<option value="${a}" ${state && state.achievement === a ? "selected" : ""}>${a}</option>`).join("")}
       </select>
     </td>
     <td class="py-unit-2xs px-unit-sm">
-      <input type="number" class="credit-input h-10 px-unit-xs bg-surface-container-lowest border border-outline-variant rounded w-16" value="4" min="1" max="10"/>
+      <input type="number" class="credit-input h-10 px-unit-xs bg-surface-container-lowest border border-outline-variant rounded w-16" value="${credit}" min="1" max="10"/>
     </td>
     <td class="py-unit-2xs px-unit-sm text-right">
       <button type="button" class="remove-row-btn text-on-surface-variant hover:text-error"><span class="material-symbols-outlined text-[18px]">close</span></button>
@@ -111,17 +143,60 @@ function addRow(subject) {
   const gradeSelect = tr.querySelector(".grade-select");
   const achSelect = tr.querySelector(".achievement-select");
   careerCheck.addEventListener("change", () => {
-    const isCareer = careerCheck.checked;
-    gradeSelect.disabled = isCareer;
-    achSelect.disabled = !isCareer;
-    if (isCareer) gradeSelect.value = ""; else achSelect.value = "";
+    const nowCareer = careerCheck.checked;
+    gradeSelect.disabled = nowCareer;
+    achSelect.disabled = !nowCareer;
+    if (nowCareer) gradeSelect.value = ""; else achSelect.value = "";
+    saveDraft();
   });
-  tr.querySelector(".remove-row-btn").addEventListener("click", () => tr.remove());
+  tr.querySelectorAll(".subject-select, .grade-select, .achievement-select, .credit-input").forEach(el => {
+    el.addEventListener("change", saveDraft);
+  });
+  tr.querySelector(".remove-row-btn").addEventListener("click", () => { tr.remove(); saveDraft(); });
 }
 
-// 기본 5개 교과군 한 줄씩 미리 깔아둔다 (진로선택과목이나 학기별 추가 과목은 "+ 과목 추가"로).
-SUBJECTS.forEach(s => addRow(s));
-document.getElementById("addRowBtn").addEventListener("click", () => addRow(SUBJECTS[0]));
+function resetRows() {
+  rowsBody.innerHTML = "";
+  SUBJECTS.forEach(s => addRow(s));
+}
+
+// 페이지 진입 시 저장된 draft가 있으면 복원하고, 없으면 기본 5개 교과군을 깔아둔다.
+let restored = false;
+try {
+  const draftRaw = sessionStorage.getItem(DRAFT_KEY);
+  if (draftRaw) {
+    const states = JSON.parse(draftRaw);
+    if (Array.isArray(states) && states.length > 0) {
+      states.forEach(st => addRow(st.subject, st));
+      restored = true;
+      document.getElementById("draftNotice").classList.remove("hidden");
+    }
+  }
+} catch (e) { /* 복원 실패 시 기본값으로 진행 */ }
+if (!restored) {
+  SUBJECTS.forEach(s => addRow(s));
+}
+
+document.getElementById("addRowBtn").addEventListener("click", () => { addRow(SUBJECTS[0]); saveDraft(); });
+
+const MATERIAL_DRAFT_KEY = "artready_grades_material_draft";
+const materialInput = document.getElementById("materialQuery");
+try {
+  const savedMaterial = sessionStorage.getItem(MATERIAL_DRAFT_KEY);
+  if (savedMaterial) materialInput.value = savedMaterial;
+} catch (e) { /* 무시 */ }
+materialInput.addEventListener("input", () => {
+  try { sessionStorage.setItem(MATERIAL_DRAFT_KEY, materialInput.value); } catch (e) { /* 무시 */ }
+});
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+  if (!confirm("입력한 성적을 전부 초기화할까요?")) return;
+  sessionStorage.removeItem(DRAFT_KEY);
+  sessionStorage.removeItem(MATERIAL_DRAFT_KEY);
+  document.getElementById("draftNotice").classList.add("hidden");
+  materialInput.value = "";
+  resetRows();
+});
 
 function collectGrades() {
   const grades = [];

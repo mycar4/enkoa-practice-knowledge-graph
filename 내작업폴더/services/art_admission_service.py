@@ -296,6 +296,25 @@ def _approximate_school_record_score(grades: List[Dict[str, Any]]) -> Optional[f
     avg = _weighted_avg(pool)
     return round(avg, 2) if avg is not None else None
 
+
+def _percentage_to_grade_equivalent(pct: Optional[float]) -> Optional[float]:
+    """학교별 환산 백분율(0~100)을 표준 9등급 곡선(_GENERIC_GRADE_CURVE)에 역으로
+    대입해 "환산등급"을 추정한다. 학교마다 반영교과·환산표가 전부 달라 이 값은
+    절대 그 학교의 실제 등급이 아니다 - 사용자가 익숙한 등급 감각으로 참고만
+    하도록 돕는 보조 지표이며, 호출부는 반드시 '참고용/추정' 라벨을 붙여야 한다."""
+    if pct is None:
+        return None
+    points = sorted(_GENERIC_GRADE_CURVE.items(), key=lambda kv: kv[1])  # (9,0) ... (1,100)
+    if pct <= points[0][1]:
+        return float(points[0][0])
+    if pct >= points[-1][1]:
+        return float(points[-1][0])
+    for (g0, s0), (g1, s1) in zip(points, points[1:]):
+        if s0 <= pct <= s1:
+            frac = (pct - s0) / (s1 - s0) if s1 != s0 else 0
+            return round(g0 - frac * (g0 - g1), 2)
+    return None
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 ENV_PATH = BASE_DIR.parent / ".env"
 load_dotenv(ENV_PATH)
@@ -1330,6 +1349,7 @@ class ArtAdmissionService:
             "raw_score": round(raw_score, 4),
             "max_score": max_score,
             "percentage": percentage,
+            "estimated_grade_equivalent": _percentage_to_grade_equivalent(percentage),
             "matched_subject_count": calc.get("matched_subject_count"),
             "missing_subject_groups": calc.get("missing_subject_groups"),
             "chosen_choice_subject": calc.get("chosen_choice_subject"),
@@ -1370,8 +1390,12 @@ class ArtAdmissionService:
             if rule:
                 calc = _calc_school_record_raw_score(rule, grades)
                 if calc and calc.get("max_score"):
+                    pct = round(calc["raw_score"] / calc["max_score"] * 100, 2)
                     entry["calc_precision"] = "exact"
-                    entry["school_record_percentage"] = round(calc["raw_score"] / calc["max_score"] * 100, 2)
+                    entry["raw_score"] = round(calc["raw_score"], 4)
+                    entry["max_score"] = calc["max_score"]
+                    entry["school_record_percentage"] = pct
+                    entry["formula_note"] = rule.get("formula_note")
                     entry["data_tier"] = "OFFICIAL_RULE"
                 else:
                     entry["calc_precision"] = "exact"
@@ -1382,6 +1406,7 @@ class ArtAdmissionService:
                 entry["calc_precision"] = "approximate"
                 entry["school_record_percentage"] = _approximate_school_record_score(grades)
                 entry["data_tier"] = "APPROXIMATE_NOT_OFFICIAL"
+            entry["estimated_grade_equivalent"] = _percentage_to_grade_equivalent(entry.get("school_record_percentage"))
 
             results.append(entry)
 
