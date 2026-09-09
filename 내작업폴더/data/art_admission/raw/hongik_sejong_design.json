@@ -24,12 +24,31 @@
     "time_limit_minutes": 15,
     "school_record_rule": {
       "mode": "choose_max_credit_subject",
-      "fixed_subjects": ["국어", "영어"],
-      "subject_choice_group": ["수학", "사회", "과학"],
-      "subject_aliases": {"한국사": "사회"},
+      "fixed_subjects": [
+        "국어",
+        "영어"
+      ],
+      "subject_choice_group": [
+        "수학",
+        "사회",
+        "과학"
+      ],
+      "subject_aliases": {
+        "한국사": "사회"
+      },
       "career_elective_included": false,
       "credit_weighted": true,
-      "conversion_table": {"1": 100, "2": 99, "3": 97, "4": 95, "5": 93, "6": 90, "7": 70, "8": 40, "9": 0},
+      "conversion_table": {
+        "1": 100,
+        "2": 99,
+        "3": 97,
+        "4": 95,
+        "5": 93,
+        "6": 90,
+        "7": 70,
+        "8": 40,
+        "9": 0
+      },
       "formula_note": "반영교과 = 국어, 영어, 택1(수학/사회/과학 중 이수단위 합이 가장 큰 교과 1개 자동 선택, 동일하면 유리한 쪽). 반영교과군의 전 과목(석차등급 있는 과목만, 학년 구분 없이 전부)을 반영. 교과점수 = Σ(과목별 이수단위×환산점수) / 총 이수단위 (2027 모집요강 p.112-113). 진로선택과목은 반영하지 않음. 참고: 이 전형은 학생부교과가 1단계(20%)에서만 반영되고, 최종 합격은 2단계 서류40%+면접60%로 결정되므로 실기고사 자체는 없음.",
       "rule_source_page": "112-113"
     },
@@ -42,8 +61,18 @@
     }
   },
   "estimates": {
-    "cutoff_grade_estimate": null,
-    "cutoff_source_url": "https://admission.hongik.ac.kr/susi/result.do",
-    "interview_summaries": []
+    "cutoff_grade_estimate": 3.63,
+    "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/홍익대학교(서울)/홍익대학교(서울)_2026학년도_수시입시결과.pdf",
+    "interview_summaries": [],
+    "prior_year_result": {
+      "admission_year": 2026,
+      "competition_rate": 6.75,
+      "school_record_grade_typical": 3.36,
+      "school_record_grade_floor": 3.63,
+      "grade_stat_type": "70pct_of_final_registrants (typical=최종등록자 평균, floor=최종등록자 중 상위 70% 지점 등급)",
+      "methodology_note": "\"세종캠퍼스 합계\"(조형대학 전체 - 디자인컨버전스학부·영상애니메이션학부·게임그래픽디자인전공(미술계) 합산) 기준. 산출방식 원문: \"국어, 영어, 택1(수학/사회/과학) 중 이수단위 합이 큰 교과 자동 반영, 내신등급 이수단위 가중평균\" - 본교 school_record_rule과 동일 방법론이라 직접 비교 가능. 이 문서는 서울/세종 두 캠퍼스 데이터를 모두 담고 있음(별도 문서 아님).",
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/홍익대학교(서울)/홍익대학교(서울)_2026학년도_수시입시결과.pdf",
+      "source_page": 4
+    }
   }
 }

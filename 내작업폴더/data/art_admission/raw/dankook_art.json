@@ -1,228 +1,455 @@
 [
-{
-  "university": "단국대학교",
-  "campus": "죽전",
-  "department": "도예과",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 21,
-    "ratio": "1단계(15배수): 교과 95% + 비교과(출결) 5% -> 2단계: 1단계 성적 20% + 실기 80%",
-    "is_staged": true,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 80,
-    "exam_type_name": "기초디자인 - 디자인 조형 요소를 이용하여 제시된 사물의 이미지를 창의력 있게 공간에 표현",
-    "allowed_materials": [],
-    "paper_size": "켄트지 3절 (대학제공)",
-    "time_limit_minutes": 300,
-    "exam_date": "2026-11-13",
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "simple_weighted_average",
-      "subjects": ["국어", "영어", "사회"],
-      "credit_weighted": true,
-      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 97, "5": 96, "6": 95, "7": 70, "8": 40, "9": 0},
-      "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
-      "rule_source_page": "82-83"
+  {
+    "university": "단국대학교",
+    "campus": "죽전",
+    "department": "도예과",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 21,
+      "ratio": "1단계(15배수): 교과 95% + 비교과(출결) 5% -> 2단계: 1단계 성적 20% + 실기 80%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 80,
+      "exam_type_name": "기초디자인 - 디자인 조형 요소를 이용하여 제시된 사물의 이미지를 창의력 있게 공간에 표현",
+      "allowed_materials": [],
+      "paper_size": "켄트지 3절 (대학제공)",
+      "time_limit_minutes": 300,
+      "exam_date": "2026-11-13",
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "사회"
+        ],
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 70,
+          "8": 40,
+          "9": 0
+        },
+        "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
+        "rule_source_page": "82-83"
+      },
+      "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
+      "source_page": 48,
+      "stages": [
+        {
+          "description": "1단계 학생부(교과+출결)",
+          "ratio_desc": "교과 95% + 비교과(출결) 5%",
+          "multiplier": 15
+        },
+        {
+          "description": "2단계 실기",
+          "ratio_desc": "1단계 성적 20% + 실기 80%",
+          "multiplier": null
+        }
+      ]
     },
-    "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
-    "source_page": 48,
-    "stages": [
-      {"description": "1단계 학생부(교과+출결)", "ratio_desc": "교과 95% + 비교과(출결) 5%", "multiplier": 15},
-      {"description": "2단계 실기", "ratio_desc": "1단계 성적 20% + 실기 80%", "multiplier": null}
-    ]
-  }
-},
-{
-  "university": "단국대학교",
-  "campus": "죽전",
-  "department": "디자인학부-커뮤니케이션디자인전공",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 30,
-    "ratio": "1단계(15배수): 교과 95% + 비교과(출결) 5% -> 2단계: 1단계 성적 20% + 실기 80%",
-    "is_staged": true,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 80,
-    "exam_type_name": "기초디자인 - 디자인 조형 요소를 이용하여 제시된 사물의 이미지를 창의력 있게 공간에 표현",
-    "allowed_materials": [],
-    "paper_size": "켄트지 3절 (대학제공)",
-    "time_limit_minutes": 300,
-    "exam_date": "2026-11-14",
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "simple_weighted_average",
-      "subjects": ["국어", "영어", "사회"],
-      "credit_weighted": true,
-      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 97, "5": 96, "6": 95, "7": 70, "8": 40, "9": 0},
-      "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
-      "rule_source_page": "82-83"
+    "estimates": {
+      "cutoff_grade_estimate": 4.7,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/단국대학교(죽전)/단국대학교(죽전)_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 16.62,
+        "school_record_grade_typical": 3.92,
+        "school_record_grade_floor": 4.7,
+        "grade_stat_type": "final_registrant_min_avg_max (typical=평균, floor=최저, 최종등록자 기준)",
+        "methodology_note": "\"2026학년도 단국대학교 수시모집 입시결과\" 실기우수자전형 표(최종등록자 학생부 등급 최저/평균/최고)에서 확인.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/단국대학교(죽전)/단국대학교(죽전)_2026학년도_수시입시결과.pdf",
+        "source_page": 6
+      }
+    }
+  },
+  {
+    "university": "단국대학교",
+    "campus": "죽전",
+    "department": "디자인학부-커뮤니케이션디자인전공",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 30,
+      "ratio": "1단계(15배수): 교과 95% + 비교과(출결) 5% -> 2단계: 1단계 성적 20% + 실기 80%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 80,
+      "exam_type_name": "기초디자인 - 디자인 조형 요소를 이용하여 제시된 사물의 이미지를 창의력 있게 공간에 표현",
+      "allowed_materials": [],
+      "paper_size": "켄트지 3절 (대학제공)",
+      "time_limit_minutes": 300,
+      "exam_date": "2026-11-14",
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "사회"
+        ],
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 70,
+          "8": 40,
+          "9": 0
+        },
+        "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
+        "rule_source_page": "82-83"
+      },
+      "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
+      "source_page": 48,
+      "stages": [
+        {
+          "description": "1단계 학생부(교과+출결)",
+          "ratio_desc": "교과 95% + 비교과(출결) 5%",
+          "multiplier": 15
+        },
+        {
+          "description": "2단계 실기",
+          "ratio_desc": "1단계 성적 20% + 실기 80%",
+          "multiplier": null
+        }
+      ]
     },
-    "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
-    "source_page": 48,
-    "stages": [
-      {"description": "1단계 학생부(교과+출결)", "ratio_desc": "교과 95% + 비교과(출결) 5%", "multiplier": 15},
-      {"description": "2단계 실기", "ratio_desc": "1단계 성적 20% + 실기 80%", "multiplier": null}
-    ]
-  }
-},
-{
-  "university": "단국대학교",
-  "campus": "죽전",
-  "department": "디자인학부-패션산업디자인전공",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 27,
-    "ratio": "1단계(15배수): 교과 95% + 비교과(출결) 5% -> 2단계: 1단계 성적 20% + 실기 80%",
-    "is_staged": true,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 80,
-    "exam_type_name": "기초디자인 - 디자인 조형 요소를 이용하여 제시된 사물의 이미지를 창의력 있게 공간에 표현",
-    "allowed_materials": [],
-    "paper_size": "켄트지 3절 (대학제공)",
-    "time_limit_minutes": 300,
-    "exam_date": "2026-11-15",
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "simple_weighted_average",
-      "subjects": ["국어", "영어", "사회"],
-      "credit_weighted": true,
-      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 97, "5": 96, "6": 95, "7": 70, "8": 40, "9": 0},
-      "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
-      "rule_source_page": "82-83"
+    "estimates": {
+      "cutoff_grade_estimate": 4.65,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/단국대학교(죽전)/단국대학교(죽전)_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 18.97,
+        "school_record_grade_typical": 2.87,
+        "school_record_grade_floor": 4.65,
+        "grade_stat_type": "final_registrant_min_avg_max (typical=평균, floor=최저, 최종등록자 기준)",
+        "methodology_note": "\"2026학년도 단국대학교 수시모집 입시결과\" 실기우수자전형 표(최종등록자 학생부 등급 최저/평균/최고)에서 확인.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/단국대학교(죽전)/단국대학교(죽전)_2026학년도_수시입시결과.pdf",
+        "source_page": 6
+      }
+    }
+  },
+  {
+    "university": "단국대학교",
+    "campus": "죽전",
+    "department": "디자인학부-패션산업디자인전공",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 27,
+      "ratio": "1단계(15배수): 교과 95% + 비교과(출결) 5% -> 2단계: 1단계 성적 20% + 실기 80%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 80,
+      "exam_type_name": "기초디자인 - 디자인 조형 요소를 이용하여 제시된 사물의 이미지를 창의력 있게 공간에 표현",
+      "allowed_materials": [],
+      "paper_size": "켄트지 3절 (대학제공)",
+      "time_limit_minutes": 300,
+      "exam_date": "2026-11-15",
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "사회"
+        ],
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 70,
+          "8": 40,
+          "9": 0
+        },
+        "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
+        "rule_source_page": "82-83"
+      },
+      "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
+      "source_page": 48,
+      "stages": [
+        {
+          "description": "1단계 학생부(교과+출결)",
+          "ratio_desc": "교과 95% + 비교과(출결) 5%",
+          "multiplier": 15
+        },
+        {
+          "description": "2단계 실기",
+          "ratio_desc": "1단계 성적 20% + 실기 80%",
+          "multiplier": null
+        }
+      ]
     },
-    "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
-    "source_page": 48,
-    "stages": [
-      {"description": "1단계 학생부(교과+출결)", "ratio_desc": "교과 95% + 비교과(출결) 5%", "multiplier": 15},
-      {"description": "2단계 실기", "ratio_desc": "1단계 성적 20% + 실기 80%", "multiplier": null}
-    ]
-  }
-},
-{
-  "university": "단국대학교",
-  "campus": "천안",
-  "department": "미술학부-공예(금속섬유)전공",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 25,
-    "ratio": "일괄합산: 실기 80% + 교과 15% + 비교과(출결) 5%",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 80,
-    "school_record_ratio_pct": 15,
-    "exam_type_name": "기초디자인",
-    "allowed_materials": [],
-    "paper_size": "켄트지 3절",
-    "time_limit_minutes": 300,
-    "exam_date": "2026-09-19",
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "simple_weighted_average",
-      "subjects": ["국어", "영어", "사회"],
-      "credit_weighted": true,
-      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 97, "5": 96, "6": 95, "7": 70, "8": 40, "9": 0},
-      "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
-      "rule_source_page": "82-83"
+    "estimates": {
+      "cutoff_grade_estimate": 4.16,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/단국대학교(죽전)/단국대학교(죽전)_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 20.93,
+        "school_record_grade_typical": 3.57,
+        "school_record_grade_floor": 4.16,
+        "grade_stat_type": "final_registrant_min_avg_max (typical=평균, floor=최저, 최종등록자 기준)",
+        "methodology_note": "\"2026학년도 단국대학교 수시모집 입시결과\" 실기우수자전형 표(최종등록자 학생부 등급 최저/평균/최고)에서 확인.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/단국대학교(죽전)/단국대학교(죽전)_2026학년도_수시입시결과.pdf",
+        "source_page": 6
+      }
+    }
+  },
+  {
+    "university": "단국대학교",
+    "campus": "천안",
+    "department": "미술학부-공예(금속섬유)전공",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 25,
+      "ratio": "일괄합산: 실기 80% + 교과 15% + 비교과(출결) 5%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 80,
+      "school_record_ratio_pct": 15,
+      "exam_type_name": "기초디자인",
+      "allowed_materials": [],
+      "paper_size": "켄트지 3절",
+      "time_limit_minutes": 300,
+      "exam_date": "2026-09-19",
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "사회"
+        ],
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 70,
+          "8": 40,
+          "9": 0
+        },
+        "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
+        "rule_source_page": "82-83"
+      },
+      "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
+      "source_page": 76
     },
-    "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
-    "source_page": 76
-  }
-},
-{
-  "university": "단국대학교",
-  "campus": "천안",
-  "department": "미술학부-동양화전공",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 20,
-    "ratio": "일괄합산: 실기 80% + 교과 15% + 비교과(출결) 5%",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 80,
-    "school_record_ratio_pct": 15,
-    "exam_type_name": "택1: 인물수묵담채화, 정물수묵담채화, 인물소묘",
-    "allowed_materials": [],
-    "paper_size": "화선지 전지 2/3절(인물수묵담채화) 또는 화선지 전지 1/2절(정물수묵담채화) 또는 켄트지 2절(인물소묘)",
-    "time_limit_minutes": null,
-    "exam_date": "2026-10-11",
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "simple_weighted_average",
-      "subjects": ["국어", "영어", "사회"],
-      "credit_weighted": true,
-      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 97, "5": 96, "6": 95, "7": 70, "8": 40, "9": 0},
-      "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
-      "rule_source_page": "82-83"
+    "estimates": {
+      "cutoff_grade_estimate": 5.72,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/단국대학교(천안)/단국대학교(천안)_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 16.67,
+        "school_record_grade_typical": 4.62,
+        "school_record_grade_floor": 5.72,
+        "grade_stat_type": "final_registrant_min_avg_max (typical=평균, floor=최저, 최종등록자 기준)",
+        "methodology_note": "\"2026학년도 단국대학교 수시모집 입시결과\" 실기우수자전형 표(최종등록자 학생부 등급 최저/평균/최고)에서 확인.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/단국대학교(천안)/단국대학교(천안)_2026학년도_수시입시결과.pdf",
+        "source_page": 6
+      }
+    }
+  },
+  {
+    "university": "단국대학교",
+    "campus": "천안",
+    "department": "미술학부-동양화전공",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 20,
+      "ratio": "일괄합산: 실기 80% + 교과 15% + 비교과(출결) 5%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 80,
+      "school_record_ratio_pct": 15,
+      "exam_type_name": "택1: 인물수묵담채화, 정물수묵담채화, 인물소묘",
+      "allowed_materials": [],
+      "paper_size": "화선지 전지 2/3절(인물수묵담채화) 또는 화선지 전지 1/2절(정물수묵담채화) 또는 켄트지 2절(인물소묘)",
+      "time_limit_minutes": null,
+      "exam_date": "2026-10-11",
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "사회"
+        ],
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 70,
+          "8": 40,
+          "9": 0
+        },
+        "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
+        "rule_source_page": "82-83"
+      },
+      "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
+      "source_page": 76
     },
-    "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
-    "source_page": 76
-  }
-},
-{
-  "university": "단국대학교",
-  "campus": "천안",
-  "department": "미술학부-서양화전공",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 21,
-    "ratio": "일괄합산: 실기 80% + 교과 15% + 비교과(출결) 5%",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 80,
-    "school_record_ratio_pct": 15,
-    "exam_type_name": "택1: 인물 수채화, 정물 수채화",
-    "allowed_materials": [],
-    "paper_size": "켄트지 2절(인물) 또는 켄트지 3절(정물)",
-    "time_limit_minutes": null,
-    "exam_date": "2026-10-11",
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "simple_weighted_average",
-      "subjects": ["국어", "영어", "사회"],
-      "credit_weighted": true,
-      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 97, "5": 96, "6": 95, "7": 70, "8": 40, "9": 0},
-      "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
-      "rule_source_page": "82-83"
+    "estimates": {
+      "cutoff_grade_estimate": 7.74,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/단국대학교(천안)/단국대학교(천안)_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 6.15,
+        "school_record_grade_typical": 4.6,
+        "school_record_grade_floor": 7.74,
+        "grade_stat_type": "final_registrant_min_avg_max (typical=평균, floor=최저, 최종등록자 기준)",
+        "methodology_note": "\"2026학년도 단국대학교 수시모집 입시결과\" 실기우수자전형 표(최종등록자 학생부 등급 최저/평균/최고)에서 확인.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/단국대학교(천안)/단국대학교(천안)_2026학년도_수시입시결과.pdf",
+        "source_page": 6
+      }
+    }
+  },
+  {
+    "university": "단국대학교",
+    "campus": "천안",
+    "department": "미술학부-서양화전공",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 21,
+      "ratio": "일괄합산: 실기 80% + 교과 15% + 비교과(출결) 5%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 80,
+      "school_record_ratio_pct": 15,
+      "exam_type_name": "택1: 인물 수채화, 정물 수채화",
+      "allowed_materials": [],
+      "paper_size": "켄트지 2절(인물) 또는 켄트지 3절(정물)",
+      "time_limit_minutes": null,
+      "exam_date": "2026-10-11",
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "사회"
+        ],
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 70,
+          "8": 40,
+          "9": 0
+        },
+        "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
+        "rule_source_page": "82-83"
+      },
+      "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
+      "source_page": 76
     },
-    "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
-    "source_page": 76
-  }
-},
-{
-  "university": "단국대학교",
-  "campus": "천안",
-  "department": "미술학부-조소전공",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 11,
-    "ratio": "일괄합산: 실기 80% + 교과 15% + 비교과(출결) 5%",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 80,
-    "school_record_ratio_pct": 15,
-    "exam_type_name": "두상소조 - 택1: 사진 모델링(8방향 촬영 사진 제시) 또는 주제가 있는 두상(문장 제시, 모델 없음)",
-    "allowed_materials": [],
-    "paper_size": "실제크기",
-    "time_limit_minutes": 240,
-    "exam_date": "2026-09-16",
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "simple_weighted_average",
-      "subjects": ["국어", "영어", "사회"],
-      "credit_weighted": true,
-      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 97, "5": 96, "6": 95, "7": 70, "8": 40, "9": 0},
-      "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
-      "rule_source_page": "82-83"
+    "estimates": {
+      "cutoff_grade_estimate": 6.38,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/단국대학교(천안)/단국대학교(천안)_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 13.76,
+        "school_record_grade_typical": 4.52,
+        "school_record_grade_floor": 6.38,
+        "grade_stat_type": "final_registrant_min_avg_max (typical=평균, floor=최저, 최종등록자 기준)",
+        "methodology_note": "\"2026학년도 단국대학교 수시모집 입시결과\" 실기우수자전형 표(최종등록자 학생부 등급 최저/평균/최고)에서 확인.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/단국대학교(천안)/단국대학교(천안)_2026학년도_수시입시결과.pdf",
+        "source_page": 6
+      }
+    }
+  },
+  {
+    "university": "단국대학교",
+    "campus": "천안",
+    "department": "미술학부-조소전공",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 11,
+      "ratio": "일괄합산: 실기 80% + 교과 15% + 비교과(출결) 5%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 80,
+      "school_record_ratio_pct": 15,
+      "exam_type_name": "두상소조 - 택1: 사진 모델링(8방향 촬영 사진 제시) 또는 주제가 있는 두상(문장 제시, 모델 없음)",
+      "allowed_materials": [],
+      "paper_size": "실제크기",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-09-16",
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "사회"
+        ],
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 70,
+          "8": 40,
+          "9": 0
+        },
+        "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
+        "rule_source_page": "82-83"
+      },
+      "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
+      "source_page": 76
     },
-    "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
-    "source_page": 76
+    "estimates": {
+      "cutoff_grade_estimate": 6.81,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/단국대학교(천안)/단국대학교(천안)_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 16.45,
+        "school_record_grade_typical": 5.06,
+        "school_record_grade_floor": 6.81,
+        "grade_stat_type": "final_registrant_min_avg_max (typical=평균, floor=최저, 최종등록자 기준)",
+        "methodology_note": "\"2026학년도 단국대학교 수시모집 입시결과\" 실기우수자전형 표(최종등록자 학생부 등급 최저/평균/최고)에서 확인.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/단국대학교(천안)/단국대학교(천안)_2026학년도_수시입시결과.pdf",
+        "source_page": 6
+      }
+    }
   }
-}
 ]
