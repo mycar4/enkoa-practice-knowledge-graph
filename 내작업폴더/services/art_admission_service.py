@@ -936,19 +936,38 @@ class ArtAdmissionService:
         return issues
 
     @staticmethod
-    def _match_selected_track(tracks: List[Dict[str, Any]], sel: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """비교/일정/근거 화면이 공유하는 전형 식별 로직. track_name(전형명, 예: "실기우수자전형")은
-        같은 대학 안 여러 학과가 그대로 공유하는 카테고리 이름이라 식별자로 쓰면 안 되고 - 실제로
-        이 버그 때문에 Evidence 패널이 엉뚱한 학과 근거를 보여준 적이 있다 - university+campus+department
-        조합만 이 데이터셋 전체(31건)에서 유일함이 확인됐다. campus는 selections에 없을 수도 있으므로
-        (구버전 클라이언트 호환) 넘어온 경우에만 비교한다."""
-        for t in tracks:
-            if t["university"] != sel.get("university") or t["department"] != sel.get("department"):
-                continue
-            if sel.get("campus") and t.get("campus") != sel.get("campus"):
-                continue
-            return t
-        return None
+    def _match_selected_track(tracks: List[Dict[str, Any]], sel: Dict[str, Any],
+                               prefer_rule: bool = False) -> Optional[Dict[str, Any]]:
+        """비교/일정/근거/성적계산 화면이 공유하는 전형 식별 로직.
+
+        2026-09-09 사고: university+campus+department 조합이 "이 데이터셋 전체에서
+        유일하다"는 예전 가정이 깨졌다 - 상명대 미술학부 조형예술전공처럼 같은 학과에
+        실기전형과 학생부종합전형이 별도 트랙으로 공존하는 실제 사례가 생겼다(실기 없이
+        학생부종합만 별도 카테고리로 추가하면서 노출됨). 그래서 sel에 track_name이
+        오면 반드시 그것까지 일치하는 트랙을 우선 반환한다(비교/일정/근거 패널처럼
+        "정확히 이 카드" 식별이 중요한 곳은 호출부가 반드시 track_name을 넘겨야 함).
+        track_name이 없는 구버전 호출(성적 계산처럼 애초에 track_name 개념이 없던
+        API)에서 후보가 여러 개면, prefer_rule=True인 경우 학생부 반영 규정
+        (school_record_rule)이 있는 트랙을 우선한다 - "성적 계산"이라는 함수 목적상
+        계산 가능한 트랙을 고르는 게 자연스러운 기본값이기 때문이다. 그래도 후보가
+        여럿이면 마지막엔 그냥 첫 번째를 반환한다(기존 동작 유지)."""
+        candidates = [
+            t for t in tracks
+            if t["university"] == sel.get("university") and t["department"] == sel.get("department")
+            and (not sel.get("campus") or t.get("campus") == sel.get("campus"))
+        ]
+        if not candidates:
+            return None
+        track_name = sel.get("track_name")
+        if track_name:
+            exact = next((t for t in candidates if t.get("track_name") == track_name), None)
+            if exact:
+                return exact
+        if prefer_rule:
+            with_rule = next((t for t in candidates if t.get("school_record_rule")), None)
+            if with_rule:
+                return with_rule
+        return candidates[0]
 
     def simulate_multi_apply(self, selections: List[Dict[str, str]]) -> Dict[str, Any]:
         """selections: [{"university":..., "campus":..., "department":...}, ...] (최대 6개, 수시 6장 제한).
@@ -1791,13 +1810,20 @@ class ArtAdmissionService:
         return (real_rows or rows)[:top_k]
 
     def calculate_school_record_score(self, university: str, department: str, grades: List[Dict[str, Any]],
-                                       campus: Optional[str] = None) -> Dict[str, Any]:
+                                       campus: Optional[str] = None, track_name: Optional[str] = None) -> Dict[str, Any]:
         """학생 성적(grades)을 특정 학교·학과의 실제 학생부 반영 규정(school_record_rule)
-        그대로 환산한다. 원문에서 확인된 5개교(중앙대·가천대·홍익대세종·서경대·상명대)만
+        그대로 환산한다. 원문에서 확인된 학교(school_record_coverage 참고)만
         정밀 계산이 가능하고, 나머지는 아직 반영교과/환산표를 확보 못 했으므로
-        available=False로 명시한다 (없는 규정을 지어내지 않는다)."""
+        available=False로 명시한다 (없는 규정을 지어내지 않는다).
+        track_name을 안 넘긴 호출(기존 grades.html 흐름)에서 같은 학과에 트랙이
+        여러 개면(예: 상명대 미술학부 조형예술전공의 실기전형/학생부종합전형)
+        _match_selected_track가 prefer_rule=True로 계산 가능한 쪽을 우선 고른다 -
+        "성적 계산"이라는 이 함수의 목적상 자연스러운 기본값."""
         tracks = self.list_all_tracks_full()
-        track = self._match_selected_track(tracks, {"university": university, "campus": campus, "department": department})
+        track = self._match_selected_track(
+            tracks, {"university": university, "campus": campus, "department": department, "track_name": track_name},
+            prefer_rule=True,
+        )
         if not track:
             return {"available": False, "reason": f"'{university} {department}' 전형을 찾을 수 없습니다."}
 

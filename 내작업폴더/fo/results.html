@@ -246,7 +246,7 @@ if (results.length === 0) {
           <input type="checkbox" class="compare-check w-4 h-4" data-key="${key}"/>비교 목록에 담기
         </label>
         <div class="flex items-center gap-unit-sm">
-          <button class="evidence-btn font-label-sm text-label-sm text-primary underline" data-university="${r.university}" data-campus="${r.campus || ""}" data-department="${r.department || ""}">공식 모집요강 근거 보기</button>
+          <button class="evidence-btn font-label-sm text-label-sm text-primary underline" data-university="${r.university}" data-campus="${r.campus || ""}" data-department="${r.department || ""}" data-track-name="${r.track_name || ""}">공식 모집요강 근거 보기</button>
         </div>
       </div>
     `;
@@ -264,7 +264,7 @@ if (results.length === 0) {
   });
 
   document.querySelectorAll(".evidence-btn").forEach(btn => {
-    btn.addEventListener("click", () => openEvidence(btn.dataset.university, btn.dataset.campus, btn.dataset.department));
+    btn.addEventListener("click", () => openEvidence(btn.dataset.university, btn.dataset.campus, btn.dataset.department, btn.dataset.trackName));
   });
 }
 } // !isRecommendMode
@@ -282,7 +282,7 @@ function updateCompareBar() {
 }
 
 document.getElementById("compareBtn").addEventListener("click", async () => {
-  const selections = Array.from(selected.values()).map(s => ({ university: s.university, campus: s.campus, department: s.department }));
+  const selections = Array.from(selected.values()).map(s => ({ university: s.university, campus: s.campus, department: s.department, track_name: s.track_name }));
   const section = document.getElementById("compareSection");
   section.classList.remove("hidden");
   section.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -338,7 +338,7 @@ document.getElementById("compareBtn").addEventListener("click", async () => {
   }
 });
 
-async function openEvidence(university, campus, department) {
+async function openEvidence(university, campus, department, trackName) {
   const overlay = document.getElementById("evidenceOverlay");
   const body = document.getElementById("evidenceBody");
   overlay.classList.remove("hidden");
@@ -346,10 +346,15 @@ async function openEvidence(university, campus, department) {
   try {
     const url = window.API_BASE_URL + "/universities/" + encodeURIComponent(university) + (campus ? "?campus=" + encodeURIComponent(campus) : "");
     const detail = await fetch(url).then(r => r.json());
-    // track_name(전형명, 예: "실기우수자전형")은 한 대학의 여러 학과가 그대로 공유하는
-    // 카테고리 이름이라 식별자로 쓰면 안 된다 - department(university+campus 안에서 유일)로 찾는다.
-    const track = (detail.official_tracks || []).find(t => t.department === department);
-    const est = (detail.estimates_by_track || []).find(t => t.department === department);
+    // 2026-09-09 사고: "department는 university+campus 안에서 유일하다"던 예전
+    // 가정이 깨졌다(상명대 미술학부 조형예술전공처럼 실기전형/학생부종합전형이
+    // 같은 학과에 별도 트랙으로 공존하는 실제 사례 발견) - department만으로 찾으면
+    // 엉뚱한 트랙의 근거가 나올 수 있어 track_name까지 함께 확인한다. track_name이
+    // 없는 옛 호출은(현재는 전부 넘기도록 고쳤지만 방어적으로) department만으로 폴백한다.
+    const track = (detail.official_tracks || []).find(t => t.department === department && (!trackName || t.track_name === trackName))
+      || (detail.official_tracks || []).find(t => t.department === department);
+    const est = (detail.estimates_by_track || []).find(t => t.department === department && (!trackName || t.track_name === trackName))
+      || (detail.estimates_by_track || []).find(t => t.department === department);
     if (!track) { body.innerHTML = `<p class="text-on-surface-variant">해당 전형의 상세 근거를 찾지 못했습니다.</p>`; return; }
     const topics = (track.past_topics || []).filter(p => p && p.topic_text);
     body.innerHTML = `
@@ -371,7 +376,7 @@ document.getElementById("evidenceClose").addEventListener("click", () => {
   document.getElementById("evidenceOverlay").classList.add("hidden");
 });
 
-async function openBreakdown(university, campus, department) {
+async function openBreakdown(university, campus, department, trackName) {
   const overlay = document.getElementById("breakdownOverlay");
   const body = document.getElementById("breakdownBody");
   overlay.classList.remove("hidden");
@@ -381,6 +386,7 @@ async function openBreakdown(university, campus, department) {
     const grades = gradesRaw ? JSON.parse(gradesRaw) : [];
     const payload = { university, department, grades };
     if (campus) payload.campus = campus;
+    if (trackName) payload.track_name = trackName;
     const detail = await fetch(window.API_BASE_URL + "/calculate-school-record", {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
     }).then(r => r.json());
@@ -717,7 +723,7 @@ function renderRecommendResults() {
         ${r.csat_minimum_required ? `<div class="font-body-sm text-body-sm text-error">수능최저학력기준 있음 - 별도 확인 필요</div>` : ""}
         ${r.formula_note ? `<div class="mt-unit-2xs pt-unit-2xs border-t border-outline-variant/20"><p class="font-label-sm text-label-sm text-on-surface-variant uppercase">환산 공식 (원문 그대로)</p><p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">${r.formula_note}</p></div>` : ""}
         <div class="flex items-center justify-between mt-unit-xs pt-unit-xs border-t border-outline-variant/20">
-          ${isExact ? `<button class="breakdown-btn font-label-sm text-label-sm text-primary underline" data-university="${r.university}" data-campus="${r.campus || ""}" data-department="${r.department || ""}">계산 상세보기</button>` : `<span></span>`}
+          ${isExact ? `<button class="breakdown-btn font-label-sm text-label-sm text-primary underline" data-university="${r.university}" data-campus="${r.campus || ""}" data-department="${r.department || ""}" data-track-name="${r.track_name || ""}">계산 상세보기</button>` : `<span></span>`}
           ${r.source_url ? `<a class="font-label-sm text-label-sm text-primary underline" href="${r.source_url}" target="_blank" rel="noopener">공식 모집요강 원문</a>` : ""}
         </div>`;
 
@@ -740,7 +746,7 @@ function renderRecommendResults() {
   }).join("");
 
   document.querySelectorAll(".breakdown-btn").forEach(btn => {
-    btn.addEventListener("click", () => openBreakdown(btn.dataset.university, btn.dataset.campus, btn.dataset.department));
+    btn.addEventListener("click", () => openBreakdown(btn.dataset.university, btn.dataset.campus, btn.dataset.department, btn.dataset.trackName));
   });
   // 새로 그려진 카드마다 지금 전역 요약보기/전체보기 상태를 그대로 반영해둔다
   // (필터·정렬이 바뀌어 카드가 다시 그려져도 전역 토글 상태가 유지되게).

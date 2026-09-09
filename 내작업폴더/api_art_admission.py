@@ -173,6 +173,7 @@ class SchoolRecordRequest(BaseModel):
     department: str
     grades: List[dict]  # [{"subject_group": "국어", "grade": 4, "credit": 4}, ...]
     campus: Optional[str] = None
+    track_name: Optional[str] = None
 
 
 @app.post("/calculate-school-record")
@@ -183,7 +184,7 @@ def calculate_school_record_endpoint(req: SchoolRecordRequest):
     그 외 학교는 available=False로 명시한다."""
     svc = get_service()
     return svc.calculate_school_record_score(
-        req.university, req.department, req.grades, campus=req.campus,
+        req.university, req.department, req.grades, campus=req.campus, track_name=req.track_name,
     )
 
 
