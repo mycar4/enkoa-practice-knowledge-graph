@@ -46,7 +46,7 @@
 <div id="recommendDisclaimer" class="hidden px-margin-mobile lg:px-12 pt-unit-sm">
   <div class="bg-tertiary-container/40 border border-tertiary/40 rounded-lg p-unit-sm font-body-sm text-body-sm text-on-surface flex items-start gap-unit-xs">
     <span class="material-symbols-outlined text-tertiary text-[20px] shrink-0">info</span>
-    <span><strong>학생부 환산 점수는 각 학교 배점표 기준 100점(또는 해당 학교 만점) 환산 결과일 뿐, 합격선·합격 가능성과는 무관합니다.</strong> 실기 점수는 전혀 반영되지 않은 값이며, "100점(만점)"이 나와도 합격이 확정되는 것이 아닙니다. 기본 정렬은 임의 가중치로 합친 종합점수가 아니라 (1) 전년도 등록자 성적 대비 위치 → (2) 내신 실질영향이 낮은 순 → (3) 실기비중이 높은 순으로 이뤄지며, 아래에서 직접 다른 기준으로 바꿔볼 수 있습니다.</span>
+    <span><strong>학생부 환산 점수는 각 학교 배점표 기준 100점(또는 해당 학교 만점) 환산 결과일 뿐, 합격선·합격 가능성과는 무관합니다.</strong> 실기 점수는 전혀 반영되지 않은 값이며, "100점(만점)"이 나와도 합격이 확정되는 것이 아닙니다. 기본 정렬은 임의 가중치로 합친 종합점수가 아니라 (1) 전년도 등록자 성적 대비 위치 → (2) 내신 실질영향이 낮은 순 → (3) 실기비중이 높은 순으로 이뤄지며, 아래에서 직접 다른 기준으로 바꿔볼 수 있습니다. 이 추천은 "입시 질문" 기능과 <strong>동일하게 저희가 직접 구축한 지식그래프(현재 27개 대학 한정)</strong>를 근거로 계산됩니다 - 그래프에 없는 대학은 추천 대상이 아닙니다.</span>
   </div>
 </div>
 <div id="recommendControls" class="hidden px-margin-mobile lg:px-12 pt-unit-sm flex flex-wrap items-center gap-unit-sm">
@@ -67,6 +67,10 @@
     <input type="checkbox" id="excludeFemaleOnlyCheck" class="w-4 h-4">
     여자대학교 제외
   </label>
+  <button id="askAboutResultsBtn" class="ml-auto h-9 px-unit-sm bg-primary text-on-primary font-label-sm text-label-sm rounded-lg flex items-center gap-unit-2xs shrink-0">
+    <span class="material-symbols-outlined text-[16px]">forum</span>
+    이 결과로 질문하기
+  </button>
 </div>
 <section id="recommendSection" class="hidden px-margin-mobile lg:px-12 pt-unit-sm gap-unit-sm grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"></section>
 
@@ -471,8 +475,32 @@ function renderRecommendResults() {
     // sortBy === "default"는 서버가 이미 정렬해서 내려준 순서(전년도tier -> 내신영향
     // -> 실기비중 -> 원등급) 그대로 유지하되, 필터만 다시 적용한 상태를 그대로 쓴다.
 
+    currentDisplayedList = list;
     renderCards(list);
   }
+
+  // "이 결과로 질문하기" - 지금 화면에 보이는(필터·정렬 적용된) 상위 결과를 요약해서
+  // qa.html로 넘긴다. 원본 JSON 전체가 아니라 사람이 읽을 수 있는 요약 문장으로
+  // 넘기는 이유: 에이전트가 어차피 자기 도구(search_tracks 등)로 실제 그래프를 다시
+  // 조회해서 답하므로, 여기서는 "어떤 학교들 얘기인지"만 정확히 짚어주면 된다.
+  let currentDisplayedList = [];
+  document.getElementById("askAboutResultsBtn").addEventListener("click", () => {
+    const top = currentDisplayedList.filter(r => r.calc_precision !== "not_applicable").slice(0, 5);
+    if (top.length === 0) {
+      sessionStorage.removeItem("artready_qa_context");
+    } else {
+      const lines = top.map((r, i) => {
+        const tier = r.prior_year_tier && r.prior_year_tier !== "NO_DATA"
+          ? (r.fit_label === "GOOD_FIT" ? "GOOD FIT" : r.fit_label === "CHECK" ? "CHECK" : "") : "";
+        return `${i + 1}. ${r.university} ${r.department}(${r.track_name || ""})${tier ? " - " + tier : ""}`;
+      }).join(" / ");
+      const naCount = currentDisplayedList.filter(r => r.calc_precision === "not_applicable").length;
+      const summary = `[내신 성적 기반 추천 결과 참고 - 상위 ${top.length}곳: ${lines}]` +
+        (naCount > 0 ? ` (이 외 학생부 미반영 전형 ${naCount}곳은 제외)` : "");
+      sessionStorage.setItem("artready_qa_context", summary);
+    }
+    window.location.href = "qa.html";
+  });
 
   document.getElementById("sortSelect").addEventListener("change", applyControlsAndRender);
   document.getElementById("hideNotApplicableCheck").addEventListener("change", applyControlsAndRender);

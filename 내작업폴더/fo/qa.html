@@ -26,8 +26,14 @@
 <section class="flex flex-col gap-unit-xs pt-unit-sm">
 <div class="flex items-center gap-unit-xs"><span class="inline-block w-2.5 h-2.5 bg-primary-container"></span><span class="font-label-sm text-label-sm text-primary uppercase tracking-wider">ART:READY</span></div>
 <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">미술입시 질문</h1>
-<p class="font-body-md text-body-md text-on-surface-variant">공식 모집요강 원문 데이터를 근거로 답변합니다. 데이터에 없는 학교/숫자는 지어내지 않고 "확인하지 못했습니다"라고 답합니다.</p>
+<p class="font-body-md text-body-md text-on-surface-variant">외부 지식이나 실시간 검색이 아니라, <strong>저희가 직접 원문 모집요강을 대조해 구축한 지식그래프(현재 27개 대학·82개 전형)</strong>를 근거로만 답변합니다. 그래프에 등록되지 않은 대학·학과는 답변할 수 없고, 데이터에 없는 숫자는 지어내지 않고 "확인하지 못했습니다"라고 답합니다. 아래 "에이전트가 실제로 호출한 도구"에서 어떤 데이터를 근거로 답했는지 직접 확인할 수 있습니다.</p>
 </section>
+
+<div id="qaContextBanner" class="hidden flex items-start gap-unit-xs bg-primary-container/20 border border-primary/30 rounded-lg p-unit-sm">
+  <span class="material-symbols-outlined text-primary text-[18px] shrink-0">calculate</span>
+  <p id="qaContextText" class="font-body-sm text-body-sm text-on-surface flex-1"></p>
+  <button id="qaContextClear" aria-label="컨텍스트 지우기" class="font-label-sm text-label-sm text-on-surface-variant underline shrink-0">지우기</button>
+</div>
 
 <section class="flex flex-col gap-unit-sm bg-surface-container p-unit-md rounded-xl shadow-sm">
 <label class="font-label-sm text-label-sm text-on-surface-variant flex items-center justify-between" for="ai-query"><span>AI 입시 데이터 질의창</span></label>
@@ -116,16 +122,40 @@ function buildToolTrace(res) {
 
 const chatHistory = [];  // day50~56 에이전트 멀티턴 - [{role, content}, ...]
 
+// grades.html 성적 추천 결과 화면의 "이 결과로 질문하기" 버튼에서 넘어온 컨텍스트.
+// 원본 JSON이 아니라 사람이 읽을 수 있는 요약 문장 하나로 저장돼 있으므로, 실제
+// 질문을 보낼 때 그대로 앞에 붙여서 에이전트가 "어떤 학교들 얘기인지" 알게 한다
+// (에이전트는 결국 자기 도구로 그래프를 다시 조회해서 답하므로 이걸로 답을
+// 대신하지 않는다 - 어떤 대상을 놓고 질문하는지 짚어주는 역할일 뿐).
+const qaContext = sessionStorage.getItem("artready_qa_context");
+if (qaContext) {
+  document.getElementById("qaContextBanner").classList.remove("hidden");
+  document.getElementById("qaContextText").textContent = "성적 추천 결과를 기준으로 질문합니다: " + qaContext;
+}
+document.getElementById("qaContextClear").addEventListener("click", () => {
+  sessionStorage.removeItem("artready_qa_context");
+  document.getElementById("qaContextBanner").classList.add("hidden");
+});
+
 function askQuestion() {
   const val = queryInput.value.trim();
   if (!val) return;
+
+  const activeContext = sessionStorage.getItem("artready_qa_context");
+  const queryToSend = activeContext ? `${activeContext}\n\n질문: ${val}` : val;
+  // 컨텍스트는 첫 질문에만 붙인다(대화가 이어지는 동안 매번 반복해서 붙이면
+  // 중복·잡음만 늘어남) - 보내고 나면 곧바로 지우고 배너도 숨긴다.
+  if (activeContext) {
+    sessionStorage.removeItem("artready_qa_context");
+    document.getElementById("qaContextBanner").classList.add("hidden");
+  }
 
   const pair = document.createElement("div");
   pair.className = "flex flex-col gap-unit-md";
 
   const userBubble = document.createElement("div");
   userBubble.className = "flex items-start gap-unit-sm bg-surface-container-low p-unit-md rounded-xl";
-  userBubble.innerHTML = `<div class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-[20px]">person</span></div><p class="font-body-md text-body-md text-on-surface font-semibold">${val}</p>`;
+  userBubble.innerHTML = `<div class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-[20px]">person</span></div><p class="font-body-md text-body-md text-on-surface font-semibold">${val}${activeContext ? ' <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">(성적 추천 결과 컨텍스트 포함)</span>' : ""}</p>`;
   pair.appendChild(userBubble);
 
   const aiBox = document.createElement("div");
@@ -140,7 +170,7 @@ function askQuestion() {
   fetch(window.API_BASE_URL + "/agent-chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query: val, history: chatHistory }),
+    body: JSON.stringify({ query: queryToSend, history: chatHistory }),
   }).then(r => r.json()).then(res => {
     const warnings = res.self_check_warnings || [];
     const warningBlock = warnings.length
