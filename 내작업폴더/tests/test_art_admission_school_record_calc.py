@@ -134,6 +134,43 @@ def test_sangmyung_accepts_art_track_subjects():
         svc.close()
 
 
+def test_korean_history_subject_alias_matches_official_rule_per_school():
+    """실측 사례로 발견: '한국사'는 학교마다 취급이 완전히 다르다.
+    - 홍익세종 미술우수자전형: 원문에 "사회 교과는 한국사, 사회를 반영함"이라고
+      명시돼 있어 한국사가 사회로 합산돼야 한다 (subject_aliases 적용 확인)
+    - 서경대: 반영교과 표에서 한국사 칸이 비어있어(국영수사만 25%씩) 한국사를
+      넣어도 결과가 안 바뀌어야 한다 (아예 반영되지 않음)"""
+    svc = ArtAdmissionService()
+    try:
+        base = [
+            {"subject_group": "국어", "grade": 3, "credit": 4},
+            {"subject_group": "영어", "grade": 3, "credit": 4},
+        ]
+        with_history = base + [{"subject_group": "한국사", "grade": 1, "credit": 4}]
+
+        r_without = svc.calculate_school_record_score(
+            "서경대학교", "공연예술학부 무대기술전공(무대,조명)", base,
+        )
+        r_with = svc.calculate_school_record_score(
+            "서경대학교", "공연예술학부 무대기술전공(무대,조명)", with_history,
+        )
+        assert r_without["percentage"] == r_with["percentage"], (
+            "서경대는 한국사 칸이 반영교과 표에 없는데, 한국사를 넣었더니 결과가 바뀜"
+        )
+
+        hongik_dept = "조형대학(디자인컨버전스학부/영상·애니메이션학부/게임그래픽디자인전공)"
+        social_only = [{"subject_group": "사회", "grade": 1, "credit": 4}, {"subject_group": "국어", "grade": 3, "credit": 4}, {"subject_group": "영어", "grade": 3, "credit": 4}]
+        history_instead = [{"subject_group": "한국사", "grade": 1, "credit": 4}, {"subject_group": "국어", "grade": 3, "credit": 4}, {"subject_group": "영어", "grade": 3, "credit": 4}]
+        r_social = svc.calculate_school_record_score("홍익대학교", hongik_dept, social_only)
+        r_history = svc.calculate_school_record_score("홍익대학교", hongik_dept, history_instead)
+        assert r_social["percentage"] == r_history["percentage"], (
+            "홍익세종은 한국사를 사회로 합산해야 하는데, 한국사로 넣었을 때 사회로 넣었을 때와 결과가 다름"
+        )
+        print("✅ test_korean_history_subject_alias_matches_official_rule_per_school passed!")
+    finally:
+        svc.close()
+
+
 def test_non_priority_school_returns_unavailable_not_fake_number():
     """정밀 반영교과 규정을 원문으로 확보하지 못한 학교(예: 경기대)는 있지도 않은
     환산표를 지어내지 말고 반드시 available=False로 명시해야 한다."""
@@ -166,6 +203,7 @@ if __name__ == "__main__":
     test_hongik_sejong_choice_subject_picks_more_advantageous_on_tie()
     test_hongik_sejong_liberal_arts_common_and_career_split_scaled()
     test_sangmyung_accepts_art_track_subjects()
+    test_korean_history_subject_alias_matches_official_rule_per_school()
     test_non_priority_school_returns_unavailable_not_fake_number()
     test_recommend_universities_ranks_exact_before_approximate()
     print("🎉 ALL SCHOOL RECORD CALC TESTS PASSED!")

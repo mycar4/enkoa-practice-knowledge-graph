@@ -26,6 +26,7 @@
       "mode": "choose_max_credit_subject",
       "fixed_subjects": ["국어", "영어"],
       "subject_choice_group": ["수학", "사회", "과학"],
+      "subject_aliases": {"한국사": "사회"},
       "career_elective_included": false,
       "credit_weighted": true,
       "conversion_table": {"1": 100, "2": 99, "3": 97, "4": 95, "5": 93, "6": 90, "7": 70, "8": 40, "9": 0},

@@ -164,6 +164,17 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
     conv = {str(k): v for k, v in (rule.get("conversion_table") or {}).items()}
     max_score = max(conv.values()) if conv else None
 
+    # 예: 홍익대 세종은 원문에 "사회 교과는 한국사, 사회(역사/도덕포함)를 반영함"이라고
+    # 명시돼 있어 한국사를 사회로 합산해야 하지만, 서경대는 반영교과 표에서 한국사
+    # 칸이 아예 비어있어 반영하지 않는다 - 이렇게 학교마다 갈리는 걸 학생 입력값을
+    # 억지로 통일시키지 않고, 확인된 학교에만 subject_aliases로 치환 규정을 박아둔다.
+    aliases = rule.get("subject_aliases") or {}
+    if aliases:
+        grades = [
+            {**g, "subject_group": aliases.get(g.get("subject_group"), g.get("subject_group"))}
+            for g in grades
+        ]
+
     def _score_for_grade(g):
         return conv.get(str(g)) if g is not None else None
 
