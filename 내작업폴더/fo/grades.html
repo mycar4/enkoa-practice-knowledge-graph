@@ -76,7 +76,11 @@
 </div></nav>
 
 <script>
-const SUBJECTS = ["국어", "영어", "수학", "사회", "과학"];
+// 기본 5개 교과군 외에 "예술"을 추가한 이유: 상명대처럼 "석차등급 있는 전 교과목"을
+// 반영하는 학교는 국영수사과 제한이 없어서, 예술고 학생부의 드로잉/평면조형/미술전공실기
+// 같은 예술계열 전문교과도 석차등급이 있으면 반영 대상이 된다(실측 사례로 확인).
+const SUBJECTS = ["국어", "영어", "수학", "사회", "과학", "예술", "기타"];
+const DEFAULT_SUBJECTS = ["국어", "영어", "수학", "사회", "과학"];
 const rowsBody = document.getElementById("gradeRows");
 const DRAFT_KEY = "artready_grades_draft";
 let rowSeq = 0;
@@ -157,7 +161,7 @@ function addRow(subject, state) {
 
 function resetRows() {
   rowsBody.innerHTML = "";
-  SUBJECTS.forEach(s => addRow(s));
+  DEFAULT_SUBJECTS.forEach(s => addRow(s));
 }
 
 // 페이지 진입 시 저장된 draft가 있으면 복원하고, 없으면 기본 5개 교과군을 깔아둔다.
@@ -174,7 +178,7 @@ try {
   }
 } catch (e) { /* 복원 실패 시 기본값으로 진행 */ }
 if (!restored) {
-  SUBJECTS.forEach(s => addRow(s));
+  DEFAULT_SUBJECTS.forEach(s => addRow(s));
 }
 
 document.getElementById("addRowBtn").addEventListener("click", () => { addRow(SUBJECTS[0]); saveDraft(); });

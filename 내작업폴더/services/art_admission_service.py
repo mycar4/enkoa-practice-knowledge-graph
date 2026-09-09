@@ -276,6 +276,42 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
             return None
         return {"raw_score": avg, "max_score": max_score, "matched_subject_count": len(pool)}
 
+    if mode == "common_and_career_split_scaled":
+        # 홍익대 세종 학생부교과(교과우수자전형 등) 방식: 공통·일반선택과목 평균과
+        # 진로선택과목 평균을 각각 0.9배해 더한 뒤, "반영교과 이수학점 합"에 따른
+        # 배율(학점합/1000 + 0.9, 학점합은 credit_cap으로 상한)을 곱한다.
+        # (원문 2027 모집요강 p.112-113, 반영과목 이수학점 합의 최대값 100)
+        subjects = set(rule.get("subjects") or [])
+        credit_cap = rule.get("credit_cap", 100)
+        ce_conv = {str(k): v for k, v in (rule.get("career_elective_conversion_table") or {}).items()}
+
+        common_pool = [
+            (_score_for_grade(g.get("grade")), g.get("credit") or 1)
+            for g in grades
+            if not g.get("career_elective") and (not subjects or g.get("subject_group") in subjects) and _score_for_grade(g.get("grade")) is not None
+        ]
+        career_pool = [
+            (ce_conv.get(str(g.get("achievement"))), g.get("credit") or 1)
+            for g in grades
+            if g.get("career_elective") and (not subjects or g.get("subject_group") in subjects) and ce_conv.get(str(g.get("achievement"))) is not None
+        ]
+        if not common_pool and not career_pool:
+            return None
+
+        common_avg = _weighted_avg(common_pool) or 0
+        career_avg = _weighted_avg(career_pool) or 0
+        total_credit = sum(c for _, c in common_pool) + sum(c for _, c in career_pool)
+        scale = min(total_credit, credit_cap) / 1000 + 0.9
+        raw_score = (common_avg * 0.9 + career_avg * 0.9) * scale
+
+        common_max = max(conv.values()) if conv else 0
+        career_max = max(ce_conv.values()) if ce_conv else 0
+        theoretical_max = (common_max * 0.9 + career_max * 0.9) * (credit_cap / 1000 + 0.9)
+        return {
+            "raw_score": raw_score, "max_score": round(theoretical_max, 4),
+            "matched_subject_count": len(common_pool) + len(career_pool),
+        }
+
     return None
 
 
@@ -870,6 +906,10 @@ class ArtAdmissionService:
         # 시험 절차의 한 항목을 가리키는 일반 단어인데, 우연히 용인대·서울예대
         # 실기유형 원문에 그대로 등장해서 "큰 주제" 선택지에 잘못 노출됐었다.
         "특기",
+        # 홍익대 세종 자율전공(자연·예능)처럼 실기 자체가 없는 전형의 exam_type_name을
+        # "해당 없음(학생부교과 100%, 실기 없음 - ...)"으로 서술했더니, "없음"이 우연히
+        # 다른 학교 원문에도 등장해 실기종목 키워드로 잘못 잡혔다(전수조사로 발견).
+        "없음", "해당",
     }
 
     @staticmethod

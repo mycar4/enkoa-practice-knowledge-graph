@@ -89,6 +89,51 @@ def test_hongik_sejong_choice_subject_picks_more_advantageous_on_tie():
         svc.close()
 
 
+def test_hongik_sejong_liberal_arts_common_and_career_split_scaled():
+    """홍익대 세종 캠퍼스자율전공(자연·예능)/교과우수자전형은 공통·일반선택 평균과
+    진로선택 평균을 각각 0.9배해 더한 뒤 이수학점 합에 따른 배율을 곱하는 5번째
+    계산 모드(common_and_career_split_scaled)를 쓴다. 손계산:
+    공통 4과목(국영수과 각 1등급=100점, credit10) 평균=100 -> ×0.9=90
+    진로선택 1과목(A=10점, credit10) 평균=10 -> ×0.9=9
+    총 이수학점=50(cap 100 이내) -> 배율=50/1000+0.9=0.95
+    raw_score=(90+9)×0.95=94.05, max_score=99.0 -> percentage=95.0"""
+    svc = ArtAdmissionService()
+    try:
+        grades = [
+            {"subject_group": "국어", "grade": 1, "credit": 10},
+            {"subject_group": "영어", "grade": 1, "credit": 10},
+            {"subject_group": "수학", "grade": 1, "credit": 10},
+            {"subject_group": "과학", "grade": 1, "credit": 10},
+            {"subject_group": "수학", "career_elective": True, "achievement": "A", "credit": 10},
+        ]
+        result = svc.calculate_school_record_score("홍익대학교", "캠퍼스자율전공(자연·예능)", grades)
+        assert result.get("available") is True, result.get("reason")
+        assert abs(result["raw_score"] - 94.05) < 0.01, result["raw_score"]
+        assert abs(result["percentage"] - 95.0) < 0.01, result["percentage"]
+        print("✅ test_hongik_sejong_liberal_arts_common_and_career_split_scaled passed!")
+    finally:
+        svc.close()
+
+
+def test_sangmyung_accepts_art_track_subjects():
+    """상명대는 '석차등급 있는 전 교과목'을 반영해 국영수사과 화이트리스트가 없다 -
+    예술고 학생부의 드로잉/평면조형/미술전공실기 같은 예술계열 전문교과도 석차등급이
+    있으면 계산에 포함돼야 한다(실측 사례로 발견한 gap의 회귀 케이스)."""
+    svc = ArtAdmissionService()
+    try:
+        grades = [
+            {"subject_group": "예술", "grade": 5, "credit": 6},
+            {"subject_group": "예술", "grade": 4, "credit": 2},
+            {"subject_group": "예술", "grade": 3, "credit": 4},
+        ]
+        result = svc.calculate_school_record_score("상명대학교", "미술학부 조형예술전공", grades)
+        assert result.get("available") is True, result.get("reason")
+        assert abs(result["percentage"] - 92.67) < 0.01, result["percentage"]
+        print("✅ test_sangmyung_accepts_art_track_subjects passed!")
+    finally:
+        svc.close()
+
+
 def test_non_priority_school_returns_unavailable_not_fake_number():
     """정밀 반영교과 규정을 원문으로 확보하지 못한 학교(예: 경기대)는 있지도 않은
     환산표를 지어내지 말고 반드시 available=False로 명시해야 한다."""
@@ -119,6 +164,8 @@ def test_recommend_universities_ranks_exact_before_approximate():
 if __name__ == "__main__":
     test_priority_schools_exact_calc_matches_hand_computed()
     test_hongik_sejong_choice_subject_picks_more_advantageous_on_tie()
+    test_hongik_sejong_liberal_arts_common_and_career_split_scaled()
+    test_sangmyung_accepts_art_track_subjects()
     test_non_priority_school_returns_unavailable_not_fake_number()
     test_recommend_universities_ranks_exact_before_approximate()
     print("🎉 ALL SCHOOL RECORD CALC TESTS PASSED!")

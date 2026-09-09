@@ -16,6 +16,8 @@ from tests.test_art_admission_rag_eval import (  # noqa: E402
 from tests.test_art_admission_school_record_calc import (  # noqa: E402
     test_priority_schools_exact_calc_matches_hand_computed,
     test_hongik_sejong_choice_subject_picks_more_advantageous_on_tie,
+    test_hongik_sejong_liberal_arts_common_and_career_split_scaled,
+    test_sangmyung_accepts_art_track_subjects,
     test_non_priority_school_returns_unavailable_not_fake_number,
     test_recommend_universities_ranks_exact_before_approximate,
 )
@@ -25,6 +27,8 @@ if __name__ == "__main__":
     test_qa_search_and_agent_search_agree()
     test_priority_schools_exact_calc_matches_hand_computed()
     test_hongik_sejong_choice_subject_picks_more_advantageous_on_tie()
+    test_hongik_sejong_liberal_arts_common_and_career_split_scaled()
+    test_sangmyung_accepts_art_track_subjects()
     test_non_priority_school_returns_unavailable_not_fake_number()
     test_recommend_universities_ranks_exact_before_approximate()
-    print("🎉 CI QUALITY GATE PASSED (무료 회귀 테스트 6건)")
+    print("🎉 CI QUALITY GATE PASSED (무료 회귀 테스트 8건)")

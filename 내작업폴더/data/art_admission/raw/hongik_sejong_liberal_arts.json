@@ -1,0 +1,46 @@
+{
+  "university": "홍익대학교",
+  "campus": "세종",
+  "department": "캠퍼스자율전공(자연·예능)",
+  "track_name": "학생부교과(교과우수자전형)",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 54,
+    "ratio": "일괄합산: 학생부교과 100% (실기 없음)",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "school_record_ratio_pct": 100,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-11"
+    },
+    "exam_date": null,
+    "result_date": "2026-12-18",
+    "exam_type_name": "해당 없음 (학생부교과 100%, 실기 없음 - 2학년 진급 시 단과대학/학부 자유 선택 가능한 자율전공)",
+    "allowed_materials": [],
+    "paper_size": null,
+    "time_limit_minutes": null,
+    "school_record_rule": {
+      "mode": "common_and_career_split_scaled",
+      "subjects": ["국어", "영어", "수학", "과학"],
+      "career_elective_included": true,
+      "credit_weighted": true,
+      "credit_cap": 100,
+      "conversion_table": {"1": 100, "2": 96, "3": 89, "4": 77, "5": 60, "6": 40, "7": 23, "8": 11, "9": 0},
+      "career_elective_conversion_table": {"A": 10, "B": 9, "C": 7},
+      "formula_note": "교과점수 = (공통·일반선택과목 이수단위가중평균×0.9 + 진로선택과목 이수단위가중평균×0.9) × (반영교과 이수학점 합/1000 + 0.9) (이수학점 합의 최대값은 100). 인문계열/캠퍼스자율전공(인문·예능)은 국어·영어·수학·사회, 자연계열/캠퍼스자율전공(자연·예능)은 국어·영어·수학·과학을 반영 (2027 모집요강 p.81, p.112-113).",
+      "rule_source_page": "81, 112-113"
+    },
+    "source_url": "https://www.hongik.ac.kr/kr/admission/recruitment.do?mode=download&articleNo=152315&attachNo=91150",
+    "source_page": 81,
+    "registration_period": {
+      "start": "2027-02-10",
+      "end": "2027-02-12"
+    }
+  },
+  "estimates": {
+    "cutoff_grade_estimate": null,
+    "cutoff_source_url": null,
+    "interview_summaries": []
+  }
+}
