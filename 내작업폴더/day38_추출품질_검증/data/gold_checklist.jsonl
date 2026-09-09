@@ -1,0 +1,95 @@
+{"doc_id": "PMC13432136", "sent_id": 0, "n_gold": 0, "note": "참여자당 실행 가능 유전자 수만 말한다. 개체쌍이 없다"}
+{"doc_id": "PMC13432136", "sent_id": 1, "n_gold": 0, "note": "비율 서술이다. 개체쌍이 없다"}
+{"doc_id": "PMC13432136", "sent_id": 2, "n_gold": 0, "note": "비율 서술이다. 개체쌍이 없다"}
+{"doc_id": "PMC13432136", "sent_id": 3, "n_gold": 0, "note": "유전자 수준이라는 도입 문장이다"}
+{"doc_id": "PMC13432136", "sent_id": 4, "n_gold": 0, "note": "유전자만 나열한다. 짝이 될 약물이 없다"}
+{"doc_id": "PMC13432136", "sent_id": 5, "n_gold": 0, "note": "유전자만 나열한다. 짝이 될 약물이 없다"}
+{"doc_id": "PMC13432136", "sent_id": 6, "n_gold": 0, "note": "약물 분류와 연결된다는 총평뿐이다. 어느 약인지 없다"}
+{"doc_id": "PMC13432136", "sent_id": 7, "n_gold": 2, "note": ""}
+{"doc_id": "PMC13432136", "sent_id": 8, "n_gold": 0, "note": "소제목이다"}
+{"doc_id": "PMC13432136", "sent_id": 9, "n_gold": 0, "note": "조사 방법 서술이다"}
+{"doc_id": "PMC13432136", "sent_id": 10, "n_gold": 0, "note": "처방 건수만 말한다"}
+{"doc_id": "PMC13432136", "sent_id": 11, "n_gold": 0, "note": "가장 많이 처방된 약 셋을 셌다. 유전자가 없어 관계가 서지 않는다"}
+{"doc_id": "PMC13432136", "sent_id": 12, "n_gold": 0, "note": "분모를 정의하는 문장이다"}
+{"doc_id": "PMC13432136", "sent_id": 13, "n_gold": 0, "note": "약-유전자 쌍마다 다르다는 총평뿐이다"}
+{"doc_id": "PMC13432136", "sent_id": 14, "n_gold": 4, "note": ""}
+{"doc_id": "PMC13432136", "sent_id": 15, "n_gold": 2, "note": ""}
+{"doc_id": "PMC13432136", "sent_id": 16, "n_gold": 2, "note": ""}
+{"doc_id": "PMC13432136", "sent_id": 17, "n_gold": 2, "note": ""}
+{"doc_id": "PMC13473732", "sent_id": 0, "n_gold": 0, "note": "표 안내 문장이다"}
+{"doc_id": "PMC13473732", "sent_id": 1, "n_gold": 0, "note": "등록 브랜드 수 서술이다"}
+{"doc_id": "PMC13473732", "sent_id": 2, "n_gold": 0, "note": "점수 분포 비교다"}
+{"doc_id": "PMC13473732", "sent_id": 3, "n_gold": 0, "note": "gene-drug pairs 라는 말만 있고 어느 쌍인지 없다"}
+{"doc_id": "PMC13473732", "sent_id": 4, "n_gold": 0, "note": "위와 같이 어느 쌍인지 없다"}
+{"doc_id": "PMC13473732", "sent_id": 5, "n_gold": 0, "note": "점수 분포 비교다"}
+{"doc_id": "PMC13473732", "sent_id": 6, "n_gold": 0, "note": "조사자 일치도 서술이다"}
+{"doc_id": "PMC13473732", "sent_id": 7, "n_gold": 0, "note": "설명서 정보 차이 서술이다"}
+{"doc_id": "PMC13473732", "sent_id": 8, "n_gold": 0, "note": "정보 부재 비율만 말한다"}
+{"doc_id": "PMC13473732", "sent_id": 9, "n_gold": 0, "note": "권고 비율 비교다"}
+{"doc_id": "PMC13473732", "sent_id": 10, "n_gold": 0, "note": "점수를 권고로 옮기는 절차 서술이다"}
+{"doc_id": "PMC13473732", "sent_id": 11, "n_gold": 0, "note": "그림 안내 문장이다"}
+{"doc_id": "PMC13473732", "sent_id": 12, "n_gold": 0, "note": "권고가 안 바뀐 쌍의 비율만 말한다"}
+{"doc_id": "PMC13473732", "sent_id": 13, "n_gold": 5, "note": ""}
+{"doc_id": "PMC13473732", "sent_id": 14, "n_gold": 4, "note": ""}
+{"doc_id": "PMC13473732", "sent_id": 15, "n_gold": 0, "note": "바뀐 쌍의 비율만 말한다"}
+{"doc_id": "PMC13473732", "sent_id": 16, "n_gold": 2, "note": ""}
+{"doc_id": "PMC13473732", "sent_id": 17, "n_gold": 5, "note": ""}
+{"doc_id": "PMC13368705", "sent_id": 0, "n_gold": 0, "note": "치매 치료와 직접 관련 없는 약이 많다는 총평이다"}
+{"doc_id": "PMC13368705", "sent_id": 1, "n_gold": 1, "note": ""}
+{"doc_id": "PMC13368705", "sent_id": 2, "n_gold": 0, "note": "독성 위험은 부작용 관계다. 계약의 7종에 없다"}
+{"doc_id": "PMC13368705", "sent_id": 3, "n_gold": 0, "note": "용량 권고 문장이다"}
+{"doc_id": "PMC13368705", "sent_id": 4, "n_gold": 0, "note": "복용 비율만 말한다"}
+{"doc_id": "PMC13368705", "sent_id": 5, "n_gold": 1, "note": ""}
+{"doc_id": "PMC13368705", "sent_id": 6, "n_gold": 0, "note": "근육병 위험은 부작용 관계다. 계약의 7종에 없다"}
+{"doc_id": "PMC13368705", "sent_id": 7, "n_gold": 0, "note": "대체약 권고 문장이다"}
+{"doc_id": "PMC13368705", "sent_id": 8, "n_gold": 1, "note": ""}
+{"doc_id": "PMC13368705", "sent_id": 9, "n_gold": 0, "note": "심혈관 사건 위험은 부작용 관계다. 계약의 7종에 없다"}
+{"doc_id": "PMC13368705", "sent_id": 10, "n_gold": 0, "note": "대체약을 쓰는 상황을 열거한 문장이다. 병명이 유전자와 짝지어진 진술이 아니다"}
+{"doc_id": "PMC13368705", "sent_id": 11, "n_gold": 0, "note": "용량 권고 문장이다"}
+{"doc_id": "PMC13368705", "sent_id": 12, "n_gold": 0, "note": "패널 크기 총평이다"}
+{"doc_id": "PMC13368705", "sent_id": 13, "n_gold": 0, "note": "유전자만 나열한다"}
+{"doc_id": "PMC13368705", "sent_id": 14, "n_gold": 3, "note": ""}
+{"doc_id": "PMC13368705", "sent_id": 15, "n_gold": 0, "note": "복용자 수만 말한다"}
+{"doc_id": "PMC13368705", "sent_id": 16, "n_gold": 0, "note": "대립유전자 빈도와 용량 조정 권고다"}
+{"doc_id": "PMC13368705", "sent_id": 17, "n_gold": 0, "note": "약효군 대체 추세 서술이다"}
+{"doc_id": "PMC13494139", "sent_id": 0, "n_gold": 2, "note": ""}
+{"doc_id": "PMC13494139", "sent_id": 1, "n_gold": 3, "note": "H3K36me3 은 히스톤 변형이라 유전자가 아니다. 그 대목만 뺐다"}
+{"doc_id": "PMC13494139", "sent_id": 2, "n_gold": 1, "note": "효과 조절 T세포 비율은 유전자가 아니다. 그 대목만 뺐다"}
+{"doc_id": "PMC13494139", "sent_id": 3, "n_gold": 0, "note": "PD-1, PD-L1 은 세포 표현형을 적은 것이라 질병-유전자 연관 진술로 보지 않는다"}
+{"doc_id": "PMC13494139", "sent_id": 4, "n_gold": 0, "note": "총론 문장이다"}
+{"doc_id": "PMC13494139", "sent_id": 5, "n_gold": 1, "note": ""}
+{"doc_id": "PMC13494139", "sent_id": 6, "n_gold": 1, "note": ""}
+{"doc_id": "PMC13494139", "sent_id": 7, "n_gold": 1, "note": ""}
+{"doc_id": "PMC13494139", "sent_id": 8, "n_gold": 2, "note": ""}
+{"doc_id": "PMC13494139", "sent_id": 9, "n_gold": 1, "note": ""}
+{"doc_id": "PMC13494208", "sent_id": 0, "n_gold": 0, "note": "소제목이다"}
+{"doc_id": "PMC13494208", "sent_id": 1, "n_gold": 3, "note": ""}
+{"doc_id": "PMC13494208", "sent_id": 2, "n_gold": 0, "note": "독성에 기여한다는 가능성 진술이다"}
+{"doc_id": "PMC13494208", "sent_id": 3, "n_gold": 0, "note": "B[a]P 가 PAH 라는 말뿐이다. 결합은 다음 문장에 있어 이어 붙이면 삼단논법이 된다"}
+{"doc_id": "PMC13494208", "sent_id": 4, "n_gold": 0, "note": "PAH 라는 무리에 대한 진술이다. 어느 물질인지는 앞 문장에 있다"}
+{"doc_id": "PMC13494208", "sent_id": 5, "n_gold": 1, "note": "3-Methylcholanthrene 은 PAH 라는 말뿐이라 삼단논법이 된다. 그 대목만 뺐다"}
+{"doc_id": "PMC13494208", "sent_id": 6, "n_gold": 3, "note": ""}
+{"doc_id": "PMC13494208", "sent_id": 7, "n_gold": 0, "note": "이정표라는 총평이다"}
+{"doc_id": "PMC13494208", "sent_id": 8, "n_gold": 0, "note": "피부 염증은 증상이다. PALLIATES 의 목적어는 질병이라 계약에 담기지 않는다"}
+{"doc_id": "PMC13494208", "sent_id": 9, "n_gold": 1, "note": "다발경화증과 헌팅턴병은 investigated 라 가능성 단계다. 그 대목만 뺐다"}
+{"doc_id": "PMC13494208", "sent_id": 10, "n_gold": 0, "note": "interest in pursuing 이라 가능성 단계다"}
+{"doc_id": "PMC13494208", "sent_id": 11, "n_gold": 2, "note": ""}
+{"doc_id": "PMC13494208", "sent_id": 12, "n_gold": 0, "note": "약물 재창출 전략 총평이다"}
+{"doc_id": "PMC13494208", "sent_id": 13, "n_gold": 2, "note": "cyclooxygenase, dihydroorotate dehydrogenase 는 유전자 하나로 정해지지 않는 계열 이름이다. 그 대목만 뺐다"}
+{"doc_id": "PMC13494208", "sent_id": 14, "n_gold": 3, "note": "tyrosine kinase, Janus kinase 는 계열 이름이다. 그 대목만 뺐다"}
+{"doc_id": "PMC13494208", "sent_id": 15, "n_gold": 0, "note": "간접 활성제라고 못 박았으므로 결합이 아니다"}
+{"doc_id": "PMC13494208", "sent_id": 16, "n_gold": 2, "note": ""}
+{"doc_id": "PMC13494208", "sent_id": 17, "n_gold": 1, "note": ""}
+{"doc_id": "PMC13461326", "sent_id": 0, "n_gold": 0, "note": "통증과 불안은 증상이다. PALLIATES 의 목적어는 질병이라 계약에 담기지 않는다"}
+{"doc_id": "PMC13461326", "sent_id": 1, "n_gold": 0, "note": "어지럼과 졸음은 부작용 관계다. 계약의 7종에 없다"}
+{"doc_id": "PMC13461326", "sent_id": 2, "n_gold": 0, "note": "호흡억제 위험은 부작용 관계다. 계약의 7종에 없다"}
+{"doc_id": "PMC13461326", "sent_id": 3, "n_gold": 0, "note": "1차 수면제로는 권하지 않는다는 부정 진술이다"}
+{"doc_id": "PMC13461326", "sent_id": 4, "n_gold": 0, "note": "소제목이다"}
+{"doc_id": "PMC13461326", "sent_id": 5, "n_gold": 0, "note": "may influence 라 가능성 단계다"}
+{"doc_id": "PMC13461326", "sent_id": 6, "n_gold": 0, "note": "진정 등 이상반응 서술이다"}
+{"doc_id": "PMC13461326", "sent_id": 7, "n_gold": 0, "note": "규제 차이 서술이다"}
+{"doc_id": "PMC13461326", "sent_id": 8, "n_gold": 0, "note": "통상 치료제로 보지 말라는 부정 진술이다"}
+{"doc_id": "PMC13461326", "sent_id": 9, "n_gold": 0, "note": "소제목이다"}
+{"doc_id": "PMC13461326", "sent_id": 10, "n_gold": 3, "note": ""}
+{"doc_id": "PMC13461326", "sent_id": 11, "n_gold": 3, "note": ""}
+{"doc_id": "PMC13461326", "sent_id": 12, "n_gold": 0, "note": "구강건조 등은 부작용 관계다. 계약의 7종에 없다"}

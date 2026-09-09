@@ -1,0 +1,30 @@
+{"doc_id": "PMC13493376", "sent_id": 0, "n_gold": 0, "note": "소제목이다"}
+{"doc_id": "PMC13493376", "sent_id": 1, "n_gold": 0, "note": "MTX 가 백신 반응을 떨어뜨린다는 말이다. 치료 관계를 세우는 문장이 아니다"}
+{"doc_id": "PMC13493376", "sent_id": 2, "n_gold": 1, "note": ""}
+{"doc_id": "PMC13493376", "sent_id": 3, "n_gold": 0, "note": "효과가 나타나는 시점 이야기다. 2번 문장과 같은 사실이라 다시 넣지 않는다"}
+{"doc_id": "PMC13493376", "sent_id": 4, "n_gold": 0, "note": "중단 뒤 재발 서술이다"}
+{"doc_id": "PMC13493376", "sent_id": 5, "n_gold": 0, "note": "효과의 빠르기를 견주는 문장이다. 활막염은 MTX 효과를 말한 것이라 질병-증상 관계로 올리지 않는다"}
+{"doc_id": "PMC13493376", "sent_id": 6, "n_gold": 0, "note": "약동학 서술이다"}
+{"doc_id": "PMC13493376", "sent_id": 7, "n_gold": 0, "note": "folate-dependent enzymes 는 유전자 하나로 정해지지 않는 계열 이름이다"}
+{"doc_id": "PMC13493376", "sent_id": 8, "n_gold": 2, "note": ""}
+{"doc_id": "PMC13493376", "sent_id": 9, "n_gold": 0, "note": "대사물의 작용 서술이다. 유전자 이름이 없다"}
+{"doc_id": "PMC13493376", "sent_id": 10, "n_gold": 0, "note": "JAK-STAT, NF-kB 는 경로 이름이라 유전자로 보지 않는다"}
+{"doc_id": "PMC13495420", "sent_id": 0, "n_gold": 0, "note": "생물학적 제제 사용이 늘었다는 총평이다"}
+{"doc_id": "PMC13495420", "sent_id": 1, "n_gold": 0, "note": "투여 전 고려 사항이다"}
+{"doc_id": "PMC13495420", "sent_id": 2, "n_gold": 0, "note": "TNFi 는 약효군 이름이다. 안전성 서술이라 치료 관계도 아니다"}
+{"doc_id": "PMC13495420", "sent_id": 3, "n_gold": 0, "note": "자료가 적다는 서술이다"}
+{"doc_id": "PMC13495420", "sent_id": 4, "n_gold": 1, "note": ""}
+{"doc_id": "PMC13495420", "sent_id": 5, "n_gold": 0, "note": "BAFF 의 작용 서술이다. 약이 없다"}
+{"doc_id": "PMC13495420", "sent_id": 6, "n_gold": 0, "note": "4번 문장과 같은 사실이라 다시 넣지 않는다"}
+{"doc_id": "PMC13495420", "sent_id": 7, "n_gold": 1, "note": ""}
+{"doc_id": "PMC13495420", "sent_id": 8, "n_gold": 0, "note": "효과와 내약성 서술이다. 7번 문장과 같은 사실이다"}
+{"doc_id": "PMC13495420", "sent_id": 9, "n_gold": 0, "note": "누구에게 효과가 큰지에 대한 서술이다"}
+{"doc_id": "PMC13495420", "sent_id": 10, "n_gold": 1, "note": ""}
+{"doc_id": "PMC13495420", "sent_id": 11, "n_gold": 0, "note": "소제목이다"}
+{"doc_id": "PMC13495420", "sent_id": 12, "n_gold": 1, "note": ""}
+{"doc_id": "PMC13495420", "sent_id": 13, "n_gold": 0, "note": "고혈압과 당뇨는 스테로이드의 부작용이다. 계약의 7종에 없다"}
+{"doc_id": "PMC13495420", "sent_id": 14, "n_gold": 0, "note": "구순구개열 위험도 부작용이다"}
+{"doc_id": "PMC13495420", "sent_id": 15, "n_gold": 0, "note": "corticosteroids 는 약효군 이름이라 개체로 넣지 않는다"}
+{"doc_id": "PMC13495420", "sent_id": 16, "n_gold": 0, "note": "태반 통과 정도 서술이다"}
+{"doc_id": "PMC13495420", "sent_id": 17, "n_gold": 0, "note": "임신 중 권하지 않는다는 부정 진술이다"}
+{"doc_id": "PMC13495420", "sent_id": 18, "n_gold": 0, "note": "용량 조절 권고다"}

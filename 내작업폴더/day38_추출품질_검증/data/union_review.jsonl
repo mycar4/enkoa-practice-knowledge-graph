@@ -1,0 +1,23 @@
+{"subject": "B[a]P", "relation": "BINDS", "object": "AHR", "doc_id": "PMC13494208", "verdict": "이어 붙여야 나오는 추론", "note": "근거는 PAH 계열과 HAH 계열의 친화도를 견준 문장이다. B[a]P 라는 이름이 그 문장에 없다"}
+{"subject": "Tapinarof (3,5-dihydroxy-4-isopropylstilbene)", "relation": "BINDS", "object": "AHR", "doc_id": "PMC13494208", "verdict": "표기만 다른 같은 사실", "note": "골드에는 문서가 처음 소개한 표기 Tapinarof 로 들어 있다. 괄호 안 화학명까지 붙여 이름이 갈렸다"}
+{"subject": "Tapinarof (3,5-dihydroxy-4-isopropylstilbene)", "relation": "TREATS", "object": "plaque psoriasis", "doc_id": "PMC13494208", "verdict": "표기만 다른 같은 사실", "note": "위와 같다"}
+{"subject": "Tapinarof (3,5-dihydroxy-4-isopropylstilbene)", "relation": "TREATS", "object": "atopic dermatitis", "doc_id": "PMC13494208", "verdict": "표기만 다른 같은 사실", "note": "위와 같다"}
+{"subject": "Laquinimod", "relation": "TREATS", "object": "multiple sclerosis", "doc_id": "PMC13494208", "verdict": "가능성 단계", "note": "investigated as 다(지침 3)"}
+{"subject": "Laquinimod", "relation": "TREATS", "object": "Huntington disease", "doc_id": "PMC13494208", "verdict": "가능성 단계", "note": "investigated as 다(지침 3)"}
+{"subject": "Laquinimod", "relation": "TREATS", "object": "inflammatory bowel disease", "doc_id": "PMC13494208", "verdict": "가능성 단계", "note": "interest in pursuing 이다(지침 3)"}
+{"subject": "omeprazole", "relation": "BINDS", "object": "AHR", "doc_id": "PMC13494208", "verdict": "간접 작용", "note": "indirect activator 라고 못 박은 문장이다(지침 8)"}
+{"subject": "gabapentin", "relation": "PALLIATES", "object": "PSD", "doc_id": "PMC13461326", "verdict": "부정 진술", "note": "1차 수면제로는 권하지 않는다는 문장이다(지침 6)"}
+{"subject": "pregabalin", "relation": "PALLIATES", "object": "PSD", "doc_id": "PMC13461326", "verdict": "부정 진술", "note": "위와 같은 문장이다"}
+{"subject": "cannabinoids", "relation": "PALLIATES", "object": "PSD", "doc_id": "PMC13461326", "verdict": "부정 진술", "note": "통상 치료제로 보지 말라는 문장이다(지침 6). 주어도 약효군 이름이다"}
+{"subject": "Tapinarof", "relation": "PALLIATES", "object": "skin inflammation", "doc_id": "PMC13494208", "verdict": "계약이 담지 못함", "note": "피부 염증은 소견이다. PALLIATES 의 목적어는 질병이라 계약에 담기지 않는다"}
+{"subject": "gabapentin", "relation": "PALLIATES", "object": "perioperative pain", "doc_id": "PMC13461326", "verdict": "계약이 담지 못함", "note": "통증은 증상이다(지침 2)"}
+{"subject": "gabapentin", "relation": "PALLIATES", "object": "chemotherapy-induced neuropathic symptoms", "doc_id": "PMC13461326", "verdict": "계약이 담지 못함", "note": "증상 이름이다(지침 2)"}
+{"subject": "gabapentin", "relation": "PALLIATES", "object": "nocturnal discomfort", "doc_id": "PMC13461326", "verdict": "계약이 담지 못함", "note": "증상 이름이다(지침 2)"}
+{"subject": "gabapentin", "relation": "PALLIATES", "object": "sleep", "doc_id": "PMC13461326", "verdict": "계약이 담지 못함", "note": "수면은 질병도 증상 이름도 아니다. 근거도 일부 환자의 부수 효과를 말한 문장이다"}
+{"subject": "gabapentin", "relation": "PALLIATES", "object": "anxiety", "doc_id": "PMC13461326", "verdict": "계약이 담지 못함", "note": "불안은 증상이다(지침 2)"}
+{"subject": "pregabalin", "relation": "PALLIATES", "object": "perioperative pain", "doc_id": "PMC13461326", "verdict": "계약이 담지 못함", "note": "통증은 증상이다(지침 2)"}
+{"subject": "pregabalin", "relation": "PALLIATES", "object": "chemotherapy-induced neuropathic symptoms", "doc_id": "PMC13461326", "verdict": "계약이 담지 못함", "note": "증상 이름이다(지침 2)"}
+{"subject": "pregabalin", "relation": "PALLIATES", "object": "nocturnal discomfort", "doc_id": "PMC13461326", "verdict": "계약이 담지 못함", "note": "증상 이름이다(지침 2)"}
+{"subject": "pregabalin", "relation": "PALLIATES", "object": "sleep", "doc_id": "PMC13461326", "verdict": "계약이 담지 못함", "note": "위와 같다"}
+{"subject": "pregabalin", "relation": "PALLIATES", "object": "anxiety", "doc_id": "PMC13461326", "verdict": "계약이 담지 못함", "note": "불안은 증상이다(지침 2)"}
+{"subject": "Cannabinoid-based therapies", "relation": "PALLIATES", "object": "pain", "doc_id": "PMC13461326", "verdict": "가능성 단계", "note": "may influence 다(지침 3). 주어도 약효군 이름이다(지침 10)"}
