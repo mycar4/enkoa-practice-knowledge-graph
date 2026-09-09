@@ -345,6 +345,45 @@ def test_batch4_remaining_15_schools_use_generalized_modes_not_hardcoding():
         svc.close()
 
 
+def test_prior_year_result_batch2_image_based_schools():
+    """이미지(스캔) PDF라 자동 텍스트 추출이 안 되는 4개교(서울과기대·성신여대·
+    경희대·경기대)는 pymupdf로 페이지를 렌더링한 뒤 직접 읽어(비전) 옮긴 값이다 -
+    OCR 도구가 아니라 육안 대조이므로 정확한 값이 DB에 그대로 들어갔는지 회귀
+    테스트로 고정해둔다. 경희대는 학생부 등급 자료 자체가 원문에 없어 competition_rate만
+    있고 typical/floor는 반드시 None이어야 한다(지어내면 안 됨)."""
+    svc = ArtAdmissionService()
+    try:
+        grades = [
+            {"subject_group": "국어", "grade": 3, "credit": 4},
+            {"subject_group": "영어", "grade": 4, "credit": 4},
+        ]
+        results = svc.recommend_universities(grades)
+
+        def pyr_of(uni, dept):
+            r = next(x for x in results if x["university"] == uni and x["department"] == dept)
+            return r["prior_year_result"]
+
+        seoultech = pyr_of("서울과학기술대학교", "조형예술학과")
+        assert seoultech["school_record_grade_typical"] == 2.75
+        assert seoultech["school_record_grade_floor"] is None
+
+        sungshin = pyr_of("성신여자대학교", "동양화과")
+        assert sungshin["competition_rate"] == 10.55
+        assert sungshin["school_record_grade_typical"] == 4.31
+
+        khu = pyr_of("경희대학교", "회화전공")
+        assert khu["competition_rate"] == 51.4
+        assert khu["school_record_grade_typical"] is None, "경희대는 학생부 등급 자료가 없는데 값이 들어감(지어냈을 위험)"
+        assert khu["school_record_grade_floor"] is None
+
+        gyeonggi = pyr_of("경기대학교", "Fine Arts학부")
+        assert gyeonggi["school_record_grade_typical"] == 5.083
+        assert gyeonggi["school_record_grade_floor"] == 5.707
+        print("✅ test_prior_year_result_batch2_image_based_schools passed!")
+    finally:
+        svc.close()
+
+
 def test_school_record_impact_score_matches_hand_computed():
     """'내신 실질영향' 지표(사용자 확정 공식) = (1등급 환산점수-6등급 환산점수)/만점
     × 학생부반영비율. 동국대 한국화전공(conv: 1등급=10점,6등급=8.7점,만점10, 학생부
@@ -534,6 +573,7 @@ if __name__ == "__main__":
     test_recommend_sorts_by_raw_grade_not_schools_own_generous_curve()
     test_prior_year_comparison_tier_drives_primary_sort()
     test_school_record_impact_score_matches_hand_computed()
+    test_prior_year_result_batch2_image_based_schools()
     test_non_priority_school_returns_unavailable_not_fake_number()
     test_recommend_universities_ranks_exact_before_approximate()
     print("🎉 ALL SCHOOL RECORD CALC TESTS PASSED!")

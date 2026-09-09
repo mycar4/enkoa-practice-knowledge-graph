@@ -73,7 +73,17 @@
     "estimates": {
       "cutoff_grade_estimate": null,
       "cutoff_source_url": null,
-      "interview_summaries": []
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 20.2,
+        "school_record_grade_typical": null,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "competition_rate_only (학생부 성적 데이터 없음)",
+        "methodology_note": "이미지(스캔) PDF \"2026학년도 입학전형 통계자료\" 08.실기우수자전형 표에서 확인. 이 표는 경쟁률/충원합격만 제공하고 학생부 등급 자료는 없음(학생부교과/학생부종합 챕터에는 등급 분포 그래프가 있으나 실기우수자전형 챕터에는 없음).",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/경희대학교/경희대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 44
+      }
     }
   },
   {
@@ -149,7 +159,17 @@
     "estimates": {
       "cutoff_grade_estimate": null,
       "cutoff_source_url": null,
-      "interview_summaries": []
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 51.4,
+        "school_record_grade_typical": null,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "competition_rate_only (학생부 성적 데이터 없음)",
+        "methodology_note": "이미지(스캔) PDF \"2026학년도 입학전형 통계자료\" 08.실기우수자전형 표에서 확인. 이 표는 경쟁률/충원합격만 제공하고 학생부 등급 자료는 없음(학생부교과/학생부종합 챕터에는 등급 분포 그래프가 있으나 실기우수자전형 챕터에는 없음).",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/경희대학교/경희대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 44
+      }
     }
   },
   {
@@ -227,7 +247,17 @@
     "estimates": {
       "cutoff_grade_estimate": null,
       "cutoff_source_url": null,
-      "interview_summaries": []
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 51.5,
+        "school_record_grade_typical": null,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "competition_rate_only (학생부 성적 데이터 없음)",
+        "methodology_note": "이미지(스캔) PDF \"2026학년도 입학전형 통계자료\" 08.실기우수자전형 표에서 확인. 이 표는 경쟁률/충원합격만 제공하고 학생부 등급 자료는 없음(학생부교과/학생부종합 챕터에는 등급 분포 그래프가 있으나 실기우수자전형 챕터에는 없음).",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/경희대학교/경희대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 44
+      }
     }
   }
 ]

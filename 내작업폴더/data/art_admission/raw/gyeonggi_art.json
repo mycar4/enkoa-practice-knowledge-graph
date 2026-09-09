@@ -1,207 +1,408 @@
 [
-{
-  "university": "경기대학교",
-  "campus": "수원",
-  "department": "입체조형학과",
-  "track_name": "실기/실적(예능실기우수자전형)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 21,
-    "ratio": "실기 70% (70점) + 학교생활기록부(교과) 30% (30점), 합계 100점",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 70,
-    "school_record_ratio_pct": 30,
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
+  {
+    "university": "경기대학교",
+    "campus": "수원",
+    "department": "입체조형학과",
+    "track_name": "실기/실적(예능실기우수자전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 21,
+      "ratio": "실기 70% (70점) + 학교생활기록부(교과) 30% (30점), 합계 100점",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 70,
+      "school_record_ratio_pct": 30,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "기초디자인: 2026-10-04, 소조(인체두상): 2026-10-05 (택1)",
+      "result_date": "2026-11-20",
+      "exam_type_name": "택1: 기초디자인(고사 당일 제시, 4시간) / 소조-인체두상(고사 당일 제시, 4시간)",
+      "allowed_materials": [
+        "[기초디자인] 화판, 아크릴물감, 수채화물감, 포스터물감, 파스텔, 색연필, 연필, 펜 등(유화물감 사용불가)",
+        "[소조] 소조용 도구, 앞치마, 수건, 면장갑, 발받침대, 흙절단용기구(철사 등, 개인 노끈·고정용 도구 사용 불가)"
+      ],
+      "paper_size": "켄트지 3절(기초디자인)",
+      "time_limit_minutes": 240,
+      "school_record_rule": {
+        "mode": "common_and_career_split_scaled",
+        "subjects": [
+          "국어",
+          "수학",
+          "영어",
+          "사회",
+          "한국사"
+        ],
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "common_weight": 0.9,
+        "career_weight": 0.1,
+        "common_weight_if_no_career": 1.0,
+        "use_credit_scale": false,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 97,
+          "4": 95,
+          "5": 90,
+          "6": 85,
+          "7": 60,
+          "8": 20,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 99,
+          "C": 95
+        },
+        "formula_note": "예술체육대학(과학 제외) 반영교과: 국어, 수학, 영어, 통합사회/사회, 한국사 - 전 과목(공통·일반선택+진로선택 구분없이 학년/학기 가중치 없이 반영). 평균점수 = (공통·일반선택 이수단위가중평균×0.9) + (진로선택 성취도 이수단위가중평균×0.1). 진로선택과목이 없으면 공통·일반선택만 100% 반영. 이 교과 점수에 별도로 비교과(출결) 점수가 더해져 최종 학생부 반영점수가 되나, 이 계산기는 교과 부분만 계산한다 (2027 모집요강 p.37-38, 41-42, 실기/실적 예능실기우수자전형 - 예술체육대학 기준).",
+        "rule_source_page": "37-38, 41-42"
+      },
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%EA%B2%BD%EA%B8%B0%EB%8C%80%ED%95%99%EA%B5%90/%EA%B2%BD%EA%B8%B0%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
+      "source_page": 47
     },
-    "exam_date": "기초디자인: 2026-10-04, 소조(인체두상): 2026-10-05 (택1)",
-    "result_date": "2026-11-20",
-    "exam_type_name": "택1: 기초디자인(고사 당일 제시, 4시간) / 소조-인체두상(고사 당일 제시, 4시간)",
-    "allowed_materials": ["[기초디자인] 화판, 아크릴물감, 수채화물감, 포스터물감, 파스텔, 색연필, 연필, 펜 등(유화물감 사용불가)", "[소조] 소조용 도구, 앞치마, 수건, 면장갑, 발받침대, 흙절단용기구(철사 등, 개인 노끈·고정용 도구 사용 불가)"],
-    "paper_size": "켄트지 3절(기초디자인)",
-    "time_limit_minutes": 240,
-    "school_record_rule": {
-      "mode": "common_and_career_split_scaled",
-      "subjects": ["국어", "수학", "영어", "사회", "한국사"],
-      "career_elective_included": true,
-      "credit_weighted": true,
-      "common_weight": 0.9,
-      "career_weight": 0.1,
-      "common_weight_if_no_career": 1.0,
-      "use_credit_scale": false,
-      "conversion_table": {"1": 100, "2": 99, "3": 97, "4": 95, "5": 90, "6": 85, "7": 60, "8": 20, "9": 0},
-      "career_elective_conversion_table": {"A": 100, "B": 99, "C": 95},
-      "formula_note": "예술체육대학(과학 제외) 반영교과: 국어, 수학, 영어, 통합사회/사회, 한국사 - 전 과목(공통·일반선택+진로선택 구분없이 학년/학기 가중치 없이 반영). 평균점수 = (공통·일반선택 이수단위가중평균×0.9) + (진로선택 성취도 이수단위가중평균×0.1). 진로선택과목이 없으면 공통·일반선택만 100% 반영. 이 교과 점수에 별도로 비교과(출결) 점수가 더해져 최종 학생부 반영점수가 되나, 이 계산기는 교과 부분만 계산한다 (2027 모집요강 p.37-38, 41-42, 실기/실적 예능실기우수자전형 - 예술체육대학 기준).",
-      "rule_source_page": "37-38, 41-42"
+    "estimates": {
+      "cutoff_grade_estimate": 5.509,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/경기대학교/경기대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 15.95,
+        "school_record_grade_typical": 5.254,
+        "school_record_grade_floor": 5.509,
+        "grade_stat_type": "50_70_cut (typical=50%cut, floor=70%cut, 최종등록자 기준)",
+        "methodology_note": "이미지(스캔) PDF라 표를 직접 읽어 옮겼다. \"실기/실적(예체능우수자전형)\" 최종등록자(학생부) 50%cut/70%cut 표에서 확인(100%cut/평균값도 원문에 있으나 다른 학교와 형식을 맞추기 위해 50/70%cut만 채택).",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/경기대학교/경기대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 20
+      }
+    }
+  },
+  {
+    "university": "경기대학교",
+    "campus": "수원",
+    "department": "디자인학부",
+    "track_name": "실기/실적(예능실기우수자전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 33,
+      "ratio": "실기 70% (70점) + 학교생활기록부(교과) 30% (30점), 합계 100점",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 70,
+      "school_record_ratio_pct": 30,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-11",
+      "result_date": "2026-11-20",
+      "exam_type_name": "기초디자인 - 고사 당일 제시",
+      "allowed_materials": [
+        "화판",
+        "아크릴물감",
+        "수채화물감",
+        "포스터물감",
+        "파스텔",
+        "색연필",
+        "연필",
+        "펜 등",
+        "유화물감 사용불가"
+      ],
+      "paper_size": "켄트지 3절",
+      "time_limit_minutes": 240,
+      "school_record_rule": {
+        "mode": "common_and_career_split_scaled",
+        "subjects": [
+          "국어",
+          "수학",
+          "영어",
+          "사회",
+          "한국사"
+        ],
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "common_weight": 0.9,
+        "career_weight": 0.1,
+        "common_weight_if_no_career": 1.0,
+        "use_credit_scale": false,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 97,
+          "4": 95,
+          "5": 90,
+          "6": 85,
+          "7": 60,
+          "8": 20,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 99,
+          "C": 95
+        },
+        "formula_note": "예술체육대학(과학 제외) 반영교과: 국어, 수학, 영어, 통합사회/사회, 한국사 - 전 과목(공통·일반선택+진로선택 구분없이 학년/학기 가중치 없이 반영). 평균점수 = (공통·일반선택 이수단위가중평균×0.9) + (진로선택 성취도 이수단위가중평균×0.1). 진로선택과목이 없으면 공통·일반선택만 100% 반영. 이 교과 점수에 별도로 비교과(출결) 점수가 더해져 최종 학생부 반영점수가 되나, 이 계산기는 교과 부분만 계산한다 (2027 모집요강 p.37-38, 41-42, 실기/실적 예능실기우수자전형 - 예술체육대학 기준).",
+        "rule_source_page": "37-38, 41-42"
+      },
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%EA%B2%BD%EA%B8%B0%EB%8C%80%ED%95%99%EA%B5%90/%EA%B2%BD%EA%B8%B0%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
+      "source_page": 47
     },
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%EA%B2%BD%EA%B8%B0%EB%8C%80%ED%95%99%EA%B5%90/%EA%B2%BD%EA%B8%B0%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
-    "source_page": 47
+    "estimates": {
+      "cutoff_grade_estimate": 5.203,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/경기대학교/경기대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 30.09,
+        "school_record_grade_typical": 4.808,
+        "school_record_grade_floor": 5.203,
+        "grade_stat_type": "50_70_cut (typical=50%cut, floor=70%cut, 최종등록자 기준)",
+        "methodology_note": "이미지(스캔) PDF라 표를 직접 읽어 옮겼다. \"실기/실적(예체능우수자전형)\" 최종등록자(학생부) 50%cut/70%cut 표에서 확인(100%cut/평균값도 원문에 있으나 다른 학교와 형식을 맞추기 위해 50/70%cut만 채택).",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/경기대학교/경기대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 20
+      }
+    }
+  },
+  {
+    "university": "경기대학교",
+    "campus": "수원",
+    "department": "Fine Arts학부",
+    "track_name": "실기/실적(예능실기우수자전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 50,
+      "ratio": "실기 70% (70점) + 학교생활기록부(교과) 30% (30점), 합계 100점",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 70,
+      "school_record_ratio_pct": 30,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-04",
+      "result_date": "2026-11-20",
+      "exam_type_name": "택1: 인물수채화 / 정물수묵(담채)화 / 서예(한글서예·한문서예·캘리그라피 중 택1)",
+      "allowed_materials": [
+        "[인물수채화] 수채화물감, 붓, 팔레트, 물통, 연필, 지우개, 압정 등",
+        "[정물수묵담채] 붓, 먹, 벼루, 물통, 물감그릇, 물감(한국화용) 등",
+        "[서예] 붓, 먹, 벼루, 서진, 자전 등"
+      ],
+      "paper_size": "켄트지 3절(인물수채화) / 화선지 전지1/2(정물수묵담채·서예)",
+      "time_limit_minutes": 240,
+      "school_record_rule": {
+        "mode": "common_and_career_split_scaled",
+        "subjects": [
+          "국어",
+          "수학",
+          "영어",
+          "사회",
+          "한국사"
+        ],
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "common_weight": 0.9,
+        "career_weight": 0.1,
+        "common_weight_if_no_career": 1.0,
+        "use_credit_scale": false,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 97,
+          "4": 95,
+          "5": 90,
+          "6": 85,
+          "7": 60,
+          "8": 20,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 99,
+          "C": 95
+        },
+        "formula_note": "예술체육대학(과학 제외) 반영교과: 국어, 수학, 영어, 통합사회/사회, 한국사 - 전 과목(공통·일반선택+진로선택 구분없이 학년/학기 가중치 없이 반영). 평균점수 = (공통·일반선택 이수단위가중평균×0.9) + (진로선택 성취도 이수단위가중평균×0.1). 진로선택과목이 없으면 공통·일반선택만 100% 반영. 이 교과 점수에 별도로 비교과(출결) 점수가 더해져 최종 학생부 반영점수가 되나, 이 계산기는 교과 부분만 계산한다 (2027 모집요강 p.37-38, 41-42, 실기/실적 예능실기우수자전형 - 예술체육대학 기준).",
+        "rule_source_page": "37-38, 41-42"
+      },
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%EA%B2%BD%EA%B8%B0%EB%8C%80%ED%95%99%EA%B5%90/%EA%B2%BD%EA%B8%B0%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
+      "source_page": 47
+    },
+    "estimates": {
+      "cutoff_grade_estimate": 5.707,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/경기대학교/경기대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 7.27,
+        "school_record_grade_typical": 5.083,
+        "school_record_grade_floor": 5.707,
+        "grade_stat_type": "50_70_cut (typical=50%cut, floor=70%cut, 최종등록자 기준)",
+        "methodology_note": "이미지(스캔) PDF라 표를 직접 읽어 옮겼다. \"실기/실적(예체능우수자전형)\" 최종등록자(학생부) 50%cut/70%cut 표에서 확인(100%cut/평균값도 원문에 있으나 다른 학교와 형식을 맞추기 위해 50/70%cut만 채택).",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/경기대학교/경기대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 20
+      }
+    }
+  },
+  {
+    "university": "경기대학교",
+    "campus": "수원",
+    "department": "애니메이션학과(상상과표현)",
+    "track_name": "실기/실적(예능실기우수자전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 11,
+      "ratio": "실기 60% (60점) + 학교생활기록부(교과) 40% (40점), 합계 100점",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 60,
+      "school_record_ratio_pct": 40,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-18",
+      "result_date": "2026-11-20",
+      "exam_type_name": "상상으로 4컷 표현하기 - 고사 당일 제시",
+      "allowed_materials": [
+        "아크릴물감",
+        "수채화물감",
+        "포스터물감",
+        "파스텔",
+        "색연필",
+        "연필",
+        "펜 등",
+        "정착액(픽서티브)/편화사전/(밑)그림/사진 등 이미지 사용 금지"
+      ],
+      "paper_size": "켄트지 30cm x 90cm",
+      "time_limit_minutes": 240,
+      "school_record_rule": {
+        "mode": "common_and_career_split_scaled",
+        "subjects": [
+          "국어",
+          "수학",
+          "영어",
+          "사회",
+          "한국사"
+        ],
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "common_weight": 0.9,
+        "career_weight": 0.1,
+        "common_weight_if_no_career": 1.0,
+        "use_credit_scale": false,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 97,
+          "4": 95,
+          "5": 90,
+          "6": 85,
+          "7": 60,
+          "8": 20,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 99,
+          "C": 95
+        },
+        "formula_note": "예술체육대학(과학 제외) 반영교과: 국어, 수학, 영어, 통합사회/사회, 한국사 - 전 과목(공통·일반선택+진로선택 구분없이 학년/학기 가중치 없이 반영). 평균점수 = (공통·일반선택 이수단위가중평균×0.9) + (진로선택 성취도 이수단위가중평균×0.1). 진로선택과목이 없으면 공통·일반선택만 100% 반영. 이 교과 점수에 별도로 비교과(출결) 점수가 더해져 최종 학생부 반영점수가 되나, 이 계산기는 교과 부분만 계산한다 (2027 모집요강 p.37-38, 41-42, 실기/실적 예능실기우수자전형 - 예술체육대학 기준).",
+        "rule_source_page": "37-38, 41-42"
+      },
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%EA%B2%BD%EA%B8%B0%EB%8C%80%ED%95%99%EA%B5%90/%EA%B2%BD%EA%B8%B0%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
+      "source_page": 47
+    },
+    "estimates": {
+      "cutoff_grade_estimate": 5.319,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/경기대학교/경기대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 58.0,
+        "school_record_grade_typical": 5.171,
+        "school_record_grade_floor": 5.319,
+        "grade_stat_type": "50_70_cut (typical=50%cut, floor=70%cut, 최종등록자 기준)",
+        "methodology_note": "이미지(스캔) PDF라 표를 직접 읽어 옮겼다. \"실기/실적(예체능우수자전형)\" 최종등록자(학생부) 50%cut/70%cut 표에서 확인(100%cut/평균값도 원문에 있으나 다른 학교와 형식을 맞추기 위해 50/70%cut만 채택).",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/경기대학교/경기대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 20
+      }
+    }
+  },
+  {
+    "university": "경기대학교",
+    "campus": "수원",
+    "department": "애니메이션학과(웹툰)",
+    "track_name": "실기/실적(예능실기우수자전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 5,
+      "ratio": "실기 60% (60점) + 학교생활기록부(교과) 40% (40점), 합계 100점",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 60,
+      "school_record_ratio_pct": 40,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-18",
+      "result_date": "2026-11-20",
+      "exam_type_name": "4컷 웹툰 - 고사 당일 제시",
+      "allowed_materials": [],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "school_record_rule": {
+        "mode": "common_and_career_split_scaled",
+        "subjects": [
+          "국어",
+          "수학",
+          "영어",
+          "사회",
+          "한국사"
+        ],
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "common_weight": 0.9,
+        "career_weight": 0.1,
+        "common_weight_if_no_career": 1.0,
+        "use_credit_scale": false,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 97,
+          "4": 95,
+          "5": 90,
+          "6": 85,
+          "7": 60,
+          "8": 20,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 99,
+          "C": 95
+        },
+        "formula_note": "예술체육대학(과학 제외) 반영교과: 국어, 수학, 영어, 통합사회/사회, 한국사 - 전 과목(공통·일반선택+진로선택 구분없이 학년/학기 가중치 없이 반영). 평균점수 = (공통·일반선택 이수단위가중평균×0.9) + (진로선택 성취도 이수단위가중평균×0.1). 진로선택과목이 없으면 공통·일반선택만 100% 반영. 이 교과 점수에 별도로 비교과(출결) 점수가 더해져 최종 학생부 반영점수가 되나, 이 계산기는 교과 부분만 계산한다 (2027 모집요강 p.37-38, 41-42, 실기/실적 예능실기우수자전형 - 예술체육대학 기준).",
+        "rule_source_page": "37-38, 41-42"
+      },
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%EA%B2%BD%EA%B8%B0%EB%8C%80%ED%95%99%EA%B5%90/%EA%B2%BD%EA%B8%B0%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
+      "source_page": 47
+    },
+    "estimates": {
+      "cutoff_grade_estimate": 4.271,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/경기대학교/경기대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 86.4,
+        "school_record_grade_typical": 3.649,
+        "school_record_grade_floor": 4.271,
+        "grade_stat_type": "50_70_cut (typical=50%cut, floor=70%cut, 최종등록자 기준)",
+        "methodology_note": "이미지(스캔) PDF라 표를 직접 읽어 옮겼다. \"실기/실적(예체능우수자전형)\" 최종등록자(학생부) 50%cut/70%cut 표에서 확인(100%cut/평균값도 원문에 있으나 다른 학교와 형식을 맞추기 위해 50/70%cut만 채택).",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/경기대학교/경기대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 20
+      }
+    }
   }
-},
-{
-  "university": "경기대학교",
-  "campus": "수원",
-  "department": "디자인학부",
-  "track_name": "실기/실적(예능실기우수자전형)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 33,
-    "ratio": "실기 70% (70점) + 학교생활기록부(교과) 30% (30점), 합계 100점",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 70,
-    "school_record_ratio_pct": 30,
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
-    },
-    "exam_date": "2026-10-11",
-    "result_date": "2026-11-20",
-    "exam_type_name": "기초디자인 - 고사 당일 제시",
-    "allowed_materials": ["화판", "아크릴물감", "수채화물감", "포스터물감", "파스텔", "색연필", "연필", "펜 등", "유화물감 사용불가"],
-    "paper_size": "켄트지 3절",
-    "time_limit_minutes": 240,
-    "school_record_rule": {
-      "mode": "common_and_career_split_scaled",
-      "subjects": ["국어", "수학", "영어", "사회", "한국사"],
-      "career_elective_included": true,
-      "credit_weighted": true,
-      "common_weight": 0.9,
-      "career_weight": 0.1,
-      "common_weight_if_no_career": 1.0,
-      "use_credit_scale": false,
-      "conversion_table": {"1": 100, "2": 99, "3": 97, "4": 95, "5": 90, "6": 85, "7": 60, "8": 20, "9": 0},
-      "career_elective_conversion_table": {"A": 100, "B": 99, "C": 95},
-      "formula_note": "예술체육대학(과학 제외) 반영교과: 국어, 수학, 영어, 통합사회/사회, 한국사 - 전 과목(공통·일반선택+진로선택 구분없이 학년/학기 가중치 없이 반영). 평균점수 = (공통·일반선택 이수단위가중평균×0.9) + (진로선택 성취도 이수단위가중평균×0.1). 진로선택과목이 없으면 공통·일반선택만 100% 반영. 이 교과 점수에 별도로 비교과(출결) 점수가 더해져 최종 학생부 반영점수가 되나, 이 계산기는 교과 부분만 계산한다 (2027 모집요강 p.37-38, 41-42, 실기/실적 예능실기우수자전형 - 예술체육대학 기준).",
-      "rule_source_page": "37-38, 41-42"
-    },
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%EA%B2%BD%EA%B8%B0%EB%8C%80%ED%95%99%EA%B5%90/%EA%B2%BD%EA%B8%B0%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
-    "source_page": 47
-  }
-},
-{
-  "university": "경기대학교",
-  "campus": "수원",
-  "department": "Fine Arts학부",
-  "track_name": "실기/실적(예능실기우수자전형)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 50,
-    "ratio": "실기 70% (70점) + 학교생활기록부(교과) 30% (30점), 합계 100점",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 70,
-    "school_record_ratio_pct": 30,
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
-    },
-    "exam_date": "2026-10-04",
-    "result_date": "2026-11-20",
-    "exam_type_name": "택1: 인물수채화 / 정물수묵(담채)화 / 서예(한글서예·한문서예·캘리그라피 중 택1)",
-    "allowed_materials": ["[인물수채화] 수채화물감, 붓, 팔레트, 물통, 연필, 지우개, 압정 등", "[정물수묵담채] 붓, 먹, 벼루, 물통, 물감그릇, 물감(한국화용) 등", "[서예] 붓, 먹, 벼루, 서진, 자전 등"],
-    "paper_size": "켄트지 3절(인물수채화) / 화선지 전지1/2(정물수묵담채·서예)",
-    "time_limit_minutes": 240,
-    "school_record_rule": {
-      "mode": "common_and_career_split_scaled",
-      "subjects": ["국어", "수학", "영어", "사회", "한국사"],
-      "career_elective_included": true,
-      "credit_weighted": true,
-      "common_weight": 0.9,
-      "career_weight": 0.1,
-      "common_weight_if_no_career": 1.0,
-      "use_credit_scale": false,
-      "conversion_table": {"1": 100, "2": 99, "3": 97, "4": 95, "5": 90, "6": 85, "7": 60, "8": 20, "9": 0},
-      "career_elective_conversion_table": {"A": 100, "B": 99, "C": 95},
-      "formula_note": "예술체육대학(과학 제외) 반영교과: 국어, 수학, 영어, 통합사회/사회, 한국사 - 전 과목(공통·일반선택+진로선택 구분없이 학년/학기 가중치 없이 반영). 평균점수 = (공통·일반선택 이수단위가중평균×0.9) + (진로선택 성취도 이수단위가중평균×0.1). 진로선택과목이 없으면 공통·일반선택만 100% 반영. 이 교과 점수에 별도로 비교과(출결) 점수가 더해져 최종 학생부 반영점수가 되나, 이 계산기는 교과 부분만 계산한다 (2027 모집요강 p.37-38, 41-42, 실기/실적 예능실기우수자전형 - 예술체육대학 기준).",
-      "rule_source_page": "37-38, 41-42"
-    },
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%EA%B2%BD%EA%B8%B0%EB%8C%80%ED%95%99%EA%B5%90/%EA%B2%BD%EA%B8%B0%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
-    "source_page": 47
-  }
-},
-{
-  "university": "경기대학교",
-  "campus": "수원",
-  "department": "애니메이션학과(상상과표현)",
-  "track_name": "실기/실적(예능실기우수자전형)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 11,
-    "ratio": "실기 60% (60점) + 학교생활기록부(교과) 40% (40점), 합계 100점",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 60,
-    "school_record_ratio_pct": 40,
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
-    },
-    "exam_date": "2026-10-18",
-    "result_date": "2026-11-20",
-    "exam_type_name": "상상으로 4컷 표현하기 - 고사 당일 제시",
-    "allowed_materials": ["아크릴물감", "수채화물감", "포스터물감", "파스텔", "색연필", "연필", "펜 등", "정착액(픽서티브)/편화사전/(밑)그림/사진 등 이미지 사용 금지"],
-    "paper_size": "켄트지 30cm x 90cm",
-    "time_limit_minutes": 240,
-    "school_record_rule": {
-      "mode": "common_and_career_split_scaled",
-      "subjects": ["국어", "수학", "영어", "사회", "한국사"],
-      "career_elective_included": true,
-      "credit_weighted": true,
-      "common_weight": 0.9,
-      "career_weight": 0.1,
-      "common_weight_if_no_career": 1.0,
-      "use_credit_scale": false,
-      "conversion_table": {"1": 100, "2": 99, "3": 97, "4": 95, "5": 90, "6": 85, "7": 60, "8": 20, "9": 0},
-      "career_elective_conversion_table": {"A": 100, "B": 99, "C": 95},
-      "formula_note": "예술체육대학(과학 제외) 반영교과: 국어, 수학, 영어, 통합사회/사회, 한국사 - 전 과목(공통·일반선택+진로선택 구분없이 학년/학기 가중치 없이 반영). 평균점수 = (공통·일반선택 이수단위가중평균×0.9) + (진로선택 성취도 이수단위가중평균×0.1). 진로선택과목이 없으면 공통·일반선택만 100% 반영. 이 교과 점수에 별도로 비교과(출결) 점수가 더해져 최종 학생부 반영점수가 되나, 이 계산기는 교과 부분만 계산한다 (2027 모집요강 p.37-38, 41-42, 실기/실적 예능실기우수자전형 - 예술체육대학 기준).",
-      "rule_source_page": "37-38, 41-42"
-    },
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%EA%B2%BD%EA%B8%B0%EB%8C%80%ED%95%99%EA%B5%90/%EA%B2%BD%EA%B8%B0%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
-    "source_page": 47
-  }
-},
-{
-  "university": "경기대학교",
-  "campus": "수원",
-  "department": "애니메이션학과(웹툰)",
-  "track_name": "실기/실적(예능실기우수자전형)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 5,
-    "ratio": "실기 60% (60점) + 학교생활기록부(교과) 40% (40점), 합계 100점",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 60,
-    "school_record_ratio_pct": 40,
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
-    },
-    "exam_date": "2026-10-18",
-    "result_date": "2026-11-20",
-    "exam_type_name": "4컷 웹툰 - 고사 당일 제시",
-    "allowed_materials": [],
-    "paper_size": "켄트지 4절",
-    "time_limit_minutes": 240,
-    "school_record_rule": {
-      "mode": "common_and_career_split_scaled",
-      "subjects": ["국어", "수학", "영어", "사회", "한국사"],
-      "career_elective_included": true,
-      "credit_weighted": true,
-      "common_weight": 0.9,
-      "career_weight": 0.1,
-      "common_weight_if_no_career": 1.0,
-      "use_credit_scale": false,
-      "conversion_table": {"1": 100, "2": 99, "3": 97, "4": 95, "5": 90, "6": 85, "7": 60, "8": 20, "9": 0},
-      "career_elective_conversion_table": {"A": 100, "B": 99, "C": 95},
-      "formula_note": "예술체육대학(과학 제외) 반영교과: 국어, 수학, 영어, 통합사회/사회, 한국사 - 전 과목(공통·일반선택+진로선택 구분없이 학년/학기 가중치 없이 반영). 평균점수 = (공통·일반선택 이수단위가중평균×0.9) + (진로선택 성취도 이수단위가중평균×0.1). 진로선택과목이 없으면 공통·일반선택만 100% 반영. 이 교과 점수에 별도로 비교과(출결) 점수가 더해져 최종 학생부 반영점수가 되나, 이 계산기는 교과 부분만 계산한다 (2027 모집요강 p.37-38, 41-42, 실기/실적 예능실기우수자전형 - 예술체육대학 기준).",
-      "rule_source_page": "37-38, 41-42"
-    },
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%EA%B2%BD%EA%B8%B0%EB%8C%80%ED%95%99%EA%B5%90/%EA%B2%BD%EA%B8%B0%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
-    "source_page": 47
-  }
-}
 ]

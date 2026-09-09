@@ -1,187 +1,371 @@
 [
-{
-  "university": "성신여자대학교",
-  "campus": "서울",
-  "department": "동양화과",
-  "track_name": "실기/실적(일반학생전형)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 21,
-    "ratio": "일괄합산: 실기 70%(교과27%+출결3% 별도) + 학생부 30%",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 70,
-    "school_record_ratio_pct": 30,
-    "exam_type_name": "택1: 정물수묵담채화 또는 인물수묵담채화",
-    "allowed_materials": [],
-    "paper_size": "화선지(반절/2·3절)",
-    "time_limit_minutes": 270,
-    "application_period": {"start": "2026-09-08", "end": "2026-09-15"},
-    "exam_date": "2026-10-17",
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "choose_max_credit_subject",
-      "fixed_subjects": ["국어", "영어"],
-      "subject_choice_group": ["사회", "수학"],
-      "selection_method": "score",
-      "career_elective_included": true,
-      "credit_weighted": true,
-      "career_elective_max_count_per_subject": 4,
-      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 96, "5": 95, "6": 92, "7": 90, "8": 70, "9": 50},
-      "career_elective_conversion_table": {"A": 100, "B": 99, "C": 96},
-      "formula_note": "미술대학 반영교과: 국어, 영어(필수) + 사회 또는 수학 중 성적이 좋은 1개 교과(이수단위 비교 없이 실제 계산해서 더 유리한 쪽 선택). 반영교과 내 1,2,3학년 전 과목(석차등급) + 진로선택과목(교과영역별 상위 4과목, 성취도 A=1등급/B=2등급/C=4등급 상당)을 이수단위 가중평균. 산출된 교과성적에 실기/실적전형은 상수 0.9를 곱해 최종 반영(2027 모집요강 p.55-57, 실기/실적 일반학생전형 - 미술대학 기준).",
-      "rule_source_page": "55-57"
+  {
+    "university": "성신여자대학교",
+    "campus": "서울",
+    "department": "동양화과",
+    "track_name": "실기/실적(일반학생전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 21,
+      "ratio": "일괄합산: 실기 70%(교과27%+출결3% 별도) + 학생부 30%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 70,
+      "school_record_ratio_pct": 30,
+      "exam_type_name": "택1: 정물수묵담채화 또는 인물수묵담채화",
+      "allowed_materials": [],
+      "paper_size": "화선지(반절/2·3절)",
+      "time_limit_minutes": 270,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-15"
+      },
+      "exam_date": "2026-10-17",
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "choose_max_credit_subject",
+        "fixed_subjects": [
+          "국어",
+          "영어"
+        ],
+        "subject_choice_group": [
+          "사회",
+          "수학"
+        ],
+        "selection_method": "score",
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "career_elective_max_count_per_subject": 4,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 96,
+          "5": 95,
+          "6": 92,
+          "7": 90,
+          "8": 70,
+          "9": 50
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 99,
+          "C": 96
+        },
+        "formula_note": "미술대학 반영교과: 국어, 영어(필수) + 사회 또는 수학 중 성적이 좋은 1개 교과(이수단위 비교 없이 실제 계산해서 더 유리한 쪽 선택). 반영교과 내 1,2,3학년 전 과목(석차등급) + 진로선택과목(교과영역별 상위 4과목, 성취도 A=1등급/B=2등급/C=4등급 상당)을 이수단위 가중평균. 산출된 교과성적에 실기/실적전형은 상수 0.9를 곱해 최종 반영(2027 모집요강 p.55-57, 실기/실적 일반학생전형 - 미술대학 기준).",
+        "rule_source_page": "55-57"
+      },
+      "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
+      "source_page": 50
     },
-    "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
-    "source_page": 50
-  }
-},
-{
-  "university": "성신여자대학교",
-  "campus": "서울",
-  "department": "서양화과",
-  "track_name": "실기/실적(일반학생전형)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 22,
-    "ratio": "일괄합산: 실기 70%(교과27%+출결3% 별도) + 학생부 30%",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 70,
-    "school_record_ratio_pct": 30,
-    "exam_type_name": "택1: 인체 표현 또는 정물 표현",
-    "allowed_materials": ["연필", "목탄", "파스텔", "콘테", "크레용", "색연필", "수채물감", "아크릴물감"],
-    "paper_size": "켄트지 2절",
-    "time_limit_minutes": 300,
-    "application_period": {"start": "2026-09-08", "end": "2026-09-15"},
-    "exam_date": "2026-10-17",
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "choose_max_credit_subject",
-      "fixed_subjects": ["국어", "영어"],
-      "subject_choice_group": ["사회", "수학"],
-      "selection_method": "score",
-      "career_elective_included": true,
-      "credit_weighted": true,
-      "career_elective_max_count_per_subject": 4,
-      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 96, "5": 95, "6": 92, "7": 90, "8": 70, "9": 50},
-      "career_elective_conversion_table": {"A": 100, "B": 99, "C": 96},
-      "formula_note": "미술대학 반영교과: 국어, 영어(필수) + 사회 또는 수학 중 성적이 좋은 1개 교과(이수단위 비교 없이 실제 계산해서 더 유리한 쪽 선택). 반영교과 내 1,2,3학년 전 과목(석차등급) + 진로선택과목(교과영역별 상위 4과목, 성취도 A=1등급/B=2등급/C=4등급 상당)을 이수단위 가중평균. 산출된 교과성적에 실기/실적전형은 상수 0.9를 곱해 최종 반영(2027 모집요강 p.55-57, 실기/실적 일반학생전형 - 미술대학 기준).",
-      "rule_source_page": "55-57"
+    "estimates": {
+      "cutoff_grade_estimate": 4.31,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/성신여자대학교/성신여자대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 10.55,
+        "school_record_grade_typical": 4.31,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "final_registrant_avg_only (최종등록자 학생부 평균 교과등급, 범위 없음)",
+        "methodology_note": "이미지(스캔) PDF라 표를 직접 읽어 옮겼다. \"수시모집 실기/실적(일반학생전형) 최종 결과\" 표의 학생부 평균등급(최종등록자 기준). 디자인과는 이 문서 표에 없어 데이터 확보 못함.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/성신여자대학교/성신여자대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 5
+      }
+    }
+  },
+  {
+    "university": "성신여자대학교",
+    "campus": "서울",
+    "department": "서양화과",
+    "track_name": "실기/실적(일반학생전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 22,
+      "ratio": "일괄합산: 실기 70%(교과27%+출결3% 별도) + 학생부 30%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 70,
+      "school_record_ratio_pct": 30,
+      "exam_type_name": "택1: 인체 표현 또는 정물 표현",
+      "allowed_materials": [
+        "연필",
+        "목탄",
+        "파스텔",
+        "콘테",
+        "크레용",
+        "색연필",
+        "수채물감",
+        "아크릴물감"
+      ],
+      "paper_size": "켄트지 2절",
+      "time_limit_minutes": 300,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-15"
+      },
+      "exam_date": "2026-10-17",
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "choose_max_credit_subject",
+        "fixed_subjects": [
+          "국어",
+          "영어"
+        ],
+        "subject_choice_group": [
+          "사회",
+          "수학"
+        ],
+        "selection_method": "score",
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "career_elective_max_count_per_subject": 4,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 96,
+          "5": 95,
+          "6": 92,
+          "7": 90,
+          "8": 70,
+          "9": 50
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 99,
+          "C": 96
+        },
+        "formula_note": "미술대학 반영교과: 국어, 영어(필수) + 사회 또는 수학 중 성적이 좋은 1개 교과(이수단위 비교 없이 실제 계산해서 더 유리한 쪽 선택). 반영교과 내 1,2,3학년 전 과목(석차등급) + 진로선택과목(교과영역별 상위 4과목, 성취도 A=1등급/B=2등급/C=4등급 상당)을 이수단위 가중평균. 산출된 교과성적에 실기/실적전형은 상수 0.9를 곱해 최종 반영(2027 모집요강 p.55-57, 실기/실적 일반학생전형 - 미술대학 기준).",
+        "rule_source_page": "55-57"
+      },
+      "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
+      "source_page": 50
     },
-    "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
-    "source_page": 50
-  }
-},
-{
-  "university": "성신여자대학교",
-  "campus": "서울",
-  "department": "조소과",
-  "track_name": "실기/실적(일반학생전형)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 24,
-    "ratio": "일괄합산: 실기 70%(교과27%+출결3% 별도) + 학생부 30%",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 70,
-    "school_record_ratio_pct": 30,
-    "exam_type_name": "소조(인물두상)",
-    "allowed_materials": [],
-    "paper_size": "실제 크기",
-    "time_limit_minutes": 300,
-    "application_period": {"start": "2026-09-08", "end": "2026-09-15"},
-    "exam_date": "2026-10-17",
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "choose_max_credit_subject",
-      "fixed_subjects": ["국어", "영어"],
-      "subject_choice_group": ["사회", "수학"],
-      "selection_method": "score",
-      "career_elective_included": true,
-      "credit_weighted": true,
-      "career_elective_max_count_per_subject": 4,
-      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 96, "5": 95, "6": 92, "7": 90, "8": 70, "9": 50},
-      "career_elective_conversion_table": {"A": 100, "B": 99, "C": 96},
-      "formula_note": "미술대학 반영교과: 국어, 영어(필수) + 사회 또는 수학 중 성적이 좋은 1개 교과(이수단위 비교 없이 실제 계산해서 더 유리한 쪽 선택). 반영교과 내 1,2,3학년 전 과목(석차등급) + 진로선택과목(교과영역별 상위 4과목, 성취도 A=1등급/B=2등급/C=4등급 상당)을 이수단위 가중평균. 산출된 교과성적에 실기/실적전형은 상수 0.9를 곱해 최종 반영(2027 모집요강 p.55-57, 실기/실적 일반학생전형 - 미술대학 기준).",
-      "rule_source_page": "55-57"
+    "estimates": {
+      "cutoff_grade_estimate": 4.57,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/성신여자대학교/성신여자대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 12.12,
+        "school_record_grade_typical": 4.57,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "final_registrant_avg_only (최종등록자 학생부 평균 교과등급, 범위 없음)",
+        "methodology_note": "이미지(스캔) PDF라 표를 직접 읽어 옮겼다. \"수시모집 실기/실적(일반학생전형) 최종 결과\" 표의 학생부 평균등급(최종등록자 기준). 디자인과는 이 문서 표에 없어 데이터 확보 못함.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/성신여자대학교/성신여자대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 5
+      }
+    }
+  },
+  {
+    "university": "성신여자대학교",
+    "campus": "서울",
+    "department": "조소과",
+    "track_name": "실기/실적(일반학생전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 24,
+      "ratio": "일괄합산: 실기 70%(교과27%+출결3% 별도) + 학생부 30%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 70,
+      "school_record_ratio_pct": 30,
+      "exam_type_name": "소조(인물두상)",
+      "allowed_materials": [],
+      "paper_size": "실제 크기",
+      "time_limit_minutes": 300,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-15"
+      },
+      "exam_date": "2026-10-17",
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "choose_max_credit_subject",
+        "fixed_subjects": [
+          "국어",
+          "영어"
+        ],
+        "subject_choice_group": [
+          "사회",
+          "수학"
+        ],
+        "selection_method": "score",
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "career_elective_max_count_per_subject": 4,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 96,
+          "5": 95,
+          "6": 92,
+          "7": 90,
+          "8": 70,
+          "9": 50
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 99,
+          "C": 96
+        },
+        "formula_note": "미술대학 반영교과: 국어, 영어(필수) + 사회 또는 수학 중 성적이 좋은 1개 교과(이수단위 비교 없이 실제 계산해서 더 유리한 쪽 선택). 반영교과 내 1,2,3학년 전 과목(석차등급) + 진로선택과목(교과영역별 상위 4과목, 성취도 A=1등급/B=2등급/C=4등급 상당)을 이수단위 가중평균. 산출된 교과성적에 실기/실적전형은 상수 0.9를 곱해 최종 반영(2027 모집요강 p.55-57, 실기/실적 일반학생전형 - 미술대학 기준).",
+        "rule_source_page": "55-57"
+      },
+      "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
+      "source_page": 50
     },
-    "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
-    "source_page": 50
-  }
-},
-{
-  "university": "성신여자대학교",
-  "campus": "서울",
-  "department": "공예과",
-  "track_name": "실기/실적(일반학생전형)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 31,
-    "ratio": "일괄합산: 실기 70%(교과27%+출결3% 별도) + 학생부 30%",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 70,
-    "school_record_ratio_pct": 30,
-    "exam_type_name": "기초디자인 (소묘, 기초조형 중 택1)",
-    "allowed_materials": [],
-    "paper_size": "켄트지 4절",
-    "time_limit_minutes": 240,
-    "application_period": {"start": "2026-09-08", "end": "2026-09-15"},
-    "exam_date": "2026-10-11",
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "choose_max_credit_subject",
-      "fixed_subjects": ["국어", "영어"],
-      "subject_choice_group": ["사회", "수학"],
-      "selection_method": "score",
-      "career_elective_included": true,
-      "credit_weighted": true,
-      "career_elective_max_count_per_subject": 4,
-      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 96, "5": 95, "6": 92, "7": 90, "8": 70, "9": 50},
-      "career_elective_conversion_table": {"A": 100, "B": 99, "C": 96},
-      "formula_note": "미술대학 반영교과: 국어, 영어(필수) + 사회 또는 수학 중 성적이 좋은 1개 교과(이수단위 비교 없이 실제 계산해서 더 유리한 쪽 선택). 반영교과 내 1,2,3학년 전 과목(석차등급) + 진로선택과목(교과영역별 상위 4과목, 성취도 A=1등급/B=2등급/C=4등급 상당)을 이수단위 가중평균. 산출된 교과성적에 실기/실적전형은 상수 0.9를 곱해 최종 반영(2027 모집요강 p.55-57, 실기/실적 일반학생전형 - 미술대학 기준).",
-      "rule_source_page": "55-57"
+    "estimates": {
+      "cutoff_grade_estimate": 4.03,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/성신여자대학교/성신여자대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 14.04,
+        "school_record_grade_typical": 4.03,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "final_registrant_avg_only (최종등록자 학생부 평균 교과등급, 범위 없음)",
+        "methodology_note": "이미지(스캔) PDF라 표를 직접 읽어 옮겼다. \"수시모집 실기/실적(일반학생전형) 최종 결과\" 표의 학생부 평균등급(최종등록자 기준). 디자인과는 이 문서 표에 없어 데이터 확보 못함.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/성신여자대학교/성신여자대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 5
+      }
+    }
+  },
+  {
+    "university": "성신여자대학교",
+    "campus": "서울",
+    "department": "공예과",
+    "track_name": "실기/실적(일반학생전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 31,
+      "ratio": "일괄합산: 실기 70%(교과27%+출결3% 별도) + 학생부 30%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 70,
+      "school_record_ratio_pct": 30,
+      "exam_type_name": "기초디자인 (소묘, 기초조형 중 택1)",
+      "allowed_materials": [],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-15"
+      },
+      "exam_date": "2026-10-11",
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "choose_max_credit_subject",
+        "fixed_subjects": [
+          "국어",
+          "영어"
+        ],
+        "subject_choice_group": [
+          "사회",
+          "수학"
+        ],
+        "selection_method": "score",
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "career_elective_max_count_per_subject": 4,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 96,
+          "5": 95,
+          "6": 92,
+          "7": 90,
+          "8": 70,
+          "9": 50
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 99,
+          "C": 96
+        },
+        "formula_note": "미술대학 반영교과: 국어, 영어(필수) + 사회 또는 수학 중 성적이 좋은 1개 교과(이수단위 비교 없이 실제 계산해서 더 유리한 쪽 선택). 반영교과 내 1,2,3학년 전 과목(석차등급) + 진로선택과목(교과영역별 상위 4과목, 성취도 A=1등급/B=2등급/C=4등급 상당)을 이수단위 가중평균. 산출된 교과성적에 실기/실적전형은 상수 0.9를 곱해 최종 반영(2027 모집요강 p.55-57, 실기/실적 일반학생전형 - 미술대학 기준).",
+        "rule_source_page": "55-57"
+      },
+      "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
+      "source_page": 50
     },
-    "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
-    "source_page": 50
+    "estimates": {
+      "cutoff_grade_estimate": 3.62,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/성신여자대학교/성신여자대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 28.46,
+        "school_record_grade_typical": 3.62,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "final_registrant_avg_only (최종등록자 학생부 평균 교과등급, 범위 없음)",
+        "methodology_note": "이미지(스캔) PDF라 표를 직접 읽어 옮겼다. \"수시모집 실기/실적(일반학생전형) 최종 결과\" 표의 학생부 평균등급(최종등록자 기준). 디자인과는 이 문서 표에 없어 데이터 확보 못함.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/성신여자대학교/성신여자대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 5
+      }
+    }
+  },
+  {
+    "university": "성신여자대학교",
+    "campus": "서울",
+    "department": "디자인과",
+    "track_name": "실기/실적(일반학생전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 16,
+      "ratio": "일괄합산: 실기 70%(교과27%+출결3% 별도) + 학생부 30%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 70,
+      "school_record_ratio_pct": 30,
+      "exam_type_name": "기초디자인 (소묘, 기초조형 중 택1)",
+      "allowed_materials": [],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-15"
+      },
+      "exam_date": "2026-10-10",
+      "result_date": null,
+      "school_record_rule": {
+        "mode": "choose_max_credit_subject",
+        "fixed_subjects": [
+          "국어",
+          "영어"
+        ],
+        "subject_choice_group": [
+          "사회",
+          "수학"
+        ],
+        "selection_method": "score",
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "career_elective_max_count_per_subject": 4,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 96,
+          "5": 95,
+          "6": 92,
+          "7": 90,
+          "8": 70,
+          "9": 50
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 99,
+          "C": 96
+        },
+        "formula_note": "미술대학 반영교과: 국어, 영어(필수) + 사회 또는 수학 중 성적이 좋은 1개 교과(이수단위 비교 없이 실제 계산해서 더 유리한 쪽 선택). 반영교과 내 1,2,3학년 전 과목(석차등급) + 진로선택과목(교과영역별 상위 4과목, 성취도 A=1등급/B=2등급/C=4등급 상당)을 이수단위 가중평균. 산출된 교과성적에 실기/실적전형은 상수 0.9를 곱해 최종 반영(2027 모집요강 p.55-57, 실기/실적 일반학생전형 - 미술대학 기준).",
+        "rule_source_page": "55-57"
+      },
+      "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
+      "source_page": 50
+    }
   }
-},
-{
-  "university": "성신여자대학교",
-  "campus": "서울",
-  "department": "디자인과",
-  "track_name": "실기/실적(일반학생전형)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 16,
-    "ratio": "일괄합산: 실기 70%(교과27%+출결3% 별도) + 학생부 30%",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 70,
-    "school_record_ratio_pct": 30,
-    "exam_type_name": "기초디자인 (소묘, 기초조형 중 택1)",
-    "allowed_materials": [],
-    "paper_size": "켄트지 4절",
-    "time_limit_minutes": 240,
-    "application_period": {"start": "2026-09-08", "end": "2026-09-15"},
-    "exam_date": "2026-10-10",
-    "result_date": null,
-    "school_record_rule": {
-      "mode": "choose_max_credit_subject",
-      "fixed_subjects": ["국어", "영어"],
-      "subject_choice_group": ["사회", "수학"],
-      "selection_method": "score",
-      "career_elective_included": true,
-      "credit_weighted": true,
-      "career_elective_max_count_per_subject": 4,
-      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 96, "5": 95, "6": 92, "7": 90, "8": 70, "9": 50},
-      "career_elective_conversion_table": {"A": 100, "B": 99, "C": 96},
-      "formula_note": "미술대학 반영교과: 국어, 영어(필수) + 사회 또는 수학 중 성적이 좋은 1개 교과(이수단위 비교 없이 실제 계산해서 더 유리한 쪽 선택). 반영교과 내 1,2,3학년 전 과목(석차등급) + 진로선택과목(교과영역별 상위 4과목, 성취도 A=1등급/B=2등급/C=4등급 상당)을 이수단위 가중평균. 산출된 교과성적에 실기/실적전형은 상수 0.9를 곱해 최종 반영(2027 모집요강 p.55-57, 실기/실적 일반학생전형 - 미술대학 기준).",
-      "rule_source_page": "55-57"
-    },
-    "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
-    "source_page": 50
-  }
-}
 ]
