@@ -8,6 +8,8 @@
     "quota": 27,
     "ratio": "일괄합산: 서류 20% + 실기 80%",
     "is_staged": false,
+    "school_record_status": "not_applicable",
+    "school_record_status_note": "서류 20%는 학생부+인성검사를 종합한 정성평가이며 등급→점수 환산표가 존재하지 않음. 학생부 환산 점수를 계산할 수 없습니다.",
     "application_period": {
       "start": "2026-09-07",
       "end": "2026-09-11"

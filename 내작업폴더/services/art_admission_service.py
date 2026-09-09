@@ -780,6 +780,8 @@ class ArtAdmissionService:
                        t.school_record_ratio_pct AS school_record_ratio_pct,
                        t.csat_minimum_required AS csat_minimum_required,
                        t.school_record_rule_json AS school_record_rule_json,
+                       t.school_record_status AS school_record_status,
+                       t.school_record_status_note AS school_record_status_note,
                        e.name AS exam_type_name, e.allowed_materials AS allowed_materials,
                        e.paper_size AS paper_size, e.time_limit_minutes AS time_limit_minutes,
                        sch.application_start AS application_start, sch.application_end AS application_end,
@@ -1680,6 +1682,15 @@ class ArtAdmissionService:
             return {"available": False, "reason": f"'{university} {department}' 전형을 찾을 수 없습니다."}
 
         rule = track.get("school_record_rule")
+        if track.get("school_record_status") == "not_applicable":
+            return {
+                "available": False,
+                "not_applicable": True,
+                "reason": track.get("school_record_status_note") or "이 전형은 학생부 성적을 반영하지 않습니다.",
+                "university": university, "department": department,
+                "practical_ratio_pct": track.get("practical_ratio_pct"),
+                "school_record_ratio_pct": track.get("school_record_ratio_pct"),
+            }
         if not rule:
             return {
                 "available": False,
@@ -1746,7 +1757,18 @@ class ArtAdmissionService:
                 "source_url": t.get("source_url"),
             }
             rule = t.get("school_record_rule")
-            if rule:
+            if t.get("school_record_status") == "not_applicable":
+                # 실기 100% 또는 학생부종합 정성평가라 애초에 "학생부 등급→점수 환산" 자체가
+                # 존재하지 않는 전형이다. 이런 학교까지 비율 기반 근사치를 매기면 실제로는
+                # 반영되지도 않는 성적을 반영되는 것처럼 보여주는 셈이라, approximate조차
+                # 계산하지 않고 명시적으로 "해당 없음"만 반환한다(원문에서 직접 확인된 사실 -
+                # RULE_INCOMPLETE와 다름, 나중에 규정이 "발견될" 여지가 없는 경우다).
+                entry["calc_precision"] = "not_applicable"
+                entry["school_record_percentage"] = None
+                entry["data_tier"] = "NOT_APPLICABLE"
+                entry["estimated_grade_equivalent"] = None
+                entry["reason_summary"] = t.get("school_record_status_note") or "이 전형은 학생부 성적을 반영하지 않습니다."
+            elif rule:
                 calc = _calc_school_record_raw_score(rule, grades)
                 if calc and calc.get("max_score"):
                     pct = round(calc["raw_score"] / calc["max_score"] * 100, 2)
@@ -1794,8 +1816,12 @@ class ArtAdmissionService:
             else:
                 e["fit_label"] = None
 
+        # 정렬 순서: 정밀 계산(exact) -> 근사 추정(approximate) -> 해당 없음(not_applicable).
+        # not_applicable은 점수 자체가 없는 게 정상이므로 맨 뒤로 보내되 목록에서 빼지는
+        # 않는다(그 학교/전형이 존재한다는 사실과 "왜 점수가 없는지"는 계속 보여줘야 함).
+        _precision_rank = {"exact": 0, "approximate": 1, "not_applicable": 2}
         results.sort(key=lambda e: (
-            e["calc_precision"] != "exact",
+            _precision_rank.get(e["calc_precision"], 3),
             -(e["school_record_percentage"] if e["school_record_percentage"] is not None else -1),
         ))
         return results

@@ -208,8 +208,13 @@ class RecommendUniversitiesRequest(BaseModel):
 
 @app.post("/recommend-universities")
 def recommend_universities_endpoint(req: RecommendUniversitiesRequest):
-    """성적 기반 대학/학과 추천. 정밀 계산 가능한 학교는 calc_precision="exact",
-    나머지는 "approximate"로 구분해서 반환 - FO에서 반드시 다르게 표시해야 한다."""
+    """성적 기반 대학/학과 추천. calc_precision은 3가지: 정밀 계산 가능한 학교는
+    "exact", 반영교과는 확인됐지만 세부 공식이 아직 없는 학교는 "approximate",
+    실기 100%나 학생부종합 정성평가라 애초에 학생부 등급 환산 자체가 없는 전형은
+    "not_applicable"(school_record_percentage=None) - FO는 반드시 이 3가지를
+    다르게 표시해야 하며, not_applicable은 점수 없이 사유(reason_summary)만
+    보여줘야 한다(근사치조차 매기면 안 됨 - 실제로 반영되지 않는 성적을
+    반영되는 것처럼 보여주는 셈이라 오해를 부른다)."""
     svc = get_service()
     try:
         return svc.recommend_universities(

@@ -9,6 +9,8 @@
     "ratio": "1단계(10배수): 학생부 종합평가 100% -> 2단계: 실기 80% + 1단계 성적 20%",
     "is_staged": true,
     "csat_minimum_required": false,
+    "school_record_status": "not_applicable",
+    "school_record_status_note": "1단계 학생부 종합평가는 정량 환산표 없이 정성적으로 평가함(2027 모집요강 p.94, '학교생활기록부의 교과 성적을 정량적으로 산출하여 평가하지 않으며... 정성적으로 평가함' 명시). 학생부 환산 점수를 계산할 수 없습니다.",
     "exam_type_name": "미지정",
     "allowed_materials": [],
     "paper_size": null,

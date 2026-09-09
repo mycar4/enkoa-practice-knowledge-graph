@@ -11,6 +11,8 @@
     "csat_minimum_required": true,
     "csat_minimum_rule": "국어, 수학, 영어, 탐구(사회/과학) 4개 영역 중 2개 영역 등급 합 7 이내",
     "document_ratio_pct": null,
+    "school_record_status": "not_applicable",
+    "school_record_status_note": "학생부종합전형(서류 100% 정성평가)이라 등급→점수 환산표 자체가 존재하지 않음(2027 모집요강 p.37-38 확인). 석차등급을 정량 환산하지 않으므로 학생부 환산 점수를 계산할 수 없습니다.",
     "exam_type_name": "학생부종합 서류평가 및 면접평가 (실기시험 없음)",
     "allowed_materials": [],
     "paper_size": null,

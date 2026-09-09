@@ -9,6 +9,8 @@
     "quota": 18,
     "ratio": "서류(포트폴리오) 60% + 면접 40% (실기고사 없음)",
     "is_staged": false,
+    "school_record_status": "not_applicable",
+    "school_record_status_note": "이 트랙(수시2차 일반전형)은 서류(포트폴리오)60%+면접40%로 선발되며 학생부는 전혀 반영되지 않음(학생부 100% 반영은 수시1차 서류위주 전형에만 해당, 이 트랙과는 별개). 학생부 환산 점수를 계산할 수 없습니다.",
     "application_period": {
       "start": "2026-11-11",
       "end": "2026-11-25"

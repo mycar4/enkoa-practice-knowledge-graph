@@ -8,6 +8,8 @@
     "quota": 22,
     "ratio": "실기 100% (일괄합산, 구두문답 포함)",
     "is_staged": false,
+    "school_record_status": "not_applicable",
+    "school_record_status_note": "실기 100% 일괄합산 전형으로 학생부 반영교과 자체가 없음. 학생부 환산 점수를 계산할 수 없습니다.",
     "application_period": {
       "start": "2026-09-07",
       "end": "2026-09-30"

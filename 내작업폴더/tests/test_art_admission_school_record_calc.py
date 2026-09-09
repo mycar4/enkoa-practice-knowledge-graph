@@ -357,6 +357,41 @@ def test_non_priority_school_returns_unavailable_not_fake_number():
         svc.close()
 
 
+def test_not_applicable_schools_get_no_score_not_approximate_guess():
+    """실기 100%나 학생부종합 정성평가라 애초에 '학생부 등급→점수 환산' 자체가
+    존재하지 않는 전형(계원예대·삼육대·덕성여대·서울여대·건국대·한양에리카·
+    서울예대·이화여대, 총 8개교 20개 트랙)은 RULE_INCOMPLETE(규정을 아직 못 찾은
+    경우, 비율 기반 근사치라도 의미가 있음)와 다르다 - 근사치조차 매기면 실제로는
+    반영되지도 않는 성적을 반영되는 것처럼 보여주는 셈이므로, calculate_school_record_score
+    단건 조회와 recommend_universities 목록 양쪽 모두에서 school_record_percentage가
+    반드시 None이어야 하고 calc_precision="not_applicable"로 명확히 구분되어야 한다."""
+    svc = ArtAdmissionService()
+    try:
+        single = svc.calculate_school_record_score("삼육대학교", "아트앤디자인학과", _GRADES)
+        assert single.get("available") is False
+        assert single.get("not_applicable") is True, "not_applicable 플래그가 없으면 FO가 RULE_INCOMPLETE와 구분 못 함"
+        assert single.get("reason"), "사유 없이 그냥 계산 불가라고만 하면 안 됨"
+
+        results = svc.recommend_universities(_GRADES)
+        na_entries = [r for r in results if r["university"] == "삼육대학교"]
+        assert na_entries, "recommend_universities 목록에서 아예 빠지면 안 됨(트랙 존재 자체는 계속 보여줘야 함)"
+        for e in na_entries:
+            assert e["calc_precision"] == "not_applicable"
+            assert e["school_record_percentage"] is None, "학생부 미반영 전형인데 근사치라도 점수가 나오면 안 됨(오해 유발)"
+            assert e.get("reason_summary"), "사유가 없으면 사용자가 왜 점수가 없는지 알 수 없음"
+
+        na_count = sum(1 for r in results if r["calc_precision"] == "not_applicable")
+        assert na_count == 20, f"확인된 학생부 미반영 트랙 수(20)와 다름: {na_count}"
+
+        # 정렬 순서: exact -> approximate -> not_applicable (점수 없는 항목이 앞으로 오면 안 됨)
+        precisions_in_order = [r["calc_precision"] for r in results]
+        first_na_idx = precisions_in_order.index("not_applicable")
+        assert all(p != "exact" for p in precisions_in_order[first_na_idx:]), "not_applicable 뒤에 exact가 나오면 정렬이 깨진 것"
+        print("✅ test_not_applicable_schools_get_no_score_not_approximate_guess passed!")
+    finally:
+        svc.close()
+
+
 def test_recommend_universities_ranks_exact_before_approximate():
     svc = ArtAdmissionService()
     try:
@@ -382,6 +417,7 @@ if __name__ == "__main__":
     test_original_15_batch2_schools_use_generalized_modes_not_hardcoding()
     test_batch3_schools_hongik_seoul_chugye_karts()
     test_batch4_remaining_15_schools_use_generalized_modes_not_hardcoding()
+    test_not_applicable_schools_get_no_score_not_approximate_guess()
     test_non_priority_school_returns_unavailable_not_fake_number()
     test_recommend_universities_ranks_exact_before_approximate()
     print("🎉 ALL SCHOOL RECORD CALC TESTS PASSED!")
