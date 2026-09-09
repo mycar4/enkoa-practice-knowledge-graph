@@ -179,6 +179,46 @@ def prep_search(req: PrepSearchRequest):
         svc.close()
 
 
+class SchoolRecordRequest(BaseModel):
+    university: str
+    department: str
+    grades: List[dict]  # [{"subject_group": "국어", "grade": 4, "credit": 4}, ...]
+    campus: Optional[str] = None
+
+
+@app.post("/calculate-school-record")
+def calculate_school_record_endpoint(req: SchoolRecordRequest):
+    """학생 성적 -> 특정 학교·학과 실제 학생부 반영 규정 그대로 환산.
+    5개교(중앙대·가천대·홍익대세종·서경대·상명대)만 원문 반영교과/환산표를
+    확보해 정밀 계산이 가능하고, 그 외 학교는 available=False로 명시한다."""
+    svc = get_service()
+    try:
+        return svc.calculate_school_record_score(
+            req.university, req.department, req.grades, campus=req.campus,
+        )
+    finally:
+        svc.close()
+
+
+class RecommendUniversitiesRequest(BaseModel):
+    grades: List[dict]
+    topic_keywords: Optional[List[str]] = None
+    material_query: str = ""
+
+
+@app.post("/recommend-universities")
+def recommend_universities_endpoint(req: RecommendUniversitiesRequest):
+    """성적 기반 대학/학과 추천. 정밀 계산 가능한 학교는 calc_precision="exact",
+    나머지는 "approximate"로 구분해서 반환 - FO에서 반드시 다르게 표시해야 한다."""
+    svc = get_service()
+    try:
+        return svc.recommend_universities(
+            req.grades, topic_keywords=req.topic_keywords, material_query=req.material_query,
+        )
+    finally:
+        svc.close()
+
+
 class QARequest(BaseModel):
     query: str
 

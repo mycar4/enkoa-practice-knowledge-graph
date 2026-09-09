@@ -25,6 +25,16 @@
     ],
     "paper_size": "본교 제공 모델용 하드보드 및 컷팅매트",
     "time_limit_minutes": 180,
+    "school_record_rule": {
+      "mode": "subject_group_weighted",
+      "subject_groups": {"국어": 25, "영어": 25, "수학": 25, "사회": 25},
+      "top_n_per_group": 3,
+      "career_elective_included": false,
+      "credit_weighted": true,
+      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 97, "5": 96, "6": 95, "7": 90, "8": 80, "9": 60},
+      "formula_note": "국어/영어/수학/사회 4개 교과군 각각 상위 3과목만 반영, 교과군별로 Σ(과목별 이수단위×석차등급 배점)/Σ(이수단위)를 구한 뒤 4개 교과군을 25%씩 합산 (2027 모집요강 p.20, 42). 진로선택/전문교과/과학탐구실험은 제외. 한국사·과학 교과는 이 전형에서는 반영되지 않음.",
+      "rule_source_page": "20, 42"
+    },
     "past_topics": [
       {
         "year": 2026,

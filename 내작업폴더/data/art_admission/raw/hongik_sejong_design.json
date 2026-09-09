@@ -22,6 +22,16 @@
     ],
     "paper_size": "해당 없음 (비실기 서류/면접)",
     "time_limit_minutes": 15,
+    "school_record_rule": {
+      "mode": "choose_max_credit_subject",
+      "fixed_subjects": ["국어", "영어"],
+      "subject_choice_group": ["수학", "사회", "과학"],
+      "career_elective_included": false,
+      "credit_weighted": true,
+      "conversion_table": {"1": 100, "2": 99, "3": 97, "4": 95, "5": 93, "6": 90, "7": 70, "8": 40, "9": 0},
+      "formula_note": "반영교과 = 국어, 영어, 택1(수학/사회/과학 중 이수단위 합이 가장 큰 교과 1개 자동 선택, 동일하면 유리한 쪽). 반영교과군의 전 과목(석차등급 있는 과목만, 학년 구분 없이 전부)을 반영. 교과점수 = Σ(과목별 이수단위×환산점수) / 총 이수단위 (2027 모집요강 p.112-113). 진로선택과목은 반영하지 않음. 참고: 이 전형은 학생부교과가 1단계(20%)에서만 반영되고, 최종 합격은 2단계 서류40%+면접60%로 결정되므로 실기고사 자체는 없음.",
+      "rule_source_page": "112-113"
+    },
     "past_topics": [],
     "source_url": "https://www.hongik.ac.kr/kr/admission/recruitment.do?mode=download&articleNo=152315&attachNo=91150",
     "source_page": 105,

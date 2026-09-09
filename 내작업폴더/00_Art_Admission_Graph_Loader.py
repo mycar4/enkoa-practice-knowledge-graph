@@ -111,7 +111,8 @@ def load_one_record_tx(tx, rec: dict):
             t.school_record_ratio_pct = $school_record_ratio_pct,
             t.practical_ratio_pct = $practical_ratio_pct,
             t.document_ratio_pct = $document_ratio_pct,
-            t.interview_ratio_pct = $interview_ratio_pct
+            t.interview_ratio_pct = $interview_ratio_pct,
+            t.school_record_rule_json = $school_record_rule_json
 
         MERGE (e:Admission_ExamType {name: $exam_type_name, track_name: $track_name, university: $university, department: $department})
         MERGE (t)-[:REQUIRES_EXAM]->(e)
@@ -137,6 +138,10 @@ def load_one_record_tx(tx, rec: dict):
          practical_ratio_pct=of.get("practical_ratio_pct"),
          document_ratio_pct=of.get("document_ratio_pct"),
          interview_ratio_pct=of.get("interview_ratio_pct"),
+         school_record_rule_json=(
+             json.dumps(of["school_record_rule"], ensure_ascii=False)
+             if of.get("school_record_rule") else None
+         ),
          exam_type_name=of.get("exam_type_name", "미지정"),
          allowed_materials=of.get("allowed_materials", []),
          paper_size=of.get("paper_size"), time_limit_minutes=of.get("time_limit_minutes"),

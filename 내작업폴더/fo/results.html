@@ -15,6 +15,7 @@
 <nav class="hidden md:flex items-center gap-unit-xl">
 <a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" href="index.html">홈</a>
 <a class="font-label-md text-label-md text-primary" href="profile.html">대학 찾기</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" href="grades.html">성적 추천</a>
 <a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" href="qa.html">입시 질문</a>
 <a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" href="review.html">서류 첨삭</a>
 </nav>
@@ -26,7 +27,7 @@
 <section class="px-margin-mobile lg:px-12 pt-unit-md pb-unit-sm">
 <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight" id="profileSummary">분석 결과</h1>
 <p id="scopeLine" class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">분석 범위: -</p>
-<div class="grid grid-cols-3 lg:max-w-xl gap-unit-xs mt-unit-md">
+<div id="matchStatsGrid" class="grid grid-cols-3 lg:max-w-xl gap-unit-xs mt-unit-md">
 <div class="bg-surface-container-lowest p-unit-sm rounded shadow-sm text-center border-l-4 border-primary"><div id="countExact" class="font-headline-sm text-headline-sm text-primary">0</div><div class="font-label-sm text-label-sm text-on-surface-variant">실기종목 일치</div></div>
 <div class="bg-surface-container-lowest p-unit-sm rounded shadow-sm text-center border-l-4 border-tertiary"><div id="countPartial" class="font-headline-sm text-headline-sm text-tertiary">0</div><div class="font-label-sm text-label-sm text-on-surface-variant">준비 내용 확인 필요</div></div>
 <div class="bg-surface-container-lowest p-unit-sm rounded shadow-sm text-center border-l-4 border-outline"><div id="countDocument" class="font-headline-sm text-headline-sm text-on-surface">0</div><div class="font-label-sm text-label-sm text-on-surface-variant">서류전형</div></div>
@@ -40,6 +41,9 @@
 <div id="emptyState" class="px-margin-mobile lg:px-12 py-unit-2xl text-center hidden">
 <p class="font-body-md text-body-md text-on-surface-variant">적재된 데이터 범위 내에서는 조건에 맞는 전형을 찾지 못했습니다.<br/>다른 실기 종목이나 재료로 다시 시도해보세요.</p>
 </div>
+
+<!-- 성적 기반 추천 결과 (grades.html에서 넘어온 경우) - 기존 실기검색 카드와는 완전히 다른 뷰 -->
+<section id="recommendSection" class="hidden px-margin-mobile lg:px-12 pt-unit-sm gap-unit-sm grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"></section>
 
 <!-- 비교/일정/충돌 섹션 - 별도 상단 메뉴가 아니라 결과 화면 안에 그대로 둔다 -->
 <section id="compareSection" class="hidden px-margin-mobile lg:px-12 py-unit-xl border-t border-outline-variant/30 mt-unit-lg">
@@ -88,6 +92,9 @@
 </div></nav>
 
 <script>
+const isRecommendMode = new URLSearchParams(location.search).get("mode") === "recommend"
+  || !!sessionStorage.getItem("artready_recommend_results");
+
 const raw = sessionStorage.getItem("artready_results");
 const profileRaw = sessionStorage.getItem("artready_profile");
 const results = raw ? JSON.parse(raw) : [];
@@ -96,7 +103,9 @@ const selected = new Map(); // key -> {university, department}
 
 function trackKey(r) { return `${r.university}::${r.campus}::${r.department}::${r.track_name}`; }
 
-if (profile) {
+if (isRecommendMode) {
+  renderRecommendResults();
+} else if (profile) {
   const bits = [];
   if (profile.examTypes && profile.examTypes.length) bits.push(profile.examTypes.join("·"));
   if (profile.materialQuery) bits.push("재료: " + profile.materialQuery);
@@ -104,6 +113,7 @@ if (profile) {
   document.getElementById("profileSummary").textContent = bits.length ? bits.join(" / ") + " 기준 결과" : "분석 결과";
 }
 
+if (!isRecommendMode) {
 const uniqCount = new Set(results.map(r => r.university)).size;
 document.getElementById("scopeLine").textContent = `분석 범위: 등록된 ${uniqCount}개 대학 전형 데이터 중 조건에 맞는 ${results.length}건`;
 
@@ -190,6 +200,7 @@ if (results.length === 0) {
     btn.addEventListener("click", () => openEvidence(btn.dataset.university, btn.dataset.campus, btn.dataset.department));
   });
 }
+} // !isRecommendMode
 
 function updateCompareBar() {
   const bar = document.getElementById("compareBar");
@@ -292,5 +303,59 @@ async function openEvidence(university, campus, department) {
 document.getElementById("evidenceClose").addEventListener("click", () => {
   document.getElementById("evidenceOverlay").classList.add("hidden");
 });
+
+function renderRecommendResults() {
+  // 실기검색 결과 화면과는 목적이 다르므로(합격 가능성 단정 X, 학생부 축 상대 유불리만
+  // 제공) 카운트 그리드/카드 섹션은 숨기고 별도 섹션에 순위 카드를 그린다.
+  document.getElementById("matchStatsGrid").classList.add("hidden");
+  document.querySelector('a[href="profile.html"].h-11').textContent = "다시 입력";
+  document.querySelector('a[href="profile.html"].h-11').href = "grades.html";
+
+  const recommendRaw = sessionStorage.getItem("artready_recommend_results");
+  const recommendResults = recommendRaw ? JSON.parse(recommendRaw) : [];
+  const section = document.getElementById("recommendSection");
+  section.classList.remove("hidden");
+
+  document.getElementById("profileSummary").textContent = "내신 성적 기반 대학 추천";
+  const exactCount = recommendResults.filter(r => r.calc_precision === "exact").length;
+  document.getElementById("scopeLine").innerHTML =
+    `총 ${recommendResults.length}개 전형 중 <span class="text-primary font-medium">${exactCount}개교는 공식 모집요강 원문 규정으로 정밀 계산</span>, ` +
+    `나머지는 실기/학생부 반영 비율 기반 근사 추정입니다. 합격 가능성을 단정하지 않으며, 학생부 축의 상대적 유불리 참고용입니다.`;
+
+  if (recommendResults.length === 0) {
+    section.innerHTML = `<p class="col-span-full font-body-md text-body-md text-on-surface-variant py-unit-2xl text-center">추천할 전형 데이터를 찾지 못했습니다.</p>`;
+    return;
+  }
+
+  section.innerHTML = recommendResults.map((r, idx) => {
+    const campusStr = r.campus ? ` (${r.campus}캠퍼스)` : "";
+    const isExact = r.calc_precision === "exact";
+    const badge = isExact
+      ? `<span class="px-unit-xs py-0.5 bg-primary text-on-primary font-label-sm text-label-sm rounded">정밀 계산 (모집요강 원문 확인됨)</span>`
+      : `<span class="px-unit-xs py-0.5 bg-surface-variant text-on-surface-variant font-label-sm text-label-sm rounded">근사 추정 (비율 기반, 참고용)</span>`;
+    const pct = r.school_record_percentage;
+    const pctLine = pct !== null && pct !== undefined
+      ? `<div class="font-headline-sm text-headline-sm ${isExact ? "text-primary" : "text-on-surface"}">학생부 환산 ${pct}점 <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">(100점 만점 환산)</span></div>`
+      : `<div class="font-body-sm text-body-sm text-on-surface-variant">${r.note || "계산 불가"}</div>`;
+    const ratioLine = (r.practical_ratio_pct != null || r.school_record_ratio_pct != null)
+      ? `<div class="font-body-sm text-body-sm text-on-surface-variant">반영비율: 실기 ${r.practical_ratio_pct ?? "-"}% · 학생부 ${r.school_record_ratio_pct ?? "-"}%</div>` : "";
+
+    return `
+      <div class="flex flex-col bg-surface-container-lowest rounded-lg p-unit-md gap-unit-2xs shadow-sm border border-outline-variant/30">
+        <div class="flex items-center justify-between gap-unit-xs">
+          <span class="font-label-sm text-label-sm text-on-surface-variant">#${idx + 1}</span>
+          ${badge}
+        </div>
+        <span class="font-headline-sm text-headline-sm text-on-surface">${r.university}${campusStr}</span>
+        <div class="font-body-md text-body-md text-on-surface font-medium">${r.department} · ${r.track_name || ""}</div>
+        ${pctLine}
+        ${ratioLine}
+        ${r.csat_minimum_required ? `<div class="font-body-sm text-body-sm text-error">수능최저학력기준 있음 - 별도 확인 필요</div>` : ""}
+        ${r.formula_note ? `<details class="mt-unit-2xs"><summary class="font-label-sm text-label-sm text-outline cursor-pointer">환산 공식 보기</summary><p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">${r.formula_note}</p></details>` : ""}
+        ${r.source_url ? `<a class="font-label-sm text-label-sm text-primary underline mt-unit-xs" href="${r.source_url}" target="_blank" rel="noopener">공식 모집요강 원문</a>` : ""}
+      </div>
+    `;
+  }).join("");
+}
 </script>
 </body></html>

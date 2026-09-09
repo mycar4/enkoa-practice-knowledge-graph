@@ -13,8 +13,18 @@ from tests.test_art_admission_rag_eval import (  # noqa: E402
     test_exact_match_never_includes_material_only_overlaps,
     test_qa_search_and_agent_search_agree,
 )
+from tests.test_art_admission_school_record_calc import (  # noqa: E402
+    test_priority_schools_exact_calc_matches_hand_computed,
+    test_hongik_sejong_choice_subject_picks_more_advantageous_on_tie,
+    test_non_priority_school_returns_unavailable_not_fake_number,
+    test_recommend_universities_ranks_exact_before_approximate,
+)
 
 if __name__ == "__main__":
     test_exact_match_never_includes_material_only_overlaps()
     test_qa_search_and_agent_search_agree()
-    print("🎉 CI QUALITY GATE PASSED (무료 회귀 테스트 2건)")
+    test_priority_schools_exact_calc_matches_hand_computed()
+    test_hongik_sejong_choice_subject_picks_more_advantageous_on_tie()
+    test_non_priority_school_returns_unavailable_not_fake_number()
+    test_recommend_universities_ranks_exact_before_approximate()
+    print("🎉 CI QUALITY GATE PASSED (무료 회귀 테스트 6건)")

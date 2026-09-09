@@ -44,6 +44,28 @@
     "registration_period": {
       "start": "2027-02-10",
       "end": "2027-02-12"
+    },
+    "school_record_rule": {
+      "mode": "simple_weighted_average",
+      "subjects": [
+        "국어",
+        "영어"
+      ],
+      "career_elective_included": false,
+      "credit_weighted": true,
+      "conversion_table": {
+        "1": 100,
+        "2": 99.5,
+        "3": 99,
+        "4": 98.5,
+        "5": 98,
+        "6": 97.5,
+        "7": 85,
+        "8": 60,
+        "9": 30
+      },
+      "formula_note": "교과점수 = Σ(반영과목별 이수단위×석차등급 배점) / Σ(반영과목별 이수단위) (2027 모집요강 p.85-87, 예·체능계열/실기우수자전형 기준). 진로선택과목은 반영하지 않으며, 석차등급이 1개 과목도 없으면 지원자격 미달.",
+      "rule_source_page": "84-87"
     }
   },
   "estimates": {
