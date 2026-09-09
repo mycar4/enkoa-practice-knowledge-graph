@@ -129,8 +129,10 @@ fetch(window.API_BASE_URL + "/stats").then(r => r.json()).then(stats => {
 fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
   const uniqueNames = [...new Set(list.map(u => u.university))].sort();
   const chipsEl = document.getElementById("univListChips");
+  // 메인의 대학명을 클릭하면 그 학교의 전형 상세 결과로 바로 이동한다
+  // ("메인의 대학을 클릭하면 검색 상세 결과로 이동" 피드백 반영).
   chipsEl.innerHTML = uniqueNames.map(name =>
-    `<span class="px-unit-sm py-unit-xs bg-surface-container-lowest border border-outline-variant/40 rounded font-label-md text-label-md text-on-surface shadow-sm">${name}</span>`
+    `<a href="results.html?mode=university&name=${encodeURIComponent(name)}" class="px-unit-sm py-unit-xs bg-surface-container-lowest border border-outline-variant/40 rounded font-label-md text-label-md text-on-surface shadow-sm hover:bg-surface-container-high transition-colors">${name}</a>`
   ).join("");
 }).catch(() => {
   document.getElementById("univListChips").innerHTML = '<span class="font-body-sm text-body-sm text-error">API 연결 실패 - 학교 목록을 불러오지 못했습니다.</span>';

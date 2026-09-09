@@ -33,6 +33,19 @@
 <div class="flex items-center gap-unit-xs"><span class="material-symbols-outlined text-primary text-[18px]">verified</span><span class="font-label-sm text-label-sm text-on-surface">등록된 모집요강 데이터 불러오기 완료</span></div>
 <span id="db-count" class="font-label-sm text-label-sm text-on-surface-variant">- 개교 연동중</span>
 </div>
+
+<!-- 실기종목/재료 조건 없이 대학명을 알고 있을 때 바로 그 학교 전형 목록으로
+     가는 지름길 - "대학 찾기 메뉴에 검색 기능이 있어야 하는거 아닌지" 피드백
+     반영. 이 학교가 등록돼 있는지, 어떤 전형이 있는지만 빠르게 보고 싶은 경우용. -->
+<div class="mt-unit-md p-unit-sm bg-surface-container-lowest border border-outline-variant/40 rounded">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase" for="univSearchInput">대학명으로 바로 찾기</label>
+<div class="flex gap-unit-xs mt-unit-2xs">
+<input id="univSearchInput" list="univSearchList" class="flex-1 h-11 px-unit-sm bg-surface text-on-surface border border-outline-variant rounded font-body-md text-body-md" placeholder="예: 중앙대학교" type="text" autocomplete="off"/>
+<datalist id="univSearchList"></datalist>
+<button id="univSearchBtn" type="button" class="h-11 px-unit-md bg-on-surface text-surface font-label-md text-label-md rounded shrink-0">검색</button>
+</div>
+<p id="univSearchError" class="font-body-sm text-body-sm text-error hidden mt-unit-2xs"></p>
+</div>
 </section>
 
 <form class="px-margin-mobile lg:px-0 space-y-unit-lg pb-unit-xl lg:col-span-2 lg:py-unit-xl" id="profileForm" onsubmit="event.preventDefault(); runAnalysis();">
@@ -88,6 +101,31 @@
 fetch(window.API_BASE_URL + "/stats").then(r => r.json()).then(s => {
   document.getElementById("db-count").textContent = s.university_count + "개교 연동됨";
 }).catch(() => { document.getElementById("db-count").textContent = "API 연결 실패"; });
+
+// "대학명으로 바로 찾기" - 등록된 대학명 자동완성 목록을 채우고, 검색하면
+// results.html의 대학 상세 모드(mode=university)로 넘긴다. 실기종목/재료
+// 조건 없이 "이 학교가 있는지, 어떤 전형이 있는지"만 빠르게 보고 싶을 때 씀.
+let univSearchNames = [];
+fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
+  univSearchNames = [...new Set(list.map(u => u.university))].sort();
+  document.getElementById("univSearchList").innerHTML = univSearchNames.map(n => `<option value="${n}"></option>`).join("");
+}).catch(() => { /* 자동완성 실패해도 직접 입력은 계속 가능해야 한다 */ });
+
+function goToUniversitySearch() {
+  const errEl = document.getElementById("univSearchError");
+  const typed = document.getElementById("univSearchInput").value.trim();
+  if (!typed) {
+    errEl.textContent = "대학명을 입력해주세요.";
+    errEl.classList.remove("hidden");
+    return;
+  }
+  // 자동완성 목록에 정확히 없어도(오타·별칭 등) 일단 그대로 보내본다 - 백엔드가
+  // 못 찾으면 결과 화면에서 "찾지 못함"으로 안내한다(여기서 임의로 막지 않음).
+  errEl.classList.add("hidden");
+  window.location.href = "results.html?mode=university&name=" + encodeURIComponent(typed);
+}
+document.getElementById("univSearchBtn").addEventListener("click", goToUniversitySearch);
+document.getElementById("univSearchInput").addEventListener("keydown", (e) => { if (e.key === "Enter") goToUniversitySearch(); });
 
 // 실기 종목 선택 - 눈에 띄게 구분되도록 배경/테두리/체크마크 전부 표시
 const selectedExams = new Set();

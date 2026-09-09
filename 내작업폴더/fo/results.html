@@ -155,8 +155,10 @@
 </div></nav>
 
 <script>
-const isRecommendMode = new URLSearchParams(location.search).get("mode") === "recommend"
+const urlParams = new URLSearchParams(location.search);
+const isRecommendMode = urlParams.get("mode") === "recommend"
   || !!sessionStorage.getItem("artready_recommend_results");
+const universityModeName = urlParams.get("mode") === "university" ? urlParams.get("name") : null;
 
 const raw = sessionStorage.getItem("artready_results");
 const profileRaw = sessionStorage.getItem("artready_profile");
@@ -166,7 +168,9 @@ const selected = new Map(); // key -> {university, department}
 
 function trackKey(r) { return `${r.university}::${r.campus}::${r.department}::${r.track_name}`; }
 
-if (isRecommendMode) {
+if (universityModeName) {
+  renderUniversityResults(universityModeName);
+} else if (isRecommendMode) {
   renderRecommendResults();
 } else if (profile) {
   const bits = [];
@@ -178,7 +182,7 @@ if (isRecommendMode) {
   document.getElementById("profileSummary").textContent = bits.length ? bits.join(" / ") + " 기준 결과" : "분석 결과";
 }
 
-if (!isRecommendMode) {
+if (!isRecommendMode && !universityModeName) {
 const uniqCount = new Set(results.map(r => r.university)).size;
 document.getElementById("scopeLine").textContent = `분석 범위: 등록된 ${uniqCount}개 대학 전형 데이터 중 조건에 맞는 ${results.length}건`;
 
@@ -431,6 +435,64 @@ async function openBreakdown(university, campus, department, trackName) {
 document.getElementById("breakdownClose").addEventListener("click", () => {
   document.getElementById("breakdownOverlay").classList.add("hidden");
 });
+
+// "대학명으로 바로 찾기" 결과 화면 - 실기종목/재료 조건으로 거른 게 아니라
+// 이 학교(전 캠퍼스)에 등록된 전형을 전부 보여준다. "대학 찾기 메뉴에 검색
+// 기능이 있어야 하는거 아닌지" + "메인의 대학을 클릭하면 상세 결과로 이동"
+// 피드백 반영 - /universities/{name}을 그대로 써서 새 백엔드 로직 없음.
+async function renderUniversityResults(name) {
+  document.getElementById("matchStatsGrid").classList.add("hidden");
+  document.getElementById("profileSummary").textContent = `${name} 등록 전형`;
+  document.getElementById("scopeLine").textContent = "불러오는 중...";
+  const container = document.getElementById("cardsContainer");
+  container.innerHTML = "";
+
+  let detail;
+  try {
+    detail = await fetch(window.API_BASE_URL + "/universities/" + encodeURIComponent(name)).then(r => r.json());
+  } catch (err) {
+    document.getElementById("scopeLine").textContent = "API 연결 실패";
+    container.innerHTML = `<p class="col-span-full font-body-md text-body-md text-error py-unit-2xl text-center">API 연결에 실패했습니다 (${err}).</p>`;
+    return;
+  }
+  const tracks = detail.official_tracks || [];
+  if (tracks.length === 0) {
+    document.getElementById("scopeLine").textContent = "등록된 전형을 찾지 못했습니다.";
+    container.innerHTML = `<p class="col-span-full font-body-md text-body-md text-on-surface-variant py-unit-2xl text-center">'${name}'으로 등록된 전형을 찾지 못했습니다. 정확한 학교명인지 확인하거나, <a class="underline text-primary" href="profile.html">실기 종목으로 다시 찾아보세요</a>.</p>`;
+    return;
+  }
+  document.getElementById("scopeLine").textContent = `${name}에 등록된 전형 ${tracks.length}건`;
+
+  const estimatesByKey = new Map(
+    (detail.estimates_by_track || []).map(e => [`${e.department}::${e.track_name}`, e])
+  );
+
+  container.innerHTML = tracks.map(t => {
+    const est = estimatesByKey.get(`${t.department}::${t.track_name}`);
+    const campusStr = t.campus ? ` (${t.campus}캠퍼스)` : "";
+    const hasCutoff = est && est.cutoff_grade_estimate != null && est.cutoff_source_url;
+    return `
+      <div class="flex flex-col bg-surface-container-lowest rounded-lg p-unit-md gap-unit-2xs shadow-sm border border-outline-variant/30">
+        <span class="font-headline-sm text-headline-sm text-on-surface">${name}${campusStr}</span>
+        <div class="font-body-md text-body-md text-on-surface font-medium">${t.department} · ${t.track_name || ""} (${t.admission_year || "-"}학년도)</div>
+        <div class="font-body-sm text-body-sm text-on-surface-variant">실기종목: ${t.exam_type_name || "-"}</div>
+        <div class="font-body-sm text-body-sm text-on-surface-variant">재료: ${(t.allowed_materials || []).join(", ") || "-"} ${t.paper_size ? "· 규격: " + t.paper_size : ""}</div>
+        <div class="font-body-sm text-body-sm text-on-surface-variant">모집인원: ${t.quota ?? "-"}명 ${t.time_limit_minutes ? "· 시험시간 " + t.time_limit_minutes + "분" : ""}</div>
+        <div class="font-body-sm text-body-sm text-on-surface-variant">원서접수: ${t.application_start || "-"} ~ ${t.application_end || "-"}</div>
+        <div class="font-body-sm text-body-sm text-on-surface-variant">실기고사: ${(t.exam_dates || []).join(", ") || "-"} · 발표: ${t.result_date || "-"}</div>
+        ${hasCutoff ? `
+          <details class="mt-unit-2xs">
+            <summary class="font-label-sm text-label-sm text-outline cursor-pointer">비공식 참고 정보</summary>
+            <div class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">작년 입시결과 기준 예상 ${est.cutoff_grade_estimate}등급 (추정치, 공식 아님) - <a class="underline text-primary" href="${est.cutoff_source_url}" target="_blank" rel="noopener">근거</a></div>
+          </details>` : ""}
+        <div class="flex items-center justify-between mt-unit-xs pt-unit-xs border-t border-outline-variant/20">
+          <span></span>
+          ${t.source_url ? `<a class="font-label-sm text-label-sm text-primary underline" href="${t.source_url}" target="_blank" rel="noopener">공식 모집요강 원문</a>` : ""}
+        </div>
+      </div>
+    `;
+  }).join("");
+}
 
 function renderRecommendResults() {
   // 실기검색 결과 화면과는 목적이 다르므로(합격 가능성 단정 X, 학생부 축 상대 유불리만
@@ -689,20 +751,24 @@ function renderRecommendResults() {
     const tierBadge = (!isNotApplicable && r.prior_year_tier)
       ? `<span class="px-unit-xs py-0.5 ${tierClass} font-label-sm text-label-sm rounded">${tierText}</span>` : "";
     const pct = r.school_record_percentage;
-    const scaleNote = (isExact && r.max_score != null)
-      ? ` <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">(${r.raw_score}점 / ${r.max_score}점 만점 기준 환산 - 합격 가능성 아님, 실기 점수 미포함)</span>`
-      : ` <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">(100점 만점 참고용 환산 - 합격 가능성 아님, 실기 점수 미포함)</span>`;
+    // 괄호 설명을 값과 같은 줄에 인라인으로 붙이면 좁은 화면에서 단어 중간이
+    // 잘리며 줄바꿈된다("가능\n한"처럼) - 값 줄과 설명 줄을 아예 분리된 블록으로
+    // 나눠서 항상 깔끔하게 다음 줄로 넘어가게 한다.
+    const scaleValueNote = (isExact && r.max_score != null)
+      ? ` <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">(${r.raw_score}점 / ${r.max_score}점 만점)</span>`
+      : ` <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">(100점 만점 참고용)</span>`;
+    const scaleDisclaimer = `<div class="font-label-sm text-label-sm text-on-surface-variant font-normal">(기준 환산 - 합격 가능성 아님, 실기 점수 미포함)</div>`;
     const pctLine = isNotApplicable
       ? `<div class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-unit-2xs"><span class="material-symbols-outlined text-[16px]">block</span>이 전형은 학생부 성적을 반영하지 않습니다 - 계산 대상 아님</div>`
       : (pct !== null && pct !== undefined
-        ? `<div class="font-headline-sm text-headline-sm ${isExact ? "text-primary" : "text-on-surface"}">배점표 기준 환산 ${pct}점${scaleNote}</div>`
+        ? `<div class="font-headline-sm text-headline-sm ${isExact ? "text-primary" : "text-on-surface"}">배점표 기준 환산 ${pct}점${scaleValueNote}</div>${scaleDisclaimer}`
         : `<div class="font-body-sm text-body-sm text-on-surface-variant">${r.note || "계산 불가"}</div>`);
     const gradeEq = r.estimated_grade_equivalent;
     // "학교 배점표를 거치지 않은 값이라 학교 간 비교 가능" 문구가 무슨 뜻인지
-    // 못 알아듣겠다는 피드백 - 쉬운 말로 다시 쓰고, 툴팁(모바일에선 안 보임)이
-    // 아니라 화면에 짧게 남기되 한 줄로 끝나게 압축했다.
+    // 못 알아듣겠다는 피드백 - 쉬운 말로 다시 썼고, 설명은 값과 같은 줄에
+    // 인라인으로 붙이지 않고 별도 블록 줄로 분리해 항상 깔끔하게 줄바꿈되게 했다.
     const gradeEqLine = (!isNotApplicable && gradeEq !== null && gradeEq !== undefined)
-      ? `<div class="font-body-md text-body-md text-on-surface font-medium">반영교과 기준 원 석차등급: 약 <span class="text-primary">${gradeEq}등급</span> <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">(학교 간 비교 가능한 참고값)</span></div>` : "";
+      ? `<div class="font-body-md text-body-md text-on-surface font-medium">반영교과 기준 원 석차등급: 약 <span class="text-primary">${gradeEq}등급</span></div><div class="font-label-sm text-label-sm text-on-surface-variant font-normal">(학교 간 비교 가능한 참고값)</div>` : "";
     const scheduleBlock = `
       ${r.exam_type_name ? `<div class="font-body-sm text-body-sm text-on-surface-variant">실기종목: ${r.exam_type_name}</div>` : ""}
       ${(r.allowed_materials && r.allowed_materials.length) || r.paper_size ? `<div class="font-body-sm text-body-sm text-on-surface-variant">재료: ${(r.allowed_materials || []).join(", ") || "-"}${r.paper_size ? " · 규격: " + r.paper_size : ""}</div>` : ""}
