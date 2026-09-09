@@ -69,14 +69,19 @@
     </select>
     <div id="topicFilterChips" class="flex flex-wrap items-center gap-unit-2xs"></div>
   </div>
-  <label class="flex items-center gap-unit-2xs font-body-sm text-body-sm text-on-surface-variant cursor-pointer">
-    <input type="checkbox" id="hideNotApplicableCheck" class="w-4 h-4">
-    학생부 미반영 전형 숨기기
-  </label>
-  <label class="flex items-center gap-unit-2xs font-body-sm text-body-sm text-on-surface-variant cursor-pointer">
-    <input type="checkbox" id="documentOnlyCheck" class="w-4 h-4">
-    서류전형(실기 없음)만 보기
-  </label>
+  <button id="moreFiltersToggle" type="button" class="md:hidden h-9 px-unit-sm rounded border border-outline-variant bg-surface-container-lowest text-on-surface-variant font-label-sm text-label-sm flex items-center gap-unit-2xs">
+    <span class="material-symbols-outlined text-[16px]">tune</span>필터 더보기
+  </button>
+  <div id="extraFiltersPanel" class="hidden md:flex w-full md:w-auto flex-col md:flex-row md:items-center gap-unit-sm">
+    <label class="flex items-center gap-unit-2xs font-body-sm text-body-sm text-on-surface-variant cursor-pointer">
+      <input type="checkbox" id="hideNotApplicableCheck" class="w-4 h-4">
+      학생부 미반영 전형 숨기기
+    </label>
+    <label class="flex items-center gap-unit-2xs font-body-sm text-body-sm text-on-surface-variant cursor-pointer">
+      <input type="checkbox" id="documentOnlyCheck" class="w-4 h-4">
+      서류전형(실기 없음)만 보기
+    </label>
+  </div>
   <button id="askAboutResultsBtn" class="ml-auto h-9 px-unit-sm bg-primary text-on-primary font-label-sm text-label-sm rounded-lg flex items-center gap-unit-2xs shrink-0">
     <span class="material-symbols-outlined text-[16px]">forum</span>
     이 결과로 질문하기
@@ -582,6 +587,15 @@ function renderRecommendResults() {
   document.getElementById("genderSelect").addEventListener("change", applyControlsAndRender);
   document.getElementById("documentOnlyCheck").addEventListener("change", applyControlsAndRender);
 
+  // 모바일에서 정렬/성별/실기종목 칩만으로도 영역이 꽉 차서, 자주 안 쓰는 체크박스
+  // 2개(학생부 미반영 숨기기/서류전형만 보기)는 기능을 없애는 대신 "필터 더보기"
+  // 뒤로 접어둔다 - 데스크톱(md 이상)에서는 항상 펼쳐진 채로 보인다.
+  document.getElementById("moreFiltersToggle")?.addEventListener("click", () => {
+    const panel = document.getElementById("extraFiltersPanel");
+    const nowHidden = panel.classList.toggle("hidden");
+    panel.classList.toggle("flex", !nowHidden);
+  });
+
   function renderCards(list) {
   if (list.length === 0) {
     section.innerHTML = `<p class="col-span-full font-body-md text-body-md text-on-surface-variant py-unit-2xl text-center">선택한 조건에 맞는 전형이 없습니다. 필터를 해제해보세요.</p>`;
@@ -645,6 +659,21 @@ function renderRecommendResults() {
     const reasonLine = r.reason_summary
       ? `<div class="font-body-sm text-body-sm text-on-surface bg-surface-container-low rounded p-unit-xs mt-unit-2xs"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase">${isNotApplicable ? "해당 없음 사유" : "추천 이유"}</span><br/>${r.reason_summary}</div>` : "";
 
+    // 카드 하나에 정보가 너무 많이 항상 펼쳐져 있으면 모바일에서 스크롤이 길어진다는
+    // 피드백 - 학교/학과/원등급/환산점수까지는 훑어보는 데 필요한 핵심이라 항상
+    // 보여주고, 나머지(반영비율·전년도 비교·추천사유·환산공식 등 상세 근거)는
+    // 기본은 접어두고 "자세히 보기"를 눌러야 펼쳐지게 한다.
+    const detailsHtml = `
+        ${ratioLine}
+        ${priorYearLine}
+        ${reasonLine}
+        ${r.csat_minimum_required ? `<div class="font-body-sm text-body-sm text-error">수능최저학력기준 있음 - 별도 확인 필요</div>` : ""}
+        ${r.formula_note ? `<div class="mt-unit-2xs pt-unit-2xs border-t border-outline-variant/20"><p class="font-label-sm text-label-sm text-on-surface-variant uppercase">환산 공식 (원문 그대로)</p><p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">${r.formula_note}</p></div>` : ""}
+        <div class="flex items-center justify-between mt-unit-xs pt-unit-xs border-t border-outline-variant/20">
+          ${isExact ? `<button class="breakdown-btn font-label-sm text-label-sm text-primary underline" data-university="${r.university}" data-campus="${r.campus || ""}" data-department="${r.department || ""}">계산 상세보기</button>` : `<span></span>`}
+          ${r.source_url ? `<a class="font-label-sm text-label-sm text-primary underline" href="${r.source_url}" target="_blank" rel="noopener">공식 모집요강 원문</a>` : ""}
+        </div>`;
+
     return `
       <div class="flex flex-col bg-surface-container-lowest rounded-lg p-unit-md gap-unit-2xs shadow-sm border ${isNotApplicable ? "border-outline-variant/20 opacity-80" : "border-outline-variant/30"}">
         <div class="flex items-center justify-between gap-unit-xs flex-wrap">
@@ -655,21 +684,24 @@ function renderRecommendResults() {
         <div class="font-body-md text-body-md text-on-surface font-medium">${r.department} · ${r.track_name || ""}</div>
         ${gradeEqLine}
         ${pctLine}
-        ${ratioLine}
-        ${priorYearLine}
-        ${reasonLine}
-        ${r.csat_minimum_required ? `<div class="font-body-sm text-body-sm text-error">수능최저학력기준 있음 - 별도 확인 필요</div>` : ""}
-        ${r.formula_note ? `<div class="mt-unit-2xs pt-unit-2xs border-t border-outline-variant/20"><p class="font-label-sm text-label-sm text-on-surface-variant uppercase">환산 공식 (원문 그대로)</p><p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">${r.formula_note}</p></div>` : ""}
-        <div class="flex items-center justify-between mt-unit-xs pt-unit-xs border-t border-outline-variant/20">
-          ${isExact ? `<button class="breakdown-btn font-label-sm text-label-sm text-primary underline" data-university="${r.university}" data-campus="${r.campus || ""}" data-department="${r.department || ""}">계산 상세보기</button>` : `<span></span>`}
-          ${r.source_url ? `<a class="font-label-sm text-label-sm text-primary underline" href="${r.source_url}" target="_blank" rel="noopener">공식 모집요강 원문</a>` : ""}
-        </div>
+        <button type="button" class="card-detail-toggle self-start mt-unit-2xs font-label-sm text-label-sm text-primary flex items-center gap-unit-2xs">
+          <span class="toggle-label">자세히 보기</span><span class="material-symbols-outlined text-[16px] toggle-icon">expand_more</span>
+        </button>
+        <div class="card-detail-body hidden flex flex-col gap-unit-2xs">${detailsHtml}</div>
       </div>
     `;
   }).join("");
 
   document.querySelectorAll(".breakdown-btn").forEach(btn => {
     btn.addEventListener("click", () => openBreakdown(btn.dataset.university, btn.dataset.campus, btn.dataset.department));
+  });
+  document.querySelectorAll(".card-detail-toggle").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const body = btn.nextElementSibling;
+      const nowHidden = body.classList.toggle("hidden");
+      btn.querySelector(".toggle-label").textContent = nowHidden ? "자세히 보기" : "간략히 보기";
+      btn.querySelector(".toggle-icon").textContent = nowHidden ? "expand_more" : "expand_less";
+    });
   });
   } // renderCards
 
