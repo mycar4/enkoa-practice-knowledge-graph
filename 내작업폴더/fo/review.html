@@ -41,11 +41,8 @@
 </select>
 </div>
 <div>
-<div class="flex items-center justify-between mb-unit-xs">
-<label class="font-label-lg text-label-lg text-on-surface" for="docText">첨삭받을 텍스트</label>
-<label class="font-label-sm text-label-sm text-primary underline cursor-pointer" for="docFile">파일에서 불러오기 (.txt)</label>
-<input type="file" id="docFile" accept=".txt,text/plain" class="hidden"/>
-</div>
+<label class="font-label-lg text-label-lg text-on-surface block mb-unit-xs" for="docText">첨삭받을 텍스트</label>
+<input type="file" id="docFile" accept=".txt,text/plain" class="w-full mb-unit-xs text-body-sm text-on-surface-variant file:mr-unit-sm file:py-unit-xs file:px-unit-sm file:rounded file:border-0 file:bg-primary file:text-on-primary file:font-label-sm file:text-label-sm file:cursor-pointer"/>
 <textarea class="w-full h-48 lg:h-64 p-unit-sm bg-surface-container-lowest border border-outline-variant rounded font-body-md text-body-md" id="docText" placeholder="자기소개서/활동보고서 텍스트를 붙여넣거나, 위에서 .txt 파일을 불러오세요"></textarea>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">PDF/한글(.hwp) 파일은 아직 지원하지 않습니다 - 텍스트로 붙여넣거나 .txt로 저장해서 올려주세요.</p>
 <p id="docTextError" class="font-body-sm text-body-sm text-error mt-unit-2xs hidden">첨삭할 텍스트를 입력해주세요.</p>
