@@ -25,6 +25,7 @@ from tests.test_art_admission_school_record_calc import (  # noqa: E402
     test_batch3_schools_hongik_seoul_chugye_karts,
     test_batch4_remaining_15_schools_use_generalized_modes_not_hardcoding,
     test_not_applicable_schools_get_no_score_not_approximate_guess,
+    test_recommend_sorts_by_raw_grade_not_schools_own_generous_curve,
     test_non_priority_school_returns_unavailable_not_fake_number,
     test_recommend_universities_ranks_exact_before_approximate,
 )
@@ -43,6 +44,7 @@ if __name__ == "__main__":
     test_batch3_schools_hongik_seoul_chugye_karts()
     test_batch4_remaining_15_schools_use_generalized_modes_not_hardcoding()
     test_not_applicable_schools_get_no_score_not_approximate_guess()
+    test_recommend_sorts_by_raw_grade_not_schools_own_generous_curve()
     test_non_priority_school_returns_unavailable_not_fake_number()
     test_recommend_universities_ranks_exact_before_approximate()
-    print("🎉 CI QUALITY GATE PASSED (무료 회귀 테스트 15건)")
+    print("🎉 CI QUALITY GATE PASSED (무료 회귀 테스트 16건)")

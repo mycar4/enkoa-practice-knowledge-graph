@@ -1802,26 +1802,35 @@ class ArtAdmissionService:
 
             results.append(entry)
 
-        # GOOD FIT / CHECK 판정: 절대적인 "합격 가능성"이 아니라, 정밀 계산이 가능한
-        # 학교들 사이에서 "이 학생의 학생부가 상대적으로 어디서 더 유리하게 환산되는가"를
-        # 보여주는 상대 지표다. 정밀 계산된 학교 중 최고 환산율 대비 5%p 이내면 GOOD FIT,
-        # 그보다 낮으면 CHECK로 표시하고, 근사 추정 학교는 신뢰도가 낮아 판정을 매기지 않는다
-        # (임계값 5%p는 공식 기준이 아니라 서비스 자체 설계 기준 - formula_note와 별개로
-        # UI에 반드시 "참고용 상대 판정"이라고 명시해야 한다).
-        exact_pcts = [e["school_record_percentage"] for e in results if e["calc_precision"] == "exact" and e["school_record_percentage"] is not None]
-        top_exact_pct = max(exact_pcts) if exact_pcts else None
+        # 정렬/판정 기준: school_record_percentage(학교 자체 배점표 통과 후 환산점수)가
+        # 아니라 estimated_grade_equivalent(원 석차등급, 학교 배점표를 거치지 않은 값)를
+        # 쓴다. 학교마다 등급→점수 환산표의 "관대함"이 전혀 달라서(예: 상위 등급을
+        # 널찍하게 압축하는 학교 vs 촘촘하게 벌리는 학교), percentage로 학교 간 순위를
+        # 매기면 실제 성적 경쟁력과 무관하게 "환산표가 후한 학교"가 항상 위로 올라오는
+        # 착시가 생긴다(실측: 같은 성적 입력값 기준 가천대 98.75%/원등급3.5가 서울과기대
+        # 98.2%/원등급2.8보다 위로 나옴 - 원등급은 서울과기대가 더 좋은데도 순위가 뒤집힘).
+        # 원 석차등급은 "이 학교가 실제로 반영하는 과목 조합"에서의 내 진짜 등급이라
+        # 학교 간 비교가 가능하다(반영 과목 자체가 다른 것은 착시가 아니라 실제 유불리).
+        exact_grades = [e["estimated_grade_equivalent"] for e in results if e["calc_precision"] == "exact" and e["estimated_grade_equivalent"] is not None]
+        best_exact_grade = min(exact_grades) if exact_grades else None  # 원 석차등급은 낮을수록(1등급에 가까울수록) 좋음
         for e in results:
-            if e["calc_precision"] == "exact" and e["school_record_percentage"] is not None and top_exact_pct is not None:
-                e["fit_label"] = "GOOD_FIT" if (top_exact_pct - e["school_record_percentage"]) <= 5 else "CHECK"
+            if e["calc_precision"] == "exact" and e["estimated_grade_equivalent"] is not None and best_exact_grade is not None:
+                # 임계값 0.5등급은 공식 기준이 아니라 서비스 자체 설계 기준(원 석차등급 반
+                # 등급 이내면 사실상 동급으로 본다) - UI에 반드시 "참고용 상대 판정"이라고
+                # 명시해야 한다.
+                e["fit_label"] = "GOOD_FIT" if (e["estimated_grade_equivalent"] - best_exact_grade) <= 0.5 else "CHECK"
             else:
                 e["fit_label"] = None
 
         # 정렬 순서: 정밀 계산(exact) -> 근사 추정(approximate) -> 해당 없음(not_applicable).
         # not_applicable은 점수 자체가 없는 게 정상이므로 맨 뒤로 보내되 목록에서 빼지는
         # 않는다(그 학교/전형이 존재한다는 사실과 "왜 점수가 없는지"는 계속 보여줘야 함).
+        # 그룹 내부는 원 석차등급 오름차순(좋은 등급 먼저) -> 동률이면 학교 배점표 환산
+        # percentage 내림차순으로 2차 정렬한다.
         _precision_rank = {"exact": 0, "approximate": 1, "not_applicable": 2}
         results.sort(key=lambda e: (
             _precision_rank.get(e["calc_precision"], 3),
+            e["estimated_grade_equivalent"] if e["estimated_grade_equivalent"] is not None else 99,
             -(e["school_record_percentage"] if e["school_record_percentage"] is not None else -1),
         ))
         return results

@@ -230,8 +230,10 @@ def test_breakdown_and_reason_summary_and_fit_label_present():
         assert exact_with_pct, "정밀 계산 결과가 하나도 없음"
         assert all(r["fit_label"] in ("GOOD_FIT", "CHECK") for r in exact_with_pct), "정밀 계산 항목엔 fit_label이 있어야 함"
         assert all(r.get("reason_summary") for r in exact_with_pct), "정밀 계산 항목엔 추천 이유가 있어야 함"
-        top = max(exact_with_pct, key=lambda r: r["school_record_percentage"])
-        assert top["fit_label"] == "GOOD_FIT", "최고 환산율 학교는 GOOD_FIT이어야 함"
+        # fit_label은 학교 배점표 환산 percentage가 아니라 원 석차등급(estimated_grade_equivalent,
+        # 학교마다 환산표 관대함이 달라 percentage만으로는 학교 간 비교가 왜곡되기 때문) 기준이다.
+        best = min(exact_with_pct, key=lambda r: r["estimated_grade_equivalent"])
+        assert best["fit_label"] == "GOOD_FIT", "원 석차등급이 가장 좋은 학교는 GOOD_FIT이어야 함"
         print("✅ test_breakdown_and_reason_summary_and_fit_label_present passed!")
     finally:
         svc.close()
@@ -392,6 +394,50 @@ def test_not_applicable_schools_get_no_score_not_approximate_guess():
         svc.close()
 
 
+def test_recommend_sorts_by_raw_grade_not_schools_own_generous_curve():
+    """사용자 피드백: 학교마다 등급→점수 환산표의 관대함이 달라서(어떤 학교는 상위
+    등급을 널찍하게 압축, 어떤 학교는 촘촘하게 벌림) school_record_percentage로
+    학교 간 순위를 매기면 "환산표가 후한 학교"가 실제 성적 경쟁력과 무관하게 항상
+    위로 올라오는 착시가 생긴다(실측: 이 테스트 성적 기준 가천대 98.75%/원등급3.5가
+    서울과기대 98.2%/원등급2.8보다 원래 순위가 위였음 - 원등급은 서울과기대가 더
+    좋은데도 뒤집힘). 따라서 exact 그룹 내 정렬과 GOOD_FIT 판정은 학교 배점표를
+    거치지 않은 원 석차등급(estimated_grade_equivalent, 학교 간 비교 가능) 기준이어야
+    하고, 학교 자체 환산 percentage 기준으로 정렬해서는 안 된다."""
+    svc = ArtAdmissionService()
+    try:
+        grades = [
+            {"subject_group": "국어", "grade": 3, "credit": 4},
+            {"subject_group": "영어", "grade": 4, "credit": 4},
+            {"subject_group": "수학", "grade": 5, "credit": 4},
+            {"subject_group": "사회", "grade": 2, "credit": 4},
+            {"subject_group": "과학", "grade": 6, "credit": 4},
+            {"subject_group": "한국사", "grade": 2, "credit": 3},
+        ]
+        results = svc.recommend_universities(grades)
+        exact = [r for r in results if r["calc_precision"] == "exact" and r["estimated_grade_equivalent"] is not None]
+        assert exact, "정밀 계산 결과가 하나도 없음"
+
+        # exact 그룹 내부가 원 석차등급 오름차순(좋은 등급 먼저)인지 확인 - percentage
+        # 오름차순이 아님에 주의(오히려 서로 순서가 다를 수 있는 게 정상).
+        exact_grades_in_order = [r["estimated_grade_equivalent"] for r in exact]
+        assert exact_grades_in_order == sorted(exact_grades_in_order), (
+            "exact 그룹이 원 석차등급 오름차순으로 정렬돼 있지 않음 - "
+            "school_record_percentage 기준으로 되돌아갔을 위험"
+        )
+
+        # 동일한 성적 입력에서, 학교 배점표 환산 percentage는 더 낮지만 원 석차등급이
+        # 더 좋은 학교가 percentage는 더 높지만 원 석차등급이 더 나쁜 학교보다 반드시
+        # 앞에 와야 한다(퍼센트만으로 정렬했다면 이 관계가 뒤집힌다).
+        for i in range(len(exact) - 1):
+            better, worse = exact[i], exact[i + 1]
+            assert better["estimated_grade_equivalent"] <= worse["estimated_grade_equivalent"], \
+                f"{better['university']}({better['estimated_grade_equivalent']}등급)가 " \
+                f"{worse['university']}({worse['estimated_grade_equivalent']}등급)보다 뒤에 옴"
+        print("✅ test_recommend_sorts_by_raw_grade_not_schools_own_generous_curve passed!")
+    finally:
+        svc.close()
+
+
 def test_recommend_universities_ranks_exact_before_approximate():
     svc = ArtAdmissionService()
     try:
@@ -418,6 +464,7 @@ if __name__ == "__main__":
     test_batch3_schools_hongik_seoul_chugye_karts()
     test_batch4_remaining_15_schools_use_generalized_modes_not_hardcoding()
     test_not_applicable_schools_get_no_score_not_approximate_guess()
+    test_recommend_sorts_by_raw_grade_not_schools_own_generous_curve()
     test_non_priority_school_returns_unavailable_not_fake_number()
     test_recommend_universities_ranks_exact_before_approximate()
     print("🎉 ALL SCHOOL RECORD CALC TESTS PASSED!")

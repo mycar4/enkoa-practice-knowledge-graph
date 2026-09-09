@@ -404,7 +404,7 @@ function renderRecommendResults() {
     `총 ${recommendResults.length}개 전형 중 <span class="text-primary font-medium">${exactCount}개교는 공식 모집요강 원문 규정으로 정밀 계산</span>, ` +
     `실기/학생부 반영 비율 기반 근사 추정이 나머지 중 일부, ` +
     (naCount > 0 ? `<span class="font-medium">${naCount}개교는 학생부를 아예 반영하지 않는 전형(실기 100% 또는 서류종합 정성평가)이라 계산 대상에서 제외</span>됩니다. ` : "") +
-    `합격 가능성을 단정하지 않으며, 학생부 축의 상대적 유불리 참고용입니다.`;
+    `정렬 기준은 학교 배점표를 통과한 환산 점수가 아니라 <span class="font-medium">원 석차등급(학교마다 배점표 관대함이 달라 환산 점수만으로는 순위가 왜곡될 수 있어서)</span>입니다. 합격 가능성을 단정하지 않으며, 학생부 축의 상대적 유불리 참고용입니다.`;
 
   if (recommendResults.length === 0) {
     section.innerHTML = `<p class="col-span-full font-body-md text-body-md text-on-surface-variant py-unit-2xl text-center">추천할 전형 데이터를 찾지 못했습니다.</p>`;
@@ -432,11 +432,11 @@ function renderRecommendResults() {
     const pctLine = isNotApplicable
       ? `<div class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-unit-2xs"><span class="material-symbols-outlined text-[16px]">block</span>이 전형은 학생부 성적을 반영하지 않습니다 - 계산 대상 아님</div>`
       : (pct !== null && pct !== undefined
-        ? `<div class="font-headline-sm text-headline-sm ${isExact ? "text-primary" : "text-on-surface"}">학생부 환산 ${pct}점${scaleNote}</div>`
+        ? `<div class="font-headline-sm text-headline-sm ${isExact ? "text-primary" : "text-on-surface"}">이 학교 배점표 기준 환산 ${pct}점${scaleNote}</div>`
         : `<div class="font-body-sm text-body-sm text-on-surface-variant">${r.note || "계산 불가"}</div>`);
     const gradeEq = r.estimated_grade_equivalent;
     const gradeEqLine = (!isNotApplicable && gradeEq !== null && gradeEq !== undefined)
-      ? `<div class="font-body-sm text-body-sm text-on-surface-variant">참고용 원 석차등급 평균: 약 ${gradeEq}등급 <span class="text-outline">- 학교 배점표를 거치지 않은 원 석차등급의 이수단위 가중평균(진로선택과목 제외)입니다. 위 학생부 환산 점수는 이 학교의 실제 배점표를 적용한 값이라 등급 감각과 차이가 날 수 있습니다.</span></div>` : "";
+      ? `<div class="font-body-md text-body-md text-on-surface font-medium">이 학교 반영교과 기준 원 석차등급: 약 <span class="text-primary">${gradeEq}등급</span> <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">- 정렬·GOOD FIT/CHECK 판정 기준(학교 배점표를 거치지 않은 값이라 학교 간 비교 가능)</span></div>` : "";
     const ratioLine = (!isNotApplicable && (r.practical_ratio_pct != null || r.school_record_ratio_pct != null))
       ? `<div class="font-body-sm text-body-sm text-on-surface-variant">반영비율: 실기 ${r.practical_ratio_pct ?? "-"}% · 학생부 ${r.school_record_ratio_pct ?? "-"}%</div>` : "";
     const reasonLine = r.reason_summary
@@ -450,8 +450,8 @@ function renderRecommendResults() {
         </div>
         <span class="font-headline-sm text-headline-sm text-on-surface">${r.university}${campusStr}</span>
         <div class="font-body-md text-body-md text-on-surface font-medium">${r.department} · ${r.track_name || ""}</div>
-        ${pctLine}
         ${gradeEqLine}
+        ${pctLine}
         ${ratioLine}
         ${reasonLine}
         ${r.csat_minimum_required ? `<div class="font-body-sm text-body-sm text-error">수능최저학력기준 있음 - 별도 확인 필요</div>` : ""}
