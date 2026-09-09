@@ -19,6 +19,19 @@
     "application_period": {"start": "2026-09-08", "end": "2026-09-15"},
     "exam_date": "2026-10-17",
     "result_date": null,
+    "school_record_rule": {
+      "mode": "choose_max_credit_subject",
+      "fixed_subjects": ["국어", "영어"],
+      "subject_choice_group": ["사회", "수학"],
+      "selection_method": "score",
+      "career_elective_included": true,
+      "credit_weighted": true,
+      "career_elective_max_count_per_subject": 4,
+      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 96, "5": 95, "6": 92, "7": 90, "8": 70, "9": 50},
+      "career_elective_conversion_table": {"A": 100, "B": 99, "C": 96},
+      "formula_note": "미술대학 반영교과: 국어, 영어(필수) + 사회 또는 수학 중 성적이 좋은 1개 교과(이수단위 비교 없이 실제 계산해서 더 유리한 쪽 선택). 반영교과 내 1,2,3학년 전 과목(석차등급) + 진로선택과목(교과영역별 상위 4과목, 성취도 A=1등급/B=2등급/C=4등급 상당)을 이수단위 가중평균. 산출된 교과성적에 실기/실적전형은 상수 0.9를 곱해 최종 반영(2027 모집요강 p.55-57, 실기/실적 일반학생전형 - 미술대학 기준).",
+      "rule_source_page": "55-57"
+    },
     "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
     "source_page": 50
   }
@@ -43,6 +56,19 @@
     "application_period": {"start": "2026-09-08", "end": "2026-09-15"},
     "exam_date": "2026-10-17",
     "result_date": null,
+    "school_record_rule": {
+      "mode": "choose_max_credit_subject",
+      "fixed_subjects": ["국어", "영어"],
+      "subject_choice_group": ["사회", "수학"],
+      "selection_method": "score",
+      "career_elective_included": true,
+      "credit_weighted": true,
+      "career_elective_max_count_per_subject": 4,
+      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 96, "5": 95, "6": 92, "7": 90, "8": 70, "9": 50},
+      "career_elective_conversion_table": {"A": 100, "B": 99, "C": 96},
+      "formula_note": "미술대학 반영교과: 국어, 영어(필수) + 사회 또는 수학 중 성적이 좋은 1개 교과(이수단위 비교 없이 실제 계산해서 더 유리한 쪽 선택). 반영교과 내 1,2,3학년 전 과목(석차등급) + 진로선택과목(교과영역별 상위 4과목, 성취도 A=1등급/B=2등급/C=4등급 상당)을 이수단위 가중평균. 산출된 교과성적에 실기/실적전형은 상수 0.9를 곱해 최종 반영(2027 모집요강 p.55-57, 실기/실적 일반학생전형 - 미술대학 기준).",
+      "rule_source_page": "55-57"
+    },
     "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
     "source_page": 50
   }
@@ -67,6 +93,19 @@
     "application_period": {"start": "2026-09-08", "end": "2026-09-15"},
     "exam_date": "2026-10-17",
     "result_date": null,
+    "school_record_rule": {
+      "mode": "choose_max_credit_subject",
+      "fixed_subjects": ["국어", "영어"],
+      "subject_choice_group": ["사회", "수학"],
+      "selection_method": "score",
+      "career_elective_included": true,
+      "credit_weighted": true,
+      "career_elective_max_count_per_subject": 4,
+      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 96, "5": 95, "6": 92, "7": 90, "8": 70, "9": 50},
+      "career_elective_conversion_table": {"A": 100, "B": 99, "C": 96},
+      "formula_note": "미술대학 반영교과: 국어, 영어(필수) + 사회 또는 수학 중 성적이 좋은 1개 교과(이수단위 비교 없이 실제 계산해서 더 유리한 쪽 선택). 반영교과 내 1,2,3학년 전 과목(석차등급) + 진로선택과목(교과영역별 상위 4과목, 성취도 A=1등급/B=2등급/C=4등급 상당)을 이수단위 가중평균. 산출된 교과성적에 실기/실적전형은 상수 0.9를 곱해 최종 반영(2027 모집요강 p.55-57, 실기/실적 일반학생전형 - 미술대학 기준).",
+      "rule_source_page": "55-57"
+    },
     "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
     "source_page": 50
   }
@@ -91,6 +130,19 @@
     "application_period": {"start": "2026-09-08", "end": "2026-09-15"},
     "exam_date": "2026-10-11",
     "result_date": null,
+    "school_record_rule": {
+      "mode": "choose_max_credit_subject",
+      "fixed_subjects": ["국어", "영어"],
+      "subject_choice_group": ["사회", "수학"],
+      "selection_method": "score",
+      "career_elective_included": true,
+      "credit_weighted": true,
+      "career_elective_max_count_per_subject": 4,
+      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 96, "5": 95, "6": 92, "7": 90, "8": 70, "9": 50},
+      "career_elective_conversion_table": {"A": 100, "B": 99, "C": 96},
+      "formula_note": "미술대학 반영교과: 국어, 영어(필수) + 사회 또는 수학 중 성적이 좋은 1개 교과(이수단위 비교 없이 실제 계산해서 더 유리한 쪽 선택). 반영교과 내 1,2,3학년 전 과목(석차등급) + 진로선택과목(교과영역별 상위 4과목, 성취도 A=1등급/B=2등급/C=4등급 상당)을 이수단위 가중평균. 산출된 교과성적에 실기/실적전형은 상수 0.9를 곱해 최종 반영(2027 모집요강 p.55-57, 실기/실적 일반학생전형 - 미술대학 기준).",
+      "rule_source_page": "55-57"
+    },
     "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
     "source_page": 50
   }
@@ -115,6 +167,19 @@
     "application_period": {"start": "2026-09-08", "end": "2026-09-15"},
     "exam_date": "2026-10-10",
     "result_date": null,
+    "school_record_rule": {
+      "mode": "choose_max_credit_subject",
+      "fixed_subjects": ["국어", "영어"],
+      "subject_choice_group": ["사회", "수학"],
+      "selection_method": "score",
+      "career_elective_included": true,
+      "credit_weighted": true,
+      "career_elective_max_count_per_subject": 4,
+      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 96, "5": 95, "6": 92, "7": 90, "8": 70, "9": 50},
+      "career_elective_conversion_table": {"A": 100, "B": 99, "C": 96},
+      "formula_note": "미술대학 반영교과: 국어, 영어(필수) + 사회 또는 수학 중 성적이 좋은 1개 교과(이수단위 비교 없이 실제 계산해서 더 유리한 쪽 선택). 반영교과 내 1,2,3학년 전 과목(석차등급) + 진로선택과목(교과영역별 상위 4과목, 성취도 A=1등급/B=2등급/C=4등급 상당)을 이수단위 가중평균. 산출된 교과성적에 실기/실적전형은 상수 0.9를 곱해 최종 반영(2027 모집요강 p.55-57, 실기/실적 일반학생전형 - 미술대학 기준).",
+      "rule_source_page": "55-57"
+    },
     "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
     "source_page": 50
   }

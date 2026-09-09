@@ -332,6 +332,7 @@ def test_batch4_remaining_15_schools_use_generalized_modes_not_hardcoding():
             ("한성대학교", "예술학부(동양화전공)", 95.62),
             ("인하대학교", "조형예술학과", 96.0),
             ("경기대학교", "입체조형학과", 95.84),
+            ("성신여자대학교", "동양화과", 97.67),
         ]
         for uni, dept, expected_pct in cases:
             r = svc.calculate_school_record_score(uni, dept, grades)
