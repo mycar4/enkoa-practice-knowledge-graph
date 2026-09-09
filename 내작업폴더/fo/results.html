@@ -57,6 +57,15 @@
       <option value="grade">원 석차등급 낮은 순</option>
       <option value="score">학교 배점표 환산점수 높은 순</option>
       <option value="competition">2026년 경쟁률 낮은 순</option>
+      <option value="practical">실기비중 높은 순</option>
+    </select>
+  </label>
+  <label class="flex items-center gap-unit-2xs font-body-sm text-body-sm text-on-surface-variant">
+    성별 조건
+    <select id="genderSelect" class="ml-unit-2xs h-9 px-unit-xs rounded border border-outline-variant bg-surface-container-lowest text-on-surface font-body-sm text-body-sm">
+      <option value="all">전체</option>
+      <option value="exclude_female">여자대학교 제외</option>
+      <option value="female_only">여자대학교만</option>
     </select>
   </label>
   <label class="flex items-center gap-unit-2xs font-body-sm text-body-sm text-on-surface-variant cursor-pointer">
@@ -64,8 +73,8 @@
     학생부 미반영 전형 숨기기
   </label>
   <label class="flex items-center gap-unit-2xs font-body-sm text-body-sm text-on-surface-variant cursor-pointer">
-    <input type="checkbox" id="excludeFemaleOnlyCheck" class="w-4 h-4">
-    여자대학교 제외
+    <input type="checkbox" id="documentOnlyCheck" class="w-4 h-4">
+    서류전형(실기 없음)만 보기
   </label>
   <button id="askAboutResultsBtn" class="ml-auto h-9 px-unit-sm bg-primary text-on-primary font-label-sm text-label-sm rounded-lg flex items-center gap-unit-2xs shrink-0">
     <span class="material-symbols-outlined text-[16px]">forum</span>
@@ -441,11 +450,14 @@ function renderRecommendResults() {
   function applyControlsAndRender() {
     const sortBy = document.getElementById("sortSelect").value;
     const hideNA = document.getElementById("hideNotApplicableCheck").checked;
-    const excludeFemale = document.getElementById("excludeFemaleOnlyCheck").checked;
+    const genderFilter = document.getElementById("genderSelect").value;
+    const documentOnly = document.getElementById("documentOnlyCheck").checked;
 
     let list = recommendResults.slice();
     if (hideNA) list = list.filter(r => r.calc_precision !== "not_applicable");
-    if (excludeFemale) list = list.filter(r => r.gender_restriction !== "female_only");
+    if (genderFilter === "exclude_female") list = list.filter(r => r.gender_restriction !== "female_only");
+    if (genderFilter === "female_only") list = list.filter(r => r.gender_restriction === "female_only");
+    if (documentOnly) list = list.filter(r => r.is_document_based);
 
     if (sortBy === "grade") {
       list.sort((a, b) => {
@@ -470,6 +482,14 @@ function renderRecommendResults() {
         if (ar == null) return 1;
         if (br == null) return -1;
         return ar - br;
+      });
+    } else if (sortBy === "practical") {
+      list.sort((a, b) => {
+        const ap = a.practical_ratio_pct, bp = b.practical_ratio_pct;
+        if (ap == null && bp == null) return 0;
+        if (ap == null) return 1;
+        if (bp == null) return -1;
+        return bp - ap;
       });
     }
     // sortBy === "default"는 서버가 이미 정렬해서 내려준 순서(전년도tier -> 내신영향
@@ -504,7 +524,8 @@ function renderRecommendResults() {
 
   document.getElementById("sortSelect").addEventListener("change", applyControlsAndRender);
   document.getElementById("hideNotApplicableCheck").addEventListener("change", applyControlsAndRender);
-  document.getElementById("excludeFemaleOnlyCheck").addEventListener("change", applyControlsAndRender);
+  document.getElementById("genderSelect").addEventListener("change", applyControlsAndRender);
+  document.getElementById("documentOnlyCheck").addEventListener("change", applyControlsAndRender);
 
   function renderCards(list) {
   if (list.length === 0) {
@@ -521,10 +542,12 @@ function renderRecommendResults() {
         ? `<span class="px-unit-xs py-0.5 bg-primary text-on-primary font-label-sm text-label-sm rounded">정밀 계산 (모집요강 원문 확인됨)</span>`
         : `<span class="px-unit-xs py-0.5 bg-surface-variant text-on-surface-variant font-label-sm text-label-sm rounded">근사 추정 (비율 기반, 참고용)</span>`;
     const fitBadge = r.fit_label === "GOOD_FIT"
-      ? `<span title="배점표 환산 점수가 아니라, 원 석차등급이 전년도 등록자 평균보다 좋다는 뜻입니다" class="px-unit-xs py-0.5 bg-secondary text-on-secondary font-label-sm text-label-sm rounded">GOOD FIT</span>`
+      ? `<span title="배점표 환산 점수가 아니라, 원 석차등급이 전년도 등록자 평균보다 좋다는 뜻입니다. 합격 가능성이나 종합평가가 아닙니다." class="px-unit-xs py-0.5 bg-secondary text-on-secondary font-label-sm text-label-sm rounded">GOOD FIT (전년도 등록자 대비 등급 우위)</span>`
       : r.fit_label === "CHECK"
-        ? `<span title="원 석차등급이 전년도 등록자 평균~최저 사이이거나 더 낮다는 뜻입니다" class="px-unit-xs py-0.5 bg-tertiary text-on-tertiary font-label-sm text-label-sm rounded">CHECK</span>`
+        ? `<span title="원 석차등급이 전년도 등록자 평균~최저 사이이거나 더 낮다는 뜻입니다. 합격 가능성이나 종합평가가 아닙니다." class="px-unit-xs py-0.5 bg-tertiary text-on-tertiary font-label-sm text-label-sm rounded">CHECK (전년도 등록자 대비 등급 열위)</span>`
         : "";
+    const docBadge = r.is_document_based
+      ? `<span class="px-unit-xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded border border-outline-variant">서류전형(실기 없음)</span>` : "";
     const tierLabelMap = {
       REGISTRANT_TOP: ["전년도 등록자 평균보다 좋음", "bg-secondary text-on-secondary"],
       REGISTRANT_MID: ["전년도 등록자 평균~최저 사이", "bg-tertiary text-on-tertiary"],
@@ -571,7 +594,7 @@ function renderRecommendResults() {
       <div class="flex flex-col bg-surface-container-lowest rounded-lg p-unit-md gap-unit-2xs shadow-sm border ${isNotApplicable ? "border-outline-variant/20 opacity-80" : "border-outline-variant/30"}">
         <div class="flex items-center justify-between gap-unit-xs flex-wrap">
           <span class="font-label-sm text-label-sm text-on-surface-variant">#${idx + 1}</span>
-          <div class="flex items-center gap-unit-2xs flex-wrap justify-end">${tierBadge}${fitBadge}${badge}</div>
+          <div class="flex items-center gap-unit-2xs flex-wrap justify-end">${tierBadge}${fitBadge}${docBadge}${badge}</div>
         </div>
         <span class="font-headline-sm text-headline-sm text-on-surface">${r.university}${campusStr}${r.gender_restriction === "female_only" ? ` <span class="font-label-sm text-label-sm text-error align-middle">(여자대학교)</span>` : ""}</span>
         <div class="font-body-md text-body-md text-on-surface font-medium">${r.department} · ${r.track_name || ""}</div>

@@ -1825,6 +1825,8 @@ class ArtAdmissionService:
                 "csat_minimum_required": t.get("csat_minimum_required"),
                 "gender_restriction": t.get("gender_restriction"),
                 "source_url": t.get("source_url"),
+                "exam_type_name": t.get("exam_type_name"),
+                "is_document_based": any(marker in (t.get("exam_type_name") or "") for marker in self._DOCUMENT_BASED_MARKERS),
             }
             rule = t.get("school_record_rule")
             if t.get("school_record_status") == "not_applicable":

@@ -248,6 +248,15 @@ def route_and_answer(query: str, history: Optional[List[Dict[str, str]]] = None)
         "args": {"query": query},
         "result_preview": f"단순 질의로 판단 - 도구 선택 없이 그래프 조회 {len(result.get('context_tracks', []))}건으로 즉시 답변",
     }]
+    # run_agent()의 grounded_tracks와 같은 모양으로 맞춰서, qa.html이 경로(단순/복합
+    # 질의)와 무관하게 같은 필드 하나로 "지식그래프 근거" 패널을 그릴 수 있게 한다.
+    context_tracks = result.get("context_tracks") or []
+    result["grounded_tracks"] = [
+        {"university": t.get("university"), "department": t.get("department"),
+         "track_name": t.get("track_name"), "source_url": t.get("source_url")}
+        for t in context_tracks[:20]
+    ]
+    result["grounded_tracks_total"] = len(context_tracks)
     return result
 
 
@@ -267,6 +276,24 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
 
     tool_trace = []
     grounded_universities = set()
+    # 2026-09-09: "입시 질문 답변이 정말 우리 지식그래프 근거인가"를 화면에서
+    # 직접 보여달라는 요청 - 학교명만 모으던 grounded_universities와 별도로,
+    # 실제 도구가 반환한 트랙(대학/학과/전형명/원문 링크)을 그대로 모아뒀다가
+    # qa.html의 "지식그래프 근거" 패널에 그대로 노출한다(사람이 읽을 수 있는
+    # 요약이 아니라 실제 반환 레코드라 설득력이 있다).
+    grounded_tracks = []
+    grounded_track_keys = set()
+
+    def _add_grounded_track(row: dict):
+        key = (row.get("university"), row.get("department"), row.get("track_name"))
+        if key in grounded_track_keys or len(grounded_tracks) >= 20:
+            return
+        grounded_track_keys.add(key)
+        grounded_tracks.append({
+            "university": row.get("university"), "department": row.get("department"),
+            "track_name": row.get("track_name"), "source_url": row.get("source_url"),
+        })
+
     for m in out_messages:
         if isinstance(m, AIMessage) and getattr(m, "tool_calls", None):
             for tc in m.tool_calls:
@@ -282,8 +309,13 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
                 for row in parsed.get("results", []) or parsed.get("tracks", []) or []:
                     if isinstance(row, dict) and row.get("university"):
                         grounded_universities.add(row["university"])
+                        _add_grounded_track(row)
                 if parsed.get("university"):
                     grounded_universities.add(parsed["university"])
+                    if parsed.get("official_tracks"):
+                        for row in parsed["official_tracks"]:
+                            if isinstance(row, dict):
+                                _add_grounded_track({**row, "university": parsed["university"]})
                 for c in parsed.get("conflicts", []) or []:
                     pass  # 충돌 항목은 "대학 학과" 합쳐진 문자열이라 이름 추출은 생략
             except Exception:
@@ -319,6 +351,8 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
         "answer": final_answer,
         "model": AGENT_MODEL,
         "tool_trace": tool_trace,
+        "grounded_tracks": grounded_tracks,
+        "grounded_tracks_total": len(grounded_tracks),
     }
     if grounding_issues or banned_hit:
         result_payload["self_check_warnings"] = grounding_issues + [f"금지 문구 제거됨: {p}" for p in banned_hit]

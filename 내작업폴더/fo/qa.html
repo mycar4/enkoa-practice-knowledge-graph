@@ -94,6 +94,28 @@ const TOOL_LABELS = {
   get_calendar: "🗓️ 일정 캘린더 조회",
 };
 
+// 답변이 어떤 실제 그래프 레코드(대학/학과/전형명/원문 링크)에 근거했는지를
+// 접었다 폈다 하는 로그가 아니라 처음부터 펼쳐서 보여준다 - "우리는 외부 지식이
+// 아니라 우리가 만든 지식그래프로 답한다"는 걸 매 답변마다 실제 데이터로
+// 증명해야 설득력이 있다는 피드백 반영.
+function buildGroundedPanel(res) {
+  const tracks = res.grounded_tracks || [];
+  if (!tracks.length) {
+    return `<div class="font-body-sm text-body-sm text-on-surface-variant bg-surface-container-low p-unit-sm rounded-lg">이번 답변이 근거로 삼은 특정 전형 레코드를 찾지 못했습니다 - 위 "정보 없음" 안내를 참고하세요.</div>`;
+  }
+  const total = res.grounded_tracks_total || tracks.length;
+  const rows = tracks.map(t => `
+    <li class="flex items-center justify-between gap-unit-sm py-unit-2xs border-b border-outline-variant/20 last:border-0">
+      <span class="font-body-sm text-body-sm text-on-surface">${t.university || "-"}${t.department ? " · " + t.department : ""}${t.track_name ? " (" + t.track_name + ")" : ""}</span>
+      ${t.source_url ? `<a class="font-label-sm text-label-sm text-primary underline shrink-0" href="${t.source_url}" target="_blank" rel="noopener">원문</a>` : `<span class="font-label-sm text-label-sm text-outline shrink-0">원문 링크 없음</span>`}
+    </li>`).join("");
+  return `
+    <div class="border border-primary/30 bg-primary-container/10 rounded-lg p-unit-sm">
+      <p class="font-label-sm text-label-sm text-primary font-bold uppercase mb-unit-xs">📊 지식그래프 근거 (이 답변이 실제로 조회한 전형 ${total}건${total > tracks.length ? `, 상위 ${tracks.length}건 표시` : ""})</p>
+      <ul class="space-y-0.5">${rows}</ul>
+    </div>`;
+}
+
 function buildToolTrace(res) {
   const trace = res.tool_trace || [];
   if (!trace.length) return "";
@@ -183,6 +205,7 @@ function askQuestion() {
       </div>
       <div class="bg-surface-container-low p-unit-md rounded-lg font-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-line">${formatAnswer(res.answer || "응답 없음")}</div>
       ${warningBlock}
+      ${buildGroundedPanel(res)}
       ${buildToolTrace(res)}
       <p class="font-body-sm text-body-sm text-error bg-error-container/30 p-unit-xs rounded">※ 주의: 최종 세부 요강은 해당 대학 입학처의 공식 공지를 반드시 재확인하십시오.</p>
     `;
