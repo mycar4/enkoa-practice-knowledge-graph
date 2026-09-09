@@ -1,3 +1,4 @@
+[
 {
   "university": "상명대학교",
   "campus": "서울",
@@ -69,4 +70,51 @@
       "source_page": 5
     }
   }
+},
+{
+  "university": "상명대학교",
+  "campus": "서울",
+  "department": "미술학부 조형예술전공",
+  "track_name": "학생부종합(상명인재전형)",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 9,
+    "ratio": "1단계(5배수): 서류평가 100% -> 2단계: 1단계 성적(서류평가) 60% + 면접평가 40%, 전형총점 1,000점",
+    "is_staged": true,
+    "csat_minimum_required": false,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-11"
+    },
+    "exam_date": "1단계 합격자 발표: 2026-10-30(금) 14:00 / 2단계 면접평가(1단계 통과자만): 2026-11-07(토)",
+    "result_date": "최초합격자 발표(전체 전형 공통): 2026-12-03(목) 09:00",
+    "exam_type_name": "학생부종합 서류평가(1단계) 및 면접평가(2단계) - 실기 없음",
+    "allowed_materials": [],
+    "paper_size": null,
+    "time_limit_minutes": null,
+    "school_record_status": "not_applicable",
+    "school_record_status_note": "학생부종합(상명인재전형)은 서류평가+면접평가로 정성평가하며 교과성적을 정량적으로 반영하지 않음(2027 모집요강 p.42 명시: \"학생부종합(상명인재전형, 기회균형전형)은 교과성적을 정량적으로 평가하지 않음\"). 석차등급 환산표 자체가 없어 학생부 환산 점수를 계산할 수 없습니다.",
+    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/상명대학교/상명대학교_2027학년도_수시모집요강.pdf",
+    "source_page": "15-17, 42",
+    "registration_period": {
+      "start": "2027-02-10",
+      "end": "2027-02-12"
+    }
+  },
+  "estimates": {
+    "cutoff_grade_estimate": null,
+    "cutoff_source_url": null,
+    "interview_summaries": [],
+    "prior_year_result": {
+      "admission_year": 2026,
+      "competition_rate": 12.50,
+      "school_record_grade_typical": 3.62,
+      "school_record_grade_floor": 4.83,
+      "grade_stat_type": "final_registrant_max_avg_min (typical=평균, floor=최저) - 정성평가 전형이라 참고용 통계만 게시, 정량 반영 아님",
+      "methodology_note": "2027 모집요강 자체 부록(Ⅻ. 2026학년도 수시모집 입시결과) 표에서 확인. 조형예술전공 학생부종합(상명인재전형) 2026학년도: 모집10명/경쟁률12.50/추가합격13명, 최초합격자(최고2.49/평균3.20/최저4.16), 최종등록자(최고2.76/평균3.62/최저4.83, 최종등록자 기준 채택). 이 전형은 교과성적을 정량평가하지 않으므로 이 등급은 계산에 쓰이지 않고 참고용입니다.",
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/상명대학교/상명대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 42
+    }
+  }
 }
+]

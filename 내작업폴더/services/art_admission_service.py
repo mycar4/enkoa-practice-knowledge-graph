@@ -1363,6 +1363,29 @@ class ArtAdmissionService:
     # "포트폴리오... 서류평가...")만 근거로 판정한다. 임의 카테고리 추정 아님.
     _DOCUMENT_BASED_MARKERS = ("서류평가", "미술활동보고서")
 
+    # 2026-09-09: "서류전형(실기 없음)만 보기"에 학생부종합전형(상명대 등)까지
+    # 섞여서 나온다는 피드백 - 준비 방법이 완전히 다른 두 유형(미술 실적/포트폴리오
+    # 제출이 핵심인 서류전형 vs 학생부+자소서를 종합평가하는 학생부종합전형)을
+    # 하나로 묶으면 안 된다. 역시 실측 데이터에 실제로 등장하는 표현만 근거로
+    # 판정한다 - 임의 카테고리 추정이 아니다.
+    _ART_PORTFOLIO_MARKERS = ("미술활동보고서", "포트폴리오")
+    _HOLISTIC_REVIEW_MARKERS = ("학생부종합",)
+
+    @staticmethod
+    def _document_track_category(exam_type_name: Optional[str]) -> Optional[str]:
+        """실기 없이 서류로 평가하는 전형을 "portfolio"(미술 실적/포트폴리오 제출)와
+        "holistic"(학생부종합 - 학생부+자소서 등 종합평가) 두 갈래로 나눈다.
+        어느 쪽 표시어도 없이 "서류평가"만 있는 경우는 과거 동작과 호환되게
+        portfolio로 취급한다(기존에 이런 케이스가 전부 그렇게 분류돼 있었음)."""
+        name = exam_type_name or ""
+        if any(m in name for m in ArtAdmissionService._ART_PORTFOLIO_MARKERS):
+            return "portfolio"
+        if any(m in name for m in ArtAdmissionService._HOLISTIC_REVIEW_MARKERS):
+            return "holistic"
+        if any(m in name for m in ArtAdmissionService._DOCUMENT_BASED_MARKERS):
+            return "portfolio"
+        return None
+
     def list_tracks_with_estimates(self) -> List[Dict[str, Any]]:
         """실기 역탐색용 원천 데이터 - 트랙마다 exam_type/재료/일정/컷라인 추정치를
         한 번의 쿼리로 합쳐서 가져온다 (N+1 방지). FO 결과 카드에 필요한 필드를
@@ -1418,19 +1441,23 @@ class ArtAdmissionService:
         return sorted(kws)
 
     def search_tracks_by_prep(self, topic_keywords: Optional[List[str]] = None,
-                               material_query: str = "", document_only: bool = False) -> List[Dict[str, Any]]:
+                               material_query: str = "", document_only: bool = False,
+                               holistic_only: bool = False) -> List[Dict[str, Any]]:
         """수험생이 고른 '큰 주제'(실기종목 키워드)와 자유 검색한 재료 문구로
         겹치는 학교/학과를 찾는다. 재료는 200개+ 세부 항목이 있어 선택지 나열
         대신 부분일치 검색으로 처리한다 - 예를 들어 "연필"로 검색하면
         "소묘용 연필", "4B연필" 등을 전부 잡는다.
-        document_only=True면 실기 없이 서류(미술활동보고서 등)로 평가받는
-        전형만 따로 보여준다.
+        document_only=True면 실기 없이 미술 실적/포트폴리오 제출로 평가받는
+        전형만, holistic_only=True면 학생부종합(서류+면접, 실기·포트폴리오
+        제출 없음) 전형만 따로 보여준다 - 준비 방법이 완전히 달라 같은
+        필터로 묶지 않는다(사용자 피드백).
 
-        match_status 3단계로 반드시 분리한다 - 재료만 겹치는 걸 "실기종목 일치"
+        match_status로 반드시 분리한다 - 재료만 겹치는 걸 "실기종목 일치"
         라고 부르면 안 된다는 게 이 함수의 핵심 불변조건이다:
-          - "exact"    : 선택한 실기종목 키워드가 전형의 실기유형과 실제로 겹침
-          - "partial"  : 재료/규격만 겹치거나 일부 키워드만 겹침 (준비 내용 확인 필요)
-          - "document" : 실기 없이 서류로 평가 (document_only일 때만)
+          - "exact"          : 선택한 실기종목 키워드가 전형의 실기유형과 실제로 겹침
+          - "partial"        : 재료/규격만 겹치거나 일부 키워드만 겹침 (준비 내용 확인 필요)
+          - "document"       : 실기 없이 미술 실적/포트폴리오로 평가 (document_only일 때만)
+          - "holistic_review": 실기·포트폴리오 없이 학생부종합으로 평가 (holistic_only일 때만)
         """
         topic_set = set(topic_keywords or [])
         material_query = (material_query or "").strip()
@@ -1438,9 +1465,10 @@ class ArtAdmissionService:
         results = []
         for r in rows:
             exam_name = r.get("exam_type_name") or ""
-            is_doc = any(marker in exam_name for marker in self._DOCUMENT_BASED_MARKERS)
+            doc_category = self._document_track_category(exam_name)
+            is_doc = doc_category is not None
             if document_only:
-                if not is_doc:
+                if doc_category != "portfolio":
                     continue
                 results.append({
                     **r, "matched_keywords": [], "is_document_based": True,
@@ -1448,8 +1476,17 @@ class ArtAdmissionService:
                     "partial_match_reasons": [], "warnings": [],
                 })
                 continue
+            if holistic_only:
+                if doc_category != "holistic":
+                    continue
+                results.append({
+                    **r, "matched_keywords": [], "is_document_based": False, "is_holistic_review": True,
+                    "match_status": "holistic_review", "exact_match_reasons": [],
+                    "partial_match_reasons": [], "warnings": [],
+                })
+                continue
             if is_doc:
-                continue  # 서류전형은 재료/실기 키워드 비교 대상이 아니므로 일반 검색에서는 제외
+                continue  # 서류/학생부종합 전형은 재료/실기 키워드 비교 대상이 아니므로 일반 검색에서는 제외
 
             exam_kw = self._exam_keywords(exam_name)
             matched_topics = topic_set & exam_kw if topic_set else set()
@@ -1841,8 +1878,10 @@ class ArtAdmissionService:
                 "gender_restriction": t.get("gender_restriction"),
                 "source_url": t.get("source_url"),
                 "exam_type_name": t.get("exam_type_name"),
-                "is_document_based": any(marker in (t.get("exam_type_name") or "") for marker in self._DOCUMENT_BASED_MARKERS),
             }
+            doc_category = self._document_track_category(t.get("exam_type_name"))
+            entry["is_document_based"] = doc_category == "portfolio"
+            entry["is_holistic_review"] = doc_category == "holistic"
             rule = t.get("school_record_rule")
             if t.get("school_record_status") == "not_applicable":
                 # 실기 100% 또는 학생부종합 정성평가라 애초에 "학생부 등급→점수 환산" 자체가

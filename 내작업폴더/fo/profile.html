@@ -60,6 +60,12 @@
 <p id="docOnlyNotice" class="font-body-sm text-body-sm text-primary hidden">서류전형만 보기를 켜면 위에서 선택한 실기 종목/재료는 검색에 반영되지 않습니다 (서류전형은 실기 자체가 없는 전형이라 실기 조건과 동시에 걸러낼 수 없습니다).</p>
 </fieldset>
 
+<fieldset class="space-y-unit-sm">
+<div class="flex items-baseline justify-between"><legend class="font-label-lg text-label-lg text-on-surface flex items-center gap-unit-xs"><span class="font-label-md text-label-md px-1.5 py-0.5 bg-on-surface text-surface rounded">04</span>학생부종합전형만 보기</legend></div>
+<label class="flex items-center gap-unit-xs"><input id="holisticOnly" type="checkbox" class="w-5 h-5"/><span class="font-body-sm text-body-sm text-on-surface-variant">실기·포트폴리오 제출 없이 학생부+서류+면접으로 평가받는 전형만</span></label>
+<p id="holisticOnlyNotice" class="font-body-sm text-body-sm text-primary hidden">학생부종합전형만 보기를 켜면 위에서 선택한 실기 종목/재료는 검색에 반영되지 않습니다 (실기 자체가 없는 전형이라 실기 조건과 동시에 걸러낼 수 없습니다). 서류전형(미술활동보고서/포트폴리오)과는 준비 방법이 달라 별도 항목으로 분리했습니다.</p>
+</fieldset>
+
 <button class="w-full h-13 py-unit-sm bg-on-surface text-surface font-label-lg text-label-lg rounded flex items-center justify-center gap-unit-xs shadow-md" type="submit" id="submitBtn">
 <span>내게 맞는 미대 찾기</span><span class="material-symbols-outlined">arrow_forward</span>
 </button>
@@ -115,26 +121,42 @@ document.querySelectorAll(".exam-btn").forEach(btn => {
   });
 });
 
-// 서류전형만 보기를 체크하면 실기종목/재료 선택은 검색 결과에 반영되지 않는다
-// (동국대 불교미술처럼 실기전형인 학교가 갑자기 안 보이는 원인이었던 혼란 포인트라
-// 실기종목 영역을 비활성화하고 이유를 명확히 표시한다).
+// 서류전형만/학생부종합전형만 보기를 체크하면 실기종목/재료 선택은 검색 결과에
+// 반영되지 않는다(동국대 불교미술처럼 실기전형인 학교가 갑자기 안 보이는
+// 원인이었던 혼란 포인트라 실기종목 영역을 비활성화하고 이유를 명확히 표시한다).
+// 두 체크박스는 서로 배타적이다 - 실기 없이 서류(포트폴리오) 기반으로 평가받는
+// 전형과 학생부종합(서류+면접) 전형은 준비 방법이 완전히 달라 동시에 켤 이유가
+// 없다(사용자 피드백으로 04번 항목을 03번과 분리해서 추가함).
 const examSection = document.getElementById("practicalExamGroup");
 const materialInput = document.getElementById("materialQuery");
+const documentOnlyCheck = document.getElementById("documentOnly");
+const holisticOnlyCheck = document.getElementById("holisticOnly");
 function updateDocumentOnlyState() {
-  const isDocOnly = document.getElementById("documentOnly").checked;
-  examSection.classList.toggle("opacity-40", isDocOnly);
-  examSection.classList.toggle("pointer-events-none", isDocOnly);
-  materialInput.disabled = isDocOnly;
-  materialInput.classList.toggle("opacity-40", isDocOnly);
+  const isDocOnly = documentOnlyCheck.checked;
+  const isHolisticOnly = holisticOnlyCheck.checked;
+  const anyOnly = isDocOnly || isHolisticOnly;
+  examSection.classList.toggle("opacity-40", anyOnly);
+  examSection.classList.toggle("pointer-events-none", anyOnly);
+  materialInput.disabled = anyOnly;
+  materialInput.classList.toggle("opacity-40", anyOnly);
   document.getElementById("docOnlyNotice").classList.toggle("hidden", !isDocOnly);
+  document.getElementById("holisticOnlyNotice").classList.toggle("hidden", !isHolisticOnly);
 }
-document.getElementById("documentOnly").addEventListener("change", updateDocumentOnlyState);
+documentOnlyCheck.addEventListener("change", () => {
+  if (documentOnlyCheck.checked) holisticOnlyCheck.checked = false;
+  updateDocumentOnlyState();
+});
+holisticOnlyCheck.addEventListener("change", () => {
+  if (holisticOnlyCheck.checked) documentOnlyCheck.checked = false;
+  updateDocumentOnlyState();
+});
 
 function runAnalysis() {
   const errEl = document.getElementById("formError");
   const materialQuery = document.getElementById("materialQuery").value.trim();
-  const documentOnly = document.getElementById("documentOnly").checked;
-  if (!documentOnly && selectedExams.size === 0 && !materialQuery) {
+  const documentOnly = documentOnlyCheck.checked;
+  const holisticOnly = holisticOnlyCheck.checked;
+  if (!documentOnly && !holisticOnly && selectedExams.size === 0 && !materialQuery) {
     errEl.textContent = "실기 종목을 1개 이상 선택하거나 재료를 입력해주세요.";
     errEl.classList.remove("hidden");
     return;
@@ -151,6 +173,7 @@ function runAnalysis() {
       topic_keywords: Array.from(selectedExams),
       material_query: materialQuery,
       document_only: documentOnly,
+      holistic_only: holisticOnly,
     }),
   }).then(r => r.json()).then(results => {
     // results.html은 "artready_recommend_results" 키가 남아있기만 해도(URL에
@@ -161,7 +184,7 @@ function runAnalysis() {
     sessionStorage.removeItem("artready_recommend_results");
     sessionStorage.setItem("artready_results", JSON.stringify(results));
     sessionStorage.setItem("artready_profile", JSON.stringify({
-      examTypes: Array.from(selectedExams), materialQuery, documentOnly,
+      examTypes: Array.from(selectedExams), materialQuery, documentOnly, holisticOnly,
     }));
     window.location.href = "results.html";
   }).catch(err => {
@@ -187,7 +210,8 @@ window.addEventListener("pageshow", (e) => {
     if (check) check.classList.add("hidden");
   });
   document.getElementById("materialQuery").value = "";
-  document.getElementById("documentOnly").checked = false;
+  documentOnlyCheck.checked = false;
+  holisticOnlyCheck.checked = false;
   updateDocumentOnlyState();
   document.getElementById("formError").classList.add("hidden");
   const btn = document.getElementById("submitBtn");
