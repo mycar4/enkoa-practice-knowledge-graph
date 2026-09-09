@@ -153,6 +153,12 @@ function runAnalysis() {
       document_only: documentOnly,
     }),
   }).then(r => r.json()).then(results => {
+    // results.html은 "artready_recommend_results" 키가 남아있기만 해도(URL에
+    // ?mode=recommend가 없어도) 무조건 성적추천 화면을 그린다 - 한 번이라도
+    // 성적추천을 썼다가 대학찾기로 넘어오면 이 키가 안 지워져서 계속 성적추천
+    // 화면만 보이는 버그(실측 확인)였다. 대학찾기 플로우로 진입하는 시점에
+    // 이전 성적추천 잔여 데이터를 지워 결과 화면이 지금 이 플로우를 그리게 한다.
+    sessionStorage.removeItem("artready_recommend_results");
     sessionStorage.setItem("artready_results", JSON.stringify(results));
     sessionStorage.setItem("artready_profile", JSON.stringify({
       examTypes: Array.from(selectedExams), materialQuery, documentOnly,

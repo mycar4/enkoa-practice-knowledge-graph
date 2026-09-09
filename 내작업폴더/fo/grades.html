@@ -360,6 +360,11 @@ document.getElementById("submitBtn").addEventListener("click", () => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ grades, material_query: materialQuery }),
   }).then(r => r.json()).then(results => {
+    // profile.html 쪽과 대칭 - 대학찾기 결과가 sessionStorage에 남아있어도
+    // 이 플로우로 들어온 뒤에는 항상 성적추천 화면이 맞다(대학찾기 잔여 데이터가
+    // 헷갈릴 이유는 없지만, 두 플로우가 서로의 leftover를 지우는 걸 대칭으로
+    // 맞춰 다음에 같은 종류의 버그가 다시 생기지 않게 한다).
+    sessionStorage.removeItem("artready_results");
     sessionStorage.setItem("artready_recommend_results", JSON.stringify(results));
     sessionStorage.setItem("artready_recommend_grades", JSON.stringify(grades));
     window.location.href = "results.html?mode=recommend";
