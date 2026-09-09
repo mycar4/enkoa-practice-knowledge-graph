@@ -17,6 +17,14 @@
     "time_limit_minutes": 300,
     "exam_date": "2026-11-13",
     "result_date": null,
+    "school_record_rule": {
+      "mode": "simple_weighted_average",
+      "subjects": ["국어", "영어", "사회"],
+      "credit_weighted": true,
+      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 97, "5": 96, "6": 95, "7": 70, "8": 40, "9": 0},
+      "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
+      "rule_source_page": "82-83"
+    },
     "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
     "source_page": 48,
     "stages": [
@@ -43,6 +51,14 @@
     "time_limit_minutes": 300,
     "exam_date": "2026-11-14",
     "result_date": null,
+    "school_record_rule": {
+      "mode": "simple_weighted_average",
+      "subjects": ["국어", "영어", "사회"],
+      "credit_weighted": true,
+      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 97, "5": 96, "6": 95, "7": 70, "8": 40, "9": 0},
+      "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
+      "rule_source_page": "82-83"
+    },
     "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
     "source_page": 48,
     "stages": [
@@ -69,6 +85,14 @@
     "time_limit_minutes": 300,
     "exam_date": "2026-11-15",
     "result_date": null,
+    "school_record_rule": {
+      "mode": "simple_weighted_average",
+      "subjects": ["국어", "영어", "사회"],
+      "credit_weighted": true,
+      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 97, "5": 96, "6": 95, "7": 70, "8": 40, "9": 0},
+      "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
+      "rule_source_page": "82-83"
+    },
     "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
     "source_page": 48,
     "stages": [
@@ -96,6 +120,14 @@
     "time_limit_minutes": 300,
     "exam_date": "2026-09-19",
     "result_date": null,
+    "school_record_rule": {
+      "mode": "simple_weighted_average",
+      "subjects": ["국어", "영어", "사회"],
+      "credit_weighted": true,
+      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 97, "5": 96, "6": 95, "7": 70, "8": 40, "9": 0},
+      "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
+      "rule_source_page": "82-83"
+    },
     "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
     "source_page": 76
   }
@@ -119,6 +151,14 @@
     "time_limit_minutes": null,
     "exam_date": "2026-10-11",
     "result_date": null,
+    "school_record_rule": {
+      "mode": "simple_weighted_average",
+      "subjects": ["국어", "영어", "사회"],
+      "credit_weighted": true,
+      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 97, "5": 96, "6": 95, "7": 70, "8": 40, "9": 0},
+      "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
+      "rule_source_page": "82-83"
+    },
     "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
     "source_page": 76
   }
@@ -142,6 +182,14 @@
     "time_limit_minutes": null,
     "exam_date": "2026-10-11",
     "result_date": null,
+    "school_record_rule": {
+      "mode": "simple_weighted_average",
+      "subjects": ["국어", "영어", "사회"],
+      "credit_weighted": true,
+      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 97, "5": 96, "6": 95, "7": 70, "8": 40, "9": 0},
+      "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
+      "rule_source_page": "82-83"
+    },
     "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
     "source_page": 76
   }
@@ -165,6 +213,14 @@
     "time_limit_minutes": 240,
     "exam_date": "2026-09-16",
     "result_date": null,
+    "school_record_rule": {
+      "mode": "simple_weighted_average",
+      "subjects": ["국어", "영어", "사회"],
+      "credit_weighted": true,
+      "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 97, "5": 96, "6": 95, "7": 70, "8": 40, "9": 0},
+      "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
+      "rule_source_page": "82-83"
+    },
     "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
     "source_page": 76
   }

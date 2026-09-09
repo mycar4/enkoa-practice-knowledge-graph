@@ -314,37 +314,60 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
     if mode == "choose_max_credit_subject":
         fixed = set(rule.get("fixed_subjects") or [])
         choice_group = rule.get("subject_choice_group") or []
-        credit_by_subject: Dict[str, int] = {}
-        for g in grades:
-            sg = g.get("subject_group")
-            if sg in choice_group and not g.get("career_elective"):
-                credit_by_subject[sg] = credit_by_subject.get(sg, 0) + (g.get("credit") or 1)
-        if not credit_by_subject:
-            chosen_candidates = []
-        else:
-            max_credit = max(credit_by_subject.values())
-            chosen_candidates = [s for s, c in credit_by_subject.items() if c == max_credit]
+        # selection_method: "credit"(기본, 이수단위 합 최대 교과 선택 - 동률이면 유리한 쪽)
+        # 또는 "score"(성신여대처럼 이수단위 비교 없이 무조건 "성적이 상위인 교과영역"을
+        # 실제로 계산해보고 고르는 학교용 - 매번 전체 후보를 계산해서 비교).
+        selection_method = rule.get("selection_method", "credit")
+        career_elective_included = rule.get("career_elective_included", False)
+        ce_conv = {str(k): v for k, v in (rule.get("career_elective_conversion_table") or {}).items()}
+        ce_max_per_subject = rule.get("career_elective_max_count_per_subject")
 
         def _pool_for(choice_subject):
             active = fixed | ({choice_subject} if choice_subject else set())
-            return [
+            common_pool = [
                 (_score_for_grade(g.get("grade")), g.get("credit") or 1)
                 for g in grades
                 if not g.get("career_elective") and g.get("subject_group") in active and _score_for_grade(g.get("grade")) is not None
             ]
+            career_pool = []
+            if career_elective_included and ce_conv:
+                for sg in active:
+                    cands = [
+                        g for g in grades
+                        if g.get("career_elective") and g.get("subject_group") == sg and ce_conv.get(str(g.get("achievement"))) is not None
+                    ]
+                    cands = sorted(cands, key=lambda g: -ce_conv[str(g.get("achievement"))])
+                    if ce_max_per_subject:
+                        cands = cands[:ce_max_per_subject]
+                    career_pool.extend((ce_conv[str(g.get("achievement"))], g.get("credit") or 1) for g in cands)
+            return common_pool + career_pool
 
-        if not chosen_candidates:
+        if selection_method == "score":
+            candidates = choice_group
+        else:
+            credit_by_subject: Dict[str, int] = {}
+            for g in grades:
+                sg = g.get("subject_group")
+                if sg in choice_group and not g.get("career_elective"):
+                    credit_by_subject[sg] = credit_by_subject.get(sg, 0) + (g.get("credit") or 1)
+            if not credit_by_subject:
+                candidates = []
+            else:
+                max_credit = max(credit_by_subject.values())
+                candidates = [s for s, c in credit_by_subject.items() if c == max_credit]
+
+        if not candidates:
             pool = _pool_for(None)
             chosen = None
-        elif len(chosen_candidates) == 1:
-            chosen = chosen_candidates[0]
+        elif len(candidates) == 1:
+            chosen = candidates[0]
             pool = _pool_for(chosen)
         else:
-            # 이수학점(단위) 합이 동률인 교과가 여럿이면 "교과점수 산출 시 유리한 교과"를
-            # 반영한다는 원문 규정대로, 각 후보를 실제로 넣어 계산해보고 결과가 더 높은
-            # 쪽을 선택한다 (임의로 하나를 고르지 않는다).
+            # 이수학점(단위) 합이 동률이거나(선택방식=credit), 애초에 "성적이 상위인 쪽을
+            # 반영"하는 규정(선택방식=score)이면 각 후보를 실제로 계산해보고 결과가 더
+            # 높은 쪽을 선택한다 (임의로 하나를 고르지 않는다).
             best_chosen, best_pool, best_avg = None, [], None
-            for cand in chosen_candidates:
+            for cand in candidates:
                 cand_pool = _pool_for(cand)
                 cand_avg = _weighted_avg(cand_pool) if cand_pool else None
                 if cand_avg is not None and (best_avg is None or cand_avg > best_avg):
@@ -369,6 +392,10 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
 
     if mode == "subject_group_weighted":
         groups = rule.get("subject_groups") or {}
+        # choice_groups: 동덕여대처럼 "필수 국어·영어 + (수학/사회/과학 중 성적이 좋은
+        # 1개 교과)"를 균등(1/3씩) 반영하는 학교용 - 고정 그룹(subject_groups)과 별개로,
+        # 옵션 여러 개 중 실제로 계산해서 평균이 가장 높은 과목 하나만 그 비중으로 반영한다.
+        choice_groups = rule.get("choice_groups") or []
         top_n = rule.get("top_n_per_group")
         total = 0.0
         matched = 0
@@ -376,7 +403,8 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
         raw_total = 0.0
         raw_weight_used = 0.0
         details = []
-        for subject, weight_pct in groups.items():
+
+        def _group_items(subject):
             items = [
                 (_score_for_grade(g.get("grade")), g.get("credit") or 1, g.get("grade"))
                 for g in grades
@@ -384,10 +412,14 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
             ]
             if top_n:
                 items = sorted(items, key=lambda x: -x[0])[:top_n]
+            return items
+
+        def _apply_group(subject, weight_pct, items):
+            nonlocal total, matched, raw_total, raw_weight_used
             if not items:
                 # 원문 규정대로: 반영과목이 전혀 없는 교과영역은 0점 처리(제외가 아님)
                 missing_groups.append(subject)
-                continue
+                return
             group_avg = _weighted_avg([(s, c) for s, c, _ in items])
             total += (group_avg or 0) * weight_pct / 100.0
             matched += len(items)
@@ -397,6 +429,46 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
                 raw_weight_used += weight_pct
             for s, c, g in items:
                 details.append({"subject_group": subject, "grade": g, "credit": c, "score": s, "group_weight_pct": weight_pct})
+
+        for subject, weight_pct in groups.items():
+            _apply_group(subject, weight_pct, _group_items(subject))
+
+        for cg in choice_groups:
+            options = cg.get("options") or []
+            weight_pct = cg.get("weight_pct", 0)
+            best_subject, best_items, best_avg = None, [], None
+            for option in options:
+                items = _group_items(option)
+                if not items:
+                    continue
+                avg = _weighted_avg([(s, c) for s, c, _ in items])
+                if avg is not None and (best_avg is None or avg > best_avg):
+                    best_subject, best_items, best_avg = option, items, avg
+            if best_subject is None:
+                missing_groups.append("choice(" + "/".join(options) + ")")
+                continue
+            _apply_group(best_subject, weight_pct, best_items)
+
+        # top_k_groups: 수원대처럼 "국어/수학/영어/사회(또는과학) 4개 후보 중 점수가
+        # 높은 2개 교과만 50%씩 반영"하는 학교용 - choice_groups(옵션 중 1개만 선택)와
+        # 달리 옵션 여러 개 중 상위 K개를 골라 각각 동일 비중으로 반영한다.
+        top_k = rule.get("top_k_groups")
+        if top_k:
+            options = top_k.get("options") or []
+            k = top_k.get("k", 1)
+            weight_pct_each = top_k.get("weight_pct_each", 0)
+            scored = []
+            for option in options:
+                items = _group_items(option)
+                if not items:
+                    continue
+                avg = _weighted_avg([(s, c) for s, c, _ in items])
+                if avg is not None:
+                    scored.append((avg, option, items))
+            scored.sort(key=lambda x: -x[0])
+            for _avg, option, items in scored[:k]:
+                _apply_group(option, weight_pct_each, items)
+
         if matched == 0:
             return None
         raw_grade_average = round(raw_total / raw_weight_used, 2) if raw_weight_used else None

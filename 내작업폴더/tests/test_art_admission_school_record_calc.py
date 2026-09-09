@@ -307,12 +307,48 @@ def test_batch3_schools_hongik_seoul_chugye_karts():
         svc.close()
 
 
-def test_non_priority_school_returns_unavailable_not_fake_number():
-    """정밀 반영교과 규정을 원문으로 확보하지 못한 학교(예: 경기대)는 있지도 않은
-    환산표를 지어내지 말고 반드시 available=False로 명시해야 한다."""
+def test_batch4_remaining_15_schools_use_generalized_modes_not_hardcoding():
+    """원본 15개교 완료 후 나머지 대학 확장: 숙명여대(진로선택 없으면 공통 100%
+    반영되는 common_and_career_split_scaled), 동덕여대(균등 1/3 반영 + 선택교과
+    1개, subject_group_weighted의 choice_groups 신규 파라미터), 수원대(4개 후보
+    교과 중 상위 2개만 50%씩 반영, subject_group_weighted의 top_k_groups 신규
+    파라미터), 단국대·한성대·인하대(simple_weighted_average 국영사 조합),
+    경기대(9개 교과 common_and_career_split_scaled) - 전부 학교명 분기 없이
+    기존 3개 모드에 새 파라미터(choice_groups/top_k_groups)만 추가해 처리된다."""
     svc = ArtAdmissionService()
     try:
-        result = svc.calculate_school_record_score("경기대학교", "입체조형학과", _GRADES)
+        grades = [
+            {"subject_group": "국어", "grade": 3, "credit": 4},
+            {"subject_group": "영어", "grade": 4, "credit": 4},
+            {"subject_group": "수학", "grade": 5, "credit": 4},
+            {"subject_group": "사회", "grade": 2, "credit": 4},
+            {"subject_group": "한국사", "grade": 2, "credit": 3},
+        ]
+        cases = [
+            ("숙명여자대학교", "회화과(한국화)", 82.0),
+            ("동덕여자대학교", "회화전공", 94.67),
+            ("수원대학교", "조형예술학부", 97.0),
+            ("단국대학교", "도예과", 98.0),
+            ("한성대학교", "예술학부(동양화전공)", 95.62),
+            ("인하대학교", "조형예술학과", 96.0),
+            ("경기대학교", "입체조형학과", 95.84),
+        ]
+        for uni, dept, expected_pct in cases:
+            r = svc.calculate_school_record_score(uni, dept, grades)
+            assert r.get("available") is True, f"{uni} {dept}: {r.get('reason')}"
+            assert abs(r["percentage"] - expected_pct) < 0.05, f"{uni} {dept}: {r['percentage']} != {expected_pct}"
+        print("✅ test_batch4_remaining_15_schools_use_generalized_modes_not_hardcoding passed!")
+    finally:
+        svc.close()
+
+
+def test_non_priority_school_returns_unavailable_not_fake_number():
+    """학생부 반영 자체가 정성평가(서류종합전형)라 정량 공식이 존재하지 않는 학교
+    (이화여대 디자인학부 예체능서류전형 - 원문 확인 결과 100% 학생부종합 정성평가)는
+    있지도 않은 환산표를 지어내지 말고 반드시 available=False로 명시해야 한다."""
+    svc = ArtAdmissionService()
+    try:
+        result = svc.calculate_school_record_score("이화여자대학교", "디자인학부", _GRADES)
         assert result.get("available") is False, "정밀 규정이 없는 학교인데 available=True가 나옴 (값을 지어냈을 위험)"
         assert "percentage" not in result or result.get("percentage") is None
         print("✅ test_non_priority_school_returns_unavailable_not_fake_number passed!")
@@ -344,6 +380,7 @@ if __name__ == "__main__":
     test_breakdown_and_reason_summary_and_fit_label_present()
     test_original_15_batch2_schools_use_generalized_modes_not_hardcoding()
     test_batch3_schools_hongik_seoul_chugye_karts()
+    test_batch4_remaining_15_schools_use_generalized_modes_not_hardcoding()
     test_non_priority_school_returns_unavailable_not_fake_number()
     test_recommend_universities_ranks_exact_before_approximate()
     print("🎉 ALL SCHOOL RECORD CALC TESTS PASSED!")

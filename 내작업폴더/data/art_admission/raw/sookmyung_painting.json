@@ -16,6 +16,21 @@
     "time_limit_minutes": 300,
     "exam_date": "2026-10-18",
     "result_date": null,
+    "school_record_rule": {
+      "mode": "common_and_career_split_scaled",
+      "subjects": ["국어", "영어", "사회"],
+      "subject_aliases": {"한국사": "사회"},
+      "career_elective_included": true,
+      "credit_weighted": true,
+      "common_weight": 0.8,
+      "career_weight": 0.2,
+      "common_weight_if_no_career": 1.0,
+      "use_credit_scale": false,
+      "conversion_table": {"1": 1000, "2": 900, "3": 800, "4": 700, "5": 600, "6": 500, "7": 400, "8": 300, "9": 200},
+      "career_elective_conversion_table": {"A": 1000, "B": 800, "C": 600},
+      "formula_note": "반영교과: 국어, 영어, 사회(한국사 포함) - 예체능계 기준. 환산석차등급 = (공통·일반선택 이수단위가중평균×0.8) + (진로선택 성취도 등급환산 이수단위가중평균×0.2, A=1등급/B=3등급/C=5등급 상당). 진로선택과목이 없으면 공통·일반선택만 100% 반영. 학생부(교과) 성적 = (11-환산석차등급)×100, 1,000점 만점 (2027 모집요강 p.44, 48, 예능창의인재전형 미술대학 1단계 기준). 1단계(20배수)에서 학생부 100%로 선발한 뒤, 2단계 최종합격은 실기 100%로만 결정되므로 이 환산점수는 1단계 통과 여부에만 영향을 준다.",
+      "rule_source_page": "44, 48, 54"
+    },
     "source_url": "https://admission.sookmyung.ac.kr/upload/BBS0021/20260907095555QDLVUJ.PDF",
     "source_page": 36,
     "stages": [
@@ -41,6 +56,21 @@
     "time_limit_minutes": 300,
     "exam_date": "2026-10-18",
     "result_date": null,
+    "school_record_rule": {
+      "mode": "common_and_career_split_scaled",
+      "subjects": ["국어", "영어", "사회"],
+      "subject_aliases": {"한국사": "사회"},
+      "career_elective_included": true,
+      "credit_weighted": true,
+      "common_weight": 0.8,
+      "career_weight": 0.2,
+      "common_weight_if_no_career": 1.0,
+      "use_credit_scale": false,
+      "conversion_table": {"1": 1000, "2": 900, "3": 800, "4": 700, "5": 600, "6": 500, "7": 400, "8": 300, "9": 200},
+      "career_elective_conversion_table": {"A": 1000, "B": 800, "C": 600},
+      "formula_note": "반영교과: 국어, 영어, 사회(한국사 포함) - 예체능계 기준. 환산석차등급 = (공통·일반선택 이수단위가중평균×0.8) + (진로선택 성취도 등급환산 이수단위가중평균×0.2, A=1등급/B=3등급/C=5등급 상당). 진로선택과목이 없으면 공통·일반선택만 100% 반영. 학생부(교과) 성적 = (11-환산석차등급)×100, 1,000점 만점 (2027 모집요강 p.44, 48, 예능창의인재전형 미술대학 1단계 기준). 1단계(20배수)에서 학생부 100%로 선발한 뒤, 2단계 최종합격은 실기 100%로만 결정되므로 이 환산점수는 1단계 통과 여부에만 영향을 준다.",
+      "rule_source_page": "44, 48, 54"
+    },
     "source_url": "https://admission.sookmyung.ac.kr/upload/BBS0021/20260907095555QDLVUJ.PDF",
     "source_page": 36,
     "stages": [

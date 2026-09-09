@@ -18,6 +18,14 @@
     "time_limit_minutes": null,
     "exam_date": null,
     "result_date": null,
+    "school_record_rule": {
+      "mode": "subject_group_weighted",
+      "top_k_groups": {"options": ["국어", "수학", "영어", "사회"], "k": 2, "weight_pct_each": 50},
+      "top_n_per_group": 5,
+      "conversion_table": {"1": 100, "2": 98, "3": 96, "4": 94, "5": 92, "6": 88, "7": 78, "8": 68, "9": 50},
+      "formula_note": "예체능계열: 국어/수학/영어/사회(또는 과학) 4개 교과 중 교과별 상위 5과목 이수단위가중평균을 낸 뒤, 점수가 높은 2개 교과만 50%씩 반영(나머지 2개 교과는 미반영). 진로선택과목은 반영하지 않음, 학년별 가중치 없음, 3학년 1학기까지 반영 ('미술'실기우수자전형 적용표 기준, 2027 모집요강 p.20-21).",
+      "rule_source_page": "20-21"
+    },
     "source_url": "https://ipsi.suwon.ac.kr/upload_data/guide/1787878393_6045.pdf",
     "source_page": 45
   }
@@ -41,6 +49,14 @@
     "time_limit_minutes": null,
     "exam_date": null,
     "result_date": null,
+    "school_record_rule": {
+      "mode": "subject_group_weighted",
+      "top_k_groups": {"options": ["국어", "수학", "영어", "사회"], "k": 2, "weight_pct_each": 50},
+      "top_n_per_group": 5,
+      "conversion_table": {"1": 100, "2": 98, "3": 96, "4": 94, "5": 92, "6": 88, "7": 78, "8": 68, "9": 50},
+      "formula_note": "예체능계열: 국어/수학/영어/사회(또는 과학) 4개 교과 중 교과별 상위 5과목 이수단위가중평균을 낸 뒤, 점수가 높은 2개 교과만 50%씩 반영(나머지 2개 교과는 미반영). 진로선택과목은 반영하지 않음, 학년별 가중치 없음, 3학년 1학기까지 반영 ('미술'실기우수자전형 적용표 기준, 2027 모집요강 p.20-21).",
+      "rule_source_page": "20-21"
+    },
     "source_url": "https://ipsi.suwon.ac.kr/upload_data/guide/1787878393_6045.pdf",
     "source_page": 45
   }
@@ -64,6 +80,14 @@
     "time_limit_minutes": null,
     "exam_date": null,
     "result_date": null,
+    "school_record_rule": {
+      "mode": "subject_group_weighted",
+      "top_k_groups": {"options": ["국어", "수학", "영어", "사회"], "k": 2, "weight_pct_each": 50},
+      "top_n_per_group": 5,
+      "conversion_table": {"1": 100, "2": 98, "3": 96, "4": 94, "5": 92, "6": 88, "7": 78, "8": 68, "9": 50},
+      "formula_note": "예체능계열: 국어/수학/영어/사회(또는 과학) 4개 교과 중 교과별 상위 5과목 이수단위가중평균을 낸 뒤, 점수가 높은 2개 교과만 50%씩 반영(나머지 2개 교과는 미반영). 진로선택과목은 반영하지 않음, 학년별 가중치 없음, 3학년 1학기까지 반영 ('미술'실기우수자전형 적용표 기준, 2027 모집요강 p.20-21).",
+      "rule_source_page": "20-21"
+    },
     "source_url": "https://ipsi.suwon.ac.kr/upload_data/guide/1787878393_6045.pdf",
     "source_page": 45
   }
@@ -87,6 +111,14 @@
     "time_limit_minutes": null,
     "exam_date": null,
     "result_date": null,
+    "school_record_rule": {
+      "mode": "subject_group_weighted",
+      "top_k_groups": {"options": ["국어", "수학", "영어", "사회"], "k": 2, "weight_pct_each": 50},
+      "top_n_per_group": 5,
+      "conversion_table": {"1": 100, "2": 98, "3": 96, "4": 94, "5": 92, "6": 88, "7": 78, "8": 68, "9": 50},
+      "formula_note": "예체능계열: 국어/수학/영어/사회(또는 과학) 4개 교과 중 교과별 상위 5과목 이수단위가중평균을 낸 뒤, 점수가 높은 2개 교과만 50%씩 반영(나머지 2개 교과는 미반영). 진로선택과목은 반영하지 않음, 학년별 가중치 없음, 3학년 1학기까지 반영 ('미술'실기우수자전형 적용표 기준, 2027 모집요강 p.20-21).",
+      "rule_source_page": "20-21"
+    },
     "source_url": "https://ipsi.suwon.ac.kr/upload_data/guide/1787878393_6045.pdf",
     "source_page": 45
   }

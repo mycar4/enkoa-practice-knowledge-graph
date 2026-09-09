@@ -18,6 +18,14 @@
     "time_limit_minutes": null,
     "exam_date": null,
     "result_date": null,
+    "school_record_rule": {
+      "mode": "subject_group_weighted",
+      "subject_groups": {"국어": 33.34, "영어": 33.33},
+      "choice_groups": [{"options": ["수학", "사회", "과학"], "weight_pct": 33.33}],
+      "conversion_table": {"1": 100, "2": 98, "3": 95, "4": 91, "5": 86, "6": 80, "7": 70, "8": 60, "9": 40},
+      "formula_note": "3개 교과군 균등(1/3씩) 반영: 필수 국어·영어 + 선택(수학/사회/과학 중 성적이 좋은 1개 교과, 실제 계산해서 더 유리한 쪽 자동 선택). 각 교과군 내 1~3학년 전 과목을 이수단위 가중평균. 평균 석차등급 점수 = (국어평균+영어평균+선택교과평균)×1/3, 학생부 20% 반영 시 이 값×2(200점 만점)로 최종 반영 (2027 모집요강 p.26, 30-31, 실기우수자전형 기준).",
+      "rule_source_page": "26, 30-31"
+    },
     "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
     "source_page": 20
   }
@@ -41,6 +49,14 @@
     "time_limit_minutes": null,
     "exam_date": null,
     "result_date": null,
+    "school_record_rule": {
+      "mode": "subject_group_weighted",
+      "subject_groups": {"국어": 33.34, "영어": 33.33},
+      "choice_groups": [{"options": ["수학", "사회", "과학"], "weight_pct": 33.33}],
+      "conversion_table": {"1": 100, "2": 98, "3": 95, "4": 91, "5": 86, "6": 80, "7": 70, "8": 60, "9": 40},
+      "formula_note": "3개 교과군 균등(1/3씩) 반영: 필수 국어·영어 + 선택(수학/사회/과학 중 성적이 좋은 1개 교과, 실제 계산해서 더 유리한 쪽 자동 선택). 각 교과군 내 1~3학년 전 과목을 이수단위 가중평균. 평균 석차등급 점수 = (국어평균+영어평균+선택교과평균)×1/3, 학생부 20% 반영 시 이 값×2(200점 만점)로 최종 반영 (2027 모집요강 p.26, 30-31, 실기우수자전형 기준).",
+      "rule_source_page": "26, 30-31"
+    },
     "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
     "source_page": 20
   }
@@ -64,6 +80,14 @@
     "time_limit_minutes": null,
     "exam_date": null,
     "result_date": null,
+    "school_record_rule": {
+      "mode": "subject_group_weighted",
+      "subject_groups": {"국어": 33.34, "영어": 33.33},
+      "choice_groups": [{"options": ["수학", "사회", "과학"], "weight_pct": 33.33}],
+      "conversion_table": {"1": 100, "2": 98, "3": 95, "4": 91, "5": 86, "6": 80, "7": 70, "8": 60, "9": 40},
+      "formula_note": "3개 교과군 균등(1/3씩) 반영: 필수 국어·영어 + 선택(수학/사회/과학 중 성적이 좋은 1개 교과, 실제 계산해서 더 유리한 쪽 자동 선택). 각 교과군 내 1~3학년 전 과목을 이수단위 가중평균. 평균 석차등급 점수 = (국어평균+영어평균+선택교과평균)×1/3, 학생부 20% 반영 시 이 값×2(200점 만점)로 최종 반영 (2027 모집요강 p.26, 30-31, 실기우수자전형 기준).",
+      "rule_source_page": "26, 30-31"
+    },
     "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
     "source_page": 20
   }
@@ -87,6 +111,14 @@
     "time_limit_minutes": null,
     "exam_date": null,
     "result_date": null,
+    "school_record_rule": {
+      "mode": "subject_group_weighted",
+      "subject_groups": {"국어": 33.34, "영어": 33.33},
+      "choice_groups": [{"options": ["수학", "사회", "과학"], "weight_pct": 33.33}],
+      "conversion_table": {"1": 100, "2": 98, "3": 95, "4": 91, "5": 86, "6": 80, "7": 70, "8": 60, "9": 40},
+      "formula_note": "3개 교과군 균등(1/3씩) 반영: 필수 국어·영어 + 선택(수학/사회/과학 중 성적이 좋은 1개 교과, 실제 계산해서 더 유리한 쪽 자동 선택). 각 교과군 내 1~3학년 전 과목을 이수단위 가중평균. 평균 석차등급 점수 = (국어평균+영어평균+선택교과평균)×1/3, 학생부 20% 반영 시 이 값×2(200점 만점)로 최종 반영 (2027 모집요강 p.26, 30-31, 실기우수자전형 기준).",
+      "rule_source_page": "26, 30-31"
+    },
     "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
     "source_page": 20
   }
@@ -110,6 +142,14 @@
     "time_limit_minutes": null,
     "exam_date": null,
     "result_date": null,
+    "school_record_rule": {
+      "mode": "subject_group_weighted",
+      "subject_groups": {"국어": 33.34, "영어": 33.33},
+      "choice_groups": [{"options": ["수학", "사회", "과학"], "weight_pct": 33.33}],
+      "conversion_table": {"1": 100, "2": 98, "3": 95, "4": 91, "5": 86, "6": 80, "7": 70, "8": 60, "9": 40},
+      "formula_note": "3개 교과군 균등(1/3씩) 반영: 필수 국어·영어 + 선택(수학/사회/과학 중 성적이 좋은 1개 교과, 실제 계산해서 더 유리한 쪽 자동 선택). 각 교과군 내 1~3학년 전 과목을 이수단위 가중평균. 평균 석차등급 점수 = (국어평균+영어평균+선택교과평균)×1/3, 학생부 20% 반영 시 이 값×2(200점 만점)로 최종 반영 (2027 모집요강 p.26, 30-31, 실기우수자전형 기준).",
+      "rule_source_page": "26, 30-31"
+    },
     "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
     "source_page": 20
   }

@@ -22,7 +22,15 @@
     "allowed_materials": ["연필", "지우개", "집게", "붓", "수채물감", "팔레트", "물통", "기타 실기고사에 필요한 물품"],
     "paper_size": "3절지",
     "time_limit_minutes": 240,
-    "source_url": "https://ipsi.inha.ac.kr",
+    "school_record_rule": {
+      "mode": "simple_weighted_average",
+      "subjects": ["국어", "영어", "사회"],
+      "credit_weighted": true,
+      "conversion_table": {"1": 10.0, "2": 9.8, "3": 9.6, "4": 9.4, "5": 9.0, "6": 8.0, "7": 4.0, "8": 2.0, "9": 0},
+      "formula_note": "예체능계열(조형예술학과 등) 반영교과: 국어, 영어, 사회(한국사 포함, 수학·과학 제외). 공통·일반선택 석차등급 과목 이수단위 가중평균. 최종 학생부 반영점수 = (교과 반영점수×2)+기본점수100, 300점 만점(2027 모집요강 p.43-45, 실기/실적 조형예술학과 등 기준). 재학생 3학년 1학기까지·졸업생 3학년 2학기까지 반영, 학년별 가중치 없음. 참고: 원문은 진로선택과목(최대 3과목, A=1등급/B=2등급/C=4등급 환산)도 반영하나 이 계산기는 석차등급이 있는 공통·일반선택과목만 반영한다.",
+      "rule_source_page": "43-45"
+    },
+    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%EC%9D%B8%ED%95%98%EB%8C%80%ED%95%99%EA%B5%90/%EC%9D%B8%ED%95%98%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
     "source_page": 37
   }
 },
@@ -49,7 +57,15 @@
     "allowed_materials": ["색채표현 가능한 모든 재료(입체적 첨가재료 불허)", "자(도형자 포함)", "지우개(전동지우개 포함)"],
     "paper_size": "3절지",
     "time_limit_minutes": 300,
-    "source_url": "https://ipsi.inha.ac.kr",
+    "school_record_rule": {
+      "mode": "simple_weighted_average",
+      "subjects": ["국어", "영어", "사회"],
+      "credit_weighted": true,
+      "conversion_table": {"1": 10.0, "2": 9.8, "3": 9.6, "4": 9.4, "5": 9.0, "6": 8.0, "7": 4.0, "8": 2.0, "9": 0},
+      "formula_note": "예체능계열(디자인융합학과 등) 반영교과: 국어, 영어, 사회(한국사 포함, 수학·과학 제외). 공통·일반선택 석차등급 과목 이수단위 가중평균. 최종 학생부 반영점수 = (교과 반영점수×2)+기본점수100, 300점 만점(2027 모집요강 p.43-45, 실기/실적 디자인융합학과 등 기준). 재학생 3학년 1학기까지·졸업생 3학년 2학기까지 반영, 학년별 가중치 없음. 참고: 원문은 진로선택과목(최대 3과목, A=1등급/B=2등급/C=4등급 환산)도 반영하나 이 계산기는 석차등급이 있는 공통·일반선택과목만 반영한다.",
+      "rule_source_page": "43-45"
+    },
+    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%EC%9D%B8%ED%95%98%EB%8C%80%ED%95%99%EA%B5%90/%EC%9D%B8%ED%95%98%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
     "source_page": 38
   }
 },
@@ -76,7 +92,15 @@
     "allowed_materials": ["색채표현 가능한 모든 재료(입체적 첨가재료 불허)", "자(도형자 포함)", "지우개(전동지우개 포함)"],
     "paper_size": "3절지",
     "time_limit_minutes": 300,
-    "source_url": "https://ipsi.inha.ac.kr",
+    "school_record_rule": {
+      "mode": "simple_weighted_average",
+      "subjects": ["국어", "영어", "사회"],
+      "credit_weighted": true,
+      "conversion_table": {"1": 10.0, "2": 9.8, "3": 9.6, "4": 9.4, "5": 9.0, "6": 8.0, "7": 4.0, "8": 2.0, "9": 0},
+      "formula_note": "예체능계열(의류디자인학과 등) 반영교과: 국어, 영어, 사회(한국사 포함, 수학·과학 제외). 공통·일반선택 석차등급 과목 이수단위 가중평균. 최종 학생부 반영점수 = (교과 반영점수×2)+기본점수100, 300점 만점(2027 모집요강 p.43-45, 실기/실적 의류디자인학과 등 기준). 재학생 3학년 1학기까지·졸업생 3학년 2학기까지 반영, 학년별 가중치 없음. 참고: 원문은 진로선택과목(최대 3과목, A=1등급/B=2등급/C=4등급 환산)도 반영하나 이 계산기는 석차등급이 있는 공통·일반선택과목만 반영한다.",
+      "rule_source_page": "43-45"
+    },
+    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%EC%9D%B8%ED%95%98%EB%8C%80%ED%95%99%EA%B5%90/%EC%9D%B8%ED%95%98%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
     "source_page": 40
   }
 }
