@@ -840,6 +840,21 @@ class ArtAdmissionService:
             r["school_record_rule"] = json.loads(raw_rule) if raw_rule else None
         return rows
 
+    def get_school_record_coverage(self) -> Dict[str, Any]:
+        """grades.html 안내 문구용 - 특정 5개교를 하드코딩해서 적던 문구가 실제로는
+        19개교로 늘어난 뒤에도 갱신 안 돼서 오래된 정보를 보여준 사고(2026-09-09
+        사용자 실측 제보)가 있었다. 대학명을 다시 하드코딩하는 대신, 매번 실제
+        데이터에서 개수를 세어 화면이 항상 최신 상태를 스스로 반영하게 한다."""
+        tracks = self.list_all_tracks_full()
+        exact_universities = {t["university"] for t in tracks if t.get("school_record_rule")}
+        na_universities = {t["university"] for t in tracks if t.get("school_record_status") == "not_applicable"}
+        all_universities = {t["university"] for t in tracks}
+        return {
+            "exact_school_count": len(exact_universities),
+            "not_applicable_school_count": len(na_universities),
+            "total_school_count": len(all_universities),
+        }
+
     def _get_prior_year_results_by_track(self) -> Dict[tuple, Dict[str, Any]]:
         """전년도 등록자 성적 추정치(Admission_CutoffEstimate) 전용 조회 - list_all_tracks_full()과
         의도적으로 분리된 별도 쿼리다. list_all_tracks_full()은 official_facts만 반환한다고

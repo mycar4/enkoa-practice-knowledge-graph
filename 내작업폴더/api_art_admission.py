@@ -109,6 +109,16 @@ def stats():
     }
 
 
+@app.get("/school-record-coverage")
+def school_record_coverage():
+    """grades.html 안내 문구용 - 정밀 계산 가능한 학교가 몇 개교인지 실시간으로
+    센다. 예전엔 특정 5개교를 문구에 직접 적어뒀는데 19개교로 늘어난 뒤에도
+    문구가 갱신되지 않았던 사고가 있었다(사용자 실측 제보) - 화면이 매번
+    실제 데이터를 세어 스스로 최신 상태를 반영하게 한다."""
+    svc = get_service()
+    return svc.get_school_record_coverage()
+
+
 class CompareRequest(BaseModel):
     selections: List[dict]  # [{"university": ..., "department": ...}, ...]
 
@@ -167,8 +177,9 @@ class SchoolRecordRequest(BaseModel):
 @app.post("/calculate-school-record")
 def calculate_school_record_endpoint(req: SchoolRecordRequest):
     """학생 성적 -> 특정 학교·학과 실제 학생부 반영 규정 그대로 환산.
-    5개교(중앙대·가천대·홍익대세종·서경대·상명대)만 원문 반영교과/환산표를
-    확보해 정밀 계산이 가능하고, 그 외 학교는 available=False로 명시한다."""
+    원문 반영교과/환산표를 확보한 학교(school_record_coverage 참고 - 학교 수는
+    계속 늘어나므로 여기 특정 개수를 적지 않는다)만 정밀 계산이 가능하고,
+    그 외 학교는 available=False로 명시한다."""
     svc = get_service()
     return svc.calculate_school_record_score(
         req.university, req.department, req.grades, campus=req.campus,

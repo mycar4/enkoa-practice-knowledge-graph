@@ -25,10 +25,9 @@
 <div class="w-full max-w-[900px] mx-auto px-margin-mobile lg:px-0 py-unit-xl">
 <div class="inline-flex items-center gap-unit-xs px-unit-sm py-unit-2xs bg-surface-container-high rounded text-on-surface mb-unit-xs"><span class="w-2 h-2 rounded-full bg-primary inline-block"></span><span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">내신 성적 기반 대학 추천</span></div>
 <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight">내신 성적을<br class="hidden lg:block"/> 입력해주세요.</h1>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">
+<p id="coverageNote" class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">
 학교마다 반영교과·석차등급 환산표·이수단위 가중평균 방식이 전부 다릅니다.<br/>
-<span class="font-bold text-on-surface">중앙대·가천대·홍익대(세종)·서경대·상명대</span>는 공식 모집요강 원문 규정 그대로 정밀 계산하고,
-그 외 학교는 실기/학생부 반영 비율만으로 근사 추정합니다.
+불러오는 중...
 </p>
 
 <fieldset class="mt-unit-lg space-y-unit-sm">
@@ -87,6 +86,23 @@
 </div></nav>
 
 <script>
+// 2026-09-09: 예전엔 "중앙대·가천대·홍익대(세종)·서경대·상명대는 정밀 계산"이라고
+// 5개교를 문구에 직접 적어뒀는데, 그 뒤로 19개교까지 늘어났는데도 문구가 갱신되지
+// 않아 낡은 정보를 보여주고 있었다(사용자 실측 제보로 확인). 특정 학교명을 다시
+// 하드코딩하는 대신 /school-record-coverage로 실제 개수를 매번 세어와서, 학교가
+// 추가돼도 이 문구가 코드 수정 없이 항상 최신 상태를 스스로 반영하게 한다.
+fetch(window.API_BASE_URL + "/school-record-coverage").then(r => r.json()).then(cov => {
+  const el = document.getElementById("coverageNote");
+  if (!el) return;
+  el.innerHTML =
+    `학교마다 반영교과·석차등급 환산표·이수단위 가중평균 방식이 전부 다릅니다.<br/>` +
+    `<span class="font-bold text-on-surface">현재 ${cov.exact_school_count}개교</span>는 공식 모집요강 원문 규정 그대로 정밀 계산하고, ` +
+    `${cov.not_applicable_school_count}개교는 학생부 성적을 아예 반영하지 않는 전형(실기 100% 또는 학생부종합 정성평가)이라 계산 대상에서 제외됩니다.`;
+}).catch(() => {
+  const el = document.getElementById("coverageNote");
+  if (el) el.textContent = "학교마다 반영교과·석차등급 환산표·이수단위 가중평균 방식이 전부 다릅니다.";
+});
+
 // 기본 5개 교과군 외에 "예술"을 추가한 이유: 상명대처럼 "석차등급 있는 전 교과목"을
 // 반영하는 학교는 국영수사과 제한이 없어서, 예술고 학생부의 드로잉/평면조형/미술전공실기
 // 같은 예술계열 전문교과도 석차등급이 있으면 반영 대상이 된다(실측 사례로 확인).
