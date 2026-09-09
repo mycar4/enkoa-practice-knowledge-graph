@@ -83,6 +83,17 @@ def embed_text(text: str) -> List[float]:
     return body["data"][0]["embedding"]
 
 
+# 2026-09-10 실측 사고: 타임아웃 30초 고정이었는데 GPT-5.5로 서류첨삭 시도 시
+# "The read operation timed out"으로 실패했다. GPT-5.5/o-시리즈 같은 추론형
+# 고급 모델은 답변 생성에 30초를 훌쩍 넘기는 경우가 흔하다 - 모델별로 여유
+# 있게 타임아웃을 다르게 준다(빠른 기본 모델까지 무작정 오래 기다리게 하진
+# 않되, 느린 고급 모델은 충분히 기다려준다).
+def _llm_timeout_seconds(model: str) -> int:
+    if model.startswith(_NO_CUSTOM_TEMPERATURE_PREFIXES):  # gpt-5*, o1/o3/o4 (추론형)
+        return 150
+    return 60
+
+
 def _call_openai_messages(messages: List[Dict[str, str]], model: str, temperature: float = 0.0) -> str:
     if not _OPENAI_KEY:
         raise RuntimeError("OPENAI_API_KEY가 설정되어 있지 않습니다.")
@@ -95,7 +106,7 @@ def _call_openai_messages(messages: List[Dict[str, str]], model: str, temperatur
         data=json.dumps(payload).encode("utf-8"),
         headers=headers,
     )
-    with urllib.request.urlopen(req, timeout=30) as resp:
+    with urllib.request.urlopen(req, timeout=_llm_timeout_seconds(model)) as resp:
         body = json.loads(resp.read().decode("utf-8"))
     return body["choices"][0]["message"]["content"]
 
@@ -116,7 +127,7 @@ def _call_anthropic_messages(messages: List[Dict[str, str]], model: str, tempera
         data=json.dumps(payload).encode("utf-8"),
         headers=headers,
     )
-    with urllib.request.urlopen(req, timeout=30) as resp:
+    with urllib.request.urlopen(req, timeout=_llm_timeout_seconds(model)) as resp:
         body = json.loads(resp.read().decode("utf-8"))
     return "".join(b.get("text", "") for b in body.get("content", []) if b.get("type") == "text")
 
@@ -136,7 +147,7 @@ def _call_gemini_messages(messages: List[Dict[str, str]], model: str, temperatur
         payload["systemInstruction"] = {"parts": [{"text": system_prompt}]}
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={_GEMINI_KEY}"
     req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=30) as resp:
+    with urllib.request.urlopen(req, timeout=_llm_timeout_seconds(model)) as resp:
         body = json.loads(resp.read().decode("utf-8"))
     return body["candidates"][0]["content"]["parts"][0]["text"]
 
