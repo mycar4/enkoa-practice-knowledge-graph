@@ -76,6 +76,26 @@
 <a class="flex flex-col items-center justify-center gap-unit-2xs text-primary bg-surface-container-low font-bold transition-colors min-h-[44px]" href="review.html"><span class="material-symbols-outlined text-[22px]">edit_document</span><span class="font-label-sm text-label-sm">서류 첨삭</span></a>
 </div></nav>
 
+<!-- 화면이 길어지면 맨 위로 스크롤하는 플로팅 버튼 - 일정 스크롤 이상 내려가야
+     나타나고, 모바일 하단 네비게이션/액션바와 겹치지 않게 오른쪽에 띄운다. -->
+<button id="scrollTopBtn" type="button" aria-label="맨 위로" class="hidden fixed bottom-20 md:bottom-6 right-4 z-40 w-11 h-11 rounded-full bg-on-surface text-surface shadow-lg items-center justify-center hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[22px]">arrow_upward</span>
+</button>
+<script>
+(function () {
+  var btn = document.getElementById("scrollTopBtn");
+  if (!btn) return;
+  window.addEventListener("scroll", function () {
+    var show = window.scrollY > 400;
+    btn.classList.toggle("hidden", !show);
+    btn.classList.toggle("flex", show);
+  });
+  btn.addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+})();
+</script>
+
 <script>
 fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
   const sel = document.getElementById("univSelect");
