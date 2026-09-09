@@ -1926,3 +1926,21 @@ class ArtAdmissionService:
             e["estimated_grade_equivalent"] if e["estimated_grade_equivalent"] is not None else 99,
         ))
         return results
+
+
+# 2026-09-09 "입시 질문이 왜 이렇게 느리지" 실측으로 발견한 원인: API 엔드포인트마다,
+# 그리고 에이전트의 도구 호출마다 매번 ArtAdmissionService()를 새로 만들고 있었다 -
+# Neo4j Aura(클라우드, 리전 간 네트워크)로 매번 새 TLS 연결+인증 핸드셰이크를 하는
+# 셈이라, 복합 질의 하나에 도구가 3~4번 불리면 그때마다 수백ms씩 연결 비용이
+# 누적됐다. neo4j 드라이버는 원래 애플리케이션당 1개만 만들어 계속 재사용하도록
+# 설계돼 있고(세션은 메서드 호출마다 만드는 게 정상, 드라이버 자체는 아님) 내부
+# 커넥션 풀이 동시 요청도 안전하게 처리하므로, 요청/도구 호출마다 새로 만들 이유가
+# 없다 - 프로세스 생애주기 동안 하나만 만들어 재사용한다.
+_shared_service: Optional["ArtAdmissionService"] = None
+
+
+def get_shared_service() -> "ArtAdmissionService":
+    global _shared_service
+    if _shared_service is None:
+        _shared_service = ArtAdmissionService()
+    return _shared_service

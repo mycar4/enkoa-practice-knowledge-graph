@@ -81,8 +81,14 @@ match_status가 "exact"인 것만 그렇게 부르고, "partial"인 것은 "재�
 
 
 def _get_service():
-    from services.art_admission_service import ArtAdmissionService
-    return ArtAdmissionService()
+    # 2026-09-09: "입시 질문이 왜 느리지" 실측 - 도구 호출마다 여기서 새
+    # ArtAdmissionService()(=새 Neo4j 드라이버, 클라우드 TLS 핸드셰이크)를 만들고
+    # 있었다. 복합 질의 하나에 도구가 3~4번 불리면 그만큼 연결 비용이 누적된다.
+    # 프로세스 생애주기 동안 하나만 만들어 재사용하는 공유 인스턴스로 교체
+    # (art_admission_service.get_shared_service() 참고, api_art_admission.py의
+    # get_service()와 동일한 인스턴스를 공유한다).
+    from services.art_admission_service import get_shared_service
+    return get_shared_service()
 
 
 def _all_universities() -> List[str]:
@@ -93,8 +99,6 @@ def _all_universities() -> List[str]:
         return sorted({u["university"] for u in svc.list_universities()})
     except Exception:
         return []
-    finally:
-        svc.close()
 
 
 @tool
@@ -104,16 +108,13 @@ def get_university_info(university: str, campus: str = "") -> str:
     키워드가 있어야만 결과가 나오므로, 그런 키워드 없이 대학 하나만 언급된 질문에는
     이 도구를 써야 한다. 그 대학의 모든 학과·전형·실기유형을 전부 반환한다."""
     svc = _get_service()
-    try:
-        detail = svc.get_university_detail(university, campus=campus or None)
-        tracks = [{
-            "department": t.get("department"), "track_name": t.get("track_name"),
-            "exam_type_name": t.get("exam_type_name"), "allowed_materials": t.get("allowed_materials"),
-            "quota": t.get("quota"), "exam_dates": t.get("exam_dates"), "source_url": t.get("source_url"),
-        } for t in detail.get("official_tracks", [])]
-        return json.dumps({"university": university, "count": len(tracks), "tracks": tracks}, ensure_ascii=False)
-    finally:
-        svc.close()
+    detail = svc.get_university_detail(university, campus=campus or None)
+    tracks = [{
+        "department": t.get("department"), "track_name": t.get("track_name"),
+        "exam_type_name": t.get("exam_type_name"), "allowed_materials": t.get("allowed_materials"),
+        "quota": t.get("quota"), "exam_dates": t.get("exam_dates"), "source_url": t.get("source_url"),
+    } for t in detail.get("official_tracks", [])]
+    return json.dumps({"university": university, "count": len(tracks), "tracks": tracks}, ensure_ascii=False)
 
 
 @tool
@@ -123,20 +124,17 @@ def search_tracks(topic_keywords: List[str] = [], material_query: str = "", docu
     "exact"면 실기유형 자체가 일치, "partial"이면 재료·규격만 겹침(실기유형은 다름),
     "document"면 서류전형이다. 서류전형만 보고 싶으면 document_only=true."""
     svc = _get_service()
-    try:
-        rows = svc.search_tracks_by_prep(
-            topic_keywords=topic_keywords, material_query=material_query, document_only=document_only,
-        )
-        trimmed = [{
-            "university": r["university"], "campus": r.get("campus"), "department": r["department"],
-            "track_name": r.get("track_name"), "exam_type_name": r.get("exam_type_name"),
-            "match_status": r["match_status"], "exact_match_reasons": r.get("exact_match_reasons"),
-            "partial_match_reasons": r.get("partial_match_reasons"), "warnings": r.get("warnings"),
-            "quota": r.get("quota"), "exam_dates": r.get("exam_dates"), "source_url": r.get("source_url"),
-        } for r in rows[:20]]  # 토큰 절약: 최대 20건만 도구 응답에 담는다
-        return json.dumps({"count": len(rows), "results": trimmed}, ensure_ascii=False)
-    finally:
-        svc.close()
+    rows = svc.search_tracks_by_prep(
+        topic_keywords=topic_keywords, material_query=material_query, document_only=document_only,
+    )
+    trimmed = [{
+        "university": r["university"], "campus": r.get("campus"), "department": r["department"],
+        "track_name": r.get("track_name"), "exam_type_name": r.get("exam_type_name"),
+        "match_status": r["match_status"], "exact_match_reasons": r.get("exact_match_reasons"),
+        "partial_match_reasons": r.get("partial_match_reasons"), "warnings": r.get("warnings"),
+        "quota": r.get("quota"), "exam_dates": r.get("exam_dates"), "source_url": r.get("source_url"),
+    } for r in rows[:20]]  # 토큰 절약: 최대 20건만 도구 응답에 담는다
+    return json.dumps({"count": len(rows), "results": trimmed}, ensure_ascii=False)
 
 
 @tool
@@ -144,11 +142,8 @@ def compare_tracks(selections: List[Dict[str, str]]) -> str:
     """선택한 전형들(university, campus, department 조합 2~6개)을 나란히 비교하는 표를
     만든다. selections 예: [{"university":"가천대학교","campus":"글로벌(성남)","department":"시각디자인전공"}, ...]"""
     svc = _get_service()
-    try:
-        rows = svc.get_comparison_table(selections)
-        return json.dumps({"count": len(rows), "tracks": rows}, ensure_ascii=False, default=str)
-    finally:
-        svc.close()
+    rows = svc.get_comparison_table(selections)
+    return json.dumps({"count": len(rows), "tracks": rows}, ensure_ascii=False, default=str)
 
 
 @tool
@@ -156,11 +151,8 @@ def check_schedule_conflicts(selections: List[Dict[str, str]]) -> str:
     """선택한 전형들의 실기고사일이 서로 겹치는지 확인한다(수시 최대 6장 제한도 함께
     검사). selections 형식은 compare_tracks와 동일."""
     svc = _get_service()
-    try:
-        result = svc.simulate_multi_apply(selections)
-        return json.dumps(result, ensure_ascii=False, default=str)
-    finally:
-        svc.close()
+    result = svc.simulate_multi_apply(selections)
+    return json.dumps(result, ensure_ascii=False, default=str)
 
 
 @tool
@@ -168,15 +160,12 @@ def get_calendar(selections: List[Dict[str, str]]) -> str:
     """선택한 전형들의 원서접수·실기고사·합격발표 일정을 시간순으로 정리한다.
     selections 형식은 compare_tracks와 동일 (빈 리스트면 전체 일정)."""
     svc = _get_service()
-    try:
-        all_events = svc.get_calendar_events()
-        if not selections:
-            return json.dumps({"events": all_events[:30]}, ensure_ascii=False, default=str)
-        labels = {f"{s['university']} {s['department']}" for s in selections}
-        filtered = [e for e in all_events if e.get("school") in labels]
-        return json.dumps({"events": filtered}, ensure_ascii=False, default=str)
-    finally:
-        svc.close()
+    all_events = svc.get_calendar_events()
+    if not selections:
+        return json.dumps({"events": all_events[:30]}, ensure_ascii=False, default=str)
+    labels = {f"{s['university']} {s['department']}" for s in selections}
+    filtered = [e for e in all_events if e.get("school") in labels]
+    return json.dumps({"events": filtered}, ensure_ascii=False, default=str)
 
 
 TOOLS = [get_university_info, search_tracks, compare_tracks, check_schedule_conflicts, get_calendar]
@@ -230,17 +219,13 @@ def route_and_answer(query: str, history: Optional[List[Dict[str, str]]] = None)
         all_universities = sorted({u["university"] for u in svc.list_universities()})
     except Exception:
         all_universities = []
-    finally:
-        svc.close()
 
     if _is_compound_query(query, all_universities):
         return run_agent(query, history)
 
     svc = _get_service()
-    try:
-        result = run_qa_pipeline(svc, query)
-    finally:
-        svc.close()
+    result = run_qa_pipeline(svc, query)
+
     # 프론트(qa.html)의 트레이스 패널과 형식을 맞추되, "도구 선택 없이 즉시 처리했다"는
     # 걸 투명하게 보여준다 - 라우팅 자체도 숨기지 않는다.
     result["tool_trace"] = [{

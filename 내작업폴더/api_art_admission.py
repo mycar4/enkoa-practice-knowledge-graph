@@ -26,7 +26,7 @@ from pydantic import BaseModel
 BASE_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(BASE_DIR))
 
-from services.art_admission_service import ArtAdmissionService  # noqa: E402
+from services.art_admission_service import ArtAdmissionService, get_shared_service  # noqa: E402
 from services.art_admission_llm import review_document, chat_about_review  # noqa: E402
 
 DEFAULT_MODEL = "gpt-4o-mini"  # 공개 API는 항상 이 모델만 쓴다 - gated 모델 노출 안 함
@@ -50,7 +50,12 @@ app.add_middleware(
 
 
 def get_service() -> ArtAdmissionService:
-    return ArtAdmissionService()
+    # 2026-09-09: 요청마다 새 드라이버를 만들지 않고 프로세스 생애주기 동안 하나만
+    # 만들어 재사용한다(입시 질문 응답 지연의 실제 원인 - 자세한 이유는
+    # art_admission_service.get_shared_service() 주석 참고). 그래서 이 함수를
+    # 호출하는 곳들은 더 이상 finally에서 svc.close()를 부르지 않는다 - 공유
+    # 인스턴스를 매 요청마다 닫아버리면 다음 요청이 죽은 드라이버를 쓰게 된다.
+    return get_shared_service()
 
 
 @app.get("/health")
@@ -62,22 +67,16 @@ def health():
 def list_universities():
     """01 PROFILE / 02 MATCH 화면용 - 등록된 학교/학과 목록."""
     svc = get_service()
-    try:
-        return svc.list_universities()
-    finally:
-        svc.close()
+    return svc.list_universities()
 
 
 @app.get("/universities/{university}")
 def university_detail(university: str, campus: Optional[str] = None):
     svc = get_service()
-    try:
-        detail = svc.get_university_detail(university, campus=campus)
-        if not detail:
-            raise HTTPException(status_code=404, detail="해당 학교 데이터를 찾을 수 없습니다.")
-        return detail
-    finally:
-        svc.close()
+    detail = svc.get_university_detail(university, campus=campus)
+    if not detail:
+        raise HTTPException(status_code=404, detail="해당 학교 데이터를 찾을 수 없습니다.")
+    return detail
 
 
 class PrepSearchRequest(BaseModel):
@@ -90,10 +89,7 @@ class PrepSearchRequest(BaseModel):
 def prep_topics():
     """"큰 주제" 선택지 - FO의 실기종목 선택 UI에 그대로 넣을 값."""
     svc = get_service()
-    try:
-        return svc.list_exam_topic_keywords()
-    finally:
-        svc.close()
+    return svc.list_exam_topic_keywords()
 
 
 @app.get("/stats")
@@ -103,17 +99,14 @@ def stats():
     이름으로만 dedup한다. 새 비즈니스 로직 없음 - list_all_tracks_full() 결과를
     그냥 집계만 한다."""
     svc = get_service()
-    try:
-        tracks = svc.list_all_tracks_full()
-        universities = {t["university"] for t in tracks}
-        years = sorted({t.get("admission_year") for t in tracks if t.get("admission_year")})
-        return {
-            "university_count": len(universities),
-            "track_count": len(tracks),
-            "admission_years": years,
-        }
-    finally:
-        svc.close()
+    tracks = svc.list_all_tracks_full()
+    universities = {t["university"] for t in tracks}
+    years = sorted({t.get("admission_year") for t in tracks if t.get("admission_year")})
+    return {
+        "university_count": len(universities),
+        "track_count": len(tracks),
+        "admission_years": years,
+    }
 
 
 class CompareRequest(BaseModel):
@@ -125,10 +118,7 @@ def compare_tracks_endpoint(req: CompareRequest):
     """대학 찾기 결과에서 2~6개 전형을 선택했을 때 나란히 비교표를 만든다.
     기존 Streamlit '전형 비교' 탭이 쓰던 get_comparison_table() 그대로 재사용."""
     svc = get_service()
-    try:
-        return svc.get_comparison_table(req.selections)
-    finally:
-        svc.close()
+    return svc.get_comparison_table(req.selections)
 
 
 @app.post("/simulate-multi-apply")
@@ -136,10 +126,7 @@ def simulate_multi_apply_endpoint(req: CompareRequest):
     """선택한 조합 안에서만 일정(실기고사일) 충돌을 검사한다. 기존 '동시지원
     시뮬레이터' 탭이 쓰던 simulate_multi_apply() 그대로 재사용 - 새 로직 없음."""
     svc = get_service()
-    try:
-        return svc.simulate_multi_apply(req.selections)
-    finally:
-        svc.close()
+    return svc.simulate_multi_apply(req.selections)
 
 
 @app.get("/calendar-events")
@@ -148,10 +135,7 @@ def calendar_events_endpoint():
     클라이언트 쪽에서 골라 타임라인으로 그린다. 기존 '일정 캘린더' 탭이 쓰던
     get_calendar_events() 그대로 재사용."""
     svc = get_service()
-    try:
-        return svc.get_calendar_events()
-    finally:
-        svc.close()
+    return svc.get_calendar_events()
 
 
 @app.get("/past-topics")
@@ -159,10 +143,7 @@ def past_topics_endpoint(university: Optional[str] = None):
     """Evidence Drawer에서 기출문제가 있으면 같이 보여주기 위한 조회.
     기존 '기출문제' 탭이 쓰던 get_past_topics() 그대로 재사용."""
     svc = get_service()
-    try:
-        return svc.get_past_topics(university=university)
-    finally:
-        svc.close()
+    return svc.get_past_topics(university=university)
 
 
 @app.post("/prep-search")
@@ -170,13 +151,10 @@ def prep_search(req: PrepSearchRequest):
     """03 RESULT 화면 - 학생이 선택한 실기종목/재료로 호환 학교 찾기.
     기존 "준비한 실기로 학교 찾기" 탭과 동일 로직, 새 비즈니스 로직 없음."""
     svc = get_service()
-    try:
-        return svc.search_tracks_by_prep(
-            topic_keywords=req.topic_keywords, material_query=req.material_query,
-            document_only=req.document_only,
-        )
-    finally:
-        svc.close()
+    return svc.search_tracks_by_prep(
+        topic_keywords=req.topic_keywords, material_query=req.material_query,
+        document_only=req.document_only,
+    )
 
 
 class SchoolRecordRequest(BaseModel):
@@ -192,12 +170,9 @@ def calculate_school_record_endpoint(req: SchoolRecordRequest):
     5개교(중앙대·가천대·홍익대세종·서경대·상명대)만 원문 반영교과/환산표를
     확보해 정밀 계산이 가능하고, 그 외 학교는 available=False로 명시한다."""
     svc = get_service()
-    try:
-        return svc.calculate_school_record_score(
-            req.university, req.department, req.grades, campus=req.campus,
-        )
-    finally:
-        svc.close()
+    return svc.calculate_school_record_score(
+        req.university, req.department, req.grades, campus=req.campus,
+    )
 
 
 class RecommendUniversitiesRequest(BaseModel):
@@ -216,12 +191,9 @@ def recommend_universities_endpoint(req: RecommendUniversitiesRequest):
     보여줘야 한다(근사치조차 매기면 안 됨 - 실제로 반영되지 않는 성적을
     반영되는 것처럼 보여주는 셈이라 오해를 부른다)."""
     svc = get_service()
-    try:
-        return svc.recommend_universities(
-            req.grades, topic_keywords=req.topic_keywords, material_query=req.material_query,
-        )
-    finally:
-        svc.close()
+    return svc.recommend_universities(
+        req.grades, topic_keywords=req.topic_keywords, material_query=req.material_query,
+    )
 
 
 class QARequest(BaseModel):
@@ -234,10 +206,7 @@ def qa(req: QARequest):
     항상 gpt-4o-mini만 쓴다(공개 API에서 프리미엄 모델 비용 노출 방지)."""
     from services.art_admission_agent import run_qa_pipeline
     svc = get_service()
-    try:
-        return run_qa_pipeline(svc, req.query, model_id=DEFAULT_MODEL)
-    finally:
-        svc.close()
+    return run_qa_pipeline(svc, req.query, model_id=DEFAULT_MODEL)
 
 
 class AgentChatRequest(BaseModel):
@@ -273,28 +242,25 @@ class ReviewRequest(BaseModel):
 def review_document_endpoint(req: ReviewRequest):
     """서류첨삭 메뉴 그대로. 학교를 지정하면 해당 학교 서류 규정 원문을 근거로 반영."""
     svc = get_service()
+    graph_hint = []
     try:
-        graph_hint = []
+        graph_hint = svc.detect_entities_in_text(req.text)
+    except Exception:
+        pass
+    doc_rules = []
+    if req.university:
         try:
-            graph_hint = svc.detect_entities_in_text(req.text)
+            doc_rules = svc.get_document_rule_excerpts(req.university, req.doc_type)
         except Exception:
             pass
-        doc_rules = []
-        if req.university:
-            try:
-                doc_rules = svc.get_document_rule_excerpts(req.university, req.doc_type)
-            except Exception:
-                pass
-        result = review_document(
-            req.text, model_id=DEFAULT_MODEL, doc_type=req.doc_type,
-            graph_hint=graph_hint, university=req.university, context_doc_rules=doc_rules,
-        )
-        # rules_found는 LLM 판단이 아니라 실제로 발췌를 찾았는지(doc_rules 존재 여부) 그대로
-        # 반영한 결정론적 값 - 화면이 이 값만 보고 안내 배너를 그리게 해서, LLM이 자체적으로
-        # "규정을 확인/확인못함" 문구를 잘못 말해도 화면 표시와 어긋나지 않게 한다.
-        return {**result, "doc_rules": doc_rules, "graph_hint": graph_hint, "rules_found": bool(doc_rules)}
-    finally:
-        svc.close()
+    result = review_document(
+        req.text, model_id=DEFAULT_MODEL, doc_type=req.doc_type,
+        graph_hint=graph_hint, university=req.university, context_doc_rules=doc_rules,
+    )
+    # rules_found는 LLM 판단이 아니라 실제로 발췌를 찾았는지(doc_rules 존재 여부) 그대로
+    # 반영한 결정론적 값 - 화면이 이 값만 보고 안내 배너를 그리게 해서, LLM이 자체적으로
+    # "규정을 확인/확인못함" 문구를 잘못 말해도 화면 표시와 어긋나지 않게 한다.
+    return {**result, "doc_rules": doc_rules, "graph_hint": graph_hint, "rules_found": bool(doc_rules)}
 
 
 class ReviewChatRequest(BaseModel):
