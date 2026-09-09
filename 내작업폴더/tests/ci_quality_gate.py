@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tests.test_art_admission_rag_eval import (  # noqa: E402
     test_exact_match_never_includes_material_only_overlaps,
     test_qa_search_and_agent_search_agree,
+    test_self_check_grounding_does_not_flag_names_from_query_context,
 )
 from tests.test_art_admission_school_record_calc import (  # noqa: E402
     test_priority_schools_exact_calc_matches_hand_computed,
@@ -37,6 +38,7 @@ from tests.test_art_admission_school_record_calc import (  # noqa: E402
 if __name__ == "__main__":
     test_exact_match_never_includes_material_only_overlaps()
     test_qa_search_and_agent_search_agree()
+    test_self_check_grounding_does_not_flag_names_from_query_context()
     test_priority_schools_exact_calc_matches_hand_computed()
     test_hongik_sejong_choice_subject_picks_more_advantageous_on_tie()
     test_hongik_sejong_liberal_arts_common_and_career_split_scaled()
@@ -55,4 +57,4 @@ if __name__ == "__main__":
     test_prior_year_result_batch2_image_based_schools()
     test_non_priority_school_returns_unavailable_not_fake_number()
     test_recommend_universities_ranks_exact_before_approximate()
-    print("🎉 CI QUALITY GATE PASSED (무료 회귀 테스트 20건)")
+    print("🎉 CI QUALITY GATE PASSED (무료 회귀 테스트 21건)")

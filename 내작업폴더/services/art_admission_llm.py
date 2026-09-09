@@ -323,16 +323,25 @@ def _strip_banned_phrases(answer: str) -> tuple:
 def _self_check_grounding(answer: str, context_tracks: List[Dict[str, Any]],
                            context_compatible_tracks: List[Dict[str, Any]],
                            context_graph_related: List[Dict[str, Any]],
-                           all_universities: Optional[List[str]]) -> List[str]:
+                           all_universities: Optional[List[str]],
+                           query: str = "") -> List[str]:
     """Self-RAG류 자기검증(day53~54): 답변에 등장하는 학교명이 이번 요청에 실제로
     근거로 준 context 안에 있었는지 대조한다. all_universities(전체 등록 대학 목록)
     중 하나가 답변 텍스트에 등장했는데 이번 context_tracks/compatible/graph_related
-    어디에도 없다면, LLM이 아예 다른 학교를 지어냈거나 착각한 것일 위험이 있다."""
+    어디에도 없다면, LLM이 아예 다른 학교를 지어냈거나 착각한 것일 위험이 있다.
+
+    2026-09-09 오탐 수정: query(사용자 질문 원문)에 이미 등장한 학교명은 grounded로
+    취급한다. "성적 추천" 결과 화면의 "이 결과로 질문하기" 기능이 상위 학교 요약을
+    질문 앞에 그대로 붙여서 보내는데, 이 요약 자체가 실제 그래프 계산 결과(허구가
+    아님)라서 LLM이 그 학교명을 답변에서 그대로 언급하면 "이번 조회 근거에는
+    없다"는 이유로 오탐(false positive)이 났다 - 질문에 이미 있던 이름을 답변에서
+    반복하는 건 지어낸 게 아니라 질문 그대로 답한 것이다."""
     if not all_universities:
         return []
     grounded_names = {t["university"] for t in context_tracks}
     grounded_names |= {t["university"] for t in context_compatible_tracks}
     grounded_names |= {r.get("name") for r in context_graph_related if r.get("name")}
+    grounded_names |= {name for name in all_universities if name in query}
     issues = []
     for name in all_universities:
         if name in answer and name not in grounded_names:
@@ -399,7 +408,7 @@ def answer_with_llm(context_tracks: List[Dict[str, Any]], context_estimates: Lis
     # 비용은 최대 2배로만 늘어남). 재시도 후에도 문제가 남으면 경고를 붙여서라도
     # 투명하게 알린다 - 조용히 숨기지 않는다.
     self_check_warnings = (
-        _self_check_grounding(answer, context_tracks, context_compatible_tracks, context_graph_related, all_universities)
+        _self_check_grounding(answer, context_tracks, context_compatible_tracks, context_graph_related, all_universities, query)
         + _self_check_compat_claim(answer, context_compatible_tracks)
     )
     if self_check_warnings:
@@ -412,7 +421,7 @@ def answer_with_llm(context_tracks: List[Dict[str, Any]], context_estimates: Lis
         try:
             retried = _call_llm(_QA_SYSTEM_PROMPT, retry_prompt, model_id, temperature=0.0)
             retry_issues = (
-                _self_check_grounding(retried, context_tracks, context_compatible_tracks, context_graph_related, all_universities)
+                _self_check_grounding(retried, context_tracks, context_compatible_tracks, context_graph_related, all_universities, query)
                 + _self_check_compat_claim(retried, context_compatible_tracks)
             )
             answer = retried

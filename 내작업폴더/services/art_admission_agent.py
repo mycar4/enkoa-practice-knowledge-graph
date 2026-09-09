@@ -297,7 +297,15 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
 
     # Self-RAG류 자기검증(day53~54): /qa와 동일한 원칙 - 답변에 등장하는 학교명이
     # 실제로 이번 도구 호출 결과 안에 있었는지 코드로 재검사한다.
+    # 2026-09-09 오탐 수정: 사용자의 질문 원문(query)이나 이전 대화(history)에 이미
+    # 등장한 학교명은 grounded로 취급한다 - "이 결과로 질문하기" 기능이 성적 추천의
+    # 실제 계산 결과(허구가 아님)를 질문 앞에 붙여 보내는데, 에이전트가 그 학교명을
+    # 그대로 답변에서 언급하면 "이번 도구 호출 결과에는 없다"는 이유로 오탐이 났다.
     all_universities = _all_universities()
+    query_text = query + " " + " ".join(str(m.get("content", "")) for m in (history or []))
+    for name in all_universities:
+        if name in query_text:
+            grounded_universities.add(name)
     grounding_issues = [
         f"'{name}'가 답변에 등장하지만 이번 도구 호출 결과에는 없었습니다(환각 의심)"
         for name in all_universities if name in final_answer and name not in grounded_universities

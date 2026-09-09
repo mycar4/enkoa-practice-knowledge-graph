@@ -30,7 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
 
 from services.art_admission_service import ArtAdmissionService  # noqa: E402
-from services.art_admission_llm import _call_llm  # noqa: E402
+from services.art_admission_llm import _call_llm, _self_check_grounding  # noqa: E402
 
 # (topic_keywords, 반드시 exact로 나와야 하는 학교, 절대 exact로 나오면 안 되는 학교)
 # 각 튜플이 이번 세션에서 실제로 터졌던 버그(재료만 겹침 vs 실기유형 자체 일치 혼동)의
@@ -63,6 +63,34 @@ def test_exact_match_never_includes_material_only_overlaps():
         print(f"✅ test_exact_match_never_includes_material_only_overlaps passed! ({len(EXACT_MATCH_REGRESSION_CASES)}개 키워드 케이스 전수 통과)")
     finally:
         svc.close()
+
+
+def test_self_check_grounding_does_not_flag_names_from_query_context():
+    """2026-09-09 오탐 수정 회귀: results.html의 "이 결과로 질문하기" 기능은 실제
+    성적 추천 계산 결과(허구 아님)에서 뽑은 학교명을 질문 앞에 붙여 보낸다. 이번
+    턴의 tool 호출/context에는 그 학교가 없더라도, query 원문에 이미 있던 이름을
+    답변이 그대로 반복하는 건 지어낸 게 아니므로 '환각 의심'으로 잡히면 안 된다."""
+    all_universities = ["가천대학교", "경기대학교", "홍익대학교"]
+    query_with_injected_context = (
+        "[내신 성적 기반 추천 결과 참고 - 상위 2곳: 가천대학교 회화전공, 경기대학교 서양화전공]\n\n"
+        "질문: 이 학교들 실기 준비물이 뭐야?"
+    )
+    answer = "가천대학교와 경기대학교는 모두 소묘 실기이며 4절 켄트지를 사용합니다."
+
+    # 이번 턴의 실제 근거(context_tracks 등)에는 두 학교가 전혀 없다고 가정 -
+    # query에 없었다면 이 상황은 진짜 환각으로 잡혀야 정상이다.
+    issues_without_query = _self_check_grounding(answer, [], [], [], all_universities, "")
+    assert any("가천대학교" in i for i in issues_without_query), "query 근거가 없으면 여전히 환각 의심으로 잡혀야 함(대조군)"
+
+    issues_with_query = _self_check_grounding(answer, [], [], [], all_universities, query_with_injected_context)
+    assert issues_with_query == [], f"질문 원문에 이미 있던 학교명이 오탐으로 잡힘: {issues_with_query}"
+
+    # 답변에 query에도 context에도 전혀 없는 제3의 학교가 등장하면 여전히 잡혀야 한다(회귀 방지 반대편 확인)
+    hallucinated_answer = "가천대학교와 홍익대학교 모두 소묘 실기입니다."
+    issues_real_hallucination = _self_check_grounding(hallucinated_answer, [], [], [], all_universities, query_with_injected_context)
+    assert any("홍익대학교" in i for i in issues_real_hallucination), "query/context 어디에도 없는 학교는 여전히 환각 의심으로 잡혀야 함"
+
+    print("✅ test_self_check_grounding_does_not_flag_names_from_query_context passed!")
 
 
 def test_qa_search_and_agent_search_agree():
