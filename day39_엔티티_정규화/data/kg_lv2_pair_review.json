@@ -1,0 +1,372 @@
+{
+  "source": "kg_alias_review.jsonl",
+  "description": "기존 출현별 원문 검토를 같은 개체 쌍으로 변환한 과제 입력입니다. 새 LLM 응답이 아니며 골드는 사용하지 않았습니다.",
+  "mentions": [
+    {
+      "mention_id": "t09:subject",
+      "triple_id": "t09",
+      "role": "subject",
+      "name": "function_overview",
+      "entity_type": "Document",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "evidence": "sns.histplot(data=penguins, x=\"flipper_length_mm\", hue=\"species\", multiple=\"stack\")"
+    },
+    {
+      "mention_id": "t09:object",
+      "triple_id": "t09",
+      "role": "object",
+      "name": "histplot",
+      "entity_type": "ApiElement",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "evidence": "sns.histplot(data=penguins, x=\"flipper_length_mm\", hue=\"species\", multiple=\"stack\")"
+    },
+    {
+      "mention_id": "t10:subject",
+      "triple_id": "t10",
+      "role": "subject",
+      "name": "function_overview",
+      "entity_type": "Document",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "evidence": "sns.kdeplot(data=penguins, x=\"flipper_length_mm\", hue=\"species\", multiple=\"stack\")"
+    },
+    {
+      "mention_id": "t10:object",
+      "triple_id": "t10",
+      "role": "object",
+      "name": "kdeplot",
+      "entity_type": "ApiElement",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "evidence": "sns.kdeplot(data=penguins, x=\"flipper_length_mm\", hue=\"species\", multiple=\"stack\")"
+    },
+    {
+      "mention_id": "t11:subject",
+      "triple_id": "t11",
+      "role": "subject",
+      "name": "function_overview",
+      "entity_type": "Document",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "evidence": "sns.displot(data=penguins, x=\"flipper_length_mm\", hue=\"species\", multiple=\"stack\")"
+    },
+    {
+      "mention_id": "t11:object",
+      "triple_id": "t11",
+      "role": "object",
+      "name": "displot",
+      "entity_type": "ApiElement",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "evidence": "sns.displot(data=penguins, x=\"flipper_length_mm\", hue=\"species\", multiple=\"stack\")"
+    },
+    {
+      "mention_id": "t12:subject",
+      "triple_id": "t12",
+      "role": "subject",
+      "name": "function_overview",
+      "entity_type": "Document",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "evidence": "sns.scatterplot(data=penguins, x=\"flipper_length_mm\", y=\"bill_length_mm\", hue=\"species\", ax=axs[0])"
+    },
+    {
+      "mention_id": "t12:object",
+      "triple_id": "t12",
+      "role": "object",
+      "name": "scatterplot",
+      "entity_type": "ApiElement",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "evidence": "sns.scatterplot(data=penguins, x=\"flipper_length_mm\", y=\"bill_length_mm\", hue=\"species\", ax=axs[0])"
+    },
+    {
+      "mention_id": "t13:subject",
+      "triple_id": "t13",
+      "role": "subject",
+      "name": "function_overview",
+      "entity_type": "Document",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "evidence": "g = sns.relplot(data=tips, x=\"total_bill\", y=\"tip\")"
+    },
+    {
+      "mention_id": "t13:object",
+      "triple_id": "t13",
+      "role": "object",
+      "name": "relplot",
+      "entity_type": "ApiElement",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "evidence": "g = sns.relplot(data=tips, x=\"total_bill\", y=\"tip\")"
+    },
+    {
+      "mention_id": "t14:subject",
+      "triple_id": "t14",
+      "role": "subject",
+      "name": "function_overview",
+      "entity_type": "Document",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "evidence": "g = sns.FacetGrid(penguins)"
+    },
+    {
+      "mention_id": "t14:object",
+      "triple_id": "t14",
+      "role": "object",
+      "name": "FacetGrid",
+      "entity_type": "ApiElement",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "evidence": "g = sns.FacetGrid(penguins)"
+    },
+    {
+      "mention_id": "t15:subject",
+      "triple_id": "t15",
+      "role": "subject",
+      "name": "function_overview",
+      "entity_type": "Document",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "evidence": "sns.jointplot(data=penguins, x=\"flipper_length_mm\", y=\"bill_length_mm\", hue=\"species\")"
+    },
+    {
+      "mention_id": "t15:object",
+      "triple_id": "t15",
+      "role": "object",
+      "name": "jointplot",
+      "entity_type": "ApiElement",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "evidence": "sns.jointplot(data=penguins, x=\"flipper_length_mm\", y=\"bill_length_mm\", hue=\"species\")"
+    },
+    {
+      "mention_id": "t16:subject",
+      "triple_id": "t16",
+      "role": "subject",
+      "name": "function_overview",
+      "entity_type": "Document",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "evidence": "sns.pairplot(data=penguins, hue=\"species\")"
+    },
+    {
+      "mention_id": "t16:object",
+      "triple_id": "t16",
+      "role": "object",
+      "name": "pairplot",
+      "entity_type": "ApiElement",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "evidence": "sns.pairplot(data=penguins, hue=\"species\")"
+    },
+    {
+      "mention_id": "t17:subject",
+      "triple_id": "t17",
+      "role": "subject",
+      "name": "scatterplot",
+      "entity_type": "Document",
+      "source_doc_id": "seaborn_doc_docstrings_scatterplot",
+      "evidence": "sns.scatterplot(data=tips, x=\"total_bill\", y=\"tip\")"
+    },
+    {
+      "mention_id": "t17:object",
+      "triple_id": "t17",
+      "role": "object",
+      "name": "scatterplot",
+      "entity_type": "ApiElement",
+      "source_doc_id": "seaborn_doc_docstrings_scatterplot",
+      "evidence": "sns.scatterplot(data=tips, x=\"total_bill\", y=\"tip\")"
+    },
+    {
+      "mention_id": "t18:subject",
+      "triple_id": "t18",
+      "role": "subject",
+      "name": "scatterplot",
+      "entity_type": "Document",
+      "source_doc_id": "seaborn_doc_docstrings_scatterplot",
+      "evidence": "sns.relplot(\n    data=tips, x=\"total_bill\", y=\"tip\",\n    col=\"time\", hue=\"day\", style=\"day\",\n    kind=\"scatter\"\n)"
+    },
+    {
+      "mention_id": "t18:object",
+      "triple_id": "t18",
+      "role": "object",
+      "name": "relplot",
+      "entity_type": "ApiElement",
+      "source_doc_id": "seaborn_doc_docstrings_scatterplot",
+      "evidence": "sns.relplot(\n    data=tips, x=\"total_bill\", y=\"tip\",\n    col=\"time\", hue=\"day\", style=\"day\",\n    kind=\"scatter\"\n)"
+    },
+    {
+      "mention_id": "t19:subject",
+      "triple_id": "t19",
+      "role": "subject",
+      "name": "kdeplot",
+      "entity_type": "Document",
+      "source_doc_id": "seaborn_doc_docstrings_kdeplot",
+      "evidence": "sns.kdeplot(data=tips, x=\"total_bill\")"
+    },
+    {
+      "mention_id": "t19:object",
+      "triple_id": "t19",
+      "role": "object",
+      "name": "kdeplot",
+      "entity_type": "ApiElement",
+      "source_doc_id": "seaborn_doc_docstrings_kdeplot",
+      "evidence": "sns.kdeplot(data=tips, x=\"total_bill\")"
+    },
+    {
+      "mention_id": "t20:subject",
+      "triple_id": "t20",
+      "role": "subject",
+      "name": "v0.12.1 (October 2022)",
+      "entity_type": "Document",
+      "source_doc_id": "seaborn_doc_whatsnew_v0_12_1",
+      "evidence": "- |Fix| Fixed a regression in kdeplot where passing `cmap` for an unfilled bivariate plot would raise an exception (3065)."
+    },
+    {
+      "mention_id": "t20:object",
+      "triple_id": "t20",
+      "role": "object",
+      "name": "Fixed a regression in kdeplot where passing cmap for an unfilled bivariate plot would raise an exception (3065).",
+      "entity_type": "Change",
+      "source_doc_id": "seaborn_doc_whatsnew_v0_12_1",
+      "evidence": "- |Fix| Fixed a regression in kdeplot where passing `cmap` for an unfilled bivariate plot would raise an exception (3065)."
+    },
+    {
+      "mention_id": "t21:subject",
+      "triple_id": "t21",
+      "role": "subject",
+      "name": "Fixed a regression in kdeplot where passing cmap for an unfilled bivariate plot would raise an exception (3065).",
+      "entity_type": "Change",
+      "source_doc_id": "seaborn_doc_whatsnew_v0_12_1",
+      "evidence": "- |Fix| Fixed a regression in kdeplot where passing `cmap` for an unfilled bivariate plot would raise an exception (3065)."
+    },
+    {
+      "mention_id": "t21:object",
+      "triple_id": "t21",
+      "role": "object",
+      "name": "kdeplot",
+      "entity_type": "ApiElement",
+      "source_doc_id": "seaborn_doc_whatsnew_v0_12_1",
+      "evidence": "- |Fix| Fixed a regression in kdeplot where passing `cmap` for an unfilled bivariate plot would raise an exception (3065)."
+    },
+    {
+      "mention_id": "t22:subject",
+      "triple_id": "t22",
+      "role": "subject",
+      "name": "Fixed a regression in kdeplot where passing cmap for an unfilled bivariate plot would raise an exception (3065).",
+      "entity_type": "Change",
+      "source_doc_id": "seaborn_doc_whatsnew_v0_12_1",
+      "evidence": "- |Fix| Fixed a regression in kdeplot where passing `cmap` for an unfilled bivariate plot would raise an exception (3065)."
+    },
+    {
+      "mention_id": "t22:object",
+      "triple_id": "t22",
+      "role": "object",
+      "name": "3065",
+      "entity_type": "Issue",
+      "source_doc_id": "seaborn_doc_whatsnew_v0_12_1",
+      "evidence": "- |Fix| Fixed a regression in kdeplot where passing `cmap` for an unfilled bivariate plot would raise an exception (3065)."
+    }
+  ],
+  "decisions": [
+    {
+      "left_id": "t09:subject",
+      "right_id": "t10:subject",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다.",
+      "right_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다."
+    },
+    {
+      "left_id": "t09:subject",
+      "right_id": "t11:subject",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다.",
+      "right_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다."
+    },
+    {
+      "left_id": "t09:subject",
+      "right_id": "t12:subject",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다.",
+      "right_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다."
+    },
+    {
+      "left_id": "t09:subject",
+      "right_id": "t13:subject",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다.",
+      "right_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다."
+    },
+    {
+      "left_id": "t09:subject",
+      "right_id": "t14:subject",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다.",
+      "right_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다."
+    },
+    {
+      "left_id": "t09:subject",
+      "right_id": "t15:subject",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다.",
+      "right_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다."
+    },
+    {
+      "left_id": "t09:subject",
+      "right_id": "t16:subject",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다.",
+      "right_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다."
+    },
+    {
+      "left_id": "t10:object",
+      "right_id": "t19:object",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "출처의 import seaborn as sns와 근거의 sns.kdeplot 호출·참조를 확인했습니다. kdeplot은 seaborn.kdeplot을 가리킵니다. API 이름의 대소문자는 보존합니다.",
+      "right_reason": "출처의 import seaborn as sns와 근거의 sns.kdeplot 호출·참조를 확인했습니다. kdeplot은 seaborn.kdeplot을 가리킵니다. API 이름의 대소문자는 보존합니다."
+    },
+    {
+      "left_id": "t10:object",
+      "right_id": "t21:object",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "출처의 import seaborn as sns와 근거의 sns.kdeplot 호출·참조를 확인했습니다. kdeplot은 seaborn.kdeplot을 가리킵니다. API 이름의 대소문자는 보존합니다.",
+      "right_reason": "seaborn의 변경 문서가 kdeplot의 cmap 오류 수정을 명시합니다. 매뉴얼의 seaborn.kdeplot과 같은 API입니다."
+    },
+    {
+      "left_id": "t12:object",
+      "right_id": "t17:object",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "출처의 import seaborn as sns와 근거의 sns.scatterplot 호출·참조를 확인했습니다. scatterplot은 seaborn.scatterplot을 가리킵니다. API 이름의 대소문자는 보존합니다.",
+      "right_reason": "출처의 import seaborn as sns와 근거의 sns.scatterplot 호출·참조를 확인했습니다. scatterplot은 seaborn.scatterplot을 가리킵니다. API 이름의 대소문자는 보존합니다."
+    },
+    {
+      "left_id": "t13:object",
+      "right_id": "t18:object",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "출처의 import seaborn as sns와 근거의 sns.relplot 호출·참조를 확인했습니다. relplot은 seaborn.relplot을 가리킵니다. API 이름의 대소문자는 보존합니다.",
+      "right_reason": "출처의 import seaborn as sns와 근거의 sns.relplot 호출·참조를 확인했습니다. relplot은 seaborn.relplot을 가리킵니다. API 이름의 대소문자는 보존합니다."
+    },
+    {
+      "left_id": "t17:subject",
+      "right_id": "t18:subject",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다.",
+      "right_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다."
+    },
+    {
+      "left_id": "t20:object",
+      "right_id": "t21:subject",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "같은 seaborn v0.12.1 문서의 같은 kdeplot/cmap 오류 수정 항목입니다. 주어·목적어 역할이 달라도 같은 변경을 가리킵니다.",
+      "right_reason": "같은 seaborn v0.12.1 문서의 같은 kdeplot/cmap 오류 수정 항목입니다. 주어·목적어 역할이 달라도 같은 변경을 가리킵니다."
+    },
+    {
+      "left_id": "t20:object",
+      "right_id": "t22:subject",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "같은 seaborn v0.12.1 문서의 같은 kdeplot/cmap 오류 수정 항목입니다. 주어·목적어 역할이 달라도 같은 변경을 가리킵니다.",
+      "right_reason": "같은 seaborn v0.12.1 문서의 같은 kdeplot/cmap 오류 수정 항목입니다. 주어·목적어 역할이 달라도 같은 변경을 가리킵니다."
+    }
+  ]
+}
