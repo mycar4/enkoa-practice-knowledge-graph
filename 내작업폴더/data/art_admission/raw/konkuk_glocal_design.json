@@ -1,170 +1,198 @@
 [
-{
-  "university": "건국대학교",
-  "campus": "GLOCAL",
-  "department": "디자인조형자유전공학부",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 27,
-    "ratio": "일괄합산: 실기 100%",
-    "is_staged": false,
-    "school_record_status": "not_applicable",
-    "school_record_status_note": "실기우수자전형(디자인대학)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 p.36, 학생부 반영은 스포츠건강학과·골프산업학과 등 다른 전형에만 적용됨을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 100,
-    "exam_type_name": "택1: 기초디자인, 발상과표현, 상황표현, 만화, 인물수채화",
-    "allowed_materials": [],
-    "paper_size": "켄트지 3절(기초디자인/인물수채화) 또는 켄트지 4절(발상과표현/상황표현/만화)",
-    "time_limit_minutes": 240,
-    "exam_date": "2026-11-07",
-    "result_date": null,
-    "source_url": "https://enter.kku.ac.kr/upload_data/mojib/20260602112619_68.pdf",
-    "source_page": 36
+  {
+    "university": "건국대학교",
+    "campus": "GLOCAL",
+    "department": "디자인조형자유전공학부",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 27,
+      "ratio": "일괄합산: 실기 100%",
+      "is_staged": false,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "실기우수자전형(디자인대학)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 p.36, 학생부 반영은 스포츠건강학과·골프산업학과 등 다른 전형에만 적용됨을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 100,
+      "exam_type_name": "택1: 기초디자인, 발상과표현, 상황표현, 만화, 인물수채화",
+      "allowed_materials": [],
+      "paper_size": "켄트지 3절(기초디자인/인물수채화) 또는 켄트지 4절(발상과표현/상황표현/만화)",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-11-07",
+      "result_date": "2026-12-17",
+      "source_url": "https://enter.kku.ac.kr/upload_data/mojib/20260602112619_68.pdf",
+      "source_page": 36,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      }
+    }
+  },
+  {
+    "university": "건국대학교",
+    "campus": "GLOCAL",
+    "department": "산업디자인학과",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 13,
+      "ratio": "일괄합산: 실기 100%",
+      "is_staged": false,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "실기우수자전형(디자인대학)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 p.36, 학생부 반영은 스포츠건강학과·골프산업학과 등 다른 전형에만 적용됨을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 100,
+      "exam_type_name": "택1: 발상과표현, 기초디자인",
+      "allowed_materials": [],
+      "paper_size": "켄트지 4절(발상과표현) 또는 켄트지 3절(기초디자인)",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-11-08",
+      "result_date": "2026-12-17",
+      "source_url": "https://enter.kku.ac.kr/upload_data/mojib/20260602112619_68.pdf",
+      "source_page": 36,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      }
+    }
+  },
+  {
+    "university": "건국대학교",
+    "campus": "GLOCAL",
+    "department": "실내디자인학과",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 13,
+      "ratio": "일괄합산: 실기 100%",
+      "is_staged": false,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "실기우수자전형(디자인대학)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 p.36, 학생부 반영은 스포츠건강학과·골프산업학과 등 다른 전형에만 적용됨을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 100,
+      "exam_type_name": "택1: 발상과표현, 기초디자인",
+      "allowed_materials": [],
+      "paper_size": "켄트지 4절(발상과표현) 또는 켄트지 3절(기초디자인)",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-11-08",
+      "result_date": "2026-12-17",
+      "source_url": "https://enter.kku.ac.kr/upload_data/mojib/20260602112619_68.pdf",
+      "source_page": 36,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      }
+    }
+  },
+  {
+    "university": "건국대학교",
+    "campus": "GLOCAL",
+    "department": "패션디자인학과",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 13,
+      "ratio": "일괄합산: 실기 100%",
+      "is_staged": false,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "실기우수자전형(디자인대학)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 p.36, 학생부 반영은 스포츠건강학과·골프산업학과 등 다른 전형에만 적용됨을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 100,
+      "exam_type_name": "택1: 발상과표현, 기초디자인",
+      "allowed_materials": [],
+      "paper_size": "켄트지 4절(발상과표현) 또는 켄트지 3절(기초디자인)",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-11-08",
+      "result_date": "2026-12-17",
+      "source_url": "https://enter.kku.ac.kr/upload_data/mojib/20260602112619_68.pdf",
+      "source_page": 36,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      }
+    }
+  },
+  {
+    "university": "건국대학교",
+    "campus": "GLOCAL",
+    "department": "시각영상디자인학과",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 25,
+      "ratio": "일괄합산: 실기 100%",
+      "is_staged": false,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "실기우수자전형(디자인대학)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 p.36, 학생부 반영은 스포츠건강학과·골프산업학과 등 다른 전형에만 적용됨을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 100,
+      "exam_type_name": "택1: 발상과표현, 상황표현, 기초디자인",
+      "allowed_materials": [],
+      "paper_size": "켄트지 4절(발상과표현/상황표현) 또는 켄트지 3절(기초디자인)",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-11-08",
+      "result_date": "2026-12-17",
+      "source_url": "https://enter.kku.ac.kr/upload_data/mojib/20260602112619_68.pdf",
+      "source_page": 36,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      }
+    }
+  },
+  {
+    "university": "건국대학교",
+    "campus": "GLOCAL",
+    "department": "미디어콘텐츠학과",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 13,
+      "ratio": "일괄합산: 실기 100%",
+      "is_staged": false,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "실기우수자전형(디자인대학)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 p.36, 학생부 반영은 스포츠건강학과·골프산업학과 등 다른 전형에만 적용됨을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 100,
+      "exam_type_name": "택1: 발상과표현, 만화, 기초디자인",
+      "allowed_materials": [],
+      "paper_size": "켄트지 4절(발상과표현/만화) 또는 켄트지 3절(기초디자인)",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-11-08",
+      "result_date": "2026-12-17",
+      "source_url": "https://enter.kku.ac.kr/upload_data/mojib/20260602112619_68.pdf",
+      "source_page": 36,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      }
+    }
+  },
+  {
+    "university": "건국대학교",
+    "campus": "GLOCAL",
+    "department": "조형예술학과",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 27,
+      "ratio": "일괄합산: 실기 100%",
+      "is_staged": false,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "실기우수자전형(디자인대학)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 p.36, 학생부 반영은 스포츠건강학과·골프산업학과 등 다른 전형에만 적용됨을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 100,
+      "exam_type_name": "택1: 인물수채화, 만화, 기초디자인",
+      "allowed_materials": [],
+      "paper_size": "켄트지 3절",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-11-07",
+      "result_date": "2026-12-17",
+      "source_url": "https://enter.kku.ac.kr/upload_data/mojib/20260602112619_68.pdf",
+      "source_page": 36,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      }
+    }
   }
-},
-{
-  "university": "건국대학교",
-  "campus": "GLOCAL",
-  "department": "산업디자인학과",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 13,
-    "ratio": "일괄합산: 실기 100%",
-    "is_staged": false,
-    "school_record_status": "not_applicable",
-    "school_record_status_note": "실기우수자전형(디자인대학)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 p.36, 학생부 반영은 스포츠건강학과·골프산업학과 등 다른 전형에만 적용됨을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 100,
-    "exam_type_name": "택1: 발상과표현, 기초디자인",
-    "allowed_materials": [],
-    "paper_size": "켄트지 4절(발상과표현) 또는 켄트지 3절(기초디자인)",
-    "time_limit_minutes": 240,
-    "exam_date": "2026-11-08",
-    "result_date": null,
-    "source_url": "https://enter.kku.ac.kr/upload_data/mojib/20260602112619_68.pdf",
-    "source_page": 36
-  }
-},
-{
-  "university": "건국대학교",
-  "campus": "GLOCAL",
-  "department": "실내디자인학과",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 13,
-    "ratio": "일괄합산: 실기 100%",
-    "is_staged": false,
-    "school_record_status": "not_applicable",
-    "school_record_status_note": "실기우수자전형(디자인대학)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 p.36, 학생부 반영은 스포츠건강학과·골프산업학과 등 다른 전형에만 적용됨을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 100,
-    "exam_type_name": "택1: 발상과표현, 기초디자인",
-    "allowed_materials": [],
-    "paper_size": "켄트지 4절(발상과표현) 또는 켄트지 3절(기초디자인)",
-    "time_limit_minutes": 240,
-    "exam_date": "2026-11-08",
-    "result_date": null,
-    "source_url": "https://enter.kku.ac.kr/upload_data/mojib/20260602112619_68.pdf",
-    "source_page": 36
-  }
-},
-{
-  "university": "건국대학교",
-  "campus": "GLOCAL",
-  "department": "패션디자인학과",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 13,
-    "ratio": "일괄합산: 실기 100%",
-    "is_staged": false,
-    "school_record_status": "not_applicable",
-    "school_record_status_note": "실기우수자전형(디자인대학)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 p.36, 학생부 반영은 스포츠건강학과·골프산업학과 등 다른 전형에만 적용됨을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 100,
-    "exam_type_name": "택1: 발상과표현, 기초디자인",
-    "allowed_materials": [],
-    "paper_size": "켄트지 4절(발상과표현) 또는 켄트지 3절(기초디자인)",
-    "time_limit_minutes": 240,
-    "exam_date": "2026-11-08",
-    "result_date": null,
-    "source_url": "https://enter.kku.ac.kr/upload_data/mojib/20260602112619_68.pdf",
-    "source_page": 36
-  }
-},
-{
-  "university": "건국대학교",
-  "campus": "GLOCAL",
-  "department": "시각영상디자인학과",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 25,
-    "ratio": "일괄합산: 실기 100%",
-    "is_staged": false,
-    "school_record_status": "not_applicable",
-    "school_record_status_note": "실기우수자전형(디자인대학)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 p.36, 학생부 반영은 스포츠건강학과·골프산업학과 등 다른 전형에만 적용됨을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 100,
-    "exam_type_name": "택1: 발상과표현, 상황표현, 기초디자인",
-    "allowed_materials": [],
-    "paper_size": "켄트지 4절(발상과표현/상황표현) 또는 켄트지 3절(기초디자인)",
-    "time_limit_minutes": 240,
-    "exam_date": "2026-11-08",
-    "result_date": null,
-    "source_url": "https://enter.kku.ac.kr/upload_data/mojib/20260602112619_68.pdf",
-    "source_page": 36
-  }
-},
-{
-  "university": "건국대학교",
-  "campus": "GLOCAL",
-  "department": "미디어콘텐츠학과",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 13,
-    "ratio": "일괄합산: 실기 100%",
-    "is_staged": false,
-    "school_record_status": "not_applicable",
-    "school_record_status_note": "실기우수자전형(디자인대학)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 p.36, 학생부 반영은 스포츠건강학과·골프산업학과 등 다른 전형에만 적용됨을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 100,
-    "exam_type_name": "택1: 발상과표현, 만화, 기초디자인",
-    "allowed_materials": [],
-    "paper_size": "켄트지 4절(발상과표현/만화) 또는 켄트지 3절(기초디자인)",
-    "time_limit_minutes": 240,
-    "exam_date": "2026-11-08",
-    "result_date": null,
-    "source_url": "https://enter.kku.ac.kr/upload_data/mojib/20260602112619_68.pdf",
-    "source_page": 36
-  }
-},
-{
-  "university": "건국대학교",
-  "campus": "GLOCAL",
-  "department": "조형예술학과",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 27,
-    "ratio": "일괄합산: 실기 100%",
-    "is_staged": false,
-    "school_record_status": "not_applicable",
-    "school_record_status_note": "실기우수자전형(디자인대학)은 실기 100% 일괄합산 전형으로, 학생부 반영교과 자체가 존재하지 않음(2027 모집요강 p.36, 학생부 반영은 스포츠건강학과·골프산업학과 등 다른 전형에만 적용됨을 확인). 학생부 환산 점수를 계산할 수 없습니다.",
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 100,
-    "exam_type_name": "택1: 인물수채화, 만화, 기초디자인",
-    "allowed_materials": [],
-    "paper_size": "켄트지 3절",
-    "time_limit_minutes": 240,
-    "exam_date": "2026-11-07",
-    "result_date": null,
-    "source_url": "https://enter.kku.ac.kr/upload_data/mojib/20260602112619_68.pdf",
-    "source_page": 36
-  }
-}
 ]

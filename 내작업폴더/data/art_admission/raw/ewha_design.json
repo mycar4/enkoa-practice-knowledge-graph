@@ -17,8 +17,12 @@
     "allowed_materials": [],
     "paper_size": null,
     "time_limit_minutes": null,
-    "exam_date": null,
-    "result_date": null,
+    "exam_date": "면접고사 2026-11-21(1단계 합격자 발표 2026-11-12)",
+    "result_date": "2026-12-17",
+    "application_period": {
+      "start": "2026-09-08",
+      "end": "2026-09-10"
+    },
     "source_url": "https://admission.ewha.ac.kr/upload/GUIDES/20260602125244F7AFE4.pdf",
     "source_page": 35,
     "stages": [

@@ -16,8 +16,8 @@
       "allowed_materials": [],
       "paper_size": null,
       "time_limit_minutes": null,
-      "exam_date": null,
-      "result_date": null,
+      "exam_date": "2026-10-08~2026-10-26 (실기우수자/공연예술대학 외 - 모집단위별 세부일정은 원서접수 전 별도 공지)",
+      "result_date": "2026-11-17",
       "school_record_rule": {
         "mode": "subject_group_weighted",
         "subject_groups": {
@@ -50,7 +50,11 @@
       },
       "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
       "source_page": 20,
-      "gender_restriction": "female_only"
+      "gender_restriction": "female_only",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      }
     },
     "estimates": {
       "cutoff_grade_estimate": null,
@@ -85,8 +89,8 @@
       "allowed_materials": [],
       "paper_size": null,
       "time_limit_minutes": null,
-      "exam_date": null,
-      "result_date": null,
+      "exam_date": "2026-10-08~2026-10-26 (실기우수자/공연예술대학 외 - 모집단위별 세부일정은 원서접수 전 별도 공지)",
+      "result_date": "2026-11-17",
       "school_record_rule": {
         "mode": "subject_group_weighted",
         "subject_groups": {
@@ -119,7 +123,11 @@
       },
       "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
       "source_page": 20,
-      "gender_restriction": "female_only"
+      "gender_restriction": "female_only",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      }
     },
     "estimates": {
       "cutoff_grade_estimate": null,
@@ -154,8 +162,8 @@
       "allowed_materials": [],
       "paper_size": null,
       "time_limit_minutes": null,
-      "exam_date": null,
-      "result_date": null,
+      "exam_date": "2026-10-08~2026-10-26 (실기우수자/공연예술대학 외 - 모집단위별 세부일정은 원서접수 전 별도 공지)",
+      "result_date": "2026-11-17",
       "school_record_rule": {
         "mode": "subject_group_weighted",
         "subject_groups": {
@@ -188,7 +196,11 @@
       },
       "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
       "source_page": 20,
-      "gender_restriction": "female_only"
+      "gender_restriction": "female_only",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      }
     },
     "estimates": {
       "cutoff_grade_estimate": null,
@@ -223,8 +235,8 @@
       "allowed_materials": [],
       "paper_size": null,
       "time_limit_minutes": null,
-      "exam_date": null,
-      "result_date": null,
+      "exam_date": "2026-10-08~2026-10-26 (실기우수자/공연예술대학 외 - 모집단위별 세부일정은 원서접수 전 별도 공지)",
+      "result_date": "2026-11-17",
       "school_record_rule": {
         "mode": "subject_group_weighted",
         "subject_groups": {
@@ -257,7 +269,11 @@
       },
       "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
       "source_page": 20,
-      "gender_restriction": "female_only"
+      "gender_restriction": "female_only",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      }
     },
     "estimates": {
       "cutoff_grade_estimate": null,
@@ -292,8 +308,8 @@
       "allowed_materials": [],
       "paper_size": null,
       "time_limit_minutes": null,
-      "exam_date": null,
-      "result_date": null,
+      "exam_date": "2026-10-08~2026-10-26 (실기우수자/공연예술대학 외 - 모집단위별 세부일정은 원서접수 전 별도 공지)",
+      "result_date": "2026-11-17",
       "school_record_rule": {
         "mode": "subject_group_weighted",
         "subject_groups": {
@@ -326,7 +342,11 @@
       },
       "source_url": "https://ipsi.dongduk.ac.kr/afile/fileDownload/sYrmn",
       "source_page": 20,
-      "gender_restriction": "female_only"
+      "gender_restriction": "female_only",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      }
     },
     "estimates": {
       "cutoff_grade_estimate": null,

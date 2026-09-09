@@ -16,12 +16,24 @@
     "paper_size": null,
     "time_limit_minutes": null,
     "exam_date": "2026-10-24",
-    "result_date": null,
+    "result_date": "2026-11-13",
     "source_url": "https://goerica.hanyang.ac.kr/upload/BBS0061/20260907093813DY9RUL.PDF",
     "source_page": 81,
     "stages": [
-      {"description": "1단계 학생부 종합평가", "ratio_desc": "학생부 종합평가 100%", "multiplier": 10},
-      {"description": "2단계 실기", "ratio_desc": "실기 80% + 1단계 성적 20%", "multiplier": null}
-    ]
+      {
+        "description": "1단계 학생부 종합평가",
+        "ratio_desc": "학생부 종합평가 100%",
+        "multiplier": 10
+      },
+      {
+        "description": "2단계 실기",
+        "ratio_desc": "실기 80% + 1단계 성적 20%",
+        "multiplier": null
+      }
+    ],
+    "application_period": {
+      "start": "2026-09-08",
+      "end": "2026-09-11"
+    }
   }
 }

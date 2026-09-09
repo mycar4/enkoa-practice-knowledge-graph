@@ -16,8 +16,8 @@
       "allowed_materials": [],
       "paper_size": null,
       "time_limit_minutes": null,
-      "exam_date": null,
-      "result_date": null,
+      "exam_date": "2026-10-03~2026-10-05 (지원자 수에 따라 변경 가능)",
+      "result_date": "2026-11-06",
       "school_record_rule": {
         "mode": "subject_group_weighted",
         "top_k_groups": {
@@ -46,7 +46,11 @@
         "rule_source_page": "20-21"
       },
       "source_url": "https://ipsi.suwon.ac.kr/upload_data/guide/1787878393_6045.pdf",
-      "source_page": 45
+      "source_page": 45,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      }
     },
     "estimates": {
       "cutoff_grade_estimate": 5.9,
@@ -81,8 +85,8 @@
       "allowed_materials": [],
       "paper_size": null,
       "time_limit_minutes": null,
-      "exam_date": null,
-      "result_date": null,
+      "exam_date": "2026-10-03~2026-10-05 (지원자 수에 따라 변경 가능)",
+      "result_date": "2026-11-06",
       "school_record_rule": {
         "mode": "subject_group_weighted",
         "top_k_groups": {
@@ -111,7 +115,11 @@
         "rule_source_page": "20-21"
       },
       "source_url": "https://ipsi.suwon.ac.kr/upload_data/guide/1787878393_6045.pdf",
-      "source_page": 45
+      "source_page": 45,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      }
     },
     "estimates": {
       "cutoff_grade_estimate": 6.0,
@@ -146,8 +154,8 @@
       "allowed_materials": [],
       "paper_size": null,
       "time_limit_minutes": null,
-      "exam_date": null,
-      "result_date": null,
+      "exam_date": "2026-10-03~2026-10-05 (지원자 수에 따라 변경 가능)",
+      "result_date": "2026-11-06",
       "school_record_rule": {
         "mode": "subject_group_weighted",
         "top_k_groups": {
@@ -176,7 +184,11 @@
         "rule_source_page": "20-21"
       },
       "source_url": "https://ipsi.suwon.ac.kr/upload_data/guide/1787878393_6045.pdf",
-      "source_page": 45
+      "source_page": 45,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      }
     },
     "estimates": {
       "cutoff_grade_estimate": 5.9,
@@ -211,8 +223,8 @@
       "allowed_materials": [],
       "paper_size": null,
       "time_limit_minutes": null,
-      "exam_date": null,
-      "result_date": null,
+      "exam_date": "2026-10-03~2026-10-05 (지원자 수에 따라 변경 가능)",
+      "result_date": "2026-11-06",
       "school_record_rule": {
         "mode": "subject_group_weighted",
         "top_k_groups": {
@@ -241,7 +253,11 @@
         "rule_source_page": "20-21"
       },
       "source_url": "https://ipsi.suwon.ac.kr/upload_data/guide/1787878393_6045.pdf",
-      "source_page": 45
+      "source_page": 45,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      }
     },
     "estimates": {
       "cutoff_grade_estimate": 5.9,

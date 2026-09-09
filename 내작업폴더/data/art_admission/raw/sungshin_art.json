@@ -21,7 +21,7 @@
         "end": "2026-09-15"
       },
       "exam_date": "2026-10-17",
-      "result_date": null,
+      "result_date": "2026-11-13",
       "school_record_rule": {
         "mode": "choose_max_credit_subject",
         "fixed_subjects": [
@@ -106,7 +106,7 @@
         "end": "2026-09-15"
       },
       "exam_date": "2026-10-17",
-      "result_date": null,
+      "result_date": "2026-11-13",
       "school_record_rule": {
         "mode": "choose_max_credit_subject",
         "fixed_subjects": [
@@ -182,7 +182,7 @@
         "end": "2026-09-15"
       },
       "exam_date": "2026-10-17",
-      "result_date": null,
+      "result_date": "2026-11-13",
       "school_record_rule": {
         "mode": "choose_max_credit_subject",
         "fixed_subjects": [
@@ -258,7 +258,7 @@
         "end": "2026-09-15"
       },
       "exam_date": "2026-10-11",
-      "result_date": null,
+      "result_date": "2026-11-13",
       "school_record_rule": {
         "mode": "choose_max_credit_subject",
         "fixed_subjects": [
@@ -334,7 +334,7 @@
         "end": "2026-09-15"
       },
       "exam_date": "2026-10-10",
-      "result_date": null,
+      "result_date": "2026-11-13",
       "school_record_rule": {
         "mode": "choose_max_credit_subject",
         "fixed_subjects": [

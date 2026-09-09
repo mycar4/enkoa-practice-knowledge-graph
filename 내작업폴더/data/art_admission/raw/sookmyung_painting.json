@@ -26,7 +26,7 @@
       "paper_size": "화선지 2/3지 또는 화선지 반절",
       "time_limit_minutes": 300,
       "exam_date": "2026-10-18",
-      "result_date": null,
+      "result_date": "2026-12-18",
       "school_record_rule": {
         "mode": "common_and_career_split_scaled",
         "subjects": [
@@ -76,7 +76,11 @@
           "multiplier": null
         }
       ],
-      "gender_restriction": "female_only"
+      "gender_restriction": "female_only",
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      }
     },
     "estimates": {
       "cutoff_grade_estimate": 4.9,
@@ -112,7 +116,7 @@
       "paper_size": "켄트지 2절",
       "time_limit_minutes": 300,
       "exam_date": "2026-10-18",
-      "result_date": null,
+      "result_date": "2026-12-18",
       "school_record_rule": {
         "mode": "common_and_career_split_scaled",
         "subjects": [
@@ -162,7 +166,11 @@
           "multiplier": null
         }
       ],
-      "gender_restriction": "female_only"
+      "gender_restriction": "female_only",
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      }
     },
     "estimates": {
       "cutoff_grade_estimate": 3.07,
