@@ -1,0 +1,353 @@
+{
+  "description": "실제 저장된 LLM 추출 결과에서 원문이 관계를 뒷받침하는 22행을 변경 없이 선별했습니다.",
+  "source_files": [
+    {
+      "path": "단위프로젝트2_개편/version_e_pylibs/outputs/triples.jsonl",
+      "sha256": "b43d929135953cfe12dbd2e9c232e5197cdd04eda1f1b734a1e3e67e78e734a7"
+    },
+    {
+      "path": "단위프로젝트2_개편/version_e_pylibs/outputs/corpus.jsonl",
+      "sha256": "22f2e6e8c82cfce1ec3939c2f672d22b4c6127d3131973003a134fd23c0abd70"
+    }
+  ],
+  "selection": [
+    {
+      "source_line": 92,
+      "doc_id": "seaborn_doc_docstrings_rugplot",
+      "source_triple_indices": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "source_line": 99,
+      "doc_id": "seaborn_doc_docstrings_jointplot",
+      "source_triple_indices": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "source_line": 84,
+      "doc_id": "seaborn_doc_tutorial_function_overview",
+      "source_triple_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    {
+      "source_line": 82,
+      "doc_id": "seaborn_doc_docstrings_scatterplot",
+      "source_triple_indices": [
+        1,
+        2
+      ]
+    },
+    {
+      "source_line": 101,
+      "doc_id": "seaborn_doc_docstrings_kdeplot",
+      "source_triple_indices": [
+        2
+      ]
+    },
+    {
+      "source_line": 579,
+      "doc_id": "seaborn_doc_whatsnew_v0_12_1",
+      "source_triple_indices": [
+        42,
+        43,
+        44
+      ]
+    }
+  ],
+  "selection_reason": "이름이 같고 타입이 다른 문서와 API, sns 별칭, 여러 문서에 반복하는 API, 변경이 주어와 목적어로 나오는 실제 관계를 학습할 수 있습니다.",
+  "extraction_provenance": {
+    "extractor_source": "단위프로젝트2_개편/version_e_pylibs/solution/kg/extract.py",
+    "observed_code_path": "extractor.invoke → model_dump → check_signature → outputs/triples.jsonl",
+    "status": "저장된 추출 결과와 이를 생성하는 코드 경로를 확인했습니다.",
+    "runtime_model_verified": false,
+    "limitations": "원본 JSONL에 실행 모델명, 호출 시각, 응답 ID가 없습니다. 정확한 모델과 실행 시각, 원 API 응답 전문은 확정할 수 없습니다.",
+    "new_model_or_network_calls": false
+  },
+  "original_optional_fields": [
+    {
+      "triple_id": "t01",
+      "change_type": null
+    },
+    {
+      "triple_id": "t02",
+      "change_type": null
+    },
+    {
+      "triple_id": "t03",
+      "change_type": null
+    },
+    {
+      "triple_id": "t04",
+      "change_type": null
+    },
+    {
+      "triple_id": "t05",
+      "change_type": null
+    },
+    {
+      "triple_id": "t06",
+      "change_type": null
+    },
+    {
+      "triple_id": "t07",
+      "change_type": null
+    },
+    {
+      "triple_id": "t08",
+      "change_type": null
+    },
+    {
+      "triple_id": "t09",
+      "change_type": null
+    },
+    {
+      "triple_id": "t10",
+      "change_type": null
+    },
+    {
+      "triple_id": "t11",
+      "change_type": null
+    },
+    {
+      "triple_id": "t12",
+      "change_type": null
+    },
+    {
+      "triple_id": "t13",
+      "change_type": null
+    },
+    {
+      "triple_id": "t14",
+      "change_type": null
+    },
+    {
+      "triple_id": "t15",
+      "change_type": null
+    },
+    {
+      "triple_id": "t16",
+      "change_type": null
+    },
+    {
+      "triple_id": "t17",
+      "change_type": null
+    },
+    {
+      "triple_id": "t18",
+      "change_type": null
+    },
+    {
+      "triple_id": "t19",
+      "change_type": null
+    },
+    {
+      "triple_id": "t20",
+      "change_type": "fix"
+    },
+    {
+      "triple_id": "t21",
+      "change_type": "fix"
+    },
+    {
+      "triple_id": "t22",
+      "change_type": "fix"
+    }
+  ],
+  "endpoint_rule": "트리플마다 subject와 object의 역할을 나눠 2개 출현을 만듭니다. mention_id는 triple_id + ':' + role입니다. 이는 토큰 위치를 새로 추정한 원문 NER 결과가 아닙니다.",
+  "surface_record_rule": "후보용 22개 표기 레코드는 (entity_type, name)으로 묶습니다. 각 그룹에 속한 모든 endpoint 검토 기록이 같은 ID를 가리키는지 확인했습니다. 새 자료의 Document는 이름만으로 묶지 않고 source_doc_id도 확인해야 합니다.",
+  "identity_note": "standard_id는 이 프로젝트의 안정적인 개체 식별자입니다. api:seaborn.kdeplot은 공식 API의 정규 이름을 반영하지만 외부 기관 발급 표준 ID는 아닙니다.",
+  "alias_policy": "API 별칭은 해당 문서의 import seaborn as sns와 실제 호출·참조를 확인했습니다. 임의의 점 접두사를 제거하거나 API 대소문자를 통일하지 않습니다.",
+  "pre_load_relationship_review": [
+    {
+      "triple_id": "t01",
+      "source_doc_id": "seaborn_doc_docstrings_rugplot",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "제목의 매뉴얼에 목적어 API를 실제로 호출하거나 콜백으로 전달하는 코드가 있습니다."
+    },
+    {
+      "triple_id": "t02",
+      "source_doc_id": "seaborn_doc_docstrings_rugplot",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "제목의 매뉴얼에 목적어 API를 실제로 호출하거나 콜백으로 전달하는 코드가 있습니다."
+    },
+    {
+      "triple_id": "t03",
+      "source_doc_id": "seaborn_doc_docstrings_rugplot",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "제목의 매뉴얼에 목적어 API를 실제로 호출하거나 콜백으로 전달하는 코드가 있습니다."
+    },
+    {
+      "triple_id": "t04",
+      "source_doc_id": "seaborn_doc_docstrings_jointplot",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "제목의 매뉴얼에 목적어 API를 실제로 호출하거나 콜백으로 전달하는 코드가 있습니다."
+    },
+    {
+      "triple_id": "t05",
+      "source_doc_id": "seaborn_doc_docstrings_jointplot",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "제목의 매뉴얼에 목적어 API를 실제로 호출하거나 콜백으로 전달하는 코드가 있습니다."
+    },
+    {
+      "triple_id": "t06",
+      "source_doc_id": "seaborn_doc_docstrings_jointplot",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "제목의 매뉴얼에 목적어 API를 실제로 호출하거나 콜백으로 전달하는 코드가 있습니다."
+    },
+    {
+      "triple_id": "t07",
+      "source_doc_id": "seaborn_doc_docstrings_jointplot",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "제목의 매뉴얼에 목적어 API를 실제로 호출하거나 콜백으로 전달하는 코드가 있습니다."
+    },
+    {
+      "triple_id": "t08",
+      "source_doc_id": "seaborn_doc_docstrings_jointplot",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "제목의 매뉴얼에 목적어 API를 실제로 호출하거나 콜백으로 전달하는 코드가 있습니다."
+    },
+    {
+      "triple_id": "t09",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "제목의 매뉴얼에 목적어 API를 실제로 호출하거나 콜백으로 전달하는 코드가 있습니다."
+    },
+    {
+      "triple_id": "t10",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "제목의 매뉴얼에 목적어 API를 실제로 호출하거나 콜백으로 전달하는 코드가 있습니다."
+    },
+    {
+      "triple_id": "t11",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "제목의 매뉴얼에 목적어 API를 실제로 호출하거나 콜백으로 전달하는 코드가 있습니다."
+    },
+    {
+      "triple_id": "t12",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "제목의 매뉴얼에 목적어 API를 실제로 호출하거나 콜백으로 전달하는 코드가 있습니다."
+    },
+    {
+      "triple_id": "t13",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "제목의 매뉴얼에 목적어 API를 실제로 호출하거나 콜백으로 전달하는 코드가 있습니다."
+    },
+    {
+      "triple_id": "t14",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "제목의 매뉴얼에 목적어 API를 실제로 호출하거나 콜백으로 전달하는 코드가 있습니다."
+    },
+    {
+      "triple_id": "t15",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "제목의 매뉴얼에 목적어 API를 실제로 호출하거나 콜백으로 전달하는 코드가 있습니다."
+    },
+    {
+      "triple_id": "t16",
+      "source_doc_id": "seaborn_doc_tutorial_function_overview",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "제목의 매뉴얼에 목적어 API를 실제로 호출하거나 콜백으로 전달하는 코드가 있습니다."
+    },
+    {
+      "triple_id": "t17",
+      "source_doc_id": "seaborn_doc_docstrings_scatterplot",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "제목의 매뉴얼에 목적어 API를 실제로 호출하거나 콜백으로 전달하는 코드가 있습니다."
+    },
+    {
+      "triple_id": "t18",
+      "source_doc_id": "seaborn_doc_docstrings_scatterplot",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "제목의 매뉴얼에 목적어 API를 실제로 호출하거나 콜백으로 전달하는 코드가 있습니다."
+    },
+    {
+      "triple_id": "t19",
+      "source_doc_id": "seaborn_doc_docstrings_kdeplot",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "제목의 매뉴얼에 목적어 API를 실제로 호출하거나 콜백으로 전달하는 코드가 있습니다."
+    },
+    {
+      "triple_id": "t20",
+      "source_doc_id": "seaborn_doc_whatsnew_v0_12_1",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "해당 릴리스 문서가 이 오류 수정 항목을 포함합니다."
+    },
+    {
+      "triple_id": "t21",
+      "source_doc_id": "seaborn_doc_whatsnew_v0_12_1",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "오류 수정 항목이 영향을 받는 kdeplot API와 cmap 인자를 명시합니다."
+    },
+    {
+      "triple_id": "t22",
+      "source_doc_id": "seaborn_doc_whatsnew_v0_12_1",
+      "decision": "supported",
+      "evidence_exact_in_source": true,
+      "reason": "같은 오류 수정 항목이 3065번 이슈를 명시적으로 참조합니다."
+    }
+  ],
+  "load_note": "검토된 주어 ID와 목적어 ID로 원래 relation을 적재합니다. Document/API, 변경/문서, 이슈/다른 개체를 합치지 않습니다. 관계마다 triple_id, source_doc_id, evidence를 보존합니다.",
+  "gold_note": "GOLD_GROUPS는 원문 검토로 고정한 전체 44 endpoint 분할입니다. 예측·후보·통합 결과를 참조해 골드를 수정하지 않습니다.",
+  "summary": {
+    "documents": 6,
+    "triples": 22,
+    "endpoint_mentions": 44,
+    "typed_surface_records": 22,
+    "canonical_entities": 19,
+    "evidence_exact_in_source": 22,
+    "original_triple_fields_unchanged": 22,
+    "gold_positive_pairs": 61,
+    "relations": {
+      "DEMONSTRATES": 19,
+      "INCLUDES": 1,
+      "AFFECTS": 1,
+      "REFERENCES": 1
+    },
+    "lv1_triples": 8,
+    "lv2_triples": 14,
+    "assignment_sources_disjoint": true
+  }
+}

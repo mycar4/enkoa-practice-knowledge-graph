@@ -1,0 +1,23 @@
+Mode: Built-in image_gen, reference-based edit.
+
+Use case: infographic-diagram. Edit the attached Korean educational diagram, regenerating it cleanly while preserving its white background, navy Korean sans serif typography, pastel blue/amber/green stage grouping, rounded cards, tasteful flat 2D document/database/graph icons and wide 16:9 layout. High resolution, immaculate readable Korean. The important correction is THREE independent candidate methods, including common-neighbor graph Node Similarity, all feeding one candidate union. Redesign spacing to fit comfortably.
+
+Title exact: "ER: 후보 검색부터 확정된 노드 통합까지".
+
+LEFT blue region (about 48% width): heading "후보 선정". Three equal method cards stacked vertically, each with icon, exact bold label and smaller subtitle:
+1 "규칙 / 문자열 유사도" / "이름 · 타입 비교"
+2 "임베딩 후보 검색" / "벡터로 가까운 이름 검색"
+3 "Node Similarity" / "공통 문서 이웃 비교"
+Third icon must show graph nodes sharing document neighbors, not vector database. EACH card sends its own right-pointing connector to one shared small card labeled "후보 합집합" with "UNION". Parallel alternatives, NOT sequential steps. Union card outputs one arrow into matching card. Beneath these, brief label "하나라도 찾은 후보를 모아 중복 제거". Do NOT keep the old common input '이름과 타입' feeding Node Similarity: it requires graph relationships. No fixed cost ranking badges.
+
+CENTER amber region (about 25%): heading "동일 개체 판정". Main white document card exact "원문 확인", subtitle "필요 시 LLM 보조". This card branches downward into two clear pills: gray "다름 / 보류" and green "같음으로 확정". Gray branch stops; green pill sends a clear connector into border of green merge stage to the right. Do not let unresolved candidates go to merge.
+
+RIGHT green region (about 25%): heading "노드 통합". Above one final canonical node show two document icons with exact labels "문서 A" and "문서 B"; two distinct arrows from these documents to ONE final rounded white node card with green circle and exact label "api:seaborn.kdeplot". Under card exact "문서 관계와 근거 보존". Clearly depict two source documents retained with one entity node, NOT two final duplicate entity nodes.
+
+Thin bracket below first TWO stages labeled "교안 01: 후보 선정과 판정"; bracket below third labeled "교안 02: 노드 통합".
+Footer exact bold "유사도는 후보를 찾는 단서이며, 같은 개체라는 확정은 아닙니다."
+Smaller footer exact "비용은 데이터량, 그래프 규모, 모델과 재사용 여부에 따라 달라집니다."
+
+Every connector starts and ends on relevant card/pill/region edges, visible arrowheads, no crossings, no floating arrows or arrows pointing at explanatory text. Keep ample whitespace and equal padded cards; simplify decorative icons as needed for readability. No extra labels, no watermark, no English other than Node Similarity, UNION, LLM, ER, api:seaborn.kdeplot.
+
+FINAL TARGETED REVISION: Keep the three candidate cards, candidate union, title, and middle matching card exactly as in the attached regenerated image. Correct the right stage: the green connector from '같음으로 확정' must NOT point toward 문서 B. Route it horizontally through the bottom corridor into the LEFT EDGE of a new small green-bordered action card at the bottom of the right region, exact label '동일 개체 노드만 통합'. Its arrowhead must touch that action card, which sits below the document/node subdiagram. Immediately beneath the right heading add small subtitle '통합 대상: kdeplot · sns.kdeplot'. The existing document A and document B arrows to canonical entity represent retained graph relationships, not transformation: make them thinner and label each '언급'. Preserve both source documents and ONE canonical node. Place '문서 관계와 근거 보존' as small text below the action card. Keep the original bottom stage brackets and footer. Ensure the word '같음으로 확정' does not overlap the new connector. These changes must make it impossible to read the diagram as merging the documents themselves. All other contents unchanged.

@@ -1,0 +1,18 @@
+Use case: infographic-diagram. Edit the attached educational PNG, replacing its confusing four-step layout with a much clearer BEFORE / AFTER graph comparison for beginner Korean students. Keep white background, polished navy Korean sans-serif typography, blue document nodes and teal function nodes, generous whitespace. Landscape 1536x1024, large readable text. No tiny footnotes or decorative elements.
+Main title EXACT: "같은 함수의 중복 노드를 하나로 통합합니다"
+Subtitle: "LLM이 추출한 kdeplot과 sns.kdeplot을 정리하는 예시"
+Two large panels left and right, connected by a prominent rightward arrow.
+LEFT heading: "통합 전: 함수 노드 2개"
+Graph: blue document rectangle "문서 A" has one rightward arrow labeled "DEMONSTRATES" to an orange function node "kdeplot"; below it, separate blue document rectangle "문서 B" has one rightward arrow labeled "DEMONSTRATES" to a SECOND orange function node "sns.kdeplot". Small evidence tag "근거 A" on first arrow, "근거 B" on second arrow, visually attached to the arrows. There must be exactly TWO distinct function nodes here.
+RIGHT heading: "통합 후: 함수 노드 1개"
+Graph: separate blue document rectangles "문서 A" and "문서 B" at top-left and bottom-left of this panel; each has its OWN directed arrow labeled "DEMONSTRATES" pointing right into the SAME single large teal function node at center-right. Evidence tag "근거 A" stays on arrow A; "근거 B" stays on arrow B. Exactly ONE function node on this side. Inside the single function node place three lines: "seaborn.kdeplot", "표준 ID", "api:seaborn.kdeplot". Below that node a compact label "원래 이름: kdeplot, sns.kdeplot". Do NOT merge the two document nodes or the two relation arrows. Make both incoming arrowheads visibly terminate at the single function node.
+A concise explanation band BELOW the two panels:
+"① 원문에서 같은 함수인지 확인"
+Small literal code example "import seaborn as sns" under it.
+"② 같은 표준 ID로 연결"
+"③ 중복 함수 노드를 하나로 통합"
+Use three compact horizontal items with arrows, no confusing backwards arrow.
+Bottom conclusion in two clear lines:
+"통합하는 것: 같은 함수를 가리키는 노드 2개 → 1개"
+"유지하는 것: 문서 노드 2개와 각 문서의 관계·근거"
+Evidence preservation is SECONDARY to the main merging lesson. Avoid long ambiguous slogan from original. All Korean text exact and legible, no typos or truncated text. The arrow direction always document to function. This is a conceptual example, not literal row IDs from the dataset.

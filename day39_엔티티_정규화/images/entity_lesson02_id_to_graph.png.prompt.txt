@@ -1,0 +1,33 @@
+Mode: Built-in image_gen, reference-based edit.
+
+Use case: infographic-diagram. Improve and regenerate the attached Korean lecture diagram. Preserve its white backdrop, wide 16:9 composition, navy Korean type, blue lesson01 sidebar, green lesson02 region and simple flat icons. Re-layout as necessary for clear semantic flow and legible text. The main correction is that THIS LESSON actually calls an LLM to SELECT AN EXISTING ID from a catalog, then code validates the selection; do not imply LLM invents identifiers or is a general requirement. Also distinguish existing-node consolidation via APOC from ID-based insertion via MERGE. Depict ONE final entity node (one circle), not a three-node cluster. Sharp crisp Hangul, spacious padded cards, no smears or malformed characters. Aim high resolution.
+
+Title exact: "판정 기록에서 표준 ID와 그래프로".
+
+Layout:
+Narrow left blue column about 18% width, top heading "교안 01". One input document card labeled "동일 개체 판정" containing four short rows "같음", "다름", "보류", "이유".
+Remaining 80% under green spanning header "교안 02". Split into middle processing column (about 39% total width) and right storage/result column (about 40% total).
+A shared evaluation bar across bottom of lesson02.
+
+MIDDLE COLUMN: FOUR vertically stacked cards connected downward by attached green arrows:
+1. "같음 쌍 그룹화", subtitle "다름 판정과 충돌하면 보류". A blue elbow connector from lesson01 input card enters this card.
+2. "개체 목록에서 ID 선택", subtitle "그룹 · 원문 · 개체 목록", small prominent pill "이 실습: LLM으로 선택", bottom small text "새 ID를 생성하지 않음". A catalog/document icon, not robot. The previous vague 'LLM 보조' must be replaced by the explicit subtitle above.
+3. "선택 결과 검사", subtitle "출현 누락 · ID · 타입 · 그룹", bottom pill "불확실하거나 충돌하면 보류". A checklist icon. This is code validation; no LLM icon. Ensure a green arrow continues only accepted records to card4, with tiny edge label "확인한 연결".
+4. "주어·목적어에 ID 연결", subtitle "양쪽 ID가 확인된 트리플". Link icon. From card4 green elbow arrow into the left edge of the right top storage container. Source tail must attach directly to card4.
+
+RIGHT COLUMN:
+Top container heading "그래프 저장". Inside TWO clearly separate side-by-side method cards with separate functions, NOT sequential:
+left "기존 노드 통합" / "APOC mergeNodes".
+right "표준 ID로 적재" / "Cypher MERGE".
+Small line across bottom "목적이 다른 두 방법".
+From bottom of this storage container one arrow DOWN to following result container.
+Result container heading "관계와 근거 보존".
+Inside two blue source document cards stacked on left "문서 A", "문서 B"; on right ONE canonical entity card containing ONE green circle, label "같은 개체 노드" and bottom pill "표준 ID".
+Two blue arrows from document A and B respectively into that ONE entity card, labeled "관계·근거 A" and "관계·근거 B". Clear graph relationships, no document merging. Footer inside result box "같은 개체로 확인한 표기를 한 노드로".
+This result container connects downward into evaluation bar.
+
+BOTTOM evaluation bar spanning lesson02 width: small chart icon and "ER 결과 평가"; subtitle "정밀도 · 재현율 · F1 · 오병합".
+
+Typography: all Korean EXACTLY as above; large clear supporting labels too, medium dark navy, use familiar Noto Sans KR style. Preserve periods only as middle dots specified. Flat pastel fills, no glossy gradients or 3D. Consistent shapes and widths; no ornamental filler. Avoid repeating labels not requested. Every arrow connects source edge to destination edge, no floating ends, crossing text, or gray held records feeding merge. Maintain overall simple top-to-bottom processing and left-to-right data transfer. No extra title or footer.
+
+Independent visual review: PASS, text and connections verified.

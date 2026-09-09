@@ -1,0 +1,39 @@
+Mode: Built-in image_gen, reference-based redesign.
+
+Create a new Korean educational concept diagram using the attached diagram only as a style and layout reference. Replace the technical-document/function example entirely with the library example specified below. Clean flat 2D illustration, white background, navy Korean typography, blue people/records, purple occurrence-ID tags, teal book entity, spacious landscape 16:9 layout. Large readable type at 1000px display width. No gradients, watermark, decorative texture, or invented text.
+
+Title exactly: "출현 ID는 자리, 표준 ID는 대상을 구분합니다"
+
+Three columns, left 42%, middle 24%, right 34%. Their headers are:
+LEFT "추출된 트리플 2행"
+MIDDLE "같은 책으로 확인"
+RIGHT "관계와 근거 보존"
+
+LEFT: two rounded record cards stacked vertically. First card:
+row ID badge "d01"
+triple horizontal, clearly separated into subject, relation, object: "민수 → 빌림 → 파이썬 입문"
+Below 민수 a short purple badge "d01:subject".
+Below 파이썬 입문 a short purple badge "d01:object".
+Second card:
+row ID badge "d02"
+triple "지우 → 빌림 → 파이썬 입문서"
+Below 지우 a short purple badge "d02:subject".
+Below 파이썬 입문서 a short purple badge "d02:object".
+Each subject/object tag is immediately beneath its own entity name, not beneath the relation.
+
+MIDDLE: One large teal book identity card:
+"book:B001"
+"김하나의 파이썬 입문 초판"
+Label above this ID card: "표준 ID"
+Exactly TWO purple arrows: one FROM first row's object name/tag to the book card, one FROM second row's object name/tag to the same book card. Neither person's subject tag connects to this book identity. Every arrow attaches to source and target card borders.
+These two occurrence IDs differ, but refer to the same author and same edition, already confirmed by source evidence.
+
+RIGHT: a tiny correct knowledge graph. Two distinct blue person nodes labeled "민수" and "지우" on the left, one teal book node labeled "파이썬 입문 초판" with small ID "book:B001" on the right. A separate arrow labeled "빌림" goes FROM 민수 to the one book. A second separate arrow labeled "빌림" goes FROM 지우 to the SAME book. By the first arrow a small provenance tag "d01 / 근거 1"; by the second "d02 / 근거 2". Do not merge the people, do not reverse relation directions, and do not create two final book nodes.
+
+Bottom: a compact two-column distinction band:
+LEFT "역할 (role)" then "주어 / 목적어"
+RIGHT "타입 (entity_type)" then "Person / Book"
+Final bold footer, exact: "출현 ID가 달라도 같은 대상이면 표준 ID는 같습니다."
+
+Do not include technical-function names, Seaborn, t01, t02, DEMONSTRATES, or '개체 ID'. Use '표준 ID' consistently. Do not add extra sentences or a second table repeating the field definitions. Display d01 and d02 exactly as above, matching the notebook's existing demo triples. The core is separately tracking each subject/object position while linking confirmed identical books to one standard identity and keeping both original borrowing relations.
+

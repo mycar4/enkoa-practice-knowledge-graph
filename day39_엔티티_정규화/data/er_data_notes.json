@@ -1,0 +1,59 @@
+{
+  "source_cache": "scripts/_pmc_cache/pmc_corpus.jsonl",
+  "source_cache_sha256": "4b070cf85ce472fbe54ba0abfeaeb3bb383341f7a2b1718fff4cd6937a666bc5",
+  "text_construction": "캐시의 abstract + 두 번의 줄바꿈 + body",
+  "corrections": {
+    "f02": {
+      "name": "glutathione (GSH)",
+      "pmcid": "PMC13495479",
+      "reason": "기존 Glutathione은 Glutathione synthetase의 일부입니다. 글루타티온을 직접 가리키는 다른 논문의 표기로 교체했습니다."
+    },
+    "l1_13": {
+      "name": "adenosine",
+      "pmcid": "PMC13493376",
+      "reason": "기존 출처의 adenosine은 adenosine triphosphate의 일부입니다. 아데노신을 직접 가리키는 다른 논문으로 출처를 교정했습니다."
+    }
+  },
+  "excluded": [
+    {
+      "source_file": "kyoan_mentions.jsonl",
+      "name": "Coumadin",
+      "reason": "처방 기록을 재현한 행이며 지정 논문의 원문 표기가 아니므로 새 논문 입력에서 제외했습니다."
+    }
+  ],
+  "related_gene": "기존 gene 필드는 옮기지 않았습니다. 이 자료는 개체 표기와 원문만 보존하며 약물과 유전자 사이의 관계를 새로 생성하지 않습니다.",
+  "duplicate_mentions": "p13과 p14는 같은 원문 문장에 있는 rosuvastatin의 첫 번째와 두 번째 출현입니다. 원문 위치가 다르므로 별도 mention_id를 유지합니다.",
+  "offset_unit": "파이썬 문자열 인덱스입니다. start는 포함하고 end는 포함하지 않습니다.",
+  "summary": {
+    "core": {
+      "mentions": 18,
+      "groups": 11,
+      "gold_positive_pairs": 8,
+      "all_pairs": 153
+    },
+    "followalong": {
+      "mentions": 12,
+      "groups": 11,
+      "gold_positive_pairs": 1,
+      "all_pairs": 66
+    },
+    "lv1": {
+      "mentions": 15,
+      "groups": 10,
+      "gold_positive_pairs": 7,
+      "all_pairs": 105
+    },
+    "lv2": {
+      "mentions": 14,
+      "groups": 9,
+      "gold_positive_pairs": 7,
+      "all_pairs": 91
+    }
+  },
+  "documents": 11,
+  "catalog": {
+    "entities": 37,
+    "aliases": 57,
+    "unmapped_aliases": []
+  }
+}

@@ -40,6 +40,9 @@ dependencies = [
     #   transformers 는 torch 를 필수 의존성으로 걸지 않는다(실측: 5.x 의 requires 에 없다).
     #   빼먹으면 uv sync 는 통과하고 pipeline() 호출에서 "None of PyTorch ... found" 로 죽는다.
     "torch>=2.0",
+    # day39 부록: Wikidata 공개 HTTP API 로 표준 ID 를 조회한다.
+    #   전이 의존으로 딸려 오지만 노트북이 직접 import 하므로 명시한다.
+    "requests>=2.32",
     # day42: 도메인 GraphRAG(Text2Cypher 체인)
     "langchain-neo4j>=0.10",
 ]

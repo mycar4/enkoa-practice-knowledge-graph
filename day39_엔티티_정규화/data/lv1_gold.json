@@ -1,0 +1,60 @@
+{
+ "gold": [
+  [
+   "metoprolol",
+   "Metoprolol"
+  ],
+  [
+   "metoprolol",
+   "metoprolol (350 mg/kg/day)"
+  ],
+  [
+   "oxybutynin",
+   "oxybutynin (27.2 mg/kg/day)"
+  ],
+  [
+   "citalopram",
+   "Citalopram"
+  ],
+  [
+   "citalopram",
+   "citalopram (15 mg/kg/day)"
+  ]
+ ],
+ "trap": [
+  [
+   "adenine",
+   "adenosine"
+  ],
+  [
+   "oxybutynin",
+   "oxycodone"
+  ]
+ ],
+ "near": [
+  [
+   "Adenine",
+   "Adenosine"
+  ],
+  [
+   "Streptomycin",
+   "Streptozocin"
+  ],
+  [
+   "Omeprazole",
+   "Esomeprazole"
+  ],
+  [
+   "Simvastatin",
+   "Lovastatin"
+  ],
+  [
+   "Oxybutynin",
+   "Oxycodone"
+  ],
+  [
+   "Adenosine",
+   "Adenosine triphosphate"
+  ]
+ ]
+}

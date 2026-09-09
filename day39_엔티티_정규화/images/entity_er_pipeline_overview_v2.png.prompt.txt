@@ -1,0 +1,38 @@
+Mode: Built-in image_gen, reference-based edit.
+
+Use case: infographic-diagram. Improve the attached Korean educational infographic to a polished professional lecture-slide quality. Preserve its accurate conceptual content and book example, but substantially improve typography, spacing, hierarchy, visual consistency, and scannability. The current image is crowded with huge heavy headings, mixed icon styles, gradients, and small subtitles. Recompose into a calm clean flat design with generous white margins, solid pastel fills, uniform outlines, short exact Korean labels. White background, navy sans serif typography (Noto Sans KR/Pretendard), blue candidate search, amber review, green integration, purple evaluation. High resolution 16:9 landscape. Do not copy damaged pixels; redraw and re-typeset sharply.
+
+MAIN TITLE at top with generous whitespace and moderate weight: "ER: 후보 검색부터 병합 결과 평가까지".
+Three upper panels left-to-right (candidate about 42%, review 25%, integration 33%) and one full-width shallow evaluation band below. Small lesson tags "교안 01" above first two panels, "교안 02" above third and evaluation. Distinct round step numerals with readable concise headings; no giant heavy headings. Exact upper headings: "1 후보 검색", "2 동일 개체 판정", "3 ID 연결과 노드 통합".
+
+PANEL1: subtitle "같은 타입 안에서 비교".
+Three clean horizontal method cards vertically stacked, small simple icons at left:
+"규칙·문자열 비교" / smaller "철자가 비슷한 이름";
+"임베딩 + KNN" / smaller "벡터가 가까운 이름";
+"Node Similarity" / smaller "공통 문서 이웃".
+Each sends an independent blue arrow to ONE shared compact card at right labeled "후보 합집합". Make each source arrow visibly attached to its card; arrows should converge to union card edges without crossing.
+Bottom note "세 방법의 쌍을 모아 중복 제거".
+One arrow from union to review card in panel2.
+
+PANEL2: central card with simple document-check icon, bold "원문·속성 확인", small "필요 시 LLM 보조", short supporting line "책: 저자·판본 대조".
+Two downward branches: gray compact card "다름·보류" / "통합하지 않음"; green compact card "같음으로 확정". Only green card sends elbow connector into panel3 integration action card. No unconfirmed candidates merged.
+
+PANEL3: compact two original-book-name cards side by side:
+"파이썬 입문" / small "김하나 · 1판",
+"파이썬 입문서" / small "김하나 · 1판".
+Each sends an arrow into a single action card "표준 ID 연결 → 노드 통합". Green confirmed branch from panel2 must enter this action card, NOT enter source documents.
+Down arrow from action card to ONE book entity card: book icon, exact ID "book:B001", small "김하나 · 1판".
+Small "문서 A" and "문서 B" cards to the left/right of entity, connected by plain green lines to it (relationships, not transformations).
+Bottom note "원래 관계와 근거 보존".
+
+BOTTOM evaluation band: step heading at left "4 병합 결과 평가", small "골드쌍과 비교". To its right four balanced metric cards with tiny clean icons:
+"정밀도" / "합친 쌍 중 맞는 비율";
+"재현율" / "같은 쌍 중 합친 비율";
+"F1" / "정밀도·재현율의 균형";
+"오병합 쌍 수(FP)" / "다른데 합친 쌍의 수".
+One arrow from bottom edge of panel3 into top edge of evaluation band; do not point at a particular metric.
+Below all panels a short footer exact "후보 검색 → 원문 판정 → 확정한 개체 통합 → 결과 평가".
+
+Design emphasis: all labels must read cleanly when shown at 1000px wide. Large enough font for subtitles, consistent dark navy color, no squeezed or condensed fonts. Shrink icons and generous outer title rather than shrink explanatory text. Do not overpack. Flat solid pastel panel backgrounds and white cards, no gradient/glow/texture/3D, no unnecessary borders, consistent 2D icons. Every Korean syllable must be intact, no typos/white smears/clipping, exact case "Node Similarity", "KNN", "F1", "FP", "book:B001". All paths semantically correct, no crossing lines/text and every connector physically touches its source and destination shapes. Keep all four metrics. Do not add long paragraphs or extra labels.
+
+Independent visual review: PASS, text and connections verified.

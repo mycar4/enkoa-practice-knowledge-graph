@@ -1,0 +1,46 @@
+{
+ "gold": [
+  [
+   "methotrexate",
+   "Methotrexate (MTX)"
+  ],
+  [
+   "methotrexate",
+   "MTX"
+  ],
+  [
+   "Methotrexate (MTX)",
+   "MTX"
+  ],
+  [
+   "hydroxychloroquine",
+   "Hydroxychloroquine (HCQ)"
+  ],
+  [
+   "hydroxychloroquine",
+   "hydroxychloroquine (HCQ)"
+  ],
+  [
+   "Hydroxychloroquine (HCQ)",
+   "hydroxychloroquine (HCQ)"
+  ],
+  [
+   "adenosine",
+   "Adenosine"
+  ]
+ ],
+ "trap": [
+  [
+   "prednisone",
+   "prednisolone"
+  ],
+  [
+   "betamethasone",
+   "dexamethasone"
+  ],
+  [
+   "leflunomide",
+   "methotrexate"
+  ]
+ ]
+}

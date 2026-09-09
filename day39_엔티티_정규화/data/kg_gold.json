@@ -1,0 +1,195 @@
+{
+  "scope": {
+    "mention_ids": [
+      "t01:object",
+      "t01:subject",
+      "t02:object",
+      "t02:subject",
+      "t03:object",
+      "t03:subject",
+      "t04:object",
+      "t04:subject",
+      "t05:object",
+      "t05:subject",
+      "t06:object",
+      "t06:subject",
+      "t07:object",
+      "t07:subject",
+      "t08:object",
+      "t08:subject",
+      "t09:object",
+      "t09:subject",
+      "t10:object",
+      "t10:subject",
+      "t11:object",
+      "t11:subject",
+      "t12:object",
+      "t12:subject",
+      "t13:object",
+      "t13:subject",
+      "t14:object",
+      "t14:subject",
+      "t15:object",
+      "t15:subject",
+      "t16:object",
+      "t16:subject",
+      "t17:object",
+      "t17:subject",
+      "t18:object",
+      "t18:subject",
+      "t19:object",
+      "t19:subject",
+      "t20:object",
+      "t20:subject",
+      "t21:object",
+      "t21:subject",
+      "t22:object",
+      "t22:subject"
+    ],
+    "complete": true
+  },
+  "evaluation_unit": "트리플의 주어 또는 목적어 출현 기록 쌍",
+  "identity_rule": "타입과 문맥을 확인합니다. API는 패키지와 정규 이름, 문서는 출처 ID, 변경은 출처의 변경 항목, 이슈는 저장소와 번호로 구분합니다.",
+  "standard_id_note": "이 데이터셋의 안정적인 프로젝트 식별자입니다. 외부 기관이 발급한 공인 표준 ID가 아닙니다.",
+  "groups": [
+    {
+      "standard_id": "doc:seaborn_doc_docstrings_rugplot",
+      "mention_ids": [
+        "t01:subject",
+        "t02:subject",
+        "t03:subject"
+      ]
+    },
+    {
+      "standard_id": "doc:seaborn_doc_docstrings_jointplot",
+      "mention_ids": [
+        "t04:subject",
+        "t05:subject",
+        "t06:subject",
+        "t07:subject",
+        "t08:subject"
+      ]
+    },
+    {
+      "standard_id": "doc:seaborn_doc_tutorial_function_overview",
+      "mention_ids": [
+        "t09:subject",
+        "t10:subject",
+        "t11:subject",
+        "t12:subject",
+        "t13:subject",
+        "t14:subject",
+        "t15:subject",
+        "t16:subject"
+      ]
+    },
+    {
+      "standard_id": "doc:seaborn_doc_docstrings_scatterplot",
+      "mention_ids": [
+        "t17:subject",
+        "t18:subject"
+      ]
+    },
+    {
+      "standard_id": "doc:seaborn_doc_docstrings_kdeplot",
+      "mention_ids": [
+        "t19:subject"
+      ]
+    },
+    {
+      "standard_id": "doc:seaborn_doc_whatsnew_v0_12_1",
+      "mention_ids": [
+        "t20:subject"
+      ]
+    },
+    {
+      "standard_id": "api:seaborn.rugplot",
+      "mention_ids": [
+        "t01:object",
+        "t08:object"
+      ]
+    },
+    {
+      "standard_id": "api:seaborn.kdeplot",
+      "mention_ids": [
+        "t02:object",
+        "t07:object",
+        "t10:object",
+        "t19:object",
+        "t21:object"
+      ]
+    },
+    {
+      "standard_id": "api:seaborn.scatterplot",
+      "mention_ids": [
+        "t03:object",
+        "t12:object",
+        "t17:object"
+      ]
+    },
+    {
+      "standard_id": "api:seaborn.set_theme",
+      "mention_ids": [
+        "t04:object"
+      ]
+    },
+    {
+      "standard_id": "api:seaborn.load_dataset",
+      "mention_ids": [
+        "t05:object"
+      ]
+    },
+    {
+      "standard_id": "api:seaborn.jointplot",
+      "mention_ids": [
+        "t06:object",
+        "t15:object"
+      ]
+    },
+    {
+      "standard_id": "api:seaborn.histplot",
+      "mention_ids": [
+        "t09:object"
+      ]
+    },
+    {
+      "standard_id": "api:seaborn.displot",
+      "mention_ids": [
+        "t11:object"
+      ]
+    },
+    {
+      "standard_id": "api:seaborn.relplot",
+      "mention_ids": [
+        "t13:object",
+        "t18:object"
+      ]
+    },
+    {
+      "standard_id": "api:seaborn.FacetGrid",
+      "mention_ids": [
+        "t14:object"
+      ]
+    },
+    {
+      "standard_id": "api:seaborn.pairplot",
+      "mention_ids": [
+        "t16:object"
+      ]
+    },
+    {
+      "standard_id": "change:seaborn:fix-kdeplot-cmap-3065",
+      "mention_ids": [
+        "t20:object",
+        "t21:subject",
+        "t22:subject"
+      ]
+    },
+    {
+      "standard_id": "issue:mwaskom/seaborn:3065",
+      "mention_ids": [
+        "t22:object"
+      ]
+    }
+  ]
+}

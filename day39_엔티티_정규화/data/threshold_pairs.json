@@ -1,0 +1,161 @@
+{
+ "note": "(가) 글자가 가까운데 다른 개체 / (나) 글자가 먼데 같은 개체",
+ "trap": [
+  {
+   "a": "Carbamazepine",
+   "b": "Oxcarbazepine",
+   "why": "항경련제. 산소 원자 하나 차이인 별개 약",
+   "id_a": "Compound::DB00564",
+   "id_b": "Compound::DB00776"
+  },
+  {
+   "a": "Lansoprazole",
+   "b": "Pantoprazole",
+   "why": "둘 다 PPI 지만 성분이 다르다",
+   "id_a": "Compound::DB00448",
+   "id_b": "Compound::DB00213"
+  },
+  {
+   "a": "Amitriptyline",
+   "b": "Nortriptyline",
+   "why": "삼환계 항우울제. 실제 조제 혼동 사례가 있다",
+   "id_a": "Compound::DB00321",
+   "id_b": "Compound::DB00540"
+  },
+  {
+   "a": "Calcidiol",
+   "b": "Calcitriol",
+   "why": "비타민 D 대사물이 다르다",
+   "id_a": "Compound::DB00146",
+   "id_b": "Compound::DB00136"
+  },
+  {
+   "a": "Streptomycin",
+   "b": "Streptozocin",
+   "why": "하나는 항생제, 하나는 항암제다",
+   "id_a": "Compound::DB01082",
+   "id_b": "Compound::DB00428"
+  },
+  {
+   "a": "Capecitabine",
+   "b": "Decitabine",
+   "why": "둘 다 항암제지만 기전이 다르다",
+   "id_a": "Compound::DB01101",
+   "id_b": "Compound::DB01262"
+  },
+  {
+   "a": "Atorvastatin",
+   "b": "Lovastatin",
+   "why": "같은 스타틴 계열의 다른 성분",
+   "id_a": "Compound::DB01076",
+   "id_b": "Compound::DB00227"
+  },
+  {
+   "a": "Rosuvastatin",
+   "b": "Lovastatin",
+   "why": "같은 스타틴 계열의 다른 성분",
+   "id_a": "Compound::DB01098",
+   "id_b": "Compound::DB00227"
+  },
+  {
+   "a": "Ibuprofen",
+   "b": "Suprofen",
+   "why": "둘 다 NSAID 지만 성분이 다르다",
+   "id_a": "Compound::DB01050",
+   "id_b": "Compound::DB00870"
+  },
+  {
+   "a": "Codeine",
+   "b": "Clonidine",
+   "why": "진통제와 혈압약이다",
+   "id_a": "Compound::DB00318",
+   "id_b": "Compound::DB00575"
+  },
+  {
+   "a": "L-Tyrosine",
+   "b": "Metyrosine",
+   "why": "아미노산과 티로신 수산화효소 억제제",
+   "id_a": "Compound::DB00135",
+   "id_b": "Compound::DB00765"
+  },
+  {
+   "a": "Doxylamine",
+   "b": "Dopamine",
+   "why": "항히스타민제와 신경전달물질",
+   "id_a": "Compound::DB00366",
+   "id_b": "Compound::DB00988"
+  },
+  {
+   "a": "Omeprazole",
+   "b": "Esomeprazole",
+   "why": "라세미체와 그 S-이성질체. 별개 약이다",
+   "id_a": "Compound::DB00338",
+   "id_b": "Compound::DB00736"
+  },
+  {
+   "a": "Phenytoin",
+   "b": "Fosphenytoin",
+   "why": "본체와 전구약물. 용량 계산이 다르다",
+   "id_a": "Compound::DB00252",
+   "id_b": "Compound::DB01320"
+  }
+ ],
+ "synonym": [
+  {
+   "a": "Rifampin",
+   "b": "Rifampicin",
+   "why": "미국 표기와 국제 표기",
+   "evidence": "corpus",
+   "id": "Compound::DB01045"
+  },
+  {
+   "a": "Aspirin",
+   "b": "Acetylsalicylic acid",
+   "why": "통칭과 화학명",
+   "evidence": "corpus",
+   "id": "Compound::DB00945"
+  },
+  {
+   "a": "Coumadin",
+   "b": "Warfarin",
+   "why": "상품명과 성분명",
+   "evidence": "dictionary",
+   "id": "Compound::DB00682"
+  },
+  {
+   "a": "Tylenol",
+   "b": "Acetaminophen",
+   "why": "상품명과 성분명",
+   "evidence": "dictionary",
+   "id": "Compound::DB00316"
+  },
+  {
+   "a": "Lipitor",
+   "b": "Atorvastatin",
+   "why": "상품명과 성분명",
+   "evidence": "dictionary",
+   "id": "Compound::DB01076"
+  },
+  {
+   "a": "Zocor",
+   "b": "Simvastatin",
+   "why": "상품명과 성분명",
+   "evidence": "dictionary",
+   "id": "Compound::DB00641"
+  },
+  {
+   "a": "Tegretol",
+   "b": "Carbamazepine",
+   "why": "상품명과 성분명",
+   "evidence": "dictionary",
+   "id": "Compound::DB00564"
+  },
+  {
+   "a": "Elavil",
+   "b": "Amitriptyline",
+   "why": "상품명과 성분명",
+   "evidence": "dictionary",
+   "id": "Compound::DB00321"
+  }
+ ]
+}

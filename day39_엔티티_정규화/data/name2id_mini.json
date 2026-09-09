@@ -1,0 +1,3708 @@
+{
+ "note": "이름 -> Hetionet ID 사전(축소판). 이름으로 MERGE 하지 말고 반드시 id 로 MERGE 한다.",
+ "normalize": "소문자 / 앞뒤 공백 제거 / 연속 공백 한 칸 / 끝의 괄호 주석 제거",
+ "counts": {
+  "entries": 577,
+  "from_hetionet": 70,
+  "from_rxnav": 507,
+  "ambiguous": 9,
+  "genes": 61,
+  "gene_stopwords": 33,
+  "brand_stopwords": 8
+ },
+ "entries": {
+  "24-homo-1,25-dihydroxyvitamin d3": {
+   "id": "Compound::DB00136",
+   "label": "Compound",
+   "canonical": "Calcitriol",
+   "source": "rxnav"
+  },
+  "absorbine": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "absorbine jr.": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "absorbine veterinary": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "absorbine veterinary liniment": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "acephen": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "acetadryl": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "acetaminophen": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "hetionet"
+  },
+  "acetylsalicylate sodium": {
+   "id": "Compound::DB00945",
+   "label": "Compound",
+   "canonical": "Acetylsalicylic acid",
+   "source": "rxnav"
+  },
+  "acetylsalicylic acid": {
+   "id": "Compound::DB00945",
+   "label": "Compound",
+   "canonical": "Acetylsalicylic acid",
+   "source": "hetionet"
+  },
+  "activice": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "activon arthritis": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "activon joint & muscle": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "addaprin": {
+   "id": "Compound::DB01050",
+   "label": "Compound",
+   "canonical": "Ibuprofen",
+   "source": "rxnav"
+  },
+  "adenine": {
+   "id": "Compound::DB00173",
+   "label": "Compound",
+   "canonical": "Adenine",
+   "source": "hetionet"
+  },
+  "adenocard": {
+   "id": "Compound::DB00640",
+   "label": "Compound",
+   "canonical": "Adenosine",
+   "source": "rxnav"
+  },
+  "adenoscan": {
+   "id": "Compound::DB00640",
+   "label": "Compound",
+   "canonical": "Adenosine",
+   "source": "rxnav"
+  },
+  "adenosine": {
+   "id": "Compound::DB00640",
+   "label": "Compound",
+   "canonical": "Adenosine",
+   "source": "hetionet"
+  },
+  "adenosine phosphate disodium": {
+   "id": "Compound::DB00640",
+   "label": "Compound",
+   "canonical": "Adenosine",
+   "source": "rxnav"
+  },
+  "adenosine triphosphate": {
+   "id": "Compound::DB00171",
+   "label": "Compound",
+   "canonical": "Adenosine triphosphate",
+   "source": "hetionet"
+  },
+  "adenosine triphosphate disodium": {
+   "id": "Compound::DB00171",
+   "label": "Compound",
+   "canonical": "Adenosine triphosphate",
+   "source": "rxnav"
+  },
+  "adriamycin": {
+   "id": "Compound::DB00997",
+   "label": "Compound",
+   "canonical": "Doxorubicin",
+   "source": "rxnav"
+  },
+  "advil": {
+   "id": "Compound::DB01050",
+   "label": "Compound",
+   "canonical": "Ibuprofen",
+   "source": "rxnav"
+  },
+  "after banger": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "aftera": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "afterpill": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "afterplan": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "aldex an": {
+   "id": "Compound::DB00366",
+   "label": "Compound",
+   "canonical": "Doxylamine",
+   "source": "rxnav"
+  },
+  "alka-seltzer": {
+   "id": "Compound::DB00945",
+   "label": "Compound",
+   "canonical": "Acetylsalicylic acid",
+   "source": "rxnav"
+  },
+  "alo": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "alophen reformulated jan 2008": {
+   "id": "Compound::DB09020",
+   "label": "Compound",
+   "canonical": "Bisacodyl",
+   "source": "rxnav"
+  },
+  "altoprev": {
+   "id": "Compound::DB00227",
+   "label": "Compound",
+   "canonical": "Lovastatin",
+   "source": "rxnav"
+  },
+  "ambifed cd": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "ambifed-g cd": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "amitriptyline": {
+   "id": "Compound::DB00321",
+   "label": "Compound",
+   "canonical": "Amitriptyline",
+   "source": "hetionet"
+  },
+  "amitriptyline hydrochloride": {
+   "id": "Compound::DB00321",
+   "label": "Compound",
+   "canonical": "Amitriptyline",
+   "source": "rxnav"
+  },
+  "amitriptyline oxide": {
+   "id": "Compound::DB00321",
+   "label": "Compound",
+   "canonical": "Amitriptyline",
+   "source": "rxnav"
+  },
+  "amitriptyline pamoate": {
+   "id": "Compound::DB00321",
+   "label": "Compound",
+   "canonical": "Amitriptyline",
+   "source": "rxnav"
+  },
+  "amlactin": {
+   "id": "Compound::DB06768",
+   "label": "Compound",
+   "canonical": "Ammonium lactate",
+   "source": "rxnav"
+  },
+  "amlactin ap": {
+   "id": "Compound::DB06768",
+   "label": "Compound",
+   "canonical": "Ammonium lactate",
+   "source": "rxnav"
+  },
+  "ammonium lactate": {
+   "id": "Compound::DB06768",
+   "label": "Compound",
+   "canonical": "Ammonium lactate",
+   "source": "hetionet"
+  },
+  "anabar": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "anacin af": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "anacin aspirin regimen": {
+   "id": "Compound::DB00945",
+   "label": "Compound",
+   "canonical": "Acetylsalicylic acid",
+   "source": "rxnav"
+  },
+  "apadaz": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "arava": {
+   "id": "Compound::DB01097",
+   "label": "Compound",
+   "canonical": "Leflunomide",
+   "source": "rxnav"
+  },
+  "arcticzen": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "arginine": {
+   "id": "Compound::DB00125",
+   "label": "Compound",
+   "canonical": "L-Arginine",
+   "source": "rxnav"
+  },
+  "arginine aminobenzoate": {
+   "id": "Compound::DB00125",
+   "label": "Compound",
+   "canonical": "L-Arginine",
+   "source": "rxnav"
+  },
+  "arginine aspartate": {
+   "id": "Compound::DB00125",
+   "label": "Compound",
+   "canonical": "L-Arginine",
+   "source": "rxnav"
+  },
+  "arginine hydrochloride": {
+   "id": "Compound::DB00125",
+   "label": "Compound",
+   "canonical": "L-Arginine",
+   "source": "rxnav"
+  },
+  "arginine, d-": {
+   "id": "Compound::DB00125",
+   "label": "Compound",
+   "canonical": "L-Arginine",
+   "source": "rxnav"
+  },
+  "arginine, dl-": {
+   "id": "Compound::DB00125",
+   "label": "Compound",
+   "canonical": "L-Arginine",
+   "source": "rxnav"
+  },
+  "arthricare for women pain relieving nighttime": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "arthricare for women ultra strength": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "arthritis hot pain relief": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "aspergum": {
+   "id": "Compound::DB00945",
+   "label": "Compound",
+   "canonical": "Acetylsalicylic acid",
+   "source": "rxnav"
+  },
+  "aspi-cor": {
+   "id": "Compound::DB00945",
+   "label": "Compound",
+   "canonical": "Acetylsalicylic acid",
+   "source": "rxnav"
+  },
+  "aspirin": {
+   "id": "Compound::DB00945",
+   "label": "Compound",
+   "canonical": "Acetylsalicylic acid",
+   "source": "rxnav"
+  },
+  "atorvaliq": {
+   "id": "Compound::DB01076",
+   "label": "Compound",
+   "canonical": "Atorvastatin",
+   "source": "rxnav"
+  },
+  "atorvastatin": {
+   "id": "Compound::DB01076",
+   "label": "Compound",
+   "canonical": "Atorvastatin",
+   "source": "hetionet"
+  },
+  "atorvastatin calcium": {
+   "id": "Compound::DB01076",
+   "label": "Compound",
+   "canonical": "Atorvastatin",
+   "source": "rxnav"
+  },
+  "atorvastatin calcium anhydrous": {
+   "id": "Compound::DB01076",
+   "label": "Compound",
+   "canonical": "Atorvastatin",
+   "source": "rxnav"
+  },
+  "atorvastatin calcium propylene glycol solvate": {
+   "id": "Compound::DB01076",
+   "label": "Compound",
+   "canonical": "Atorvastatin",
+   "source": "rxnav"
+  },
+  "atorvastatin calcium trihydrate": {
+   "id": "Compound::DB01076",
+   "label": "Compound",
+   "canonical": "Atorvastatin",
+   "source": "rxnav"
+  },
+  "atripla": {
+   "id": "Compound::DB00625",
+   "label": "Compound",
+   "canonical": "Efavirenz",
+   "source": "rxnav"
+  },
+  "attero": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "rxnav"
+  },
+  "aulief": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "backaid": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "bactimicina": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "bayer aspirin": {
+   "id": "Compound::DB00945",
+   "label": "Compound",
+   "canonical": "Acetylsalicylic acid",
+   "source": "rxnav"
+  },
+  "betamethasone": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "hetionet"
+  },
+  "betamethasone acetate": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "rxnav"
+  },
+  "betamethasone benzoate": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "rxnav"
+  },
+  "betamethasone dipropionate": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "rxnav"
+  },
+  "betamethasone dipropionate, augmented": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "rxnav"
+  },
+  "betamethasone sodium phosphate": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "rxnav"
+  },
+  "betamethasone valerate": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "rxnav"
+  },
+  "betavet": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "rxnav"
+  },
+  "bigeloil": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "bioease pain relieving cold therapy": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "biofreeze": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "biotussin": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "bisac-evac": {
+   "id": "Compound::DB09020",
+   "label": "Compound",
+   "canonical": "Bisacodyl",
+   "source": "rxnav"
+  },
+  "bisacodyl": {
+   "id": "Compound::DB09020",
+   "label": "Compound",
+   "canonical": "Bisacodyl",
+   "source": "hetionet"
+  },
+  "boroleum": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "bromo seltzer antacid pain reliever": {
+   "id": "Compound::DB00945",
+   "label": "Compound",
+   "canonical": "Acetylsalicylic acid",
+   "source": "rxnav"
+  },
+  "brontex": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "brovex cb": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "brovex pbc": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "bucalsep": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "buckley's bedtime formula": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "bufferin": {
+   "id": "Compound::DB00945",
+   "label": "Compound",
+   "canonical": "Acetylsalicylic acid",
+   "source": "rxnav"
+  },
+  "by ache": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "caelyx": {
+   "id": "Compound::DB00997",
+   "label": "Compound",
+   "canonical": "Doxorubicin",
+   "source": "rxnav"
+  },
+  "calcidiol": {
+   "id": "Compound::DB00146",
+   "label": "Compound",
+   "canonical": "Calcidiol",
+   "source": "hetionet"
+  },
+  "calcifediol": {
+   "id": "Compound::DB00146",
+   "label": "Compound",
+   "canonical": "Calcidiol",
+   "source": "rxnav"
+  },
+  "calcifediol anhydrous": {
+   "id": "Compound::DB00146",
+   "label": "Compound",
+   "canonical": "Calcidiol",
+   "source": "rxnav"
+  },
+  "calcitriol": {
+   "id": "Compound::DB00136",
+   "label": "Compound",
+   "canonical": "Calcitriol",
+   "source": "hetionet"
+  },
+  "caldolor": {
+   "id": "Compound::DB01050",
+   "label": "Compound",
+   "canonical": "Ibuprofen",
+   "source": "rxnav"
+  },
+  "calmodrox": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "calmoseptine": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "calprotect": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "canineaid": {
+   "id": "Compound::DB00125",
+   "label": "Compound",
+   "canonical": "L-Arginine",
+   "source": "rxnav"
+  },
+  "canker care": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "canker complete": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "canker cover": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "capecitabine": {
+   "id": "Compound::DB01101",
+   "label": "Compound",
+   "canonical": "Capecitabine",
+   "source": "hetionet"
+  },
+  "capzasin quick relief": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "carbamazepine": {
+   "id": "Compound::DB00564",
+   "label": "Compound",
+   "canonical": "Carbamazepine",
+   "source": "hetionet"
+  },
+  "carbatrol": {
+   "id": "Compound::DB00564",
+   "label": "Compound",
+   "canonical": "Carbamazepine",
+   "source": "rxnav"
+  },
+  "cartilade": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "castiva cooling": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "catapres": {
+   "id": "Compound::DB00575",
+   "label": "Compound",
+   "canonical": "Clonidine",
+   "source": "rxnav"
+  },
+  "cefapirin": {
+   "id": "Compound::DB01139",
+   "label": "Compound",
+   "canonical": "Cefapirin",
+   "source": "hetionet"
+  },
+  "celadrin": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "celebrex": {
+   "id": "Compound::DB00482",
+   "label": "Compound",
+   "canonical": "Celecoxib",
+   "source": "rxnav"
+  },
+  "celecoxib": {
+   "id": "Compound::DB00482",
+   "label": "Compound",
+   "canonical": "Celecoxib",
+   "source": "hetionet"
+  },
+  "celestone soluspan": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "rxnav"
+  },
+  "celexa": {
+   "id": "Compound::DB00215",
+   "label": "Compound",
+   "canonical": "Citalopram",
+   "source": "rxnav"
+  },
+  "ceo-two": {
+   "id": "Compound::DB01390",
+   "label": "Compound",
+   "canonical": "Sodium bicarbonate",
+   "source": "rxnav"
+  },
+  "cepacol sore throat from post nasal drip": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "cepacol sore throat pain relief": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "cephapirin": {
+   "id": "Compound::DB01139",
+   "label": "Compound",
+   "canonical": "Cefapirin",
+   "source": "rxnav"
+  },
+  "cephapirin benzathine": {
+   "id": "Compound::DB01139",
+   "label": "Compound",
+   "canonical": "Cefapirin",
+   "source": "rxnav"
+  },
+  "cephapirin sodium": {
+   "id": "Compound::DB01139",
+   "label": "Compound",
+   "canonical": "Cefapirin",
+   "source": "rxnav"
+  },
+  "cerebyx": {
+   "id": "Compound::DB01320",
+   "label": "Compound",
+   "canonical": "Fosphenytoin",
+   "source": "rxnav"
+  },
+  "cetafen": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "cheratussin": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "china-gel": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "chloraseptic sore throat": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "citalopram": {
+   "id": "Compound::DB00215",
+   "label": "Compound",
+   "canonical": "Citalopram",
+   "source": "hetionet"
+  },
+  "citalopram hydrobromide": {
+   "id": "Compound::DB00215",
+   "label": "Compound",
+   "canonical": "Citalopram",
+   "source": "rxnav"
+  },
+  "climara pro": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "clomid": {
+   "id": "Compound::DB00882",
+   "label": "Compound",
+   "canonical": "Clomifene",
+   "source": "rxnav"
+  },
+  "clomifene": {
+   "id": "Compound::DB00882",
+   "label": "Compound",
+   "canonical": "Clomifene",
+   "source": "hetionet"
+  },
+  "clomiphene": {
+   "id": "Compound::DB00882",
+   "label": "Compound",
+   "canonical": "Clomifene",
+   "source": "rxnav"
+  },
+  "clomiphene citrate": {
+   "id": "Compound::DB00882",
+   "label": "Compound",
+   "canonical": "Clomifene",
+   "source": "rxnav"
+  },
+  "clonidine": {
+   "id": "Compound::DB00575",
+   "label": "Compound",
+   "canonical": "Clonidine",
+   "source": "hetionet"
+  },
+  "clonidine hydrochloride": {
+   "id": "Compound::DB00575",
+   "label": "Compound",
+   "canonical": "Clonidine",
+   "source": "rxnav"
+  },
+  "clopidogrel": {
+   "id": "Compound::DB00758",
+   "label": "Compound",
+   "canonical": "Clopidogrel",
+   "source": "hetionet"
+  },
+  "clopidogrel bisulfate": {
+   "id": "Compound::DB00758",
+   "label": "Compound",
+   "canonical": "Clopidogrel",
+   "source": "rxnav"
+  },
+  "cocaine": {
+   "id": "Compound::DB00907",
+   "label": "Compound",
+   "canonical": "Cocaine",
+   "source": "hetionet"
+  },
+  "cocaine hydrochloride": {
+   "id": "Compound::DB00907",
+   "label": "Compound",
+   "canonical": "Cocaine",
+   "source": "rxnav"
+  },
+  "codeine": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "hetionet"
+  },
+  "codeine anhyd": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "codeine anhydrous": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "codeine camsyl": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "codeine hydrochloride": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "codeine phosphate": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "codeine phosphate anhydrous": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "codeine polistirex": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "codeine sulfate": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "cold spot": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "combogesic": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "comtrex sore throat relief": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "contragesic": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "correct": {
+   "id": "Compound::DB09020",
+   "label": "Compound",
+   "canonical": "Bisacodyl",
+   "source": "rxnav"
+  },
+  "correctol laxative reformulated feb 2008": {
+   "id": "Compound::DB09020",
+   "label": "Compound",
+   "canonical": "Bisacodyl",
+   "source": "rxnav"
+  },
+  "cortamine": {
+   "id": "Compound::DB00860",
+   "label": "Compound",
+   "canonical": "Prednisolone",
+   "source": "rxnav"
+  },
+  "coumadin": {
+   "id": "Compound::DB00682",
+   "label": "Compound",
+   "canonical": "Warfarin",
+   "source": "rxnav"
+  },
+  "counteract cough drops": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "counteract ib": {
+   "id": "Compound::DB01050",
+   "label": "Compound",
+   "canonical": "Ibuprofen",
+   "source": "rxnav"
+  },
+  "counteract pain": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "cramergesic": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "crestor": {
+   "id": "Compound::DB01098",
+   "label": "Compound",
+   "canonical": "Rosuvastatin",
+   "source": "rxnav"
+  },
+  "curae": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "cystine": {
+   "id": "Compound::DB00138",
+   "label": "Compound",
+   "canonical": "L-Cystine",
+   "source": "rxnav"
+  },
+  "cystine dihydrochloride": {
+   "id": "Compound::DB00138",
+   "label": "Compound",
+   "canonical": "L-Cystine",
+   "source": "rxnav"
+  },
+  "dacogen": {
+   "id": "Compound::DB01262",
+   "label": "Compound",
+   "canonical": "Decitabine",
+   "source": "rxnav"
+  },
+  "daraprim": {
+   "id": "Compound::DB00205",
+   "label": "Compound",
+   "canonical": "Pyrimethamine",
+   "source": "rxnav"
+  },
+  "decadron": {
+   "id": "Compound::DB01234",
+   "label": "Compound",
+   "canonical": "Dexamethasone",
+   "source": "rxnav"
+  },
+  "decitabine": {
+   "id": "Compound::DB01262",
+   "label": "Compound",
+   "canonical": "Decitabine",
+   "source": "hetionet"
+  },
+  "del-beta": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "rxnav"
+  },
+  "deltasone": {
+   "id": "Compound::DB00635",
+   "label": "Compound",
+   "canonical": "Prednisone",
+   "source": "rxnav"
+  },
+  "demser": {
+   "id": "Compound::DB00765",
+   "label": "Compound",
+   "canonical": "Metyrosine",
+   "source": "rxnav"
+  },
+  "dendracin neurodendraxcin": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "denorex therapeutic reformulated mar 2013": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "dermasarra": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "dermoplast pain": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "desempacho": {
+   "id": "Compound::DB01390",
+   "label": "Compound",
+   "canonical": "Sodium bicarbonate",
+   "source": "rxnav"
+  },
+  "dexamethasone": {
+   "id": "Compound::DB01234",
+   "label": "Compound",
+   "canonical": "Dexamethasone",
+   "source": "hetionet"
+  },
+  "dexamethasone acetate": {
+   "id": "Compound::DB01234",
+   "label": "Compound",
+   "canonical": "Dexamethasone",
+   "source": "rxnav"
+  },
+  "dexamethasone acetate anhydrous": {
+   "id": "Compound::DB01234",
+   "label": "Compound",
+   "canonical": "Dexamethasone",
+   "source": "rxnav"
+  },
+  "dexamethasone isonicotinate": {
+   "id": "Compound::DB01234",
+   "label": "Compound",
+   "canonical": "Dexamethasone",
+   "source": "rxnav"
+  },
+  "dexamethasone phosphate": {
+   "id": "Compound::DB01234",
+   "label": "Compound",
+   "canonical": "Dexamethasone",
+   "source": "rxnav"
+  },
+  "dexamethasone sodium phosphate": {
+   "id": "Compound::DB01234",
+   "label": "Compound",
+   "canonical": "Dexamethasone",
+   "source": "rxnav"
+  },
+  "dexamethasone trimethyl acetate": {
+   "id": "Compound::DB01234",
+   "label": "Compound",
+   "canonical": "Dexamethasone",
+   "source": "rxnav"
+  },
+  "dexasone": {
+   "id": "Compound::DB01234",
+   "label": "Compound",
+   "canonical": "Dexamethasone",
+   "source": "rxnav"
+  },
+  "dexium": {
+   "id": "Compound::DB01234",
+   "label": "Compound",
+   "canonical": "Dexamethasone",
+   "source": "rxnav"
+  },
+  "dexlyt": {
+   "id": "Compound::DB01234",
+   "label": "Compound",
+   "canonical": "Dexamethasone",
+   "source": "rxnav"
+  },
+  "dextenza": {
+   "id": "Compound::DB01234",
+   "label": "Compound",
+   "canonical": "Dexamethasone",
+   "source": "rxnav"
+  },
+  "dexycu": {
+   "id": "Compound::DB01234",
+   "label": "Compound",
+   "canonical": "Dexamethasone",
+   "source": "rxnav"
+  },
+  "diethylstilbestrol": {
+   "id": "Compound::DB00255",
+   "label": "Compound",
+   "canonical": "Diethylstilbestrol",
+   "source": "hetionet"
+  },
+  "dilantin": {
+   "id": "Compound::DB00252",
+   "label": "Compound",
+   "canonical": "Phenytoin",
+   "source": "rxnav"
+  },
+  "diprolene": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "rxnav"
+  },
+  "ditropan": {
+   "id": "Compound::DB01062",
+   "label": "Compound",
+   "canonical": "Oxybutynin",
+   "source": "rxnav"
+  },
+  "dologesic": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "dopamine": {
+   "id": "Compound::DB00988",
+   "label": "Compound",
+   "canonical": "Dopamine",
+   "source": "hetionet"
+  },
+  "dopamine hydrochloride": {
+   "id": "Compound::DB00988",
+   "label": "Compound",
+   "canonical": "Dopamine",
+   "source": "rxnav"
+  },
+  "doxil": {
+   "id": "Compound::DB00997",
+   "label": "Compound",
+   "canonical": "Doxorubicin",
+   "source": "rxnav"
+  },
+  "doxorubicin": {
+   "id": "Compound::DB00997",
+   "label": "Compound",
+   "canonical": "Doxorubicin",
+   "source": "hetionet"
+  },
+  "doxorubicin hydrochloride": {
+   "id": "Compound::DB00997",
+   "label": "Compound",
+   "canonical": "Doxorubicin",
+   "source": "rxnav"
+  },
+  "doxorubicin hydrochloride liposome": {
+   "id": "Compound::DB00997",
+   "label": "Compound",
+   "canonical": "Doxorubicin",
+   "source": "rxnav"
+  },
+  "doxorubicin liposome": {
+   "id": "Compound::DB00997",
+   "label": "Compound",
+   "canonical": "Doxorubicin",
+   "source": "rxnav"
+  },
+  "doxylamine": {
+   "id": "Compound::DB00366",
+   "label": "Compound",
+   "canonical": "Doxylamine",
+   "source": "hetionet"
+  },
+  "doxylamine succinate": {
+   "id": "Compound::DB00366",
+   "label": "Compound",
+   "canonical": "Doxylamine",
+   "source": "rxnav"
+  },
+  "doxylamine succinate, (r)-": {
+   "id": "Compound::DB00366",
+   "label": "Compound",
+   "canonical": "Doxylamine",
+   "source": "rxnav"
+  },
+  "dragon": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "dulcolax": {
+   "id": "Compound::DB09020",
+   "label": "Compound",
+   "canonical": "Bisacodyl",
+   "source": "rxnav"
+  },
+  "duotic": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "rxnav"
+  },
+  "duraclon": {
+   "id": "Compound::DB00575",
+   "label": "Compound",
+   "canonical": "Clonidine",
+   "source": "rxnav"
+  },
+  "durlaza": {
+   "id": "Compound::DB00945",
+   "label": "Compound",
+   "canonical": "Acetylsalicylic acid",
+   "source": "rxnav"
+  },
+  "e-con": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "e-z-gas ii": {
+   "id": "Compound::DB01390",
+   "label": "Compound",
+   "canonical": "Sodium bicarbonate",
+   "source": "rxnav"
+  },
+  "eagle brand medicated oil": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "econtra": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "ecotrin": {
+   "id": "Compound::DB00945",
+   "label": "Compound",
+   "canonical": "Acetylsalicylic acid",
+   "source": "rxnav"
+  },
+  "ed flex": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "efavirenz": {
+   "id": "Compound::DB00625",
+   "label": "Compound",
+   "canonical": "Efavirenz",
+   "source": "hetionet"
+  },
+  "elavil": {
+   "id": "Compound::DB00321",
+   "label": "Compound",
+   "canonical": "Amitriptyline",
+   "source": "rxnav"
+  },
+  "elyxyb": {
+   "id": "Compound::DB00482",
+   "label": "Compound",
+   "canonical": "Celecoxib",
+   "source": "rxnav"
+  },
+  "endocet": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "enstilar": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "rxnav"
+  },
+  "epitol": {
+   "id": "Compound::DB00564",
+   "label": "Compound",
+   "canonical": "Carbamazepine",
+   "source": "rxnav"
+  },
+  "equetro": {
+   "id": "Compound::DB00564",
+   "label": "Compound",
+   "canonical": "Carbamazepine",
+   "source": "rxnav"
+  },
+  "equi-block lt formula": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "equineaid": {
+   "id": "Compound::DB00125",
+   "label": "Compound",
+   "canonical": "L-Arginine",
+   "source": "rxnav"
+  },
+  "esomeprazole": {
+   "id": "Compound::DB00736",
+   "label": "Compound",
+   "canonical": "Esomeprazole",
+   "source": "hetionet"
+  },
+  "esomeprazole magnesium": {
+   "id": "Compound::DB00736",
+   "label": "Compound",
+   "canonical": "Esomeprazole",
+   "source": "rxnav"
+  },
+  "esomeprazole magnesium dihydrate": {
+   "id": "Compound::DB00736",
+   "label": "Compound",
+   "canonical": "Esomeprazole",
+   "source": "rxnav"
+  },
+  "esomeprazole magnesium trihydrate": {
+   "id": "Compound::DB00736",
+   "label": "Compound",
+   "canonical": "Esomeprazole",
+   "source": "rxnav"
+  },
+  "esomeprazole sodium": {
+   "id": "Compound::DB00736",
+   "label": "Compound",
+   "canonical": "Esomeprazole",
+   "source": "rxnav"
+  },
+  "esomeprazole strontium": {
+   "id": "Compound::DB00736",
+   "label": "Compound",
+   "canonical": "Esomeprazole",
+   "source": "rxnav"
+  },
+  "eucamint": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "eucerin calming itch relief": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "euthaphen": {
+   "id": "Compound::DB00252",
+   "label": "Compound",
+   "canonical": "Phenytoin",
+   "source": "rxnav"
+  },
+  "euthasol": {
+   "id": "Compound::DB00252",
+   "label": "Compound",
+   "canonical": "Phenytoin",
+   "source": "rxnav"
+  },
+  "evac-u-gen reformulated jan 2008": {
+   "id": "Compound::DB09020",
+   "label": "Compound",
+   "canonical": "Bisacodyl",
+   "source": "rxnav"
+  },
+  "ex-lax ultra": {
+   "id": "Compound::DB09020",
+   "label": "Compound",
+   "canonical": "Bisacodyl",
+   "source": "rxnav"
+  },
+  "excedrin pm": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "excedrin pm triple action": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "ezallor": {
+   "id": "Compound::DB01098",
+   "label": "Compound",
+   "canonical": "Rosuvastatin",
+   "source": "rxnav"
+  },
+  "fast freeze": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "fast freeze naturally cool": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "feen-a-mint reformulated jan 2008": {
+   "id": "Compound::DB09020",
+   "label": "Compound",
+   "canonical": "Bisacodyl",
+   "source": "rxnav"
+  },
+  "felineaid": {
+   "id": "Compound::DB00125",
+   "label": "Compound",
+   "canonical": "L-Arginine",
+   "source": "rxnav"
+  },
+  "fem choice": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "feverall": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "fire out": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "fisherman's friend": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "flexall": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "flexall ultra plus": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "flolipid": {
+   "id": "Compound::DB00641",
+   "label": "Compound",
+   "canonical": "Simvastatin",
+   "source": "rxnav"
+  },
+  "fluoxetine": {
+   "id": "Compound::DB00472",
+   "label": "Compound",
+   "canonical": "Fluoxetine",
+   "source": "hetionet"
+  },
+  "fluoxetine hydrochloride": {
+   "id": "Compound::DB00472",
+   "label": "Compound",
+   "canonical": "Fluoxetine",
+   "source": "rxnav"
+  },
+  "fosphenytoin": {
+   "id": "Compound::DB01320",
+   "label": "Compound",
+   "canonical": "Fosphenytoin",
+   "source": "hetionet"
+  },
+  "fosphenytoin sodium": {
+   "id": "Compound::DB01320",
+   "label": "Compound",
+   "canonical": "Fosphenytoin",
+   "source": "rxnav"
+  },
+  "freeze it": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "frenadol": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "gastrobim": {
+   "id": "Compound::DB00338",
+   "label": "Compound",
+   "canonical": "Omeprazole",
+   "source": "rxnav"
+  },
+  "gelnique": {
+   "id": "Compound::DB01062",
+   "label": "Compound",
+   "canonical": "Oxybutynin",
+   "source": "rxnav"
+  },
+  "genone": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "rxnav"
+  },
+  "genpril": {
+   "id": "Compound::DB01050",
+   "label": "Compound",
+   "canonical": "Ibuprofen",
+   "source": "rxnav"
+  },
+  "gentacalm": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "rxnav"
+  },
+  "gentaved": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "rxnav"
+  },
+  "geri-hydrolac": {
+   "id": "Compound::DB06768",
+   "label": "Compound",
+   "canonical": "Ammonium lactate",
+   "source": "rxnav"
+  },
+  "glutathione": {
+   "id": "Compound::DB00143",
+   "label": "Compound",
+   "canonical": "Glutathione",
+   "source": "hetionet"
+  },
+  "goprelto": {
+   "id": "Compound::DB00907",
+   "label": "Compound",
+   "canonical": "Cocaine",
+   "source": "rxnav"
+  },
+  "granulotion medicated lotion": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "halls": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "hemady": {
+   "id": "Compound::DB01234",
+   "label": "Compound",
+   "canonical": "Dexamethasone",
+   "source": "rxnav"
+  },
+  "her style": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "hycet": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "hydroxychloroquine": {
+   "id": "Compound::DB01611",
+   "label": "Compound",
+   "canonical": "Hydroxychloroquine",
+   "source": "hetionet"
+  },
+  "hydroxychloroquine sulfate": {
+   "id": "Compound::DB01611",
+   "label": "Compound",
+   "canonical": "Hydroxychloroquine",
+   "source": "rxnav"
+  },
+  "ibu": {
+   "id": "Compound::DB01050",
+   "label": "Compound",
+   "canonical": "Ibuprofen",
+   "source": "rxnav"
+  },
+  "ibuprofen": {
+   "id": "Compound::DB01050",
+   "label": "Compound",
+   "canonical": "Ibuprofen",
+   "source": "hetionet"
+  },
+  "ibuprofen lysine": {
+   "id": "Compound::DB01050",
+   "label": "Compound",
+   "canonical": "Ibuprofen",
+   "source": "rxnav"
+  },
+  "ibuprofen, sodium salt": {
+   "id": "Compound::DB01050",
+   "label": "Compound",
+   "canonical": "Ibuprofen",
+   "source": "rxnav"
+  },
+  "ibuprohm": {
+   "id": "Compound::DB01050",
+   "label": "Compound",
+   "canonical": "Ibuprofen",
+   "source": "rxnav"
+  },
+  "inflammation otc deep pain care": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "inflammation otc deep pain care hot": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "inqovi": {
+   "id": "Compound::DB01262",
+   "label": "Compound",
+   "canonical": "Decitabine",
+   "source": "rxnav"
+  },
+  "ithappenz": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "ivy dry super continuous spray": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "ivy-dry cream": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "jantoven": {
+   "id": "Compound::DB00682",
+   "label": "Compound",
+   "canonical": "Warfarin",
+   "source": "rxnav"
+  },
+  "javadin": {
+   "id": "Compound::DB00575",
+   "label": "Compound",
+   "canonical": "Clonidine",
+   "source": "rxnav"
+  },
+  "julie": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "jylamvo": {
+   "id": "Compound::DB00563",
+   "label": "Compound",
+   "canonical": "Methotrexate",
+   "source": "rxnav"
+  },
+  "kapspargo": {
+   "id": "Compound::DB00264",
+   "label": "Compound",
+   "canonical": "Metoprolol",
+   "source": "rxnav"
+  },
+  "kapvay": {
+   "id": "Compound::DB00575",
+   "label": "Compound",
+   "canonical": "Clonidine",
+   "source": "rxnav"
+  },
+  "katinko": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "koldets cough drop": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "konvomep": {
+   "id": "Compound::DB00338",
+   "label": "Compound",
+   "canonical": "Omeprazole",
+   "source": "rxnav"
+  },
+  "kyleena": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "l-arginine": {
+   "id": "Compound::DB00125",
+   "label": "Compound",
+   "canonical": "L-Arginine",
+   "source": "hetionet"
+  },
+  "l-cystine": {
+   "id": "Compound::DB00138",
+   "label": "Compound",
+   "canonical": "L-Cystine",
+   "source": "hetionet"
+  },
+  "l-formula": {
+   "id": "Compound::DB00123",
+   "label": "Compound",
+   "canonical": "L-Lysine",
+   "source": "rxnav"
+  },
+  "l-lysine": {
+   "id": "Compound::DB00123",
+   "label": "Compound",
+   "canonical": "L-Lysine",
+   "source": "hetionet"
+  },
+  "l-proline": {
+   "id": "Compound::DB00172",
+   "label": "Compound",
+   "canonical": "L-Proline",
+   "source": "hetionet"
+  },
+  "l-tyrosine": {
+   "id": "Compound::DB00135",
+   "label": "Compound",
+   "canonical": "L-Tyrosine",
+   "source": "hetionet"
+  },
+  "lac-hydrin": {
+   "id": "Compound::DB06768",
+   "label": "Compound",
+   "canonical": "Ammonium lactate",
+   "source": "rxnav"
+  },
+  "lactate": {
+   "id": "Compound::DB06768",
+   "label": "Compound",
+   "canonical": "Ammonium lactate",
+   "source": "rxnav"
+  },
+  "lansoprazole": {
+   "id": "Compound::DB00448",
+   "label": "Compound",
+   "canonical": "Lansoprazole",
+   "source": "hetionet"
+  },
+  "lantiseptic multi-purpose": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "laxomil": {
+   "id": "Compound::DB09020",
+   "label": "Compound",
+   "canonical": "Bisacodyl",
+   "source": "rxnav"
+  },
+  "leflunomide": {
+   "id": "Compound::DB01097",
+   "label": "Compound",
+   "canonical": "Leflunomide",
+   "source": "hetionet"
+  },
+  "legatrin pm": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "levonorgestrel": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "hetionet"
+  },
+  "levophed": {
+   "id": "Compound::DB00368",
+   "label": "Compound",
+   "canonical": "Norepinephrine",
+   "source": "rxnav"
+  },
+  "liletta": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "ling nam ultra balm": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "lipitor": {
+   "id": "Compound::DB01076",
+   "label": "Compound",
+   "canonical": "Atorvastatin",
+   "source": "rxnav"
+  },
+  "listerine antiseptic": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "listerine ultraclean": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "little fevers": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "little ouchies": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "livalo": {
+   "id": "Compound::DB08860",
+   "label": "Compound",
+   "canonical": "Pitavastatin",
+   "source": "rxnav"
+  },
+  "lopressor": {
+   "id": "Compound::DB00264",
+   "label": "Compound",
+   "canonical": "Metoprolol",
+   "source": "rxnav"
+  },
+  "lopressor hct": {
+   "id": "Compound::DB00264",
+   "label": "Compound",
+   "canonical": "Metoprolol",
+   "source": "rxnav"
+  },
+  "lortuss ex": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "lovastatin": {
+   "id": "Compound::DB00227",
+   "label": "Compound",
+   "canonical": "Lovastatin",
+   "source": "hetionet"
+  },
+  "luden's": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "luden's dual relief": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "luxiq": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "rxnav"
+  },
+  "lypsyl": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "lysine": {
+   "id": "Compound::DB00123",
+   "label": "Compound",
+   "canonical": "L-Lysine",
+   "source": "rxnav"
+  },
+  "lysine acetate": {
+   "id": "Compound::DB00123",
+   "label": "Compound",
+   "canonical": "L-Lysine",
+   "source": "rxnav"
+  },
+  "lysine aspartate": {
+   "id": "Compound::DB00123",
+   "label": "Compound",
+   "canonical": "L-Lysine",
+   "source": "rxnav"
+  },
+  "lysine hydrochloride": {
+   "id": "Compound::DB00123",
+   "label": "Compound",
+   "canonical": "L-Lysine",
+   "source": "rxnav"
+  },
+  "lysine hydrochloride, dl-": {
+   "id": "Compound::DB00123",
+   "label": "Compound",
+   "canonical": "L-Lysine",
+   "source": "rxnav"
+  },
+  "lysine monohydrate": {
+   "id": "Compound::DB00123",
+   "label": "Compound",
+   "canonical": "L-Lysine",
+   "source": "rxnav"
+  },
+  "lysine plus": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "m-clear wc": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "m-end max d": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "m-end pe": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "mane 'n tail mineral ice": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "mapap": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "mar-cof bp": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "mar-cof cg": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "maxidex": {
+   "id": "Compound::DB01234",
+   "label": "Compound",
+   "canonical": "Dexamethasone",
+   "source": "rxnav"
+  },
+  "maxiphen cdx": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "medi-derm": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "medicaine sting": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "medrox": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "menthol": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "hetionet"
+  },
+  "menthol glucuronide": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "menthol, (+)-": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "mentholatum": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "methotrexate": {
+   "id": "Compound::DB00563",
+   "label": "Compound",
+   "canonical": "Methotrexate",
+   "source": "hetionet"
+  },
+  "methotrexate sodium": {
+   "id": "Compound::DB00563",
+   "label": "Compound",
+   "canonical": "Methotrexate",
+   "source": "rxnav"
+  },
+  "metoprolol": {
+   "id": "Compound::DB00264",
+   "label": "Compound",
+   "canonical": "Metoprolol",
+   "source": "hetionet"
+  },
+  "metoprolol fumarate": {
+   "id": "Compound::DB00264",
+   "label": "Compound",
+   "canonical": "Metoprolol",
+   "source": "rxnav"
+  },
+  "metoprolol succinate": {
+   "id": "Compound::DB00264",
+   "label": "Compound",
+   "canonical": "Metoprolol",
+   "source": "rxnav"
+  },
+  "metoprolol tartrate": {
+   "id": "Compound::DB00264",
+   "label": "Compound",
+   "canonical": "Metoprolol",
+   "source": "rxnav"
+  },
+  "metyrosine": {
+   "id": "Compound::DB00765",
+   "label": "Compound",
+   "canonical": "Metyrosine",
+   "source": "hetionet"
+  },
+  "millipred": {
+   "id": "Compound::DB00860",
+   "label": "Compound",
+   "canonical": "Prednisolone",
+   "source": "rxnav"
+  },
+  "milophene": {
+   "id": "Compound::DB00882",
+   "label": "Compound",
+   "canonical": "Clomifene",
+   "source": "rxnav"
+  },
+  "mineral ice": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "miniprin": {
+   "id": "Compound::DB00945",
+   "label": "Compound",
+   "canonical": "Acetylsalicylic acid",
+   "source": "rxnav"
+  },
+  "mirena": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "morning after": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "motrin": {
+   "id": "Compound::DB01050",
+   "label": "Compound",
+   "canonical": "Ibuprofen",
+   "source": "rxnav"
+  },
+  "motrin pm": {
+   "id": "Compound::DB01050",
+   "label": "Compound",
+   "canonical": "Ibuprofen",
+   "source": "rxnav"
+  },
+  "my choice": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "my way": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "myogesic-cs": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "n'ice": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "nalocet": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "neoprofen": {
+   "id": "Compound::DB01050",
+   "label": "Compound",
+   "canonical": "Ibuprofen",
+   "source": "rxnav"
+  },
+  "neut brand of sodium bicarbonate": {
+   "id": "Compound::DB01390",
+   "label": "Compound",
+   "canonical": "Sodium bicarbonate",
+   "source": "rxnav"
+  },
+  "new day": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "nexiclon": {
+   "id": "Compound::DB00575",
+   "label": "Compound",
+   "canonical": "Clonidine",
+   "source": "rxnav"
+  },
+  "nexium": {
+   "id": "Compound::DB00736",
+   "label": "Compound",
+   "canonical": "Esomeprazole",
+   "source": "rxnav"
+  },
+  "next choice one dose": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "nikita": {
+   "id": "Compound::DB08860",
+   "label": "Compound",
+   "canonical": "Pitavastatin",
+   "source": "rxnav"
+  },
+  "ninjacof a": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "ninjacof xg": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "nocto": {
+   "id": "Compound::DB00366",
+   "label": "Compound",
+   "canonical": "Doxylamine",
+   "source": "rxnav"
+  },
+  "noradrenaline hydrochloride": {
+   "id": "Compound::DB00368",
+   "label": "Compound",
+   "canonical": "Norepinephrine",
+   "source": "rxnav"
+  },
+  "norco": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "norepinephrine": {
+   "id": "Compound::DB00368",
+   "label": "Compound",
+   "canonical": "Norepinephrine",
+   "source": "hetionet"
+  },
+  "norepinephrine bitartrate": {
+   "id": "Compound::DB00368",
+   "label": "Compound",
+   "canonical": "Norepinephrine",
+   "source": "rxnav"
+  },
+  "norepinephrine, dl-": {
+   "id": "Compound::DB00368",
+   "label": "Compound",
+   "canonical": "Norepinephrine",
+   "source": "rxnav"
+  },
+  "nortemp": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "nortriptyline": {
+   "id": "Compound::DB00540",
+   "label": "Compound",
+   "canonical": "Nortriptyline",
+   "source": "hetionet"
+  },
+  "nortriptyline hydrochloride": {
+   "id": "Compound::DB00540",
+   "label": "Compound",
+   "canonical": "Nortriptyline",
+   "source": "rxnav"
+  },
+  "norwich aspirin": {
+   "id": "Compound::DB00945",
+   "label": "Compound",
+   "canonical": "Acetylsalicylic acid",
+   "source": "rxnav"
+  },
+  "numbrino": {
+   "id": "Compound::DB00907",
+   "label": "Compound",
+   "canonical": "Cocaine",
+   "source": "rxnav"
+  },
+  "numotizine": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "numstat": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "omeprazole": {
+   "id": "Compound::DB00338",
+   "label": "Compound",
+   "canonical": "Omeprazole",
+   "source": "hetionet"
+  },
+  "omeprazole magnesium": {
+   "id": "Compound::DB00338",
+   "label": "Compound",
+   "canonical": "Omeprazole",
+   "source": "rxnav"
+  },
+  "omeprazole sodium": {
+   "id": "Compound::DB00338",
+   "label": "Compound",
+   "canonical": "Omeprazole",
+   "source": "rxnav"
+  },
+  "onyda": {
+   "id": "Compound::DB00575",
+   "label": "Compound",
+   "canonical": "Clonidine",
+   "source": "rxnav"
+  },
+  "opcicon one-step": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "option 2": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "orapred": {
+   "id": "Compound::DB00860",
+   "label": "Compound",
+   "canonical": "Prednisolone",
+   "source": "rxnav"
+  },
+  "orasep reformulated dec 2013": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "organix complete": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "ortho-nesic": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "osmoflex": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "osurnia": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "rxnav"
+  },
+  "otrexup": {
+   "id": "Compound::DB00563",
+   "label": "Compound",
+   "canonical": "Methotrexate",
+   "source": "rxnav"
+  },
+  "oxaydo": {
+   "id": "Compound::DB00497",
+   "label": "Compound",
+   "canonical": "Oxycodone",
+   "source": "rxnav"
+  },
+  "oxcarbazepine": {
+   "id": "Compound::DB00776",
+   "label": "Compound",
+   "canonical": "Oxcarbazepine",
+   "source": "hetionet"
+  },
+  "oxtellar": {
+   "id": "Compound::DB00776",
+   "label": "Compound",
+   "canonical": "Oxcarbazepine",
+   "source": "rxnav"
+  },
+  "oxybutynin": {
+   "id": "Compound::DB01062",
+   "label": "Compound",
+   "canonical": "Oxybutynin",
+   "source": "hetionet"
+  },
+  "oxybutynin chloride": {
+   "id": "Compound::DB01062",
+   "label": "Compound",
+   "canonical": "Oxybutynin",
+   "source": "rxnav"
+  },
+  "oxycodone": {
+   "id": "Compound::DB00497",
+   "label": "Compound",
+   "canonical": "Oxycodone",
+   "source": "hetionet"
+  },
+  "oxycodone hydrochloride": {
+   "id": "Compound::DB00497",
+   "label": "Compound",
+   "canonical": "Oxycodone",
+   "source": "rxnav"
+  },
+  "oxycodone terephthalate": {
+   "id": "Compound::DB00497",
+   "label": "Compound",
+   "canonical": "Oxycodone",
+   "source": "rxnav"
+  },
+  "oxycontin": {
+   "id": "Compound::DB00497",
+   "label": "Compound",
+   "canonical": "Oxycodone",
+   "source": "rxnav"
+  },
+  "oxytrol": {
+   "id": "Compound::DB01062",
+   "label": "Compound",
+   "canonical": "Oxybutynin",
+   "source": "rxnav"
+  },
+  "ozurdex": {
+   "id": "Compound::DB01234",
+   "label": "Compound",
+   "canonical": "Dexamethasone",
+   "source": "rxnav"
+  },
+  "pamelor": {
+   "id": "Compound::DB00540",
+   "label": "Compound",
+   "canonical": "Nortriptyline",
+   "source": "rxnav"
+  },
+  "pamprin cramp formula": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "pamprin multi-symptom": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "panadol": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "panadol pm": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "pantoprazole": {
+   "id": "Compound::DB00213",
+   "label": "Compound",
+   "canonical": "Pantoprazole",
+   "source": "hetionet"
+  },
+  "pantoprazole sodium": {
+   "id": "Compound::DB00213",
+   "label": "Compound",
+   "canonical": "Pantoprazole",
+   "source": "rxnav"
+  },
+  "pediapred": {
+   "id": "Compound::DB00860",
+   "label": "Compound",
+   "canonical": "Prednisolone",
+   "source": "rxnav"
+  },
+  "percocet": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "percogesic reformulated jan 2011": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "perform": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "pharbetol": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "phenytek": {
+   "id": "Compound::DB00252",
+   "label": "Compound",
+   "canonical": "Phenytoin",
+   "source": "rxnav"
+  },
+  "phenytoin": {
+   "id": "Compound::DB00252",
+   "label": "Compound",
+   "canonical": "Phenytoin",
+   "source": "hetionet"
+  },
+  "phenytoin sodium": {
+   "id": "Compound::DB00252",
+   "label": "Compound",
+   "canonical": "Phenytoin",
+   "source": "rxnav"
+  },
+  "picot": {
+   "id": "Compound::DB01390",
+   "label": "Compound",
+   "canonical": "Sodium bicarbonate",
+   "source": "rxnav"
+  },
+  "pitavastatin": {
+   "id": "Compound::DB08860",
+   "label": "Compound",
+   "canonical": "Pitavastatin",
+   "source": "hetionet"
+  },
+  "pitavastatin calcium": {
+   "id": "Compound::DB08860",
+   "label": "Compound",
+   "canonical": "Pitavastatin",
+   "source": "rxnav"
+  },
+  "pitavastatin magnesium": {
+   "id": "Compound::DB08860",
+   "label": "Compound",
+   "canonical": "Pitavastatin",
+   "source": "rxnav"
+  },
+  "pitavastatin sodium": {
+   "id": "Compound::DB08860",
+   "label": "Compound",
+   "canonical": "Pitavastatin",
+   "source": "rxnav"
+  },
+  "plan b one-step": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "plaquenil": {
+   "id": "Compound::DB01611",
+   "label": "Compound",
+   "canonical": "Hydroxychloroquine",
+   "source": "rxnav"
+  },
+  "plavix": {
+   "id": "Compound::DB00758",
+   "label": "Compound",
+   "canonical": "Clopidogrel",
+   "source": "rxnav"
+  },
+  "polar freeze": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "polar frost": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "postday one-step": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "pramegel reformulated apr 2012": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "pred forte": {
+   "id": "Compound::DB00860",
+   "label": "Compound",
+   "canonical": "Prednisolone",
+   "source": "rxnav"
+  },
+  "pred mild": {
+   "id": "Compound::DB00860",
+   "label": "Compound",
+   "canonical": "Prednisolone",
+   "source": "rxnav"
+  },
+  "prednisolone": {
+   "id": "Compound::DB00860",
+   "label": "Compound",
+   "canonical": "Prednisolone",
+   "source": "hetionet"
+  },
+  "prednisolone acetate": {
+   "id": "Compound::DB00860",
+   "label": "Compound",
+   "canonical": "Prednisolone",
+   "source": "rxnav"
+  },
+  "prednisolone phosphate": {
+   "id": "Compound::DB00860",
+   "label": "Compound",
+   "canonical": "Prednisolone",
+   "source": "rxnav"
+  },
+  "prednisolone sodium metasulphobenzoate": {
+   "id": "Compound::DB00860",
+   "label": "Compound",
+   "canonical": "Prednisolone",
+   "source": "rxnav"
+  },
+  "prednisolone sodium phosphate": {
+   "id": "Compound::DB00860",
+   "label": "Compound",
+   "canonical": "Prednisolone",
+   "source": "rxnav"
+  },
+  "prednisolone sodium succinate": {
+   "id": "Compound::DB00860",
+   "label": "Compound",
+   "canonical": "Prednisolone",
+   "source": "rxnav"
+  },
+  "prednisolone tebutate": {
+   "id": "Compound::DB00860",
+   "label": "Compound",
+   "canonical": "Prednisolone",
+   "source": "rxnav"
+  },
+  "prednisone": {
+   "id": "Compound::DB00635",
+   "label": "Compound",
+   "canonical": "Prednisone",
+   "source": "hetionet"
+  },
+  "prednistab": {
+   "id": "Compound::DB00860",
+   "label": "Compound",
+   "canonical": "Prednisolone",
+   "source": "rxnav"
+  },
+  "premsyn pms": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "prevacid": {
+   "id": "Compound::DB00448",
+   "label": "Compound",
+   "canonical": "Lansoprazole",
+   "source": "rxnav"
+  },
+  "preventeza": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "prilosec": {
+   "id": "Compound::DB00338",
+   "label": "Compound",
+   "canonical": "Omeprazole",
+   "source": "rxnav"
+  },
+  "primeguard": {
+   "id": "Compound::DB00338",
+   "label": "Compound",
+   "canonical": "Omeprazole",
+   "source": "rxnav"
+  },
+  "primlev": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "prolate": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "proline": {
+   "id": "Compound::DB00172",
+   "label": "Compound",
+   "canonical": "L-Proline",
+   "source": "rxnav"
+  },
+  "proline, dl-": {
+   "id": "Compound::DB00172",
+   "label": "Compound",
+   "canonical": "L-Proline",
+   "source": "rxnav"
+  },
+  "proprinal": {
+   "id": "Compound::DB01050",
+   "label": "Compound",
+   "canonical": "Ibuprofen",
+   "source": "rxnav"
+  },
+  "protonix": {
+   "id": "Compound::DB00213",
+   "label": "Compound",
+   "canonical": "Pantoprazole",
+   "source": "rxnav"
+  },
+  "prozac": {
+   "id": "Compound::DB00472",
+   "label": "Compound",
+   "canonical": "Fluoxetine",
+   "source": "rxnav"
+  },
+  "pyrimethamine": {
+   "id": "Compound::DB00205",
+   "label": "Compound",
+   "canonical": "Pyrimethamine",
+   "source": "hetionet"
+  },
+  "rasuvo": {
+   "id": "Compound::DB00563",
+   "label": "Compound",
+   "canonical": "Methotrexate",
+   "source": "rxnav"
+  },
+  "rayaldee": {
+   "id": "Compound::DB00146",
+   "label": "Compound",
+   "canonical": "Calcidiol",
+   "source": "rxnav"
+  },
+  "rayos": {
+   "id": "Compound::DB00635",
+   "label": "Compound",
+   "canonical": "Prednisone",
+   "source": "rxnav"
+  },
+  "react": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "rebalance": {
+   "id": "Compound::DB00205",
+   "label": "Compound",
+   "canonical": "Pyrimethamine",
+   "source": "rxnav"
+  },
+  "reconcile": {
+   "id": "Compound::DB00472",
+   "label": "Compound",
+   "canonical": "Fluoxetine",
+   "source": "rxnav"
+  },
+  "reditrex": {
+   "id": "Compound::DB00563",
+   "label": "Compound",
+   "canonical": "Methotrexate",
+   "source": "rxnav"
+  },
+  "redutemp": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "relagesic": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "restart": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "rhuli": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "ricola": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "rifadin": {
+   "id": "Compound::DB01045",
+   "label": "Compound",
+   "canonical": "Rifampicin",
+   "source": "rxnav"
+  },
+  "rifampicin": {
+   "id": "Compound::DB01045",
+   "label": "Compound",
+   "canonical": "Rifampicin",
+   "source": "hetionet"
+  },
+  "rifampin": {
+   "id": "Compound::DB01045",
+   "label": "Compound",
+   "canonical": "Rifampicin",
+   "source": "rxnav"
+  },
+  "ringl": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "risamine": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "rocainol": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "rocaltrol": {
+   "id": "Compound::DB00136",
+   "label": "Compound",
+   "canonical": "Calcitriol",
+   "source": "rxnav"
+  },
+  "rosuvastatin": {
+   "id": "Compound::DB01098",
+   "label": "Compound",
+   "canonical": "Rosuvastatin",
+   "source": "hetionet"
+  },
+  "rosuvastatin calcium": {
+   "id": "Compound::DB01098",
+   "label": "Compound",
+   "canonical": "Rosuvastatin",
+   "source": "rxnav"
+  },
+  "roxicodone": {
+   "id": "Compound::DB00497",
+   "label": "Compound",
+   "canonical": "Oxycodone",
+   "source": "rxnav"
+  },
+  "roxybond": {
+   "id": "Compound::DB00497",
+   "label": "Compound",
+   "canonical": "Oxycodone",
+   "source": "rxnav"
+  },
+  "samson 8": {
+   "id": "Compound::DB01050",
+   "label": "Compound",
+   "canonical": "Ibuprofen",
+   "source": "rxnav"
+  },
+  "sernivo": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "rxnav"
+  },
+  "shewise": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "simvastatin": {
+   "id": "Compound::DB00641",
+   "label": "Compound",
+   "canonical": "Simvastatin",
+   "source": "hetionet"
+  },
+  "sinucleanse": {
+   "id": "Compound::DB01390",
+   "label": "Compound",
+   "canonical": "Sodium bicarbonate",
+   "source": "rxnav"
+  },
+  "skyla": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "sodium bicarbonate": {
+   "id": "Compound::DB01390",
+   "label": "Compound",
+   "canonical": "Sodium bicarbonate",
+   "source": "hetionet"
+  },
+  "sombra warm pain relieving gel": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "sore no more": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "sovuna": {
+   "id": "Compound::DB01611",
+   "label": "Compound",
+   "canonical": "Hydroxychloroquine",
+   "source": "rxnav"
+  },
+  "st. joseph aspirin": {
+   "id": "Compound::DB00945",
+   "label": "Compound",
+   "canonical": "Acetylsalicylic acid",
+   "source": "rxnav"
+  },
+  "sting-kill": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "stopain": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "streptomycin": {
+   "id": "Compound::DB01082",
+   "label": "Compound",
+   "canonical": "Streptomycin",
+   "source": "hetionet"
+  },
+  "streptomycin sulfate": {
+   "id": "Compound::DB01082",
+   "label": "Compound",
+   "canonical": "Streptomycin",
+   "source": "rxnav"
+  },
+  "streptozocin": {
+   "id": "Compound::DB00428",
+   "label": "Compound",
+   "canonical": "Streptozocin",
+   "source": "hetionet"
+  },
+  "sulfamethazine": {
+   "id": "Compound::DB01582",
+   "label": "Compound",
+   "canonical": "Sulfamethazine",
+   "source": "hetionet"
+  },
+  "sulfamethazine sodium": {
+   "id": "Compound::DB01582",
+   "label": "Compound",
+   "canonical": "Sulfamethazine",
+   "source": "rxnav"
+  },
+  "sulfamethoxazole": {
+   "id": "Compound::DB01015",
+   "label": "Compound",
+   "canonical": "Sulfamethoxazole",
+   "source": "hetionet"
+  },
+  "suprofen": {
+   "id": "Compound::DB00870",
+   "label": "Compound",
+   "canonical": "Suprofen",
+   "source": "hetionet"
+  },
+  "sustain": {
+   "id": "Compound::DB01582",
+   "label": "Compound",
+   "canonical": "Sulfamethazine",
+   "source": "rxnav"
+  },
+  "swineaid": {
+   "id": "Compound::DB00125",
+   "label": "Compound",
+   "canonical": "L-Arginine",
+   "source": "rxnav"
+  },
+  "symfi": {
+   "id": "Compound::DB00625",
+   "label": "Compound",
+   "canonical": "Efavirenz",
+   "source": "rxnav"
+  },
+  "taclonex": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "rxnav"
+  },
+  "tactinal": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "take action": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "talicia": {
+   "id": "Compound::DB00338",
+   "label": "Compound",
+   "canonical": "Omeprazole",
+   "source": "rxnav"
+  },
+  "tegretol": {
+   "id": "Compound::DB00564",
+   "label": "Compound",
+   "canonical": "Carbamazepine",
+   "source": "rxnav"
+  },
+  "temaril-p": {
+   "id": "Compound::DB00860",
+   "label": "Compound",
+   "canonical": "Prednisolone",
+   "source": "rxnav"
+  },
+  "tempra quicklets": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "the magic bullet": {
+   "id": "Compound::DB09020",
+   "label": "Compound",
+   "canonical": "Bisacodyl",
+   "source": "rxnav"
+  },
+  "thera-gesic": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "thera-gesic plus": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "therastat": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "thoracol": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "today": {
+   "id": "Compound::DB01139",
+   "label": "Compound",
+   "canonical": "Cefapirin",
+   "source": "rxnav"
+  },
+  "tomorrow": {
+   "id": "Compound::DB01139",
+   "label": "Compound",
+   "canonical": "Cefapirin",
+   "source": "rxnav"
+  },
+  "toprol": {
+   "id": "Compound::DB00264",
+   "label": "Compound",
+   "canonical": "Metoprolol",
+   "source": "rxnav"
+  },
+  "trexall": {
+   "id": "Compound::DB00563",
+   "label": "Compound",
+   "canonical": "Methotrexate",
+   "source": "rxnav"
+  },
+  "tricylate": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "trileptal": {
+   "id": "Compound::DB00776",
+   "label": "Compound",
+   "canonical": "Oxcarbazepine",
+   "source": "rxnav"
+  },
+  "tuxarin": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "tuzistra": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "twirla": {
+   "id": "Compound::DB00367",
+   "label": "Compound",
+   "canonical": "Levonorgestrel",
+   "source": "rxnav"
+  },
+  "tycolene": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "tylenol": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "tylenol gelcap extra strength": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "tylenol pm": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "tylenol with codeine": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "tyrosine": {
+   "id": "Compound::DB00135",
+   "label": "Compound",
+   "canonical": "L-Tyrosine",
+   "source": "rxnav"
+  },
+  "tyrosine disodium dihydrate": {
+   "id": "Compound::DB00135",
+   "label": "Compound",
+   "canonical": "L-Tyrosine",
+   "source": "rxnav"
+  },
+  "ulcergard": {
+   "id": "Compound::DB00338",
+   "label": "Compound",
+   "canonical": "Omeprazole",
+   "source": "rxnav"
+  },
+  "unisom": {
+   "id": "Compound::DB00366",
+   "label": "Compound",
+   "canonical": "Doxylamine",
+   "source": "rxnav"
+  },
+  "unisom with pain relief": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "vaporex": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "vazalore": {
+   "id": "Compound::DB00945",
+   "label": "Compound",
+   "canonical": "Acetylsalicylic acid",
+   "source": "rxnav"
+  },
+  "vectical": {
+   "id": "Compound::DB00136",
+   "label": "Compound",
+   "canonical": "Calcitriol",
+   "source": "rxnav"
+  },
+  "verdrocet": {
+   "id": "Compound::DB00316",
+   "label": "Compound",
+   "canonical": "Acetaminophen",
+   "source": "rxnav"
+  },
+  "veripred": {
+   "id": "Compound::DB00860",
+   "label": "Compound",
+   "canonical": "Prednisolone",
+   "source": "rxnav"
+  },
+  "vimovo": {
+   "id": "Compound::DB00736",
+   "label": "Compound",
+   "canonical": "Esomeprazole",
+   "source": "rxnav"
+  },
+  "vyscoxa": {
+   "id": "Compound::DB00482",
+   "label": "Compound",
+   "canonical": "Celecoxib",
+   "source": "rxnav"
+  },
+  "vytorin": {
+   "id": "Compound::DB00641",
+   "label": "Compound",
+   "canonical": "Simvastatin",
+   "source": "rxnav"
+  },
+  "wal-profen": {
+   "id": "Compound::DB01050",
+   "label": "Compound",
+   "canonical": "Ibuprofen",
+   "source": "rxnav"
+  },
+  "wal-som": {
+   "id": "Compound::DB00366",
+   "label": "Compound",
+   "canonical": "Doxylamine",
+   "source": "rxnav"
+  },
+  "warfarin": {
+   "id": "Compound::DB00682",
+   "label": "Compound",
+   "canonical": "Warfarin",
+   "source": "hetionet"
+  },
+  "warfarin potassium": {
+   "id": "Compound::DB00682",
+   "label": "Compound",
+   "canonical": "Warfarin",
+   "source": "rxnav"
+  },
+  "warfarin sodium": {
+   "id": "Compound::DB00682",
+   "label": "Compound",
+   "canonical": "Warfarin",
+   "source": "rxnav"
+  },
+  "wellpatch backache relief": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "wong to yick": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "wynzora": {
+   "id": "Compound::DB00443",
+   "label": "Compound",
+   "canonical": "Betamethasone",
+   "source": "rxnav"
+  },
+  "xatmep": {
+   "id": "Compound::DB00563",
+   "label": "Compound",
+   "canonical": "Methotrexate",
+   "source": "rxnav"
+  },
+  "xeloda": {
+   "id": "Compound::DB01101",
+   "label": "Compound",
+   "canonical": "Capecitabine",
+   "source": "rxnav"
+  },
+  "xoten": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "xoten-c": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "xtampza": {
+   "id": "Compound::DB00497",
+   "label": "Compound",
+   "canonical": "Oxycodone",
+   "source": "rxnav"
+  },
+  "yosprala": {
+   "id": "Compound::DB00338",
+   "label": "Compound",
+   "canonical": "Omeprazole",
+   "source": "rxnav"
+  },
+  "zanosar": {
+   "id": "Compound::DB00428",
+   "label": "Compound",
+   "canonical": "Streptozocin",
+   "source": "rxnav"
+  },
+  "zegerid reformulated aug 2006": {
+   "id": "Compound::DB00338",
+   "label": "Compound",
+   "canonical": "Omeprazole",
+   "source": "rxnav"
+  },
+  "ziks pain relief": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "zocor": {
+   "id": "Compound::DB00641",
+   "label": "Compound",
+   "canonical": "Simvastatin",
+   "source": "rxnav"
+  },
+  "zodryl ac": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "zodryl dac": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "zodryl dec": {
+   "id": "Compound::DB00318",
+   "label": "Compound",
+   "canonical": "Codeine",
+   "source": "rxnav"
+  },
+  "zostrix joint & arthritis pain relief": {
+   "id": "Compound::DB00825",
+   "label": "Compound",
+   "canonical": "Menthol",
+   "source": "rxnav"
+  },
+  "zypitamag": {
+   "id": "Compound::DB08860",
+   "label": "Compound",
+   "canonical": "Pitavastatin",
+   "source": "rxnav"
+  },
+  "zzzquil ultra": {
+   "id": "Compound::DB00366",
+   "label": "Compound",
+   "canonical": "Doxylamine",
+   "source": "rxnav"
+  }
+ },
+ "ambiguous": {
+  "cholecalciferol": [
+   {
+    "id": "Compound::DB00169",
+    "label": "Compound",
+    "canonical": "Cholecalciferol"
+   },
+   {
+    "id": "Pharmacologic Class::N0000006996",
+    "label": "PharmacologicClass",
+    "canonical": "Cholecalciferol"
+   }
+  ],
+  "estradiol": [
+   {
+    "id": "Compound::DB00783",
+    "label": "Compound",
+    "canonical": "Estradiol"
+   },
+   {
+    "id": "Pharmacologic Class::N0000007246",
+    "label": "PharmacologicClass",
+    "canonical": "Estradiol"
+   }
+  ],
+  "folic acid": [
+   {
+    "id": "Compound::DB00158",
+    "label": "Compound",
+    "canonical": "Folic Acid"
+   },
+   {
+    "id": "Pharmacologic Class::N0000007151",
+    "label": "PharmacologicClass",
+    "canonical": "Folic Acid"
+   }
+  ],
+  "narcolepsy": [
+   {
+    "id": "Disease::DOID:8986",
+    "label": "Disease",
+    "canonical": "narcolepsy"
+   },
+   {
+    "id": "Symptom::D009290",
+    "label": "Symptom",
+    "canonical": "Narcolepsy"
+   }
+  ],
+  "nicotine": [
+   {
+    "id": "Compound::DB00184",
+    "label": "Compound",
+    "canonical": "Nicotine"
+   },
+   {
+    "id": "Pharmacologic Class::N0000006496",
+    "label": "PharmacologicClass",
+    "canonical": "Nicotine"
+   }
+  ],
+  "obesity": [
+   {
+    "id": "Disease::DOID:9970",
+    "label": "Disease",
+    "canonical": "obesity"
+   },
+   {
+    "id": "Symptom::D009765",
+    "label": "Symptom",
+    "canonical": "Obesity"
+   }
+  ],
+  "progesterone": [
+   {
+    "id": "Compound::DB00396",
+    "label": "Compound",
+    "canonical": "Progesterone"
+   },
+   {
+    "id": "Pharmacologic Class::N0000005934",
+    "label": "PharmacologicClass",
+    "canonical": "Progesterone"
+   }
+  ],
+  "restless legs syndrome": [
+   {
+    "id": "Disease::DOID:0050425",
+    "label": "Disease",
+    "canonical": "restless legs syndrome"
+   },
+   {
+    "id": "Symptom::D012148",
+    "label": "Symptom",
+    "canonical": "Restless Legs Syndrome"
+   }
+  ],
+  "vitamin a": [
+   {
+    "id": "Compound::DB00162",
+    "label": "Compound",
+    "canonical": "Vitamin A"
+   },
+   {
+    "id": "Pharmacologic Class::N0000006269",
+    "label": "PharmacologicClass",
+    "canonical": "Vitamin A"
+   }
+  ]
+ },
+ "genes": {
+  "ABCB1": "Gene::5243",
+  "ABCG2": "Gene::9429",
+  "ACT": "Gene::389036",
+  "AKR1C1": "Gene::1645",
+  "AKR1C3": "Gene::8644",
+  "ARC": "Gene::23237",
+  "BAD": "Gene::572",
+  "CAD": "Gene::790",
+  "CAMP": "Gene::820",
+  "CARS": "Gene::833",
+  "CAST": "Gene::831",
+  "CAT": "Gene::847",
+  "CKMT2": "Gene::1160",
+  "CLOCK": "Gene::9575",
+  "COPE": "Gene::11316",
+  "CS": "Gene::1431",
+  "CYP1A1": "Gene::1543",
+  "CYP2B6": "Gene::1555",
+  "CYP2C19": "Gene::1557",
+  "CYP2C9": "Gene::1559",
+  "CYP2D6": "Gene::1565",
+  "CYP3A4": "Gene::1576",
+  "CYP3A5": "Gene::1577",
+  "CYP4F2": "Gene::8529",
+  "DPYD": "Gene::1806",
+  "FAS": "Gene::355",
+  "GLRX2": "Gene::51022",
+  "GPX1": "Gene::2876",
+  "GPX3": "Gene::2878",
+  "GPX7": "Gene::2882",
+  "GSTM1": "Gene::2944",
+  "GSTM3": "Gene::2947",
+  "GSTM4": "Gene::2948",
+  "GSTP1": "Gene::2950",
+  "HR": "Gene::55806",
+  "IMPACT": "Gene::55364",
+  "JUN": "Gene::3725",
+  "KIT": "Gene::3815",
+  "LARGE": "Gene::9215",
+  "MAX": "Gene::4149",
+  "MSN": "Gene::4478",
+  "NUDT15": "Gene::55270",
+  "PEX14": "Gene::5195",
+  "PIP": "Gene::5304",
+  "POLE": "Gene::5426",
+  "RAN": "Gene::5901",
+  "REN": "Gene::5972",
+  "REST": "Gene::5978",
+  "SARS": "Gene::6301",
+  "SDS": "Gene::10993",
+  "SELL": "Gene::6402",
+  "SET": "Gene::6418",
+  "SHE": "Gene::126669",
+  "SLCO1B1": "Gene::10599",
+  "SON": "Gene::6651",
+  "STAR": "Gene::6770",
+  "TANK": "Gene::10010",
+  "TPMT": "Gene::7172",
+  "UGT1A1": "Gene::54658",
+  "VKORC1": "Gene::79001",
+  "WARS": "Gene::7453"
+ },
+ "gene_stopwords": [
+  "ACT",
+  "ARC",
+  "BAD",
+  "CAD",
+  "CAMP",
+  "CARS",
+  "CAST",
+  "CAT",
+  "CLOCK",
+  "COPE",
+  "CS",
+  "FAS",
+  "HR",
+  "IMPACT",
+  "JUN",
+  "KIT",
+  "LARGE",
+  "MAX",
+  "MSN",
+  "PIP",
+  "POLE",
+  "RAN",
+  "REN",
+  "REST",
+  "SARS",
+  "SDS",
+  "SELL",
+  "SET",
+  "SHE",
+  "SON",
+  "STAR",
+  "TANK",
+  "WARS"
+ ],
+ "brand_stopwords": [
+  "correct",
+  "lactate",
+  "perform",
+  "react",
+  "rebalance",
+  "reconcile",
+  "sustain",
+  "today"
+ ],
+ "stopword_counts": {
+  "perform": 18,
+  "lactate": 9,
+  "sustain": 9,
+  "react": 4,
+  "rebalance": 2,
+  "today": 1,
+  "correct": 0,
+  "reconcile": 0
+ },
+ "stopword_counts_docs": 22,
+ "stopword_counts_basis": "이 단원이 쓰는 논문 22편 본문에서 낱말 경계 기준으로 센 소문자 등장 횟수(교안 02 의 함정어 표가 이 값을 쓴다)",
+ "stopword_rule": "gene_stopwords 와 brand_stopwords 에 든 이름은 **원래 대소문자로 쓰인 자리만** 인정한다. 소문자로 눌러 맞추면 평범한 문장이 개체로 둔갑한다."
+}

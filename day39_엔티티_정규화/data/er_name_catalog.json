@@ -1,0 +1,261 @@
+[
+  {
+    "standard_id": "Compound::DB00143",
+    "canonical_name": "Glutathione",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB00171",
+    "canonical_name": "Adenosine triphosphate",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB00173",
+    "canonical_name": "Adenine",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB00215",
+    "canonical_name": "Citalopram",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB00264",
+    "canonical_name": "Metoprolol",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB00321",
+    "canonical_name": "Amitriptyline",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB00338",
+    "canonical_name": "Omeprazole",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB00443",
+    "canonical_name": "Betamethasone",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB00448",
+    "canonical_name": "Lansoprazole",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB00482",
+    "canonical_name": "Celecoxib",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB00497",
+    "canonical_name": "Oxycodone",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB00563",
+    "canonical_name": "Methotrexate",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB00625",
+    "canonical_name": "Efavirenz",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB00635",
+    "canonical_name": "Prednisone",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB00640",
+    "canonical_name": "Adenosine",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB00641",
+    "canonical_name": "Simvastatin",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB00682",
+    "canonical_name": "Warfarin",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB00758",
+    "canonical_name": "Clopidogrel",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB00860",
+    "canonical_name": "Prednisolone",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB00997",
+    "canonical_name": "Doxorubicin",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB01050",
+    "canonical_name": "Ibuprofen",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB01062",
+    "canonical_name": "Oxybutynin",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB01076",
+    "canonical_name": "Atorvastatin",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB01082",
+    "canonical_name": "Streptomycin",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB01097",
+    "canonical_name": "Leflunomide",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB01098",
+    "canonical_name": "Rosuvastatin",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB01234",
+    "canonical_name": "Dexamethasone",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Compound::DB01611",
+    "canonical_name": "Hydroxychloroquine",
+    "entity_type": "Compound",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Gene::1645",
+    "canonical_name": "AKR1C1",
+    "entity_type": "Gene",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Gene::2876",
+    "canonical_name": "GPX1",
+    "entity_type": "Gene",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Gene::2878",
+    "canonical_name": "GPX3",
+    "entity_type": "Gene",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Gene::2882",
+    "canonical_name": "GPX7",
+    "entity_type": "Gene",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Gene::2944",
+    "canonical_name": "GSTM1",
+    "entity_type": "Gene",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Gene::2947",
+    "canonical_name": "GSTM3",
+    "entity_type": "Gene",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Gene::2948",
+    "canonical_name": "GSTM4",
+    "entity_type": "Gene",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Gene::2950",
+    "canonical_name": "GSTP1",
+    "entity_type": "Gene",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  },
+  {
+    "standard_id": "Gene::8644",
+    "canonical_name": "AKR1C3",
+    "entity_type": "Gene",
+    "source_file": "data/hetionet_names.csv",
+    "source_knowledge_base": "Hetionet v1.0"
+  }
+]
