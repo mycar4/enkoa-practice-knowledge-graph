@@ -1904,6 +1904,14 @@ class ArtAdmissionService:
                 "gender_restriction": t.get("gender_restriction"),
                 "source_url": t.get("source_url"),
                 "exam_type_name": t.get("exam_type_name"),
+                # 2026-09-09: 대학찾기 카드에는 있는데 성적추천 카드에는 빠져있던
+                # 모집인원/재료/규격/일정 정보 - "이 정보가 중요하니 대학찾기와
+                # 동일하게 나와야 한다"는 피드백 반영. list_all_tracks_full()이
+                # 이미 만들어둔 값을 그대로 옮기기만 한다(새 쿼리 없음).
+                "quota": t.get("quota"), "admission_year": t.get("admission_year"),
+                "allowed_materials": t.get("allowed_materials"), "paper_size": t.get("paper_size"),
+                "application_start": t.get("application_start"), "application_end": t.get("application_end"),
+                "exam_dates": t.get("exam_dates"), "result_date": t.get("result_date"),
             }
             doc_category = self._document_track_category(t.get("exam_type_name"))
             entry["is_document_based"] = doc_category == "portfolio"

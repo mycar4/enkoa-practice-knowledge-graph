@@ -55,15 +55,13 @@
 </fieldset>
 
 <fieldset class="space-y-unit-sm">
-<div class="flex items-baseline justify-between"><legend class="font-label-lg text-label-lg text-on-surface flex items-center gap-unit-xs"><span class="font-label-md text-label-md px-1.5 py-0.5 bg-on-surface text-surface rounded">03</span>서류전형만 보기</legend></div>
-<label class="flex items-center gap-unit-xs"><input id="documentOnly" type="checkbox" class="w-5 h-5"/><span class="font-body-sm text-body-sm text-on-surface-variant">실기 없이 미술활동보고서/포트폴리오로 평가받는 전형만</span></label>
-<p id="docOnlyNotice" class="font-body-sm text-body-sm text-primary hidden">서류전형만 보기를 켜면 위에서 선택한 실기 종목/재료는 검색에 반영되지 않습니다 (서류전형은 실기 자체가 없는 전형이라 실기 조건과 동시에 걸러낼 수 없습니다).</p>
-</fieldset>
-
-<fieldset class="space-y-unit-sm">
-<div class="flex items-baseline justify-between"><legend class="font-label-lg text-label-lg text-on-surface flex items-center gap-unit-xs"><span class="font-label-md text-label-md px-1.5 py-0.5 bg-on-surface text-surface rounded">04</span>학생부종합전형만 보기</legend></div>
-<label class="flex items-center gap-unit-xs"><input id="holisticOnly" type="checkbox" class="w-5 h-5"/><span class="font-body-sm text-body-sm text-on-surface-variant">실기·포트폴리오 제출 없이 학생부+서류+면접으로 평가받는 전형만</span></label>
-<p id="holisticOnlyNotice" class="font-body-sm text-body-sm text-primary hidden">학생부종합전형만 보기를 켜면 위에서 선택한 실기 종목/재료는 검색에 반영되지 않습니다 (실기 자체가 없는 전형이라 실기 조건과 동시에 걸러낼 수 없습니다). 서류전형(미술활동보고서/포트폴리오)과는 준비 방법이 달라 별도 항목으로 분리했습니다.</p>
+<div class="flex items-baseline justify-between"><legend class="font-label-lg text-label-lg text-on-surface flex items-center gap-unit-xs"><span class="font-label-md text-label-md px-1.5 py-0.5 bg-on-surface text-surface rounded">03</span>전형 유형으로 좁히기 (선택)</legend></div>
+<select id="trackTypeFilter" class="w-full h-11 px-unit-sm bg-surface-container-lowest border border-outline-variant rounded font-body-md text-body-md">
+  <option value="">전체 (위에서 고른 실기 종목/재료 기준으로 검색)</option>
+  <option value="document">서류전형만 - 실기 없이 미술활동보고서/포트폴리오로 평가받는 전형만</option>
+  <option value="holistic">학생부종합전형만 - 실기·포트폴리오 제출 없이 학생부+서류+면접으로 평가받는 전형만</option>
+</select>
+<p id="trackTypeNotice" class="font-body-sm text-body-sm text-primary hidden">이 필터를 켜면 위에서 선택한 실기 종목/재료는 검색에 반영되지 않습니다 (실기 자체가 없는 전형이라 실기 조건과 동시에 걸러낼 수 없습니다). 논술전형·학생부교과전형 등 다른 전형 유형은 데이터가 확보되는 대로 이 목록에 계속 추가됩니다.</p>
 </fieldset>
 
 <button class="w-full h-13 py-unit-sm bg-on-surface text-surface font-label-lg text-label-lg rounded flex items-center justify-center gap-unit-xs shadow-md" type="submit" id="submitBtn">
@@ -121,41 +119,31 @@ document.querySelectorAll(".exam-btn").forEach(btn => {
   });
 });
 
-// 서류전형만/학생부종합전형만 보기를 체크하면 실기종목/재료 선택은 검색 결과에
-// 반영되지 않는다(동국대 불교미술처럼 실기전형인 학교가 갑자기 안 보이는
+// 전형 유형 필터(서류전형/학생부종합전형)를 고르면 실기종목/재료 선택은 검색
+// 결과에 반영되지 않는다(동국대 불교미술처럼 실기전형인 학교가 갑자기 안 보이는
 // 원인이었던 혼란 포인트라 실기종목 영역을 비활성화하고 이유를 명확히 표시한다).
-// 두 체크박스는 서로 배타적이다 - 실기 없이 서류(포트폴리오) 기반으로 평가받는
-// 전형과 학생부종합(서류+면접) 전형은 준비 방법이 완전히 달라 동시에 켤 이유가
-// 없다(사용자 피드백으로 04번 항목을 03번과 분리해서 추가함).
+// 2026-09-09: 원래 체크박스 2개(03/04)로 따로 있던 걸 select 하나로 합쳤다 -
+// "이 영역을 하나로 묶어서 선택하게 해달라"는 피드백, 그리고 앞으로 논술전형·
+// 학생부교과전형 등 전형 유형이 더 늘어날 걸 감안하면 체크박스를 계속 늘리는
+// 것보다 select 옵션을 늘리는 쪽이 확장하기 쉽다.
 const examSection = document.getElementById("practicalExamGroup");
 const materialInput = document.getElementById("materialQuery");
-const documentOnlyCheck = document.getElementById("documentOnly");
-const holisticOnlyCheck = document.getElementById("holisticOnly");
+const trackTypeFilter = document.getElementById("trackTypeFilter");
 function updateDocumentOnlyState() {
-  const isDocOnly = documentOnlyCheck.checked;
-  const isHolisticOnly = holisticOnlyCheck.checked;
-  const anyOnly = isDocOnly || isHolisticOnly;
+  const anyOnly = !!trackTypeFilter.value;
   examSection.classList.toggle("opacity-40", anyOnly);
   examSection.classList.toggle("pointer-events-none", anyOnly);
   materialInput.disabled = anyOnly;
   materialInput.classList.toggle("opacity-40", anyOnly);
-  document.getElementById("docOnlyNotice").classList.toggle("hidden", !isDocOnly);
-  document.getElementById("holisticOnlyNotice").classList.toggle("hidden", !isHolisticOnly);
+  document.getElementById("trackTypeNotice").classList.toggle("hidden", !anyOnly);
 }
-documentOnlyCheck.addEventListener("change", () => {
-  if (documentOnlyCheck.checked) holisticOnlyCheck.checked = false;
-  updateDocumentOnlyState();
-});
-holisticOnlyCheck.addEventListener("change", () => {
-  if (holisticOnlyCheck.checked) documentOnlyCheck.checked = false;
-  updateDocumentOnlyState();
-});
+trackTypeFilter.addEventListener("change", updateDocumentOnlyState);
 
 function runAnalysis() {
   const errEl = document.getElementById("formError");
   const materialQuery = document.getElementById("materialQuery").value.trim();
-  const documentOnly = documentOnlyCheck.checked;
-  const holisticOnly = holisticOnlyCheck.checked;
+  const documentOnly = trackTypeFilter.value === "document";
+  const holisticOnly = trackTypeFilter.value === "holistic";
   if (!documentOnly && !holisticOnly && selectedExams.size === 0 && !materialQuery) {
     errEl.textContent = "실기 종목을 1개 이상 선택하거나 재료를 입력해주세요.";
     errEl.classList.remove("hidden");
@@ -210,8 +198,7 @@ window.addEventListener("pageshow", (e) => {
     if (check) check.classList.add("hidden");
   });
   document.getElementById("materialQuery").value = "";
-  documentOnlyCheck.checked = false;
-  holisticOnlyCheck.checked = false;
+  trackTypeFilter.value = "";
   updateDocumentOnlyState();
   document.getElementById("formError").classList.add("hidden");
   const btn = document.getElementById("submitBtn");

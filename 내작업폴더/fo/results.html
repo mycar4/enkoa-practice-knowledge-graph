@@ -81,13 +81,13 @@
       <input type="checkbox" id="hideNotApplicableCheck" class="w-4 h-4">
       학생부 미반영 전형 숨기기
     </label>
-    <label class="flex items-center gap-unit-2xs font-body-sm text-body-sm text-on-surface-variant cursor-pointer">
-      <input type="checkbox" id="documentOnlyCheck" class="w-4 h-4">
-      서류전형(실기 없음)만 보기
-    </label>
-    <label class="flex items-center gap-unit-2xs font-body-sm text-body-sm text-on-surface-variant cursor-pointer">
-      <input type="checkbox" id="holisticOnlyCheck" class="w-4 h-4">
-      학생부종합전형만 보기
+    <label class="flex items-center gap-unit-2xs font-body-sm text-body-sm text-on-surface-variant">
+      전형 유형
+      <select id="trackTypeSelect" class="ml-unit-2xs h-9 px-unit-xs rounded border border-outline-variant bg-surface-container-lowest text-on-surface font-body-sm text-body-sm">
+        <option value="">전체</option>
+        <option value="document">서류전형만 (실기 없음)</option>
+        <option value="holistic">학생부종합전형만</option>
+      </select>
     </label>
   </div>
   <button id="askAboutResultsBtn" class="ml-auto h-9 px-unit-sm bg-primary text-on-primary font-label-sm text-label-sm rounded-lg flex items-center gap-unit-2xs shrink-0">
@@ -552,8 +552,9 @@ function renderRecommendResults() {
     const sortBy = document.getElementById("sortSelect").value;
     const hideNA = document.getElementById("hideNotApplicableCheck").checked;
     const genderFilter = document.getElementById("genderSelect").value;
-    const documentOnly = document.getElementById("documentOnlyCheck").checked;
-    const holisticOnly = document.getElementById("holisticOnlyCheck").checked;
+    const trackTypeValue = document.getElementById("trackTypeSelect").value;
+    const documentOnly = trackTypeValue === "document";
+    const holisticOnly = trackTypeValue === "holistic";
 
     let list = recommendResults.slice();
     if (hideNA) list = list.filter(r => r.calc_precision !== "not_applicable");
@@ -635,8 +636,7 @@ function renderRecommendResults() {
   document.getElementById("sortSelect").addEventListener("change", applyControlsAndRender);
   document.getElementById("hideNotApplicableCheck").addEventListener("change", applyControlsAndRender);
   document.getElementById("genderSelect").addEventListener("change", applyControlsAndRender);
-  document.getElementById("documentOnlyCheck").addEventListener("change", applyControlsAndRender);
-  document.getElementById("holisticOnlyCheck").addEventListener("change", applyControlsAndRender);
+  document.getElementById("trackTypeSelect").addEventListener("change", applyControlsAndRender);
 
   // 모바일에서 정렬/성별/실기종목 칩만으로도 영역이 꽉 차서, 자주 안 쓰는 체크박스
   // 2개(학생부 미반영 숨기기/서류전형만 보기)는 기능을 없애는 대신 "필터 더보기"
@@ -689,8 +689,19 @@ function renderRecommendResults() {
         ? `<div class="font-headline-sm text-headline-sm ${isExact ? "text-primary" : "text-on-surface"}">배점표 기준 환산 ${pct}점${scaleNote}</div>`
         : `<div class="font-body-sm text-body-sm text-on-surface-variant">${r.note || "계산 불가"}</div>`);
     const gradeEq = r.estimated_grade_equivalent;
+    // 값(등급)과 그 아래 설명 문구를 한 줄에 이어붙이면 좁은 화면에서 줄바꿈될 때
+    // 간격이 어색해진다 - 값은 굵게 한 줄, 설명은 그 아래 별도 줄(작은 글씨)로 분리.
     const gradeEqLine = (!isNotApplicable && gradeEq !== null && gradeEq !== undefined)
-      ? `<div class="font-body-md text-body-md text-on-surface font-medium">이 학교 반영교과 기준 원 석차등급: 약 <span class="text-primary">${gradeEq}등급</span> <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">- 학교 배점표를 거치지 않은 값이라 학교 간 비교 가능(정렬 타이브레이커로 사용)</span></div>` : "";
+      ? `<div class="font-body-md text-body-md text-on-surface font-medium">이 학교 반영교과 기준 원 석차등급: 약 <span class="text-primary">${gradeEq}등급</span>
+          <div class="font-label-sm text-label-sm text-on-surface-variant font-normal leading-relaxed">학교 배점표를 거치지 않은 값이라 학교 간 비교 가능(정렬 타이브레이커로 사용)</div>
+        </div>` : "";
+    const scheduleBlock = `
+      ${r.exam_type_name ? `<div class="font-body-sm text-body-sm text-on-surface-variant">실기종목: ${r.exam_type_name}</div>` : ""}
+      ${(r.allowed_materials && r.allowed_materials.length) || r.paper_size ? `<div class="font-body-sm text-body-sm text-on-surface-variant">재료: ${(r.allowed_materials || []).join(", ") || "-"}${r.paper_size ? " · 규격: " + r.paper_size : ""}</div>` : ""}
+      <div class="font-body-sm text-body-sm text-on-surface-variant">모집인원: ${r.quota ?? "-"}명</div>
+      <div class="font-body-sm text-body-sm text-on-surface-variant">원서접수: ${r.application_start || "-"} ~ ${r.application_end || "-"}</div>
+      <div class="font-body-sm text-body-sm text-on-surface-variant">실기고사: ${(r.exam_dates || []).join(", ") || "-"} · 발표: ${r.result_date || "-"}</div>
+    `;
     const ratioLine = (!isNotApplicable && (r.practical_ratio_pct != null || r.school_record_ratio_pct != null))
       ? `<div class="font-body-sm text-body-sm text-on-surface-variant">반영비율: 실기 ${r.practical_ratio_pct ?? "-"}% · 학생부 ${r.school_record_ratio_pct ?? "-"}%` +
         (r.practical_ratio_pct != null && r.practical_ratio_pct >= 70
@@ -741,8 +752,9 @@ function renderRecommendResults() {
         </div>
         <span class="font-headline-sm text-headline-sm text-on-surface">${r.university}${campusStr}${r.gender_restriction === "female_only" ? ` <span class="font-label-sm text-label-sm text-error align-middle">(여자대학교)</span>` : ""}</span>
         <div class="font-body-md text-body-md text-on-surface font-medium">${r.department} · ${r.track_name || ""}</div>
-        ${gradeEqLine}
+        ${scheduleBlock}
         ${pctLine}
+        ${gradeEqLine}
         <button type="button" class="card-detail-toggle self-start mt-unit-2xs font-label-sm text-label-sm text-primary flex items-center gap-unit-2xs">
           <span class="toggle-label">자세히 보기</span><span class="material-symbols-outlined text-[16px] toggle-icon">expand_more</span>
         </button>
