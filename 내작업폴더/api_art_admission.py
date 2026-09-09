@@ -84,6 +84,7 @@ class PrepSearchRequest(BaseModel):
     material_query: str = ""
     document_only: bool = False
     holistic_only: bool = False
+    academic_record_only: bool = False
 
 
 @app.get("/prep-topics")
@@ -165,6 +166,7 @@ def prep_search(req: PrepSearchRequest):
     return svc.search_tracks_by_prep(
         topic_keywords=req.topic_keywords, material_query=req.material_query,
         document_only=req.document_only, holistic_only=req.holistic_only,
+        academic_record_only=req.academic_record_only,
     )
 
 

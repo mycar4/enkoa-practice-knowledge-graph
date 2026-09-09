@@ -60,8 +60,9 @@
   <option value="">전체 (위에서 고른 실기 종목/재료 기준으로 검색)</option>
   <option value="document">서류전형만 - 실기 없이 미술활동보고서/포트폴리오로 평가받는 전형만</option>
   <option value="holistic">학생부종합전형만 - 실기·포트폴리오 제출 없이 학생부+서류+면접으로 평가받는 전형만</option>
+  <option value="academic_record">학생부교과전형만 - 실기 없이 학생부 성적 100% 정량 반영으로 평가받는 전형만</option>
 </select>
-<p id="trackTypeNotice" class="font-body-sm text-body-sm text-primary hidden">이 필터를 켜면 위에서 선택한 실기 종목/재료는 검색에 반영되지 않습니다 (실기 자체가 없는 전형이라 실기 조건과 동시에 걸러낼 수 없습니다). 논술전형·학생부교과전형 등 다른 전형 유형은 데이터가 확보되는 대로 이 목록에 계속 추가됩니다.</p>
+<p id="trackTypeNotice" class="font-body-sm text-body-sm text-primary hidden">이 필터를 켜면 위에서 선택한 실기 종목/재료는 검색에 반영되지 않습니다 (실기 자체가 없는 전형이라 실기 조건과 동시에 걸러낼 수 없습니다). 논술전형 등 다른 전형 유형은 데이터가 확보되는 대로 이 목록에 계속 추가됩니다.</p>
 </fieldset>
 
 <button class="w-full h-13 py-unit-sm bg-on-surface text-surface font-label-lg text-label-lg rounded flex items-center justify-center gap-unit-xs shadow-md" type="submit" id="submitBtn">
@@ -144,7 +145,8 @@ function runAnalysis() {
   const materialQuery = document.getElementById("materialQuery").value.trim();
   const documentOnly = trackTypeFilter.value === "document";
   const holisticOnly = trackTypeFilter.value === "holistic";
-  if (!documentOnly && !holisticOnly && selectedExams.size === 0 && !materialQuery) {
+  const academicRecordOnly = trackTypeFilter.value === "academic_record";
+  if (!documentOnly && !holisticOnly && !academicRecordOnly && selectedExams.size === 0 && !materialQuery) {
     errEl.textContent = "실기 종목을 1개 이상 선택하거나 재료를 입력해주세요.";
     errEl.classList.remove("hidden");
     return;
@@ -162,6 +164,7 @@ function runAnalysis() {
       material_query: materialQuery,
       document_only: documentOnly,
       holistic_only: holisticOnly,
+      academic_record_only: academicRecordOnly,
     }),
   }).then(r => r.json()).then(results => {
     // results.html은 "artready_recommend_results" 키가 남아있기만 해도(URL에
@@ -172,7 +175,7 @@ function runAnalysis() {
     sessionStorage.removeItem("artready_recommend_results");
     sessionStorage.setItem("artready_results", JSON.stringify(results));
     sessionStorage.setItem("artready_profile", JSON.stringify({
-      examTypes: Array.from(selectedExams), materialQuery, documentOnly, holisticOnly,
+      examTypes: Array.from(selectedExams), materialQuery, documentOnly, holisticOnly, academicRecordOnly,
     }));
     window.location.href = "results.html";
   }).catch(err => {

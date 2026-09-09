@@ -87,6 +87,7 @@
         <option value="">전체</option>
         <option value="document">서류전형만 (실기 없음)</option>
         <option value="holistic">학생부종합전형만</option>
+        <option value="academic_record">학생부교과전형만</option>
       </select>
     </label>
   </div>
@@ -173,6 +174,7 @@ if (isRecommendMode) {
   if (profile.materialQuery) bits.push("재료: " + profile.materialQuery);
   if (profile.documentOnly) bits.push("서류전형만");
   if (profile.holisticOnly) bits.push("학생부종합전형만");
+  if (profile.academicRecordOnly) bits.push("학생부교과전형만");
   document.getElementById("profileSummary").textContent = bits.length ? bits.join(" / ") + " 기준 결과" : "분석 결과";
 }
 
@@ -198,6 +200,9 @@ function statusBadge(r) {
   }
   if (r.match_status === "holistic_review") {
     return `<span class="px-unit-xs py-0.5 bg-secondary text-on-secondary font-label-sm text-label-sm rounded">학생부종합전형</span>`;
+  }
+  if (r.match_status === "academic_record") {
+    return `<span class="px-unit-xs py-0.5 bg-secondary text-on-secondary font-label-sm text-label-sm rounded">학생부교과전형</span>`;
   }
   return `<span class="px-unit-xs py-0.5 bg-tertiary text-on-tertiary font-label-sm text-label-sm rounded">준비 내용 확인 필요</span>`;
 }
@@ -555,6 +560,7 @@ function renderRecommendResults() {
     const trackTypeValue = document.getElementById("trackTypeSelect").value;
     const documentOnly = trackTypeValue === "document";
     const holisticOnly = trackTypeValue === "holistic";
+    const academicRecordOnly = trackTypeValue === "academic_record";
 
     let list = recommendResults.slice();
     if (hideNA) list = list.filter(r => r.calc_precision !== "not_applicable");
@@ -562,6 +568,7 @@ function renderRecommendResults() {
     if (genderFilter === "female_only") list = list.filter(r => r.gender_restriction === "female_only");
     if (documentOnly) list = list.filter(r => r.is_document_based);
     if (holisticOnly) list = list.filter(r => r.is_holistic_review);
+    if (academicRecordOnly) list = list.filter(r => r.is_academic_record);
     if (selectedTopicFilters.size > 0) {
       list = list.filter(r => {
         const tokens = examKeywordTokens(r.exam_type_name);
@@ -669,7 +676,9 @@ function renderRecommendResults() {
     const docBadge = r.is_document_based
       ? `<span class="px-unit-xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded border border-outline-variant">서류전형(실기 없음)</span>`
       : r.is_holistic_review
-        ? `<span class="px-unit-xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded border border-outline-variant">학생부종합전형</span>` : "";
+        ? `<span class="px-unit-xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded border border-outline-variant">학생부종합전형</span>`
+        : r.is_academic_record
+          ? `<span class="px-unit-xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded border border-outline-variant">학생부교과전형</span>` : "";
     const tierLabelMap = {
       REGISTRANT_TOP: ["전년도 등록자 평균보다 좋음", "bg-secondary text-on-secondary"],
       REGISTRANT_MID: ["전년도 등록자 평균~최저 사이", "bg-tertiary text-on-tertiary"],
@@ -689,12 +698,11 @@ function renderRecommendResults() {
         ? `<div class="font-headline-sm text-headline-sm ${isExact ? "text-primary" : "text-on-surface"}">배점표 기준 환산 ${pct}점${scaleNote}</div>`
         : `<div class="font-body-sm text-body-sm text-on-surface-variant">${r.note || "계산 불가"}</div>`);
     const gradeEq = r.estimated_grade_equivalent;
-    // 값(등급)과 그 아래 설명 문구를 한 줄에 이어붙이면 좁은 화면에서 줄바꿈될 때
-    // 간격이 어색해진다 - 값은 굵게 한 줄, 설명은 그 아래 별도 줄(작은 글씨)로 분리.
+    // "학교 배점표를 거치지 않은 값이라 학교 간 비교 가능" 문구가 무슨 뜻인지
+    // 못 알아듣겠다는 피드백 - 쉬운 말로 다시 쓰고, 툴팁(모바일에선 안 보임)이
+    // 아니라 화면에 짧게 남기되 한 줄로 끝나게 압축했다.
     const gradeEqLine = (!isNotApplicable && gradeEq !== null && gradeEq !== undefined)
-      ? `<div class="font-body-md text-body-md text-on-surface font-medium">이 학교 반영교과 기준 원 석차등급: 약 <span class="text-primary">${gradeEq}등급</span>
-          <div class="font-label-sm text-label-sm text-on-surface-variant font-normal leading-relaxed">학교 배점표를 거치지 않은 값이라 학교 간 비교 가능(정렬 타이브레이커로 사용)</div>
-        </div>` : "";
+      ? `<div class="font-body-md text-body-md text-on-surface font-medium">반영교과 기준 원 석차등급: 약 <span class="text-primary">${gradeEq}등급</span> <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">(학교 간 비교 가능한 참고값)</span></div>` : "";
     const scheduleBlock = `
       ${r.exam_type_name ? `<div class="font-body-sm text-body-sm text-on-surface-variant">실기종목: ${r.exam_type_name}</div>` : ""}
       ${(r.allowed_materials && r.allowed_materials.length) || r.paper_size ? `<div class="font-body-sm text-body-sm text-on-surface-variant">재료: ${(r.allowed_materials || []).join(", ") || "-"}${r.paper_size ? " · 규격: " + r.paper_size : ""}</div>` : ""}
@@ -753,8 +761,8 @@ function renderRecommendResults() {
         <span class="font-headline-sm text-headline-sm text-on-surface">${r.university}${campusStr}${r.gender_restriction === "female_only" ? ` <span class="font-label-sm text-label-sm text-error align-middle">(여자대학교)</span>` : ""}</span>
         <div class="font-body-md text-body-md text-on-surface font-medium">${r.department} · ${r.track_name || ""}</div>
         ${scheduleBlock}
-        ${pctLine}
         ${gradeEqLine}
+        ${pctLine}
         <button type="button" class="card-detail-toggle self-start mt-unit-2xs font-label-sm text-label-sm text-primary flex items-center gap-unit-2xs">
           <span class="toggle-label">자세히 보기</span><span class="material-symbols-outlined text-[16px] toggle-icon">expand_more</span>
         </button>
