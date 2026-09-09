@@ -60,14 +60,15 @@
       <option value="practical">실기비중 높은 순</option>
     </select>
   </label>
-  <label class="flex items-center gap-unit-2xs font-body-sm text-body-sm text-on-surface-variant">
-    성별 조건
-    <select id="genderSelect" class="ml-unit-2xs h-9 px-unit-xs rounded border border-outline-variant bg-surface-container-lowest text-on-surface font-body-sm text-body-sm">
-      <option value="all">전체</option>
+  <div class="flex items-start gap-unit-2xs flex-wrap">
+    <span class="font-body-sm text-body-sm text-on-surface-variant h-9 flex items-center">검색조건</span>
+    <select id="genderSelect" class="h-9 px-unit-xs rounded border border-outline-variant bg-surface-container-lowest text-on-surface font-body-sm text-body-sm">
+      <option value="all">성별: 전체</option>
       <option value="exclude_female">여자대학교 제외</option>
       <option value="female_only">여자대학교만</option>
     </select>
-  </label>
+    <div id="topicFilterChips" class="flex flex-wrap items-center gap-unit-2xs"></div>
+  </div>
   <label class="flex items-center gap-unit-2xs font-body-sm text-body-sm text-on-surface-variant cursor-pointer">
     <input type="checkbox" id="hideNotApplicableCheck" class="w-4 h-4">
     학생부 미반영 전형 숨기기
@@ -444,6 +445,53 @@ function renderRecommendResults() {
     return;
   }
 
+  // "검색조건"의 실기 종목 칩 - 대학찾기(profile.html)와 완전히 같은 /prep-topics
+  // 목록을 그대로 쓴다(하드코딩한 별도 7개 목록이 아니라, 그래프에 실제 등장하는
+  // 실기종목 키워드를 그대로 재사용 - 대학이 추가돼도 코드 수정 없이 자동 반영).
+  // 선택된 종목이 있으면 "내신 성적 기반 대학 추천" 결과 82건을 한 번 더 걸러낸다.
+  let selectedTopicFilters = new Set();
+
+  // 서버 search_tracks_by_prep()과 동일한 매칭 규칙을 클라이언트에서 그대로
+  // 재현한다: exam_type_name에서 한글 연속 구간([가-힣]{2,})을 통째로 하나의
+  // 토큰으로 뽑는다(부분일치 아님) - 그래서 "수채화"를 선택해도 "인체수채화"
+  // 전형이 잘못 걸리지 않는다(이번 세션에서 실제로 겪었던 부분일치 오탐 버그와
+  // 같은 함정을 여기서도 피해야 한다).
+  function examKeywordTokens(examTypeName) {
+    return new Set((examTypeName || "").match(/[가-힣]{2,}/g) || []);
+  }
+
+  // profile.html(대학찾기) 01단계와 정확히 같은 7개 "큰 주제" 선택지 - /prep-topics의
+  // 원시 키워드 전체(45개+, 학교별 세부 표기 포함)가 아니라 profile.html이 쓰는
+  // 것과 동일한 큐레이션된 값·라벨 쌍을 그대로 맞춘다(사용자가 "대학찾기에서
+  // 선택가능한 7가지 영역"이라고 명시했으므로 - 두 화면에서 같은 이름의 필터가
+  // 서로 다른 목록을 가리키면 혼란을 준다).
+  const RECOMMEND_TOPIC_OPTIONS = [
+    { value: "기초디자인", label: "기초디자인" },
+    { value: "소묘", label: "소묘" },
+    { value: "수채화", label: "수채화" },
+    { value: "인체수채화", label: "인체수채화" },
+    { value: "수묵담채화", label: "한국화 (수묵담채화)" },
+    { value: "자유표현", label: "자유표현" },
+    { value: "입체적", label: "입체/조형" },
+  ];
+  const topicChipContainer = document.getElementById("topicFilterChips");
+  topicChipContainer.innerHTML = RECOMMEND_TOPIC_OPTIONS.map(o => `
+    <button type="button" class="topic-filter-chip px-unit-xs h-9 rounded border border-outline-variant bg-surface-container-lowest text-on-surface-variant font-label-sm text-label-sm" data-topic="${o.value}">${o.label}</button>
+  `).join("");
+  topicChipContainer.querySelectorAll(".topic-filter-chip").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const topic = btn.dataset.topic;
+      if (selectedTopicFilters.has(topic)) {
+        selectedTopicFilters.delete(topic);
+        btn.classList.remove("!bg-primary", "!border-primary", "!text-on-primary");
+      } else {
+        selectedTopicFilters.add(topic);
+        btn.classList.add("!bg-primary", "!border-primary", "!text-on-primary");
+      }
+      applyControlsAndRender();
+    });
+  });
+
   // 정렬 기준 select / 필터 체크박스가 바뀔 때마다 recommendResults 원본을 복사해서
   // 다시 필터·정렬 후 렌더링한다 - 서버 재호출 없이 클라이언트에서만 처리(이미 전체
   // 데이터를 한 번에 받아왔으므로).
@@ -458,6 +506,13 @@ function renderRecommendResults() {
     if (genderFilter === "exclude_female") list = list.filter(r => r.gender_restriction !== "female_only");
     if (genderFilter === "female_only") list = list.filter(r => r.gender_restriction === "female_only");
     if (documentOnly) list = list.filter(r => r.is_document_based);
+    if (selectedTopicFilters.size > 0) {
+      list = list.filter(r => {
+        const tokens = examKeywordTokens(r.exam_type_name);
+        for (const topic of selectedTopicFilters) { if (tokens.has(topic)) return true; }
+        return false;
+      });
+    }
 
     if (sortBy === "grade") {
       list.sort((a, b) => {
