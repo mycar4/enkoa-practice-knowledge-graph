@@ -460,9 +460,11 @@ def test_non_priority_school_returns_unavailable_not_fake_number():
 def test_not_applicable_schools_get_no_score_not_approximate_guess():
     """실기 100%나 학생부종합 정성평가라 애초에 '학생부 등급→점수 환산' 자체가
     존재하지 않는 전형(계원예대·삼육대·덕성여대·서울여대·건국대·한양에리카·
-    서울예대·이화여대·상명대(학생부종합), 총 9개교 21개 트랙)은 RULE_INCOMPLETE
-    (규정을 아직 못 찾은 경우, 비율 기반 근사치라도 의미가 있음)와 다르다 -
-    근사치조차 매기면 실제로는
+    이화여대·상명대(학생부종합), 총 8개교 20개 트랙)은 RULE_INCOMPLETE
+    (규정을 아직 못 찾은 경우, 비율 기반 근사치라도 의미가 있음)와 다르다.
+    (서울예대 연극전공은 2026-09-10 실측으로 미술 실기 입시와 무관한 연기
+    오디션 전형임이 확인되어 데이터에서 완전히 제거했다 - 이 도구는 "미술
+    실기 입시 도우미"라 범위 밖.) 근사치조차 매기면 실제로는
     반영되지도 않는 성적을 반영되는 것처럼 보여주는 셈이므로, calculate_school_record_score
     단건 조회와 recommend_universities 목록 양쪽 모두에서 school_record_percentage가
     반드시 None이어야 하고 calc_precision="not_applicable"로 명확히 구분되어야 한다."""
@@ -482,7 +484,7 @@ def test_not_applicable_schools_get_no_score_not_approximate_guess():
             assert e.get("reason_summary"), "사유가 없으면 사용자가 왜 점수가 없는지 알 수 없음"
 
         na_count = sum(1 for r in results if r["calc_precision"] == "not_applicable")
-        assert na_count == 21, f"확인된 학생부 미반영 트랙 수(21)와 다름: {na_count}"
+        assert na_count == 20, f"확인된 학생부 미반영 트랙 수(20)와 다름: {na_count}"
 
         # 정렬 순서: exact -> approximate -> not_applicable (점수 없는 항목이 앞으로 오면 안 됨)
         precisions_in_order = [r["calc_precision"] for r in results]
