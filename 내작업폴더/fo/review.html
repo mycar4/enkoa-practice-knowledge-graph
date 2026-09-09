@@ -41,6 +41,15 @@
 </select>
 </div>
 <div>
+<label class="font-label-lg text-label-lg text-on-surface block mb-unit-xs" for="modelSelect">AI 모델 선택</label>
+<select class="w-full h-11 px-unit-sm bg-surface-container-lowest border border-outline-variant rounded font-body-md text-body-md" id="modelSelect"><option value="gpt-4o-mini">불러오는 중...</option></select>
+<!-- 고급(gated) 모델을 고르면만 나타난다 - 비밀번호가 없거나 틀리면 서버가
+     자동으로 기본 모델로 대체하고 이유를 알려준다(막지 않음). -->
+<div id="modelPasswordBox" class="hidden mt-unit-xs">
+<input type="password" id="modelPasswordInput" class="w-full h-11 px-unit-sm bg-surface-container-lowest border border-outline-variant rounded font-body-md text-body-md" placeholder="🔒 고급 모델 비밀번호"/>
+</div>
+</div>
+<div>
 <label class="font-label-lg text-label-lg text-on-surface block mb-unit-xs" for="docText">첨삭받을 텍스트</label>
 <input type="file" id="docFile" accept=".txt,text/plain" class="w-full mb-unit-xs text-body-sm text-on-surface-variant file:mr-unit-sm file:py-unit-xs file:px-unit-sm file:rounded file:border-0 file:bg-primary file:text-on-primary file:font-label-sm file:text-label-sm file:cursor-pointer"/>
 <textarea class="w-full h-48 lg:h-64 p-unit-sm bg-surface-container-lowest border border-outline-variant rounded font-body-md text-body-md" id="docText" placeholder="자기소개서/활동보고서 텍스트를 붙여넣거나, 위에서 .txt 파일을 불러오세요"></textarea>
@@ -50,6 +59,7 @@
 <button class="w-full h-13 py-unit-sm bg-on-surface text-surface font-label-lg text-label-lg rounded flex items-center justify-center gap-unit-xs shadow-md" id="reviewBtn"><span>AI 첨삭 받기</span><span class="material-symbols-outlined">arrow_forward</span></button>
 </div>
 <div id="reviewResult" class="hidden mt-unit-md lg:mt-0 flex flex-col gap-unit-md lg:sticky lg:top-24">
+<p id="modelGateNote" class="hidden font-body-sm text-body-sm text-tertiary bg-surface-container-high p-unit-sm rounded"></p>
 <div id="docRulesBox" class="hidden flex flex-col gap-unit-xs bg-surface-container p-unit-md rounded-lg">
 <div class="flex items-center gap-unit-xs text-primary font-bold font-label-sm text-label-sm"><span class="material-symbols-outlined text-[18px]">verified</span><span>이 학교 서류 규정 원문 근거</span></div>
 <div id="docRulesList" class="flex flex-col gap-unit-2xs font-body-sm text-body-sm text-on-surface"></div>
@@ -103,6 +113,27 @@ fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
   });
 }).catch(() => {});
 
+// AI 모델 선택 - 기본 모델은 누구나 바로 쓸 수 있고, 고급(gated) 모델은
+// 비밀번호 입력창이 같이 나타난다. 비밀번호는 서버에서 검증하며, 틀리거나
+// 비워두면 서버가 조용히 기본 모델로 대체하고 이유를 응답에 실어 보낸다.
+let modelRegistry = [];
+fetch(window.API_BASE_URL + "/review-models").then(r => r.json()).then(models => {
+  modelRegistry = models;
+  const sel = document.getElementById("modelSelect");
+  sel.innerHTML = models.map(m => {
+    const suffix = m.available ? (m.gated ? " 🔒" : "") : " (API 키 없음)";
+    return `<option value="${m.id}" ${m.available ? "" : "disabled"}>${m.label}${suffix}</option>`;
+  }).join("");
+  updateModelPasswordVisibility();
+}).catch(() => {});
+
+function updateModelPasswordVisibility() {
+  const sel = document.getElementById("modelSelect");
+  const info = modelRegistry.find(m => m.id === sel.value);
+  document.getElementById("modelPasswordBox").classList.toggle("hidden", !(info && info.gated));
+}
+document.getElementById("modelSelect").addEventListener("change", updateModelPasswordVisibility);
+
 document.getElementById("docFile").addEventListener("change", (e) => {
   const file = e.target.files[0];
   if (!file) return;
@@ -155,12 +186,17 @@ document.getElementById("reviewBtn").addEventListener("click", () => {
   document.getElementById("chatThread").innerHTML = "";
   document.getElementById("chatInputBox").classList.add("hidden");
 
+  const modelId = document.getElementById("modelSelect").value;
+  const modelPassword = document.getElementById("modelPasswordInput").value;
+
   fetch(window.API_BASE_URL + "/review-document", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text, doc_type: docType, university: university || null }),
+    body: JSON.stringify({ text, doc_type: docType, university: university || null, model_id: modelId, model_password: modelPassword }),
   }).then(r => r.json()).then(res => {
     feedbackBox.innerHTML = formatFeedback(res.feedback || "응답 없음");
+    document.getElementById("modelGateNote").textContent = res.gate_note || "";
+    document.getElementById("modelGateNote").classList.toggle("hidden", !res.gate_note);
 
     const rules = res.doc_rules || [];
     if (rules.length) {
@@ -201,7 +237,11 @@ function sendChatMessage() {
   fetch(window.API_BASE_URL + "/review-chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ doc_text: currentDocText, doc_type: currentDocType, history: chatHistory }),
+    body: JSON.stringify({
+      doc_text: currentDocText, doc_type: currentDocType, history: chatHistory,
+      model_id: document.getElementById("modelSelect").value,
+      model_password: document.getElementById("modelPasswordInput").value,
+    }),
   }).then(r => r.json()).then(res => {
     const reply = res.reply || "응답 없음";
     aiBubble.textContent = reply;

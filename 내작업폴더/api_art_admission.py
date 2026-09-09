@@ -7,8 +7,13 @@
 - 노출 범위는 딱 4개 - 학교/전형 조회, 호환학교 매칭(6장 조합 추천 아님, 그대로
   있던 기능), RAG 질의응답, 서류첨삭. 학생관리/PDF리포트/결제/관리자는 의도적으로
   아예 안 만들었다 - "Validation FO" 범위 밖.
-- 프리미엄(gated) 모델은 외부 공개 API에서 비용/오남용 위험이 있어 노출하지
-  않는다 - 항상 gpt-4o-mini(무료키만 있으면 쓸 수 있는 저비용 모델)로 고정.
+- 서류첨삭(review-document/review-chat)에 한해 AI 모델을 고를 수 있다. 기본
+  모델(gpt-4o-mini 등 gated=False)은 누구나 바로 쓸 수 있고, 고급 모델
+  (gated=True)은 art_admission_llm.MODEL_PASSWORD와 일치하는 비밀번호를
+  같이 보내야 실제로 그 모델이 쓰인다 - 비용이 큰 모델을 실수/장난으로 못
+  고르게 막는 용도일 뿐 보안 목적은 아니다(art_admission_app.py Streamlit
+  버전과 동일한 정책). 비밀번호가 없거나 틀리면 조용히 기본 모델로 대체하고
+  이유(gate_note)를 응답에 실어 보낸다 - 에러로 막지 않는다.
 - 실행: uv run uvicorn 내작업폴더.api_art_admission:app --reload --port 8000
   (배포 시에는 별도 호스팅 - Streamlit Cloud는 FastAPI를 못 띄운다)
 ================================================================================
@@ -27,9 +32,27 @@ BASE_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(BASE_DIR))
 
 from services.art_admission_service import ArtAdmissionService, get_shared_service  # noqa: E402
-from services.art_admission_llm import review_document, chat_about_review  # noqa: E402
+from services.art_admission_llm import (  # noqa: E402
+    review_document, chat_about_review, get_available_models, MODEL_PASSWORD,
+)
 
-DEFAULT_MODEL = "gpt-4o-mini"  # 공개 API는 항상 이 모델만 쓴다 - gated 모델 노출 안 함
+DEFAULT_MODEL = "gpt-4o-mini"  # 모델을 못 고르는 나머지 엔드포인트(질의응답 등)는 항상 이 모델
+
+
+def _resolve_review_model(model_id: Optional[str], model_password: Optional[str]) -> tuple[str, Optional[str]]:
+    """서류첨삭 전용 모델 선택 + 비밀번호 게이트. gated 모델인데 비밀번호가
+    안 맞으면 에러로 막지 않고 조용히 기본 모델로 대체한 뒤, 화면에 보여줄
+    사유(gate_note)를 같이 돌려준다 - art_admission_app.py(Streamlit)의
+    "비밀번호 안 맞으면 그냥 기본값" 정책과 동일하게 맞춘다."""
+    models = get_available_models()
+    info = next((m for m in models if m["id"] == model_id), None)
+    if info is None:
+        return DEFAULT_MODEL, None
+    if not info["available"]:
+        return DEFAULT_MODEL, f"'{info['label']}'는 API 키가 설정되어 있지 않아 사용할 수 없습니다. 기본 모델로 답변합니다."
+    if info["gated"] and model_password != MODEL_PASSWORD:
+        return DEFAULT_MODEL, f"'{info['label']}'는 비밀번호가 필요합니다. 비밀번호가 없거나 일치하지 않아 기본 모델로 답변합니다."
+    return info["id"], None
 
 app = FastAPI(
     title="Art Admission Validation API",
@@ -247,10 +270,20 @@ def agent_chat_endpoint(req: AgentChatRequest):
         }
 
 
+@app.get("/review-models")
+def review_models_endpoint():
+    """서류첨삭 화면의 "AI 모델 선택" 드롭다운용 - id/label/gated/available만
+    노출한다(실제 API 키는 절대 포함 안 됨). gated=True인 모델은 FO가 비밀번호
+    입력창을 같이 보여줘야 한다."""
+    return get_available_models()
+
+
 class ReviewRequest(BaseModel):
     text: str
     doc_type: str = "자기소개서"
     university: Optional[str] = None
+    model_id: str = DEFAULT_MODEL
+    model_password: Optional[str] = None
 
 
 @app.post("/review-document")
@@ -268,10 +301,13 @@ def review_document_endpoint(req: ReviewRequest):
             doc_rules = svc.get_document_rule_excerpts(req.university, req.doc_type)
         except Exception:
             pass
+    resolved_model, gate_note = _resolve_review_model(req.model_id, req.model_password)
     result = review_document(
-        req.text, model_id=DEFAULT_MODEL, doc_type=req.doc_type,
+        req.text, model_id=resolved_model, doc_type=req.doc_type,
         graph_hint=graph_hint, university=req.university, context_doc_rules=doc_rules,
     )
+    if gate_note:
+        result["gate_note"] = gate_note
     # rules_found는 LLM 판단이 아니라 실제로 발췌를 찾았는지(doc_rules 존재 여부) 그대로
     # 반영한 결정론적 값 - 화면이 이 값만 보고 안내 배너를 그리게 해서, LLM이 자체적으로
     # "규정을 확인/확인못함" 문구를 잘못 말해도 화면 표시와 어긋나지 않게 한다.
@@ -282,10 +318,16 @@ class ReviewChatRequest(BaseModel):
     doc_text: str
     doc_type: str = "자기소개서"
     history: List[dict]
+    model_id: str = DEFAULT_MODEL
+    model_password: Optional[str] = None
 
 
 @app.post("/review-chat")
 def review_chat_endpoint(req: ReviewChatRequest):
     """첨삭 후 이어지는 대화. history는 최초 첨삭(assistant)부터 이후 주고받은
     턴을 [{'role': 'user'|'assistant', 'content': ...}] 그대로 담아 보낸다."""
-    return chat_about_review(req.doc_text, req.doc_type, req.history, model_id=DEFAULT_MODEL)
+    resolved_model, gate_note = _resolve_review_model(req.model_id, req.model_password)
+    result = chat_about_review(req.doc_text, req.doc_type, req.history, model_id=resolved_model)
+    if gate_note:
+        result["gate_note"] = gate_note
+    return result
