@@ -275,6 +275,38 @@ def test_original_15_batch2_schools_use_generalized_modes_not_hardcoding():
         svc.close()
 
 
+def test_batch3_schools_hongik_seoul_chugye_karts():
+    """계속 확장: 홍익대 서울캠퍼스(choose_max_credit_subject, 세종캠퍼스와 동일한
+    학교 공통 환산표를 공유 - Ⅰ.학교생활기록부 반영 방법 챕터가 두 캠퍼스에 공통
+    적용됨을 검증), 추계예술대(simple_weighted_average, 국어·영어만, 이수단위
+    가중평균), 한국예술종합학교 무대미술과(신규 모드 year_weighted_band_lookup:
+    학기별 가중평균->학년별 단순평균->학년별 반영비율 가중합->32단계 구간표 조회)
+    까지 전부 기존 5개 모드(+1개 새 모드)에 파라미터만 추가해 처리됨을 확인한다."""
+    svc = ArtAdmissionService()
+    try:
+        r = svc.calculate_school_record_score("홍익대학교", "미술대학(동양화/회화/판화/조소/디자인학부 등)", _GRADES)
+        assert r.get("available") is True, r.get("reason")
+        assert abs(r["percentage"] - 95.67) < 0.05, f"홍익대 서울: {r['percentage']} != 95.67"
+
+        r = svc.calculate_school_record_score("추계예술대학교", "미술창작학부(1학년말 동양화/서양화(현대미술 포함)/판화미디어전공 선택)", _GRADES)
+        assert r.get("available") is True, r.get("reason")
+        assert abs(r["percentage"] - 92.5) < 0.05, f"추계예술대: {r['percentage']} != 92.5"
+
+        karts_grades = []
+        for sem in [1, 2]:
+            karts_grades.append({"year": 1, "semester": sem, "subject_group": "국어", "grade": 2, "credit": 4})
+            karts_grades.append({"year": 1, "semester": sem, "subject_group": "영어", "grade": 2, "credit": 4})
+            karts_grades.append({"year": 2, "semester": sem, "subject_group": "국어", "grade": 3, "credit": 4})
+            karts_grades.append({"year": 2, "semester": sem, "subject_group": "영어", "grade": 3, "credit": 4})
+        r = svc.calculate_school_record_score("한국예술종합학교", "무대미술과", karts_grades)
+        assert r.get("available") is True, r.get("reason")
+        # 손계산: 1학년 평균등급점수=8(2등급), 2학년=7(3등급) -> 8*0.4+7*0.6=7.4 -> 구간표 7.26~7.50 -> 85.00점
+        assert abs(r["percentage"] - 85.0) < 0.05, f"한예종 무대미술과: {r['percentage']} != 85.0"
+        print("✅ test_batch3_schools_hongik_seoul_chugye_karts passed!")
+    finally:
+        svc.close()
+
+
 def test_non_priority_school_returns_unavailable_not_fake_number():
     """정밀 반영교과 규정을 원문으로 확보하지 못한 학교(예: 경기대)는 있지도 않은
     환산표를 지어내지 말고 반드시 available=False로 명시해야 한다."""
@@ -311,6 +343,7 @@ if __name__ == "__main__":
     test_estimated_grade_equivalent_matches_raw_grade_not_inflated_score()
     test_breakdown_and_reason_summary_and_fit_label_present()
     test_original_15_batch2_schools_use_generalized_modes_not_hardcoding()
+    test_batch3_schools_hongik_seoul_chugye_karts()
     test_non_priority_school_returns_unavailable_not_fake_number()
     test_recommend_universities_ranks_exact_before_approximate()
     print("🎉 ALL SCHOOL RECORD CALC TESTS PASSED!")

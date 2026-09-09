@@ -202,6 +202,11 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
         subjects = set(rule.get("subjects") or [])
         top_n = rule.get("top_n")
         credit_weighted = rule.get("credit_weighted", True)
+        # average_by_semester: 계원예대처럼 "학기별 이수단위 가중평균 -> 그 학기평균들의
+        # 단순평균"(2단계 평균)을 쓰는 학교용. 학기 이수단위 총량이 학기마다 다르면
+        # 전체를 한 번에 이수단위 가중평균 내는 것과 결과가 달라지므로, 원문 계산식이
+        # 명시적으로 학기 단위 평균을 요구할 때만 켠다(학생 입력에 "semester" 키 필요).
+        average_by_semester = rule.get("average_by_semester", False)
         candidates = []
         for g in grades:
             if g.get("career_elective"):
@@ -225,11 +230,86 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
             weight = credit if credit_weighted else 1
             pool.append((s, weight))
             raw_pool.append((weight, g.get("grade")))
-            details.append({"subject_group": g.get("subject_group"), "grade": g.get("grade"), "credit": credit, "score": s})
-        avg = _weighted_avg(pool) if pool else None
+            details.append({"subject_group": g.get("subject_group"), "grade": g.get("grade"), "credit": credit, "score": s, "semester": g.get("semester")})
+
+        if not pool:
+            return None
+
+        if average_by_semester:
+            by_sem: Dict[Any, List[tuple]] = {}
+            for g in candidates:
+                sem = g.get("semester") or "미상"
+                credit = g.get("credit") or 1
+                weight = credit if credit_weighted else 1
+                by_sem.setdefault(sem, []).append((_score_for_grade(g.get("grade")), weight))
+            sem_avgs = [v for v in (_weighted_avg(items) for items in by_sem.values()) if v is not None]
+            avg = sum(sem_avgs) / len(sem_avgs) if sem_avgs else None
+        else:
+            avg = _weighted_avg(pool)
         if avg is None:
             return None
         return {"raw_score": avg, "max_score": max_score, "matched_subject_count": len(pool), "raw_grade_average": _raw_grade_avg(raw_pool), "breakdown": details}
+
+    if mode == "year_weighted_band_lookup":
+        # 한국예술종합학교 방식: 과목별 석차등급을 9~1점 등급점수로 바꾼 뒤
+        # (1) 학기별 이수단위 가중평균 -> (2) 학년별 단순평균(학기 평균들의 평균, 이수단위
+        # 미적용) -> (3) 학년별 반영비율(year_weights)로 가중합 -> (4) 그 결과값을
+        # 0~100점 구간표(score_band_table)에서 조회, 총 4단계 집계라 기존
+        # conversion_table 방식(과목별 점수 -> 단일 가중평균)으로는 표현이 안 돼서
+        # 새 모드로 분리했다(여전히 학교명 분기 없이 파라미터만으로 재사용 가능).
+        grade_points = {str(k): v for k, v in (rule.get("grade_point_table") or {}).items()}
+        year_weights = {str(k): v for k, v in (rule.get("year_weights") or {}).items()}
+        bands = rule.get("score_band_table") or []
+
+        by_year_sem: Dict[tuple, List[tuple]] = {}
+        raw_pool = []
+        for g in grades:
+            year = str(g.get("year")) if g.get("year") is not None else None
+            if year not in year_weights or not year_weights[year]:
+                continue  # 반영비율 0인 학년(예: 8월 지원 졸업예정자의 3학년)은 원문대로 제외
+            pt = grade_points.get(str(g.get("grade"))) if g.get("grade") is not None else None
+            if pt is None:
+                continue
+            credit = g.get("credit") or 1
+            sem = g.get("semester")
+            by_year_sem.setdefault((year, sem), []).append((pt, credit))
+            raw_pool.append((credit, g.get("grade")))
+
+        if not by_year_sem:
+            return None
+
+        year_semester_avgs: Dict[str, List[float]] = {}
+        for (year, _sem), items in by_year_sem.items():
+            avg = _weighted_avg(items)
+            if avg is not None:
+                year_semester_avgs.setdefault(year, []).append(avg)
+
+        year_scores = {y: sum(v) / len(v) for y, v in year_semester_avgs.items() if v}
+        if not year_scores:
+            return None
+        total_weight = sum(year_weights[y] for y in year_scores)
+        if total_weight == 0:
+            return None
+        # 실제로 성적이 있는 학년의 반영비율 합으로 정규화 - 원문 규정은 모든 학년 성적이
+        # 다 있는 걸 전제로 하지만(그 경우 정규화해도 값이 그대로임), 일부 학년 성적이
+        # 없는 예외적 입력에서 총합이 100%에 못 미쳐 부당하게 낮은 점수가 나오는 걸 방지.
+        weighted_grade_point = sum(year_scores[y] * year_weights[y] for y in year_scores) / total_weight
+
+        matched_score = None
+        for band in bands:
+            lo, hi = band.get("min"), band.get("max")
+            if lo is not None and hi is not None and lo <= weighted_grade_point <= hi:
+                matched_score = band.get("score")
+                break
+        if matched_score is None:
+            return None
+        return {
+            "raw_score": matched_score,
+            "max_score": 100,
+            "matched_subject_count": sum(len(items) for items in by_year_sem.values()),
+            "raw_grade_average": _raw_grade_avg(raw_pool),
+            "breakdown": [{"year": y, "year_grade_point": round(s, 2)} for y, s in year_scores.items()] + [{"weighted_grade_point": round(weighted_grade_point, 2)}],
+        }
 
     if mode == "choose_max_credit_subject":
         fixed = set(rule.get("fixed_subjects") or [])

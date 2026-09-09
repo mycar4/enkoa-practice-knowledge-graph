@@ -21,6 +21,31 @@
     ],
     "paper_size": "켄트지(학교 제공)",
     "time_limit_minutes": 180,
+    "school_record_rule": {
+      "mode": "year_weighted_band_lookup",
+      "grade_point_table": {"1": 9, "2": 8, "3": 7, "4": 6, "5": 5, "6": 4, "7": 3, "8": 2, "9": 1},
+      "year_weights": {"1": 0.4, "2": 0.6, "3": 0},
+      "score_band_table": [
+        {"min": 8.76, "max": 9.00, "score": 100.00}, {"min": 8.51, "max": 8.75, "score": 97.50},
+        {"min": 8.26, "max": 8.50, "score": 95.00}, {"min": 8.01, "max": 8.25, "score": 92.50},
+        {"min": 7.76, "max": 8.00, "score": 90.00}, {"min": 7.51, "max": 7.75, "score": 87.50},
+        {"min": 7.26, "max": 7.50, "score": 85.00}, {"min": 7.01, "max": 7.25, "score": 82.50},
+        {"min": 6.76, "max": 7.00, "score": 80.00}, {"min": 6.51, "max": 6.75, "score": 77.50},
+        {"min": 6.26, "max": 6.50, "score": 75.00}, {"min": 6.01, "max": 6.25, "score": 72.50},
+        {"min": 5.76, "max": 6.00, "score": 70.00}, {"min": 5.51, "max": 5.75, "score": 67.50},
+        {"min": 5.26, "max": 5.50, "score": 65.00}, {"min": 5.01, "max": 5.25, "score": 62.50},
+        {"min": 4.76, "max": 5.00, "score": 60.00}, {"min": 4.51, "max": 4.75, "score": 57.50},
+        {"min": 4.26, "max": 4.50, "score": 55.00}, {"min": 4.01, "max": 4.25, "score": 52.50},
+        {"min": 3.76, "max": 4.00, "score": 50.00}, {"min": 3.51, "max": 3.75, "score": 47.50},
+        {"min": 3.26, "max": 3.50, "score": 45.00}, {"min": 3.01, "max": 3.25, "score": 42.50},
+        {"min": 2.76, "max": 3.00, "score": 40.00}, {"min": 2.51, "max": 2.75, "score": 37.50},
+        {"min": 2.26, "max": 2.50, "score": 35.00}, {"min": 2.01, "max": 2.25, "score": 32.50},
+        {"min": 1.76, "max": 2.00, "score": 30.00}, {"min": 1.51, "max": 1.75, "score": 27.50},
+        {"min": 1.26, "max": 1.50, "score": 25.00}, {"min": 1.00, "max": 1.25, "score": 22.50}
+      ],
+      "formula_note": "학생부 전 학년·전 교과목 반영(성적 미표기 과목 제외). 과목별 석차등급을 9~1점 등급점수로 환산(1등급=9점)->학기별 이수단위 가중평균->학년별 단순평균(1,2학기 평균)->학년별 반영비율 가중합(2027.2월 졸업예정자·8월 입시 기준 1학년40%+2학년60%+3학년0%, 3학년 성적은 미반영)->산출된 9점 만점 값을 32단계 구간표에서 조회해 0~100점 고교내신 반영점수로 확정. 이 전형은 1차에서 실기80%+고교내신20%로 1차 통과자를 가리고, 2차는 심층실기60%+구술40%로 완전히 별도 채점되므로 학생부는 1차 통과 여부에만 영향을 준다. 주의: 이미 고교를 졸업한 지원자(21.12월~26.2월 졸업자)는 학년별 반영비율이 20/40/40으로 달라짐(2027 모집요강 p.73-74, 정원내 일반전형 공통사항) - 이 데이터는 '27년 2월 졸업예정' 재학생 기준만 반영함.",
+      "rule_source_page": "22, 73-74"
+    },
     "past_topics": [
       {
         "year": 2026,
@@ -35,7 +60,7 @@
         "source_url": "https://www.karts.ac.kr/usr/gfa/guideline.do"
       }
     ],
-    "source_url": "https://www.karts.ac.kr/usr/gfa/guideline.do",
+    "source_url": "https://www.karts.ac.kr/cmm/fms/FileDown.do?atchFileId=FILE_000000000162044&fileSn=0&accAt=&bbsId=00000000000000000000",
     "source_page": 21,
     "registration_period": {
       "start": "2027-01-25",
