@@ -150,6 +150,23 @@ def _weighted_avg(items: List[tuple]) -> Optional[float]:
     return sum(s * c for s, c in items) / total_credit
 
 
+def _raw_grade_avg(items_with_grade: List[tuple]) -> Optional[float]:
+    """(이수단위, 원 석차등급) 쌍의 이수단위 가중평균 - 학교 고유 배점표를 거치지 않은
+    '원 석차등급' 그대로의 평균이다. 학교 배점표는 상위 등급 구간을 압축해두는
+    경우가 흔해서(예: 가천대 1~6등급이 100~97.5점으로 거의 차이가 없음), 배점
+    기준 백분율을 일반 곡선에 역산하면 실제보다 훨씬 좋아 보이는 등급이 나온다
+    (실측: 4~6등급대 학생이 배점 기준 97%로 나오는데 원 등급 평균은 4.96 -
+    타 입시업체 '내등급' 4.92와 거의 일치). 그래서 참고용 등급은 반드시 이
+    원 석차등급 평균을 써야 하고, 배점표를 거친 값을 역산하면 안 된다."""
+    pairs = [(g, c) for c, g in items_with_grade if g is not None]
+    if not pairs:
+        return None
+    total_credit = sum(c for _, c in pairs)
+    if total_credit == 0:
+        return None
+    return round(sum(g * c for g, c in pairs) / total_credit, 2)
+
+
 def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
     """school_record_rule(원문 모집요강에서 그대로 옮긴 반영교과/환산표/공식)에 따라
     학생 성적을 그 학교 공식 그대로 환산한다. 등급 곡선을 임의로 지어내지 않고,
@@ -181,6 +198,7 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
     if mode == "simple_weighted_average":
         subjects = set(rule.get("subjects") or [])
         pool = []
+        raw_pool = []
         for g in grades:
             if g.get("career_elective"):
                 continue  # 이 모드는 진로선택과목 미반영 (원문 규정 그대로)
@@ -189,11 +207,13 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
             s = _score_for_grade(g.get("grade"))
             if s is None:
                 continue
-            pool.append((s, g.get("credit") or 1))
+            credit = g.get("credit") or 1
+            pool.append((s, credit))
+            raw_pool.append((credit, g.get("grade")))
         avg = _weighted_avg(pool) if pool else None
         if avg is None:
             return None
-        return {"raw_score": avg, "max_score": max_score, "matched_subject_count": len(pool)}
+        return {"raw_score": avg, "max_score": max_score, "matched_subject_count": len(pool), "raw_grade_average": _raw_grade_avg(raw_pool)}
 
     if mode == "choose_max_credit_subject":
         fixed = set(rule.get("fixed_subjects") or [])
@@ -238,7 +258,12 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
         avg = _weighted_avg(pool) if pool else None
         if avg is None:
             return None
-        return {"raw_score": avg, "max_score": max_score, "matched_subject_count": len(pool), "chosen_choice_subject": chosen}
+        raw_pool = [
+            (g.get("credit") or 1, g.get("grade"))
+            for g in grades
+            if not g.get("career_elective") and g.get("subject_group") in (fixed | ({chosen} if chosen else set())) and _score_for_grade(g.get("grade")) is not None
+        ]
+        return {"raw_score": avg, "max_score": max_score, "matched_subject_count": len(pool), "chosen_choice_subject": chosen, "raw_grade_average": _raw_grade_avg(raw_pool)}
 
     if mode == "subject_group_weighted":
         groups = rule.get("subject_groups") or {}
@@ -246,9 +271,11 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
         total = 0.0
         matched = 0
         missing_groups = []
+        raw_total = 0.0
+        raw_weight_used = 0.0
         for subject, weight_pct in groups.items():
             items = [
-                (_score_for_grade(g.get("grade")), g.get("credit") or 1)
+                (_score_for_grade(g.get("grade")), g.get("credit") or 1, g.get("grade"))
                 for g in grades
                 if not g.get("career_elective") and g.get("subject_group") == subject and _score_for_grade(g.get("grade")) is not None
             ]
@@ -258,15 +285,21 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
                 # 원문 규정대로: 반영과목이 전혀 없는 교과영역은 0점 처리(제외가 아님)
                 missing_groups.append(subject)
                 continue
-            group_avg = _weighted_avg(items)
+            group_avg = _weighted_avg([(s, c) for s, c, _ in items])
             total += (group_avg or 0) * weight_pct / 100.0
             matched += len(items)
+            group_raw_avg = _raw_grade_avg([(c, g) for _, c, g in items])
+            if group_raw_avg is not None:
+                raw_total += group_raw_avg * weight_pct
+                raw_weight_used += weight_pct
         if matched == 0:
             return None
-        return {"raw_score": total, "max_score": max_score, "matched_subject_count": matched, "missing_subject_groups": missing_groups}
+        raw_grade_average = round(raw_total / raw_weight_used, 2) if raw_weight_used else None
+        return {"raw_score": total, "max_score": max_score, "matched_subject_count": matched, "missing_subject_groups": missing_groups, "raw_grade_average": raw_grade_average}
 
     if mode == "all_subjects_plus_career_elective":
         pool = []
+        raw_pool = []
         ce_conv = {str(k): v for k, v in (rule.get("career_elective_conversion_table") or {}).items()}
         ce_items = []
         for g in grades:
@@ -277,7 +310,9 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
             else:
                 s = _score_for_grade(g.get("grade"))
                 if s is not None:
-                    pool.append((s, g.get("credit") or 1))
+                    credit = g.get("credit") or 1
+                    pool.append((s, credit))
+                    raw_pool.append((credit, g.get("grade")))  # 진로선택(성취도)은 원 석차등급이 없어 참고등급 계산엔 제외
         max_ce = rule.get("career_elective_max_count")
         if max_ce is not None:
             ce_items = sorted(ce_items, key=lambda x: -x[0])[:max_ce]
@@ -285,7 +320,7 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
         avg = _weighted_avg(pool) if pool else None
         if avg is None:
             return None
-        return {"raw_score": avg, "max_score": max_score, "matched_subject_count": len(pool)}
+        return {"raw_score": avg, "max_score": max_score, "matched_subject_count": len(pool), "raw_grade_average": _raw_grade_avg(raw_pool)}
 
     if mode == "common_and_career_split_scaled":
         # 홍익대 세종 학생부교과(교과우수자전형 등) 방식: 공통·일반선택과목 평균과
@@ -318,9 +353,15 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
         common_max = max(conv.values()) if conv else 0
         career_max = max(ce_conv.values()) if ce_conv else 0
         theoretical_max = (common_max * 0.9 + career_max * 0.9) * (credit_cap / 1000 + 0.9)
+        raw_grade_pool = [
+            (g.get("credit") or 1, g.get("grade"))
+            for g in grades
+            if not g.get("career_elective") and (not subjects or g.get("subject_group") in subjects) and _score_for_grade(g.get("grade")) is not None
+        ]
         return {
             "raw_score": raw_score, "max_score": round(theoretical_max, 4),
             "matched_subject_count": len(common_pool) + len(career_pool),
+            "raw_grade_average": _raw_grade_avg(raw_grade_pool),
         }
 
     return None
@@ -344,23 +385,14 @@ def _approximate_school_record_score(grades: List[Dict[str, Any]]) -> Optional[f
     return round(avg, 2) if avg is not None else None
 
 
-def _percentage_to_grade_equivalent(pct: Optional[float]) -> Optional[float]:
-    """학교별 환산 백분율(0~100)을 표준 9등급 곡선(_GENERIC_GRADE_CURVE)에 역으로
-    대입해 "환산등급"을 추정한다. 학교마다 반영교과·환산표가 전부 달라 이 값은
-    절대 그 학교의 실제 등급이 아니다 - 사용자가 익숙한 등급 감각으로 참고만
-    하도록 돕는 보조 지표이며, 호출부는 반드시 '참고용/추정' 라벨을 붙여야 한다."""
-    if pct is None:
-        return None
-    points = sorted(_GENERIC_GRADE_CURVE.items(), key=lambda kv: kv[1])  # (9,0) ... (1,100)
-    if pct <= points[0][1]:
-        return float(points[0][0])
-    if pct >= points[-1][1]:
-        return float(points[-1][0])
-    for (g0, s0), (g1, s1) in zip(points, points[1:]):
-        if s0 <= pct <= s1:
-            frac = (pct - s0) / (s1 - s0) if s1 != s0 else 0
-            return round(g0 - frac * (g0 - g1), 2)
-    return None
+# 2026-09-09 실측으로 발견한 사고: 처음엔 "환산 백분율을 표준 9등급 곡선에 역산"하는
+# 방식(_percentage_to_grade_equivalent, 삭제됨)을 썼는데, 타 입시업체 실측 데이터
+# (내등급 4.92)와 비교해보니 완전히 다른 값(1.29)이 나왔다. 원인: 학교 공식 배점표가
+# 상위 등급 구간을 압축해두는 경우가 흔해서(가천대 1~6등급이 100~97.5점, 겨우 2.5점
+# 차이) 배점 기준 백분율은 원 등급이 4~6등급이어도 97%까지 나올 수 있는데, 이걸
+# "일반적인" 9등급 곡선에 거꾸로 대입하면 실제보다 훨씬 좋은 등급으로 둔갑한다.
+# 그래서 참고용 등급은 위 각 계산 모드가 함께 반환하는 raw_grade_average(배점표를
+# 거치지 않은 원 석차등급의 이수단위 가중평균)를 그대로 쓴다 - 타사 수치와 실측 일치.
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 ENV_PATH = BASE_DIR.parent / ".env"
@@ -1400,7 +1432,7 @@ class ArtAdmissionService:
             "raw_score": round(raw_score, 4),
             "max_score": max_score,
             "percentage": percentage,
-            "estimated_grade_equivalent": _percentage_to_grade_equivalent(percentage),
+            "estimated_grade_equivalent": calc.get("raw_grade_average"),
             "matched_subject_count": calc.get("matched_subject_count"),
             "missing_subject_groups": calc.get("missing_subject_groups"),
             "chosen_choice_subject": calc.get("chosen_choice_subject"),
@@ -1448,16 +1480,22 @@ class ArtAdmissionService:
                     entry["school_record_percentage"] = pct
                     entry["formula_note"] = rule.get("formula_note")
                     entry["data_tier"] = "OFFICIAL_RULE"
+                    entry["estimated_grade_equivalent"] = calc.get("raw_grade_average")
                 else:
                     entry["calc_precision"] = "exact"
                     entry["school_record_percentage"] = None
                     entry["note"] = "입력한 과목 중 이 학교의 반영 대상 과목이 없어 계산할 수 없습니다."
                     entry["data_tier"] = "OFFICIAL_RULE"
+                    entry["estimated_grade_equivalent"] = None
             else:
                 entry["calc_precision"] = "approximate"
                 entry["school_record_percentage"] = _approximate_school_record_score(grades)
                 entry["data_tier"] = "APPROXIMATE_NOT_OFFICIAL"
-            entry["estimated_grade_equivalent"] = _percentage_to_grade_equivalent(entry.get("school_record_percentage"))
+                # 반영교과를 모르는 학교라 별도 배점표가 없다 - 입력한 전 과목(진로선택
+                # 제외)의 원 석차등급 이수단위 가중평균을 그대로 참고등급으로 쓴다.
+                entry["estimated_grade_equivalent"] = _raw_grade_avg([
+                    (g.get("credit") or 1, g.get("grade")) for g in grades if not g.get("career_elective")
+                ])
 
             results.append(entry)
 

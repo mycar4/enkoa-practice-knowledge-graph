@@ -357,7 +357,7 @@ function renderRecommendResults() {
       : `<div class="font-body-sm text-body-sm text-on-surface-variant">${r.note || "계산 불가"}</div>`;
     const gradeEq = r.estimated_grade_equivalent;
     const gradeEqLine = gradeEq !== null && gradeEq !== undefined
-      ? `<div class="font-body-sm text-body-sm text-on-surface-variant">참고용 환산등급(추정): 약 ${gradeEq}등급 <span class="text-outline">- 실제 등급이 아니라 백분위를 표준 9등급 곡선에 역산한 참고치입니다</span></div>` : "";
+      ? `<div class="font-body-sm text-body-sm text-on-surface-variant">참고용 원 석차등급 평균: 약 ${gradeEq}등급 <span class="text-outline">- 학교 배점표를 거치지 않은 원 석차등급의 이수단위 가중평균(진로선택과목 제외)입니다. 위 학생부 환산 점수는 이 학교의 실제 배점표를 적용한 값이라 등급 감각과 차이가 날 수 있습니다.</span></div>` : "";
     const ratioLine = (r.practical_ratio_pct != null || r.school_record_ratio_pct != null)
       ? `<div class="font-body-sm text-body-sm text-on-surface-variant">반영비율: 실기 ${r.practical_ratio_pct ?? "-"}% · 학생부 ${r.school_record_ratio_pct ?? "-"}%</div>` : "";
 

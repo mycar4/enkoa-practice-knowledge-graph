@@ -171,6 +171,43 @@ def test_korean_history_subject_alias_matches_official_rule_per_school():
         svc.close()
 
 
+def test_estimated_grade_equivalent_matches_raw_grade_not_inflated_score():
+    """2026-09-09 실측 사고: 처음엔 학교 배점표 기준 백분율(가천대 97.1%)을 일반
+    9등급 곡선에 역산해서 "참고용 환산등급"을 만들었는데, 타 입시업체 실측 데이터
+    (내등급 4.92)와 비교해보니 완전히 다른 값(1.29)이 나왔다. 가천대 배점표는
+    1~6등급이 100~97.5점으로 거의 압축돼 있어 원 등급 4~6등급도 배점 기준으론
+    97%가 나오는데, 이걸 다시 등급으로 되돌리면 실제보다 훨씬 좋아 보이게 된다.
+    참고등급은 배점표를 거치지 않은 '원 석차등급 가중평균'이어야 하고, 이 값이
+    타사 실측치(4.92)와 거의 일치해야 한다 - 이번 세션에서 실제 확인한 회귀 케이스."""
+    svc = ArtAdmissionService()
+    try:
+        # 실제 학생(은수) 국어/영어 5개 학기 성적 - 가천대 회화전공은 국영만 반영
+        grades = [
+            {"subject_group": "국어", "grade": 5, "credit": 3},
+            {"subject_group": "영어", "grade": 6, "credit": 3},
+            {"subject_group": "국어", "grade": 4, "credit": 3},
+            {"subject_group": "영어", "grade": 5, "credit": 3},
+            {"subject_group": "국어", "grade": 5, "credit": 3},
+            {"subject_group": "영어", "grade": 7, "credit": 2},
+            {"subject_group": "국어", "grade": 4, "credit": 3},
+            {"subject_group": "영어", "grade": 5, "credit": 2},
+            {"subject_group": "국어", "grade": 4, "credit": 2},
+            {"subject_group": "영어", "grade": 5, "credit": 2},
+        ]
+        result = svc.calculate_school_record_score("가천대학교", "회화전공", grades)
+        assert result["available"] is True
+        assert abs(result["percentage"] - 97.1) < 0.05, "배점표 기준 환산 백분율 자체는 그대로 97.1%여야 함"
+        # 원 석차등급 가중평균은 손계산: 국어(62/14=4.4286), 영어(67/12=5.5833),
+        # 두 교과를 이수단위 합산 가중평균하면 (62+67)/(14+12)=4.9615 -> 4.96
+        assert abs(result["estimated_grade_equivalent"] - 4.96) < 0.05, (
+            f"참고등급이 원 석차등급 평균(≈4.96, 타사 실측 4.92와 일치)이 아니라 "
+            f"배점표 역산값({result['estimated_grade_equivalent']})으로 나옴 - 회귀 발생"
+        )
+        print("✅ test_estimated_grade_equivalent_matches_raw_grade_not_inflated_score passed!")
+    finally:
+        svc.close()
+
+
 def test_non_priority_school_returns_unavailable_not_fake_number():
     """정밀 반영교과 규정을 원문으로 확보하지 못한 학교(예: 경기대)는 있지도 않은
     환산표를 지어내지 말고 반드시 available=False로 명시해야 한다."""
@@ -204,6 +241,7 @@ if __name__ == "__main__":
     test_hongik_sejong_liberal_arts_common_and_career_split_scaled()
     test_sangmyung_accepts_art_track_subjects()
     test_korean_history_subject_alias_matches_official_rule_per_school()
+    test_estimated_grade_equivalent_matches_raw_grade_not_inflated_score()
     test_non_priority_school_returns_unavailable_not_fake_number()
     test_recommend_universities_ranks_exact_before_approximate()
     print("🎉 ALL SCHOOL RECORD CALC TESTS PASSED!")
