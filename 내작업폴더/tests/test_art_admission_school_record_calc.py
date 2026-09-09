@@ -208,6 +208,35 @@ def test_estimated_grade_equivalent_matches_raw_grade_not_inflated_score():
         svc.close()
 
 
+def test_breakdown_and_reason_summary_and_fit_label_present():
+    """UI 요청사항: (1) 계산 상세보기 팝업에 실제 대입값을 보여줘야 하므로
+    calculate_school_record_score가 breakdown(과목별 등급/이수단위/환산점수)을
+    반환해야 한다. (2) recommend_universities는 추천 이유(reason_summary)와
+    GOOD_FIT/CHECK 판정(fit_label)을 정밀 계산된 항목에 부여해야 한다."""
+    svc = ArtAdmissionService()
+    try:
+        grades = [
+            {"subject_group": "국어", "grade": 5, "credit": 3},
+            {"subject_group": "영어", "grade": 6, "credit": 3},
+        ]
+        detail = svc.calculate_school_record_score("가천대학교", "회화전공", grades)
+        assert detail["available"] is True
+        assert isinstance(detail.get("breakdown"), list) and len(detail["breakdown"]) == 2
+        for item in detail["breakdown"]:
+            assert "subject_group" in item and "credit" in item and "score" in item
+
+        recs = svc.recommend_universities(grades)
+        exact_with_pct = [r for r in recs if r["calc_precision"] == "exact" and r["school_record_percentage"] is not None]
+        assert exact_with_pct, "정밀 계산 결과가 하나도 없음"
+        assert all(r["fit_label"] in ("GOOD_FIT", "CHECK") for r in exact_with_pct), "정밀 계산 항목엔 fit_label이 있어야 함"
+        assert all(r.get("reason_summary") for r in exact_with_pct), "정밀 계산 항목엔 추천 이유가 있어야 함"
+        top = max(exact_with_pct, key=lambda r: r["school_record_percentage"])
+        assert top["fit_label"] == "GOOD_FIT", "최고 환산율 학교는 GOOD_FIT이어야 함"
+        print("✅ test_breakdown_and_reason_summary_and_fit_label_present passed!")
+    finally:
+        svc.close()
+
+
 def test_non_priority_school_returns_unavailable_not_fake_number():
     """정밀 반영교과 규정을 원문으로 확보하지 못한 학교(예: 경기대)는 있지도 않은
     환산표를 지어내지 말고 반드시 available=False로 명시해야 한다."""
@@ -242,6 +271,7 @@ if __name__ == "__main__":
     test_sangmyung_accepts_art_track_subjects()
     test_korean_history_subject_alias_matches_official_rule_per_school()
     test_estimated_grade_equivalent_matches_raw_grade_not_inflated_score()
+    test_breakdown_and_reason_summary_and_fit_label_present()
     test_non_priority_school_returns_unavailable_not_fake_number()
     test_recommend_universities_ranks_exact_before_approximate()
     print("🎉 ALL SCHOOL RECORD CALC TESTS PASSED!")

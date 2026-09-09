@@ -20,6 +20,7 @@ from tests.test_art_admission_school_record_calc import (  # noqa: E402
     test_sangmyung_accepts_art_track_subjects,
     test_korean_history_subject_alias_matches_official_rule_per_school,
     test_estimated_grade_equivalent_matches_raw_grade_not_inflated_score,
+    test_breakdown_and_reason_summary_and_fit_label_present,
     test_non_priority_school_returns_unavailable_not_fake_number,
     test_recommend_universities_ranks_exact_before_approximate,
 )
@@ -33,6 +34,7 @@ if __name__ == "__main__":
     test_sangmyung_accepts_art_track_subjects()
     test_korean_history_subject_alias_matches_official_rule_per_school()
     test_estimated_grade_equivalent_matches_raw_grade_not_inflated_score()
+    test_breakdown_and_reason_summary_and_fit_label_present()
     test_non_priority_school_returns_unavailable_not_fake_number()
     test_recommend_universities_ranks_exact_before_approximate()
-    print("🎉 CI QUALITY GATE PASSED (무료 회귀 테스트 10건)")
+    print("🎉 CI QUALITY GATE PASSED (무료 회귀 테스트 11건)")

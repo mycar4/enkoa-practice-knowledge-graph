@@ -24,16 +24,39 @@
       "mode": "all_subjects_plus_career_elective",
       "career_elective_included": true,
       "career_elective_max_count": 3,
-      "career_elective_conversion_table": {"A": 100, "B": 96, "C": 90},
+      "career_elective_conversion_table": {
+        "A": 100,
+        "B": 96,
+        "C": 90
+      },
       "credit_weighted": true,
-      "conversion_table": {"1": 100, "2": 98, "3": 96, "4": 94, "5": 90, "6": 80, "7": 60, "8": 40, "9": 0},
+      "conversion_table": {
+        "1": 100,
+        "2": 98,
+        "3": 96,
+        "4": 94,
+        "5": 90,
+        "6": 80,
+        "7": 60,
+        "8": 40,
+        "9": 0
+      },
       "formula_note": "과목 화이트리스트(국영수사과 등) 제한 없이, 석차등급(9등급제)이 있는 전 교과목 + 성취등급(A~C)이 있는 진로선택과목 중 우수 최대 3과목을 반영. 교과성적 = Σ(반영과목별 환산점수×이수단위) / Σ(이수단위) × 반영비율, 일반과목과 진로선택과목을 하나의 풀로 합쳐 가중평균 (2027 모집요강 p.4-5, 34). 다른 4개교와 달리 특정 교과로 제한하지 않고 전 과목을 반영하는 것이 상명대의 특징.",
       "rule_source_page": "4-5, 34"
     },
     "past_topics": [],
     "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/상명대학교/상명대학교_2027학년도_수시모집요강.pdf",
     "source_page": 27,
-    "registration_period": {"start": "2027-02-10", "end": "2027-02-12"}
+    "registration_period": {
+      "start": "2027-02-10",
+      "end": "2027-02-12"
+    },
+    "practical_ratio_pct": 70,
+    "school_record_ratio_pct": 30
   },
-  "estimates": {"cutoff_grade_estimate": null, "cutoff_source_url": null, "interview_summaries": []}
+  "estimates": {
+    "cutoff_grade_estimate": null,
+    "cutoff_source_url": null,
+    "interview_summaries": []
+  }
 }

@@ -84,6 +84,15 @@
 </div>
 </div>
 
+<!-- 계산 상세보기 팝업 - 학교 공식에 실제 어떤 값이 대입됐는지 과목별로 보여준다 -->
+<div id="breakdownOverlay" class="hidden fixed inset-0 bg-[#151515]/60 z-50 flex items-end md:items-center justify-center p-0 md:p-unit-lg">
+<div class="bg-surface w-full md:max-w-2xl md:rounded-lg max-h-[85vh] overflow-y-auto p-unit-lg relative">
+<button id="breakdownClose" class="absolute top-unit-md right-unit-md text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-unit-sm">계산 상세보기</h3>
+<div id="breakdownBody" class="font-body-sm text-body-sm text-on-surface space-y-unit-sm">불러오는 중...</div>
+</div>
+</div>
+
 <nav class="md:hidden fixed bottom-0 w-full z-50 pb-safe bg-surface/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.04)]"><div class="grid grid-cols-5 h-16 items-stretch">
 <a class="flex flex-col items-center justify-center gap-unit-2xs text-on-surface-variant hover:text-on-surface transition-colors min-h-[44px]" href="index.html"><span class="material-symbols-outlined text-[22px]">view_quilt</span><span class="font-label-sm text-label-sm">홈</span></a>
 <a id="navProfileMobile" class="flex flex-col items-center justify-center gap-unit-2xs text-primary bg-surface-container-low font-bold transition-colors min-h-[44px]" href="profile.html"><span class="material-symbols-outlined text-[22px]">school</span><span class="font-label-sm text-label-sm">대학 찾기</span></a>
@@ -305,6 +314,56 @@ document.getElementById("evidenceClose").addEventListener("click", () => {
   document.getElementById("evidenceOverlay").classList.add("hidden");
 });
 
+async function openBreakdown(university, campus, department) {
+  const overlay = document.getElementById("breakdownOverlay");
+  const body = document.getElementById("breakdownBody");
+  overlay.classList.remove("hidden");
+  body.textContent = "계산 중...";
+  try {
+    const gradesRaw = sessionStorage.getItem("artready_recommend_grades");
+    const grades = gradesRaw ? JSON.parse(gradesRaw) : [];
+    const payload = { university, department, grades };
+    if (campus) payload.campus = campus;
+    const detail = await fetch(window.API_BASE_URL + "/calculate-school-record", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
+    }).then(r => r.json());
+
+    if (!detail.available) {
+      body.innerHTML = `<p class="text-on-surface-variant">${detail.reason || "계산 상세를 불러오지 못했습니다."}</p>`;
+      return;
+    }
+    const rows = (detail.breakdown || []).map(b => {
+      return `<tr class="border-b border-outline-variant/20">
+        <td class="py-unit-2xs pr-unit-sm">${b.subject_group || "-"}</td>
+        <td class="py-unit-2xs pr-unit-sm">${b.achievement ? `진로선택(${b.achievement})` : (b.grade + "등급")}</td>
+        <td class="py-unit-2xs pr-unit-sm">${b.credit}</td>
+        <td class="py-unit-2xs pr-unit-sm">${b.score}${b.group_weight_pct != null ? ` <span class="text-outline">(${b.group_weight_pct}% 교과군)</span>` : ""}</td>
+      </tr>`;
+    }).join("");
+    body.innerHTML = `
+      <p class="font-body-md text-body-md text-on-surface font-medium">${university}${campus ? " ("+campus+")" : ""} ${department} · ${detail.track_name || ""}</p>
+      <div class="overflow-x-auto mt-unit-sm">
+        <table class="w-full text-left border-collapse">
+          <thead><tr class="border-b border-outline-variant/40 font-label-sm text-label-sm text-on-surface-variant uppercase">
+            <th class="py-unit-2xs pr-unit-sm">교과</th><th class="py-unit-2xs pr-unit-sm">등급/성취도</th><th class="py-unit-2xs pr-unit-sm">이수단위</th><th class="py-unit-2xs pr-unit-sm">환산점수</th>
+          </tr></thead>
+          <tbody>${rows || `<tr><td colspan="4" class="py-unit-sm text-on-surface-variant">반영된 과목이 없습니다.</td></tr>`}</tbody>
+        </table>
+      </div>
+      <p class="mt-unit-sm">Σ(환산점수×이수단위) / Σ(이수단위) = <span class="font-bold text-primary">${detail.raw_score}점</span> / ${detail.max_score}점 만점 (${detail.percentage}%)</p>
+      ${detail.chosen_choice_subject ? `<p class="text-on-surface-variant">택1 자동선택 결과: <span class="font-medium text-on-surface">${detail.chosen_choice_subject}</span></p>` : ""}
+      <p class="mt-unit-sm pt-unit-sm border-t border-outline-variant/30 text-on-surface-variant">${detail.formula_note || ""}</p>
+      ${detail.source_url ? `<p class="mt-unit-xs"><a class="underline text-primary" href="${detail.source_url}" target="_blank" rel="noopener">공식 모집요강 원문</a></p>` : ""}
+    `;
+  } catch (err) {
+    body.innerHTML = `<p class="text-error">API 연결 실패: ${err}</p>`;
+  }
+}
+
+document.getElementById("breakdownClose").addEventListener("click", () => {
+  document.getElementById("breakdownOverlay").classList.add("hidden");
+});
+
 function renderRecommendResults() {
   // 실기검색 결과 화면과는 목적이 다르므로(합격 가능성 단정 X, 학생부 축 상대 유불리만
   // 제공) 카운트 그리드/카드 섹션은 숨기고 별도 섹션에 순위 카드를 그린다.
@@ -348,6 +407,11 @@ function renderRecommendResults() {
     const badge = isExact
       ? `<span class="px-unit-xs py-0.5 bg-primary text-on-primary font-label-sm text-label-sm rounded">정밀 계산 (모집요강 원문 확인됨)</span>`
       : `<span class="px-unit-xs py-0.5 bg-surface-variant text-on-surface-variant font-label-sm text-label-sm rounded">근사 추정 (비율 기반, 참고용)</span>`;
+    const fitBadge = r.fit_label === "GOOD_FIT"
+      ? `<span class="px-unit-xs py-0.5 bg-secondary text-on-secondary font-label-sm text-label-sm rounded">GOOD FIT</span>`
+      : r.fit_label === "CHECK"
+        ? `<span class="px-unit-xs py-0.5 bg-tertiary text-on-tertiary font-label-sm text-label-sm rounded">CHECK</span>`
+        : "";
     const pct = r.school_record_percentage;
     const scaleNote = (isExact && r.max_score != null)
       ? ` <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">(${r.raw_score}점 / ${r.max_score}점 만점 기준 환산)</span>`
@@ -360,24 +424,34 @@ function renderRecommendResults() {
       ? `<div class="font-body-sm text-body-sm text-on-surface-variant">참고용 원 석차등급 평균: 약 ${gradeEq}등급 <span class="text-outline">- 학교 배점표를 거치지 않은 원 석차등급의 이수단위 가중평균(진로선택과목 제외)입니다. 위 학생부 환산 점수는 이 학교의 실제 배점표를 적용한 값이라 등급 감각과 차이가 날 수 있습니다.</span></div>` : "";
     const ratioLine = (r.practical_ratio_pct != null || r.school_record_ratio_pct != null)
       ? `<div class="font-body-sm text-body-sm text-on-surface-variant">반영비율: 실기 ${r.practical_ratio_pct ?? "-"}% · 학생부 ${r.school_record_ratio_pct ?? "-"}%</div>` : "";
+    const reasonLine = r.reason_summary
+      ? `<div class="font-body-sm text-body-sm text-on-surface bg-surface-container-low rounded p-unit-xs mt-unit-2xs"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase">추천 이유</span><br/>${r.reason_summary}</div>` : "";
 
     return `
       <div class="flex flex-col bg-surface-container-lowest rounded-lg p-unit-md gap-unit-2xs shadow-sm border border-outline-variant/30">
-        <div class="flex items-center justify-between gap-unit-xs">
+        <div class="flex items-center justify-between gap-unit-xs flex-wrap">
           <span class="font-label-sm text-label-sm text-on-surface-variant">#${idx + 1}</span>
-          ${badge}
+          <div class="flex items-center gap-unit-2xs">${fitBadge}${badge}</div>
         </div>
         <span class="font-headline-sm text-headline-sm text-on-surface">${r.university}${campusStr}</span>
         <div class="font-body-md text-body-md text-on-surface font-medium">${r.department} · ${r.track_name || ""}</div>
         ${pctLine}
         ${gradeEqLine}
         ${ratioLine}
+        ${reasonLine}
         ${r.csat_minimum_required ? `<div class="font-body-sm text-body-sm text-error">수능최저학력기준 있음 - 별도 확인 필요</div>` : ""}
         ${r.formula_note ? `<div class="mt-unit-2xs pt-unit-2xs border-t border-outline-variant/20"><p class="font-label-sm text-label-sm text-on-surface-variant uppercase">환산 공식 (원문 그대로)</p><p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">${r.formula_note}</p></div>` : ""}
-        ${r.source_url ? `<a class="font-label-sm text-label-sm text-primary underline mt-unit-xs" href="${r.source_url}" target="_blank" rel="noopener">공식 모집요강 원문</a>` : ""}
+        <div class="flex items-center justify-between mt-unit-xs pt-unit-xs border-t border-outline-variant/20">
+          ${isExact ? `<button class="breakdown-btn font-label-sm text-label-sm text-primary underline" data-university="${r.university}" data-campus="${r.campus || ""}" data-department="${r.department || ""}">계산 상세보기</button>` : `<span></span>`}
+          ${r.source_url ? `<a class="font-label-sm text-label-sm text-primary underline" href="${r.source_url}" target="_blank" rel="noopener">공식 모집요강 원문</a>` : ""}
+        </div>
       </div>
     `;
   }).join("");
+
+  document.querySelectorAll(".breakdown-btn").forEach(btn => {
+    btn.addEventListener("click", () => openBreakdown(btn.dataset.university, btn.dataset.campus, btn.dataset.department));
+  });
 }
 </script>
 </body></html>

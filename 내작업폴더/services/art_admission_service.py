@@ -199,6 +199,7 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
         subjects = set(rule.get("subjects") or [])
         pool = []
         raw_pool = []
+        details = []
         for g in grades:
             if g.get("career_elective"):
                 continue  # 이 모드는 진로선택과목 미반영 (원문 규정 그대로)
@@ -210,10 +211,11 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
             credit = g.get("credit") or 1
             pool.append((s, credit))
             raw_pool.append((credit, g.get("grade")))
+            details.append({"subject_group": g.get("subject_group"), "grade": g.get("grade"), "credit": credit, "score": s})
         avg = _weighted_avg(pool) if pool else None
         if avg is None:
             return None
-        return {"raw_score": avg, "max_score": max_score, "matched_subject_count": len(pool), "raw_grade_average": _raw_grade_avg(raw_pool)}
+        return {"raw_score": avg, "max_score": max_score, "matched_subject_count": len(pool), "raw_grade_average": _raw_grade_avg(raw_pool), "breakdown": details}
 
     if mode == "choose_max_credit_subject":
         fixed = set(rule.get("fixed_subjects") or [])
@@ -258,12 +260,18 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
         avg = _weighted_avg(pool) if pool else None
         if avg is None:
             return None
+        active_final = fixed | ({chosen} if chosen else set())
         raw_pool = [
             (g.get("credit") or 1, g.get("grade"))
             for g in grades
-            if not g.get("career_elective") and g.get("subject_group") in (fixed | ({chosen} if chosen else set())) and _score_for_grade(g.get("grade")) is not None
+            if not g.get("career_elective") and g.get("subject_group") in active_final and _score_for_grade(g.get("grade")) is not None
         ]
-        return {"raw_score": avg, "max_score": max_score, "matched_subject_count": len(pool), "chosen_choice_subject": chosen, "raw_grade_average": _raw_grade_avg(raw_pool)}
+        details = [
+            {"subject_group": g.get("subject_group"), "grade": g.get("grade"), "credit": g.get("credit") or 1, "score": _score_for_grade(g.get("grade"))}
+            for g in grades
+            if not g.get("career_elective") and g.get("subject_group") in active_final and _score_for_grade(g.get("grade")) is not None
+        ]
+        return {"raw_score": avg, "max_score": max_score, "matched_subject_count": len(pool), "chosen_choice_subject": chosen, "raw_grade_average": _raw_grade_avg(raw_pool), "breakdown": details}
 
     if mode == "subject_group_weighted":
         groups = rule.get("subject_groups") or {}
@@ -273,6 +281,7 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
         missing_groups = []
         raw_total = 0.0
         raw_weight_used = 0.0
+        details = []
         for subject, weight_pct in groups.items():
             items = [
                 (_score_for_grade(g.get("grade")), g.get("credit") or 1, g.get("grade"))
@@ -292,35 +301,45 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
             if group_raw_avg is not None:
                 raw_total += group_raw_avg * weight_pct
                 raw_weight_used += weight_pct
+            for s, c, g in items:
+                details.append({"subject_group": subject, "grade": g, "credit": c, "score": s, "group_weight_pct": weight_pct})
         if matched == 0:
             return None
         raw_grade_average = round(raw_total / raw_weight_used, 2) if raw_weight_used else None
-        return {"raw_score": total, "max_score": max_score, "matched_subject_count": matched, "missing_subject_groups": missing_groups, "raw_grade_average": raw_grade_average}
+        return {"raw_score": total, "max_score": max_score, "matched_subject_count": matched, "missing_subject_groups": missing_groups, "raw_grade_average": raw_grade_average, "breakdown": details}
 
     if mode == "all_subjects_plus_career_elective":
         pool = []
         raw_pool = []
+        details = []
         ce_conv = {str(k): v for k, v in (rule.get("career_elective_conversion_table") or {}).items()}
         ce_items = []
+        ce_details = []
         for g in grades:
             if g.get("career_elective"):
                 s = ce_conv.get(str(g.get("achievement")))
                 if s is not None:
-                    ce_items.append((s, g.get("credit") or 1))
+                    credit = g.get("credit") or 1
+                    ce_items.append((s, credit))
+                    ce_details.append({"subject_group": g.get("subject_group"), "achievement": g.get("achievement"), "credit": credit, "score": s})
             else:
                 s = _score_for_grade(g.get("grade"))
                 if s is not None:
                     credit = g.get("credit") or 1
                     pool.append((s, credit))
                     raw_pool.append((credit, g.get("grade")))  # 진로선택(성취도)은 원 석차등급이 없어 참고등급 계산엔 제외
+                    details.append({"subject_group": g.get("subject_group"), "grade": g.get("grade"), "credit": credit, "score": s})
         max_ce = rule.get("career_elective_max_count")
         if max_ce is not None:
-            ce_items = sorted(ce_items, key=lambda x: -x[0])[:max_ce]
+            paired = sorted(zip(ce_items, ce_details), key=lambda x: -x[0][0])[:max_ce]
+            ce_items = [p[0] for p in paired]
+            ce_details = [p[1] for p in paired]
         pool.extend(ce_items)
+        details.extend(ce_details)
         avg = _weighted_avg(pool) if pool else None
         if avg is None:
             return None
-        return {"raw_score": avg, "max_score": max_score, "matched_subject_count": len(pool), "raw_grade_average": _raw_grade_avg(raw_pool)}
+        return {"raw_score": avg, "max_score": max_score, "matched_subject_count": len(pool), "raw_grade_average": _raw_grade_avg(raw_pool), "breakdown": details}
 
     if mode == "common_and_career_split_scaled":
         # 홍익대 세종 학생부교과(교과우수자전형 등) 방식: 공통·일반선택과목 평균과
@@ -358,10 +377,20 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
             for g in grades
             if not g.get("career_elective") and (not subjects or g.get("subject_group") in subjects) and _score_for_grade(g.get("grade")) is not None
         ]
+        details = [
+            {"subject_group": g.get("subject_group"), "grade": g.get("grade"), "credit": g.get("credit") or 1, "score": _score_for_grade(g.get("grade"))}
+            for g in grades
+            if not g.get("career_elective") and (not subjects or g.get("subject_group") in subjects) and _score_for_grade(g.get("grade")) is not None
+        ] + [
+            {"subject_group": g.get("subject_group"), "achievement": g.get("achievement"), "credit": g.get("credit") or 1, "score": ce_conv.get(str(g.get("achievement")))}
+            for g in grades
+            if g.get("career_elective") and (not subjects or g.get("subject_group") in subjects) and ce_conv.get(str(g.get("achievement"))) is not None
+        ]
         return {
             "raw_score": raw_score, "max_score": round(theoretical_max, 4),
             "matched_subject_count": len(common_pool) + len(career_pool),
             "raw_grade_average": _raw_grade_avg(raw_grade_pool),
+            "breakdown": details,
         }
 
     return None
@@ -371,6 +400,52 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
 # 입력받은 전 과목을 그냥 이수단위 가중평균한다 - "정밀 계산"이 아니라 "근사 추정"이라고
 # 반드시 라벨링해서 내려보내야 하는 이유가 이것 (calc_precision: "approximate").
 _GENERIC_GRADE_CURVE = {1: 100, 2: 90, 3: 80, 4: 70, 5: 60, 6: 50, 7: 40, 8: 20, 9: 0}
+
+
+def _describe_reflected_subjects(rule: Dict[str, Any]) -> str:
+    """학교별 반영교과를 한 줄 설명으로 - 카드에 "왜 추천됐는지" 보여주기 위한
+    결정론적 템플릿(LLM 호출 없음). rule에 실제 들어있는 필드만 조합하므로
+    지어내는 내용이 없다."""
+    mode = rule.get("mode")
+    if mode == "simple_weighted_average":
+        subs = rule.get("subjects") or []
+        return "·".join(subs) + " 반영" if subs else "일부 교과만 반영"
+    if mode == "choose_max_credit_subject":
+        fixed = "·".join(rule.get("fixed_subjects") or [])
+        choice = "/".join(rule.get("subject_choice_group") or [])
+        return f"{fixed} + 택1({choice}, 이수단위 많은 교과 자동선택)" if fixed else "택1 교과 반영"
+    if mode == "subject_group_weighted":
+        groups = rule.get("subject_groups") or {}
+        return "·".join(groups.keys()) + " 4개 교과군 균등 반영" if groups else "교과군별 반영"
+    if mode == "all_subjects_plus_career_elective":
+        return "특정 교과 제한 없이 석차등급 있는 전 교과목 반영"
+    if mode == "common_and_career_split_scaled":
+        subs = rule.get("subjects") or []
+        return "·".join(subs) + " + 진로선택과목 반영" if subs else "전 교과목 반영"
+    return "학교 고유 반영 방식"
+
+
+def _build_reason_summary(rule: Dict[str, Any], practical_ratio_pct: Optional[float],
+                           school_record_ratio_pct: Optional[float], ratio_text: Optional[str] = None) -> str:
+    """카드에 노출할 "추천 이유" 한 줄 - 반영교과 + 실기/학생부 비중을 조합한
+    결정론적 문장이다. 절대 "합격 가능성"을 언급하지 않고, 반영 구조상의
+    유불리(학생부 영향이 크다/작다)만 설명한다."""
+    subj_desc = _describe_reflected_subjects(rule)
+    if practical_ratio_pct is not None and school_record_ratio_pct is not None:
+        if practical_ratio_pct >= school_record_ratio_pct * 2:
+            ratio_desc = f"실기 {practical_ratio_pct}% · 학생부 {school_record_ratio_pct}%로 실기 비중이 커서 학생부 영향은 상대적으로 제한적입니다."
+        elif school_record_ratio_pct > practical_ratio_pct:
+            ratio_desc = f"실기 {practical_ratio_pct}% · 학생부 {school_record_ratio_pct}%로 학생부 비중이 낮지 않아 내신 영향이 큽니다."
+        else:
+            ratio_desc = f"실기 {practical_ratio_pct}% · 학생부 {school_record_ratio_pct}%로 실기와 학생부가 비슷한 비중입니다."
+    elif school_record_ratio_pct == 100:
+        ratio_desc = "실기 없이 학생부교과 100%로 선발하는 전형입니다."
+    elif ratio_text:
+        # 단계별 전형처럼 단일 실기%/학생부%로 못 쪼개는 경우, 원문 반영비율 설명을 그대로 인용한다.
+        ratio_desc = f"반영비율(원문): {ratio_text}"
+    else:
+        ratio_desc = "반영비율 정보가 확인되지 않았습니다."
+    return f"{subj_desc}. {ratio_desc}"
 
 
 def _approximate_school_record_score(grades: List[Dict[str, Any]]) -> Optional[float]:
@@ -1443,6 +1518,7 @@ class ArtAdmissionService:
             "rule_source_page": rule.get("rule_source_page"),
             "source_url": track.get("source_url"),
             "data_tier": "OFFICIAL_RULE",
+            "breakdown": calc.get("breakdown"),
         }
 
     def recommend_universities(self, grades: List[Dict[str, Any]],
@@ -1481,12 +1557,16 @@ class ArtAdmissionService:
                     entry["formula_note"] = rule.get("formula_note")
                     entry["data_tier"] = "OFFICIAL_RULE"
                     entry["estimated_grade_equivalent"] = calc.get("raw_grade_average")
+                    entry["reason_summary"] = _build_reason_summary(
+                        rule, t.get("practical_ratio_pct"), t.get("school_record_ratio_pct"), t.get("ratio"),
+                    )
                 else:
                     entry["calc_precision"] = "exact"
                     entry["school_record_percentage"] = None
                     entry["note"] = "입력한 과목 중 이 학교의 반영 대상 과목이 없어 계산할 수 없습니다."
                     entry["data_tier"] = "OFFICIAL_RULE"
                     entry["estimated_grade_equivalent"] = None
+                    entry["reason_summary"] = None
             else:
                 entry["calc_precision"] = "approximate"
                 entry["school_record_percentage"] = _approximate_school_record_score(grades)
@@ -1496,8 +1576,23 @@ class ArtAdmissionService:
                 entry["estimated_grade_equivalent"] = _raw_grade_avg([
                     (g.get("credit") or 1, g.get("grade")) for g in grades if not g.get("career_elective")
                 ])
+                entry["reason_summary"] = "반영교과·환산표가 원문으로 확인되지 않아 실기/학생부 반영 비율만으로 근사 추정한 결과입니다."
 
             results.append(entry)
+
+        # GOOD FIT / CHECK 판정: 절대적인 "합격 가능성"이 아니라, 정밀 계산이 가능한
+        # 학교들 사이에서 "이 학생의 학생부가 상대적으로 어디서 더 유리하게 환산되는가"를
+        # 보여주는 상대 지표다. 정밀 계산된 학교 중 최고 환산율 대비 5%p 이내면 GOOD FIT,
+        # 그보다 낮으면 CHECK로 표시하고, 근사 추정 학교는 신뢰도가 낮아 판정을 매기지 않는다
+        # (임계값 5%p는 공식 기준이 아니라 서비스 자체 설계 기준 - formula_note와 별개로
+        # UI에 반드시 "참고용 상대 판정"이라고 명시해야 한다).
+        exact_pcts = [e["school_record_percentage"] for e in results if e["calc_precision"] == "exact" and e["school_record_percentage"] is not None]
+        top_exact_pct = max(exact_pcts) if exact_pcts else None
+        for e in results:
+            if e["calc_precision"] == "exact" and e["school_record_percentage"] is not None and top_exact_pct is not None:
+                e["fit_label"] = "GOOD_FIT" if (top_exact_pct - e["school_record_percentage"]) <= 5 else "CHECK"
+            else:
+                e["fit_label"] = None
 
         results.sort(key=lambda e: (
             e["calc_precision"] != "exact",

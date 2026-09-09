@@ -66,7 +66,9 @@
       },
       "formula_note": "교과점수 = Σ(반영과목별 이수단위×석차등급 배점) / Σ(반영과목별 이수단위) (2027 모집요강 p.85-87, 예·체능계열/실기우수자전형 기준). 진로선택과목은 반영하지 않으며, 석차등급이 1개 과목도 없으면 지원자격 미달.",
       "rule_source_page": "84-87"
-    }
+    },
+    "practical_ratio_pct": 70,
+    "school_record_ratio_pct": 30
   },
   "estimates": {
     "cutoff_grade_estimate": 5.86,
