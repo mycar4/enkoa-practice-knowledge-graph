@@ -1,0 +1,47 @@
+[
+  {
+    "subject": "이노엔비타메진캡슐",
+    "relation": "HAS_SIDE_EFFECT",
+    "object": "구역",
+    "source_doc_id": "drug_198500050",
+    "paragraph_id": "p02",
+    "evidence_section": "이상반응",
+    "evidence": "구역, 구토, 묽은 변, 식욕부진, 복부팽만감 등이 나타나는 경우 복용을 즉각 중지하고 의사 또는 약사와 상의하십시오."
+  },
+  {
+    "subject": "이노엔비타메진캡슐",
+    "relation": "HAS_SIDE_EFFECT",
+    "object": "구토",
+    "source_doc_id": "drug_198500050",
+    "paragraph_id": "p02",
+    "evidence_section": "이상반응",
+    "evidence": "구역, 구토, 묽은 변, 식욕부진, 복부팽만감 등이 나타나는 경우 복용을 즉각 중지하고 의사 또는 약사와 상의하십시오."
+  },
+  {
+    "subject": "이노엔비타메진캡슐",
+    "relation": "HAS_SIDE_EFFECT",
+    "object": "묽은 변",
+    "source_doc_id": "drug_198500050",
+    "paragraph_id": "p02",
+    "evidence_section": "이상반응",
+    "evidence": "구역, 구토, 묽은 변, 식욕부진, 복부팽만감 등이 나타나는 경우 복용을 즉각 중지하고 의사 또는 약사와 상의하십시오."
+  },
+  {
+    "subject": "이노엔비타메진캡슐",
+    "relation": "HAS_SIDE_EFFECT",
+    "object": "식욕부진",
+    "source_doc_id": "drug_198500050",
+    "paragraph_id": "p02",
+    "evidence_section": "이상반응",
+    "evidence": "구역, 구토, 묽은 변, 식욕부진, 복부팽만감 등이 나타나는 경우 복용을 즉각 중지하고 의사 또는 약사와 상의하십시오."
+  },
+  {
+    "subject": "이노엔비타메진캡슐",
+    "relation": "HAS_SIDE_EFFECT",
+    "object": "복부팽만감",
+    "source_doc_id": "drug_198500050",
+    "paragraph_id": "p02",
+    "evidence_section": "이상반응",
+    "evidence": "구역, 구토, 묽은 변, 식욕부진, 복부팽만감 등이 나타나는 경우 복용을 즉각 중지하고 의사 또는 약사와 상의하십시오."
+  }
+]

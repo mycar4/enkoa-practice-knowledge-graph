@@ -1,0 +1,47 @@
+{
+  "doc_id": "pandas_doc_source_whatsnew_v2_0_3",
+  "version": "2.0.3",
+  "title": "What's new in 2.0.3 (June 28, 2023)",
+  "url": "https://github.com/pandas-dev/pandas/blob/main/doc/source/whatsnew/v2.0.3.rst",
+  "collected_at": "2026-09-07T07:11:44.423332+00:00",
+  "source_sha256": "d57066241a61fe5091e1ff240670b57dfba62a19d1c4a8b7a6be893a6c5a4d63",
+  "text": "What's new in 2.0.3 (June 28, 2023)\n\nFixed regressions\n\n- Fixed regression when DataFrame.to_string creates extra space for string dtypes (52690)\n\nBug fixes\n\n- Bug in Series.reindex when expanding a non-nanosecond datetime or timedelta Series would not fill with NaT correctly (53497)\n\nBug fixes\n\n- Bug in read_csv when defining dtype with bool[pyarrow] for the \"c\" and \"python\" engines (53390)\n\nBug fixes\n\n- Bug in Series.str.split and Series.str.rsplit with expand=True for ArrowDtype with pyarrow.string (53532)",
+  "paragraphs": [
+    {
+      "paragraph_id": "p01",
+      "text": "- Fixed regression when DataFrame.to_string creates extra space for string dtypes (52690)",
+      "source_start": 326,
+      "source_end": 415,
+      "reviewed": true,
+      "n_gold": 1,
+      "reason": "이 버전에서 수정한 API 문제"
+    },
+    {
+      "paragraph_id": "p02",
+      "text": "- Bug in Series.reindex when expanding a non-nanosecond datetime or timedelta Series would not fill with NaT correctly (53497)",
+      "source_start": 642,
+      "source_end": 768,
+      "reviewed": true,
+      "n_gold": 1,
+      "reason": "이 버전에서 수정한 API 문제"
+    },
+    {
+      "paragraph_id": "p03",
+      "text": "- Bug in read_csv when defining dtype with bool[pyarrow] for the \"c\" and \"python\" engines (53390)",
+      "source_start": 769,
+      "source_end": 866,
+      "reviewed": true,
+      "n_gold": 1,
+      "reason": "이 버전에서 수정한 API 문제"
+    },
+    {
+      "paragraph_id": "p04",
+      "text": "- Bug in Series.str.split and Series.str.rsplit with expand=True for ArrowDtype with pyarrow.string (53532)",
+      "source_start": 867,
+      "source_end": 974,
+      "reviewed": true,
+      "n_gold": 2,
+      "reason": "이 버전에서 수정한 API 문제"
+    }
+  ]
+}

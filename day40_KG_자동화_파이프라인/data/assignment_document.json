@@ -1,0 +1,68 @@
+{
+  "doc_id": "drug_198500050",
+  "domain": "medical",
+  "title": "이노엔비타메진캡슐",
+  "url": "https://www.data.go.kr/data/15075057/openapi.do",
+  "collected_at": "2026-07-10T09:57:49.581265+00:00",
+  "source_sha256": "e71d692ad0a69e95b15094dbe13adeb14853b4b33cd3cfc03ab825f9039865b8",
+  "source_snapshot": "단위프로젝트2_개편/version_c_drugs/dataset/snapshot/drugs_snapshot.csv",
+  "source_format": "기존 CSV의 원문 필드에 제품명과 절 이름을 붙인 문서",
+  "text": "이노엔비타메진캡슐\n\n[효능]\n이 약은 육체피로, 임신ㆍ수유기, 병중ㆍ병후(병을 앓는 동안이나 회복 후)의 체력 저하 시 비타민 B1, B6의 보급과 신경통, 근육통, 관절통(요통, 어깨결림 등), 각기, 눈의 피로, 구각염(입꼬리염), 구순염(입술염), 구내염(입안염), 설염(혀염), 습진, 피부염 증상의 완화에 사용합니다.\n\n[이상반응]\n구역, 구토, 묽은 변, 식욕부진, 복부팽만감 등이 나타나는 경우 복용을 즉각 중지하고 의사 또는 약사와 상의하십시오.\n\n[사용법]\n성인은 1회 2캡슐씩, 1일 1~2회 복용합니다.\n\n[주의사항]\n이 약에 과민증 환자, 만 3개월 미만의 젖먹이는 이 약을 복용하지 마십시오. 이 약을 복용하기 전에 폴산이 부족한 환자는 의사 또는 약사와 상의하십시오. 정해진 용법과 용량을 잘 지키십시오. 1개월 정도 복용하여도 증상의 개선이 없을 경우 복용을 즉각 중지하고 의사 또는 약사와 상의하십시오.\n\n[상호작용]\n레보도파와 함께 복용하지 마십시오.",
+  "paragraphs": [
+    {
+      "paragraph_id": "p01",
+      "source_field": "efficacy",
+      "section": "효능",
+      "text": "이 약은 육체피로, 임신ㆍ수유기, 병중ㆍ병후(병을 앓는 동안이나 회복 후)의 체력 저하 시 비타민 B1, B6의 보급과 신경통, 근육통, 관절통(요통, 어깨결림 등), 각기, 눈의 피로, 구각염(입꼬리염), 구순염(입술염), 구내염(입안염), 설염(혀염), 습진, 피부염 증상의 완화에 사용합니다.",
+      "source_start": 16,
+      "source_end": 182,
+      "reviewed": true,
+      "n_gold": 0,
+      "reason": "이상반응 절이 아니므로 HAS_SIDE_EFFECT에서 제외"
+    },
+    {
+      "paragraph_id": "p02",
+      "source_field": "side_effect",
+      "section": "이상반응",
+      "text": "구역, 구토, 묽은 변, 식욕부진, 복부팽만감 등이 나타나는 경우 복용을 즉각 중지하고 의사 또는 약사와 상의하십시오.",
+      "source_start": 191,
+      "source_end": 257,
+      "reviewed": true,
+      "n_gold": 5,
+      "reason": "사용 후 나타날 수 있는 이상반응 5개"
+    },
+    {
+      "paragraph_id": "p03",
+      "source_field": "usage",
+      "section": "사용법",
+      "text": "성인은 1회 2캡슐씩, 1일 1~2회 복용합니다.",
+      "source_start": 265,
+      "source_end": 292,
+      "reviewed": true,
+      "n_gold": 0,
+      "reason": "이상반응 절이 아니므로 HAS_SIDE_EFFECT에서 제외"
+    },
+    {
+      "paragraph_id": "p04",
+      "source_field": "caution",
+      "section": "주의사항",
+      "text": "이 약에 과민증 환자, 만 3개월 미만의 젖먹이는 이 약을 복용하지 마십시오. 이 약을 복용하기 전에 폴산이 부족한 환자는 의사 또는 약사와 상의하십시오. 정해진 용법과 용량을 잘 지키십시오. 1개월 정도 복용하여도 증상의 개선이 없을 경우 복용을 즉각 중지하고 의사 또는 약사와 상의하십시오.",
+      "source_start": 301,
+      "source_end": 465,
+      "reviewed": true,
+      "n_gold": 0,
+      "reason": "이상반응 절이 아니므로 HAS_SIDE_EFFECT에서 제외"
+    },
+    {
+      "paragraph_id": "p05",
+      "source_field": "interaction",
+      "section": "상호작용",
+      "text": "레보도파와 함께 복용하지 마십시오.",
+      "source_start": 474,
+      "source_end": 493,
+      "reviewed": true,
+      "n_gold": 0,
+      "reason": "이상반응 절이 아니므로 HAS_SIDE_EFFECT에서 제외"
+    }
+  ]
+}

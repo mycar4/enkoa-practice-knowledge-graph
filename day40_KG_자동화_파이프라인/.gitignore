@@ -1,0 +1,5 @@
+.env
+.ipynb_checkpoints/
+output/*.json
+output/*.ipynb
+output/.validation_cache/

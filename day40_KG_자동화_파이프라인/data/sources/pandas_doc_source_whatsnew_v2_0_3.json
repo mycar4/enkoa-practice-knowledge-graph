@@ -1,0 +1,12 @@
+{
+  "doc_id": "pandas_doc_source_whatsnew_v2_0_3",
+  "library": "pandas",
+  "repo": "pandas-dev/pandas",
+  "path": "doc/source/whatsnew/v2.0.3.rst",
+  "section": "whatsnew",
+  "doc_kind": "변경이력",
+  "format": "rst",
+  "title": "What's new in 2.0.3 (June 28, 2023)",
+  "url": "https://github.com/pandas-dev/pandas/blob/main/doc/source/whatsnew/v2.0.3.rst",
+  "collected_at": "2026-09-07T07:11:44.423332+00:00"
+}
