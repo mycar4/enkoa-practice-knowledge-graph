@@ -1,0 +1,234 @@
+{
+  "scope": {
+    "mention_ids": [
+      "l1_01",
+      "l1_02",
+      "l1_03",
+      "l1_04",
+      "l1_05",
+      "l1_06",
+      "l1_07",
+      "l1_08",
+      "l1_09",
+      "l1_10",
+      "l1_11",
+      "l1_12",
+      "l1_13",
+      "l1_14",
+      "l1_15"
+    ],
+    "complete": true
+  },
+  "evaluation_unit": "순서를 구분하지 않는 두 mention_id의 쌍",
+  "identity_rule": "같은 화합물 또는 같은 유전자 기호를 한 그룹으로 봅니다. 통계, 투여량, 공급 업체 주석과 대소문자 변형은 정체성을 바꾸지 않습니다. 다른 성분, 다른 유전자 기호와 ATP 같은 별도 화합물은 구분합니다.",
+  "entity_id_note": "entity_id는 평가용 로컬 그룹 ID입니다. 외부 지식베이스의 표준 ID가 아니며 입력이나 후보 생성에 사용하지 않습니다.",
+  "annotation_basis": "원문 문맥을 대조한 수업용 판정입니다. lv1과 lv2는 기존 골드의 동일쌍과 다른 쌍도 확인했습니다. 자동 사전 조회 결과를 정답으로 복사하지 않았습니다.",
+  "gene_scope_note": "Gene은 논문의 유전자 또는 그 산물에 붙은 기호를 평가합니다. 측정량이나 약물과의 관계를 판정하는 자료가 아닙니다.",
+  "groups": [
+    {
+      "entity_id": "lv1_entity_01",
+      "canonical_name": "metoprolol",
+      "entity_type": "Compound",
+      "mention_ids": [
+        "l1_01",
+        "l1_02",
+        "l1_03"
+      ],
+      "rationale": "기존 골드의 동일쌍을 원문과 대조했습니다. 대소문자와 투여량 주석만 다릅니다.",
+      "sources": [
+        {
+          "mention_id": "l1_01",
+          "source_doc_id": "PMC13494174",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+          "evidence": "This study investigated the effects of 4 commonly prescribed drugs, metoprolol, citalopram, oxybutynin, and oxycodone, on LSEC function."
+        },
+        {
+          "mention_id": "l1_02",
+          "source_doc_id": "PMC13494174",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+          "evidence": "Metoprolol also reduced fenestration frequency (0.58 ± 0.54, P <.05), whereas oxybutynin and the polypharmacy cocktail did not produce significant changes at steady-state concentration."
+        },
+        {
+          "mention_id": "l1_03",
+          "source_doc_id": "PMC13494174",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+          "evidence": "The high DBI polypharmacy regimen consisted of simvastatin (20 mg/kg/day), metoprolol (350 mg/kg/day), oxybutynin (27.2 mg/kg/day), oxycodone (5 mg/kg/day), and citalopram (15 mg/kg/day)."
+        }
+      ]
+    },
+    {
+      "entity_id": "lv1_entity_02",
+      "canonical_name": "oxybutynin",
+      "entity_type": "Compound",
+      "mention_ids": [
+        "l1_04",
+        "l1_05"
+      ],
+      "rationale": "투여량 주석만 다릅니다. 옥시코돈과 별도로 나열됩니다.",
+      "sources": [
+        {
+          "mention_id": "l1_04",
+          "source_doc_id": "PMC13494174",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+          "evidence": "This study investigated the effects of 4 commonly prescribed drugs, metoprolol, citalopram, oxybutynin, and oxycodone, on LSEC function."
+        },
+        {
+          "mention_id": "l1_05",
+          "source_doc_id": "PMC13494174",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+          "evidence": "The high DBI polypharmacy regimen consisted of simvastatin (20 mg/kg/day), metoprolol (350 mg/kg/day), oxybutynin (27.2 mg/kg/day), oxycodone (5 mg/kg/day), and citalopram (15 mg/kg/day)."
+        }
+      ]
+    },
+    {
+      "entity_id": "lv1_entity_03",
+      "canonical_name": "oxycodone",
+      "entity_type": "Compound",
+      "mention_ids": [
+        "l1_06"
+      ],
+      "rationale": "원문에서 옥시부티닌과 별도로 나열됩니다.",
+      "sources": [
+        {
+          "mention_id": "l1_06",
+          "source_doc_id": "PMC13494174",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+          "evidence": "This study investigated the effects of 4 commonly prescribed drugs, metoprolol, citalopram, oxybutynin, and oxycodone, on LSEC function."
+        }
+      ]
+    },
+    {
+      "entity_id": "lv1_entity_04",
+      "canonical_name": "citalopram",
+      "entity_type": "Compound",
+      "mention_ids": [
+        "l1_07",
+        "l1_08",
+        "l1_09"
+      ],
+      "rationale": "기존 골드의 동일쌍을 원문과 대조했습니다. 대소문자와 투여량 주석만 다릅니다.",
+      "sources": [
+        {
+          "mention_id": "l1_07",
+          "source_doc_id": "PMC13494174",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+          "evidence": "This study investigated the effects of 4 commonly prescribed drugs, metoprolol, citalopram, oxybutynin, and oxycodone, on LSEC function."
+        },
+        {
+          "mention_id": "l1_08",
+          "source_doc_id": "PMC13494174",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+          "evidence": "Citalopram and oxybutynin caused dose-dependent defenestration, whereas metoprolol and oxycodone produced mild, nondose-dependent effects."
+        },
+        {
+          "mention_id": "l1_09",
+          "source_doc_id": "PMC13494174",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+          "evidence": "The high DBI polypharmacy regimen consisted of simvastatin (20 mg/kg/day), metoprolol (350 mg/kg/day), oxybutynin (27.2 mg/kg/day), oxycodone (5 mg/kg/day), and citalopram (15 mg/kg/day)."
+        }
+      ]
+    },
+    {
+      "entity_id": "lv1_entity_05",
+      "canonical_name": "simvastatin",
+      "entity_type": "Compound",
+      "mention_ids": [
+        "l1_10"
+      ],
+      "rationale": "원문에서 독립된 약물 이름으로 나열됩니다.",
+      "sources": [
+        {
+          "mention_id": "l1_10",
+          "source_doc_id": "PMC13494174",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+          "evidence": "A recent study using mouse models showed that chronic exposure to a high-DBI polypharmacy regimen, consisting of citalopram, metoprolol, oxybutynin, oxycodone, and simvastatin, increased frailty and impaired physical function."
+        }
+      ]
+    },
+    {
+      "entity_id": "lv1_entity_06",
+      "canonical_name": "streptomycin",
+      "entity_type": "Compound",
+      "mention_ids": [
+        "l1_11"
+      ],
+      "rationale": "괄호는 공급 업체 이름이며 성분은 스트렙토마이신입니다.",
+      "sources": [
+        {
+          "mention_id": "l1_11",
+          "source_doc_id": "PMC13494174",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+          "evidence": "LSEC were cultured in endothelial cell growth medium (Cell Applications Inc) supplemented with 10,000 U/mL penicillin (Sigma-Aldrich) and 10 mg/mL streptomycin (Sigma-Aldrich) at 37 °C in 5% CO2 and 5% O2 overnight before treatment."
+        }
+      ]
+    },
+    {
+      "entity_id": "lv1_entity_07",
+      "canonical_name": "adenine",
+      "entity_type": "Compound",
+      "mention_ids": [
+        "l1_12"
+      ],
+      "rationale": "원문에서 ATP 대사 과정의 별도 물질 이름으로 사용됩니다.",
+      "sources": [
+        {
+          "mention_id": "l1_12",
+          "source_doc_id": "PMC13493512",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13493512/",
+          "evidence": "ATP is then metabolized into adenine and ultimately converted into uric acid, which elevates serum uric acid levels and increases the risk of gout."
+        }
+      ]
+    },
+    {
+      "entity_id": "lv1_entity_08",
+      "canonical_name": "adenosine",
+      "entity_type": "Compound",
+      "mention_ids": [
+        "l1_13"
+      ],
+      "rationale": "출처를 교정해 아데노신 자체를 가리키는 문맥을 사용했습니다. ATP와 다른 화합물입니다.",
+      "sources": [
+        {
+          "mention_id": "l1_13",
+          "source_doc_id": "PMC13493376",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13493376/",
+          "evidence": "In addition, MTX exerts immunomodulatory effects through mechanisms such as adenosine release, nitric oxide synthase uncoupling, and inhibition of Janus kinase-signal transducer and activator of transcription (JAK-STAT) and Nuclear factor kappa B (NF-κB) signaling, ultimately inhibiting cell activation and proliferation."
+        }
+      ]
+    },
+    {
+      "entity_id": "lv1_entity_09",
+      "canonical_name": "adenosine triphosphate",
+      "entity_type": "Compound",
+      "mention_ids": [
+        "l1_14"
+      ],
+      "rationale": "원문이 ATP라는 약어를 함께 정의합니다. 이름 일부가 같아도 아데노신과 같은 화합물이 아닙니다.",
+      "sources": [
+        {
+          "mention_id": "l1_14",
+          "source_doc_id": "PMC13493512",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13493512/",
+          "evidence": "The underlying mechanism may be that PPIs block H+/K+-ATPase, leading to the accumulation of serum adenosine triphosphate (ATP)."
+        }
+      ]
+    },
+    {
+      "entity_id": "lv1_entity_10",
+      "canonical_name": "omeprazole",
+      "entity_type": "Compound",
+      "mention_ids": [
+        "l1_15"
+      ],
+      "rationale": "원문에서 독립된 약물 이름으로 나열됩니다.",
+      "sources": [
+        {
+          "mention_id": "l1_15",
+          "source_doc_id": "PMC13493512",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13493512/",
+          "evidence": "Kraus et al. initially reported two cases of patients with duodenal bulb ulcer who developed acute gout after omeprazole treatment."
+        }
+      ]
+    }
+  ]
+}

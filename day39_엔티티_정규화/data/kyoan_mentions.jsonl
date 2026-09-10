@@ -1,0 +1,19 @@
+{"name": "warfarin", "gene": "CYP2C9", "pmcid": "PMC13432136", "source": "paper"}
+{"name": "Warfarin", "gene": "CYP4F2", "pmcid": "PMC13432136", "source": "paper"}
+{"name": "warfarin (CYP2C9/VKORC1)", "gene": "VKORC1", "pmcid": "PMC13473732", "source": "paper"}
+{"name": "omeprazole", "gene": "CYP2C19", "pmcid": "PMC13432136", "source": "paper"}
+{"name": "omeprazole (n = 658)", "gene": "CYP2C19", "pmcid": "PMC13432136", "source": "paper"}
+{"name": "lansoprazole (74/140, 52.86%)", "gene": "CYP2C19", "pmcid": "PMC13432136", "source": "paper"}
+{"name": "amitriptyline", "gene": "CYP2C19", "pmcid": "PMC13432136", "source": "paper"}
+{"name": "clopidogrel", "gene": "CYP2C19", "pmcid": "PMC13432136", "source": "paper"}
+{"name": "atorvastatin", "gene": "SLCO1B1", "pmcid": "PMC13432136", "source": "paper"}
+{"name": "atorvastatin (n = 606)", "gene": "SLCO1B1", "pmcid": "PMC13432136", "source": "paper"}
+{"name": "simvastatin", "gene": "SLCO1B1", "pmcid": "PMC13432136", "source": "paper"}
+{"name": "simvastatin (n = 603)", "gene": "SLCO1B1", "pmcid": "PMC13432136", "source": "paper"}
+{"name": "rosuvastatin", "gene": "ABCG2", "pmcid": "PMC13432136", "source": "paper"}
+{"name": "rosuvastatin", "gene": "SLCO1B1", "pmcid": "PMC13432136", "source": "paper"}
+{"name": "ibuprofen", "gene": "CYP2C9", "pmcid": "PMC13432136", "source": "paper"}
+{"name": "celecoxib (4/27, 14.81%)", "gene": "CYP2C9", "pmcid": "PMC13432136", "source": "paper"}
+{"name": "efavirenz", "gene": "CYP2B6", "pmcid": "PMC13473732", "source": "paper"}
+{"name": "efavirenz (CYP2B6)", "gene": "CYP2B6", "pmcid": "PMC13473732", "source": "paper"}
+{"name": "Coumadin", "gene": "VKORC1", "pmcid": "PMC13432136", "source": "prescription"}

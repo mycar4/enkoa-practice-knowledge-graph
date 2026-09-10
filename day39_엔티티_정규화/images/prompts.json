@@ -1,0 +1,22 @@
+[
+  {
+    "file": "entity_identity_cases.png",
+    "prompt": "Create a crisp Korean educational concept infographic, white background, flat 2D vector-style illustration, large dark navy Korean typography, muted blue green orange palette, landscape 1536x1024. Topic: same book edition versus different editions; teach identity not spelling. Title exactly \"이름과 개체는 다릅니다\". Two spacious side-by-side panels. Left green panel label \"같은 판본\". Two source book cards read \"파이썬 입문\" and \"파이썬  입문\" (second visibly more whitespace), both labeled \"초판\". Arrows from each join one catalog card reading \"B001\". Right orange panel label \"다른 판본\". One card \"파이썬 입문\" / \"초판\" points to \"B001\"; another \"파이썬 입문\" / \"개정판\" points separately to \"B002\". No connecting arrow between B001 and B002. Bottom sentence exactly \"공백 차이는 정리하고, 판본 차이는 보존합니다\". Very simple book icons, no decorative mascots, no extra text or numbers, clearly connected arrowheads, all text fully readable."
+  },
+  {
+    "file": "entity_resolution_steps.png",
+    "prompt": "Korean classroom concept infographic, pristine white background, flat 2D diagram, large readable navy text, blue for preparation, green confirmed, amber review, no gradients, landscape 1536x1024. Show branching workflow with a clear top-to-bottom reading order, only short labels. Title \"같은 개체를 확인하는 순서\". First box \"원래 이름과 문맥\" arrow to \"비교용 이름\". Then diamond \"사전과 문맥으로 확인?\" with branch label \"확인됨\" going left to green box \"표준 ID 연결\"; branch label \"미해결\" going right to box \"유사도로 후보 선정\", then box \"문맥으로 판정\". From this final decision box draw three arrows to smaller boxes labeled \"같음\", \"다름\", \"보류\". At the bottom separate concise note \"유사도는 동일 개체의 확정 판정이 아닙니다\". Ensure all arrows visibly touch boxes, no arbitrary counts, no scores, no LLM required for every record."
+  },
+  {
+    "file": "entity_resolution_linking.png",
+    "prompt": "Make a polished minimal flat Korean educational diagram on pure white, landscape 1536x1024, very readable navy text, blue and green accents. Title exactly \"동일 개체 판별과 표준 ID 연결\". Two balanced horizontal panels. Left panel heading \"동일 개체 판별 (ER)\". Three cards labeled \"파이썬 입문\", \"파이썬  입문\", \"파이썬 입문서\" converge into a grouped container label \"같은 초판을 가리키는 표기\". Small caption inside panel \"문맥과 도서 목록으로 확인\". Right panel heading \"표준 ID 연결 (EL)\". Show that grouped container icon pointing to catalog card with exact lines \"도서 목록\", \"B001\", \"파이썬 입문 / 초판\". Bottom note \"여러 표기를 구분하고, 확인한 대상의 ID를 붙입니다\". Use little book/catalog icons, no long paragraphs, no claim that ER must always precede EL, no numeric metrics, arrows connected, plenty of spacing."
+  },
+  {
+    "file": "entity_candidate_signals.png",
+    "prompt": "Korean concept diagram, white background, flat 2D graphics, navy readable type, blue and orange accents, landscape1536x1024. Title \"후보를 고르는 두 가지 정보\". Two columns. Left header \"KNN: 이름 벡터\". Show cards \"이름 A\", \"이름 B\" converted into small vector bars labeled \"임베딩\", then two nearby dots linked by dashed line, caption \"벡터가 가까운 이름\". Right header \"Node Similarity: 연결된 이웃\". Draw node A labeled \"A\", node B labeled \"B\", each with edges to the same two small circles labeled \"이웃 1\" and \"이웃 2\". Caption \"연결된 이웃이 겹치는 노드\". Bottom centered bold sentence \"가까움과 이웃 겹침만으로 같은 개체라고 확정하지 않습니다\". No numbers or fake scores, no matrix values, clean arrow routing with no text collisions."
+  },
+  {
+    "file": "entity_overmerge.png",
+    "prompt": "Generate Korean teaching infographic on pure white background, flat 2D vector aesthetic, navy typography, green groups and red false link, landscape1536x1024. Title \"잘못된 한 쌍이 그룹 전체를 합칩니다\". Top row: two separate pale green containers. Left heading \"초판: B001\", nodes A1 and A2 joined by green link. Right heading \"개정판: B002\", nodes B1 and B2 joined by green link. Red dashed line connects A2 and B1 across groups labeled \"잘못된 동일 판정\". Below a downward arrow into a red outlined large group containing A1,A2,B1,B2 with heading \"잘못 합쳐진 그룹\". At bottom a separate amber warning card \"서로 다른 표준 ID가 있으면 병합을 보류합니다\". All four record identifiers exactly once in each row, no extraneous letters/numbers, visibly distinct source groups and bad merged outcome, no clutter."
+  }
+]

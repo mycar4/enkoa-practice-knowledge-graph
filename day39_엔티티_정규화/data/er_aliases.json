@@ -1,0 +1,1103 @@
+[
+  {
+    "alias": "ATP",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00171"
+    ],
+    "source_doc_ids": [
+      "PMC13493512"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13493512",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13493512/",
+        "evidence": "The underlying mechanism may be that PPIs block H+/K+-ATPase, leading to the accumulation of serum adenosine triphosphate (ATP)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "Adenosine",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00640"
+    ],
+    "source_doc_ids": [
+      "PMC13493376"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13493376",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13493376/",
+        "evidence": "Adenosine is generated, in part, through enzymatic degradation of extracellular ATP by CD39 and CD73, whose expression can be modulated by B cell–activating factor (BAFF)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "Citalopram",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00215"
+    ],
+    "source_doc_ids": [
+      "PMC13494174"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13494174",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+        "evidence": "Citalopram and oxybutynin caused dose-dependent defenestration, whereas metoprolol and oxycodone produced mild, nondose-dependent effects."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "GSH",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00143"
+    ],
+    "source_doc_ids": [
+      "PMC13495479"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13495479",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13495479/",
+        "evidence": "The nuclear factor erythroid 2-related factor 2/heme oxygenase 1(NRF2/HO-1)/GPX4 signaling axis serves as a central regulatory pathway in ferroptosis by maintaining cellular redox homeostasis and glutathione (GSH) metabolism and has emerged as a critical therapeutic target."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "HCQ",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB01611"
+    ],
+    "source_doc_ids": [
+      "PMC13495420"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13495420",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13495420/",
+        "evidence": "Hydroxychloroquine (HCQ) is an antimalarial medication widely used in the treatment of SLE."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "Hydroxychloroquine (HCQ)",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB01611"
+    ],
+    "source_doc_ids": [
+      "PMC13495420"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13495420",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13495420/",
+        "evidence": "Hydroxychloroquine (HCQ) is an antimalarial medication widely used in the treatment of SLE."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "MTX",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00563"
+    ],
+    "source_doc_ids": [
+      "PMC13493376"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13493376",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13493376/",
+        "evidence": "Short-term methotrexate (MTX) discontinuation restores vaccine responses in rheumatoid arthritis (RA)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "Methotrexate (MTX)",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00563"
+    ],
+    "source_doc_ids": [
+      "PMC13493376"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13493376",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13493376/",
+        "evidence": "Methotrexate (MTX) suppresses immune response and reduces vaccine efficacy in patients with rheumatoid arthritis (RA) (–)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "Metoprolol",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00264"
+    ],
+    "source_doc_ids": [
+      "PMC13494174"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13494174",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+        "evidence": "Metoprolol also reduced fenestration frequency (0.58 ± 0.54, P <.05), whereas oxybutynin and the polypharmacy cocktail did not produce significant changes at steady-state concentration."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "Warfarin",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00682"
+    ],
+    "source_doc_ids": [
+      "PMC13432136"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13432136",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13432136/",
+        "evidence": "Warfarin exposure was uncommon (n = 9)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "adenine",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00173"
+    ],
+    "source_doc_ids": [
+      "PMC13493512"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13493512",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13493512/",
+        "evidence": "ATP is then metabolized into adenine and ultimately converted into uric acid, which elevates serum uric acid levels and increases the risk of gout."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "adenosine",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00640"
+    ],
+    "source_doc_ids": [
+      "PMC13493084",
+      "PMC13493376"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13493084",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13493084/",
+        "evidence": "This work highlights the importance of early metabolic risk monitoring in depression and lays a foundation for developing co-morbidity therapies targeting adenosine signaling, cholesterol synthesis, and immune-related pathways."
+      },
+      {
+        "source_doc_id": "PMC13493376",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13493376/",
+        "evidence": "In addition, MTX exerts immunomodulatory effects through mechanisms such as adenosine release, nitric oxide synthase uncoupling, and inhibition of Janus kinase-signal transducer and activator of transcription (JAK-STAT) and Nuclear factor kappa B (NF-κB) signaling, ultimately inhibiting cell activation and proliferation."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "adenosine triphosphate (ATP)",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00171"
+    ],
+    "source_doc_ids": [
+      "PMC13493512"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13493512",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13493512/",
+        "evidence": "The underlying mechanism may be that PPIs block H+/K+-ATPase, leading to the accumulation of serum adenosine triphosphate (ATP)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "amitriptyline",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00321"
+    ],
+    "source_doc_ids": [
+      "PMC13432136"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13432136",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13432136/",
+        "evidence": "Actionable CYP2C19 phenotypes were frequent among users of proton pump inhibitors (PPIs) and other CYP2C19-guided therapies, including omeprazole (362/658, 55.02%) and lansoprazole (74/140, 52.86%), as well as amitriptyline (32/61, 52.46%) and clopidogrel (9/21, 42.86%)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "atorvastatin",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB01076"
+    ],
+    "source_doc_ids": [
+      "PMC13432136"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13432136",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13432136/",
+        "evidence": "For statins, actionable SLCO1B1 phenotypes were observed in atorvastatin users (133/606, 21.95%) and simvastatin users (139/602, 23.05%)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "atorvastatin (n = 606)",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB01076"
+    ],
+    "source_doc_ids": [
+      "PMC13432136"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13432136",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13432136/",
+        "evidence": "The most commonly prescribed/dispensed medications were omeprazole (n = 658) and statins, including atorvastatin (n = 606) and simvastatin (n = 603) (Fig 4)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "betamethasone",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00443"
+    ],
+    "source_doc_ids": [
+      "PMC13495420"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13495420",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13495420/",
+        "evidence": "While prednisone and prednisolone only cross the placenta in small amounts, fluorinated glucocorticoids, such as dexamethasone and betamethasone, are easily transferred."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "celecoxib (4/27, 14.81%)",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00482"
+    ],
+    "source_doc_ids": [
+      "PMC13432136"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13432136",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13432136/",
+        "evidence": "For CYP2C9-guided NSAIDs, actionable phenotypes were observed in a smaller fraction of users, including ibuprofen (14/94, 14.89%) and celecoxib (4/27, 14.81%)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "citalopram",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00215"
+    ],
+    "source_doc_ids": [
+      "PMC13494174"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13494174",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+        "evidence": "This study investigated the effects of 4 commonly prescribed drugs, metoprolol, citalopram, oxybutynin, and oxycodone, on LSEC function."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "citalopram (15 mg/kg/day)",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00215"
+    ],
+    "source_doc_ids": [
+      "PMC13494174"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13494174",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+        "evidence": "The high DBI polypharmacy regimen consisted of simvastatin (20 mg/kg/day), metoprolol (350 mg/kg/day), oxybutynin (27.2 mg/kg/day), oxycodone (5 mg/kg/day), and citalopram (15 mg/kg/day)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "clopidogrel",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00758"
+    ],
+    "source_doc_ids": [
+      "PMC13432136"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13432136",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13432136/",
+        "evidence": "Actionable CYP2C19 phenotypes were frequent among users of proton pump inhibitors (PPIs) and other CYP2C19-guided therapies, including omeprazole (362/658, 55.02%) and lansoprazole (74/140, 52.86%), as well as amitriptyline (32/61, 52.46%) and clopidogrel (9/21, 42.86%)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "dexamethasone",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB01234"
+    ],
+    "source_doc_ids": [
+      "PMC13495420"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13495420",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13495420/",
+        "evidence": "While prednisone and prednisolone only cross the placenta in small amounts, fluorinated glucocorticoids, such as dexamethasone and betamethasone, are easily transferred."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "doxorubicin",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00997"
+    ],
+    "source_doc_ids": [
+      "PMC13494271"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13494271",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494271/",
+        "evidence": "Furthermore, sperm cells are loaded into the magnetic microcap containing doxorubicin, enabling them to be magnetically guide and transport and release drugs together for the treatment of cervical and ovarian cancers."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "efavirenz",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00625"
+    ],
+    "source_doc_ids": [
+      "PMC13473732"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13473732",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13473732/",
+        "evidence": "Lower NNG profiles were observed for atazanavir–UGT1A1 (NNG 5), irinotecan–UGT1A1 (9), efavirenz–CYP2B6 (26), phenytoin–CYP2C9 (25), warfarin–CYP2C9 (42), tamoxifen–CYP2D6 (128), and DPYD-associated fluoropyrimidines (NNG 200)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "efavirenz (CYP2B6)",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00625"
+    ],
+    "source_doc_ids": [
+      "PMC13473732"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13473732",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13473732/",
+        "evidence": "Most changes reflected up-classification in the Zimbabwean population, atazanavir (UGT1A1), and efavirenz (CYP2B6), which was reclassified from Beneficial or Potentially beneficial to Essential."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "glutathione",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00143"
+    ],
+    "source_doc_ids": [
+      "PMC13494176"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13494176",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494176/",
+        "evidence": "Much of the skin metabolic activity is devoted to glutathione metabolism, but there are also abundant enzymes involved in redox metabolism and a surprisingly large amount of liver carboxyesterase 1."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "glutathione (GSH)",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00143"
+    ],
+    "source_doc_ids": [
+      "PMC13495479"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13495479",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13495479/",
+        "evidence": "The nuclear factor erythroid 2-related factor 2/heme oxygenase 1(NRF2/HO-1)/GPX4 signaling axis serves as a central regulatory pathway in ferroptosis by maintaining cellular redox homeostasis and glutathione (GSH) metabolism and has emerged as a critical therapeutic target."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "hydroxychloroquine",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB01611"
+    ],
+    "source_doc_ids": [
+      "PMC13495420"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13495420",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13495420/",
+        "evidence": "Because these events are most likely to occur during the first 12 weeks of pregnancy, some have suggested delaying the initiation of hydroxychloroquine (HCQ) treatment until after this period."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "hydroxychloroquine (HCQ)",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB01611"
+    ],
+    "source_doc_ids": [
+      "PMC13495420"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13495420",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13495420/",
+        "evidence": "Because these events are most likely to occur during the first 12 weeks of pregnancy, some have suggested delaying the initiation of hydroxychloroquine (HCQ) treatment until after this period."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "ibuprofen",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB01050"
+    ],
+    "source_doc_ids": [
+      "PMC13432136"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13432136",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13432136/",
+        "evidence": "For CYP2C9-guided NSAIDs, actionable phenotypes were observed in a smaller fraction of users, including ibuprofen (14/94, 14.89%) and celecoxib (4/27, 14.81%)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "lansoprazole (74/140, 52.86%)",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00448"
+    ],
+    "source_doc_ids": [
+      "PMC13432136"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13432136",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13432136/",
+        "evidence": "Actionable CYP2C19 phenotypes were frequent among users of proton pump inhibitors (PPIs) and other CYP2C19-guided therapies, including omeprazole (362/658, 55.02%) and lansoprazole (74/140, 52.86%), as well as amitriptyline (32/61, 52.46%) and clopidogrel (9/21, 42.86%)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "leflunomide",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB01097"
+    ],
+    "source_doc_ids": [
+      "PMC13493261"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13493261",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13493261/",
+        "evidence": "As shown in Supplementary Table 1, there were no significant differences between the two groups regarding methotrexate or leflunomide usage, dosage, treatment duration, dose adjustment rates, medication interruption, or drug withdrawal (all p > 0.05)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "methotrexate",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00563"
+    ],
+    "source_doc_ids": [
+      "PMC13493261"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13493261",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13493261/",
+        "evidence": "As shown in Supplementary Table 1, there were no significant differences between the two groups regarding methotrexate or leflunomide usage, dosage, treatment duration, dose adjustment rates, medication interruption, or drug withdrawal (all p > 0.05)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "metoprolol",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00264"
+    ],
+    "source_doc_ids": [
+      "PMC13494174"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13494174",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+        "evidence": "This study investigated the effects of 4 commonly prescribed drugs, metoprolol, citalopram, oxybutynin, and oxycodone, on LSEC function."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "metoprolol (350 mg/kg/day)",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00264"
+    ],
+    "source_doc_ids": [
+      "PMC13494174"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13494174",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+        "evidence": "The high DBI polypharmacy regimen consisted of simvastatin (20 mg/kg/day), metoprolol (350 mg/kg/day), oxybutynin (27.2 mg/kg/day), oxycodone (5 mg/kg/day), and citalopram (15 mg/kg/day)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "omeprazole",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00338"
+    ],
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13493512"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13432136",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13432136/",
+        "evidence": "Among users, actionable phenotypes were frequent for CYP2C19–omeprazole (55.02%) and SLCO1B1–statins (21.95–23.05%)."
+      },
+      {
+        "source_doc_id": "PMC13493512",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13493512/",
+        "evidence": "Kraus et al. initially reported two cases of patients with duodenal bulb ulcer who developed acute gout after omeprazole treatment."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "omeprazole (n = 658)",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00338"
+    ],
+    "source_doc_ids": [
+      "PMC13432136"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13432136",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13432136/",
+        "evidence": "EMR linkage identified 1,529 (32.58%) participants exposed to ≥1 study medication; omeprazole (n = 658) and statins were most common (atorvastatin n = 606; simvastatin n = 603)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "oxybutynin",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB01062"
+    ],
+    "source_doc_ids": [
+      "PMC13494174"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13494174",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+        "evidence": "This study investigated the effects of 4 commonly prescribed drugs, metoprolol, citalopram, oxybutynin, and oxycodone, on LSEC function."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "oxybutynin (27.2 mg/kg/day)",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB01062"
+    ],
+    "source_doc_ids": [
+      "PMC13494174"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13494174",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+        "evidence": "The high DBI polypharmacy regimen consisted of simvastatin (20 mg/kg/day), metoprolol (350 mg/kg/day), oxybutynin (27.2 mg/kg/day), oxycodone (5 mg/kg/day), and citalopram (15 mg/kg/day)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "oxycodone",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00497"
+    ],
+    "source_doc_ids": [
+      "PMC13494174"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13494174",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+        "evidence": "This study investigated the effects of 4 commonly prescribed drugs, metoprolol, citalopram, oxybutynin, and oxycodone, on LSEC function."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "prednisolone",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00860"
+    ],
+    "source_doc_ids": [
+      "PMC13495420"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13495420",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13495420/",
+        "evidence": "While prednisone and prednisolone only cross the placenta in small amounts, fluorinated glucocorticoids, such as dexamethasone and betamethasone, are easily transferred."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "prednisone",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00635"
+    ],
+    "source_doc_ids": [
+      "PMC13495420"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13495420",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13495420/",
+        "evidence": "Many patients with mild SLE activity are treated with low-dose corticosteroids, usually prednisone."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "rosuvastatin",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB01098"
+    ],
+    "source_doc_ids": [
+      "PMC13432136"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13432136",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13432136/",
+        "evidence": "Among rosuvastatin users (n = 39), actionable phenotypes were observed for ABCG2 (14/39, 35.90%) and SLCO1B1 (6/39, 15.38%), reflecting the multi-gene relevance of rosuvastatin."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "simvastatin",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00641"
+    ],
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13494174"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13432136",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13432136/",
+        "evidence": "For statins, actionable SLCO1B1 phenotypes were observed in atorvastatin users (133/606, 21.95%) and simvastatin users (139/602, 23.05%)."
+      },
+      {
+        "source_doc_id": "PMC13494174",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+        "evidence": "A recent study using mouse models showed that chronic exposure to a high-DBI polypharmacy regimen, consisting of citalopram, metoprolol, oxybutynin, oxycodone, and simvastatin, increased frailty and impaired physical function."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "simvastatin (n = 603)",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00641"
+    ],
+    "source_doc_ids": [
+      "PMC13432136"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13432136",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13432136/",
+        "evidence": "The most commonly prescribed/dispensed medications were omeprazole (n = 658) and statins, including atorvastatin (n = 606) and simvastatin (n = 603) (Fig 4)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "streptomycin (Sigma-Aldrich)",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB01082"
+    ],
+    "source_doc_ids": [
+      "PMC13494174"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13494174",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494174/",
+        "evidence": "LSEC were cultured in endothelial cell growth medium (Cell Applications Inc) supplemented with 10,000 U/mL penicillin (Sigma-Aldrich) and 10 mg/mL streptomycin (Sigma-Aldrich) at 37 °C in 5% CO2 and 5% O2 overnight before treatment."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "warfarin",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00682"
+    ],
+    "source_doc_ids": [
+      "PMC13432136"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13432136",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13432136/",
+        "evidence": "For warfarin, VKORC1 rs9923231 and CYP4F2 rs2108622 genotype distributions and CYP2C9 phenotypes were summarized descriptively among warfarin users due to small sample size."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "warfarin (CYP2C9/VKORC1)",
+    "entity_type": "Compound",
+    "candidate_ids": [
+      "Compound::DB00682"
+    ],
+    "source_doc_ids": [
+      "PMC13473732"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13473732",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13473732/",
+        "evidence": "Similarly, drug–gene pairs such as warfarin (CYP2C9/VKORC1), carbamazepine (HLA-A), and lamotrigine (HLA-B) consistently remained within the Beneficial category."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "AKR1C1",
+    "entity_type": "Gene",
+    "candidate_ids": [
+      "Gene::1645"
+    ],
+    "source_doc_ids": [
+      "PMC13494176"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13494176",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494176/",
+        "evidence": "These included members of the aldehyde dehydrogenase family (ALDH16A1 and ALDH6A1), epoxide hydrolase 1 (EPHX1), monoamine oxidases (MAOA, MAOB), esterases (ESTD and BCHE), aldo-keto reductases (AKR1A1, AKR1B1, AKR1C1, AKR1C4), and amine oxidase copper-containing 1 (AOX1)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "AKR1C3",
+    "entity_type": "Gene",
+    "candidate_ids": [
+      "Gene::8644"
+    ],
+    "source_doc_ids": [
+      "PMC13494176"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13494176",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494176/",
+        "evidence": "Dermal aldo-keto reductase family 1 member C3 (AKR1C3) could equally well be assigned to aldo-keto reductase family 1 member C1 (AKR1C1) but the epidermal samples contain peptides unique for AKR1C3, so the dermal protein is tentatively assumed to be AKR1C3."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "GPX1",
+    "entity_type": "Gene",
+    "candidate_ids": [
+      "Gene::2876"
+    ],
+    "source_doc_ids": [
+      "PMC13494176"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13494176",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494176/",
+        "evidence": "Similarly, GPX1 is detected but not quantified in dermal cytosol (Supplemental Table 9)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "GPX3",
+    "entity_type": "Gene",
+    "candidate_ids": [
+      "Gene::2878"
+    ],
+    "source_doc_ids": [
+      "PMC13494176"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13494176",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494176/",
+        "evidence": "The data included glutathione S-transferases (GSTM1–4, GSTP1, and GSTP1-rs1695), glutathione peroxidases (GPX3, GPX7), and catechol-O-methyltransferase (COMT)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "GPX7",
+    "entity_type": "Gene",
+    "candidate_ids": [
+      "Gene::2882"
+    ],
+    "source_doc_ids": [
+      "PMC13494176"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13494176",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494176/",
+        "evidence": "Notably, GPX7 exhibited the highest CV (233%), despite its low mean value (0.31), indicating substantial interindividual variability in expression."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "GSTM1",
+    "entity_type": "Gene",
+    "candidate_ids": [
+      "Gene::2944"
+    ],
+    "source_doc_ids": [
+      "PMC13494176"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13494176",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494176/",
+        "evidence": "GSTs and ALDHs were especially abundant, with GSTP1 showing the highest mean expression (22.8 pmol/mg protein) followed by GSTM1 at 12.4 pmol/mg protein in both skin layers."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "GSTM3",
+    "entity_type": "Gene",
+    "candidate_ids": [
+      "Gene::2947"
+    ],
+    "source_doc_ids": [
+      "PMC13494176"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13494176",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494176/",
+        "evidence": "Among the GST isoforms, GSTP1 showed the highest mean expression (22.8 ± 15.5), followed by GSTM3 (12.4 ± 10.1), whereas GSTM4 exhibited the lowest (0.16 ± 0.27)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "GSTM4",
+    "entity_type": "Gene",
+    "candidate_ids": [
+      "Gene::2948"
+    ],
+    "source_doc_ids": [
+      "PMC13494176"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13494176",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494176/",
+        "evidence": "Among the GST isoforms, GSTP1 showed the highest mean expression (22.8 ± 15.5), followed by GSTM3 (12.4 ± 10.1), whereas GSTM4 exhibited the lowest (0.16 ± 0.27)."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  },
+  {
+    "alias": "GSTP1",
+    "entity_type": "Gene",
+    "candidate_ids": [
+      "Gene::2950"
+    ],
+    "source_doc_ids": [
+      "PMC13494176"
+    ],
+    "evidence": [
+      {
+        "source_doc_id": "PMC13494176",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494176/",
+        "evidence": "GSTs and ALDHs were especially abundant, with GSTP1 showing the highest mean expression (22.8 pmol/mg protein) followed by GSTM1 at 12.4 pmol/mg protein in both skin layers."
+      }
+    ],
+    "rationale": "원문 표기와 개체 유형을 확인했습니다. 정의된 약어 또는 성분을 바꾸지 않는 주석만 표준 이름에 연결합니다.",
+    "scope": "아래 원문 문맥에서 검토한 연결입니다. 다른 문서의 같은 문자열까지 자동으로 보장하지 않습니다."
+  }
+]

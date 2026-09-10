@@ -1,0 +1,1577 @@
+[
+  {
+    "left_id": "p01",
+    "right_id": "p02",
+    "decision": "같음",
+    "reason": "같은 warfarin 성분을 대소문자만 다르게 적었습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p01",
+    "right_id": "p03",
+    "decision": "같음",
+    "reason": "원문의 괄호는 warfarin과 연결해 보고한 유전자 목록입니다. 다른 성분명이 아닙니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p01",
+    "right_id": "p04",
+    "decision": "다름",
+    "reason": "warfarin와 omeprazole는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p01",
+    "right_id": "p05",
+    "decision": "다름",
+    "reason": "warfarin와 omeprazole (n = 658)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p01",
+    "right_id": "p06",
+    "decision": "다름",
+    "reason": "warfarin와 lansoprazole (74/140, 52.86%)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p01",
+    "right_id": "p07",
+    "decision": "다름",
+    "reason": "warfarin와 amitriptyline는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p01",
+    "right_id": "p08",
+    "decision": "다름",
+    "reason": "warfarin와 clopidogrel는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p01",
+    "right_id": "p09",
+    "decision": "다름",
+    "reason": "warfarin와 atorvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p01",
+    "right_id": "p10",
+    "decision": "다름",
+    "reason": "warfarin와 atorvastatin (n = 606)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p01",
+    "right_id": "p11",
+    "decision": "다름",
+    "reason": "warfarin와 simvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p01",
+    "right_id": "p12",
+    "decision": "다름",
+    "reason": "warfarin와 simvastatin (n = 603)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p01",
+    "right_id": "p13",
+    "decision": "다름",
+    "reason": "warfarin와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p01",
+    "right_id": "p14",
+    "decision": "다름",
+    "reason": "warfarin와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p01",
+    "right_id": "p15",
+    "decision": "다름",
+    "reason": "warfarin와 ibuprofen는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p01",
+    "right_id": "p16",
+    "decision": "다름",
+    "reason": "warfarin와 celecoxib (4/27, 14.81%)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p01",
+    "right_id": "p17",
+    "decision": "다름",
+    "reason": "warfarin와 efavirenz는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p01",
+    "right_id": "p18",
+    "decision": "다름",
+    "reason": "warfarin와 efavirenz (CYP2B6)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p02",
+    "right_id": "p03",
+    "decision": "같음",
+    "reason": "같은 warfarin이며 괄호에는 관련 유전자 목록이 붙었습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p02",
+    "right_id": "p04",
+    "decision": "다름",
+    "reason": "Warfarin와 omeprazole는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p02",
+    "right_id": "p05",
+    "decision": "다름",
+    "reason": "Warfarin와 omeprazole (n = 658)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p02",
+    "right_id": "p06",
+    "decision": "다름",
+    "reason": "Warfarin와 lansoprazole (74/140, 52.86%)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p02",
+    "right_id": "p07",
+    "decision": "다름",
+    "reason": "Warfarin와 amitriptyline는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p02",
+    "right_id": "p08",
+    "decision": "다름",
+    "reason": "Warfarin와 clopidogrel는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p02",
+    "right_id": "p09",
+    "decision": "다름",
+    "reason": "Warfarin와 atorvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p02",
+    "right_id": "p10",
+    "decision": "다름",
+    "reason": "Warfarin와 atorvastatin (n = 606)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p02",
+    "right_id": "p11",
+    "decision": "다름",
+    "reason": "Warfarin와 simvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p02",
+    "right_id": "p12",
+    "decision": "다름",
+    "reason": "Warfarin와 simvastatin (n = 603)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p02",
+    "right_id": "p13",
+    "decision": "다름",
+    "reason": "Warfarin와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p02",
+    "right_id": "p14",
+    "decision": "다름",
+    "reason": "Warfarin와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p02",
+    "right_id": "p15",
+    "decision": "다름",
+    "reason": "Warfarin와 ibuprofen는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p02",
+    "right_id": "p16",
+    "decision": "다름",
+    "reason": "Warfarin와 celecoxib (4/27, 14.81%)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p02",
+    "right_id": "p17",
+    "decision": "다름",
+    "reason": "Warfarin와 efavirenz는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p02",
+    "right_id": "p18",
+    "decision": "다름",
+    "reason": "Warfarin와 efavirenz (CYP2B6)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p03",
+    "right_id": "p04",
+    "decision": "다름",
+    "reason": "warfarin (CYP2C9/VKORC1)와 omeprazole는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p03",
+    "right_id": "p05",
+    "decision": "다름",
+    "reason": "warfarin (CYP2C9/VKORC1)와 omeprazole (n = 658)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p03",
+    "right_id": "p06",
+    "decision": "다름",
+    "reason": "warfarin (CYP2C9/VKORC1)와 lansoprazole (74/140, 52.86%)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p03",
+    "right_id": "p07",
+    "decision": "다름",
+    "reason": "warfarin (CYP2C9/VKORC1)와 amitriptyline는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p03",
+    "right_id": "p08",
+    "decision": "다름",
+    "reason": "warfarin (CYP2C9/VKORC1)와 clopidogrel는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p03",
+    "right_id": "p09",
+    "decision": "다름",
+    "reason": "warfarin (CYP2C9/VKORC1)와 atorvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p03",
+    "right_id": "p10",
+    "decision": "다름",
+    "reason": "warfarin (CYP2C9/VKORC1)와 atorvastatin (n = 606)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p03",
+    "right_id": "p11",
+    "decision": "다름",
+    "reason": "warfarin (CYP2C9/VKORC1)와 simvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p03",
+    "right_id": "p12",
+    "decision": "다름",
+    "reason": "warfarin (CYP2C9/VKORC1)와 simvastatin (n = 603)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p03",
+    "right_id": "p13",
+    "decision": "다름",
+    "reason": "warfarin (CYP2C9/VKORC1)와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p03",
+    "right_id": "p14",
+    "decision": "다름",
+    "reason": "warfarin (CYP2C9/VKORC1)와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p03",
+    "right_id": "p15",
+    "decision": "다름",
+    "reason": "warfarin (CYP2C9/VKORC1)와 ibuprofen는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p03",
+    "right_id": "p16",
+    "decision": "다름",
+    "reason": "warfarin (CYP2C9/VKORC1)와 celecoxib (4/27, 14.81%)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p03",
+    "right_id": "p17",
+    "decision": "다름",
+    "reason": "warfarin (CYP2C9/VKORC1)와 efavirenz는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p03",
+    "right_id": "p18",
+    "decision": "다름",
+    "reason": "warfarin (CYP2C9/VKORC1)와 efavirenz (CYP2B6)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p04",
+    "right_id": "p05",
+    "decision": "같음",
+    "reason": "같은 omeprazole입니다. n = 658은 노출 인원수입니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p04",
+    "right_id": "p06",
+    "decision": "다름",
+    "reason": "omeprazole와 lansoprazole (74/140, 52.86%)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p04",
+    "right_id": "p07",
+    "decision": "다름",
+    "reason": "omeprazole와 amitriptyline는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p04",
+    "right_id": "p08",
+    "decision": "다름",
+    "reason": "omeprazole와 clopidogrel는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p04",
+    "right_id": "p09",
+    "decision": "다름",
+    "reason": "omeprazole와 atorvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p04",
+    "right_id": "p10",
+    "decision": "다름",
+    "reason": "omeprazole와 atorvastatin (n = 606)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p04",
+    "right_id": "p11",
+    "decision": "다름",
+    "reason": "omeprazole와 simvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p04",
+    "right_id": "p12",
+    "decision": "다름",
+    "reason": "omeprazole와 simvastatin (n = 603)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p04",
+    "right_id": "p13",
+    "decision": "다름",
+    "reason": "omeprazole와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p04",
+    "right_id": "p14",
+    "decision": "다름",
+    "reason": "omeprazole와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p04",
+    "right_id": "p15",
+    "decision": "다름",
+    "reason": "omeprazole와 ibuprofen는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p04",
+    "right_id": "p16",
+    "decision": "다름",
+    "reason": "omeprazole와 celecoxib (4/27, 14.81%)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p04",
+    "right_id": "p17",
+    "decision": "다름",
+    "reason": "omeprazole와 efavirenz는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p04",
+    "right_id": "p18",
+    "decision": "다름",
+    "reason": "omeprazole와 efavirenz (CYP2B6)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p05",
+    "right_id": "p06",
+    "decision": "다름",
+    "reason": "omeprazole (n = 658)와 lansoprazole (74/140, 52.86%)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p05",
+    "right_id": "p07",
+    "decision": "다름",
+    "reason": "omeprazole (n = 658)와 amitriptyline는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p05",
+    "right_id": "p08",
+    "decision": "다름",
+    "reason": "omeprazole (n = 658)와 clopidogrel는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p05",
+    "right_id": "p09",
+    "decision": "다름",
+    "reason": "omeprazole (n = 658)와 atorvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p05",
+    "right_id": "p10",
+    "decision": "다름",
+    "reason": "omeprazole (n = 658)와 atorvastatin (n = 606)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p05",
+    "right_id": "p11",
+    "decision": "다름",
+    "reason": "omeprazole (n = 658)와 simvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p05",
+    "right_id": "p12",
+    "decision": "다름",
+    "reason": "omeprazole (n = 658)와 simvastatin (n = 603)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p05",
+    "right_id": "p13",
+    "decision": "다름",
+    "reason": "omeprazole (n = 658)와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p05",
+    "right_id": "p14",
+    "decision": "다름",
+    "reason": "omeprazole (n = 658)와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p05",
+    "right_id": "p15",
+    "decision": "다름",
+    "reason": "omeprazole (n = 658)와 ibuprofen는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p05",
+    "right_id": "p16",
+    "decision": "다름",
+    "reason": "omeprazole (n = 658)와 celecoxib (4/27, 14.81%)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p05",
+    "right_id": "p17",
+    "decision": "다름",
+    "reason": "omeprazole (n = 658)와 efavirenz는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p05",
+    "right_id": "p18",
+    "decision": "다름",
+    "reason": "omeprazole (n = 658)와 efavirenz (CYP2B6)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p06",
+    "right_id": "p07",
+    "decision": "다름",
+    "reason": "lansoprazole (74/140, 52.86%)와 amitriptyline는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p06",
+    "right_id": "p08",
+    "decision": "다름",
+    "reason": "lansoprazole (74/140, 52.86%)와 clopidogrel는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p06",
+    "right_id": "p09",
+    "decision": "다름",
+    "reason": "lansoprazole (74/140, 52.86%)와 atorvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p06",
+    "right_id": "p10",
+    "decision": "다름",
+    "reason": "lansoprazole (74/140, 52.86%)와 atorvastatin (n = 606)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p06",
+    "right_id": "p11",
+    "decision": "다름",
+    "reason": "lansoprazole (74/140, 52.86%)와 simvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p06",
+    "right_id": "p12",
+    "decision": "다름",
+    "reason": "lansoprazole (74/140, 52.86%)와 simvastatin (n = 603)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p06",
+    "right_id": "p13",
+    "decision": "다름",
+    "reason": "lansoprazole (74/140, 52.86%)와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p06",
+    "right_id": "p14",
+    "decision": "다름",
+    "reason": "lansoprazole (74/140, 52.86%)와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p06",
+    "right_id": "p15",
+    "decision": "다름",
+    "reason": "lansoprazole (74/140, 52.86%)와 ibuprofen는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p06",
+    "right_id": "p16",
+    "decision": "다름",
+    "reason": "lansoprazole (74/140, 52.86%)와 celecoxib (4/27, 14.81%)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p06",
+    "right_id": "p17",
+    "decision": "다름",
+    "reason": "lansoprazole (74/140, 52.86%)와 efavirenz는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p06",
+    "right_id": "p18",
+    "decision": "다름",
+    "reason": "lansoprazole (74/140, 52.86%)와 efavirenz (CYP2B6)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p07",
+    "right_id": "p08",
+    "decision": "다름",
+    "reason": "amitriptyline와 clopidogrel는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p07",
+    "right_id": "p09",
+    "decision": "다름",
+    "reason": "amitriptyline와 atorvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p07",
+    "right_id": "p10",
+    "decision": "다름",
+    "reason": "amitriptyline와 atorvastatin (n = 606)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p07",
+    "right_id": "p11",
+    "decision": "다름",
+    "reason": "amitriptyline와 simvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p07",
+    "right_id": "p12",
+    "decision": "다름",
+    "reason": "amitriptyline와 simvastatin (n = 603)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p07",
+    "right_id": "p13",
+    "decision": "다름",
+    "reason": "amitriptyline와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p07",
+    "right_id": "p14",
+    "decision": "다름",
+    "reason": "amitriptyline와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p07",
+    "right_id": "p15",
+    "decision": "다름",
+    "reason": "amitriptyline와 ibuprofen는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p07",
+    "right_id": "p16",
+    "decision": "다름",
+    "reason": "amitriptyline와 celecoxib (4/27, 14.81%)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p07",
+    "right_id": "p17",
+    "decision": "다름",
+    "reason": "amitriptyline와 efavirenz는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p07",
+    "right_id": "p18",
+    "decision": "다름",
+    "reason": "amitriptyline와 efavirenz (CYP2B6)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p08",
+    "right_id": "p09",
+    "decision": "다름",
+    "reason": "clopidogrel와 atorvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p08",
+    "right_id": "p10",
+    "decision": "다름",
+    "reason": "clopidogrel와 atorvastatin (n = 606)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p08",
+    "right_id": "p11",
+    "decision": "다름",
+    "reason": "clopidogrel와 simvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p08",
+    "right_id": "p12",
+    "decision": "다름",
+    "reason": "clopidogrel와 simvastatin (n = 603)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p08",
+    "right_id": "p13",
+    "decision": "다름",
+    "reason": "clopidogrel와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p08",
+    "right_id": "p14",
+    "decision": "다름",
+    "reason": "clopidogrel와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p08",
+    "right_id": "p15",
+    "decision": "다름",
+    "reason": "clopidogrel와 ibuprofen는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p08",
+    "right_id": "p16",
+    "decision": "다름",
+    "reason": "clopidogrel와 celecoxib (4/27, 14.81%)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p08",
+    "right_id": "p17",
+    "decision": "다름",
+    "reason": "clopidogrel와 efavirenz는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p08",
+    "right_id": "p18",
+    "decision": "다름",
+    "reason": "clopidogrel와 efavirenz (CYP2B6)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p09",
+    "right_id": "p10",
+    "decision": "같음",
+    "reason": "같은 atorvastatin입니다. 괄호에는 해당 성분을 사용한 인원수가 붙었습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p09",
+    "right_id": "p11",
+    "decision": "다름",
+    "reason": "atorvastatin와 simvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p09",
+    "right_id": "p12",
+    "decision": "다름",
+    "reason": "atorvastatin와 simvastatin (n = 603)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p09",
+    "right_id": "p13",
+    "decision": "다름",
+    "reason": "atorvastatin와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p09",
+    "right_id": "p14",
+    "decision": "다름",
+    "reason": "atorvastatin와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p09",
+    "right_id": "p15",
+    "decision": "다름",
+    "reason": "atorvastatin와 ibuprofen는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p09",
+    "right_id": "p16",
+    "decision": "다름",
+    "reason": "atorvastatin와 celecoxib (4/27, 14.81%)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p09",
+    "right_id": "p17",
+    "decision": "다름",
+    "reason": "atorvastatin와 efavirenz는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p09",
+    "right_id": "p18",
+    "decision": "다름",
+    "reason": "atorvastatin와 efavirenz (CYP2B6)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p10",
+    "right_id": "p11",
+    "decision": "다름",
+    "reason": "atorvastatin (n = 606)와 simvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p10",
+    "right_id": "p12",
+    "decision": "다름",
+    "reason": "atorvastatin (n = 606)와 simvastatin (n = 603)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p10",
+    "right_id": "p13",
+    "decision": "다름",
+    "reason": "atorvastatin (n = 606)와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p10",
+    "right_id": "p14",
+    "decision": "다름",
+    "reason": "atorvastatin (n = 606)와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p10",
+    "right_id": "p15",
+    "decision": "다름",
+    "reason": "atorvastatin (n = 606)와 ibuprofen는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p10",
+    "right_id": "p16",
+    "decision": "다름",
+    "reason": "atorvastatin (n = 606)와 celecoxib (4/27, 14.81%)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p10",
+    "right_id": "p17",
+    "decision": "다름",
+    "reason": "atorvastatin (n = 606)와 efavirenz는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p10",
+    "right_id": "p18",
+    "decision": "다름",
+    "reason": "atorvastatin (n = 606)와 efavirenz (CYP2B6)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p11",
+    "right_id": "p12",
+    "decision": "같음",
+    "reason": "같은 simvastatin입니다. 괄호의 n = 603은 성분명의 일부가 아닙니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p11",
+    "right_id": "p13",
+    "decision": "다름",
+    "reason": "simvastatin와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p11",
+    "right_id": "p14",
+    "decision": "다름",
+    "reason": "simvastatin와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p11",
+    "right_id": "p15",
+    "decision": "다름",
+    "reason": "simvastatin와 ibuprofen는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p11",
+    "right_id": "p16",
+    "decision": "다름",
+    "reason": "simvastatin와 celecoxib (4/27, 14.81%)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p11",
+    "right_id": "p17",
+    "decision": "다름",
+    "reason": "simvastatin와 efavirenz는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p11",
+    "right_id": "p18",
+    "decision": "다름",
+    "reason": "simvastatin와 efavirenz (CYP2B6)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p12",
+    "right_id": "p13",
+    "decision": "다름",
+    "reason": "simvastatin (n = 603)와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p12",
+    "right_id": "p14",
+    "decision": "다름",
+    "reason": "simvastatin (n = 603)와 rosuvastatin는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p12",
+    "right_id": "p15",
+    "decision": "다름",
+    "reason": "simvastatin (n = 603)와 ibuprofen는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p12",
+    "right_id": "p16",
+    "decision": "다름",
+    "reason": "simvastatin (n = 603)와 celecoxib (4/27, 14.81%)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p12",
+    "right_id": "p17",
+    "decision": "다름",
+    "reason": "simvastatin (n = 603)와 efavirenz는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p12",
+    "right_id": "p18",
+    "decision": "다름",
+    "reason": "simvastatin (n = 603)와 efavirenz (CYP2B6)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p13",
+    "right_id": "p14",
+    "decision": "같음",
+    "reason": "두 출현 모두 rosuvastatin이라는 같은 성분을 가리킵니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p13",
+    "right_id": "p15",
+    "decision": "다름",
+    "reason": "rosuvastatin와 ibuprofen는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p13",
+    "right_id": "p16",
+    "decision": "다름",
+    "reason": "rosuvastatin와 celecoxib (4/27, 14.81%)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p13",
+    "right_id": "p17",
+    "decision": "다름",
+    "reason": "rosuvastatin와 efavirenz는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p13",
+    "right_id": "p18",
+    "decision": "다름",
+    "reason": "rosuvastatin와 efavirenz (CYP2B6)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p14",
+    "right_id": "p15",
+    "decision": "다름",
+    "reason": "rosuvastatin와 ibuprofen는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p14",
+    "right_id": "p16",
+    "decision": "다름",
+    "reason": "rosuvastatin와 celecoxib (4/27, 14.81%)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p14",
+    "right_id": "p17",
+    "decision": "다름",
+    "reason": "rosuvastatin와 efavirenz는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p14",
+    "right_id": "p18",
+    "decision": "다름",
+    "reason": "rosuvastatin와 efavirenz (CYP2B6)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p15",
+    "right_id": "p16",
+    "decision": "다름",
+    "reason": "ibuprofen와 celecoxib (4/27, 14.81%)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136"
+    ]
+  },
+  {
+    "left_id": "p15",
+    "right_id": "p17",
+    "decision": "다름",
+    "reason": "ibuprofen와 efavirenz는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p15",
+    "right_id": "p18",
+    "decision": "다름",
+    "reason": "ibuprofen와 efavirenz (CYP2B6)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p16",
+    "right_id": "p17",
+    "decision": "다름",
+    "reason": "celecoxib (4/27, 14.81%)와 efavirenz는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p16",
+    "right_id": "p18",
+    "decision": "다름",
+    "reason": "celecoxib (4/27, 14.81%)와 efavirenz (CYP2B6)는 원문과 성분 목록에서 구분되는 성분입니다. 함께 보고되거나 이름이 비슷해도 같은 성분으로 합치지 않습니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13432136",
+      "PMC13473732"
+    ]
+  },
+  {
+    "left_id": "p17",
+    "right_id": "p18",
+    "decision": "같음",
+    "reason": "같은 efavirenz입니다. 괄호의 CYP2B6은 함께 보고한 유전자입니다.",
+    "annotation_kind": "원문과 성분 구분을 대조한 수업용 판정 예시",
+    "source_doc_ids": [
+      "PMC13473732"
+    ]
+  }
+]

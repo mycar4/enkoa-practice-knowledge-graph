@@ -1,0 +1,150 @@
+id,name,label
+Compound::DB00316,Acetaminophen,Compound
+Compound::DB00945,Acetylsalicylic acid,Compound
+Compound::DB00173,Adenine,Compound
+Compound::DB00640,Adenosine,Compound
+Compound::DB00171,Adenosine triphosphate,Compound
+Compound::DB00321,Amitriptyline,Compound
+Compound::DB06768,Ammonium lactate,Compound
+Compound::DB01076,Atorvastatin,Compound
+Compound::DB00443,Betamethasone,Compound
+Compound::DB09020,Bisacodyl,Compound
+Compound::DB00146,Calcidiol,Compound
+Compound::DB00136,Calcitriol,Compound
+Compound::DB01101,Capecitabine,Compound
+Compound::DB00564,Carbamazepine,Compound
+Compound::DB01139,Cefapirin,Compound
+Compound::DB00482,Celecoxib,Compound
+Compound::DB00169,Cholecalciferol,Compound
+Compound::DB00215,Citalopram,Compound
+Compound::DB00882,Clomifene,Compound
+Compound::DB00575,Clonidine,Compound
+Compound::DB00758,Clopidogrel,Compound
+Compound::DB00907,Cocaine,Compound
+Compound::DB00318,Codeine,Compound
+Compound::DB01262,Decitabine,Compound
+Compound::DB01234,Dexamethasone,Compound
+Compound::DB00255,Diethylstilbestrol,Compound
+Compound::DB00988,Dopamine,Compound
+Compound::DB00997,Doxorubicin,Compound
+Compound::DB00366,Doxylamine,Compound
+Compound::DB00625,Efavirenz,Compound
+Compound::DB00736,Esomeprazole,Compound
+Compound::DB00783,Estradiol,Compound
+Compound::DB00472,Fluoxetine,Compound
+Compound::DB00158,Folic Acid,Compound
+Compound::DB01320,Fosphenytoin,Compound
+Compound::DB00143,Glutathione,Compound
+Compound::DB01611,Hydroxychloroquine,Compound
+Compound::DB01050,Ibuprofen,Compound
+Compound::DB00125,L-Arginine,Compound
+Compound::DB00138,L-Cystine,Compound
+Compound::DB00123,L-Lysine,Compound
+Compound::DB00172,L-Proline,Compound
+Compound::DB00135,L-Tyrosine,Compound
+Compound::DB00448,Lansoprazole,Compound
+Compound::DB01097,Leflunomide,Compound
+Compound::DB00367,Levonorgestrel,Compound
+Compound::DB00227,Lovastatin,Compound
+Compound::DB00825,Menthol,Compound
+Compound::DB00563,Methotrexate,Compound
+Compound::DB00264,Metoprolol,Compound
+Compound::DB00765,Metyrosine,Compound
+Compound::DB00184,Nicotine,Compound
+Compound::DB00368,Norepinephrine,Compound
+Compound::DB00540,Nortriptyline,Compound
+Compound::DB00338,Omeprazole,Compound
+Compound::DB00776,Oxcarbazepine,Compound
+Compound::DB01062,Oxybutynin,Compound
+Compound::DB00497,Oxycodone,Compound
+Compound::DB00213,Pantoprazole,Compound
+Compound::DB00252,Phenytoin,Compound
+Compound::DB08860,Pitavastatin,Compound
+Compound::DB00860,Prednisolone,Compound
+Compound::DB00635,Prednisone,Compound
+Compound::DB00396,Progesterone,Compound
+Compound::DB00205,Pyrimethamine,Compound
+Compound::DB01045,Rifampicin,Compound
+Compound::DB01098,Rosuvastatin,Compound
+Compound::DB00641,Simvastatin,Compound
+Compound::DB01390,Sodium bicarbonate,Compound
+Compound::DB01082,Streptomycin,Compound
+Compound::DB00428,Streptozocin,Compound
+Compound::DB01582,Sulfamethazine,Compound
+Compound::DB01015,Sulfamethoxazole,Compound
+Compound::DB00870,Suprofen,Compound
+Compound::DB00162,Vitamin A,Compound
+Compound::DB00682,Warfarin,Compound
+Disease::DOID:8986,narcolepsy,Disease
+Disease::DOID:9970,obesity,Disease
+Disease::DOID:0050425,restless legs syndrome,Disease
+Gene::5243,ABCB1,Gene
+Gene::9429,ABCG2,Gene
+Gene::389036,ACT,Gene
+Gene::1645,AKR1C1,Gene
+Gene::8644,AKR1C3,Gene
+Gene::23237,ARC,Gene
+Gene::572,BAD,Gene
+Gene::790,CAD,Gene
+Gene::820,CAMP,Gene
+Gene::833,CARS,Gene
+Gene::831,CAST,Gene
+Gene::847,CAT,Gene
+Gene::1160,CKMT2,Gene
+Gene::9575,CLOCK,Gene
+Gene::11316,COPE,Gene
+Gene::1431,CS,Gene
+Gene::1543,CYP1A1,Gene
+Gene::1555,CYP2B6,Gene
+Gene::1557,CYP2C19,Gene
+Gene::1559,CYP2C9,Gene
+Gene::1565,CYP2D6,Gene
+Gene::1576,CYP3A4,Gene
+Gene::1577,CYP3A5,Gene
+Gene::8529,CYP4F2,Gene
+Gene::1806,DPYD,Gene
+Gene::355,FAS,Gene
+Gene::51022,GLRX2,Gene
+Gene::2876,GPX1,Gene
+Gene::2878,GPX3,Gene
+Gene::2882,GPX7,Gene
+Gene::2944,GSTM1,Gene
+Gene::2947,GSTM3,Gene
+Gene::2948,GSTM4,Gene
+Gene::2950,GSTP1,Gene
+Gene::55806,HR,Gene
+Gene::55364,IMPACT,Gene
+Gene::3725,JUN,Gene
+Gene::3815,KIT,Gene
+Gene::9215,LARGE,Gene
+Gene::4149,MAX,Gene
+Gene::4478,MSN,Gene
+Gene::55270,NUDT15,Gene
+Gene::5195,PEX14,Gene
+Gene::5304,PIP,Gene
+Gene::5426,POLE,Gene
+Gene::5901,RAN,Gene
+Gene::5972,REN,Gene
+Gene::5978,REST,Gene
+Gene::6301,SARS,Gene
+Gene::10993,SDS,Gene
+Gene::6402,SELL,Gene
+Gene::6418,SET,Gene
+Gene::126669,SHE,Gene
+Gene::10599,SLCO1B1,Gene
+Gene::6651,SON,Gene
+Gene::6770,STAR,Gene
+Gene::10010,TANK,Gene
+Gene::7172,TPMT,Gene
+Gene::54658,UGT1A1,Gene
+Gene::79001,VKORC1,Gene
+Gene::7453,WARS,Gene
+Pharmacologic Class::N0000006996,Cholecalciferol,PharmacologicClass
+Pharmacologic Class::N0000007246,Estradiol,PharmacologicClass
+Pharmacologic Class::N0000007151,Folic Acid,PharmacologicClass
+Pharmacologic Class::N0000006496,Nicotine,PharmacologicClass
+Pharmacologic Class::N0000005934,Progesterone,PharmacologicClass
+Pharmacologic Class::N0000006269,Vitamin A,PharmacologicClass
+Symptom::D009290,Narcolepsy,Symptom
+Symptom::D009765,Obesity,Symptom
+Symptom::D012148,Restless Legs Syndrome,Symptom

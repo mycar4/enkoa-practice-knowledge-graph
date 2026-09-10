@@ -1,0 +1,220 @@
+{
+  "scope": {
+    "mention_ids": [
+      "f01",
+      "f02",
+      "f03",
+      "f04",
+      "f05",
+      "f06",
+      "f07",
+      "f08",
+      "f09",
+      "f10",
+      "f11",
+      "f12"
+    ],
+    "complete": true
+  },
+  "evaluation_unit": "순서를 구분하지 않는 두 mention_id의 쌍",
+  "identity_rule": "같은 화합물 또는 같은 유전자 기호를 한 그룹으로 봅니다. 통계, 투여량, 공급 업체 주석과 대소문자 변형은 정체성을 바꾸지 않습니다. 다른 성분, 다른 유전자 기호와 ATP 같은 별도 화합물은 구분합니다.",
+  "entity_id_note": "entity_id는 평가용 로컬 그룹 ID입니다. 외부 지식베이스의 표준 ID가 아니며 입력이나 후보 생성에 사용하지 않습니다.",
+  "annotation_basis": "원문 문맥을 대조한 수업용 판정입니다. lv1과 lv2는 기존 골드의 동일쌍과 다른 쌍도 확인했습니다. 자동 사전 조회 결과를 정답으로 복사하지 않았습니다.",
+  "gene_scope_note": "Gene은 논문의 유전자 또는 그 산물에 붙은 기호를 평가합니다. 측정량이나 약물과의 관계를 판정하는 자료가 아닙니다.",
+  "groups": [
+    {
+      "entity_id": "followalong_entity_01",
+      "canonical_name": "glutathione",
+      "entity_type": "Compound",
+      "mention_ids": [
+        "f01",
+        "f02"
+      ],
+      "rationale": "두 원문 모두 글루타티온 대사를 설명하며 두 번째 원문은 GSH라는 약어를 함께 정의합니다.",
+      "sources": [
+        {
+          "mention_id": "f01",
+          "source_doc_id": "PMC13494176",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494176/",
+          "evidence": "Much of the skin metabolic activity is devoted to glutathione metabolism, but there are also abundant enzymes involved in redox metabolism and a surprisingly large amount of liver carboxyesterase 1."
+        },
+        {
+          "mention_id": "f02",
+          "source_doc_id": "PMC13495479",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13495479/",
+          "evidence": "The nuclear factor erythroid 2-related factor 2/heme oxygenase 1(NRF2/HO-1)/GPX4 signaling axis serves as a central regulatory pathway in ferroptosis by maintaining cellular redox homeostasis and glutathione (GSH) metabolism and has emerged as a critical therapeutic target."
+        }
+      ]
+    },
+    {
+      "entity_id": "followalong_entity_02",
+      "canonical_name": "GSTM1",
+      "entity_type": "Gene",
+      "mention_ids": [
+        "f03"
+      ],
+      "rationale": "원문에 별도 기호로 보고된 유전자 산물입니다.",
+      "sources": [
+        {
+          "mention_id": "f03",
+          "source_doc_id": "PMC13494176",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494176/",
+          "evidence": "GSTs and ALDHs were especially abundant, with GSTP1 showing the highest mean expression (22.8 pmol/mg protein) followed by GSTM1 at 12.4 pmol/mg protein in both skin layers."
+        }
+      ]
+    },
+    {
+      "entity_id": "followalong_entity_03",
+      "canonical_name": "GSTM3",
+      "entity_type": "Gene",
+      "mention_ids": [
+        "f04"
+      ],
+      "rationale": "GSTM1과 기호가 비슷하지만 다른 기호로 구분됩니다.",
+      "sources": [
+        {
+          "mention_id": "f04",
+          "source_doc_id": "PMC13494176",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494176/",
+          "evidence": "Among the GST isoforms, GSTP1 showed the highest mean expression (22.8 ± 15.5), followed by GSTM3 (12.4 ± 10.1), whereas GSTM4 exhibited the lowest (0.16 ± 0.27)."
+        }
+      ]
+    },
+    {
+      "entity_id": "followalong_entity_04",
+      "canonical_name": "GSTM4",
+      "entity_type": "Gene",
+      "mention_ids": [
+        "f05"
+      ],
+      "rationale": "GSTM3과 같은 문장에서 서로 다른 양으로 보고됩니다.",
+      "sources": [
+        {
+          "mention_id": "f05",
+          "source_doc_id": "PMC13494176",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494176/",
+          "evidence": "Among the GST isoforms, GSTP1 showed the highest mean expression (22.8 ± 15.5), followed by GSTM3 (12.4 ± 10.1), whereas GSTM4 exhibited the lowest (0.16 ± 0.27)."
+        }
+      ]
+    },
+    {
+      "entity_id": "followalong_entity_05",
+      "canonical_name": "GSTP1",
+      "entity_type": "Gene",
+      "mention_ids": [
+        "f06"
+      ],
+      "rationale": "GSTM1과 같은 문장에서 별도 기호로 보고됩니다.",
+      "sources": [
+        {
+          "mention_id": "f06",
+          "source_doc_id": "PMC13494176",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494176/",
+          "evidence": "GSTs and ALDHs were especially abundant, with GSTP1 showing the highest mean expression (22.8 pmol/mg protein) followed by GSTM1 at 12.4 pmol/mg protein in both skin layers."
+        }
+      ]
+    },
+    {
+      "entity_id": "followalong_entity_06",
+      "canonical_name": "GPX1",
+      "entity_type": "Gene",
+      "mention_ids": [
+        "f07"
+      ],
+      "rationale": "GPX3 및 GPX7과 구별되는 기호입니다.",
+      "sources": [
+        {
+          "mention_id": "f07",
+          "source_doc_id": "PMC13494176",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494176/",
+          "evidence": "Similarly, GPX1 is detected but not quantified in dermal cytosol (Supplemental Table 9)."
+        }
+      ]
+    },
+    {
+      "entity_id": "followalong_entity_07",
+      "canonical_name": "GPX3",
+      "entity_type": "Gene",
+      "mention_ids": [
+        "f08"
+      ],
+      "rationale": "GPX7과 같은 목록에 별도 기호로 기록됩니다.",
+      "sources": [
+        {
+          "mention_id": "f08",
+          "source_doc_id": "PMC13494176",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494176/",
+          "evidence": "The data included glutathione S-transferases (GSTM1–4, GSTP1, and GSTP1-rs1695), glutathione peroxidases (GPX3, GPX7), and catechol-O-methyltransferase (COMT)."
+        }
+      ]
+    },
+    {
+      "entity_id": "followalong_entity_08",
+      "canonical_name": "GPX7",
+      "entity_type": "Gene",
+      "mention_ids": [
+        "f09"
+      ],
+      "rationale": "원문에서 별도 기호로 보고됩니다.",
+      "sources": [
+        {
+          "mention_id": "f09",
+          "source_doc_id": "PMC13494176",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494176/",
+          "evidence": "Notably, GPX7 exhibited the highest CV (233%), despite its low mean value (0.31), indicating substantial interindividual variability in expression."
+        }
+      ]
+    },
+    {
+      "entity_id": "followalong_entity_09",
+      "canonical_name": "AKR1C1",
+      "entity_type": "Gene",
+      "mention_ids": [
+        "f10"
+      ],
+      "rationale": "AKR1C3과 다른 기호입니다. 측정 신호의 구분이 어렵다는 사실이 동일 개체라는 뜻은 아닙니다.",
+      "sources": [
+        {
+          "mention_id": "f10",
+          "source_doc_id": "PMC13494176",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494176/",
+          "evidence": "These included members of the aldehyde dehydrogenase family (ALDH16A1 and ALDH6A1), epoxide hydrolase 1 (EPHX1), monoamine oxidases (MAOA, MAOB), esterases (ESTD and BCHE), aldo-keto reductases (AKR1A1, AKR1B1, AKR1C1, AKR1C4), and amine oxidase copper-containing 1 (AOX1)."
+        }
+      ]
+    },
+    {
+      "entity_id": "followalong_entity_10",
+      "canonical_name": "AKR1C3",
+      "entity_type": "Gene",
+      "mention_ids": [
+        "f11"
+      ],
+      "rationale": "원문은 AKR1C1과 측정 신호를 구분하기 어려운 경우를 설명하지만 두 기호를 동일 개체로 정의하지 않습니다.",
+      "sources": [
+        {
+          "mention_id": "f11",
+          "source_doc_id": "PMC13494176",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494176/",
+          "evidence": "Dermal aldo-keto reductase family 1 member C3 (AKR1C3) could equally well be assigned to aldo-keto reductase family 1 member C1 (AKR1C1) but the epidermal samples contain peptides unique for AKR1C3, so the dermal protein is tentatively assumed to be AKR1C3."
+        }
+      ]
+    },
+    {
+      "entity_id": "followalong_entity_11",
+      "canonical_name": "adenosine",
+      "entity_type": "Compound",
+      "mention_ids": [
+        "f12"
+      ],
+      "rationale": "아데노신 신호 전달을 설명한 문맥의 화합물입니다.",
+      "sources": [
+        {
+          "mention_id": "f12",
+          "source_doc_id": "PMC13493084",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13493084/",
+          "evidence": "This work highlights the importance of early metabolic risk monitoring in depression and lays a foundation for developing co-morbidity therapies targeting adenosine signaling, cholesterol synthesis, and immune-related pathways."
+        }
+      ]
+    }
+  ]
+}

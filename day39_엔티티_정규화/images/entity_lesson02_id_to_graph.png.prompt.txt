@@ -1,0 +1,15 @@
+Renderer: built-in image_gen, 2026-09-10
+Generated asset: 01a08028-1067-7090-8a11-c2050d470063/exec-70aa5ead-f964-432f-b793-3786ea85e239.png
+
+Use case: infographic-diagram. Edit and re-layout the referenced Korean teaching diagram for the NEW lesson02. Keep polished white background, navy Hangul, blue lesson01 sidebar, green lesson02 region, flat icons, wide 16:9 and large legible text. REPLACE the catalog lookup / LLM ID selection stage completely. Lesson02 NEVER calls LLM: it generates ONE internal standard_id PER CONFIRMED GROUP using Python. Do not include LLM, catalog selection or existing ID selection anywhere in diagram.
+
+Exact title: "같은 그룹에 ID를 붙여 그래프로 저장"
+Left narrow blue region title "교안 01"; simple document card "동일 개체 판정", three chips "같음", "다름", "보류", bottom "원문과 판정 이유".
+Right large green region title "교안 02". Main flow with clear arrows:
+1 card "1. 같음 쌍을 그룹으로", supporting "판정이 충돌한 그룹은 보류".
+2 card "2. 그룹마다 ID 하나 부여", supporting prominent "Python으로 생성", two example rows "d01:object → entity:d01:object" and "d02:object → entity:d01:object". Both are same book group, not two separate IDs. Tiny footer "같은 그룹은 같은 ID".
+3 card "3. 트리플에 ID 붙이기", supporting "subject_id / object_id", footer "원래 이름과 근거 유지".
+Next region "4. 그래프 저장" with two side-by-side alternative methods (not sequential): "기존 중복 노드 통합", code label "apoc.refactor.mergeNodes"; and "처음부터 ID로 적재", code label "MERGE". Caption "같은 개체는 노드 하나로".
+Below show two document boxes "문서 A", "문서 B", each its own arrow labelled "관계와 근거 A", "관계와 근거 B", pointing into ONE green circle labelled "같은 개체". Both edges must remain visually distinct. Title "출처별 관계와 근거 보존".
+Bottom banner "5. ER 품질 평가", supporting "정밀도 / 재현율 / F1 / 오병합 수". Bottom small text "ID 글자가 아닌, 같은 출현끼리 묶였는지 평가".
+Avoid crowded layout, malformed Hangul, obsolete '새 ID 생성하지 않음', any robot or LLM stage in lesson02. Meaning must be unmistakable.

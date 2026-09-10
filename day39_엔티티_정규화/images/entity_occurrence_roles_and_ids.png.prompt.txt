@@ -1,0 +1,47 @@
+Mode: Built-in image_gen, reference-based redesign and one connector correction.
+
+Redesign the attached Korean library concept diagram to explicitly show the SAME book as OBJECT in borrowing relations and SUBJECT in an author relation. Preserve the clean teaching style, white background, navy text, blue people, purple highlighted book occurrences, teal canonical book, and readable Korean. Flat solid fills, generous whitespace, wide landscape 16:9, high resolution for a 1000px-wide notebook. No watermark, glossy effects, or extra text.
+
+Title exactly: "역할이 달라도 같은 책은 같은 표준 ID"
+
+Three column headers:
+LEFT (48% width) "트리플에서 나온 자리"
+CENTER (22%) "같은 책으로 확인"
+RIGHT (30%) "관계 방향과 근거 보존"
+
+LEFT: THREE large record cards stacked vertically. Render each triple horizontally with arrow direction matching the exact text. Highlight ONLY the book name in purple, even when it is at the LEFT of the third triple. Beneath each triple put a full-width pale-purple strip giving the selected BOOK occurrence, role and type; arrows into the center start at the RIGHT BORDER of these strips.
+Card1 badge "d01", triple "민수 → 빌림 → 파이썬 입문".
+Purple strip: "d01:object  |  목적어  |  Book".
+Card2 badge "d02", triple "지우 → 빌림 → 파이썬 입문서".
+Purple strip: "d02:object  |  목적어  |  Book".
+Card3 badge "d04", triple "파이썬 입문 → 저자 → 김하나".
+Purple strip: "d04:subject  |  주어  |  Book".
+The third BOOK is the subject, and 김하나 is a Person object. This distinction must be unmistakable.
+
+CENTER: ONE teal identity card, exact labels:
+"표준 ID"
+"book:B001"
+"김하나의 파이썬 입문 초판"
+Exactly THREE purple connectors go from the left cards' selected book-occurrence strips to THIS ONE card. Endpoints must touch the strip and canonical card borders, no floating arrowheads. Do not connect a person's name to this book card.
+
+RIGHT: A small graph of FOUR nodes and exactly THREE directed relations.
+TWO distinct blue person nodes "민수" and "지우" on the left.
+ONE teal book node "파이썬 입문" with small "book:B001" in the middle.
+ONE blue person node "김하나" toward bottom/right.
+Directed edges:
+민수 -> book, edge label "빌림", small tag "d01".
+지우 -> book, edge label "빌림", small tag "d02".
+book -> 김하나, edge label "저자", small tag "d04".
+All arrowheads visible and attached to the target node border.
+Arrange vertically if needed for clean routing. The book is the target of borrowing and source of authorship. Keep people separate and retain just one book node. Small caption under graph: "원래 관계와 근거 보존".
+
+BOTTOM: two compact explanation tiles.
+Tile1 label "역할 (role)" and text "관계에서의 자리: 주어 또는 목적어".
+Tile2 label "타입 (entity_type)" and text "대상의 종류: 이 책은 항상 Book".
+Final short footer, exact: "역할은 바뀌어도 같은 책의 타입과 표준 ID는 같습니다."
+
+No t01/t02, function names, node IDs for people, additional books, revision examples, or mentions of automatic name-based matching. This figure shows a selected subset d01,d02,d04 of an expanded six-triple example; do not claim the whole dataset has three rows. Do not use '개체 ID'; use '표준 ID'. Keep labels exact, large, and clear. The obvious central takeaway must be that d01:object and d04:subject differ as occurrences but both map to Book / book:B001.
+
+Correction:
+Edit only ONE connector in the attached diagram. Keep every label, card, role/type distinction, color, and the complete right-hand graph unchanged. The purple connector from the THIRD record d04 currently starts immediately to the right of the PERSON name '김하나'; that is incorrect and could imply 김하나 maps to book:B001. Remove that entire existing d04 connector. Draw its replacement with the tail visibly attached to the RIGHT EDGE of the LOWER PURPLE STRIP labeled 'd04:subject | 주어 | Book'. In this 1672x941 image that tail is approximately at x=669,y=700, not x=679,y=636. Route the line outside the record card through the empty gap and curve upward to the LOWER-LEFT EDGE of the central book:B001 card, approximately x=768,y=543. The arrowhead must touch the canonical book card. The replacement tail must align vertically with the 'd04:subject | 주어 | Book' text strip and be visibly separated from the 김하나 name row. No purple line may start beside or from 김하나. All other content and connectors remain exactly unchanged.
+

@@ -1,0 +1,216 @@
+{
+  "source": "kg_alias_review.jsonl",
+  "description": "기존 출현별 원문 검토를 같은 개체 쌍으로 변환한 과제 입력입니다. 새 LLM 응답이 아니며 골드는 사용하지 않았습니다.",
+  "mentions": [
+    {
+      "mention_id": "t01:subject",
+      "triple_id": "t01",
+      "role": "subject",
+      "name": "rugplot",
+      "entity_type": "Document",
+      "source_doc_id": "seaborn_doc_docstrings_rugplot",
+      "evidence": "sns.rugplot(data=tips, x=\"total_bill\")"
+    },
+    {
+      "mention_id": "t01:object",
+      "triple_id": "t01",
+      "role": "object",
+      "name": "rugplot",
+      "entity_type": "ApiElement",
+      "source_doc_id": "seaborn_doc_docstrings_rugplot",
+      "evidence": "sns.rugplot(data=tips, x=\"total_bill\")"
+    },
+    {
+      "mention_id": "t02:subject",
+      "triple_id": "t02",
+      "role": "subject",
+      "name": "rugplot",
+      "entity_type": "Document",
+      "source_doc_id": "seaborn_doc_docstrings_rugplot",
+      "evidence": "sns.kdeplot(data=tips, x=\"total_bill\")"
+    },
+    {
+      "mention_id": "t02:object",
+      "triple_id": "t02",
+      "role": "object",
+      "name": "kdeplot",
+      "entity_type": "ApiElement",
+      "source_doc_id": "seaborn_doc_docstrings_rugplot",
+      "evidence": "sns.kdeplot(data=tips, x=\"total_bill\")"
+    },
+    {
+      "mention_id": "t03:subject",
+      "triple_id": "t03",
+      "role": "subject",
+      "name": "rugplot",
+      "entity_type": "Document",
+      "source_doc_id": "seaborn_doc_docstrings_rugplot",
+      "evidence": "sns.scatterplot(data=tips, x=\"total_bill\", y=\"tip\")"
+    },
+    {
+      "mention_id": "t03:object",
+      "triple_id": "t03",
+      "role": "object",
+      "name": "scatterplot",
+      "entity_type": "ApiElement",
+      "source_doc_id": "seaborn_doc_docstrings_rugplot",
+      "evidence": "sns.scatterplot(data=tips, x=\"total_bill\", y=\"tip\")"
+    },
+    {
+      "mention_id": "t04:subject",
+      "triple_id": "t04",
+      "role": "subject",
+      "name": "jointplot",
+      "entity_type": "Document",
+      "source_doc_id": "seaborn_doc_docstrings_jointplot",
+      "evidence": "sns.set_theme(style=\"white\")"
+    },
+    {
+      "mention_id": "t04:object",
+      "triple_id": "t04",
+      "role": "object",
+      "name": "sns.set_theme",
+      "entity_type": "ApiElement",
+      "source_doc_id": "seaborn_doc_docstrings_jointplot",
+      "evidence": "sns.set_theme(style=\"white\")"
+    },
+    {
+      "mention_id": "t05:subject",
+      "triple_id": "t05",
+      "role": "subject",
+      "name": "jointplot",
+      "entity_type": "Document",
+      "source_doc_id": "seaborn_doc_docstrings_jointplot",
+      "evidence": "penguins = sns.load_dataset(\"penguins\")"
+    },
+    {
+      "mention_id": "t05:object",
+      "triple_id": "t05",
+      "role": "object",
+      "name": "sns.load_dataset",
+      "entity_type": "ApiElement",
+      "source_doc_id": "seaborn_doc_docstrings_jointplot",
+      "evidence": "penguins = sns.load_dataset(\"penguins\")"
+    },
+    {
+      "mention_id": "t06:subject",
+      "triple_id": "t06",
+      "role": "subject",
+      "name": "jointplot",
+      "entity_type": "Document",
+      "source_doc_id": "seaborn_doc_docstrings_jointplot",
+      "evidence": "sns.jointplot(data=penguins, x=\"bill_length_mm\", y=\"bill_depth_mm\")"
+    },
+    {
+      "mention_id": "t06:object",
+      "triple_id": "t06",
+      "role": "object",
+      "name": "sns.jointplot",
+      "entity_type": "ApiElement",
+      "source_doc_id": "seaborn_doc_docstrings_jointplot",
+      "evidence": "sns.jointplot(data=penguins, x=\"bill_length_mm\", y=\"bill_depth_mm\")"
+    },
+    {
+      "mention_id": "t07:subject",
+      "triple_id": "t07",
+      "role": "subject",
+      "name": "jointplot",
+      "entity_type": "Document",
+      "source_doc_id": "seaborn_doc_docstrings_jointplot",
+      "evidence": "g.plot_joint(sns.kdeplot, color=\"r\", zorder=0, levels=6)"
+    },
+    {
+      "mention_id": "t07:object",
+      "triple_id": "t07",
+      "role": "object",
+      "name": "sns.kdeplot",
+      "entity_type": "ApiElement",
+      "source_doc_id": "seaborn_doc_docstrings_jointplot",
+      "evidence": "g.plot_joint(sns.kdeplot, color=\"r\", zorder=0, levels=6)"
+    },
+    {
+      "mention_id": "t08:subject",
+      "triple_id": "t08",
+      "role": "subject",
+      "name": "jointplot",
+      "entity_type": "Document",
+      "source_doc_id": "seaborn_doc_docstrings_jointplot",
+      "evidence": "g.plot_marginals(sns.rugplot, color=\"r\", height=-.15, clip_on=False)"
+    },
+    {
+      "mention_id": "t08:object",
+      "triple_id": "t08",
+      "role": "object",
+      "name": "sns.rugplot",
+      "entity_type": "ApiElement",
+      "source_doc_id": "seaborn_doc_docstrings_jointplot",
+      "evidence": "g.plot_marginals(sns.rugplot, color=\"r\", height=-.15, clip_on=False)"
+    }
+  ],
+  "decisions": [
+    {
+      "left_id": "t01:object",
+      "right_id": "t08:object",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "출처의 import seaborn as sns와 근거의 sns.rugplot 호출·참조를 확인했습니다. rugplot은 seaborn.rugplot을 가리킵니다. API 이름의 대소문자는 보존합니다.",
+      "right_reason": "출처의 import seaborn as sns와 근거의 sns.rugplot 호출·참조를 확인했습니다. sns.rugplot은 seaborn.rugplot을 가리킵니다. API 이름의 대소문자는 보존합니다."
+    },
+    {
+      "left_id": "t01:subject",
+      "right_id": "t02:subject",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다.",
+      "right_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다."
+    },
+    {
+      "left_id": "t01:subject",
+      "right_id": "t03:subject",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다.",
+      "right_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다."
+    },
+    {
+      "left_id": "t02:object",
+      "right_id": "t07:object",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "출처의 import seaborn as sns와 근거의 sns.kdeplot 호출·참조를 확인했습니다. kdeplot은 seaborn.kdeplot을 가리킵니다. API 이름의 대소문자는 보존합니다.",
+      "right_reason": "출처의 import seaborn as sns와 근거의 sns.kdeplot 호출·참조를 확인했습니다. sns.kdeplot은 seaborn.kdeplot을 가리킵니다. API 이름의 대소문자는 보존합니다."
+    },
+    {
+      "left_id": "t04:subject",
+      "right_id": "t05:subject",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다.",
+      "right_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다."
+    },
+    {
+      "left_id": "t04:subject",
+      "right_id": "t06:subject",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다.",
+      "right_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다."
+    },
+    {
+      "left_id": "t04:subject",
+      "right_id": "t07:subject",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다.",
+      "right_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다."
+    },
+    {
+      "left_id": "t04:subject",
+      "right_id": "t08:subject",
+      "decision": "같음",
+      "reason": "기존 원문 검토에서 같은 대상으로 확인한 두 출현입니다.",
+      "left_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다.",
+      "right_reason": "출처 문서의 제목과 일치합니다. 같은 이름의 API와 구분하며 source_doc_id로 문서를 식별합니다."
+    }
+  ]
+}
