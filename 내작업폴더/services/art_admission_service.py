@@ -773,9 +773,22 @@ class ArtAdmissionService:
                        sch.registration_start AS registration_start, sch.registration_end AS registration_end,
                        past_topics
             """, university=university, campus=campus).data()
+            _CATEGORY_LABELS = {
+                "portfolio": "서류전형(실기 없음)",
+                "holistic": "학생부종합전형",
+                "academic_record": "학생부교과전형",
+                None: "실기/실적위주전형",
+            }
             for t in tracks:
                 t["source_tier"] = _classify_source(t.get("source_url"))
                 t["exam_dates"] = _extract_dates(t.get("exam_date"))
+                # FO 카드 상단 태그용 - search_tracks_by_prep/build_llm_context와 동일한
+                # _document_track_category() 판정을 그대로 재사용해서 판정이 세 곳에서
+                # 어긋나지 않게 한다(오늘 build_llm_context 쪽에서 이 판정이 빠져 실기
+                # 키워드 QA 매칭이 잘못됐던 것과 같은 종류의 불일치를 막기 위함).
+                doc_category = self._document_track_category(t.get("exam_type_name"))
+                t["track_category"] = doc_category or "practical"
+                t["track_category_label"] = _CATEGORY_LABELS[doc_category]
 
             estimates = s.run("""
                 MATCH (u:Admission_University {name: $university})-[:HAS_DEPARTMENT]->(d:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)

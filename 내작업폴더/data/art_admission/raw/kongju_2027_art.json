@@ -15,11 +15,19 @@
       "allowed_materials": ["자유채색 재료"],
       "paper_size": "켄트지 4절",
       "time_limit_minutes": 240,
-      "exam_date": null,
-      "result_date": null,
+      "exam_date": "2026-10-22",
+      "result_date": "2026-12-18",
+      "application_period": {"start": "2026-09-07", "end": "2026-09-11"},
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {"1": 900, "2": 850, "3": 800, "4": 750, "5": 700, "6": 650, "7": 600, "8": 550, "9": 500},
+        "formula_note": "교과성적(900점) = 변환점수평균×50 + 500(기본점수). 변환점수평균 = Σ(과목별 변환점수(1등급=8~9등급=0)×이수단위)÷Σ이수단위. 반영교과: 국어·수학·영어·한국사·사회·과학 전 과목(3학년 1학기까지, 학년별 가중치 없음). 여기서는 등급→900~500점 직접 환산(50×등급점수+500)으로 표현해 동일 결과를 재현함. 출결성적(100점)·진로선택과목 가산점은 이 계산에 포함되지 않음(2027 모집요강 p.62, p.80-81).",
+        "rule_source_page": "62, 80-81"
+      },
       "source_url": "https://ipsi.kongju.ac.kr/attach/44a038e6d069249324e35d9e6f1998b6/13055e35ba7465cb478c5b4be490c5a8",
       "source_page": 59,
-      "source_page_note": "모집인원: PDF 59쪽, 반영비율: PDF 61쪽, 실기과제: PDF 62·65쪽. 실기/실적 일반전형/게임디자인학과 행 대조.",
+      "source_page_note": "모집인원: PDF 59쪽, 반영비율: PDF 61쪽, 실기과제: PDF 62·65쪽, 원서접수/실기고사/발표일: PDF 24·27쪽, 학생부 반영방법: PDF 80-81쪽. 실기/실적 일반전형/게임디자인학과 행 대조.",
       "data_sources": [{"document_name": "국립공주대학교 2027학년도 수시 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf"}]
     }
   },
@@ -39,11 +47,19 @@
       "allowed_materials": [],
       "paper_size": null,
       "time_limit_minutes": null,
-      "exam_date": null,
-      "result_date": null,
+      "exam_date": "2026-10-22",
+      "result_date": "2026-12-18",
+      "application_period": {"start": "2026-09-07", "end": "2026-09-11"},
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {"1": 900, "2": 850, "3": 800, "4": 750, "5": 700, "6": 650, "7": 600, "8": 550, "9": 500},
+        "formula_note": "교과성적(900점) = 변환점수평균×50 + 500(기본점수). 변환점수평균 = Σ(과목별 변환점수(1등급=8~9등급=0)×이수단위)÷Σ이수단위. 반영교과: 국어·수학·영어·한국사·사회·과학 전 과목(3학년 1학기까지, 학년별 가중치 없음). 여기서는 등급→900~500점 직접 환산(50×등급점수+500)으로 표현해 동일 결과를 재현함. 출결성적(100점)·진로선택과목 가산점은 이 계산에 포함되지 않음(2027 모집요강 p.62, p.80-81).",
+        "rule_source_page": "62, 80-81"
+      },
       "source_url": "https://ipsi.kongju.ac.kr/attach/44a038e6d069249324e35d9e6f1998b6/13055e35ba7465cb478c5b4be490c5a8",
       "source_page": 59,
-      "source_page_note": "모집인원: PDF 59쪽, 반영비율: PDF 61쪽, 실기유형: PDF 62쪽. 실기/실적 일반전형/가구리빙디자인학과 행 대조.",
+      "source_page_note": "모집인원: PDF 59쪽, 반영비율: PDF 61쪽, 실기유형: PDF 62쪽, 원서접수/실기고사/발표일: PDF 24·27쪽, 학생부 반영방법: PDF 80-81쪽. 실기/실적 일반전형/가구리빙디자인학과 행 대조.",
       "data_sources": [{"document_name": "국립공주대학교 2027학년도 수시 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf"}]
     }
   },
@@ -63,11 +79,19 @@
       "allowed_materials": [],
       "paper_size": null,
       "time_limit_minutes": null,
-      "exam_date": null,
-      "result_date": null,
+      "exam_date": "2026-10-22",
+      "result_date": "2026-12-18",
+      "application_period": {"start": "2026-09-07", "end": "2026-09-11"},
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {"1": 900, "2": 850, "3": 800, "4": 750, "5": 700, "6": 650, "7": 600, "8": 550, "9": 500},
+        "formula_note": "교과성적(900점) = 변환점수평균×50 + 500(기본점수). 변환점수평균 = Σ(과목별 변환점수(1등급=8~9등급=0)×이수단위)÷Σ이수단위. 반영교과: 국어·수학·영어·한국사·사회·과학 전 과목(3학년 1학기까지, 학년별 가중치 없음). 여기서는 등급→900~500점 직접 환산(50×등급점수+500)으로 표현해 동일 결과를 재현함. 출결성적(100점)·진로선택과목 가산점은 이 계산에 포함되지 않음(2027 모집요강 p.62, p.80-81).",
+        "rule_source_page": "62, 80-81"
+      },
       "source_url": "https://ipsi.kongju.ac.kr/attach/44a038e6d069249324e35d9e6f1998b6/13055e35ba7465cb478c5b4be490c5a8",
       "source_page": 59,
-      "source_page_note": "모집인원: PDF 59쪽, 반영비율: PDF 61쪽, 실기유형: PDF 62쪽. 실기/실적 일반전형/도자문화융합디자인학과 행 대조.",
+      "source_page_note": "모집인원: PDF 59쪽, 반영비율: PDF 61쪽, 실기유형: PDF 62쪽, 원서접수/실기고사/발표일: PDF 24·27쪽, 학생부 반영방법: PDF 80-81쪽. 실기/실적 일반전형/도자문화융합디자인학과 행 대조.",
       "data_sources": [{"document_name": "국립공주대학교 2027학년도 수시 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf"}]
     }
   },
@@ -87,11 +111,19 @@
       "allowed_materials": [],
       "paper_size": null,
       "time_limit_minutes": null,
-      "exam_date": null,
-      "result_date": null,
+      "exam_date": "2026-10-22",
+      "result_date": "2026-12-18",
+      "application_period": {"start": "2026-09-07", "end": "2026-09-11"},
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {"1": 900, "2": 850, "3": 800, "4": 750, "5": 700, "6": 650, "7": 600, "8": 550, "9": 500},
+        "formula_note": "교과성적(900점) = 변환점수평균×50 + 500(기본점수). 변환점수평균 = Σ(과목별 변환점수(1등급=8~9등급=0)×이수단위)÷Σ이수단위. 반영교과: 국어·수학·영어·한국사·사회·과학 전 과목(3학년 1학기까지, 학년별 가중치 없음). 여기서는 등급→900~500점 직접 환산(50×등급점수+500)으로 표현해 동일 결과를 재현함. 출결성적(100점)·진로선택과목 가산점은 이 계산에 포함되지 않음(2027 모집요강 p.62, p.80-81).",
+        "rule_source_page": "62, 80-81"
+      },
       "source_url": "https://ipsi.kongju.ac.kr/attach/44a038e6d069249324e35d9e6f1998b6/13055e35ba7465cb478c5b4be490c5a8",
       "source_page": 59,
-      "source_page_note": "모집인원: PDF 59쪽, 반영비율: PDF 61쪽, 실기유형: PDF 62쪽. 실기/실적 일반전형/주얼리·금속디자인학과 행 대조.",
+      "source_page_note": "모집인원: PDF 59쪽, 반영비율: PDF 61쪽, 실기유형: PDF 62쪽, 원서접수/실기고사/발표일: PDF 24·27쪽, 학생부 반영방법: PDF 80-81쪽. 실기/실적 일반전형/주얼리·금속디자인학과 행 대조.",
       "data_sources": [{"document_name": "국립공주대학교 2027학년도 수시 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf"}]
     }
   },
@@ -111,11 +143,19 @@
       "allowed_materials": [],
       "paper_size": null,
       "time_limit_minutes": 240,
-      "exam_date": null,
-      "result_date": null,
+      "exam_date": "2026-10-23~2026-10-24",
+      "result_date": "2026-12-18",
+      "application_period": {"start": "2026-09-07", "end": "2026-09-11"},
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {"1": 900, "2": 850, "3": 800, "4": 750, "5": 700, "6": 650, "7": 600, "8": 550, "9": 500},
+        "formula_note": "교과성적(900점) = 변환점수평균×50 + 500(기본점수). 변환점수평균 = Σ(과목별 변환점수(1등급=8~9등급=0)×이수단위)÷Σ이수단위. 반영교과: 국어·수학·영어·한국사·사회·과학 전 과목(3학년 1학기까지, 학년별 가중치 없음). 여기서는 등급→900~500점 직접 환산(50×등급점수+500)으로 표현해 동일 결과를 재현함. 출결성적(100점)·진로선택과목 가산점은 이 계산에 포함되지 않음(2027 모집요강 p.62, p.80-81).",
+        "rule_source_page": "62, 80-81"
+      },
       "source_url": "https://ipsi.kongju.ac.kr/attach/44a038e6d069249324e35d9e6f1998b6/13055e35ba7465cb478c5b4be490c5a8",
       "source_page": 59,
-      "source_page_note": "모집인원: PDF 59쪽, 반영비율: PDF 61쪽, 실기유형·시간: PDF 62·68쪽. 실기/실적 일반전형/만화애니메이션학부 행 대조.",
+      "source_page_note": "모집인원: PDF 59쪽, 반영비율: PDF 61쪽, 실기유형·시간: PDF 62·68쪽, 원서접수/실기고사/발표일: PDF 24·27쪽, 학생부 반영방법: PDF 80-81쪽. 실기/실적 일반전형/만화애니메이션학부 행 대조. 상황표현 10.23/칸만화 10.24 (택1이라 응시 종목 날짜에 응시).",
       "data_sources": [{"document_name": "국립공주대학교 2027학년도 수시 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf"}]
     }
   }

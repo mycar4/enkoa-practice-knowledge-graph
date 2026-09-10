@@ -1,46 +1,152 @@
-{
-  "university": "홍익대학교",
-  "campus": "세종",
-  "department": "캠퍼스자율전공(자연·예능)",
-  "track_name": "학생부교과(교과우수자전형)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 54,
-    "ratio": "일괄합산: 학생부교과 100% (실기 없음)",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "school_record_ratio_pct": 100,
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
+[
+  {
+    "university": "홍익대학교",
+    "campus": "세종",
+    "department": "캠퍼스자율전공(자연·예능)",
+    "track_name": "학생부교과(교과우수자전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 54,
+      "ratio": "일괄합산: 학생부교과 100% (실기 없음)",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 100,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": null,
+      "result_date": "2026-12-18",
+      "exam_type_name": "해당 없음 (학생부교과 100%, 실기 없음 - 2학년 진급 시 단과대학/학부 자유 선택 가능한 자율전공)",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "school_record_rule": {
+        "mode": "common_and_career_split_scaled",
+        "subjects": ["국어", "영어", "수학", "과학"],
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "credit_cap": 100,
+        "conversion_table": {"1": 100, "2": 96, "3": 89, "4": 77, "5": 60, "6": 40, "7": 23, "8": 11, "9": 0},
+        "career_elective_conversion_table": {"A": 10, "B": 9, "C": 7},
+        "formula_note": "교과점수 = (공통·일반선택과목 이수단위가중평균×0.9 + 진로선택과목 이수단위가중평균×0.9) × (반영교과 이수학점 합/1000 + 0.9) (이수학점 합의 최대값은 100). 인문계열/캠퍼스자율전공(인문·예능)은 국어·영어·수학·사회, 자연계열/캠퍼스자율전공(자연·예능)은 국어·영어·수학·과학을 반영 (2027 모집요강 p.81, p.112-113).",
+        "rule_source_page": "81, 112-113"
+      },
+      "source_url": "https://www.hongik.ac.kr/kr/admission/recruitment.do?mode=download&articleNo=152315&attachNo=91150",
+      "source_page": 81,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      }
     },
-    "exam_date": null,
-    "result_date": "2026-12-18",
-    "exam_type_name": "해당 없음 (학생부교과 100%, 실기 없음 - 2학년 진급 시 단과대학/학부 자유 선택 가능한 자율전공)",
-    "allowed_materials": [],
-    "paper_size": null,
-    "time_limit_minutes": null,
-    "school_record_rule": {
-      "mode": "common_and_career_split_scaled",
-      "subjects": ["국어", "영어", "수학", "과학"],
-      "career_elective_included": true,
-      "credit_weighted": true,
-      "credit_cap": 100,
-      "conversion_table": {"1": 100, "2": 96, "3": 89, "4": 77, "5": 60, "6": 40, "7": 23, "8": 11, "9": 0},
-      "career_elective_conversion_table": {"A": 10, "B": 9, "C": 7},
-      "formula_note": "교과점수 = (공통·일반선택과목 이수단위가중평균×0.9 + 진로선택과목 이수단위가중평균×0.9) × (반영교과 이수학점 합/1000 + 0.9) (이수학점 합의 최대값은 100). 인문계열/캠퍼스자율전공(인문·예능)은 국어·영어·수학·사회, 자연계열/캠퍼스자율전공(자연·예능)은 국어·영어·수학·과학을 반영 (2027 모집요강 p.81, p.112-113).",
-      "rule_source_page": "81, 112-113"
-    },
-    "source_url": "https://www.hongik.ac.kr/kr/admission/recruitment.do?mode=download&articleNo=152315&attachNo=91150",
-    "source_page": 81,
-    "registration_period": {
-      "start": "2027-02-10",
-      "end": "2027-02-12"
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": []
     }
   },
-  "estimates": {
-    "cutoff_grade_estimate": null,
-    "cutoff_source_url": null,
-    "interview_summaries": []
+  {
+    "university": "홍익대학교",
+    "campus": "세종",
+    "department": "캠퍼스자율전공(자연·예능)",
+    "track_name": "학생부위주(종합)(학교생활우수자전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 37,
+      "ratio": "일괄합산: 서류(학생부종합) 100% (실기 없음)",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "학생부종합전형(서류 100% 정성평가)이라 등급→점수 환산표 자체가 존재하지 않음(2027 모집요강 PDF 89쪽 확인). 학업역량·진로역량·공동체역량을 종합평가하며 석차등급을 정량 환산하지 않으므로 학생부 환산 점수를 계산할 수 없습니다.",
+      "exam_type_name": "학생부종합 서류평가 (실기시험 없음, 면접 없음)",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "csat_minimum_rule_note": "수능최저학력기준 없음 (2027 모집요강 PDF 90쪽)",
+      "source_url": "https://www.hongik.ac.kr/kr/admission/recruitment.do?mode=download&articleNo=152315&attachNo=91150",
+      "source_page": 89,
+      "data_sources": [{"document_name": "2027학년도 홍익대학교 수시모집요강(세종캠퍼스)", "local_file": "data/art_admission_raw/prospectus/홍익대학교_2027학년도_수시모집요강.pdf"}]
+    }
+  },
+  {
+    "university": "홍익대학교",
+    "campus": "세종",
+    "department": "캠퍼스자율전공(인문·예능)",
+    "track_name": "학생부교과(교과우수자전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 54,
+      "ratio": "일괄합산: 학생부교과 100% (실기 없음)",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 100,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": null,
+      "result_date": "2026-12-18",
+      "exam_type_name": "해당 없음 (학생부교과 100%, 실기 없음 - 2학년 진급 시 단과대학/학부 자유 선택 가능한 자율전공)",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "school_record_rule": {
+        "mode": "common_and_career_split_scaled",
+        "subjects": ["국어", "영어", "수학", "사회"],
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "credit_cap": 100,
+        "conversion_table": {"1": 100, "2": 96, "3": 89, "4": 77, "5": 60, "6": 40, "7": 23, "8": 11, "9": 0},
+        "career_elective_conversion_table": {"A": 10, "B": 9, "C": 7},
+        "formula_note": "교과점수 = (공통·일반선택과목 이수단위가중평균×0.9 + 진로선택과목 이수단위가중평균×0.9) × (반영교과 이수학점 합/1000 + 0.9) (이수학점 합의 최대값은 100). 인문계열/캠퍼스자율전공(인문·예능)은 국어·영어·수학·사회, 자연계열/캠퍼스자율전공(자연·예능)은 국어·영어·수학·과학을 반영 (2027 모집요강 p.81, p.112-113).",
+        "rule_source_page": "81, 112-113"
+      },
+      "source_url": "https://www.hongik.ac.kr/kr/admission/recruitment.do?mode=download&articleNo=152315&attachNo=91150",
+      "source_page": 81,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      }
+    },
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": []
+    }
+  },
+  {
+    "university": "홍익대학교",
+    "campus": "세종",
+    "department": "캠퍼스자율전공(인문·예능)",
+    "track_name": "학생부위주(종합)(학교생활우수자전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 37,
+      "ratio": "일괄합산: 서류(학생부종합) 100% (실기 없음)",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "학생부종합전형(서류 100% 정성평가)이라 등급→점수 환산표 자체가 존재하지 않음(2027 모집요강 PDF 89쪽 확인). 학업역량·진로역량·공동체역량을 종합평가하며 석차등급을 정량 환산하지 않으므로 학생부 환산 점수를 계산할 수 없습니다.",
+      "exam_type_name": "학생부종합 서류평가 (실기시험 없음, 면접 없음)",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "csat_minimum_rule_note": "수능최저학력기준 없음 (2027 모집요강 PDF 90쪽)",
+      "source_url": "https://www.hongik.ac.kr/kr/admission/recruitment.do?mode=download&articleNo=152315&attachNo=91150",
+      "source_page": 89,
+      "data_sources": [{"document_name": "2027학년도 홍익대학교 수시모집요강(세종캠퍼스)", "local_file": "data/art_admission_raw/prospectus/홍익대학교_2027학년도_수시모집요강.pdf"}]
+    }
   }
-}
+]

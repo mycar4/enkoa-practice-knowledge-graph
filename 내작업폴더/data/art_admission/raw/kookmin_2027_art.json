@@ -17,6 +17,7 @@
       "time_limit_minutes": null,
       "exam_date": null,
       "result_date": null,
+      "application_period": {"start": "2026-09-07", "end": "2026-09-11"},
       "source_url": "https://admission.kookmin.ac.kr/common/file_download.php?col=1&id=contents&no=180",
       "source_page": 52,
       "stages": [
@@ -44,6 +45,7 @@
       "time_limit_minutes": 240,
       "exam_date": null,
       "result_date": null,
+      "application_period": {"start": "2026-09-07", "end": "2026-09-11"},
       "source_url": "https://admission.kookmin.ac.kr/common/file_download.php?col=1&id=contents&no=180",
       "source_page": 65,
       "stages": [

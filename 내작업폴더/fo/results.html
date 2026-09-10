@@ -72,6 +72,9 @@
   </label>
   <div class="flex items-start gap-unit-2xs flex-wrap">
     <span class="font-body-sm text-body-sm text-on-surface-variant h-9 flex items-center">검색조건</span>
+    <input id="universitySearchInput" list="universitySearchList" type="text" placeholder="대학명으로 찾기"
+      class="h-9 px-unit-xs rounded border border-outline-variant bg-surface-container-lowest text-on-surface font-body-sm text-body-sm w-40" />
+    <datalist id="universitySearchList"></datalist>
     <select id="genderSelect" class="h-9 px-unit-xs rounded border border-outline-variant bg-surface-container-lowest text-on-surface font-body-sm text-body-sm">
       <option value="all">성별: 전체</option>
       <option value="exclude_female">여자대학교 제외</option>
@@ -500,9 +503,15 @@ async function renderUniversityResults(name) {
     const est = estimatesByKey.get(`${t.department}::${t.track_name}`);
     const campusStr = t.campus ? ` (${t.campus}캠퍼스)` : "";
     const hasCutoff = est && est.cutoff_grade_estimate != null && est.cutoff_source_url;
+    // 전형유형 태그 - 실기/실적위주만 강조색, 서류/학생부계열은 중립색(실기가 아니라는
+    // 걸 한눈에 구분하기 위함). 백엔드 _document_track_category() 판정을 그대로 노출.
+    const categoryBadge = t.track_category === "practical"
+      ? `<span class="px-unit-xs py-0.5 bg-primary text-on-primary font-label-sm text-label-sm rounded">${t.track_category_label}</span>`
+      : `<span class="px-unit-xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded border border-outline-variant">${t.track_category_label}</span>`;
     return `
       <div class="flex flex-col bg-surface-container-lowest rounded-lg p-unit-md gap-unit-2xs shadow-sm border border-outline-variant/30">
         <span class="font-headline-sm text-headline-sm text-on-surface">${name}${campusStr}</span>
+        <div>${categoryBadge}</div>
         <div class="font-body-md text-body-md text-on-surface font-medium">${t.department} · ${t.track_name || ""} (${t.admission_year || "-"}학년도)</div>
         <div class="font-body-sm text-body-sm text-on-surface-variant">실기종목: ${t.exam_type_name || "-"}</div>
         <div class="font-body-sm text-body-sm text-on-surface-variant">재료: ${(t.allowed_materials || []).join(", ") || "-"} ${t.paper_size ? "· 규격: " + t.paper_size : ""}</div>
@@ -653,7 +662,10 @@ function renderRecommendResults() {
     const holisticOnly = trackTypeValue === "holistic";
     const academicRecordOnly = trackTypeValue === "academic_record";
 
+    const universitySearch = document.getElementById("universitySearchInput").value.trim();
+
     let list = recommendResults.slice();
+    if (universitySearch) list = list.filter(r => r.university.includes(universitySearch));
     if (hideNA) list = list.filter(r => r.calc_precision !== "not_applicable");
     if (genderFilter === "exclude_female") list = list.filter(r => r.gender_restriction !== "female_only");
     if (genderFilter === "female_only") list = list.filter(r => r.gender_restriction === "female_only");
@@ -735,6 +747,9 @@ function renderRecommendResults() {
   document.getElementById("hideNotApplicableCheck").addEventListener("change", applyControlsAndRender);
   document.getElementById("genderSelect").addEventListener("change", applyControlsAndRender);
   document.getElementById("trackTypeSelect").addEventListener("change", applyControlsAndRender);
+  document.getElementById("universitySearchInput").addEventListener("input", applyControlsAndRender);
+  document.getElementById("universitySearchList").innerHTML = [...new Set(recommendResults.map(r => r.university))]
+    .sort().map(name => `<option value="${name}"></option>`).join("");
 
   // 모바일에서 정렬/성별/실기종목 칩만으로도 영역이 꽉 차서, 자주 안 쓰는 체크박스
   // 2개(학생부 미반영 숨기기/서류전형만 보기)는 기능을 없애는 대신 "필터 더보기"

@@ -1,10 +1,62 @@
 [
   {
-    "university": "용인대학교", "campus": "용인", "department": "미디어디자인학과", "track_name": "일반학생전형",
-    "official_facts": {"admission_year": 2027, "quota": 25, "ratio": "학교생활기록부 30% + 실기 70%", "is_staged": false, "csat_minimum_required": false, "school_record_status": "required", "exam_type_name": "기초디자인", "allowed_materials": [], "paper_size": null, "time_limit_minutes": null, "exam_date": null, "result_date": null, "source_url": "https://ipsi.yongin.ac.kr/ipsi/guide/susi/mo_susi_20260623_1020.pdf", "source_page": 4, "source_page_note": "PDF 뷰어 4쪽(인쇄 1쪽) 일반학생전형 모집인원 행, 뷰어 13쪽(인쇄 10쪽) 반영비율, 뷰어 27쪽(인쇄 24쪽) 실기요강을 대조.", "data_sources": [{"document_name": "2027학년도 용인대학교 수시 신입생 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_yongin_susi.pdf"}]}
+    "university": "용인대학교",
+    "campus": "용인",
+    "department": "미디어디자인학과",
+    "track_name": "일반학생전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 25,
+      "ratio": "학교생활기록부 30% + 실기 70%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "기초디자인",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": "2026-10-02~2026-10-05",
+      "result_date": "2026-10-16 15:00 이후",
+      "application_period": {"start": "2026-09-07", "end": "2026-09-11"},
+      "source_url": "https://ipsi.yongin.ac.kr/ipsi/guide/susi/mo_susi_20260623_1020.pdf",
+      "source_page": 4,
+      "source_page_note": "모집인원: PDF 뷰어 4쪽/인쇄 1쪽. 반영비율: 뷰어 21쪽/인쇄 18쪽. 일정: 뷰어 7쪽/인쇄 4쪽. 학생부 반영표는 뷰어 46~47쪽(인쇄 43~44쪽)에 있으나, '학년별 3과목만 반영'이라는 선별 규칙이 현재 계산 엔진으로 정확히 재현 안 되어(연도별 상위 N과목 선택 로직 없음) school_record_rule은 보류함 - 근사 추정으로 남김. 참고용 등급환산(150점 만점): 1등급150/2=142.5/3=135/4=127.5/5=120/6=112.5/7=105/8=97.5/9=0.",
+      "data_sources": [
+        {
+          "document_name": "2027학년도 용인대학교 수시 신입생 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_yongin_susi.pdf"
+        }
+      ]
+    }
   },
   {
-    "university": "용인대학교", "campus": "용인", "department": "회화학과", "track_name": "일반학생전형",
-    "official_facts": {"admission_year": 2027, "quota": 10, "ratio": "학교생활기록부 30% + 실기 70%", "is_staged": false, "csat_minimum_required": false, "school_record_status": "required", "exam_type_name": "인물화(사진 보고 사실적으로 그리기)", "allowed_materials": ["유화를 제외한 재료", "이젤"], "paper_size": "A4 크기", "time_limit_minutes": null, "exam_date": null, "result_date": null, "source_url": "https://ipsi.yongin.ac.kr/ipsi/guide/susi/mo_susi_20260623_1020.pdf", "source_page": 4, "source_page_note": "PDF 뷰어 4쪽(인쇄 1쪽) 일반학생전형 모집인원 행, 뷰어 13쪽(인쇄 10쪽) 반영비율, 뷰어 27쪽(인쇄 24쪽) 실기요강을 대조.", "data_sources": [{"document_name": "2027학년도 용인대학교 수시 신입생 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_yongin_susi.pdf"}]}
+    "university": "용인대학교",
+    "campus": "용인",
+    "department": "회화학과",
+    "track_name": "일반학생전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 10,
+      "ratio": "학교생활기록부 30% + 실기 70%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "인물화(사진 보고 사실적으로 그리기)",
+      "allowed_materials": ["유화를 제외한 재료", "이젤"],
+      "paper_size": "A4 크기",
+      "time_limit_minutes": null,
+      "exam_date": "2026-10-02~2026-10-05",
+      "result_date": "2026-10-16 15:00 이후",
+      "application_period": {"start": "2026-09-07", "end": "2026-09-11"},
+      "source_url": "https://ipsi.yongin.ac.kr/ipsi/guide/susi/mo_susi_20260623_1020.pdf",
+      "source_page": 4,
+      "source_page_note": "모집인원: PDF 뷰어 4쪽/인쇄 1쪽. 반영비율: 뷰어 21쪽/인쇄 18쪽. 일정: 뷰어 7쪽/인쇄 4쪽. 학생부 반영표는 뷰어 46~47쪽(인쇄 43~44쪽)에 있으나, '학년별 3과목만 반영'이라는 선별 규칙이 현재 계산 엔진으로 정확히 재현 안 되어(연도별 상위 N과목 선택 로직 없음) school_record_rule은 보류함 - 근사 추정으로 남김. 참고용 등급환산(150점 만점): 1등급150/2=142.5/3=135/4=127.5/5=120/6=112.5/7=105/8=97.5/9=0.",
+      "data_sources": [
+        {
+          "document_name": "2027학년도 용인대학교 수시 신입생 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_yongin_susi.pdf"
+        }
+      ]
+    }
   }
 ]
