@@ -593,6 +593,88 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
             "breakdown": details,
         }
 
+    if mode == "subject_group_band_lookup":
+        # 인천대 방식: 교과군별로 먼저 원 석차등급을 이수단위 가중평균 낸 뒤(예: 국어 2.07),
+        # 그 "평균값"을 학교 고유 구간표(band_table, 예: 2.00~2.24 -> 347점)에서 조회해
+        # 교과군 점수를 구하고, 교과군 비중(subject_groups)만큼 곱해 합산한다.
+        # subject_group_weighted와 다른 점: 그 모드는 "과목별로 먼저 환산 -> 평균"인데
+        # 반해, 이 모드는 "원 등급을 먼저 평균 -> 그 평균을 한 번만 환산"한다 - 순서가
+        # 바뀌면 결과가 달라지는 비선형 구간표라 별도 모드로 분리했다(2027 인천대
+        # 모집요강 39·53·54쪽 산출예시로 검증한 방식).
+        subject_groups = rule.get("subject_groups") or {}
+        bands = sorted(rule.get("band_table") or [], key=lambda b: b["min"])
+        no_course_grade = rule.get("no_course_grade", 9)  # 반영과목이 없으면 최저등급(9등급) 반영
+
+        def _band_score(raw_avg: float) -> Optional[float]:
+            for b in bands:
+                if b["min"] <= raw_avg <= b["max"]:
+                    return b["score"]
+            return None
+
+        total = 0.0
+        matched = 0
+        details = []
+        raw_avgs_weighted = []
+        for subject, weight_pct in subject_groups.items():
+            items = [
+                (g.get("grade"), g.get("credit") or 1)
+                for g in grades
+                if not g.get("career_elective") and g.get("subject_group") == subject and g.get("grade") is not None
+            ]
+            if items:
+                raw_avg = _raw_grade_avg([(c, g) for g, c in items])
+                matched += len(items)
+            else:
+                raw_avg = float(no_course_grade)  # 원문 규정: 반영과목이 하나도 없는 교과군은 최저등급 처리
+            score = _band_score(raw_avg) if raw_avg is not None else None
+            if score is None:
+                continue
+            total += score * weight_pct / 100.0
+            raw_avgs_weighted.append((raw_avg, weight_pct))
+            details.append({"subject_group": subject, "raw_grade_average": raw_avg, "score": score, "group_weight_pct": weight_pct})
+        if matched == 0:
+            return None
+        band_max = max((b["score"] for b in bands), default=None)
+        raw_grade_average = _weighted_avg(raw_avgs_weighted) if raw_avgs_weighted else None
+        return {
+            "raw_score": total, "max_score": band_max, "matched_subject_count": matched,
+            "raw_grade_average": round(raw_grade_average, 2) if raw_grade_average is not None else None,
+            "breakdown": details,
+        }
+
+    if mode == "top_n_per_year_simple_average":
+        # 용인대 방식: 학년(1~3)마다 반영교과 중 성적이 좋은 상위 N과목만 골라(전체
+        # 학년 통틀어 최대 N x 3과목), 이수단위 가중치 없이 그 환산점수들을 단순평균한다
+        # (다른 모드는 전부 이수단위 가중평균인데 이 학교만 단순평균 - 원문 46~47쪽 확인).
+        # grades 항목에 "year": 1|2|3 이 있어야 학년별로 묶을 수 있다.
+        subjects = set(rule.get("subjects") or [])
+        top_n = rule.get("top_n_per_year", 3)
+        by_year: Dict[Any, List[Dict[str, Any]]] = {}
+        for g in grades:
+            if g.get("career_elective"):
+                continue
+            if subjects and g.get("subject_group") not in subjects:
+                continue
+            s = _score_for_grade(g.get("grade"))
+            if s is None:
+                continue
+            by_year.setdefault(g.get("year"), []).append({**g, "score": s})
+        pool = []
+        details = []
+        for _year, items in by_year.items():
+            items = sorted(items, key=lambda g: -g["score"])[:top_n]
+            pool.extend(items)
+        if not pool:
+            return None
+        avg = sum(g["score"] for g in pool) / len(pool)
+        raw_pool = [(1, g.get("grade")) for g in pool]  # 단순평균이므로 이수단위 대신 가중치 1로 통일
+        for g in pool:
+            details.append({"subject_group": g.get("subject_group"), "grade": g.get("grade"), "year": g.get("year"), "score": g["score"]})
+        return {
+            "raw_score": avg, "max_score": max_score, "matched_subject_count": len(pool),
+            "raw_grade_average": _raw_grade_avg(raw_pool), "breakdown": details,
+        }
+
     return None
 
 
@@ -622,6 +704,13 @@ def _describe_reflected_subjects(rule: Dict[str, Any]) -> str:
     if mode == "common_and_career_split_scaled":
         subs = rule.get("subjects") or []
         return "·".join(subs) + " + 진로선택과목 반영" if subs else "전 교과목 반영"
+    if mode == "subject_group_band_lookup":
+        groups = rule.get("subject_groups") or {}
+        return "·".join(groups.keys()) + " 교과군별 반영(구간표 조회)" if groups else "교과군별 구간표 반영"
+    if mode == "top_n_per_year_simple_average":
+        subs = rule.get("subjects") or []
+        top_n = rule.get("top_n_per_year", 3)
+        return (f"{'·'.join(subs)} 중 학년별 상위 {top_n}과목 단순평균" if subs else f"학년별 상위 {top_n}과목 단순평균")
     return "학교 고유 반영 방식"
 
 
