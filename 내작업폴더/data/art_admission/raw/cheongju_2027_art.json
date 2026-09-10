@@ -1,0 +1,26 @@
+[
+  {
+    "university": "청주대학교", "campus": "청주", "department": "산업디자인학과", "track_name": "예체능전형",
+    "official_facts": {"admission_year": 2027, "quota": 36, "ratio": "고등학교생활기록부(교과성적) 30% + 실기 70%", "is_staged": false, "csat_minimum_required": false, "school_record_status": "required", "exam_type_name": "발상과표현, 기초디자인, 상황표현 중 택 1", "allowed_materials": ["포스터물감", "수채화물감", "색연필", "콘테", "마카", "파스텔", "정착액"], "paper_size": "켄트지 4절", "time_limit_minutes": 240, "exam_date": "2026-10-19", "result_date": "2026-11-17", "source_url": "https://intl.cju.ac.kr/DATA/download/ipsi/cts783_file02_2026.pdf", "source_page": 4, "source_page_note": "모집인원: PDF 4쪽 예체능 열, 반영비율: 21쪽, 실기과제·일자: 22쪽. 산업디자인학과 행 대조.", "data_sources": [{"document_name": "2027학년도 청주대학교 수시모집 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf"}]}
+  },
+  {
+    "university": "청주대학교", "campus": "청주", "department": "시각디자인학과", "track_name": "예체능전형",
+    "official_facts": {"admission_year": 2027, "quota": 35, "ratio": "고등학교생활기록부(교과성적) 30% + 실기 70%", "is_staged": false, "csat_minimum_required": false, "school_record_status": "required", "exam_type_name": "발상과표현, 기초디자인 중 택 1", "allowed_materials": ["포스터물감", "수채화물감", "색연필", "콘테", "마카", "파스텔", "정착액"], "paper_size": "켄트지 4절", "time_limit_minutes": 240, "exam_date": "2026-10-20", "result_date": "2026-11-17", "source_url": "https://intl.cju.ac.kr/DATA/download/ipsi/cts783_file02_2026.pdf", "source_page": 4, "source_page_note": "모집인원: PDF 4쪽 예체능 열, 반영비율: 21쪽, 실기과제·일자: 22쪽. 시각디자인학과 행 대조.", "data_sources": [{"document_name": "2027학년도 청주대학교 수시모집 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf"}]}
+  },
+  {
+    "university": "청주대학교", "campus": "청주", "department": "공예디자인학과", "track_name": "예체능전형",
+    "official_facts": {"admission_year": 2027, "quota": 27, "ratio": "고등학교생활기록부(교과성적) 30% + 실기 70%", "is_staged": false, "csat_minimum_required": false, "school_record_status": "required", "exam_type_name": "발상과표현, 기초디자인 중 택 1", "allowed_materials": ["포스터물감", "수채화물감", "색연필", "콘테", "마카", "파스텔", "정착액"], "paper_size": "켄트지 4절", "time_limit_minutes": 240, "exam_date": "2026-10-21", "result_date": "2026-11-17", "source_url": "https://intl.cju.ac.kr/DATA/download/ipsi/cts783_file02_2026.pdf", "source_page": 4, "source_page_note": "모집인원: PDF 4쪽 예체능 열, 반영비율: 21쪽, 실기과제·일자: 22쪽. 공예디자인학과 행 대조.", "data_sources": [{"document_name": "2027학년도 청주대학교 수시모집 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf"}]}
+  },
+  {
+    "university": "청주대학교", "campus": "청주", "department": "아트앤패션디자인학과", "track_name": "예체능전형",
+    "official_facts": {"admission_year": 2027, "quota": 35, "ratio": "고등학교생활기록부(교과성적) 30% + 실기 70%", "is_staged": false, "csat_minimum_required": false, "school_record_status": "required", "exam_type_name": "발상과표현, 기초디자인 중 택 1", "allowed_materials": ["포스터물감", "수채화물감", "색연필", "콘테", "마카", "파스텔", "정착액"], "paper_size": "켄트지 4절", "time_limit_minutes": 240, "exam_date": "2026-10-22", "result_date": "2026-11-17", "source_url": "https://intl.cju.ac.kr/DATA/download/ipsi/cts783_file02_2026.pdf", "source_page": 4, "source_page_note": "모집인원: PDF 4쪽 예체능 열, 반영비율: 21쪽, 실기과제·일자: 22쪽. 아트앤패션디자인학과 행 대조.", "data_sources": [{"document_name": "2027학년도 청주대학교 수시모집 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf"}]}
+  },
+  {
+    "university": "청주대학교", "campus": "청주", "department": "디지털미디어디자인학과", "track_name": "예체능전형",
+    "official_facts": {"admission_year": 2027, "quota": 30, "ratio": "고등학교생활기록부(교과성적) 30% + 실기 70%", "is_staged": false, "csat_minimum_required": false, "school_record_status": "required", "exam_type_name": "발상과표현, 기초디자인, 상황표현 중 택 1", "allowed_materials": ["포스터물감", "수채화물감", "색연필", "콘테", "마카", "파스텔", "정착액"], "paper_size": "켄트지 4절", "time_limit_minutes": 240, "exam_date": "2026-10-23", "result_date": "2026-11-17", "source_url": "https://intl.cju.ac.kr/DATA/download/ipsi/cts783_file02_2026.pdf", "source_page": 4, "source_page_note": "모집인원: PDF 4쪽 예체능 열, 반영비율: 21쪽, 실기과제·일자: 22쪽. 디지털미디어디자인학과 행 대조.", "data_sources": [{"document_name": "2027학년도 청주대학교 수시모집 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf"}]}
+  },
+  {
+    "university": "청주대학교", "campus": "청주", "department": "만화애니메이션학과", "track_name": "예체능전형",
+    "official_facts": {"admission_year": 2027, "quota": 44, "ratio": "고등학교생활기록부(교과성적) 20% + 실기 80%", "is_staged": false, "csat_minimum_required": false, "school_record_status": "required", "exam_type_name": "칸만화, 상황표현 중 택 1", "allowed_materials": ["유화를 제외한 모든 채색 도구"], "paper_size": null, "time_limit_minutes": null, "exam_date": "2026-10-26~2026-10-27", "result_date": "2026-11-17", "source_url": "https://intl.cju.ac.kr/DATA/download/ipsi/cts783_file02_2026.pdf", "source_page": 4, "source_page_note": "모집인원: PDF 4쪽 예체능 열, 반영비율: 21쪽, 실기과제·일자: 22쪽. 만화애니메이션학과 행 대조.", "data_sources": [{"document_name": "2027학년도 청주대학교 수시모집 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf"}]}
+  }
+]

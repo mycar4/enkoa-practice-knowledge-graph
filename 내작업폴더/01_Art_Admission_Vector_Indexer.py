@@ -59,6 +59,12 @@ INDEX_TARGETS = [
     ("서울대학교", "2027_snu_susi.pdf", 2027),
     ("고려대학교", "2027_korea_susi.pdf", 2027),
     ("한양대학교", "2027_hanyang_seoul_susi.pdf", 2027),
+    ("인천대학교", "2027_incheon_susi.pdf", 2027),
+    ("국립공주대학교", "2027_kongju_susi.pdf", 2027),
+    ("청주대학교", "2027_cheongju_susi.pdf", 2027),
+    # 인천가톨릭대학교는 공식 요강이 PDF가 아닌 HWP로만 제공되어(2027_incheon_catholic_susi.hwp)
+    # 현재 pypdf 기반 인덱서로는 텍스트 추출이 불가능하다 - HWP 파서(pyhwp 등) 도입 전까지는
+    # 구조화 사실(Neo4j Track)만 적재되고 "원문 발췌"/하이브리드 검색 대상에서는 빠진다.
 ]
 
 CHUNK_CHAR_SIZE = 1500  # 대략 400~500 토큰 - 임베딩 품질/개수 균형

@@ -1,0 +1,60 @@
+[
+  {
+    "university": "인천가톨릭대학교",
+    "campus": "송도국제캠퍼스",
+    "department": "조형예술학과",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 17,
+      "ratio": "학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "인물수채화, 인물모델링",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": null,
+      "source_url": "https://admission.iccu.ac.kr/bbs/board.php?bo_table=notice&wr_id=447",
+      "source_page": null,
+      "source_page_note": "공식 HWP 수시모집요강의 실기 안내와 대학어디가 2027 전형표를 대조. 실기우수자/조형예술학과 일괄선발 17명 행.",
+      "data_sources": [
+        {"document_name": "2027학년도 인천가톨릭대학교 수시모집요강(2026-07-10 수정)", "local_file": "data/art_admission_raw/prospectus/2027_incheon_catholic_susi.hwp"},
+        {"document_name": "대학어디가 2027 전형평가기준 및 결과공개", "source_url": "https://www.adiga.kr/ucp/uvt/uni/univDetailSelection.do?menuId=PCUVTINF2000&searchSyr=2027&unvCd=0000167"}
+      ]
+    }
+  },
+  {
+    "university": "인천가톨릭대학교",
+    "campus": "송도국제캠퍼스",
+    "department": "융합디자인학과",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 22,
+      "ratio": "1단계 학생부교과 100%(5배수) → 2단계 학생부교과 20% + 실기 80%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "기초디자인",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": null,
+      "source_url": "https://admission.iccu.ac.kr/bbs/board.php?bo_table=notice&wr_id=447",
+      "source_page": null,
+      "source_page_note": "공식 HWP 수시모집요강의 실기 안내와 대학어디가 2027 전형표를 대조. 실기우수자/융합디자인학과 1단계 5배수·2단계 22명 행.",
+      "stages": [
+        {"description": "학생부교과", "ratio_desc": "100%, 모집인원의 5배수", "multiplier": 5},
+        {"description": "학생부교과 및 실기", "ratio_desc": "학생부교과 20% + 실기 80%", "multiplier": null}
+      ],
+      "data_sources": [
+        {"document_name": "2027학년도 인천가톨릭대학교 수시모집요강(2026-07-10 수정)", "local_file": "data/art_admission_raw/prospectus/2027_incheon_catholic_susi.hwp"},
+        {"document_name": "대학어디가 2027 전형평가기준 및 결과공개", "source_url": "https://www.adiga.kr/ucp/uvt/uni/univDetailSelection.do?menuId=PCUVTINF2000&searchSyr=2027&unvCd=0000167"}
+      ]
+    }
+  }
+]

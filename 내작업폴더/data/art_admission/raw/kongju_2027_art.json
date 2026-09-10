@@ -1,0 +1,122 @@
+[
+  {
+    "university": "국립공주대학교",
+    "campus": "공주",
+    "department": "게임디자인학과",
+    "track_name": "실기/실적 일반전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 12,
+      "ratio": "학생부 30% + 실기 70%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "발상과 표현",
+      "allowed_materials": ["자유채색 재료"],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "exam_date": null,
+      "result_date": null,
+      "source_url": "https://ipsi.kongju.ac.kr/attach/44a038e6d069249324e35d9e6f1998b6/13055e35ba7465cb478c5b4be490c5a8",
+      "source_page": 59,
+      "source_page_note": "모집인원: PDF 59쪽, 반영비율: PDF 61쪽, 실기과제: PDF 62·65쪽. 실기/실적 일반전형/게임디자인학과 행 대조.",
+      "data_sources": [{"document_name": "국립공주대학교 2027학년도 수시 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf"}]
+    }
+  },
+  {
+    "university": "국립공주대학교",
+    "campus": "공주",
+    "department": "가구리빙디자인학과",
+    "track_name": "실기/실적 일반전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 17,
+      "ratio": "학생부 30% + 실기 70%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "기초디자인, 발상과 표현, 기초조형 중 택 1",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": null,
+      "source_url": "https://ipsi.kongju.ac.kr/attach/44a038e6d069249324e35d9e6f1998b6/13055e35ba7465cb478c5b4be490c5a8",
+      "source_page": 59,
+      "source_page_note": "모집인원: PDF 59쪽, 반영비율: PDF 61쪽, 실기유형: PDF 62쪽. 실기/실적 일반전형/가구리빙디자인학과 행 대조.",
+      "data_sources": [{"document_name": "국립공주대학교 2027학년도 수시 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf"}]
+    }
+  },
+  {
+    "university": "국립공주대학교",
+    "campus": "공주",
+    "department": "도자문화융합디자인학과",
+    "track_name": "실기/실적 일반전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 17,
+      "ratio": "학생부 30% + 실기 70%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "기초디자인, 발상과 표현, 점토조형, 물레성형 중 택 1",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": null,
+      "source_url": "https://ipsi.kongju.ac.kr/attach/44a038e6d069249324e35d9e6f1998b6/13055e35ba7465cb478c5b4be490c5a8",
+      "source_page": 59,
+      "source_page_note": "모집인원: PDF 59쪽, 반영비율: PDF 61쪽, 실기유형: PDF 62쪽. 실기/실적 일반전형/도자문화융합디자인학과 행 대조.",
+      "data_sources": [{"document_name": "국립공주대학교 2027학년도 수시 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf"}]
+    }
+  },
+  {
+    "university": "국립공주대학교",
+    "campus": "공주",
+    "department": "주얼리·금속디자인학과",
+    "track_name": "실기/실적 일반전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 17,
+      "ratio": "학생부 30% + 실기 70%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "기초디자인, 발상과 표현 중 택 1",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": null,
+      "source_url": "https://ipsi.kongju.ac.kr/attach/44a038e6d069249324e35d9e6f1998b6/13055e35ba7465cb478c5b4be490c5a8",
+      "source_page": 59,
+      "source_page_note": "모집인원: PDF 59쪽, 반영비율: PDF 61쪽, 실기유형: PDF 62쪽. 실기/실적 일반전형/주얼리·금속디자인학과 행 대조.",
+      "data_sources": [{"document_name": "국립공주대학교 2027학년도 수시 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf"}]
+    }
+  },
+  {
+    "university": "국립공주대학교",
+    "campus": "공주",
+    "department": "만화애니메이션학부",
+    "track_name": "실기/실적 일반전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 35,
+      "ratio": "학생부 30% + 실기 70%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "상황 표현, 칸 만화 중 택 1",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": 240,
+      "exam_date": null,
+      "result_date": null,
+      "source_url": "https://ipsi.kongju.ac.kr/attach/44a038e6d069249324e35d9e6f1998b6/13055e35ba7465cb478c5b4be490c5a8",
+      "source_page": 59,
+      "source_page_note": "모집인원: PDF 59쪽, 반영비율: PDF 61쪽, 실기유형·시간: PDF 62·68쪽. 실기/실적 일반전형/만화애니메이션학부 행 대조.",
+      "data_sources": [{"document_name": "국립공주대학교 2027학년도 수시 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf"}]
+    }
+  }
+]

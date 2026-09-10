@@ -1,0 +1,10 @@
+[
+  {
+    "university": "용인대학교", "campus": "용인", "department": "미디어디자인학과", "track_name": "일반학생전형",
+    "official_facts": {"admission_year": 2027, "quota": 25, "ratio": "학교생활기록부 30% + 실기 70%", "is_staged": false, "csat_minimum_required": false, "school_record_status": "required", "exam_type_name": "기초디자인", "allowed_materials": [], "paper_size": null, "time_limit_minutes": null, "exam_date": null, "result_date": null, "source_url": "https://ipsi.yongin.ac.kr/ipsi/guide/susi/mo_susi_20260623_1020.pdf", "source_page": 4, "source_page_note": "PDF 뷰어 4쪽(인쇄 1쪽) 일반학생전형 모집인원 행, 뷰어 13쪽(인쇄 10쪽) 반영비율, 뷰어 27쪽(인쇄 24쪽) 실기요강을 대조.", "data_sources": [{"document_name": "2027학년도 용인대학교 수시 신입생 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_yongin_susi.pdf"}]}
+  },
+  {
+    "university": "용인대학교", "campus": "용인", "department": "회화학과", "track_name": "일반학생전형",
+    "official_facts": {"admission_year": 2027, "quota": 10, "ratio": "학교생활기록부 30% + 실기 70%", "is_staged": false, "csat_minimum_required": false, "school_record_status": "required", "exam_type_name": "인물화(사진 보고 사실적으로 그리기)", "allowed_materials": ["유화를 제외한 재료", "이젤"], "paper_size": "A4 크기", "time_limit_minutes": null, "exam_date": null, "result_date": null, "source_url": "https://ipsi.yongin.ac.kr/ipsi/guide/susi/mo_susi_20260623_1020.pdf", "source_page": 4, "source_page_note": "PDF 뷰어 4쪽(인쇄 1쪽) 일반학생전형 모집인원 행, 뷰어 13쪽(인쇄 10쪽) 반영비율, 뷰어 27쪽(인쇄 24쪽) 실기요강을 대조.", "data_sources": [{"document_name": "2027학년도 용인대학교 수시 신입생 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_yongin_susi.pdf"}]}
+  }
+]

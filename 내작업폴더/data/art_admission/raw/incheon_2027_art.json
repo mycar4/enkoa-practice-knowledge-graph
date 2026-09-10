@@ -1,0 +1,78 @@
+[
+  {
+    "university": "인천대학교",
+    "campus": "인천",
+    "department": "조형예술학부 한국화전공",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 14,
+      "ratio": "학생부교과 30% + 실기 70%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "수묵담채",
+      "allowed_materials": [],
+      "paper_size": "정물: 화선지 반절, 인물: 화선지 2/3절",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-10-16",
+      "result_date": null,
+      "source_url": "https://admission.inu.ac.kr/file/download.do?ofn=2027%ED%95%99%EB%85%84%EB%8F%84+%EC%9D%B8%EC%B2%9C%EB%8C%80%ED%95%99%EA%B5%90+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95+%281%29.pdf&sfn=20260826092629801_2027%ED%95%99%EB%85%84%EB%8F%84+%EC%9D%B8%EC%B2%9C%EB%8C%80%ED%95%99%EA%B5%90+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95+%281%29.pdf",
+      "source_page": 38,
+      "source_page_note": "모집인원·전형방법: PDF 38쪽, 실기과제·일자: PDF 40쪽. 실기우수자전형/한국화전공 행 대조.",
+      "data_sources": [{"document_name": "2027학년도 인천대학교 수시모집요강", "local_file": "data/art_admission_raw/prospectus/2027_incheon_susi.pdf"}]
+    }
+  },
+  {
+    "university": "인천대학교",
+    "campus": "인천",
+    "department": "조형예술학부 서양화전공",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 15,
+      "ratio": "학생부교과 30% + 실기 70%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "수채화 또는 드로잉 인물화",
+      "allowed_materials": [],
+      "paper_size": "켄트지 3절",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-10-15",
+      "result_date": null,
+      "source_url": "https://admission.inu.ac.kr/file/download.do?ofn=2027%ED%95%99%EB%85%84%EB%8F%84+%EC%9D%B8%EC%B2%9C%EB%8C%80%ED%95%99%EA%B5%90+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95+%281%29.pdf&sfn=20260826092629801_2027%ED%95%99%EB%85%84%EB%8F%84+%EC%9D%B8%EC%B2%9C%EB%8C%80%ED%95%99%EA%B5%90+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95+%281%29.pdf",
+      "source_page": 38,
+      "source_page_note": "모집인원·전형방법: PDF 38쪽, 실기과제·일자: PDF 40쪽. 실기우수자전형/서양화전공 행 대조.",
+      "data_sources": [{"document_name": "2027학년도 인천대학교 수시모집요강", "local_file": "data/art_admission_raw/prospectus/2027_incheon_susi.pdf"}]
+    }
+  },
+  {
+    "university": "인천대학교",
+    "campus": "인천",
+    "department": "디자인학부",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 33,
+      "ratio": "1단계 학생부교과 100%(6배수) → 2단계 학생부교과 30% + 실기 70%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "기초디자인",
+      "allowed_materials": ["수채화물감", "포스터칼라", "아크릴물감", "마카", "색연필", "파스텔"],
+      "paper_size": "켄트지 3절",
+      "time_limit_minutes": 300,
+      "exam_date": "2026-10-14",
+      "result_date": null,
+      "source_url": "https://admission.inu.ac.kr/file/download.do?ofn=2027%ED%95%99%EB%85%84%EB%8F%84+%EC%9D%B8%EC%B2%9C%EB%8C%80%ED%95%99%EA%B5%90+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95+%281%29.pdf&sfn=20260826092629801_2027%ED%95%99%EB%85%84%EB%8F%84+%EC%9D%B8%EC%B2%9C%EB%8C%80%ED%95%99%EA%B5%90+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95+%281%29.pdf",
+      "source_page": 38,
+      "source_page_note": "모집인원·전형방법: PDF 38쪽, 실기과제·일자: PDF 40~41쪽. 실기우수자전형/디자인학부 행 대조.",
+      "stages": [
+        {"description": "학생부교과", "ratio_desc": "100%, 모집인원의 6배수", "multiplier": 6},
+        {"description": "학생부교과 및 실기", "ratio_desc": "학생부교과 30% + 실기 70%", "multiplier": null}
+      ],
+      "data_sources": [{"document_name": "2027학년도 인천대학교 수시모집요강", "local_file": "data/art_admission_raw/prospectus/2027_incheon_susi.pdf"}]
+    }
+  }
+]
