@@ -30,19 +30,28 @@ DART-Trace(지배구조 서비스)와 완전히 별개인 신규 서비스입니
 문자열(`"2026-09-07 10:00~2026-09-11 18:00"`)로 넣으면 로더가 크래시한다. 시간은
 필요 없고 날짜만 start/end로 분리해서 넣을 것.
 
-### 학생부 반영공식: 엔진이 이해하는 6개 모드 중 하나로 맞출 것 — 없는 이름 지어내지 말 것
-계산 엔진(`services/art_admission_service.py`)은 아래 6개 `mode`만 이해한다:
+### 학생부 반영공식: 엔진이 이해하는 8개 모드 중 하나로 맞출 것 — 없는 이름 지어내지 말 것
+계산 엔진(`services/art_admission_service.py`)은 아래 **8개** `mode`만 이해한다(2026-09-10
+기준 최신 — 이 문서 이전 버전이나 다른 세션의 기억에 "6개"라고 남아있으면 그건 구버전이다):
 `simple_weighted_average`(지정/전체 교과 이수단위가중평균→배점표, top_n·학기별 옵션),
 `subject_group_weighted`(교과군별 반영비율 다름, 교과군별 가중평균 후 합산),
 `common_and_career_split_scaled`(공통·일반선택과 진로선택을 각각 다른 가중치로 합산),
 `choose_max_credit_subject`(여러 교과군 중 유리한 1개만 선택 반영),
 `all_subjects_plus_career_elective`(전 과목+진로선택을 한 풀로 가중평균),
-`year_weighted_band_lookup`(학년별 평균→학년가중합산→구간표 조회).
-**원문 공식이 이 6개 중 어디에도 안 맞으면 mode를 지어내지 말고 `school_record_rule`을
+`year_weighted_band_lookup`(학년별 평균→학년가중합산→구간표 조회),
+`subject_group_band_lookup`(교과군별로 먼저 이수단위가중평균한 원 석차등급을 구간표에서
+조회해 교과군 점수를 얻고 비중만큼 합산 — 인천대 사례),
+`top_n_per_year_simple_average`(학년별 상위 N과목만, 이수단위 가중치 없이 단순평균 후
+배점표 조회 — 용인대 사례).
+**원문 공식이 이 8개 중 어디에도 안 맞으면 mode를 지어내지 말고 `school_record_rule`을
 비워둔 채 `formula_note`에 원문 공식을 설명 텍스트로만 적을 것** — 실제로 없는 모드명
-("grade_conversion" 등)을 써서 계산이 조용히 실패하는 사고가 있었다. 새 모드 추가는
-Claude가 판단한다. "자세한 학생부 반영방법은 O쪽 참고" 문구가 있으면 그 페이지의 실제
-등급→점수 배점표까지 반드시 가져올 것 — 반영비율(%)만으로는 미완성이다.
+("grade_conversion" 등)을 써서 계산이 조용히 실패하는 사고가 있었다. **이미 `school_record_rule`이
+채워져 있고 `mode`가 위 8개 중 하나인 레코드를 "엔진이 지원 안 함"이라고 판단해 빈 값
+`{}`으로 되돌리지 말 것** — 실제로 인천대·용인대에서 이 사고가 발생해 검증까지 끝난 규칙이
+삭제된 적이 있다(2026-09-10, 복구 커밋 `6f3077f`). 모드 지원 여부가 불확실하면 지우지 말고
+먼저 Claude에게 확인할 것. 새 모드 추가는 Claude가 판단한다. "자세한 학생부 반영방법은
+O쪽 참고" 문구가 있으면 그 페이지의 실제 등급→점수 배점표까지 반드시 가져올 것 —
+반영비율(%)만으로는 미완성이다.
 
 ### `school_record_status` 정확히 구분
 전형이 **정성평가**(서류평가/면접을 다수 입학사정관이 종합적으로 평가, 등급→점수
@@ -167,7 +176,7 @@ Claude가 판단한다. "자세한 학생부 반영방법은 O쪽 참고" 문구
 4. `python 내작업폴더/00_Art_Admission_Graph_Loader.py` 드라이런 → 리젝트 0건 확인 → `--commit`.
 5. `python 내작업폴더/01_Art_Admission_Vector_Indexer.py --university <신규학교> --commit`.
 6. 배치가 끝나면(학교마다 매번 X) `python 내작업폴더/02_Art_Admission_Entity_Linker.py --commit` 1회 실행(전체 재구성형이므로).
-7. `python 내작업폴더/tests/ci_quality_gate.py` 실행. 새 학교의 `school_record_rule.mode`가 `services/art_admission_service.py`의 기존 6종 모드에 해당 안 되면, 그때만 `calculate_school_record_score`에 모드 추가 검토(코어 코드 변경은 이 경우에만 발생).
+7. `python 내작업폴더/tests/ci_quality_gate.py` 실행. 새 학교의 `school_record_rule.mode`가 `services/art_admission_service.py`의 기존 8종 모드(위 "학생부 반영공식" 절 참고)에 해당 안 되면, 그때만 `calculate_school_record_score`에 모드 추가 검토(코어 코드 변경은 이 경우에만 발생).
 8. API를 로컬로 띄워 `/universities`, `/school-record-coverage`, `/qa` 샘플 질의로 스팟 체크.
 9. git add/commit(+push). **데이터 파일만 바뀐 배치는 API 재배포가 필요 없다** — API가 Neo4j를 실시간 조회하므로. `services/art_admission_service.py`를 실제로 고친 경우에만 GitHub Actions가 자동배포한다.
 10. (선택) `내작업폴더/docs/ARTREADY_PROJECT_PROGRESS_BOARD_v1.0.md`의 대학 수 등 오래된 수치 갱신.
