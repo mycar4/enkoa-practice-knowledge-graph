@@ -35,7 +35,7 @@
           {"min": 7.00, "max": 7.99, "score": 87.00},
           {"min": 8.00, "max": 9.00, "score": 70.00}
         ],
-        "formula_note": "교과군(국어40%/영어30%/사회30%)별로 반영과목 원 석차등급을 이수단위 가중평균한 뒤(예: 2.07), 그 평균값을 조형예술학부·디자인학부 전용 구간표(150점 만점, 2027 모집요강 p.53)에서 조회해 교과군 점수를 얻고 비중만큼 합산. 산출예시(p.54)로 검증됨. 반영과목이 하나도 없는 교과군은 최저등급(9등급)으로 처리.",
+        "formula_note": "교과군(국어40%/영어30%/사회30%)별로 반영과목 원 석차등급을 이수단위 가중평균한 뒤(예: 2.07), 그 평균값을 조형예술학부·디자인학부 전용 구간표(150점 만점, 2027 모집요강 p.53)에서 조회해 교과군 점수를 얻고 비중만큼 합산. 산출예시(p.54)로 검증됨. 반영과목이 하나도 없는 교과군은 최저등급(9등급)으로 처리. (2026-09-10: 엔진에 subject_group_band_lookup 모드 신규 추가해 지원 - 브리프의 '6개 모드' 목록은 구버전이니 최신 8개 모드 목록 참고)",
         "rule_source_page": "39, 53-54"
       },
       "school_record_status": "required",
@@ -45,11 +45,20 @@
       "time_limit_minutes": 240,
       "exam_date": "2026-10-16",
       "result_date": "2026-12-18",
-      "application_period": {"start": "2026-09-07", "end": "2026-09-11"},
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
       "source_url": "https://admission.inu.ac.kr/file/download.do?ofn=2027%ED%95%99%EB%85%84%EB%8F%84+%EC%9D%B8%EC%B2%9C%EB%8C%80%ED%95%99%EA%B5%90+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95+%281%29.pdf&sfn=20260826092629801_2027%ED%95%99%EB%85%84%EB%8F%84+%EC%9D%B8%EC%B2%9C%EB%8C%80%ED%95%99%EA%B5%90+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95+%281%29.pdf",
       "source_page": 38,
       "source_page_note": "모집인원·전형방법: PDF 38쪽, 실기과제·일자: PDF 40쪽. 실기우수자전형/한국화전공 행 대조.",
-      "data_sources": [{"document_name": "2027학년도 인천대학교 수시모집요강", "local_file": "data/art_admission_raw/prospectus/2027_incheon_susi.pdf"}]
+      "data_sources": [
+        {
+          "document_name": "2027학년도 인천대학교 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_incheon_susi.pdf"
+        }
+      ],
+      "formula_note": "원문 p.52-53: 반영교과군별 이수단위 가중 석차등급을 등급구간 환산표로 변환하고, 교과군 반영비율 및 이수단위 가산점을 합산한다. 현 엔진의 6개 mode로는 ‘교과군별 구간 환산표 + 가산점’을 정확히 표현할 수 없어 자동 계산 규칙은 비워 둔다."
     }
   },
   {
@@ -88,7 +97,7 @@
           {"min": 7.00, "max": 7.99, "score": 87.00},
           {"min": 8.00, "max": 9.00, "score": 70.00}
         ],
-        "formula_note": "교과군(국어40%/영어30%/사회30%)별로 반영과목 원 석차등급을 이수단위 가중평균한 뒤(예: 2.07), 그 평균값을 조형예술학부·디자인학부 전용 구간표(150점 만점, 2027 모집요강 p.53)에서 조회해 교과군 점수를 얻고 비중만큼 합산. 산출예시(p.54)로 검증됨. 반영과목이 하나도 없는 교과군은 최저등급(9등급)으로 처리.",
+        "formula_note": "교과군(국어40%/영어30%/사회30%)별로 반영과목 원 석차등급을 이수단위 가중평균한 뒤(예: 2.07), 그 평균값을 조형예술학부·디자인학부 전용 구간표(150점 만점, 2027 모집요강 p.53)에서 조회해 교과군 점수를 얻고 비중만큼 합산. 산출예시(p.54)로 검증됨. 반영과목이 하나도 없는 교과군은 최저등급(9등급)으로 처리. (2026-09-10: 엔진에 subject_group_band_lookup 모드 신규 추가해 지원 - 브리프의 '6개 모드' 목록은 구버전이니 최신 8개 모드 목록 참고)",
         "rule_source_page": "39, 53-54"
       },
       "school_record_status": "required",
@@ -98,11 +107,20 @@
       "time_limit_minutes": 240,
       "exam_date": "2026-10-15",
       "result_date": "2026-12-18",
-      "application_period": {"start": "2026-09-07", "end": "2026-09-11"},
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
       "source_url": "https://admission.inu.ac.kr/file/download.do?ofn=2027%ED%95%99%EB%85%84%EB%8F%84+%EC%9D%B8%EC%B2%9C%EB%8C%80%ED%95%99%EA%B5%90+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95+%281%29.pdf&sfn=20260826092629801_2027%ED%95%99%EB%85%84%EB%8F%84+%EC%9D%B8%EC%B2%9C%EB%8C%80%ED%95%99%EA%B5%90+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95+%281%29.pdf",
       "source_page": 38,
       "source_page_note": "모집인원·전형방법: PDF 38쪽, 실기과제·일자: PDF 40쪽. 실기우수자전형/서양화전공 행 대조.",
-      "data_sources": [{"document_name": "2027학년도 인천대학교 수시모집요강", "local_file": "data/art_admission_raw/prospectus/2027_incheon_susi.pdf"}]
+      "data_sources": [
+        {
+          "document_name": "2027학년도 인천대학교 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_incheon_susi.pdf"
+        }
+      ],
+      "formula_note": "원문 p.52-53: 반영교과군별 이수단위 가중 석차등급을 등급구간 환산표로 변환하고, 교과군 반영비율 및 이수단위 가산점을 합산한다. 현 엔진의 6개 mode로는 ‘교과군별 구간 환산표 + 가산점’을 정확히 표현할 수 없어 자동 계산 규칙은 비워 둔다."
     }
   },
   {
@@ -141,25 +159,49 @@
           {"min": 7.00, "max": 7.99, "score": 87.00},
           {"min": 8.00, "max": 9.00, "score": 70.00}
         ],
-        "formula_note": "교과군(국어40%/영어30%/사회30%)별로 반영과목 원 석차등급을 이수단위 가중평균한 뒤(예: 2.07), 그 평균값을 조형예술학부·디자인학부 전용 구간표(150점 만점, 2027 모집요강 p.53)에서 조회해 교과군 점수를 얻고 비중만큼 합산. 산출예시(p.54)로 검증됨. 반영과목이 하나도 없는 교과군은 최저등급(9등급)으로 처리.",
+        "formula_note": "교과군(국어40%/영어30%/사회30%)별로 반영과목 원 석차등급을 이수단위 가중평균한 뒤(예: 2.07), 그 평균값을 조형예술학부·디자인학부 전용 구간표(150점 만점, 2027 모집요강 p.53)에서 조회해 교과군 점수를 얻고 비중만큼 합산. 산출예시(p.54)로 검증됨. 반영과목이 하나도 없는 교과군은 최저등급(9등급)으로 처리. (2026-09-10: 엔진에 subject_group_band_lookup 모드 신규 추가해 지원 - 브리프의 '6개 모드' 목록은 구버전이니 최신 8개 모드 목록 참고)",
         "rule_source_page": "39, 53-54"
       },
       "school_record_status": "required",
       "exam_type_name": "기초디자인",
-      "allowed_materials": ["수채화물감", "포스터칼라", "아크릴물감", "마카", "색연필", "파스텔"],
+      "allowed_materials": [
+        "수채화물감",
+        "포스터칼라",
+        "아크릴물감",
+        "마카",
+        "색연필",
+        "파스텔"
+      ],
       "paper_size": "켄트지 3절",
       "time_limit_minutes": 300,
       "exam_date": "2026-10-14",
       "result_date": "2026-12-18",
-      "application_period": {"start": "2026-09-07", "end": "2026-09-11"},
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
       "source_url": "https://admission.inu.ac.kr/file/download.do?ofn=2027%ED%95%99%EB%85%84%EB%8F%84+%EC%9D%B8%EC%B2%9C%EB%8C%80%ED%95%99%EA%B5%90+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95+%281%29.pdf&sfn=20260826092629801_2027%ED%95%99%EB%85%84%EB%8F%84+%EC%9D%B8%EC%B2%9C%EB%8C%80%ED%95%99%EA%B5%90+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95+%281%29.pdf",
       "source_page": 38,
       "source_page_note": "모집인원·전형방법: PDF 38쪽, 실기과제·일자: PDF 40~41쪽. 실기우수자전형/디자인학부 행 대조.",
       "stages": [
-        {"description": "학생부교과", "ratio_desc": "100%, 모집인원의 6배수", "multiplier": 6},
-        {"description": "학생부교과 및 실기", "ratio_desc": "학생부교과 30% + 실기 70%", "multiplier": null}
+        {
+          "description": "학생부교과",
+          "ratio_desc": "100%, 모집인원의 6배수",
+          "multiplier": 6
+        },
+        {
+          "description": "학생부교과 및 실기",
+          "ratio_desc": "학생부교과 30% + 실기 70%",
+          "multiplier": null
+        }
       ],
-      "data_sources": [{"document_name": "2027학년도 인천대학교 수시모집요강", "local_file": "data/art_admission_raw/prospectus/2027_incheon_susi.pdf"}]
+      "data_sources": [
+        {
+          "document_name": "2027학년도 인천대학교 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_incheon_susi.pdf"
+        }
+      ],
+      "formula_note": "원문 p.52-53: 반영교과군별 이수단위 가중 석차등급을 등급구간 환산표로 변환하고, 교과군 반영비율 및 이수단위 가산점을 합산한다. 현 엔진의 6개 mode로는 ‘교과군별 구간 환산표 + 가산점’을 정확히 표현할 수 없어 자동 계산 규칙은 비워 둔다."
     }
   }
 ]
