@@ -1711,7 +1711,14 @@ class ArtAdmissionService:
             "application_start": t.get("application_start"), "application_end": t.get("application_end"),
             "exam_dates": t.get("exam_dates"), "result_date": t.get("result_date"),
             "source_url": t.get("source_url"),
-            "exam_type_keyword_match": bool(query_topic_kw & self._exam_keywords(t.get("exam_type_name") or "")),
+            # search_tracks_by_prep과 동일하게, 서류/학생부종합/학생부교과 전형(is_doc)은
+            # 실기 키워드 비교 대상이 아니므로 여기서도 제외한다 - 국민대 "포트폴리오 기반
+            # 구술면접"(디자인학과·공예학과)처럼 exam_type_name에 우연히 실기 키워드
+            # 문자열이 섞여 들어간 서류전형이 잘못 "실기유형 일치"로 잡히는 걸 막는다.
+            "exam_type_keyword_match": (
+                self._document_track_category(t.get("exam_type_name")) is None
+                and bool(query_topic_kw & self._exam_keywords(t.get("exam_type_name") or ""))
+            ),
         } for t in subset]
 
         context_estimates = []
