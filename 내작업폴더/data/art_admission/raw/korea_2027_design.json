@@ -1,0 +1,25 @@
+{
+  "university": "고려대학교",
+  "campus": "서울",
+  "department": "디자인조형학부",
+  "track_name": "특기자전형(디자인조형)",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 15,
+    "ratio": "1단계 서류 100%(5배수) → 2단계 1단계 성적 60% + 제출서류 기반 면접 40%",
+    "is_staged": true,
+    "csat_minimum_required": true,
+    "csat_minimum_rule": "국어, 수학, 영어, 탐구 4개 영역 중 3개 영역 등급의 합이 8 이내 및 한국사 4등급 이내",
+    "school_record_status": "required",
+    "exam_type_name": "창의활동보고서·대표 이미지 기반 면접",
+    "allowed_materials": [],
+    "paper_size": null,
+    "time_limit_minutes": 6,
+    "exam_date": "2026-10-31",
+    "result_date": "2026-12-18",
+    "source_url": "https://oku.korea.ac.kr/attach/202605/1780023076409_0.pdf",
+    "source_page": 25,
+    "stages": [{"description": "서류평가", "ratio_desc": "100%, 모집인원의 5배수", "multiplier": 5}, {"description": "제출서류 기반 면접", "ratio_desc": "1단계 60% + 면접 40%", "multiplier": null}],
+    "data_sources": [{"document_name": "2027학년도 고려대학교 수시모집요강", "local_file": "data/art_admission_raw/prospectus/2027_korea_susi.pdf"}]
+  }
+}

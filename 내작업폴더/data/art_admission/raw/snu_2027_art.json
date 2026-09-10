@@ -1,0 +1,105 @@
+[
+  {
+    "university": "서울대학교",
+    "campus": "서울",
+    "department": "동양화과",
+    "track_name": "기회균형특별전형(사회통합)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 1,
+      "ratio": "1단계 서류평가 100%(3배수) → 2단계 1단계 성적 40% + 실기평가 30% + 면접 30%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "수묵·채색 등 전공 관련 기법 실기",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": 240,
+      "exam_date": "2026-11-28",
+      "result_date": "2026-12-18",
+      "source_url": "https://admission.snu.ac.kr/webdata/admission/files/2027susi.pdf",
+      "source_page": 45,
+      "source_page_note": "PDF 뷰어 45쪽 / 문서 인쇄 쪽수 41쪽",
+      "stages": [
+        {"description": "서류평가", "ratio_desc": "100%, 모집인원의 3배수", "multiplier": 3},
+        {"description": "실기평가 및 면접", "ratio_desc": "1단계 40% + 실기 30% + 면접 30%", "multiplier": null}
+      ],
+      "data_sources": [{"document_name": "2027학년도 서울대학교 수시모집 안내", "local_file": "data/art_admission_raw/prospectus/2027_snu_susi.pdf"}]
+    }
+  },
+  {
+    "university": "서울대학교",
+    "campus": "서울",
+    "department": "서양화과",
+    "track_name": "기회균형특별전형(사회통합)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 1,
+      "ratio": "1단계 서류평가 100%(3배수) → 2단계 1단계 성적 40% + 실기평가 30% + 면접 30%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "주어진 주제를 제시된 재료로 표현",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": 240,
+      "exam_date": "2026-11-28",
+      "result_date": "2026-12-18",
+      "source_url": "https://admission.snu.ac.kr/webdata/admission/files/2027susi.pdf",
+      "source_page": 45,
+      "source_page_note": "PDF 뷰어 45쪽 / 문서 인쇄 쪽수 41쪽",
+      "stages": [{"description": "서류평가", "ratio_desc": "100%, 모집인원의 3배수", "multiplier": 3}, {"description": "실기평가 및 면접", "ratio_desc": "1단계 40% + 실기 30% + 면접 30%", "multiplier": null}],
+      "data_sources": [{"document_name": "2027학년도 서울대학교 수시모집 안내", "local_file": "data/art_admission_raw/prospectus/2027_snu_susi.pdf"}]
+    }
+  },
+  {
+    "university": "서울대학교",
+    "campus": "서울",
+    "department": "조소과",
+    "track_name": "기회균형특별전형(사회통합)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 1,
+      "ratio": "1단계 서류평가 100%(3배수) → 2단계 1단계 성적 40% + 실기평가 30% + 면접 30%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "주어진 주제를 제시된 재료로 표현",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": 240,
+      "exam_date": "2026-11-28",
+      "result_date": "2026-12-18",
+      "source_url": "https://admission.snu.ac.kr/webdata/admission/files/2027susi.pdf",
+      "source_page": 45,
+      "source_page_note": "PDF 뷰어 45쪽 / 문서 인쇄 쪽수 41쪽",
+      "stages": [{"description": "서류평가", "ratio_desc": "100%, 모집인원의 3배수", "multiplier": 3}, {"description": "실기평가 및 면접", "ratio_desc": "1단계 40% + 실기 30% + 면접 30%", "multiplier": null}],
+      "data_sources": [{"document_name": "2027학년도 서울대학교 수시모집 안내", "local_file": "data/art_admission_raw/prospectus/2027_snu_susi.pdf"}]
+    }
+  },
+  {
+    "university": "서울대학교",
+    "campus": "서울",
+    "department": "공예과",
+    "track_name": "기회균형특별전형(사회통합)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 1,
+      "ratio": "1단계 서류평가 100%(3배수) → 2단계 1단계 성적 40% + 실기평가 30% + 면접 30%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "주어진 주제를 제시된 재료로 표현",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": 240,
+      "exam_date": "2026-11-28",
+      "result_date": "2026-12-18",
+      "source_url": "https://admission.snu.ac.kr/webdata/admission/files/2027susi.pdf",
+      "source_page": 45,
+      "source_page_note": "PDF 뷰어 45쪽 / 문서 인쇄 쪽수 41쪽",
+      "stages": [{"description": "서류평가", "ratio_desc": "100%, 모집인원의 3배수", "multiplier": 3}, {"description": "실기평가 및 면접", "ratio_desc": "1단계 40% + 실기 30% + 면접 30%", "multiplier": null}],
+      "data_sources": [{"document_name": "2027학년도 서울대학교 수시모집 안내", "local_file": "data/art_admission_raw/prospectus/2027_snu_susi.pdf"}]
+    }
+  }
+]
