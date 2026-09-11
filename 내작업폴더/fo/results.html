@@ -487,16 +487,22 @@ async function openBreakdown(university, campus, department, trackName) {
       body.innerHTML = `<p class="text-on-surface-variant">${detail.reason || "계산 상세를 불러오지 못했습니다."}</p>`;
       return;
     }
-    const rows = (detail.breakdown || []).map(b => {
-      return `<tr class="border-b border-outline-variant/20">
+    // 학교마다 breakdown 행의 구조가 다르다 - 과목 단위(simple_weighted_average 등,
+    // subject_group/grade/credit/score 보유)와 학년 단위(year_weighted_band_lookup처럼
+    // year/year_grade_point만 있고 과목 개념 자체가 없음)가 섞여 있어, 과목표를
+    // 무조건 그리면 학년 단위 데이터에서 "undefined등급"이 찍힌다. 실제로 어떤
+    // 모양인지 보고 맞는 표를 고른다.
+    const breakdownRows = detail.breakdown || [];
+    const isSubjectLevel = breakdownRows.length > 0 && breakdownRows.every(b => "subject_group" in b);
+    let breakdownTableHtml;
+    if (isSubjectLevel) {
+      const rows = breakdownRows.map(b => `<tr class="border-b border-outline-variant/20">
         <td class="py-unit-2xs pr-unit-sm">${b.subject_group || "-"}</td>
         <td class="py-unit-2xs pr-unit-sm">${b.achievement ? `진로선택(${b.achievement})` : (b.grade + "등급")}</td>
         <td class="py-unit-2xs pr-unit-sm">${b.credit}</td>
         <td class="py-unit-2xs pr-unit-sm">${b.score}${b.group_weight_pct != null ? ` <span class="text-outline">(${b.group_weight_pct}% 교과군)</span>` : ""}</td>
-      </tr>`;
-    }).join("");
-    body.innerHTML = `
-      <p class="font-body-md text-body-md text-on-surface font-medium">${university}${campus ? " ("+campus+")" : ""} ${department} · ${detail.track_name || ""}</p>
+      </tr>`).join("");
+      breakdownTableHtml = `
       <div class="overflow-x-auto mt-unit-sm">
         <table class="w-full text-left border-collapse">
           <thead><tr class="border-b border-outline-variant/40 font-label-sm text-label-sm text-on-surface-variant uppercase">
@@ -504,7 +510,25 @@ async function openBreakdown(university, campus, department, trackName) {
           </tr></thead>
           <tbody>${rows || `<tr><td colspan="4" class="py-unit-sm text-on-surface-variant">반영된 과목이 없습니다.</td></tr>`}</tbody>
         </table>
-      </div>
+      </div>`;
+    } else if (breakdownRows.length > 0) {
+      const rows = breakdownRows.map(b => `<tr class="border-b border-outline-variant/20">
+        ${Object.entries(b).map(([k, v]) => `<td class="py-unit-2xs pr-unit-sm">${v}</td>`).join("")}
+      </tr>`).join("");
+      const headers = Object.keys(breakdownRows[0]).map(k => `<th class="py-unit-2xs pr-unit-sm">${k}</th>`).join("");
+      breakdownTableHtml = `
+      <div class="overflow-x-auto mt-unit-sm">
+        <table class="w-full text-left border-collapse">
+          <thead><tr class="border-b border-outline-variant/40 font-label-sm text-label-sm text-on-surface-variant uppercase">${headers}</tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+    } else {
+      breakdownTableHtml = `<p class="mt-unit-sm text-on-surface-variant">반영된 과목이 없습니다.</p>`;
+    }
+    body.innerHTML = `
+      <p class="font-body-md text-body-md text-on-surface font-medium">${university}${campus ? " ("+campus+")" : ""} ${department} · ${detail.track_name || ""}</p>
+      ${breakdownTableHtml}
       <p class="mt-unit-sm">Σ(환산점수×이수단위) / Σ(이수단위) = <span class="font-bold text-primary">${detail.raw_score}점</span> / ${detail.max_score}점 만점 (${detail.percentage}%)</p>
       ${detail.chosen_choice_subject ? `<p class="text-on-surface-variant">택1 자동선택 결과: <span class="font-medium text-on-surface">${detail.chosen_choice_subject}</span></p>` : ""}
       <p class="mt-unit-sm pt-unit-sm border-t border-outline-variant/30 text-on-surface-variant">${detail.formula_note || ""}</p>
@@ -930,6 +954,19 @@ function renderRecommendResults() {
     // 인라인으로 붙이지 않고 별도 블록 줄로 분리해 항상 깔끔하게 줄바꿈되게 했다.
     const gradeEqLine = (!isNotApplicable && gradeEq !== null && gradeEq !== undefined)
       ? `<div class="font-body-md text-body-md text-on-surface font-medium">반영교과 기준 원 석차등급: 약 <span class="text-primary">${gradeEq}등급</span></div><div class="font-label-sm text-label-sm text-on-surface-variant font-normal">(학교 간 비교 가능한 참고값)</div>` : "";
+    // 뒤집기 시뮬레이션(모달) 없이도 카드에서 바로 보이도록, 이미 카드에 있는
+    // 값(school_record_percentage/반영비율)만으로 동일한 산술을 클라이언트에서
+    // 그대로 재현한다 - 별도 API 호출 불필요. 단계별(1차/2차) 전형처럼 단일
+    // 반영비율 쌍이 없는 경우는 여기서도 정직하게 숨긴다(지어내지 않음).
+    let reversalLine = "";
+    if (isExact && pct != null && r.school_record_ratio_pct != null && r.practical_ratio_pct != null) {
+      const contribution = Math.round(pct * r.school_record_ratio_pct / 100 * 100) / 100;
+      const compositeMax = Math.round((contribution + r.practical_ratio_pct) * 100) / 100;
+      reversalLine = `<div class="font-body-sm text-body-sm text-on-surface bg-secondary-container/20 rounded p-unit-2xs flex items-center gap-unit-2xs">
+        <span class="material-symbols-outlined text-[16px] text-secondary">swap_vert</span>
+        실기 결과에 따라 최종 총점 <span class="font-bold text-secondary">${contribution}%p ~ ${compositeMax}%p</span> 사이 (학생부로 이미 ${contribution}%p 확보)
+      </div>`;
+    }
     const scheduleBlock = `
       ${r.exam_type_name ? `<div class="font-body-sm text-body-sm text-on-surface-variant">실기종목: ${r.exam_type_name}</div>` : ""}
       ${(r.allowed_materials && r.allowed_materials.length) || r.paper_size ? `<div class="font-body-sm text-body-sm text-on-surface-variant">재료: ${(r.allowed_materials || []).join(", ") || "-"}${r.paper_size ? " · 규격: " + r.paper_size : ""}</div>` : ""}
@@ -990,6 +1027,7 @@ function renderRecommendResults() {
         ${scheduleBlock}
         ${gradeEqLine}
         ${pctLine}
+        ${reversalLine}
         <button type="button" class="card-detail-toggle self-start mt-unit-2xs font-label-sm text-label-sm text-primary flex items-center gap-unit-2xs">
           <span class="toggle-label">자세히 보기</span><span class="material-symbols-outlined text-[16px] toggle-icon">expand_more</span>
         </button>
