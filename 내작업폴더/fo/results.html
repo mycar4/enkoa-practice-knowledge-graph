@@ -53,6 +53,10 @@
     <option value="academic_record">학생부교과전형만</option>
   </select>
 </label>
+<div id="profileSpecialTypeWrap" class="hidden flex flex-wrap items-center gap-unit-2xs mt-unit-sm">
+  <span class="font-body-sm text-body-sm text-on-surface-variant">특별전형 종류로 좁히기</span>
+  <div id="profileSpecialTypeChips" class="flex flex-wrap items-center gap-unit-2xs"></div>
+</div>
 </section>
 
 <section class="px-margin-mobile lg:px-12 pt-unit-sm gap-unit-sm grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" id="cardsContainer">
@@ -113,6 +117,10 @@
         <option value="academic_record">학생부교과전형만</option>
       </select>
     </label>
+    <div id="recommendSpecialTypeWrap" class="hidden flex flex-wrap items-center gap-unit-2xs">
+      <span class="font-body-sm text-body-sm text-on-surface-variant">특별전형 종류</span>
+      <div id="recommendSpecialTypeChips" class="flex flex-wrap items-center gap-unit-2xs"></div>
+    </div>
   </div>
   <button id="comboRecommendBtn" class="h-9 px-unit-sm bg-secondary text-on-secondary font-label-sm text-label-sm rounded-lg flex items-center gap-unit-2xs shrink-0">
     <span class="material-symbols-outlined text-[16px]">auto_awesome</span>
@@ -238,6 +246,31 @@ const selected = new Map(); // key -> {university, department}
 
 function trackKey(r) { return `${r.university}::${r.campus}::${r.department}::${r.track_name}`; }
 
+// "전형 유형으로 좁히기"(서류/학생부종합/학생부교과)와는 다른 축 - 학교장추천·
+// 농어촌학생·특수교육대상자·가톨릭지도자추천처럼 학교마다 표기가 조금씩 다른
+// "특별전형 종류"를 track_name에서 뽑아낸다. 이번 34개교 재검증 배치에서 이런
+// 특별전형 트랙을 대거 새로 발견해 추가했는데, 정작 화면에서 이걸로 좁혀볼
+// 방법이 없다는 피드백을 받았다. 66개 원문 track_name을 그대로 나열하면 학교마다
+// 표기가 제각각이라("실기/실적(학교장추천전형_미술)" vs "학생부교과(학교장추천전형)")
+// 쓸모가 없으므로, 공통 키워드로 묶어서 카테고리화한다.
+const SPECIAL_ADMISSION_PATTERNS = [
+  { key: "학교장추천", re: /학교장추천/ },
+  { key: "농어촌학생", re: /농어촌(학생|출신)/ },
+  { key: "특수교육대상자", re: /특수교육대상자/ },
+  { key: "특성화고", re: /특성화고(교)?(졸업자|출신)?/ },
+  { key: "기회균형·사회통합", re: /기회균형|사회통합|고른기회|기초생활수급자/ },
+  { key: "지역인재", re: /지역인재/ },
+  { key: "가톨릭지도자추천", re: /가톨릭지도자/ },
+  { key: "재림교회목회자추천", re: /재림교회/ },
+  { key: "예체능인재", re: /예체능인재/ },
+  { key: "특기자", re: /특기자/ },
+];
+function specialAdmissionTags(trackName) {
+  const name = trackName || "";
+  const tags = SPECIAL_ADMISSION_PATTERNS.filter(p => p.re.test(name)).map(p => p.key);
+  return tags.length ? tags : ["일반(특별전형 아님)"];
+}
+
 if (universityModeName) {
   renderUniversityResults(universityModeName);
 } else if (isRecommendMode) {
@@ -362,10 +395,43 @@ function renderProfileCards(list) {
 renderProfileCards(results);
 if (results.length > 0) {
   document.getElementById("profileTrackTypeWrap").classList.remove("hidden");
-  document.getElementById("profileTrackTypeSelect").addEventListener("change", (e) => {
-    const v = e.target.value;
-    renderProfileCards(v ? results.filter(r => r.match_status === v) : results);
-  });
+
+  // 특별전형 종류 칩은 하드코딩된 고정 목록이 아니라, 지금 이 결과 안에 실제로
+  // 존재하는 카테고리만 추려서 보여준다 - 데이터에 없는 칩을 눌러봐야 항상
+  // 0건이라 의미가 없기 때문.
+  const profileSelectedSpecialTags = new Set();
+  const presentTags = new Set();
+  results.forEach(r => specialAdmissionTags(r.track_name).forEach(t => presentTags.add(t)));
+  const specialChipContainer = document.getElementById("profileSpecialTypeChips");
+  if (presentTags.size > 1) {
+    document.getElementById("profileSpecialTypeWrap").classList.remove("hidden");
+    specialChipContainer.innerHTML = Array.from(presentTags).map(t => `
+      <button type="button" class="special-type-chip px-unit-xs h-9 rounded border border-outline-variant bg-surface-container-lowest text-on-surface-variant font-label-sm text-label-sm" data-tag="${t}">${t}</button>
+    `).join("");
+    specialChipContainer.querySelectorAll(".special-type-chip").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const tag = btn.dataset.tag;
+        if (profileSelectedSpecialTags.has(tag)) {
+          profileSelectedSpecialTags.delete(tag);
+          btn.classList.remove("!bg-primary", "!border-primary", "!text-on-primary");
+        } else {
+          profileSelectedSpecialTags.add(tag);
+          btn.classList.add("!bg-primary", "!border-primary", "!text-on-primary");
+        }
+        applyProfileFilters();
+      });
+    });
+  }
+
+  function applyProfileFilters() {
+    const v = document.getElementById("profileTrackTypeSelect").value;
+    let list = v ? results.filter(r => r.match_status === v) : results.slice();
+    if (profileSelectedSpecialTags.size > 0) {
+      list = list.filter(r => specialAdmissionTags(r.track_name).some(t => profileSelectedSpecialTags.has(t)));
+    }
+    renderProfileCards(list);
+  }
+  document.getElementById("profileTrackTypeSelect").addEventListener("change", applyProfileFilters);
 }
 } // !isRecommendMode
 
@@ -766,6 +832,33 @@ function renderRecommendResults() {
     });
   });
 
+  // 학교장추천·농어촌학생·특수교육대상자 등 "특별전형 종류" 칩 - 실기종목 칩과
+  // 같은 패턴이지만 축이 다르다(실기종목은 시험 내용, 이건 지원자격/전형명).
+  // 여기도 지금 recommendResults 안에 실제로 존재하는 카테고리만 보여준다.
+  const selectedSpecialTypeFilters = new Set();
+  const recommendPresentTags = new Set();
+  recommendResults.forEach(r => specialAdmissionTags(r.track_name).forEach(t => recommendPresentTags.add(t)));
+  const specialTypeChipContainer = document.getElementById("recommendSpecialTypeChips");
+  if (recommendPresentTags.size > 1) {
+    document.getElementById("recommendSpecialTypeWrap").classList.remove("hidden");
+    specialTypeChipContainer.innerHTML = Array.from(recommendPresentTags).map(t => `
+      <button type="button" class="special-type-filter-chip px-unit-xs h-9 rounded border border-outline-variant bg-surface-container-lowest text-on-surface-variant font-label-sm text-label-sm" data-tag="${t}">${t}</button>
+    `).join("");
+    specialTypeChipContainer.querySelectorAll(".special-type-filter-chip").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const tag = btn.dataset.tag;
+        if (selectedSpecialTypeFilters.has(tag)) {
+          selectedSpecialTypeFilters.delete(tag);
+          btn.classList.remove("!bg-primary", "!border-primary", "!text-on-primary");
+        } else {
+          selectedSpecialTypeFilters.add(tag);
+          btn.classList.add("!bg-primary", "!border-primary", "!text-on-primary");
+        }
+        applyControlsAndRender();
+      });
+    });
+  }
+
   // 정렬 기준 select / 필터 체크박스가 바뀔 때마다 recommendResults 원본을 복사해서
   // 다시 필터·정렬 후 렌더링한다 - 서버 재호출 없이 클라이언트에서만 처리(이미 전체
   // 데이터를 한 번에 받아왔으므로).
@@ -794,6 +887,9 @@ function renderRecommendResults() {
         for (const topic of selectedTopicFilters) { if (tokens.has(topic)) return true; }
         return false;
       });
+    }
+    if (selectedSpecialTypeFilters.size > 0) {
+      list = list.filter(r => specialAdmissionTags(r.track_name).some(t => selectedSpecialTypeFilters.has(t)));
     }
 
     if (sortBy === "grade") {
