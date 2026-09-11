@@ -74,6 +74,7 @@
     <span><strong>학생부 환산 점수는 각 학교 배점표 기준 100점(또는 해당 학교 만점) 환산 결과일 뿐, 합격선·합격 가능성과는 무관합니다.</strong> 실기 점수는 전혀 반영되지 않은 값이며, "100점(만점)"이 나와도 합격이 확정되는 것이 아닙니다. 기본 정렬은 임의 가중치로 합친 종합점수가 아니라 (1) 전년도 등록자 성적 대비 위치 → (2) 내신 실질영향이 낮은 순 → (3) 실기비중이 높은 순으로 이뤄지며, 아래에서 직접 다른 기준으로 바꿔볼 수 있습니다. 이 추천은 "입시 질문" 기능과 <strong>동일하게 저희가 직접 구축한 지식그래프(현재 27개 대학 한정)</strong>를 근거로 계산됩니다 - 그래프에 없는 대학은 추천 대상이 아닙니다.</span>
   </div>
 </div>
+<p id="recommendFilteredCount" class="hidden px-margin-mobile lg:px-12 pt-unit-xs font-label-sm text-label-sm text-on-surface-variant"></p>
 <div id="recommendControls" class="hidden px-margin-mobile lg:px-12 pt-unit-sm flex flex-wrap items-center gap-unit-sm">
   <label class="flex items-center gap-unit-2xs font-body-sm text-body-sm text-on-surface-variant">
     정렬 기준
@@ -90,6 +91,11 @@
     <input id="universitySearchInput" list="universitySearchList" type="text" placeholder="대학명으로 찾기"
       class="h-9 px-unit-xs rounded border border-outline-variant bg-surface-container-lowest text-on-surface font-body-sm text-body-sm w-40" />
     <datalist id="universitySearchList"></datalist>
+    <!-- 타이핑 없이도 전체 대학 목록을 눌러서 바로 고를 수 있게 - 성별/전형유형
+         셀렉트와 같은 형태의 드롭다운. 위 텍스트 입력과 값이 항상 동기화된다. -->
+    <select id="universitySelect" class="h-9 px-unit-xs rounded border border-outline-variant bg-surface-container-lowest text-on-surface font-body-sm text-body-sm">
+      <option value="">대학명: 전체</option>
+    </select>
     <select id="genderSelect" class="h-9 px-unit-xs rounded border border-outline-variant bg-surface-container-lowest text-on-surface font-body-sm text-body-sm">
       <option value="all">성별: 전체</option>
       <option value="exclude_female">여자대학교 제외</option>
@@ -930,6 +936,9 @@ function renderRecommendResults() {
 
     currentDisplayedList = list;
     renderCards(list);
+    const countEl = document.getElementById("recommendFilteredCount");
+    countEl.textContent = `지금 조건에 맞는 ${list.length}건 (전체 ${recommendResults.length}건 중)`;
+    countEl.classList.remove("hidden");
   }
 
   // "이 결과로 질문하기" - 지금 화면에 보이는(필터·정렬 적용된) 상위 결과를 요약해서
@@ -1024,9 +1033,19 @@ function renderRecommendResults() {
   document.getElementById("hideNotApplicableCheck").addEventListener("change", applyControlsAndRender);
   document.getElementById("genderSelect").addEventListener("change", applyControlsAndRender);
   document.getElementById("trackTypeSelect").addEventListener("change", applyControlsAndRender);
-  document.getElementById("universitySearchInput").addEventListener("input", applyControlsAndRender);
-  document.getElementById("universitySearchList").innerHTML = [...new Set(recommendResults.map(r => r.university))]
-    .sort().map(name => `<option value="${name}"></option>`).join("");
+  document.getElementById("universitySearchInput").addEventListener("input", () => {
+    document.getElementById("universitySelect").value = "";
+    applyControlsAndRender();
+  });
+  const universityNames = [...new Set(recommendResults.map(r => r.university))].sort();
+  document.getElementById("universitySearchList").innerHTML = universityNames
+    .map(name => `<option value="${name}"></option>`).join("");
+  document.getElementById("universitySelect").innerHTML = `<option value="">대학명: 전체</option>` +
+    universityNames.map(name => `<option value="${name}">${name}</option>`).join("");
+  document.getElementById("universitySelect").addEventListener("change", (e) => {
+    document.getElementById("universitySearchInput").value = e.target.value;
+    applyControlsAndRender();
+  });
 
   // 모바일에서 정렬/성별/실기종목 칩만으로도 영역이 꽉 차서, 자주 안 쓰는 체크박스
   // 2개(학생부 미반영 숨기기/서류전형만 보기)는 기능을 없애는 대신 "필터 더보기"
