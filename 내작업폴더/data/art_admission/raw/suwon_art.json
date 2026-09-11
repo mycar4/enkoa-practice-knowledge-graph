@@ -12,10 +12,10 @@
       "csat_minimum_required": false,
       "practical_ratio_pct": 80,
       "school_record_ratio_pct": 20,
-      "exam_type_name": "미지정",
+      "exam_type_name": "택1: 인체소묘(사진모델링), 인체수채화(사진모델링), 수묵담채화(사진정물), 인물두상(사진모델링)",
       "allowed_materials": [],
-      "paper_size": null,
-      "time_limit_minutes": null,
+      "paper_size": "3절 켄트지(인체소묘/인체수채) 또는 반절 화선지(수묵담채) 또는 찰흙(인물두상)",
+      "time_limit_minutes": 240,
       "exam_date": "2026-10-03~2026-10-05 (지원자 수에 따라 변경 가능)",
       "result_date": "2026-11-06",
       "school_record_rule": {
@@ -50,7 +50,15 @@
       "application_period": {
         "start": "2026-09-07",
         "end": "2026-09-11"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/수원대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required",
+      "source_page_note": "실기고사 방법(p.46): 실기과제·용지·시간(4시간)·배점(800점) 확인. 기존엔 exam_type_name이 '미지정'으로 비어 있었음(2026-09-11 Claude가 원문 보완)."
     },
     "estimates": {
       "cutoff_grade_estimate": 5.9,
@@ -81,10 +89,10 @@
       "csat_minimum_required": false,
       "practical_ratio_pct": 80,
       "school_record_ratio_pct": 20,
-      "exam_type_name": "미지정",
+      "exam_type_name": "택1: 기초디자인(주제제시), 발상과표현(주제제시)",
       "allowed_materials": [],
-      "paper_size": null,
-      "time_limit_minutes": null,
+      "paper_size": "4절 켄트지",
+      "time_limit_minutes": 240,
       "exam_date": "2026-10-03~2026-10-05 (지원자 수에 따라 변경 가능)",
       "result_date": "2026-11-06",
       "school_record_rule": {
@@ -119,16 +127,24 @@
       "application_period": {
         "start": "2026-09-07",
         "end": "2026-09-11"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/수원대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required",
+      "source_page_note": "실기고사 방법(p.46): 실기과제·용지·시간(4시간)·배점(800점) 확인. 기존엔 exam_type_name이 '미지정'으로 비어 있었음(2026-09-11 Claude가 원문 보완)."
     },
     "estimates": {
-      "cutoff_grade_estimate": 6.0,
+      "cutoff_grade_estimate": 6,
       "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/수원대학교/수원대학교_2026학년도_수시입시결과.pdf",
       "interview_summaries": [],
       "prior_year_result": {
         "admission_year": 2026,
         "competition_rate": 33.15,
-        "school_record_grade_typical": 6.0,
+        "school_record_grade_typical": 6,
         "school_record_grade_floor": null,
         "grade_stat_type": "avg_only (typical=학생부성적 평균, 범위 데이터 없음)",
         "methodology_note": "원문에 최종등록자/합격자 구분 명시 없이 \"학생부성적(평균)\" 단일값만 제공 - 정확한 산출 방법론(원등급 vs 자체 환산등급) 불명확, 참고용으로만 사용.",
@@ -150,10 +166,10 @@
       "csat_minimum_required": false,
       "practical_ratio_pct": 80,
       "school_record_ratio_pct": 20,
-      "exam_type_name": "미지정",
+      "exam_type_name": "택1: 기초디자인(주제제시), 발상과표현(주제제시)",
       "allowed_materials": [],
-      "paper_size": null,
-      "time_limit_minutes": null,
+      "paper_size": "4절 켄트지",
+      "time_limit_minutes": 240,
       "exam_date": "2026-10-03~2026-10-05 (지원자 수에 따라 변경 가능)",
       "result_date": "2026-11-06",
       "school_record_rule": {
@@ -188,7 +204,15 @@
       "application_period": {
         "start": "2026-09-07",
         "end": "2026-09-11"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/수원대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required",
+      "source_page_note": "실기고사 방법(p.46): 실기과제·용지·시간(4시간)·배점(800점) 확인. 기존엔 exam_type_name이 '미지정'으로 비어 있었음(2026-09-11 Claude가 원문 보완)."
     },
     "estimates": {
       "cutoff_grade_estimate": 5.9,
@@ -219,10 +243,10 @@
       "csat_minimum_required": false,
       "practical_ratio_pct": 80,
       "school_record_ratio_pct": 20,
-      "exam_type_name": "미지정",
+      "exam_type_name": "택1: 기초디자인(주제제시), 발상과표현(주제제시)",
       "allowed_materials": [],
-      "paper_size": null,
-      "time_limit_minutes": null,
+      "paper_size": "4절 켄트지",
+      "time_limit_minutes": 240,
       "exam_date": "2026-10-03~2026-10-05 (지원자 수에 따라 변경 가능)",
       "result_date": "2026-11-06",
       "school_record_rule": {
@@ -257,7 +281,15 @@
       "application_period": {
         "start": "2026-09-07",
         "end": "2026-09-11"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/수원대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required",
+      "source_page_note": "실기고사 방법(p.46): 실기과제·용지·시간(4시간)·배점(800점) 확인. 기존엔 exam_type_name이 '미지정'으로 비어 있었음(2026-09-11 Claude가 원문 보완)."
     },
     "estimates": {
       "cutoff_grade_estimate": 5.9,
