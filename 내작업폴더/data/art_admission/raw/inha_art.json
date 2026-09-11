@@ -1,152 +1,461 @@
 [
-{
-  "university": "인하대학교",
-  "campus": "인천(본교)",
-  "department": "조형예술학과",
-  "track_name": "실기/실적(조형예술학과-인물수채화)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 15,
-    "ratio": "실기 70% (700점/250점) + 학생부교과 30% (300점/100점), 일괄합산",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 70,
-    "school_record_ratio_pct": 30,
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
+  {
+    "university": "인하대학교",
+    "campus": "인천(본교)",
+    "department": "조형예술학과",
+    "track_name": "실기/실적(조형예술학과-인물수채화)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 15,
+      "ratio": "실기 70% (700점/250점) + 학생부교과 30% (300점/100점), 일괄합산",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 70,
+      "school_record_ratio_pct": 30,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-09",
+      "result_date": "2026-11-17",
+      "exam_type_name": "인물수채화 - 고사 당일 주어진 주제에 대한 수채화(인물 이미지 제시)",
+      "allowed_materials": [
+        "연필",
+        "지우개",
+        "집게",
+        "붓",
+        "수채물감",
+        "팔레트",
+        "물통",
+        "기타 실기고사에 필요한 물품"
+      ],
+      "paper_size": "3절지",
+      "time_limit_minutes": 240,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "사회"
+        ],
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 10,
+          "2": 9.8,
+          "3": 9.6,
+          "4": 9.4,
+          "5": 9,
+          "6": 8,
+          "7": 4,
+          "8": 2,
+          "9": 0
+        },
+        "formula_note": "예체능계열(조형예술학과 등) 반영교과: 국어, 영어, 사회(한국사 포함, 수학·과학 제외). 공통·일반선택 석차등급 과목 이수단위 가중평균. 최종 학생부 반영점수 = (교과 반영점수×2)+기본점수100, 300점 만점(2027 모집요강 p.43-45, 실기/실적 조형예술학과 등 기준). 재학생 3학년 1학기까지·졸업생 3학년 2학기까지 반영, 학년별 가중치 없음. 참고: 원문은 진로선택과목(최대 3과목, A=1등급/B=2등급/C=4등급 환산)도 반영하나 이 계산기는 석차등급이 있는 공통·일반선택과목만 반영한다.",
+        "rule_source_page": "43-45"
+      },
+      "source_url": "https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242994&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000169&searchSyr=2027",
+      "source_page": 37,
+      "data_sources": [
+        {
+          "document_name": "대입정보포털 공개 인하대학교 2027학년도 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
-    "exam_date": "2026-10-09",
-    "result_date": "2026-11-17",
-    "exam_type_name": "인물수채화 - 고사 당일 주어진 주제에 대한 수채화(인물 이미지 제시)",
-    "allowed_materials": ["연필", "지우개", "집게", "붓", "수채물감", "팔레트", "물통", "기타 실기고사에 필요한 물품"],
-    "paper_size": "3절지",
-    "time_limit_minutes": 240,
-    "school_record_rule": {
-      "mode": "simple_weighted_average",
-      "subjects": ["국어", "영어", "사회"],
-      "credit_weighted": true,
-      "conversion_table": {"1": 10.0, "2": 9.8, "3": 9.6, "4": 9.4, "5": 9.0, "6": 8.0, "7": 4.0, "8": 2.0, "9": 0},
-      "formula_note": "예체능계열(조형예술학과 등) 반영교과: 국어, 영어, 사회(한국사 포함, 수학·과학 제외). 공통·일반선택 석차등급 과목 이수단위 가중평균. 최종 학생부 반영점수 = (교과 반영점수×2)+기본점수100, 300점 만점(2027 모집요강 p.43-45, 실기/실적 조형예술학과 등 기준). 재학생 3학년 1학기까지·졸업생 3학년 2학기까지 반영, 학년별 가중치 없음. 참고: 원문은 진로선택과목(최대 3과목, A=1등급/B=2등급/C=4등급 환산)도 반영하나 이 계산기는 석차등급이 있는 공통·일반선택과목만 반영한다.",
-      "rule_source_page": "43-45"
-    },
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%EC%9D%B8%ED%95%98%EB%8C%80%ED%95%99%EA%B5%90/%EC%9D%B8%ED%95%98%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
-    "source_page": 37
-  },
-  "estimates": {
-    "cutoff_grade_estimate": null,
-    "cutoff_source_url": null,
-    "interview_summaries": [],
-    "prior_year_result": {
-      "admission_year": 2026,
-      "competition_rate": 8.13,
-      "school_record_grade_typical": null,
-      "school_record_grade_floor": null,
-      "grade_stat_type": "competition_rate_only (합격자 학생부 등급 미공개)",
-      "methodology_note": "인하대 미술계열 전년도(2026) 경쟁률 정리 자료에서 확인(모집15명/지원122명/경쟁률8.13:1). 합격선 학생부 등급은 공식 공개자료에 없어 미공개로 유지한다.",
-      "source_url": "https://grinalda.net/inha-midae-susi-2027/",
-      "source_page": 1
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 8.13,
+        "school_record_grade_typical": null,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "competition_rate_only (합격자 학생부 등급 미공개)",
+        "methodology_note": "인하대 미술계열 전년도(2026) 경쟁률 정리 자료에서 확인(모집15명/지원122명/경쟁률8.13:1). 합격선 학생부 등급은 공식 공개자료에 없어 미공개로 유지한다.",
+        "source_url": "https://grinalda.net/inha-midae-susi-2027/",
+        "source_page": 1
+      }
     }
-  }
-},
-{
-  "university": "인하대학교",
-  "campus": "인천(본교)",
-  "department": "디자인융합학과",
-  "track_name": "실기/실적(디자인융합학과)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 23,
-    "ratio": "실기 70% (700점/250점) + 학생부교과 30% (300점/100점), 일괄합산",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 70,
-    "school_record_ratio_pct": 30,
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
-    },
-    "exam_date": "2026-10-11",
-    "result_date": "2026-11-17",
-    "exam_type_name": "기초디자인 - 고사 당일 주어진 주제를 해석하여 표현",
-    "allowed_materials": ["색채표현 가능한 모든 재료(입체적 첨가재료 불허)", "자(도형자 포함)", "지우개(전동지우개 포함)"],
-    "paper_size": "3절지",
-    "time_limit_minutes": 300,
-    "school_record_rule": {
-      "mode": "simple_weighted_average",
-      "subjects": ["국어", "영어", "사회"],
-      "credit_weighted": true,
-      "conversion_table": {"1": 10.0, "2": 9.8, "3": 9.6, "4": 9.4, "5": 9.0, "6": 8.0, "7": 4.0, "8": 2.0, "9": 0},
-      "formula_note": "예체능계열(디자인융합학과 등) 반영교과: 국어, 영어, 사회(한국사 포함, 수학·과학 제외). 공통·일반선택 석차등급 과목 이수단위 가중평균. 최종 학생부 반영점수 = (교과 반영점수×2)+기본점수100, 300점 만점(2027 모집요강 p.43-45, 실기/실적 디자인융합학과 등 기준). 재학생 3학년 1학기까지·졸업생 3학년 2학기까지 반영, 학년별 가중치 없음. 참고: 원문은 진로선택과목(최대 3과목, A=1등급/B=2등급/C=4등급 환산)도 반영하나 이 계산기는 석차등급이 있는 공통·일반선택과목만 반영한다.",
-      "rule_source_page": "43-45"
-    },
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%EC%9D%B8%ED%95%98%EB%8C%80%ED%95%99%EA%B5%90/%EC%9D%B8%ED%95%98%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
-    "source_page": 38
   },
-  "estimates": {
-    "cutoff_grade_estimate": null,
-    "cutoff_source_url": null,
-    "interview_summaries": [],
-    "prior_year_result": {
-      "admission_year": 2026,
-      "competition_rate": 35.91,
-      "school_record_grade_typical": null,
-      "school_record_grade_floor": null,
-      "grade_stat_type": "competition_rate_only (합격자 학생부 등급 미공개)",
-      "methodology_note": "인하대 미술계열 전년도(2026) 경쟁률 정리 자료에서 확인(모집23명/지원826명/경쟁률35.91:1). 합격선 학생부 등급은 공식 공개자료에 없어 미공개로 유지한다.",
-      "source_url": "https://grinalda.net/inha-midae-susi-2027/",
-      "source_page": 1
+  {
+    "university": "인하대학교",
+    "campus": "인천(본교)",
+    "department": "디자인융합학과",
+    "track_name": "실기/실적(디자인융합학과)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 23,
+      "ratio": "실기 70% (700점/250점) + 학생부교과 30% (300점/100점), 일괄합산",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 70,
+      "school_record_ratio_pct": 30,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-11",
+      "result_date": "2026-11-17",
+      "exam_type_name": "기초디자인 - 고사 당일 주어진 주제를 해석하여 표현",
+      "allowed_materials": [
+        "색채표현 가능한 모든 재료(입체적 첨가재료 불허)",
+        "자(도형자 포함)",
+        "지우개(전동지우개 포함)"
+      ],
+      "paper_size": "3절지",
+      "time_limit_minutes": 300,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "사회"
+        ],
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 10,
+          "2": 9.8,
+          "3": 9.6,
+          "4": 9.4,
+          "5": 9,
+          "6": 8,
+          "7": 4,
+          "8": 2,
+          "9": 0
+        },
+        "formula_note": "예체능계열(디자인융합학과 등) 반영교과: 국어, 영어, 사회(한국사 포함, 수학·과학 제외). 공통·일반선택 석차등급 과목 이수단위 가중평균. 최종 학생부 반영점수 = (교과 반영점수×2)+기본점수100, 300점 만점(2027 모집요강 p.43-45, 실기/실적 디자인융합학과 등 기준). 재학생 3학년 1학기까지·졸업생 3학년 2학기까지 반영, 학년별 가중치 없음. 참고: 원문은 진로선택과목(최대 3과목, A=1등급/B=2등급/C=4등급 환산)도 반영하나 이 계산기는 석차등급이 있는 공통·일반선택과목만 반영한다.",
+        "rule_source_page": "43-45"
+      },
+      "source_url": "https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242994&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000169&searchSyr=2027",
+      "source_page": 38,
+      "data_sources": [
+        {
+          "document_name": "대입정보포털 공개 인하대학교 2027학년도 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
+    },
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 35.91,
+        "school_record_grade_typical": null,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "competition_rate_only (합격자 학생부 등급 미공개)",
+        "methodology_note": "인하대 미술계열 전년도(2026) 경쟁률 정리 자료에서 확인(모집23명/지원826명/경쟁률35.91:1). 합격선 학생부 등급은 공식 공개자료에 없어 미공개로 유지한다.",
+        "source_url": "https://grinalda.net/inha-midae-susi-2027/",
+        "source_page": 1
+      }
     }
-  }
-},
-{
-  "university": "인하대학교",
-  "campus": "인천(본교)",
-  "department": "의류디자인학과",
-  "track_name": "실기/실적(의류디자인학과-실기)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 10,
-    "ratio": "실기 70% (700점/250점) + 학생부교과 30% (300점/100점), 일괄합산",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 70,
-    "school_record_ratio_pct": 30,
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
-    },
-    "exam_date": "2026-10-10",
-    "result_date": "2026-11-17",
-    "exam_type_name": "기초디자인 - 고사 당일 주어진 주제를 해석하여 표현",
-    "allowed_materials": ["색채표현 가능한 모든 재료(입체적 첨가재료 불허)", "자(도형자 포함)", "지우개(전동지우개 포함)"],
-    "paper_size": "3절지",
-    "time_limit_minutes": 300,
-    "school_record_rule": {
-      "mode": "simple_weighted_average",
-      "subjects": ["국어", "영어", "사회"],
-      "credit_weighted": true,
-      "conversion_table": {"1": 10.0, "2": 9.8, "3": 9.6, "4": 9.4, "5": 9.0, "6": 8.0, "7": 4.0, "8": 2.0, "9": 0},
-      "formula_note": "예체능계열(의류디자인학과 등) 반영교과: 국어, 영어, 사회(한국사 포함, 수학·과학 제외). 공통·일반선택 석차등급 과목 이수단위 가중평균. 최종 학생부 반영점수 = (교과 반영점수×2)+기본점수100, 300점 만점(2027 모집요강 p.43-45, 실기/실적 의류디자인학과 등 기준). 재학생 3학년 1학기까지·졸업생 3학년 2학기까지 반영, 학년별 가중치 없음. 참고: 원문은 진로선택과목(최대 3과목, A=1등급/B=2등급/C=4등급 환산)도 반영하나 이 계산기는 석차등급이 있는 공통·일반선택과목만 반영한다.",
-      "rule_source_page": "43-45"
-    },
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%EC%9D%B8%ED%95%98%EB%8C%80%ED%95%99%EA%B5%90/%EC%9D%B8%ED%95%98%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
-    "source_page": 40
   },
-  "estimates": {
-    "cutoff_grade_estimate": null,
-    "cutoff_source_url": null,
-    "interview_summaries": [],
-    "prior_year_result": {
-      "admission_year": 2026,
-      "competition_rate": 25.30,
-      "school_record_grade_typical": null,
-      "school_record_grade_floor": null,
-      "grade_stat_type": "competition_rate_only (합격자 학생부 등급 미공개)",
-      "methodology_note": "인하대 미술계열 전년도(2026) 경쟁률 정리 자료에서 확인(모집10명/지원253명/경쟁률25.30:1, 실기우수자전형 기준). 주의: 동일 자료에 나오는 '4.50:1'은 의류디자인학과 일반전형(지역균형)의 경쟁률이며 실기전형과 다른 값이므로 혼동하지 않는다. 합격선 학생부 등급은 공식 공개자료에 없어 미공개로 유지한다.",
-      "source_url": "https://grinalda.net/inha-midae-susi-2027/",
-      "source_page": 1
+  {
+    "university": "인하대학교",
+    "campus": "인천(본교)",
+    "department": "의류디자인학과",
+    "track_name": "실기/실적(의류디자인학과-실기)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 10,
+      "ratio": "실기 70% (700점/250점) + 학생부교과 30% (300점/100점), 일괄합산",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 70,
+      "school_record_ratio_pct": 30,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-10",
+      "result_date": "2026-11-17",
+      "exam_type_name": "기초디자인 - 고사 당일 주어진 주제를 해석하여 표현",
+      "allowed_materials": [
+        "색채표현 가능한 모든 재료(입체적 첨가재료 불허)",
+        "자(도형자 포함)",
+        "지우개(전동지우개 포함)"
+      ],
+      "paper_size": "3절지",
+      "time_limit_minutes": 300,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "사회"
+        ],
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 10,
+          "2": 9.8,
+          "3": 9.6,
+          "4": 9.4,
+          "5": 9,
+          "6": 8,
+          "7": 4,
+          "8": 2,
+          "9": 0
+        },
+        "formula_note": "예체능계열(의류디자인학과 등) 반영교과: 국어, 영어, 사회(한국사 포함, 수학·과학 제외). 공통·일반선택 석차등급 과목 이수단위 가중평균. 최종 학생부 반영점수 = (교과 반영점수×2)+기본점수100, 300점 만점(2027 모집요강 p.43-45, 실기/실적 의류디자인학과 등 기준). 재학생 3학년 1학기까지·졸업생 3학년 2학기까지 반영, 학년별 가중치 없음. 참고: 원문은 진로선택과목(최대 3과목, A=1등급/B=2등급/C=4등급 환산)도 반영하나 이 계산기는 석차등급이 있는 공통·일반선택과목만 반영한다.",
+        "rule_source_page": "43-45"
+      },
+      "source_url": "https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242994&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000169&searchSyr=2027",
+      "source_page": 40,
+      "data_sources": [
+        {
+          "document_name": "대입정보포털 공개 인하대학교 2027학년도 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
+    },
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 25.3,
+        "school_record_grade_typical": null,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "competition_rate_only (합격자 학생부 등급 미공개)",
+        "methodology_note": "인하대 미술계열 전년도(2026) 경쟁률 정리 자료에서 확인(모집10명/지원253명/경쟁률25.30:1, 실기우수자전형 기준). 주의: 동일 자료에 나오는 '4.50:1'은 의류디자인학과 일반전형(지역균형)의 경쟁률이며 실기전형과 다른 값이므로 혼동하지 않는다. 합격선 학생부 등급은 공식 공개자료에 없어 미공개로 유지한다.",
+        "source_url": "https://grinalda.net/inha-midae-susi-2027/",
+        "source_page": 1
+      }
     }
+  },
+  {
+    "university": "인하대학교",
+    "campus": "인천(본교)",
+    "department": "의류디자인학과",
+    "track_name": "학생부종합(인하미래인재(면접형))",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 12,
+      "ratio": "1단계 서류종합평가 100%(3.5배수) → 2단계 1단계 성적 70% + 면접평가 30%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "document_ratio_pct": 70,
+      "interview_ratio_pct": 30,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "result_date": "2026-12-18",
+      "source_url": "https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242994&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000169&searchSyr=2027",
+      "source_page": 11,
+      "data_sources": [
+        {
+          "document_name": "대입정보포털 공개 인하대학교 2027학년도 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_rule": {},
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "학교생활기록부 등 제출서류를 평가기준에 따라 정성적으로 종합평가하는 전형으로, 등급→점수 환산표가 없음(2027 수시모집요강 p.11).",
+      "stages": [
+        {
+          "description": "서류종합평가",
+          "ratio_desc": "100%, 3.5배수 선발",
+          "multiplier": 3.5
+        },
+        {
+          "description": "1단계 성적 + 면접평가",
+          "ratio_desc": "70% + 30%",
+          "multiplier": 1
+        }
+      ]
+    },
+    "estimates": {}
+  },
+  {
+    "university": "인하대학교",
+    "campus": "인천(본교)",
+    "department": "의류디자인학과",
+    "track_name": "학생부종합(인하미래인재(서류형))",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 5,
+      "ratio": "서류종합평가 100%, 일괄합산",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "document_ratio_pct": 100,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "result_date": "2026-12-18",
+      "source_url": "https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242994&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000169&searchSyr=2027",
+      "source_page": 14,
+      "data_sources": [
+        {
+          "document_name": "대입정보포털 공개 인하대학교 2027학년도 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_rule": {},
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "학교생활기록부 등 제출서류를 평가기준에 따라 정성적으로 종합평가하는 전형으로, 등급→점수 환산표가 없음(2027 수시모집요강 p.14)."
+    },
+    "estimates": {}
+  },
+  {
+    "university": "인하대학교",
+    "campus": "인천(본교)",
+    "department": "의류디자인학과",
+    "track_name": "학생부종합(고른기회)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "ratio": "서류종합평가 100%, 일괄합산",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "document_ratio_pct": 100,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "result_date": "2026-12-18",
+      "source_url": "https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242994&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000169&searchSyr=2027",
+      "source_page": 18,
+      "data_sources": [
+        {
+          "document_name": "대입정보포털 공개 인하대학교 2027학년도 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_rule": {},
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "학교생활기록부 등 제출서류를 평가기준에 따라 정성적으로 종합평가하는 전형으로, 등급→점수 환산표가 없음(2027 수시모집요강 p.18)."
+    },
+    "estimates": {}
+  },
+  {
+    "university": "인하대학교",
+    "campus": "인천(본교)",
+    "department": "의류디자인학과",
+    "track_name": "학생부종합(농어촌학생)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "ratio": "서류종합평가 100%, 일괄합산",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "document_ratio_pct": 100,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "result_date": "2026-12-18",
+      "source_url": "https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242994&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000169&searchSyr=2027",
+      "source_page": 21,
+      "data_sources": [
+        {
+          "document_name": "대입정보포털 공개 인하대학교 2027학년도 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_rule": {},
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "학교생활기록부 등 제출서류를 평가기준에 따라 정성적으로 종합평가하는 전형으로, 등급→점수 환산표가 없음(2027 수시모집요강 p.21)."
+    },
+    "estimates": {}
+  },
+  {
+    "university": "인하대학교",
+    "campus": "인천(본교)",
+    "department": "디자인융합학과",
+    "track_name": "학생부종합(농어촌학생)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 1,
+      "ratio": "서류종합평가 100%, 일괄합산",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "document_ratio_pct": 100,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "result_date": "2026-12-18",
+      "source_url": "https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242994&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000169&searchSyr=2027",
+      "source_page": 21,
+      "data_sources": [
+        {
+          "document_name": "대입정보포털 공개 인하대학교 2027학년도 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_rule": {},
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "학교생활기록부 등 제출서류를 평가기준에 따라 정성적으로 종합평가하는 전형으로, 등급→점수 환산표가 없음(2027 수시모집요강 p.21).",
+      "source_page_note": "전형별 모집인원표(p.6) 열 순서 재대조 결과, 디자인융합학과 1명은 '고른기회'가 아니라 '농어촌학생' 열의 값이었다(2026-09-11 정정)."
+    },
+    "estimates": {}
+  },
+  {
+    "university": "인하대학교",
+    "campus": "인천(본교)",
+    "department": "의류디자인학과",
+    "track_name": "학생부교과(지역균형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 5,
+      "ratio": "학생부교과 100%, 일괄합산",
+      "is_staged": false,
+      "csat_minimum_required": true,
+      "csat_minimum_rule": "국어, 수학, 영어, 사회/과학탐구(1과목) 중 2개 영역 등급 합 6 이내(인문계열); 한국사 필수 응시",
+      "school_record_ratio_pct": 100,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "result_date": "2026-12-18",
+      "school_record_rule": {
+        "mode": "all_subjects_plus_career_elective",
+        "subjects": [
+          "국어",
+          "수학",
+          "영어",
+          "사회"
+        ],
+        "credit_weighted": true,
+        "career_elective_max_count": 3,
+        "conversion_table": {
+          "1": 10,
+          "2": 9.8,
+          "3": 9.6,
+          "4": 9.4,
+          "5": 9,
+          "6": 8,
+          "7": 4,
+          "8": 2,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 10,
+          "B": 9.8,
+          "C": 9.4
+        },
+        "formula_note": "의류디자인학과(일반)은 인문계열 반영교과(국어·수학·영어·사회[한국사 포함])를 적용. 공통·일반선택 석차등급 및 진로선택 성취도(상위 3과목, A=1등급/B=2등급/C=4등급 환산)를 이수단위 가중평균하여 학생부교과 반영점수를 산출하고 ×10(2027 수시모집요강 p.43-45).",
+        "rule_source_page": "43-45"
+      },
+      "source_url": "https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242994&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000169&searchSyr=2027",
+      "source_page": 29,
+      "data_sources": [
+        {
+          "document_name": "대입정보포털 공개 인하대학교 2027학년도 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required",
+      "source_page_note": "모집인원·전형방법 p.6·29, 수능최저 p.30, 학생부 반영방법 p.43-45, 일정 p.8."
+    },
+    "estimates": {}
   }
-}
 ]
