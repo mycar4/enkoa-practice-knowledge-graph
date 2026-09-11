@@ -47,18 +47,54 @@ RAW_DIR = REPO_ROOT / "내작업폴더" / "data" / "art_admission" / "raw"
 # 조각을 학과명 후보로 뽑는다(너무 짧은 조각은 노이즈라 2자 이상만 인정).
 DEPT_SUFFIX_RE = re.compile(r"[가-힣A-Za-z0-9·\(\)/&,\.]{2,25}(?:학과|학부|전공학과|전공)")
 
-# 미술 실기고사에서 실제로 쓰이는 과목/과제명 - 학과 이름이 아니라 "시험 내용"
-# 기준이라 공학계 "디자인" 학과(디자인컨버전스학과 등)는 여기 안 걸린다.
-# "인물"·"정물"·"조소" 단독처럼 너무 흔한 한글 단어는 무관한 문맥(지원자격
-# 설명, 인물평가 등)에서도 걸려 오탐을 늘리므로 빼고, 실기고사 표에서만
-# 쓰이는 구체적인 복합 과목명 위주로 좁혔다.
-EXAM_SUBJECT_KEYWORDS = [
-    "인물수채화", "인물소묘", "정물소묘", "정물수채화", "인체소묘", "인체수채화",
-    "수묵담채화", "문인화", "발상과 표현", "발상과표현", "기초디자인",
-    "입체조형", "평면조형", "매체미술", "자유표현", "상황표현", "칸만화",
-    "기초조형", "점토조형", "물레성형", "공예디자인", "기초소묘", "사고의전환",
-    "기초수채화", "인물화", "두상소묘", "석고소묘", "정물화", "풍경소묘",
-]
+# 실기 과목명은 "매칭 정확도를 위한 필터"가 아니라, 학생이 실제로 무엇을
+# 준비해야 하는지를 가르는 진짜 데이터다(예: 인물수채화만 준비한 학생은
+# 정물수채화가 나오는 학교 시험은 못 본다). 손으로 추측해서 목록을 좁히면
+# 그 목록에 없는 표현을 쓰는 학교가 감사 대상에서 통째로 빠지는, "누락을
+# 막으려다 새 누락을 만드는" 결과가 된다. 그래서 이 목록은 하드코딩하지
+# 않고, 이미 원문 대조를 거쳐 검증된 raw json 38개 파일의 실제 exam_type_name
+# 값에서 직접 뽑는다 - 새 학교를 추가할 때마다 이 사전도 같이 늘어난다.
+STOP_FRAGMENTS = {
+    "고사", "당일", "제시", "제공", "사진", "이미지", "경우", "조건", "주제",
+    "선택", "가능", "방법", "형식", "포함", "해당", "없음", "실기", "이하",
+    "기준", "기재", "별도", "확인", "반영", "전용", "동일", "추정", "원문",
+    "단계", "구술", "면접", "서류", "평가", "질의응답", "학생부", "정성평가",
+}
+# 실기 과목명다운 어미(화/묘/조/형/디자인/표현/만화 등)로 끝나는 조각만
+# 채택 - "고사 당일" 같은 순수 안내문구가 섞여 들어오지 않게 거른다.
+SUBJECT_SUFFIXES = ("화", "묘", "조", "형", "성형", "조형", "디자인", "표현", "만화", "서예", "그라피")
+
+
+def build_exam_subject_keywords():
+    names = set()
+    for path in RAW_DIR.glob("*.json"):
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        for rec in (data if isinstance(data, list) else [data]):
+            n = rec.get("official_facts", {}).get("exam_type_name")
+            if n:
+                names.add(n)
+
+    fragments = set()
+    splitter = re.compile(r"택\s*\d|또는|중\s*택|위주|[·,/+()\[\]:;\-]")
+    for name in names:
+        for part in splitter.split(name):
+            p = part.strip()
+            if not p or not (2 <= len(p) <= 10):
+                continue
+            if not re.fullmatch(r"[가-힣\s]+", p):
+                continue
+            p_nospace = p.replace(" ", "")
+            if p_nospace in STOP_FRAGMENTS:
+                continue
+            if p_nospace.endswith(SUBJECT_SUFFIXES):
+                fragments.add(p_nospace)
+    return sorted(fragments)
+
+
+EXAM_SUBJECT_KEYWORDS = build_exam_subject_keywords()
 
 # 학과명 후보에 섞여 나오지만 실제로는 학과가 아닌 흔한 오탐 패턴
 NOISE_SUBSTRINGS = ["자율전공학부", "특성화고교졸업자전형", "농어촌학생전형"]
@@ -111,6 +147,11 @@ def local_pdf_paths_for_university(university):
 # 앞뒤 이 글자 수 안에 실기 과목명이 있어야만 "그 학과 얘기"로 인정한다.
 PROXIMITY_WINDOW = 120
 
+# PDF 텍스트 추출 시 "발상과 표현"/"발상과표현"처럼 같은 과목명이 띄어쓰기
+# 유무로 갈리는 경우가 흔하다 - 키워드 글자 사이에 공백이 있어도/없어도
+# 매칭되게 각 글자 사이에 \s*를 끼워 정규식을 만든다.
+_SUBJECT_PATTERNS = [re.compile(r"\s*".join(re.escape(ch) for ch in kw)) for kw in EXAM_SUBJECT_KEYWORDS]
+
 
 def extract_dept_candidates(pdf_path):
     """실기 과목명(EXAM_SUBJECT_KEYWORDS)이 근처(PROXIMITY_WINDOW자 이내)에
@@ -121,7 +162,7 @@ def extract_dept_candidates(pdf_path):
     candidates = set()
     for page in doc:
         text = page.get_text()
-        subject_positions = [m.start() for kw in EXAM_SUBJECT_KEYWORDS for m in re.finditer(re.escape(kw), text)]
+        subject_positions = [m.start() for pat in _SUBJECT_PATTERNS for m in pat.finditer(text)]
         if not subject_positions:
             continue
         for m in DEPT_SUFFIX_RE.finditer(text):

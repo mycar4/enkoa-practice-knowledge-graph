@@ -140,5 +140,307 @@
         "source_page": 1
       }
     }
+  },
+  {
+    "university": "중앙대학교",
+    "campus": "서울",
+    "department": "미술학부",
+    "track_name": "한국화",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 13,
+      "ratio": "일괄합산: 학생부 20%(교과15%+비교과5%) + 실기 80%",
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-18",
+      "result_date": "2026-11-17",
+      "exam_type_name": "수묵담채화(정물 또는 인물 중 택1)",
+      "allowed_materials": [],
+      "paper_size": "옥당지 반절(68×70cm, 정물) 또는 2/3(70×90cm, 인물) - 과제 선택에 따름",
+      "time_limit_minutes": 240,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": ["국어", "영어", "사회"],
+        "career_elective_included": false,
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 10, "2": 9.6, "3": 9.2, "4": 8.8, "5": 8.2, "6": 7.6, "7": 7, "8": 6, "9": 3
+        },
+        "formula_note": "교과 환산점수 평균 = Σ(반영과목별 석차등급 환산점수×이수단위) / Σ(반영과목별 이수단위) (2027 모집요강 p.69-70, p.87-89 [표3] 실기형 환산점수표 기준 - 공간연출전공과 동일한 학교 공통 규정). 석차등급 없는 과목/진로선택과목은 반영하지 않음. 산출된 평균에 학생부 반영비율(교과15%+비교과5%=20%)을 곱해 사용 - 비교과(출결) 5%는 미인정 결석일수 기준 별도 산출(무결석 시 만점 가정)이라 이 계산기에서는 무결석으로 가정함.",
+        "rule_source_page": "69-70, 87-89"
+      },
+      "source_url": "https://admission.cau.ac.kr/file/pdfDown.pdf?sfn=20260805051607003_0c37226bf7e64ad79adafec6f6fdc72c.pdf&ofn=%EC%A4%91%EC%95%99%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_%EC%97%85%EB%A1%9C%EB%93%9C%EC%9A%A9%28%EC%B5%9C%EC%A2%85%29.pdf",
+      "source_page": 67,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required",
+      "source_page_note": "2026-09-11 완결성 감사 도구로 발견된 누락 - 중앙대는 공간연출전공만 있고 미술학부/디자인학부 전체가 빠져 있었음. 모집인원: p.67, 반영비율: p.69, 실기과제: p.73-74, 학생부 반영방법: p.69-70·87-89, 전형일정: p.68."
+    }
+  },
+  {
+    "university": "중앙대학교",
+    "campus": "서울",
+    "department": "미술학부",
+    "track_name": "서양화",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 11,
+      "ratio": "일괄합산: 학생부 20%(교과15%+비교과5%) + 실기 80%",
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-17",
+      "result_date": "2026-11-17",
+      "exam_type_name": "인체수채화 + 정물",
+      "allowed_materials": [
+        "수채화 재료(아크릴/과슈/흰색 물감 및 연필·지우개 외 소묘 재료 사용 금지)"
+      ],
+      "paper_size": "2절지(54.5×78.8cm)",
+      "time_limit_minutes": 240,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": ["국어", "영어", "사회"],
+        "career_elective_included": false,
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 10, "2": 9.6, "3": 9.2, "4": 8.8, "5": 8.2, "6": 7.6, "7": 7, "8": 6, "9": 3
+        },
+        "formula_note": "교과 환산점수 평균 = Σ(반영과목별 석차등급 환산점수×이수단위) / Σ(반영과목별 이수단위) (2027 모집요강 p.69-70, p.87-89 [표3] 실기형 환산점수표 기준 - 공간연출전공과 동일한 학교 공통 규정). 석차등급 없는 과목/진로선택과목은 반영하지 않음. 산출된 평균에 학생부 반영비율(교과15%+비교과5%=20%)을 곱해 사용 - 비교과(출결) 5%는 미인정 결석일수 기준 별도 산출(무결석 시 만점 가정)이라 이 계산기에서는 무결석으로 가정함.",
+        "rule_source_page": "69-70, 87-89"
+      },
+      "source_url": "https://admission.cau.ac.kr/file/pdfDown.pdf?sfn=20260805051607003_0c37226bf7e64ad79adafec6f6fdc72c.pdf&ofn=%EC%A4%91%EC%95%99%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_%EC%97%85%EB%A1%9C%EB%93%9C%EC%9A%A9%28%EC%B5%9C%EC%A2%85%29.pdf",
+      "source_page": 67,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required",
+      "source_page_note": "2026-09-11 완결성 감사 도구로 발견된 누락. 모집인원: p.67, 반영비율: p.69, 실기과제: p.74, 학생부 반영방법: p.69-70·87-89, 전형일정: p.68."
+    }
+  },
+  {
+    "university": "중앙대학교",
+    "campus": "서울",
+    "department": "미술학부",
+    "track_name": "조소",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 13,
+      "ratio": "일괄합산: 학생부 20%(교과15%+비교과5%) + 실기 80%",
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-17",
+      "result_date": "2026-11-17",
+      "exam_type_name": "인체소조(인물두상, 모델 없음, 점토작업)",
+      "allowed_materials": [],
+      "paper_size": "해당 없음 (입체 조형)",
+      "time_limit_minutes": 240,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": ["국어", "영어", "사회"],
+        "career_elective_included": false,
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 10, "2": 9.6, "3": 9.2, "4": 8.8, "5": 8.2, "6": 7.6, "7": 7, "8": 6, "9": 3
+        },
+        "formula_note": "교과 환산점수 평균 = Σ(반영과목별 석차등급 환산점수×이수단위) / Σ(반영과목별 이수단위) (2027 모집요강 p.69-70, p.87-89 [표3] 실기형 환산점수표 기준 - 공간연출전공과 동일한 학교 공통 규정). 석차등급 없는 과목/진로선택과목은 반영하지 않음. 산출된 평균에 학생부 반영비율(교과15%+비교과5%=20%)을 곱해 사용 - 비교과(출결) 5%는 미인정 결석일수 기준 별도 산출(무결석 시 만점 가정)이라 이 계산기에서는 무결석으로 가정함.",
+        "rule_source_page": "69-70, 87-89"
+      },
+      "source_url": "https://admission.cau.ac.kr/file/pdfDown.pdf?sfn=20260805051607003_0c37226bf7e64ad79adafec6f6fdc72c.pdf&ofn=%EC%A4%91%EC%95%99%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_%EC%97%85%EB%A1%9C%EB%93%9C%EC%9A%A9%28%EC%B5%9C%EC%A2%85%29.pdf",
+      "source_page": 67,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required",
+      "source_page_note": "2026-09-11 완결성 감사 도구로 발견된 누락. 모집인원: p.67, 반영비율: p.69, 실기과제: p.74, 학생부 반영방법: p.69-70·87-89, 전형일정: p.68."
+    }
+  },
+  {
+    "university": "중앙대학교",
+    "campus": "서울",
+    "department": "디자인학부",
+    "track_name": "공예",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 4,
+      "ratio": "1단계(20배수): 학생부 100%(교과75%+비교과25%) -> 2단계: 학생부 20%(교과15%+비교과5%) + 실기 80%",
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "is_staged": true,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-31",
+      "result_date": "2026-11-17",
+      "exam_type_name": "기초디자인",
+      "allowed_materials": [
+        "채색표현 재료(제한 없음)"
+      ],
+      "paper_size": "3절지(47×64.5cm, 가로 방향)",
+      "time_limit_minutes": 300,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": ["국어", "영어", "사회"],
+        "career_elective_included": false,
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 10, "2": 9.6, "3": 9.2, "4": 8.8, "5": 8.2, "6": 7.6, "7": 7, "8": 6, "9": 3
+        },
+        "formula_note": "교과 환산점수 평균 = Σ(반영과목별 석차등급 환산점수×이수단위) / Σ(반영과목별 이수단위) (2027 모집요강 p.69-70, p.87-89 [표3] 실기형 환산점수표 기준 - 공간연출전공과 동일한 학교 공통 규정). 1단계(20배수)는 학생부 100%(교과75+비교과25)로만 선발하고, 2단계 최종 점수는 학생부 20%(교과15+비교과5)+실기 80%로 다시 산출함(1단계 성적을 이월하지 않음) - 이 계산기는 2단계 최종 반영비율 기준으로 계산함. 비교과(출결) 5%는 미인정 결석일수 기준 별도 산출(무결석 시 만점 가정)이라 이 계산기에서는 무결석으로 가정함.",
+        "rule_source_page": "69-70, 87-89"
+      },
+      "source_url": "https://admission.cau.ac.kr/file/pdfDown.pdf?sfn=20260805051607003_0c37226bf7e64ad79adafec6f6fdc72c.pdf&ofn=%EC%A4%91%EC%95%99%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_%EC%97%85%EB%A1%9C%EB%93%9C%EC%9A%A9%28%EC%B5%9C%EC%A2%85%29.pdf",
+      "source_page": 67,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required",
+      "source_page_note": "2026-09-11 완결성 감사 도구로 발견된 누락. 디자인학부의 실내환경디자인·패션은 이 실기형(공예/산업디자인/시각디자인만 명시) 표에 없어 별도 전형(학생부위주 등)일 가능성이 있음 - 별도 확인 필요, 이번엔 원문에서 실기형으로 명확히 확인된 3개 전공만 추가함. 모집인원: p.67, 반영비율: p.69, 실기과제: p.74, 전형일정: p.68."
+    }
+  },
+  {
+    "university": "중앙대학교",
+    "campus": "서울",
+    "department": "디자인학부",
+    "track_name": "산업디자인",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 5,
+      "ratio": "1단계(20배수): 학생부 100%(교과75%+비교과25%) -> 2단계: 학생부 20%(교과15%+비교과5%) + 실기 80%",
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "is_staged": true,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-31",
+      "result_date": "2026-11-17",
+      "exam_type_name": "기초디자인",
+      "allowed_materials": [
+        "채색표현 재료(제한 없음)"
+      ],
+      "paper_size": "3절지(47×64.5cm, 가로 방향)",
+      "time_limit_minutes": 300,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": ["국어", "영어", "사회"],
+        "career_elective_included": false,
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 10, "2": 9.6, "3": 9.2, "4": 8.8, "5": 8.2, "6": 7.6, "7": 7, "8": 6, "9": 3
+        },
+        "formula_note": "교과 환산점수 평균 = Σ(반영과목별 석차등급 환산점수×이수단위) / Σ(반영과목별 이수단위) (2027 모집요강 p.69-70, p.87-89 [표3] 실기형 환산점수표 기준 - 공간연출전공과 동일한 학교 공통 규정). 1단계(20배수)는 학생부 100%(교과75+비교과25)로만 선발하고, 2단계 최종 점수는 학생부 20%(교과15+비교과5)+실기 80%로 다시 산출함(1단계 성적을 이월하지 않음) - 이 계산기는 2단계 최종 반영비율 기준으로 계산함. 비교과(출결) 5%는 미인정 결석일수 기준 별도 산출(무결석 시 만점 가정)이라 이 계산기에서는 무결석으로 가정함.",
+        "rule_source_page": "69-70, 87-89"
+      },
+      "source_url": "https://admission.cau.ac.kr/file/pdfDown.pdf?sfn=20260805051607003_0c37226bf7e64ad79adafec6f6fdc72c.pdf&ofn=%EC%A4%91%EC%95%99%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_%EC%97%85%EB%A1%9C%EB%93%9C%EC%9A%A9%28%EC%B5%9C%EC%A2%85%29.pdf",
+      "source_page": 67,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required",
+      "source_page_note": "2026-09-11 완결성 감사 도구로 발견된 누락. 모집인원: p.67, 반영비율: p.69, 실기과제: p.74, 전형일정: p.68."
+    }
+  },
+  {
+    "university": "중앙대학교",
+    "campus": "서울",
+    "department": "디자인학부",
+    "track_name": "시각디자인",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 6,
+      "ratio": "1단계(20배수): 학생부 100%(교과75%+비교과25%) -> 2단계: 학생부 20%(교과15%+비교과5%) + 실기 80%",
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "is_staged": true,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-31",
+      "result_date": "2026-11-17",
+      "exam_type_name": "기초디자인",
+      "allowed_materials": [
+        "채색표현 재료(제한 없음)"
+      ],
+      "paper_size": "3절지(47×64.5cm, 가로 방향)",
+      "time_limit_minutes": 300,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": ["국어", "영어", "사회"],
+        "career_elective_included": false,
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 10, "2": 9.6, "3": 9.2, "4": 8.8, "5": 8.2, "6": 7.6, "7": 7, "8": 6, "9": 3
+        },
+        "formula_note": "교과 환산점수 평균 = Σ(반영과목별 석차등급 환산점수×이수단위) / Σ(반영과목별 이수단위) (2027 모집요강 p.69-70, p.87-89 [표3] 실기형 환산점수표 기준 - 공간연출전공과 동일한 학교 공통 규정). 1단계(20배수)는 학생부 100%(교과75+비교과25)로만 선발하고, 2단계 최종 점수는 학생부 20%(교과15+비교과5)+실기 80%로 다시 산출함(1단계 성적을 이월하지 않음) - 이 계산기는 2단계 최종 반영비율 기준으로 계산함. 비교과(출결) 5%는 미인정 결석일수 기준 별도 산출(무결석 시 만점 가정)이라 이 계산기에서는 무결석으로 가정함.",
+        "rule_source_page": "69-70, 87-89"
+      },
+      "source_url": "https://admission.cau.ac.kr/file/pdfDown.pdf?sfn=20260805051607003_0c37226bf7e64ad79adafec6f6fdc72c.pdf&ofn=%EC%A4%91%EC%95%99%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_%EC%97%85%EB%A1%9C%EB%93%9C%EC%9A%A9%28%EC%B5%9C%EC%A2%85%29.pdf",
+      "source_page": 67,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required",
+      "source_page_note": "2026-09-11 완결성 감사 도구로 발견된 누락. 모집인원: p.67, 반영비율: p.69, 실기과제: p.74, 전형일정: p.68."
+    }
   }
 ]
