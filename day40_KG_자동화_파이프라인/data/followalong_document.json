@@ -1,0 +1,54 @@
+{
+  "doc_id": "PMC13494208",
+  "title": "Aryl hydrocarbon receptor pharmacology, mechanisms, ligands, and therapeutic potential",
+  "journal": "Pharmacological Reviews",
+  "year": "2026",
+  "license": "CC BY",
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494208/",
+  "publisher_url": "https://www.sciencedirect.com/science/article/pii/S0031699726000347",
+  "source_file": "실습자료/day38_추출품질_검증/data/kg_corpus.jsonl",
+  "source_sha256": "3e036e0b1cea855878d0a7279ce1f23f54fb888f0fae5106e672ebe9238f7841",
+  "text": "Tapinarof (3,5-dihydroxy-4-isopropylstilbene) is the first-in-class nonsteroidal, topical AHR agonist (Kd: 100–200 nM) that was approved by the US Food and Drug Administration (FDA) in 2022 for the treatment of plaque psoriasis and in 2024 for the treatment of atopic dermatitis.\n\nLaquinimod is a quinoline-3-carboxamide and AHR agonist developed by Active Biotech and Teva that was investigated as an oral treatment for multiple sclerosis and Huntington disease.\n\nThere is also interest in pursuing laquinimod for the treatment of inflammatory bowel disease.\n\nCarbidopa, used to treat Parkinson disease, was reported to activate AHR.",
+  "paragraphs": [
+    {
+      "paragraph_id": "p01",
+      "sentence_id": 7,
+      "text": "Tapinarof (3,5-dihydroxy-4-isopropylstilbene) is the first-in-class nonsteroidal, topical AHR agonist (Kd: 100–200 nM) that was approved by the US Food and Drug Administration (FDA) in 2022 for the treatment of plaque psoriasis and in 2024 for the treatment of atopic dermatitis.",
+      "source_start": 790,
+      "source_end": 1069,
+      "reviewed": true,
+      "n_gold": 2,
+      "reason": "두 질환의 치료 승인을 명시함"
+    },
+    {
+      "paragraph_id": "p02",
+      "sentence_id": 10,
+      "text": "Laquinimod is a quinoline-3-carboxamide and AHR agonist developed by Active Biotech and Teva that was investigated as an oral treatment for multiple sclerosis and Huntington disease.",
+      "source_start": 1282,
+      "source_end": 1464,
+      "reviewed": true,
+      "n_gold": 0,
+      "reason": "치료제로 연구했다는 서술이므로 치료 사용 관계에서 제외"
+    },
+    {
+      "paragraph_id": "p03",
+      "sentence_id": 11,
+      "text": "There is also interest in pursuing laquinimod for the treatment of inflammatory bowel disease.",
+      "source_start": 1465,
+      "source_end": 1559,
+      "reviewed": true,
+      "n_gold": 0,
+      "reason": "치료 연구에 관심이 있다는 서술이므로 제외"
+    },
+    {
+      "paragraph_id": "p04",
+      "sentence_id": 17,
+      "text": "Carbidopa, used to treat Parkinson disease, was reported to activate AHR.",
+      "source_start": 2437,
+      "source_end": 2510,
+      "reviewed": true,
+      "n_gold": 1,
+      "reason": "치료에 사용된다고 명시함"
+    }
+  ]
+}

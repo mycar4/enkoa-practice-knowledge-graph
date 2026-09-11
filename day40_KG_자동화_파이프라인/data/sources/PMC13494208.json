@@ -1,0 +1,28 @@
+{
+  "doc_id": "PMC13494208",
+  "title": "Aryl hydrocarbon receptor pharmacology, mechanisms, ligands, and therapeutic potential",
+  "journal": "Pharmacological Reviews",
+  "year": "2026",
+  "license": "CC BY",
+  "text": "Exogenous ligands\n\nHAHs, such as TCDD (Kd: 0.5 nM) 2,3,7,8-tetrachlorodibenzofuran and 3,3′,4,4′,5-pentachlorobiphenyl (Kd: 1.3 nM) are environmental contaminants that exhibit high affinity and prolonged binding to AHR, causing sustained AHR activation (Fig. 2). This increased and stable AHR response has been suggested to contribute to their toxicity, although recent findings suggest that this may not be the case for AHR regulated immune responses. PAHs, such as B[a]P, are products of combustion and industrial processes that are found in tobacco smoke, air pollution and charbroiled food. PAHs generally have a lower affinity for AHR than HAHs. 3-Methylcholanthrene is a synthetic PAH, whereas β-naphthoflavone is a synthetic flavone and is routinely used as a nontoxic AHR agonist.\n\nTapinarof (3,5-dihydroxy-4-isopropylstilbene) is the first-in-class nonsteroidal, topical AHR agonist (Kd: 100–200 nM) that was approved by the US Food and Drug Administration (FDA) in 2022 for the treatment of plaque psoriasis and in 2024 for the treatment of atopic dermatitis. The clinical approval of tapinarof was a milestone in the efforts to establish AHR as a viable therapeutic target. Tapinarof leverages AHR’s anti-inflammatory and antioxidant actions to reduce skin inflammation. Laquinimod is a quinoline-3-carboxamide and AHR agonist developed by Active Biotech and Teva that was investigated as an oral treatment for multiple sclerosis and Huntington disease. There is also interest in pursuing laquinimod for the treatment of inflammatory bowel disease. 10-Chloro-7H-benzimidazo[2,1-a]benzo[de]iso-quinolin-7-one and its analog 11-chloro-7H-benzimidazo[2,1-a]benzo[de]iso-quinolin-7-one are rapidly metabolized AHR activators and immune modulators discovered from small molecule library screening. Drug repurposing screening strategies have identified other FDA approved agents that have AHR modulating activities. Such screening efforts have identified the cyclooxygenase inhibitor, nabumetone, and the dihydroorotate dehydrogenase inhibitor, teriflunomide, as AHR activators. The tyrosine kinase inhibitor, ponatinib, and the Janus kinase (JAK) inhibitor, tofacitinib, were also reported to reduce TCDD-dependent increases in CYP1A1 levels. The proton-pump inhibitor omeprazole has been identified as an indirect AHR activator, proagonist and proantagonist depending on the metabolite generated and in a species-specific manner. Carbidopa, used to treat Parkinson disease, was reported to activate AHR. Tranilast is an AHR activator and clinically approved antiallergic agent used in Japan, South Korea, and China, but it is not approved by the FDA.",
+  "sentences": [
+    "Exogenous ligands",
+    "HAHs, such as TCDD (Kd: 0.5 nM) 2,3,7,8-tetrachlorodibenzofuran and 3,3′,4,4′,5-pentachlorobiphenyl (Kd: 1.3 nM) are environmental contaminants that exhibit high affinity and prolonged binding to AHR, causing sustained AHR activation (Fig. 2).",
+    "This increased and stable AHR response has been suggested to contribute to their toxicity, although recent findings suggest that this may not be the case for AHR regulated immune responses.",
+    "PAHs, such as B[a]P, are products of combustion and industrial processes that are found in tobacco smoke, air pollution and charbroiled food.",
+    "PAHs generally have a lower affinity for AHR than HAHs.",
+    "3-Methylcholanthrene is a synthetic PAH, whereas β-naphthoflavone is a synthetic flavone and is routinely used as a nontoxic AHR agonist.",
+    "Tapinarof (3,5-dihydroxy-4-isopropylstilbene) is the first-in-class nonsteroidal, topical AHR agonist (Kd: 100–200 nM) that was approved by the US Food and Drug Administration (FDA) in 2022 for the treatment of plaque psoriasis and in 2024 for the treatment of atopic dermatitis.",
+    "The clinical approval of tapinarof was a milestone in the efforts to establish AHR as a viable therapeutic target.",
+    "Tapinarof leverages AHR’s anti-inflammatory and antioxidant actions to reduce skin inflammation.",
+    "Laquinimod is a quinoline-3-carboxamide and AHR agonist developed by Active Biotech and Teva that was investigated as an oral treatment for multiple sclerosis and Huntington disease.",
+    "There is also interest in pursuing laquinimod for the treatment of inflammatory bowel disease.",
+    "10-Chloro-7H-benzimidazo[2,1-a]benzo[de]iso-quinolin-7-one and its analog 11-chloro-7H-benzimidazo[2,1-a]benzo[de]iso-quinolin-7-one are rapidly metabolized AHR activators and immune modulators discovered from small molecule library screening.",
+    "Drug repurposing screening strategies have identified other FDA approved agents that have AHR modulating activities.",
+    "Such screening efforts have identified the cyclooxygenase inhibitor, nabumetone, and the dihydroorotate dehydrogenase inhibitor, teriflunomide, as AHR activators.",
+    "The tyrosine kinase inhibitor, ponatinib, and the Janus kinase (JAK) inhibitor, tofacitinib, were also reported to reduce TCDD-dependent increases in CYP1A1 levels.",
+    "The proton-pump inhibitor omeprazole has been identified as an indirect AHR activator, proagonist and proantagonist depending on the metabolite generated and in a species-specific manner.",
+    "Carbidopa, used to treat Parkinson disease, was reported to activate AHR.",
+    "Tranilast is an AHR activator and clinically approved antiallergic agent used in Japan, South Korea, and China, but it is not approved by the FDA."
+  ]
+}

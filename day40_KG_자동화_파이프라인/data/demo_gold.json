@@ -1,0 +1,42 @@
+[
+  {
+    "subject": "2.0.3",
+    "relation": "FIXES_API",
+    "object": "DataFrame.to_string",
+    "source_doc_id": "pandas_doc_source_whatsnew_v2_0_3",
+    "paragraph_id": "p01",
+    "evidence": "- Fixed regression when DataFrame.to_string creates extra space for string dtypes (52690)"
+  },
+  {
+    "subject": "2.0.3",
+    "relation": "FIXES_API",
+    "object": "Series.reindex",
+    "source_doc_id": "pandas_doc_source_whatsnew_v2_0_3",
+    "paragraph_id": "p02",
+    "evidence": "- Bug in Series.reindex when expanding a non-nanosecond datetime or timedelta Series would not fill with NaT correctly (53497)"
+  },
+  {
+    "subject": "2.0.3",
+    "relation": "FIXES_API",
+    "object": "read_csv",
+    "source_doc_id": "pandas_doc_source_whatsnew_v2_0_3",
+    "paragraph_id": "p03",
+    "evidence": "- Bug in read_csv when defining dtype with bool[pyarrow] for the \"c\" and \"python\" engines (53390)"
+  },
+  {
+    "subject": "2.0.3",
+    "relation": "FIXES_API",
+    "object": "Series.str.split",
+    "source_doc_id": "pandas_doc_source_whatsnew_v2_0_3",
+    "paragraph_id": "p04",
+    "evidence": "- Bug in Series.str.split and Series.str.rsplit with expand=True for ArrowDtype with pyarrow.string (53532)"
+  },
+  {
+    "subject": "2.0.3",
+    "relation": "FIXES_API",
+    "object": "Series.str.rsplit",
+    "source_doc_id": "pandas_doc_source_whatsnew_v2_0_3",
+    "paragraph_id": "p04",
+    "evidence": "- Bug in Series.str.split and Series.str.rsplit with expand=True for ArrowDtype with pyarrow.string (53532)"
+  }
+]

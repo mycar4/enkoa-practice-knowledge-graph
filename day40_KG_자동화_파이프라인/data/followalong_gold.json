@@ -1,0 +1,29 @@
+[
+  {
+    "subject": "Tapinarof",
+    "relation": "TREATS",
+    "object": "plaque psoriasis",
+    "source_doc_id": "PMC13494208",
+    "paragraph_id": "p01",
+    "sentence_id": 7,
+    "evidence": "Tapinarof (3,5-dihydroxy-4-isopropylstilbene) is the first-in-class nonsteroidal, topical AHR agonist (Kd: 100–200 nM) that was approved by the US Food and Drug Administration (FDA) in 2022 for the treatment of plaque psoriasis and in 2024 for the treatment of atopic dermatitis."
+  },
+  {
+    "subject": "Tapinarof",
+    "relation": "TREATS",
+    "object": "atopic dermatitis",
+    "source_doc_id": "PMC13494208",
+    "paragraph_id": "p01",
+    "sentence_id": 7,
+    "evidence": "Tapinarof (3,5-dihydroxy-4-isopropylstilbene) is the first-in-class nonsteroidal, topical AHR agonist (Kd: 100–200 nM) that was approved by the US Food and Drug Administration (FDA) in 2022 for the treatment of plaque psoriasis and in 2024 for the treatment of atopic dermatitis."
+  },
+  {
+    "subject": "Carbidopa",
+    "relation": "TREATS",
+    "object": "Parkinson disease",
+    "source_doc_id": "PMC13494208",
+    "paragraph_id": "p04",
+    "sentence_id": 17,
+    "evidence": "Carbidopa, used to treat Parkinson disease, was reported to activate AHR."
+  }
+]

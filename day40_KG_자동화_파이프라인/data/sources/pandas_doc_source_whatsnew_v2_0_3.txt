@@ -1,0 +1,23 @@
+What's new in 2.0.3 (June 28, 2023)
+
+These are the changes in pandas 2.0.3. See release for a full changelog
+including other versions of pandas.
+
+Fixed regressions
+- Bug in Timestamp.weekday was returning incorrect results before '0000-02-29' (53738)
+- Fixed performance regression in merging on datetime-like columns (53231)
+- Fixed regression when DataFrame.to_string creates extra space for string dtypes (52690)
+
+Bug fixes
+- Bug in DataFrame.convert_dtype and Series.convert_dtype when trying to convert ArrowDtype with dtype_backend="nullable_numpy" (53648)
+- Bug in RangeIndex.union when using sort=True with another RangeIndex (53490)
+- Bug in Series.reindex when expanding a non-nanosecond datetime or timedelta Series would not fill with NaT correctly (53497)
+- Bug in read_csv when defining dtype with bool[pyarrow] for the "c" and "python" engines (53390)
+- Bug in Series.str.split and Series.str.rsplit with expand=True for ArrowDtype with pyarrow.string (53532)
+- Bug in indexing methods (e.g. DataFrame.__getitem__) where taking the entire DataFrame/Series would raise an OverflowError when Copy on Write was enabled and the length of the array was over the maximum size a 32-bit integer can hold (53616)
+- Bug when constructing a DataFrame with columns of an ArrowDtype with a pyarrow.dictionary type that reindexes the data (53617)
+- Bug when indexing a DataFrame or Series with an Index with a timestamp ArrowDtype would raise an AttributeError (53644)
+
+Other
+
+Contributors

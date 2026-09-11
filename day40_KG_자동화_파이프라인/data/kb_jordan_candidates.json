@@ -1,0 +1,36 @@
+{
+  "retrieved_at": "2026-09-11",
+  "note": "Wikidata 실제 항목 3개를 강사가 골라 한국어로 요약한 비교 자료입니다. 검색 순위가 아닙니다. 실습 문장은 학습용으로 작성했습니다.",
+  "candidates": [
+    {
+      "qid": "Q810",
+      "name": "요르단",
+      "type": "국가",
+      "description": "서아시아의 국가",
+      "original_label": "Jordan",
+      "original_description": "country in West Asia",
+      "source_url": "https://www.wikidata.org/wiki/Q810",
+      "revision": 2539091385
+    },
+    {
+      "qid": "Q3308285",
+      "name": "마이클 I. 조던",
+      "type": "사람",
+      "description": "컴퓨터 과학자",
+      "original_label": "Michael I. Jordan",
+      "original_description": "American computer scientist, University of California, Berkeley",
+      "source_url": "https://www.wikidata.org/wiki/Q3308285",
+      "revision": 2494702480
+    },
+    {
+      "qid": "Q41421",
+      "name": "마이클 조던",
+      "type": "사람",
+      "description": "미국의 농구 선수이자 사업가",
+      "original_label": "Michael Jordan",
+      "original_description": "American basketball player and businessman (born 1963)",
+      "source_url": "https://www.wikidata.org/wiki/Q41421",
+      "revision": 2540289186
+    }
+  ]
+}

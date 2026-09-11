@@ -1,0 +1,9 @@
+{
+  "status": "LV1과 LV2는 같은 의약품 원문으로 추출과 평가를 이어서 수행합니다.",
+  "selected": {
+    "doc_id": "drug_198500050",
+    "title": "이노엔비타메진캡슐",
+    "source": "https://www.data.go.kr/data/15075057/openapi.do",
+    "reason": "효능과 주의사항의 증상은 제외하고 이상반응 절의 5개 증상만 추출"
+  }
+}
