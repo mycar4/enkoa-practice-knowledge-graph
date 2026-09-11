@@ -68,7 +68,14 @@
       "rule_source_page": "84-87"
     },
     "practical_ratio_pct": 70,
-    "school_record_ratio_pct": 30
+    "school_record_ratio_pct": 30,
+    "data_sources": [
+      {
+        "document_name": "2027학년도 공식 수시모집요강",
+        "local_file": "data/art_admission_raw/prospectus/가천대학교_2027학년도_수시모집요강.pdf"
+      }
+    ],
+    "school_record_status": "required"
   },
   "estimates": {
     "cutoff_grade_estimate": 5.6,

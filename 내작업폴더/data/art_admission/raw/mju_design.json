@@ -57,7 +57,14 @@
         "rule_source_page": "83-84"
       },
       "practical_ratio_pct": 70,
-      "school_record_ratio_pct": 30
+      "school_record_ratio_pct": 30,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/명지대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": 5.42,
@@ -133,7 +140,14 @@
         "rule_source_page": "83-84"
       },
       "practical_ratio_pct": 70,
-      "school_record_ratio_pct": 30
+      "school_record_ratio_pct": 30,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/명지대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": 4.93,
@@ -141,7 +155,7 @@
       "interview_summaries": [],
       "prior_year_result": {
         "admission_year": 2026,
-        "competition_rate": 20.0,
+        "competition_rate": 20,
         "school_record_grade_typical": 4.02,
         "school_record_grade_floor": 4.93,
         "grade_stat_type": "max_avg_70cut_min_stddev (typical=평균, floor=최저)",
@@ -214,7 +228,14 @@
         "rule_source_page": "83-84"
       },
       "practical_ratio_pct": 70,
-      "school_record_ratio_pct": 30
+      "school_record_ratio_pct": 30,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/명지대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": 5.27,
@@ -290,7 +311,14 @@
         "rule_source_page": "83-84"
       },
       "practical_ratio_pct": 70,
-      "school_record_ratio_pct": 30
+      "school_record_ratio_pct": 30,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/명지대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": 5.27,
@@ -366,7 +394,14 @@
         "rule_source_page": "83-84"
       },
       "practical_ratio_pct": 70,
-      "school_record_ratio_pct": 30
+      "school_record_ratio_pct": 30,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/명지대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": 6.18,

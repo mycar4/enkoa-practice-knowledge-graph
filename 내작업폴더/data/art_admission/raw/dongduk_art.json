@@ -54,7 +54,14 @@
       "application_period": {
         "start": "2026-09-07",
         "end": "2026-09-11"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/동덕여자대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": null,
@@ -127,7 +134,14 @@
       "application_period": {
         "start": "2026-09-07",
         "end": "2026-09-11"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/동덕여자대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": null,
@@ -152,7 +166,7 @@
     "track_name": "실기우수자전형",
     "official_facts": {
       "admission_year": 2027,
-      "quota": 42,
+      "quota": 26,
       "ratio": "일괄합산: 실기 80%(실질87%) + 학생부교과 20%(실질13%)",
       "is_staged": false,
       "csat_minimum_required": null,
@@ -200,7 +214,14 @@
       "application_period": {
         "start": "2026-09-07",
         "end": "2026-09-11"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/동덕여자대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": null,
@@ -225,7 +246,7 @@
     "track_name": "실기우수자전형",
     "official_facts": {
       "admission_year": 2027,
-      "quota": 63,
+      "quota": 40,
       "ratio": "일괄합산: 실기 80%(실질87%) + 학생부교과 20%(실질13%)",
       "is_staged": false,
       "csat_minimum_required": null,
@@ -273,7 +294,14 @@
       "application_period": {
         "start": "2026-09-07",
         "end": "2026-09-11"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/동덕여자대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": null,
@@ -298,7 +326,7 @@
     "track_name": "실기우수자전형",
     "official_facts": {
       "admission_year": 2027,
-      "quota": 36,
+      "quota": 24,
       "ratio": "일괄합산: 실기 80%(실질87%) + 학생부교과 20%(실질13%)",
       "is_staged": false,
       "csat_minimum_required": null,
@@ -346,7 +374,14 @@
       "application_period": {
         "start": "2026-09-07",
         "end": "2026-09-11"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/동덕여자대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": null,

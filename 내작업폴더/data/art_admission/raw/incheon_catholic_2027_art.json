@@ -15,15 +15,77 @@
       "allowed_materials": [],
       "paper_size": null,
       "time_limit_minutes": null,
-      "exam_date": null,
-      "result_date": null,
+      "exam_date": "2026-10-31",
+      "result_date": "2026-11-11",
       "source_url": "https://admission.iccu.ac.kr/bbs/board.php?bo_table=notice&wr_id=447",
       "source_page": null,
-      "source_page_note": "공식 HWP 수시모집요강의 실기 안내와 대학어디가 2027 전형표를 대조. 실기우수자/조형예술학과 일괄선발 17명 행.",
+      "source_page_note": "UNVERIFIED/HOLD — 공식 HWP 원본의 화면/인쇄 페이지 번호 매핑을 재현할 수 없어 숫자 쪽수는 저장하지 않음. 대조 위치: Ⅲ 전형별 모집인원, Ⅳ 송도국제캠퍼스 전형일정, Ⅵ-1·Ⅵ-2 학생부·실기 반영방법.",
       "data_sources": [
-        {"document_name": "2027학년도 인천가톨릭대학교 수시모집요강(2026-07-10 수정)", "local_file": "data/art_admission_raw/prospectus/2027_incheon_catholic_susi.hwp"},
-        {"document_name": "대학어디가 2027 전형평가기준 및 결과공개", "source_url": "https://www.adiga.kr/ucp/uvt/uni/univDetailSelection.do?menuId=PCUVTINF2000&searchSyr=2027&unvCd=0000167"}
-      ]
+        {
+          "document_name": "2027학년도 인천가톨릭대학교 수시모집요강(2026-07-10 수정)",
+          "local_file": "data/art_admission_raw/prospectus/2027_incheon_catholic_susi.hwp"
+        },
+        {
+          "document_name": "대학어디가 2027 전형평가기준 및 결과공개",
+          "source_url": "https://www.adiga.kr/ucp/uvt/uni/univDetailSelection.do?menuId=PCUVTINF2000&searchSyr=2027&unvCd=0000167"
+        }
+      ],
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "수학",
+          "영어",
+          "과학",
+          "사회",
+          "한국사"
+        ],
+        "credit_weighted": true,
+        "select_best_n_per_year": 6,
+        "year_weights": {
+          "1": 0.3,
+          "2": 0.4,
+          "3": 0.3
+        },
+        "missing_grade_3_year_weights": {
+          "1": 0.4,
+          "2": 0.6
+        },
+        "conversion_table": {
+          "1": 100,
+          "2": 98,
+          "3": 96,
+          "4": 94,
+          "5": 92,
+          "6": 90,
+          "7": 70,
+          "8": 40,
+          "9": 0
+        },
+        "career_elective_bonus": {
+          "subjects": [
+            "국어",
+            "영어",
+            "수학",
+            "사회",
+            "과학"
+          ],
+          "select_best_n": 2,
+          "conversion_table": {
+            "A": 1.5,
+            "B": 1,
+            "C": 0.5
+          },
+          "credit_weighted": false,
+          "add_to_total": true
+        }
+      },
+      "formula_note": "송도국제캠퍼스 조형예술대학 기준: 국어·수학·영어·과학·사회·한국사 중 학년별 석차등급 우수 상위 6과목(동점이면 이수단위 높은 과목)을 이수단위 가중평균하고, 1·2·3학년 30%·40%·30%로 반영. 등급 배점은 1~9등급=100·98·96·94·92·90·70·40·0점. 진로선택은 국어·영어·수학·사회·과학 상위 2과목 A/B/C=1.5/1.0/0.5점을 평균내어 교과 취득총점에 가산. 3학년 성적이 없으면 1·2학년 40%·60%.",
+      "rule_source_page": "HWP Ⅵ 학생부 반영방법 1~6"
     }
   },
   {
@@ -42,19 +104,544 @@
       "allowed_materials": [],
       "paper_size": null,
       "time_limit_minutes": null,
-      "exam_date": null,
-      "result_date": null,
+      "exam_date": "2026-10-31",
+      "result_date": "2026-11-11",
       "source_url": "https://admission.iccu.ac.kr/bbs/board.php?bo_table=notice&wr_id=447",
       "source_page": null,
-      "source_page_note": "공식 HWP 수시모집요강의 실기 안내와 대학어디가 2027 전형표를 대조. 실기우수자/융합디자인학과 1단계 5배수·2단계 22명 행.",
+      "source_page_note": "UNVERIFIED/HOLD — 공식 HWP 원본의 화면/인쇄 페이지 번호 매핑을 재현할 수 없어 숫자 쪽수는 저장하지 않음. 대조 위치: Ⅲ 전형별 모집인원, Ⅳ 송도국제캠퍼스 전형일정, Ⅵ-1·Ⅵ-2 학생부·실기 반영방법.",
       "stages": [
-        {"description": "학생부교과", "ratio_desc": "100%, 모집인원의 5배수", "multiplier": 5},
-        {"description": "학생부교과 및 실기", "ratio_desc": "학생부교과 20% + 실기 80%", "multiplier": null}
+        {
+          "description": "학생부교과",
+          "ratio_desc": "100%, 모집인원의 5배수",
+          "multiplier": 5
+        },
+        {
+          "description": "학생부교과 및 실기",
+          "ratio_desc": "학생부교과 20% + 실기 80%",
+          "multiplier": null
+        }
       ],
       "data_sources": [
-        {"document_name": "2027학년도 인천가톨릭대학교 수시모집요강(2026-07-10 수정)", "local_file": "data/art_admission_raw/prospectus/2027_incheon_catholic_susi.hwp"},
-        {"document_name": "대학어디가 2027 전형평가기준 및 결과공개", "source_url": "https://www.adiga.kr/ucp/uvt/uni/univDetailSelection.do?menuId=PCUVTINF2000&searchSyr=2027&unvCd=0000167"}
-      ]
+        {
+          "document_name": "2027학년도 인천가톨릭대학교 수시모집요강(2026-07-10 수정)",
+          "local_file": "data/art_admission_raw/prospectus/2027_incheon_catholic_susi.hwp"
+        },
+        {
+          "document_name": "대학어디가 2027 전형평가기준 및 결과공개",
+          "source_url": "https://www.adiga.kr/ucp/uvt/uni/univDetailSelection.do?menuId=PCUVTINF2000&searchSyr=2027&unvCd=0000167"
+        }
+      ],
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "수학",
+          "영어",
+          "과학",
+          "사회",
+          "한국사"
+        ],
+        "credit_weighted": true,
+        "select_best_n_per_year": 6,
+        "year_weights": {
+          "1": 0.3,
+          "2": 0.4,
+          "3": 0.3
+        },
+        "missing_grade_3_year_weights": {
+          "1": 0.4,
+          "2": 0.6
+        },
+        "conversion_table": {
+          "1": 100,
+          "2": 98,
+          "3": 96,
+          "4": 94,
+          "5": 92,
+          "6": 90,
+          "7": 70,
+          "8": 40,
+          "9": 0
+        },
+        "career_elective_bonus": {
+          "subjects": [
+            "국어",
+            "영어",
+            "수학",
+            "사회",
+            "과학"
+          ],
+          "select_best_n": 2,
+          "conversion_table": {
+            "A": 1.5,
+            "B": 1,
+            "C": 0.5
+          },
+          "credit_weighted": false,
+          "add_to_total": true
+        }
+      },
+      "formula_note": "송도국제캠퍼스 조형예술대학 기준: 국어·수학·영어·과학·사회·한국사 중 학년별 석차등급 우수 상위 6과목(동점이면 이수단위 높은 과목)을 이수단위 가중평균하고, 1·2·3학년 30%·40%·30%로 반영. 등급 배점은 1~9등급=100·98·96·94·92·90·70·40·0점. 진로선택은 국어·영어·수학·사회·과학 상위 2과목 A/B/C=1.5/1.0/0.5점을 평균내어 교과 취득총점에 가산. 3학년 성적이 없으면 1·2학년 40%·60%.",
+      "rule_source_page": "HWP Ⅵ 학생부 반영방법 1~6"
+    }
+  },
+  {
+    "university": "인천가톨릭대학교",
+    "campus": "송도국제캠퍼스",
+    "department": "조형예술학과",
+    "track_name": "가톨릭지도자추천전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "ratio": "학생부교과 40% + 실기 60%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "인물수채화, 인물모델링",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": "2026-10-31",
+      "result_date": "2026-11-11",
+      "source_url": "https://admission.iccu.ac.kr/bbs/board.php?bo_table=notice&wr_id=447",
+      "source_page": null,
+      "source_page_note": "UNVERIFIED/HOLD — 공식 HWP 원본의 화면/인쇄 페이지 번호 매핑을 재현할 수 없어 숫자 쪽수는 저장하지 않음. 대조 위치: Ⅲ 전형별 모집인원, Ⅳ 송도국제캠퍼스 전형일정, Ⅵ-1·Ⅵ-2 학생부·실기 반영방법.",
+      "data_sources": [
+        {
+          "document_name": "2027학년도 인천가톨릭대학교 수시모집요강(2026-07-10 수정)",
+          "local_file": "data/art_admission_raw/prospectus/2027_incheon_catholic_susi.hwp"
+        },
+        {
+          "document_name": "대학어디가 2027 전형평가기준 및 결과공개",
+          "source_url": "https://www.adiga.kr/ucp/uvt/uni/univDetailSelection.do?menuId=PCUVTINF2000&searchSyr=2027&unvCd=0000167"
+        }
+      ],
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "수학",
+          "영어",
+          "과학",
+          "사회",
+          "한국사"
+        ],
+        "credit_weighted": true,
+        "select_best_n_per_year": 6,
+        "year_weights": {
+          "1": 0.2,
+          "2": 0.4,
+          "3": 0.4
+        },
+        "missing_grade_3_year_weights": {
+          "1": 0.4,
+          "2": 0.6
+        },
+        "conversion_table": {
+          "1": 100,
+          "2": 98,
+          "3": 96,
+          "4": 94,
+          "5": 92,
+          "6": 90,
+          "7": 70,
+          "8": 40,
+          "9": 0
+        },
+        "career_elective_bonus": {
+          "subjects": [
+            "국어",
+            "영어",
+            "수학",
+            "사회",
+            "과학"
+          ],
+          "select_best_n": 2,
+          "conversion_table": {
+            "A": 1.5,
+            "B": 1,
+            "C": 0.5
+          },
+          "credit_weighted": false,
+          "add_to_total": true
+        }
+      },
+      "formula_note": "송도국제캠퍼스 조형예술대학 기준: 국어·수학·영어·과학·사회·한국사 중 학년별 석차등급 우수 상위 6과목(동점이면 이수단위 높은 과목)을 이수단위 가중평균하고, 1·2·3학년 20%·40%·40%로 반영. 등급 배점은 1~9등급=100·98·96·94·92·90·70·40·0점. 진로선택은 국어·영어·수학·사회·과학 상위 2과목 A/B/C=1.5/1.0/0.5점을 평균내어 교과 취득총점에 가산. 3학년 성적이 없으면 1·2학년 40%·60%.",
+      "rule_source_page": "HWP Ⅵ 학생부 반영방법 1~6"
+    }
+  },
+  {
+    "university": "인천가톨릭대학교",
+    "campus": "송도국제캠퍼스",
+    "department": "융합디자인학과",
+    "track_name": "가톨릭지도자추천전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "ratio": "학생부교과 40% + 실기 60%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "기초디자인",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": "2026-10-31",
+      "result_date": "2026-11-11",
+      "source_url": "https://admission.iccu.ac.kr/bbs/board.php?bo_table=notice&wr_id=447",
+      "source_page": null,
+      "source_page_note": "UNVERIFIED/HOLD — 공식 HWP 원본의 화면/인쇄 페이지 번호 매핑을 재현할 수 없어 숫자 쪽수는 저장하지 않음. 대조 위치: Ⅲ 전형별 모집인원, Ⅳ 송도국제캠퍼스 전형일정, Ⅵ-1·Ⅵ-2 학생부·실기 반영방법.",
+      "data_sources": [
+        {
+          "document_name": "2027학년도 인천가톨릭대학교 수시모집요강(2026-07-10 수정)",
+          "local_file": "data/art_admission_raw/prospectus/2027_incheon_catholic_susi.hwp"
+        },
+        {
+          "document_name": "대학어디가 2027 전형평가기준 및 결과공개",
+          "source_url": "https://www.adiga.kr/ucp/uvt/uni/univDetailSelection.do?menuId=PCUVTINF2000&searchSyr=2027&unvCd=0000167"
+        }
+      ],
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "수학",
+          "영어",
+          "과학",
+          "사회",
+          "한국사"
+        ],
+        "credit_weighted": true,
+        "select_best_n_per_year": 6,
+        "year_weights": {
+          "1": 0.2,
+          "2": 0.4,
+          "3": 0.4
+        },
+        "missing_grade_3_year_weights": {
+          "1": 0.4,
+          "2": 0.6
+        },
+        "conversion_table": {
+          "1": 100,
+          "2": 98,
+          "3": 96,
+          "4": 94,
+          "5": 92,
+          "6": 90,
+          "7": 70,
+          "8": 40,
+          "9": 0
+        },
+        "career_elective_bonus": {
+          "subjects": [
+            "국어",
+            "영어",
+            "수학",
+            "사회",
+            "과학"
+          ],
+          "select_best_n": 2,
+          "conversion_table": {
+            "A": 1.5,
+            "B": 1,
+            "C": 0.5
+          },
+          "credit_weighted": false,
+          "add_to_total": true
+        }
+      },
+      "formula_note": "송도국제캠퍼스 조형예술대학 기준: 국어·수학·영어·과학·사회·한국사 중 학년별 석차등급 우수 상위 6과목(동점이면 이수단위 높은 과목)을 이수단위 가중평균하고, 1·2·3학년 20%·40%·40%로 반영. 등급 배점은 1~9등급=100·98·96·94·92·90·70·40·0점. 진로선택은 국어·영어·수학·사회·과학 상위 2과목 A/B/C=1.5/1.0/0.5점을 평균내어 교과 취득총점에 가산. 3학년 성적이 없으면 1·2학년 40%·60%.",
+      "rule_source_page": "HWP Ⅵ 학생부 반영방법 1~6"
+    }
+  },
+  {
+    "university": "인천가톨릭대학교",
+    "campus": "송도국제캠퍼스",
+    "department": "융합디자인학과",
+    "track_name": "특성화고교출신전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "ratio": "학생부교과 40% + 실기 60%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "기초디자인",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": "2026-10-31",
+      "result_date": "2026-11-11",
+      "source_url": "https://admission.iccu.ac.kr/bbs/board.php?bo_table=notice&wr_id=447",
+      "source_page": null,
+      "source_page_note": "UNVERIFIED/HOLD — 공식 HWP 원본의 화면/인쇄 페이지 번호 매핑을 재현할 수 없어 숫자 쪽수는 저장하지 않음. 대조 위치: Ⅲ 전형별 모집인원, Ⅳ 송도국제캠퍼스 전형일정, Ⅵ-1·Ⅵ-2 학생부·실기 반영방법.",
+      "data_sources": [
+        {
+          "document_name": "2027학년도 인천가톨릭대학교 수시모집요강(2026-07-10 수정)",
+          "local_file": "data/art_admission_raw/prospectus/2027_incheon_catholic_susi.hwp"
+        },
+        {
+          "document_name": "대학어디가 2027 전형평가기준 및 결과공개",
+          "source_url": "https://www.adiga.kr/ucp/uvt/uni/univDetailSelection.do?menuId=PCUVTINF2000&searchSyr=2027&unvCd=0000167"
+        }
+      ],
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "수학",
+          "영어",
+          "과학",
+          "사회",
+          "한국사"
+        ],
+        "credit_weighted": true,
+        "select_best_n_per_year": 6,
+        "year_weights": {
+          "1": 0.2,
+          "2": 0.4,
+          "3": 0.4
+        },
+        "missing_grade_3_year_weights": {
+          "1": 0.4,
+          "2": 0.6
+        },
+        "conversion_table": {
+          "1": 100,
+          "2": 98,
+          "3": 96,
+          "4": 94,
+          "5": 92,
+          "6": 90,
+          "7": 70,
+          "8": 40,
+          "9": 0
+        },
+        "career_elective_bonus": {
+          "subjects": [
+            "국어",
+            "영어",
+            "수학",
+            "사회",
+            "과학"
+          ],
+          "select_best_n": 2,
+          "conversion_table": {
+            "A": 1.5,
+            "B": 1,
+            "C": 0.5
+          },
+          "credit_weighted": false,
+          "add_to_total": true
+        }
+      },
+      "formula_note": "송도국제캠퍼스 조형예술대학 기준: 국어·수학·영어·과학·사회·한국사 중 학년별 석차등급 우수 상위 6과목(동점이면 이수단위 높은 과목)을 이수단위 가중평균하고, 1·2·3학년 20%·40%·40%로 반영. 등급 배점은 1~9등급=100·98·96·94·92·90·70·40·0점. 진로선택은 국어·영어·수학·사회·과학 상위 2과목 A/B/C=1.5/1.0/0.5점을 평균내어 교과 취득총점에 가산. 3학년 성적이 없으면 1·2학년 40%·60%.",
+      "rule_source_page": "HWP Ⅵ 학생부 반영방법 1~6"
+    }
+  },
+  {
+    "university": "인천가톨릭대학교",
+    "campus": "송도국제캠퍼스",
+    "department": "조형예술학과",
+    "track_name": "특수교육대상자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "ratio": "학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "인물수채화, 인물모델링",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": "2026-10-31",
+      "result_date": "2026-11-11",
+      "source_url": "https://admission.iccu.ac.kr/bbs/board.php?bo_table=notice&wr_id=447",
+      "source_page": null,
+      "source_page_note": "UNVERIFIED/HOLD — 공식 HWP 원본의 화면/인쇄 페이지 번호 매핑을 재현할 수 없어 숫자 쪽수는 저장하지 않음. 대조 위치: Ⅲ 전형별 모집인원, Ⅳ 송도국제캠퍼스 전형일정, Ⅵ-1·Ⅵ-2 학생부·실기 반영방법.",
+      "data_sources": [
+        {
+          "document_name": "2027학년도 인천가톨릭대학교 수시모집요강(2026-07-10 수정)",
+          "local_file": "data/art_admission_raw/prospectus/2027_incheon_catholic_susi.hwp"
+        },
+        {
+          "document_name": "대학어디가 2027 전형평가기준 및 결과공개",
+          "source_url": "https://www.adiga.kr/ucp/uvt/uni/univDetailSelection.do?menuId=PCUVTINF2000&searchSyr=2027&unvCd=0000167"
+        }
+      ],
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "수학",
+          "영어",
+          "과학",
+          "사회",
+          "한국사"
+        ],
+        "credit_weighted": true,
+        "select_best_n_per_year": 6,
+        "year_weights": {
+          "1": 0.2,
+          "2": 0.4,
+          "3": 0.4
+        },
+        "missing_grade_3_year_weights": {
+          "1": 0.4,
+          "2": 0.6
+        },
+        "conversion_table": {
+          "1": 100,
+          "2": 98,
+          "3": 96,
+          "4": 94,
+          "5": 92,
+          "6": 90,
+          "7": 70,
+          "8": 40,
+          "9": 0
+        },
+        "career_elective_bonus": {
+          "subjects": [
+            "국어",
+            "영어",
+            "수학",
+            "사회",
+            "과학"
+          ],
+          "select_best_n": 2,
+          "conversion_table": {
+            "A": 1.5,
+            "B": 1,
+            "C": 0.5
+          },
+          "credit_weighted": false,
+          "add_to_total": true
+        }
+      },
+      "formula_note": "송도국제캠퍼스 조형예술대학 기준: 국어·수학·영어·과학·사회·한국사 중 학년별 석차등급 우수 상위 6과목(동점이면 이수단위 높은 과목)을 이수단위 가중평균하고, 1·2·3학년 20%·40%·40%로 반영. 등급 배점은 1~9등급=100·98·96·94·92·90·70·40·0점. 진로선택은 국어·영어·수학·사회·과학 상위 2과목 A/B/C=1.5/1.0/0.5점을 평균내어 교과 취득총점에 가산. 3학년 성적이 없으면 1·2학년 40%·60%.",
+      "rule_source_page": "HWP Ⅵ 학생부 반영방법 1~6"
+    }
+  },
+  {
+    "university": "인천가톨릭대학교",
+    "campus": "송도국제캠퍼스",
+    "department": "융합디자인학과",
+    "track_name": "특수교육대상자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "ratio": "학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "기초디자인",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": "2026-10-31",
+      "result_date": "2026-11-11",
+      "source_url": "https://admission.iccu.ac.kr/bbs/board.php?bo_table=notice&wr_id=447",
+      "source_page": null,
+      "source_page_note": "UNVERIFIED/HOLD — 공식 HWP 원본의 화면/인쇄 페이지 번호 매핑을 재현할 수 없어 숫자 쪽수는 저장하지 않음. 대조 위치: Ⅲ 전형별 모집인원, Ⅳ 송도국제캠퍼스 전형일정, Ⅵ-1·Ⅵ-2 학생부·실기 반영방법.",
+      "data_sources": [
+        {
+          "document_name": "2027학년도 인천가톨릭대학교 수시모집요강(2026-07-10 수정)",
+          "local_file": "data/art_admission_raw/prospectus/2027_incheon_catholic_susi.hwp"
+        },
+        {
+          "document_name": "대학어디가 2027 전형평가기준 및 결과공개",
+          "source_url": "https://www.adiga.kr/ucp/uvt/uni/univDetailSelection.do?menuId=PCUVTINF2000&searchSyr=2027&unvCd=0000167"
+        }
+      ],
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "수학",
+          "영어",
+          "과학",
+          "사회",
+          "한국사"
+        ],
+        "credit_weighted": true,
+        "select_best_n_per_year": 6,
+        "year_weights": {
+          "1": 0.2,
+          "2": 0.4,
+          "3": 0.4
+        },
+        "missing_grade_3_year_weights": {
+          "1": 0.4,
+          "2": 0.6
+        },
+        "conversion_table": {
+          "1": 100,
+          "2": 98,
+          "3": 96,
+          "4": 94,
+          "5": 92,
+          "6": 90,
+          "7": 70,
+          "8": 40,
+          "9": 0
+        },
+        "career_elective_bonus": {
+          "subjects": [
+            "국어",
+            "영어",
+            "수학",
+            "사회",
+            "과학"
+          ],
+          "select_best_n": 2,
+          "conversion_table": {
+            "A": 1.5,
+            "B": 1,
+            "C": 0.5
+          },
+          "credit_weighted": false,
+          "add_to_total": true
+        }
+      },
+      "formula_note": "송도국제캠퍼스 조형예술대학 기준: 국어·수학·영어·과학·사회·한국사 중 학년별 석차등급 우수 상위 6과목(동점이면 이수단위 높은 과목)을 이수단위 가중평균하고, 1·2·3학년 20%·40%·40%로 반영. 등급 배점은 1~9등급=100·98·96·94·92·90·70·40·0점. 진로선택은 국어·영어·수학·사회·과학 상위 2과목 A/B/C=1.5/1.0/0.5점을 평균내어 교과 취득총점에 가산. 3학년 성적이 없으면 1·2학년 40%·60%.",
+      "rule_source_page": "HWP Ⅵ 학생부 반영방법 1~6"
     }
   }
 ]

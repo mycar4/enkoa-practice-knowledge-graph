@@ -12,12 +12,29 @@
       "csat_minimum_required": false,
       "school_record_rule": {
         "mode": "common_and_career_split_scaled",
-        "subjects": ["국어", "영어"],
+        "subjects": [
+          "국어",
+          "영어"
+        ],
         "common_weight": 0.85,
         "career_weight": 0.15,
         "use_credit_scale": false,
-        "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 95, "5": 90, "6": 70, "7": 50, "8": 30, "9": 0},
-        "career_elective_conversion_table": {"A": 100, "B": 98, "C": 90},
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 95,
+          "5": 90,
+          "6": 70,
+          "7": 50,
+          "8": 30,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 98,
+          "C": 90
+        },
         "career_elective_max_count": 3,
         "formula_note": "교과성적 = 공통·일반선택(국어·영어, 석차등급, 이수단위가중평균)×0.85 + 진로선택(상위 3과목, 성취도)×0.15 (2027 모집요강 p.69-70). 원문은 예체능계 진로선택 반영교과를 국어·영어·예술·체육으로 더 넓게 잡지만(공통은 국어·영어만), 계산 엔진 제약상 여기서는 국어·영어로만 통일했다 - 예술·체육 진로선택과목이 있는 학생은 실제보다 약간 보수적으로(낮게) 계산될 수 있음.",
         "rule_source_page": "69-70"
@@ -28,15 +45,32 @@
       "paper_size": "작품 1점당 A3 단면 이내, 최대 10점",
       "time_limit_minutes": null,
       "exam_date": null,
-      "result_date": null,
-      "application_period": {"start": "2026-09-07", "end": "2026-09-11"},
+      "result_date": "2026-11-10",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
       "source_url": "https://admission.kookmin.ac.kr/common/file_download.php?col=1&id=contents&no=180",
       "source_page": 52,
       "stages": [
-        {"description": "입상성적", "ratio_desc": "100%, 모집인원의 6배수", "multiplier": 6},
-        {"description": "작품집 기반 구술면접 및 학생부교과", "ratio_desc": "1단계 40% + 면접 45% + 학생부교과 15%", "multiplier": null}
+        {
+          "description": "입상성적",
+          "ratio_desc": "100%, 모집인원의 6배수",
+          "multiplier": 6
+        },
+        {
+          "description": "작품집 기반 구술면접 및 학생부교과",
+          "ratio_desc": "1단계 40% + 면접 45% + 학생부교과 15%",
+          "multiplier": null
+        }
       ],
-      "data_sources": [{"document_name": "2027학년도 국민대학교 수시 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf"}]
+      "data_sources": [
+        {
+          "document_name": "2027학년도 국민대학교 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf"
+        }
+      ],
+      "source_page_note": "2027 수시모집요강 p.10 전형일정 및 p.11 최초 합격 발표 표: 실기우수자·특기자 최초합격 발표 2026-11-10 17:00 예정."
     }
   },
   {
@@ -52,31 +86,200 @@
       "csat_minimum_required": false,
       "school_record_rule": {
         "mode": "common_and_career_split_scaled",
-        "subjects": ["국어", "영어"],
+        "subjects": [
+          "국어",
+          "영어"
+        ],
         "common_weight": 0.85,
         "career_weight": 0.15,
         "use_credit_scale": false,
-        "conversion_table": {"1": 100, "2": 99, "3": 98, "4": 95, "5": 90, "6": 70, "7": 50, "8": 30, "9": 0},
-        "career_elective_conversion_table": {"A": 100, "B": 98, "C": 90},
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 95,
+          "5": 90,
+          "6": 70,
+          "7": 50,
+          "8": 30,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 98,
+          "C": 90
+        },
         "career_elective_max_count": 3,
         "formula_note": "교과성적 = 공통·일반선택(국어·영어, 석차등급, 이수단위가중평균)×0.85 + 진로선택(상위 3과목, 성취도)×0.15 (2027 모집요강 p.69-70). 원문은 예체능계 진로선택 반영교과를 국어·영어·예술·체육으로 더 넓게 잡지만(공통은 국어·영어만), 계산 엔진 제약상 여기서는 국어·영어로만 통일했다 - 예술·체육 진로선택과목이 있는 학생은 실제보다 약간 보수적으로(낮게) 계산될 수 있음.",
         "rule_source_page": "69-70"
       },
       "school_record_status": "required",
       "exam_type_name": "주제가 있는 회화; 아이디어 스케치와 글쓰기·구술면접",
-      "allowed_materials": ["구아슈", "콘테", "아크릴칼라", "파스텔", "연필", "색연필", "수채화도구", "유성·수성싸인펜"],
+      "allowed_materials": [
+        "구아슈",
+        "콘테",
+        "아크릴칼라",
+        "파스텔",
+        "연필",
+        "색연필",
+        "수채화도구",
+        "유성·수성싸인펜"
+      ],
       "paper_size": "1단계 켄트지 3절(세로), 2단계 켄트지 4절(가로)",
       "time_limit_minutes": 240,
-      "exam_date": null,
-      "result_date": null,
-      "application_period": {"start": "2026-09-07", "end": "2026-09-11"},
+      "exam_date": "2026-10-04",
+      "result_date": "2026-11-10",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
       "source_url": "https://admission.kookmin.ac.kr/common/file_download.php?col=1&id=contents&no=180",
-      "source_page": 65,
+      "source_page": 61,
       "stages": [
-        {"description": "주제가 있는 회화", "ratio_desc": "실기 100%, 모집인원의 5배수", "multiplier": 5},
-        {"description": "아이디어 스케치와 글쓰기·구술면접 및 학생부교과", "ratio_desc": "1단계 40% + 면접 30% + 학생부교과 30%", "multiplier": null}
+        {
+          "description": "주제가 있는 회화",
+          "ratio_desc": "실기 100%, 모집인원의 5배수",
+          "multiplier": 5
+        },
+        {
+          "description": "아이디어 스케치와 글쓰기·구술면접 및 학생부교과",
+          "ratio_desc": "1단계 40% + 면접 30% + 학생부교과 30%",
+          "multiplier": null
+        }
       ],
-      "data_sources": [{"document_name": "2027학년도 국민대학교 수시 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf"}]
+      "data_sources": [
+        {
+          "document_name": "2027학년도 국민대학교 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf"
+        }
+      ],
+      "source_page_note": "2027 수시모집요강 p.10 전형일정 및 p.11 최초 합격 발표 표: 실기우수자·특기자 최초합격 발표 2026-11-10 17:00 예정.",
+      "interview_date": "2026-10-18",
+      "schedule_note": "1단계 실기고사 2026-10-04, 2단계 아이디어 스케치·글쓰기 및 구술면접 2026-10-18 (모집요강 p.10)."
+    }
+  },
+  {
+    "university": "국민대학교",
+    "campus": "서울",
+    "department": "조형대학 시각디자인학과",
+    "track_name": "국민프런티어전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 10,
+      "ratio": "1단계 서류 100% (3배수) + 2단계 1단계성적 70% + 면접 30%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "not_applicable",
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "source_url": "https://admission.kookmin.ac.kr/common/file_download.php?col=1&id=contents&no=180",
+      "source_page": 8,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 국민대학교 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf"
+        }
+      ],
+      "source_page_note": "모집요강 p.8 모집인원표, p.10·11 전형일정 및 최초합격 발표, 모집요강 p.17: 입학사정관 2인의 정성적 서류 종합평가 및 학생부 확인 면접으로 등급 환산표 없음.",
+      "practical_ratio_pct": 0,
+      "school_record_ratio_pct": 0,
+      "school_record_status_note": "모집요강 p.17: 입학사정관 2인의 정성적 서류 종합평가 및 학생부 확인 면접으로 등급 환산표 없음."
+    }
+  },
+  {
+    "university": "국민대학교",
+    "campus": "서울",
+    "department": "조형대학 AI디자인학과",
+    "track_name": "국민프런티어전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 15,
+      "ratio": "1단계 서류 100% (3배수) + 2단계 1단계성적 70% + 면접 30%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "not_applicable",
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "source_url": "https://admission.kookmin.ac.kr/common/file_download.php?col=1&id=contents&no=180",
+      "source_page": 8,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 국민대학교 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf"
+        }
+      ],
+      "source_page_note": "모집요강 p.8 모집인원표, p.10·11 전형일정 및 최초합격 발표, 모집요강 p.17: 입학사정관 2인의 정성적 서류 종합평가 및 학생부 확인 면접으로 등급 환산표 없음.",
+      "practical_ratio_pct": 0,
+      "school_record_ratio_pct": 0,
+      "school_record_status_note": "모집요강 p.17: 입학사정관 2인의 정성적 서류 종합평가 및 학생부 확인 면접으로 등급 환산표 없음."
+    }
+  },
+  {
+    "university": "국민대학교",
+    "campus": "서울",
+    "department": "조형대학 금속공예학과",
+    "track_name": "농어촌학생전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 1,
+      "ratio": "서류 100%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "not_applicable",
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "source_url": "https://admission.kookmin.ac.kr/common/file_download.php?col=1&id=contents&no=180",
+      "source_page": 8,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 국민대학교 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf"
+        }
+      ],
+      "source_page_note": "모집요강 p.8 모집인원표, p.10·11 전형일정 및 최초합격 발표, 모집요강 p.26: 입학사정관 2인의 정성적 서류 종합평가로 등급 환산표 없음.",
+      "practical_ratio_pct": 0,
+      "school_record_ratio_pct": 0,
+      "school_record_status_note": "모집요강 p.26: 입학사정관 2인의 정성적 서류 종합평가로 등급 환산표 없음."
+    }
+  },
+  {
+    "university": "국민대학교",
+    "campus": "서울",
+    "department": "조형대학 도자공예학과",
+    "track_name": "농어촌학생전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 1,
+      "ratio": "서류 100%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "not_applicable",
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "source_url": "https://admission.kookmin.ac.kr/common/file_download.php?col=1&id=contents&no=180",
+      "source_page": 8,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 국민대학교 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf"
+        }
+      ],
+      "source_page_note": "모집요강 p.8 모집인원표, p.10·11 전형일정 및 최초합격 발표, 모집요강 p.26: 입학사정관 2인의 정성적 서류 종합평가로 등급 환산표 없음.",
+      "practical_ratio_pct": 0,
+      "school_record_ratio_pct": 0,
+      "school_record_status_note": "모집요강 p.26: 입학사정관 2인의 정성적 서류 종합평가로 등급 환산표 없음."
     }
   }
 ]

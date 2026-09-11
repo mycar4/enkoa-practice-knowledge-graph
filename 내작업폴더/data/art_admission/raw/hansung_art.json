@@ -1,152 +1,373 @@
 [
-{
-  "university": "한성대학교",
-  "campus": "서울",
-  "department": "예술학부(동양화전공)",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 7,
-    "ratio": "실기고사 80% (800점) + 학생부교과 20% (200점), 전형총점 1,000점",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 80,
-    "school_record_ratio_pct": 20,
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
+  {
+    "university": "한성대학교",
+    "campus": "서울",
+    "department": "예술학부(동양화전공)",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 7,
+      "ratio": "실기고사 80% (800점) + 학생부교과 20% (200점), 전형총점 1,000점",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 80,
+      "school_record_ratio_pct": 20,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-24",
+      "result_date": "2026-11-06",
+      "exam_type_name": "인물수묵담채화 / 정물수묵담채화 / 인물수채화 중 택1",
+      "allowed_materials": [
+        "수묵담채화 도구 일체(모포 포함) 또는 수채화 도구 일체",
+        "개인용 화판 사용 금지"
+      ],
+      "paper_size": "화선지 70x90cm(수묵담채화) 또는 켄트지 2절(인물수채화)",
+      "time_limit_minutes": 240,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "수학",
+          "사회"
+        ],
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 200,
+          "2": 197,
+          "3": 194,
+          "4": 191,
+          "5": 183,
+          "6": 175,
+          "7": 167,
+          "8": 133,
+          "9": 0
+        },
+        "formula_note": "반영교과: 국어, 영어, 수학, 사회(한국사 포함) 공통·일반선택과목 전 과목(석차등급)을 이수단위 가중평균, 200점 만점(전형총점 1,000점 중 학생부 20%에 해당). 학년별 가중치 없음, 3학년 1학기까지 반영 (2027 모집요강 p.44-45, 실기위주 실기우수자전형 - 예술학부/AI융합디자인학부 기준). 참고: 원문은 진로선택·전문교과 성취도(A/B/C, 누적비율 기반 변환등급)도 최대 3과목 반영하나 산출식이 복잡해 이 계산기는 공통·일반선택 석차등급 과목만 반영한다.",
+        "rule_source_page": "44-45"
+      },
+      "source_url": "https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256853&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000200&searchSyr=2027",
+      "source_page": 22,
+      "data_sources": [
+        {
+          "document_name": "대입정보포털 공개 한성대학교 2027학년도 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/한성대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
-    "exam_date": "2026-10-24",
-    "result_date": "2026-11-06",
-    "exam_type_name": "인물수묵담채화 / 정물수묵담채화 / 인물수채화 중 택1",
-    "allowed_materials": ["수묵담채화 도구 일체(모포 포함) 또는 수채화 도구 일체", "개인용 화판 사용 금지"],
-    "paper_size": "화선지 70x90cm(수묵담채화) 또는 켄트지 2절(인물수채화)",
-    "time_limit_minutes": 240,
-    "school_record_rule": {
-      "mode": "simple_weighted_average",
-      "subjects": ["국어", "영어", "수학", "사회"],
-      "credit_weighted": true,
-      "conversion_table": {"1": 200, "2": 197, "3": 194, "4": 191, "5": 183, "6": 175, "7": 167, "8": 133, "9": 0},
-      "formula_note": "반영교과: 국어, 영어, 수학, 사회(한국사 포함) 공통·일반선택과목 전 과목(석차등급)을 이수단위 가중평균, 200점 만점(전형총점 1,000점 중 학생부 20%에 해당). 학년별 가중치 없음, 3학년 1학기까지 반영 (2027 모집요강 p.44-45, 실기위주 실기우수자전형 - 예술학부/AI융합디자인학부 기준). 참고: 원문은 진로선택·전문교과 성취도(A/B/C, 누적비율 기반 변환등급)도 최대 3과목 반영하나 산출식이 복잡해 이 계산기는 공통·일반선택 석차등급 과목만 반영한다.",
-      "rule_source_page": "44-45"
-    },
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%ED%95%9C%EC%84%B1%EB%8C%80%ED%95%99%EA%B5%90/%ED%95%9C%EC%84%B1%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
-    "source_page": 22
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 8.7,
+        "school_record_grade_typical": null,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "competition_rate_only (합격자 학생부 등급 미공개)",
+        "methodology_note": "한성대 2026학년도 실기우수자전형 동양화전공 경쟁률(모집7명/지원61명/약8.70:1). 합격선 학생부 등급은 공식 공개자료에 없어 미공개로 유지한다.",
+        "source_url": null,
+        "source_page": null
+      }
+    }
   },
-  "estimates": {
-    "cutoff_grade_estimate": null,
-    "cutoff_source_url": null,
-    "interview_summaries": [],
-    "prior_year_result": {
-      "admission_year": 2026,
-      "competition_rate": 8.70,
-      "school_record_grade_typical": null,
-      "school_record_grade_floor": null,
-      "grade_stat_type": "competition_rate_only (합격자 학생부 등급 미공개)",
-      "methodology_note": "한성대 2026학년도 실기우수자전형 동양화전공 경쟁률(모집7명/지원61명/약8.70:1). 합격선 학생부 등급은 공식 공개자료에 없어 미공개로 유지한다.",
-      "source_url": null,
-      "source_page": null
+  {
+    "university": "한성대학교",
+    "campus": "서울",
+    "department": "예술학부(서양화전공)",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 7,
+      "ratio": "실기고사 80% (800점) + 학생부교과 20% (200점), 전형총점 1,000점",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 80,
+      "school_record_ratio_pct": 20,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-24",
+      "result_date": "2026-11-06",
+      "exam_type_name": "인물수채화",
+      "allowed_materials": [
+        "수채화 도구 일체",
+        "개인용 화판 사용 금지"
+      ],
+      "paper_size": "켄트지 2절",
+      "time_limit_minutes": 240,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "수학",
+          "사회"
+        ],
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 200,
+          "2": 197,
+          "3": 194,
+          "4": 191,
+          "5": 183,
+          "6": 175,
+          "7": 167,
+          "8": 133,
+          "9": 0
+        },
+        "formula_note": "반영교과: 국어, 영어, 수학, 사회(한국사 포함) 공통·일반선택과목 전 과목(석차등급)을 이수단위 가중평균, 200점 만점(전형총점 1,000점 중 학생부 20%에 해당). 학년별 가중치 없음, 3학년 1학기까지 반영 (2027 모집요강 p.44-45, 실기위주 실기우수자전형 - 예술학부/AI융합디자인학부 기준). 참고: 원문은 진로선택·전문교과 성취도(A/B/C, 누적비율 기반 변환등급)도 최대 3과목 반영하나 산출식이 복잡해 이 계산기는 공통·일반선택 석차등급 과목만 반영한다.",
+        "rule_source_page": "44-45"
+      },
+      "source_url": "https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256853&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000200&searchSyr=2027",
+      "source_page": 22,
+      "data_sources": [
+        {
+          "document_name": "대입정보포털 공개 한성대학교 2027학년도 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/한성대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
+    },
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 14.29,
+        "school_record_grade_typical": null,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "competition_rate_only (합격자 학생부 등급 미공개)",
+        "methodology_note": "한성대 2026학년도 실기우수자전형 서양화전공 경쟁률(모집7명/지원100명/14.29:1). 합격선 학생부 등급은 공식 공개자료에 없어 미공개로 유지한다.",
+        "source_url": null,
+        "source_page": null
+      }
+    }
+  },
+  {
+    "university": "한성대학교",
+    "campus": "서울",
+    "department": "AI융합디자인학부",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 86,
+      "ratio": "실기고사 80% (800점) + 학생부교과 20% (200점), 전형총점 1,000점",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 80,
+      "school_record_ratio_pct": 20,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-18",
+      "result_date": "2026-11-06",
+      "exam_type_name": "기초디자인 - 무작위 사물 3가지를 제시하여 조형적 특징을 이용한 화면 구성(사진 이미지 제공)",
+      "allowed_materials": [
+        "채색재료 제한 없음"
+      ],
+      "paper_size": "켄트지 4절 (가로 방향)",
+      "time_limit_minutes": 240,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "수학",
+          "사회"
+        ],
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 200,
+          "2": 197,
+          "3": 194,
+          "4": 191,
+          "5": 183,
+          "6": 175,
+          "7": 167,
+          "8": 133,
+          "9": 0
+        },
+        "formula_note": "반영교과: 국어, 영어, 수학, 사회(한국사 포함) 공통·일반선택과목 전 과목(석차등급)을 이수단위 가중평균, 200점 만점(전형총점 1,000점 중 학생부 20%에 해당). 학년별 가중치 없음, 3학년 1학기까지 반영 (2027 모집요강 p.44-45, 실기위주 실기우수자전형 - 예술학부/AI융합디자인학부 기준). 참고: 원문은 진로선택·전문교과 성취도(A/B/C, 누적비율 기반 변환등급)도 최대 3과목 반영하나 산출식이 복잡해 이 계산기는 공통·일반선택 석차등급 과목만 반영한다.",
+        "rule_source_page": "44-45"
+      },
+      "source_url": "https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256853&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000200&searchSyr=2027",
+      "source_page": 28,
+      "data_sources": [
+        {
+          "document_name": "대입정보포털 공개 한성대학교 2027학년도 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/한성대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
+    },
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 35.22,
+        "school_record_grade_typical": null,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "competition_rate_only (합격자 학생부 등급 미공개)",
+        "methodology_note": "주의: 이 학과의 2026학년도 공식 명칭은 'ICT디자인학부'이며(대입정보포털 확인), 2027학년도부터 'AI융합디자인학부'로 개편되었다. 경쟁률(모집64명/지원2,254명/35.22:1)은 대입정보포털에서도 동일하게 확인됨. 합격선 학생부 등급은 공식 공개자료에 없어 미공개로 유지한다.",
+        "source_url": "https://www.adiga.kr/ucp/uvt/uni/univDetail.do?menuId=PCUVTINF2000&searchSyr=2026&unvCd=0000200",
+        "source_page": null
+      }
+    }
+  },
+  {
+    "university": "한성대학교",
+    "campus": "서울",
+    "department": "AI융합디자인학부",
+    "track_name": "실기위주-기회균형(농어촌학생)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 4,
+      "ratio": "실기고사 80%(800점) + 학교생활기록부(교과정량) 20%(200점)",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 80,
+      "school_record_ratio_pct": 20,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-18",
+      "result_date": "2026-11-06",
+      "exam_type_name": "기초디자인 - 무작위 사물 3가지를 제시하여 조형적 특징을 이용한 화면 구성(사진 이미지 제공)",
+      "allowed_materials": [
+        "채색재료 제한 없음"
+      ],
+      "paper_size": "켄트지 4절 (가로 방향)",
+      "time_limit_minutes": 240,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "수학",
+          "사회"
+        ],
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 200,
+          "2": 197,
+          "3": 194,
+          "4": 191,
+          "5": 183,
+          "6": 175,
+          "7": 167,
+          "8": 133,
+          "9": 0
+        },
+        "formula_note": "반영교과: 국어, 영어, 수학, 사회(한국사 포함) 공통·일반선택과목 전 과목(석차등급)을 이수단위 가중평균, 200점 만점(전형총점 1,000점 중 학생부 20%에 해당). 학년별 가중치 없음, 3학년 1학기까지 반영 (2027 모집요강 p.44-45, 실기위주 실기우수자전형 - 예술학부/AI융합디자인학부 기준). 참고: 원문은 진로선택·전문교과 성취도(A/B/C, 누적비율 기반 변환등급)도 최대 3과목 반영하나 산출식이 복잡해 이 계산기는 공통·일반선택 석차등급 과목만 반영한다.",
+        "rule_source_page": "44-45"
+      },
+      "source_url": "https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256853&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000200&searchSyr=2027",
+      "source_page": 27,
+      "data_sources": [
+        {
+          "document_name": "대입정보포털 공개 한성대학교 2027학년도 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/한성대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required",
+      "source_page_note": "모집인원 p.27, 반영비율·일정 p.28-29, 학생부 공통 반영방법 p.44-46."
+    },
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 35.22,
+        "school_record_grade_typical": null,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "competition_rate_only (합격자 학생부 등급 미공개)",
+        "methodology_note": "주의: 이 학과의 2026학년도 공식 명칭은 'ICT디자인학부'이며(대입정보포털 확인), 2027학년도부터 'AI융합디자인학부'로 개편되었다. 경쟁률(모집64명/지원2,254명/35.22:1)은 대입정보포털에서도 동일하게 확인됨. 합격선 학생부 등급은 공식 공개자료에 없어 미공개로 유지한다.",
+        "source_url": "https://www.adiga.kr/ucp/uvt/uni/univDetail.do?menuId=PCUVTINF2000&searchSyr=2026&unvCd=0000200",
+        "source_page": null
+      }
+    }
+  },
+  {
+    "university": "한성대학교",
+    "campus": "서울",
+    "department": "AI융합디자인학부",
+    "track_name": "실기위주-기회균형(특성화고교졸업자)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "ratio": "실기고사 80%(800점) + 학교생활기록부(교과정량) 20%(200점)",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "practical_ratio_pct": 80,
+      "school_record_ratio_pct": 20,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-18",
+      "result_date": "2026-11-06",
+      "exam_type_name": "기초디자인 - 무작위 사물 3가지를 제시하여 조형적 특징을 이용한 화면 구성(사진 이미지 제공)",
+      "allowed_materials": [
+        "채색재료 제한 없음"
+      ],
+      "paper_size": "켄트지 4절 (가로 방향)",
+      "time_limit_minutes": 240,
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "전교과 전과목(예체능교과 성취평가코드 31~33 제외)"
+        ],
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 200,
+          "2": 197,
+          "3": 194,
+          "4": 191,
+          "5": 183,
+          "6": 175,
+          "7": 167,
+          "8": 133,
+          "9": 0
+        },
+        "formula_note": "이수단위 가중 석차등급 환산 평균. 특성화고교졸업자 특별전형은 전교과 전과목을 반영하되 예체능교과(성취평가코드 31~33)는 제외(2027 수시모집요강 p.32, 44-46).",
+        "rule_source_page": "44-45"
+      },
+      "source_url": "https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256853&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000200&searchSyr=2027",
+      "source_page": 32,
+      "data_sources": [
+        {
+          "document_name": "대입정보포털 공개 한성대학교 2027학년도 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/한성대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required",
+      "source_page_note": "모집인원·반영비율·실기일 p.32, 세부 일정 p.33, 학생부 공통 반영방법 p.44-46."
+    },
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 35.22,
+        "school_record_grade_typical": null,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "competition_rate_only (합격자 학생부 등급 미공개)",
+        "methodology_note": "주의: 이 학과의 2026학년도 공식 명칭은 'ICT디자인학부'이며(대입정보포털 확인), 2027학년도부터 'AI융합디자인학부'로 개편되었다. 경쟁률(모집64명/지원2,254명/35.22:1)은 대입정보포털에서도 동일하게 확인됨. 합격선 학생부 등급은 공식 공개자료에 없어 미공개로 유지한다.",
+        "source_url": "https://www.adiga.kr/ucp/uvt/uni/univDetail.do?menuId=PCUVTINF2000&searchSyr=2026&unvCd=0000200",
+        "source_page": null
+      }
     }
   }
-},
-{
-  "university": "한성대학교",
-  "campus": "서울",
-  "department": "예술학부(서양화전공)",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 7,
-    "ratio": "실기고사 80% (800점) + 학생부교과 20% (200점), 전형총점 1,000점",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 80,
-    "school_record_ratio_pct": 20,
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
-    },
-    "exam_date": "2026-10-24",
-    "result_date": "2026-11-06",
-    "exam_type_name": "인물수채화",
-    "allowed_materials": ["수채화 도구 일체", "개인용 화판 사용 금지"],
-    "paper_size": "켄트지 2절",
-    "time_limit_minutes": 240,
-    "school_record_rule": {
-      "mode": "simple_weighted_average",
-      "subjects": ["국어", "영어", "수학", "사회"],
-      "credit_weighted": true,
-      "conversion_table": {"1": 200, "2": 197, "3": 194, "4": 191, "5": 183, "6": 175, "7": 167, "8": 133, "9": 0},
-      "formula_note": "반영교과: 국어, 영어, 수학, 사회(한국사 포함) 공통·일반선택과목 전 과목(석차등급)을 이수단위 가중평균, 200점 만점(전형총점 1,000점 중 학생부 20%에 해당). 학년별 가중치 없음, 3학년 1학기까지 반영 (2027 모집요강 p.44-45, 실기위주 실기우수자전형 - 예술학부/AI융합디자인학부 기준). 참고: 원문은 진로선택·전문교과 성취도(A/B/C, 누적비율 기반 변환등급)도 최대 3과목 반영하나 산출식이 복잡해 이 계산기는 공통·일반선택 석차등급 과목만 반영한다.",
-      "rule_source_page": "44-45"
-    },
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%ED%95%9C%EC%84%B1%EB%8C%80%ED%95%99%EA%B5%90/%ED%95%9C%EC%84%B1%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
-    "source_page": 22
-  },
-  "estimates": {
-    "cutoff_grade_estimate": null,
-    "cutoff_source_url": null,
-    "interview_summaries": [],
-    "prior_year_result": {
-      "admission_year": 2026,
-      "competition_rate": 14.29,
-      "school_record_grade_typical": null,
-      "school_record_grade_floor": null,
-      "grade_stat_type": "competition_rate_only (합격자 학생부 등급 미공개)",
-      "methodology_note": "한성대 2026학년도 실기우수자전형 서양화전공 경쟁률(모집7명/지원100명/14.29:1). 합격선 학생부 등급은 공식 공개자료에 없어 미공개로 유지한다.",
-      "source_url": null,
-      "source_page": null
-    }
-  }
-},
-{
-  "university": "한성대학교",
-  "campus": "서울",
-  "department": "AI융합디자인학부",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 86,
-    "ratio": "실기고사 80% (800점) + 학생부교과 20% (200점), 전형총점 1,000점",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "practical_ratio_pct": 80,
-    "school_record_ratio_pct": 20,
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
-    },
-    "exam_date": "2026-10-18",
-    "result_date": "2026-11-06",
-    "exam_type_name": "기초디자인 - 무작위 사물 3가지를 제시하여 조형적 특징을 이용한 화면 구성(사진 이미지 제공)",
-    "allowed_materials": ["채색재료 제한 없음"],
-    "paper_size": "켄트지 4절 (가로 방향)",
-    "time_limit_minutes": 240,
-    "school_record_rule": {
-      "mode": "simple_weighted_average",
-      "subjects": ["국어", "영어", "수학", "사회"],
-      "credit_weighted": true,
-      "conversion_table": {"1": 200, "2": 197, "3": 194, "4": 191, "5": 183, "6": 175, "7": 167, "8": 133, "9": 0},
-      "formula_note": "반영교과: 국어, 영어, 수학, 사회(한국사 포함) 공통·일반선택과목 전 과목(석차등급)을 이수단위 가중평균, 200점 만점(전형총점 1,000점 중 학생부 20%에 해당). 학년별 가중치 없음, 3학년 1학기까지 반영 (2027 모집요강 p.44-45, 실기위주 실기우수자전형 - 예술학부/AI융합디자인학부 기준). 참고: 원문은 진로선택·전문교과 성취도(A/B/C, 누적비율 기반 변환등급)도 최대 3과목 반영하나 산출식이 복잡해 이 계산기는 공통·일반선택 석차등급 과목만 반영한다.",
-      "rule_source_page": "44-45"
-    },
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/%ED%95%9C%EC%84%B1%EB%8C%80%ED%95%99%EA%B5%90/%ED%95%9C%EC%84%B1%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84_%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95.pdf",
-    "source_page": 28
-  },
-  "estimates": {
-    "cutoff_grade_estimate": null,
-    "cutoff_source_url": null,
-    "interview_summaries": [],
-    "prior_year_result": {
-      "admission_year": 2026,
-      "competition_rate": 35.22,
-      "school_record_grade_typical": null,
-      "school_record_grade_floor": null,
-      "grade_stat_type": "competition_rate_only (합격자 학생부 등급 미공개)",
-      "methodology_note": "주의: 이 학과의 2026학년도 공식 명칭은 'ICT디자인학부'이며(대입정보포털 확인), 2027학년도부터 'AI융합디자인학부'로 개편되었다. 경쟁률(모집64명/지원2,254명/35.22:1)은 대입정보포털에서도 동일하게 확인됨. 합격선 학생부 등급은 공식 공개자료에 없어 미공개로 유지한다.",
-      "source_url": "https://www.adiga.kr/ucp/uvt/uni/univDetail.do?menuId=PCUVTINF2000&searchSyr=2026&unvCd=0000200",
-      "source_page": null
-    }
-  }
-}
 ]

@@ -1,39 +1,80 @@
-{
-  "university": "한양대학교",
-  "campus": "ERICA(안산)",
-  "department": "디자인계열",
-  "track_name": "재능우수자(디자인)전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 40,
-    "ratio": "1단계(10배수): 학생부 종합평가 100% -> 2단계: 실기 80% + 1단계 성적 20%",
-    "is_staged": true,
-    "csat_minimum_required": false,
-    "school_record_status": "not_applicable",
-    "school_record_status_note": "1단계 학생부 종합평가는 정량 환산표 없이 정성적으로 평가함(2027 모집요강 p.94, '학교생활기록부의 교과 성적을 정량적으로 산출하여 평가하지 않으며... 정성적으로 평가함' 명시). 학생부 환산 점수를 계산할 수 없습니다.",
-    "exam_type_name": "미지정",
-    "allowed_materials": [],
-    "paper_size": null,
-    "time_limit_minutes": null,
-    "exam_date": "2026-10-24",
-    "result_date": "2026-11-13",
-    "source_url": "https://goerica.hanyang.ac.kr/upload/BBS0061/20260907093813DY9RUL.PDF",
-    "source_page": 81,
-    "stages": [
-      {
-        "description": "1단계 학생부 종합평가",
-        "ratio_desc": "학생부 종합평가 100%",
-        "multiplier": 10
+[
+  {
+    "university": "한양대학교",
+    "campus": "ERICA(안산)",
+    "department": "디자인계열",
+    "track_name": "재능우수자(디자인)전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 40,
+      "ratio": "1단계(10배수): 학생부 종합평가 100% -> 2단계: 실기 80% + 1단계 성적 20%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "1단계 학생부 종합평가는 정량 환산표 없이 정성적으로 평가함(2027 모집요강 p.94, '학교생활기록부의 교과 성적을 정량적으로 산출하여 평가하지 않으며... 정성적으로 평가함' 명시). 학생부 환산 점수를 계산할 수 없습니다.",
+      "exam_type_name": "기초디자인",
+      "allowed_materials": [
+        "연필, 물감, 기타 색채 표현 가능한 모든 재료 허용(혼용 가능 / 입체적 첨가 재료 불가)",
+        "자(도형자 포함), 지우개(전동지우개), 컴퍼스 사용 가능"
+      ],
+      "paper_size": "3절 1장",
+      "time_limit_minutes": 300,
+      "exam_date": "2026-10-24",
+      "result_date": "2026-11-13",
+      "source_url": "https://goerica.hanyang.ac.kr/upload/BBS0061/20260907093813DY9RUL.PDF",
+      "source_page": 81,
+      "stages": [
+        {
+          "description": "1단계 학생부 종합평가",
+          "ratio_desc": "학생부 종합평가 100%",
+          "multiplier": 10
+        },
+        {
+          "description": "2단계 실기",
+          "ratio_desc": "실기 80% + 1단계 성적 20%",
+          "multiplier": null
+        }
+      ],
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
       },
-      {
-        "description": "2단계 실기",
-        "ratio_desc": "실기 80% + 1단계 성적 20%",
-        "multiplier": null
-      }
-    ],
-    "application_period": {
-      "start": "2026-09-08",
-      "end": "2026-09-11"
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/한양대학교_ERICA_2027학년도_수시모집요강.pdf"
+        }
+      ]
+    }
+  },
+  {
+    "university": "한양대학교",
+    "campus": "ERICA(안산)",
+    "department": "디자인계열",
+    "track_name": "학생부종합(서류형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 17,
+      "ratio": "학교생활기록부 서류평가 100%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "학교생활기록부를 바탕으로 다수 입학사정관이 종합 평가하는 정성평가(2027 수시모집요강 p.39, 94).",
+      "result_date": "2026-12-18",
+      "source_url": "https://goerica.hanyang.ac.kr/upload/BBS0061/20260907093813DY9RUL.PDF",
+      "source_page": 39,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/한양대학교_ERICA_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_rule": {},
+      "source_page_note": "디자인계열 모집인원·서류형 p.23·39, 공통 원서접수 p.20, 최초합격 발표 p.95."
     }
   }
-}
+]

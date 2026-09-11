@@ -34,7 +34,13 @@
       "application_period": {
         "start": "2026-09-07",
         "end": "2026-09-11"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/덕성여자대학교_2027학년도_수시모집요강.pdf"
+        }
+      ]
     }
   },
   {
@@ -71,7 +77,13 @@
       "application_period": {
         "start": "2026-09-07",
         "end": "2026-09-11"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/덕성여자대학교_2027학년도_수시모집요강.pdf"
+        }
+      ]
     }
   },
   {
@@ -100,7 +112,13 @@
       "application_period": {
         "start": "2026-09-07",
         "end": "2026-09-11"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/덕성여자대학교_2027학년도_수시모집요강.pdf"
+        }
+      ]
     }
   },
   {
@@ -131,7 +149,13 @@
       "application_period": {
         "start": "2026-09-07",
         "end": "2026-09-11"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/덕성여자대학교_2027학년도_수시모집요강.pdf"
+        }
+      ]
     }
   }
 ]

@@ -61,10 +61,17 @@
         "rule_source_page": "84-87"
       },
       "practical_ratio_pct": 70,
-      "school_record_ratio_pct": 30
+      "school_record_ratio_pct": 30,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/가천대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
-      "cutoff_grade_estimate": 6.0,
+      "cutoff_grade_estimate": 6,
       "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/가천대학교/가천대학교_2026학년도_수시입시결과.pdf",
       "prior_year_result": {
         "admission_year": 2026,
@@ -148,10 +155,17 @@
         "rule_source_page": "84-87"
       },
       "practical_ratio_pct": 70,
-      "school_record_ratio_pct": 30
+      "school_record_ratio_pct": 30,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/가천대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
-      "cutoff_grade_estimate": 5.0,
+      "cutoff_grade_estimate": 5,
       "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/가천대학교/가천대학교_2026학년도_수시입시결과.pdf",
       "prior_year_result": {
         "admission_year": 2026,
@@ -235,7 +249,14 @@
         "rule_source_page": "84-87"
       },
       "practical_ratio_pct": 70,
-      "school_record_ratio_pct": 30
+      "school_record_ratio_pct": 30,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/가천대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": 5.39,

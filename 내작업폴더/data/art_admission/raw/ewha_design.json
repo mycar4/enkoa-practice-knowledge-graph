@@ -37,6 +37,12 @@
         "multiplier": null
       }
     ],
-    "gender_restriction": "female_only"
+    "gender_restriction": "female_only",
+    "data_sources": [
+      {
+        "document_name": "2027학년도 공식 수시모집요강",
+        "local_file": "data/art_admission_raw/prospectus/이화여자대학교_2027학년도_수시모집요강.pdf"
+      }
+    ]
   }
 }

@@ -45,7 +45,7 @@
         "credit_weighted": true,
         "common_weight": 0.8,
         "career_weight": 0.2,
-        "common_weight_if_no_career": 1.0,
+        "common_weight_if_no_career": 1,
         "use_credit_scale": false,
         "career_elective_max_count": 3,
         "conversion_table": {
@@ -68,7 +68,14 @@
         "rule_source_page": "111-112"
       },
       "practical_ratio_pct": 90,
-      "school_record_ratio_pct": 10
+      "school_record_ratio_pct": 10,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/경희대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": null,
@@ -131,7 +138,7 @@
         "credit_weighted": true,
         "common_weight": 0.8,
         "career_weight": 0.2,
-        "common_weight_if_no_career": 1.0,
+        "common_weight_if_no_career": 1,
         "use_credit_scale": false,
         "career_elective_max_count": 3,
         "conversion_table": {
@@ -154,7 +161,14 @@
         "rule_source_page": "111-112"
       },
       "practical_ratio_pct": 90,
-      "school_record_ratio_pct": 10
+      "school_record_ratio_pct": 10,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/경희대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": null,
@@ -219,7 +233,7 @@
         "credit_weighted": true,
         "common_weight": 0.8,
         "career_weight": 0.2,
-        "common_weight_if_no_career": 1.0,
+        "common_weight_if_no_career": 1,
         "use_credit_scale": false,
         "career_elective_max_count": 3,
         "conversion_table": {
@@ -242,7 +256,14 @@
         "rule_source_page": "111-112"
       },
       "practical_ratio_pct": 90,
-      "school_record_ratio_pct": 10
+      "school_record_ratio_pct": 10,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/경희대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": null,

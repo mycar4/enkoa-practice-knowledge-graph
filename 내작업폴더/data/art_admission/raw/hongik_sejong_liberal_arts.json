@@ -23,12 +23,31 @@
       "time_limit_minutes": null,
       "school_record_rule": {
         "mode": "common_and_career_split_scaled",
-        "subjects": ["국어", "영어", "수학", "과학"],
+        "subjects": [
+          "국어",
+          "영어",
+          "수학",
+          "과학"
+        ],
         "career_elective_included": true,
         "credit_weighted": true,
         "credit_cap": 100,
-        "conversion_table": {"1": 100, "2": 96, "3": 89, "4": 77, "5": 60, "6": 40, "7": 23, "8": 11, "9": 0},
-        "career_elective_conversion_table": {"A": 10, "B": 9, "C": 7},
+        "conversion_table": {
+          "1": 100,
+          "2": 96,
+          "3": 89,
+          "4": 77,
+          "5": 60,
+          "6": 40,
+          "7": 23,
+          "8": 11,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 10,
+          "B": 9,
+          "C": 7
+        },
         "formula_note": "교과점수 = (공통·일반선택과목 이수단위가중평균×0.9 + 진로선택과목 이수단위가중평균×0.9) × (반영교과 이수학점 합/1000 + 0.9) (이수학점 합의 최대값은 100). 인문계열/캠퍼스자율전공(인문·예능)은 국어·영어·수학·사회, 자연계열/캠퍼스자율전공(자연·예능)은 국어·영어·수학·과학을 반영 (2027 모집요강 p.81, p.112-113).",
         "rule_source_page": "81, 112-113"
       },
@@ -37,7 +56,14 @@
       "registration_period": {
         "start": "2027-02-10",
         "end": "2027-02-12"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/홍익대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": null,
@@ -71,7 +97,12 @@
       "csat_minimum_rule_note": "수능최저학력기준 없음 (2027 모집요강 PDF 90쪽)",
       "source_url": "https://www.hongik.ac.kr/kr/admission/recruitment.do?mode=download&articleNo=152315&attachNo=91150",
       "source_page": 89,
-      "data_sources": [{"document_name": "2027학년도 홍익대학교 수시모집요강(세종캠퍼스)", "local_file": "data/art_admission_raw/prospectus/홍익대학교_2027학년도_수시모집요강.pdf"}]
+      "data_sources": [
+        {
+          "document_name": "2027학년도 홍익대학교 수시모집요강(세종캠퍼스)",
+          "local_file": "data/art_admission_raw/prospectus/홍익대학교_2027학년도_수시모집요강.pdf"
+        }
+      ]
     }
   },
   {
@@ -98,12 +129,31 @@
       "time_limit_minutes": null,
       "school_record_rule": {
         "mode": "common_and_career_split_scaled",
-        "subjects": ["국어", "영어", "수학", "사회"],
+        "subjects": [
+          "국어",
+          "영어",
+          "수학",
+          "사회"
+        ],
         "career_elective_included": true,
         "credit_weighted": true,
         "credit_cap": 100,
-        "conversion_table": {"1": 100, "2": 96, "3": 89, "4": 77, "5": 60, "6": 40, "7": 23, "8": 11, "9": 0},
-        "career_elective_conversion_table": {"A": 10, "B": 9, "C": 7},
+        "conversion_table": {
+          "1": 100,
+          "2": 96,
+          "3": 89,
+          "4": 77,
+          "5": 60,
+          "6": 40,
+          "7": 23,
+          "8": 11,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 10,
+          "B": 9,
+          "C": 7
+        },
         "formula_note": "교과점수 = (공통·일반선택과목 이수단위가중평균×0.9 + 진로선택과목 이수단위가중평균×0.9) × (반영교과 이수학점 합/1000 + 0.9) (이수학점 합의 최대값은 100). 인문계열/캠퍼스자율전공(인문·예능)은 국어·영어·수학·사회, 자연계열/캠퍼스자율전공(자연·예능)은 국어·영어·수학·과학을 반영 (2027 모집요강 p.81, p.112-113).",
         "rule_source_page": "81, 112-113"
       },
@@ -112,7 +162,14 @@
       "registration_period": {
         "start": "2027-02-10",
         "end": "2027-02-12"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/홍익대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": null,
@@ -146,7 +203,12 @@
       "csat_minimum_rule_note": "수능최저학력기준 없음 (2027 모집요강 PDF 90쪽)",
       "source_url": "https://www.hongik.ac.kr/kr/admission/recruitment.do?mode=download&articleNo=152315&attachNo=91150",
       "source_page": 89,
-      "data_sources": [{"document_name": "2027학년도 홍익대학교 수시모집요강(세종캠퍼스)", "local_file": "data/art_admission_raw/prospectus/홍익대학교_2027학년도_수시모집요강.pdf"}]
+      "data_sources": [
+        {
+          "document_name": "2027학년도 홍익대학교 수시모집요강(세종캠퍼스)",
+          "local_file": "data/art_admission_raw/prospectus/홍익대학교_2027학년도_수시모집요강.pdf"
+        }
+      ]
     }
   }
 ]

@@ -56,7 +56,14 @@
       "application_period": {
         "start": "2026-09-08",
         "end": "2026-09-11"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/단국대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": 4.7,
@@ -131,7 +138,14 @@
       "application_period": {
         "start": "2026-09-08",
         "end": "2026-09-11"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/단국대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": 4.65,
@@ -206,7 +220,14 @@
       "application_period": {
         "start": "2026-09-08",
         "end": "2026-09-11"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/단국대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": 4.16,
@@ -270,7 +291,14 @@
       "application_period": {
         "start": "2026-09-08",
         "end": "2026-09-11"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/단국대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": 5.72,
@@ -334,7 +362,14 @@
       "application_period": {
         "start": "2026-09-08",
         "end": "2026-09-11"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/단국대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": 7.74,
@@ -398,7 +433,14 @@
       "application_period": {
         "start": "2026-09-08",
         "end": "2026-09-11"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/단국대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": 6.38,
@@ -462,7 +504,14 @@
       "application_period": {
         "start": "2026-09-08",
         "end": "2026-09-11"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/단국대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": 6.81,

@@ -25,10 +25,23 @@
     "time_limit_minutes": 300,
     "school_record_rule": {
       "mode": "simple_weighted_average",
-      "subjects": ["국어", "영어"],
+      "subjects": [
+        "국어",
+        "영어"
+      ],
       "career_elective_included": false,
       "credit_weighted": true,
-      "conversion_table": {"1": 100, "2": 98, "3": 95, "4": 90, "5": 85, "6": 80, "7": 50, "8": 20, "9": 0},
+      "conversion_table": {
+        "1": 100,
+        "2": 98,
+        "3": 95,
+        "4": 90,
+        "5": 85,
+        "6": 80,
+        "7": 50,
+        "8": 20,
+        "9": 0
+      },
       "formula_note": "반영교과(국어/영어) 공통·일반선택과목 전체를 졸업예정자는 3학년 1학기까지(5개학기), 졸업자는 3학년 2학기까지(6개학기) 반영. 교과성적 = Σ(과목별 등급점수×이수단위) / Σ이수단위 (2027 모집요강 p.21, 실기/실적 일반학생전형 - 미술창작학부 기준). 진로선택과목은 반영교과 표에 없어 미반영.",
       "rule_source_page": "21"
     },
@@ -47,7 +60,14 @@
     "registration_period": {
       "start": "2027-02-10",
       "end": "2027-02-13"
-    }
+    },
+    "data_sources": [
+      {
+        "document_name": "2027학년도 공식 수시모집요강",
+        "local_file": "data/art_admission_raw/prospectus/추계예술대학교_2027학년도_수시모집요강.pdf"
+      }
+    ],
+    "school_record_status": "required"
   },
   "estimates": {
     "cutoff_grade_estimate": null,

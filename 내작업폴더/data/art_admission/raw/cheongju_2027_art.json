@@ -34,7 +34,13 @@
           "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf"
         }
       ],
-      "application_period": {"start": "2026-09-07", "end": "2026-09-11"}
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {},
+      "formula_note": "원문 p.12~13: 국어·영어·수학 각 상위 2과목 및 사회·과학·제2외국어/한문 통합 상위 2과목(총 8과목)을 대상으로, 교과목 원점수·교과평균·표준편차로 표준점수=12×((원점수-평균)/표준편차)+75를 산출한 뒤 평균한다. 석차등급만으로는 원점수·평균·표준편차를 복원할 수 없어 현 엔진의 6개 mode에 정확히 적용 불가.",
+      "rule_source_page": "12-13"
     }
   },
   {
@@ -72,7 +78,13 @@
           "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf"
         }
       ],
-      "application_period": {"start": "2026-09-07", "end": "2026-09-11"}
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {},
+      "formula_note": "원문 p.12~13: 국어·영어·수학 각 상위 2과목 및 사회·과학·제2외국어/한문 통합 상위 2과목(총 8과목)을 대상으로, 교과목 원점수·교과평균·표준편차로 표준점수=12×((원점수-평균)/표준편차)+75를 산출한 뒤 평균한다. 석차등급만으로는 원점수·평균·표준편차를 복원할 수 없어 현 엔진의 6개 mode에 정확히 적용 불가.",
+      "rule_source_page": "12-13"
     }
   },
   {
@@ -110,7 +122,13 @@
           "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf"
         }
       ],
-      "application_period": {"start": "2026-09-07", "end": "2026-09-11"}
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {},
+      "formula_note": "원문 p.12~13: 국어·영어·수학 각 상위 2과목 및 사회·과학·제2외국어/한문 통합 상위 2과목(총 8과목)을 대상으로, 교과목 원점수·교과평균·표준편차로 표준점수=12×((원점수-평균)/표준편차)+75를 산출한 뒤 평균한다. 석차등급만으로는 원점수·평균·표준편차를 복원할 수 없어 현 엔진의 6개 mode에 정확히 적용 불가.",
+      "rule_source_page": "12-13"
     }
   },
   {
@@ -148,7 +166,13 @@
           "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf"
         }
       ],
-      "application_period": {"start": "2026-09-07", "end": "2026-09-11"}
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {},
+      "formula_note": "원문 p.12~13: 국어·영어·수학 각 상위 2과목 및 사회·과학·제2외국어/한문 통합 상위 2과목(총 8과목)을 대상으로, 교과목 원점수·교과평균·표준편차로 표준점수=12×((원점수-평균)/표준편차)+75를 산출한 뒤 평균한다. 석차등급만으로는 원점수·평균·표준편차를 복원할 수 없어 현 엔진의 6개 mode에 정확히 적용 불가.",
+      "rule_source_page": "12-13"
     }
   },
   {
@@ -186,7 +210,13 @@
           "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf"
         }
       ],
-      "application_period": {"start": "2026-09-07", "end": "2026-09-11"}
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {},
+      "formula_note": "원문 p.12~13: 국어·영어·수학 각 상위 2과목 및 사회·과학·제2외국어/한문 통합 상위 2과목(총 8과목)을 대상으로, 교과목 원점수·교과평균·표준편차로 표준점수=12×((원점수-평균)/표준편차)+75를 산출한 뒤 평균한다. 석차등급만으로는 원점수·평균·표준편차를 복원할 수 없어 현 엔진의 6개 mode에 정확히 적용 불가.",
+      "rule_source_page": "12-13"
     }
   },
   {
@@ -218,7 +248,13 @@
           "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf"
         }
       ],
-      "application_period": {"start": "2026-09-07", "end": "2026-09-11"}
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {},
+      "formula_note": "원문 p.12~13: 국어·영어·수학 각 상위 2과목 및 사회·과학·제2외국어/한문 통합 상위 2과목(총 8과목)을 대상으로, 교과목 원점수·교과평균·표준편차로 표준점수=12×((원점수-평균)/표준편차)+75를 산출한 뒤 평균한다. 석차등급만으로는 원점수·평균·표준편차를 복원할 수 없어 현 엔진의 6개 mode에 정확히 적용 불가.",
+      "rule_source_page": "12-13"
     }
   }
 ]

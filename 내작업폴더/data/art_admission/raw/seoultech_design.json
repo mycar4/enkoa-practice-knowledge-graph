@@ -51,7 +51,14 @@
         },
         "formula_note": "반영교과(국어/영어/사회/한국사) 전 과목의 석차등급을 이수단위 가중평균 (진로선택과목은 실기위주전형에서는 반영하지 않음, 학년별 가중치 없음). 이 전형은 1단계(8배수)에서 학생부교과 100%로 선발한 뒤, 2단계 최종 점수는 실기 100%로만 결정되므로 이 환산점수는 1단계 통과 여부에만 영향을 준다 (2027 모집요강 p.53, 56-57).",
         "rule_source_page": "53, 56-57"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울과학기술대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": 2.75,
@@ -121,7 +128,14 @@
         },
         "formula_note": "반영교과(국어/영어/사회/한국사) 전 과목의 석차등급을 이수단위 가중평균 (진로선택과목은 실기위주전형에서는 반영하지 않음, 학년별 가중치 없음). 이 전형은 1단계(8배수)에서 학생부교과 100%로 선발한 뒤, 2단계 최종 점수는 실기 100%로만 결정되므로 이 환산점수는 1단계 통과 여부에만 영향을 준다 (2027 모집요강 p.53, 56-57).",
         "rule_source_page": "53, 56-57"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울과학기술대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": 2.22,
@@ -191,7 +205,14 @@
         },
         "formula_note": "반영교과(국어/영어/사회/한국사) 전 과목의 석차등급을 이수단위 가중평균 (진로선택과목은 실기위주전형에서는 반영하지 않음, 학년별 가중치 없음). 이 전형은 1단계(8배수)에서 학생부교과 100%로 선발한 뒤, 2단계 최종 점수는 실기 100%로만 결정되므로 이 환산점수는 1단계 통과 여부에만 영향을 준다 (2027 모집요강 p.53, 56-57).",
         "rule_source_page": "53, 56-57"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울과학기술대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": 2.51,
@@ -261,7 +282,14 @@
         },
         "formula_note": "반영교과(국어/영어/사회/한국사) 전 과목의 석차등급을 이수단위 가중평균 (진로선택과목은 실기위주전형에서는 반영하지 않음, 학년별 가중치 없음). 이 전형은 1단계(8배수)에서 학생부교과 100%로 선발한 뒤, 2단계 최종 점수는 실기 100%로만 결정되므로 이 환산점수는 1단계 통과 여부에만 영향을 준다 (2027 모집요강 p.53, 56-57).",
         "rule_source_page": "53, 56-57"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울과학기술대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": 2.87,
@@ -331,7 +359,14 @@
         },
         "formula_note": "반영교과(국어/영어/사회/한국사) 전 과목의 석차등급을 이수단위 가중평균 (진로선택과목은 실기위주전형에서는 반영하지 않음, 학년별 가중치 없음). 이 전형은 1단계(8배수)에서 학생부교과 100%로 선발한 뒤, 2단계 최종 점수는 실기 100%로만 결정되므로 이 환산점수는 1단계 통과 여부에만 영향을 준다 (2027 모집요강 p.53, 56-57).",
         "rule_source_page": "53, 56-57"
-      }
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울과학기술대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": 2.31,
@@ -341,6 +376,494 @@
         "admission_year": 2026,
         "competition_rate": null,
         "school_record_grade_typical": 2.31,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "final_registrant_avg_only (입학생 평균, 범위 없음)",
+        "methodology_note": "이미지(스캔) PDF라 표를 직접 읽어 옮겼다(자동 텍스트 추출 불가). \"실기위주(실기전형) 입시 결과(등급)\" 표의 \"입학생 평균\"(최종 등록자 기준). 1단계 합격자 평균/최저(다른 모집단)는 별도로 있으나 최종등록자 값만 채택. 경쟁률은 이 표에 없어 미기재.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 4
+      }
+    }
+  },
+  {
+    "university": "서울과학기술대학교",
+    "campus": "서울(공릉)",
+    "department": "조형대학 시각디자인학과",
+    "track_name": "학생부종합 학교생활우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 3,
+      "ratio": "1단계 서류 100% (3배수) + 2단계 1단계성적 70% + 면접 30%",
+      "is_staged": true,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "result_date": "2026-12-18",
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 26,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울과학기술대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "not_applicable",
+      "practical_ratio_pct": 0,
+      "school_record_ratio_pct": 0,
+      "school_record_status_note": "제출서류 기반 정성평가 및 블라인드 면접으로 등급 환산표 없음.",
+      "source_page_note": "2027 수시모집요강 p.26: 제출서류 기반 정성평가 및 블라인드 면접으로 등급 환산표 없음. 일정은 p.25·p.50 원서접수·최초합격자 발표 표 대조.",
+      "stages": [
+        {
+          "stage": 1,
+          "selection_multiplier": 3,
+          "ratio": "서류 100%"
+        },
+        {
+          "stage": 2,
+          "ratio": "1단계성적 70% + 면접 30%"
+        }
+      ]
+    },
+    "estimates": {
+      "cutoff_grade_estimate": 2.75,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": null,
+        "school_record_grade_typical": 2.75,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "final_registrant_avg_only (입학생 평균, 범위 없음)",
+        "methodology_note": "이미지(스캔) PDF라 표를 직접 읽어 옮겼다(자동 텍스트 추출 불가). \"실기위주(실기전형) 입시 결과(등급)\" 표의 \"입학생 평균\"(최종 등록자 기준). 1단계 합격자 평균/최저(다른 모집단)는 별도로 있으나 최종등록자 값만 채택. 경쟁률은 이 표에 없어 미기재.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 4
+      }
+    }
+  },
+  {
+    "university": "서울과학기술대학교",
+    "campus": "서울(공릉)",
+    "department": "조형대학 금속공예디자인학과",
+    "track_name": "학생부종합 학교생활우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 3,
+      "ratio": "1단계 서류 100% (3배수) + 2단계 1단계성적 70% + 면접 30%",
+      "is_staged": true,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "result_date": "2026-12-18",
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 26,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울과학기술대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "not_applicable",
+      "practical_ratio_pct": 0,
+      "school_record_ratio_pct": 0,
+      "school_record_status_note": "제출서류 기반 정성평가 및 블라인드 면접으로 등급 환산표 없음.",
+      "source_page_note": "2027 수시모집요강 p.26: 제출서류 기반 정성평가 및 블라인드 면접으로 등급 환산표 없음. 일정은 p.25·p.50 원서접수·최초합격자 발표 표 대조.",
+      "stages": [
+        {
+          "stage": 1,
+          "selection_multiplier": 3,
+          "ratio": "서류 100%"
+        },
+        {
+          "stage": 2,
+          "ratio": "1단계성적 70% + 면접 30%"
+        }
+      ]
+    },
+    "estimates": {
+      "cutoff_grade_estimate": 2.75,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": null,
+        "school_record_grade_typical": 2.75,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "final_registrant_avg_only (입학생 평균, 범위 없음)",
+        "methodology_note": "이미지(스캔) PDF라 표를 직접 읽어 옮겼다(자동 텍스트 추출 불가). \"실기위주(실기전형) 입시 결과(등급)\" 표의 \"입학생 평균\"(최종 등록자 기준). 1단계 합격자 평균/최저(다른 모집단)는 별도로 있으나 최종등록자 값만 채택. 경쟁률은 이 표에 없어 미기재.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 4
+      }
+    }
+  },
+  {
+    "university": "서울과학기술대학교",
+    "campus": "서울(공릉)",
+    "department": "조형대학 시각디자인학과",
+    "track_name": "학생부종합 기회균형전형_기회균등",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 1,
+      "ratio": "1단계 서류 100% (3배수) + 2단계 1단계성적 70% + 면접 30%",
+      "is_staged": true,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "result_date": "2026-12-18",
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 32,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울과학기술대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "not_applicable",
+      "practical_ratio_pct": 0,
+      "school_record_ratio_pct": 0,
+      "school_record_status_note": "제출서류 기반 정성평가 및 블라인드 면접으로 등급 환산표 없음.",
+      "source_page_note": "2027 수시모집요강 p.32: 제출서류 기반 정성평가 및 블라인드 면접으로 등급 환산표 없음. 일정은 p.25·p.50 원서접수·최초합격자 발표 표 대조.",
+      "stages": [
+        {
+          "stage": 1,
+          "selection_multiplier": 3,
+          "ratio": "서류 100%"
+        },
+        {
+          "stage": 2,
+          "ratio": "1단계성적 70% + 면접 30%"
+        }
+      ]
+    },
+    "estimates": {
+      "cutoff_grade_estimate": 2.75,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": null,
+        "school_record_grade_typical": 2.75,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "final_registrant_avg_only (입학생 평균, 범위 없음)",
+        "methodology_note": "이미지(스캔) PDF라 표를 직접 읽어 옮겼다(자동 텍스트 추출 불가). \"실기위주(실기전형) 입시 결과(등급)\" 표의 \"입학생 평균\"(최종 등록자 기준). 1단계 합격자 평균/최저(다른 모집단)는 별도로 있으나 최종등록자 값만 채택. 경쟁률은 이 표에 없어 미기재.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 4
+      }
+    }
+  },
+  {
+    "university": "서울과학기술대학교",
+    "campus": "서울(공릉)",
+    "department": "조형대학 산업디자인학과",
+    "track_name": "학생부종합 기회균형전형_농어촌학생",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 1,
+      "ratio": "1단계 서류 100% (3배수) + 2단계 1단계성적 70% + 면접 30%",
+      "is_staged": true,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "result_date": "2026-12-18",
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 35,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울과학기술대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "not_applicable",
+      "practical_ratio_pct": 0,
+      "school_record_ratio_pct": 0,
+      "school_record_status_note": "제출서류 기반 정성평가 및 블라인드 면접으로 등급 환산표 없음.",
+      "source_page_note": "2027 수시모집요강 p.35: 제출서류 기반 정성평가 및 블라인드 면접으로 등급 환산표 없음. 일정은 p.25·p.50 원서접수·최초합격자 발표 표 대조.",
+      "stages": [
+        {
+          "stage": 1,
+          "selection_multiplier": 3,
+          "ratio": "서류 100%"
+        },
+        {
+          "stage": 2,
+          "ratio": "1단계성적 70% + 면접 30%"
+        }
+      ]
+    },
+    "estimates": {
+      "cutoff_grade_estimate": 2.75,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": null,
+        "school_record_grade_typical": 2.75,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "final_registrant_avg_only (입학생 평균, 범위 없음)",
+        "methodology_note": "이미지(스캔) PDF라 표를 직접 읽어 옮겼다(자동 텍스트 추출 불가). \"실기위주(실기전형) 입시 결과(등급)\" 표의 \"입학생 평균\"(최종 등록자 기준). 1단계 합격자 평균/최저(다른 모집단)는 별도로 있으나 최종등록자 값만 채택. 경쟁률은 이 표에 없어 미기재.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 4
+      }
+    }
+  },
+  {
+    "university": "서울과학기술대학교",
+    "campus": "서울(공릉)",
+    "department": "조형대학 시각디자인학과",
+    "track_name": "학생부종합 기회균형전형_농어촌학생",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 1,
+      "ratio": "1단계 서류 100% (3배수) + 2단계 1단계성적 70% + 면접 30%",
+      "is_staged": true,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "result_date": "2026-12-18",
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 35,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울과학기술대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "not_applicable",
+      "practical_ratio_pct": 0,
+      "school_record_ratio_pct": 0,
+      "school_record_status_note": "제출서류 기반 정성평가 및 블라인드 면접으로 등급 환산표 없음.",
+      "source_page_note": "2027 수시모집요강 p.35: 제출서류 기반 정성평가 및 블라인드 면접으로 등급 환산표 없음. 일정은 p.25·p.50 원서접수·최초합격자 발표 표 대조.",
+      "stages": [
+        {
+          "stage": 1,
+          "selection_multiplier": 3,
+          "ratio": "서류 100%"
+        },
+        {
+          "stage": 2,
+          "ratio": "1단계성적 70% + 면접 30%"
+        }
+      ]
+    },
+    "estimates": {
+      "cutoff_grade_estimate": 2.75,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": null,
+        "school_record_grade_typical": 2.75,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "final_registrant_avg_only (입학생 평균, 범위 없음)",
+        "methodology_note": "이미지(스캔) PDF라 표를 직접 읽어 옮겼다(자동 텍스트 추출 불가). \"실기위주(실기전형) 입시 결과(등급)\" 표의 \"입학생 평균\"(최종 등록자 기준). 1단계 합격자 평균/최저(다른 모집단)는 별도로 있으나 최종등록자 값만 채택. 경쟁률은 이 표에 없어 미기재.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 4
+      }
+    }
+  },
+  {
+    "university": "서울과학기술대학교",
+    "campus": "서울(공릉)",
+    "department": "조형대학 도예학과",
+    "track_name": "학생부종합 기회균형전형_농어촌학생",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 3,
+      "ratio": "1단계 서류 100% (3배수) + 2단계 1단계성적 70% + 면접 30%",
+      "is_staged": true,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "result_date": "2026-12-18",
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 35,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울과학기술대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "not_applicable",
+      "practical_ratio_pct": 0,
+      "school_record_ratio_pct": 0,
+      "school_record_status_note": "제출서류 기반 정성평가 및 블라인드 면접으로 등급 환산표 없음.",
+      "source_page_note": "2027 수시모집요강 p.35: 제출서류 기반 정성평가 및 블라인드 면접으로 등급 환산표 없음. 일정은 p.25·p.50 원서접수·최초합격자 발표 표 대조.",
+      "stages": [
+        {
+          "stage": 1,
+          "selection_multiplier": 3,
+          "ratio": "서류 100%"
+        },
+        {
+          "stage": 2,
+          "ratio": "1단계성적 70% + 면접 30%"
+        }
+      ]
+    },
+    "estimates": {
+      "cutoff_grade_estimate": 2.75,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": null,
+        "school_record_grade_typical": 2.75,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "final_registrant_avg_only (입학생 평균, 범위 없음)",
+        "methodology_note": "이미지(스캔) PDF라 표를 직접 읽어 옮겼다(자동 텍스트 추출 불가). \"실기위주(실기전형) 입시 결과(등급)\" 표의 \"입학생 평균\"(최종 등록자 기준). 1단계 합격자 평균/최저(다른 모집단)는 별도로 있으나 최종등록자 값만 채택. 경쟁률은 이 표에 없어 미기재.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 4
+      }
+    }
+  },
+  {
+    "university": "서울과학기술대학교",
+    "campus": "서울(공릉)",
+    "department": "조형대학 금속공예디자인학과",
+    "track_name": "학생부종합 기회균형전형_농어촌학생",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 4,
+      "ratio": "1단계 서류 100% (3배수) + 2단계 1단계성적 70% + 면접 30%",
+      "is_staged": true,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "result_date": "2026-12-18",
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 35,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울과학기술대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "not_applicable",
+      "practical_ratio_pct": 0,
+      "school_record_ratio_pct": 0,
+      "school_record_status_note": "제출서류 기반 정성평가 및 블라인드 면접으로 등급 환산표 없음.",
+      "source_page_note": "2027 수시모집요강 p.35: 제출서류 기반 정성평가 및 블라인드 면접으로 등급 환산표 없음. 일정은 p.25·p.50 원서접수·최초합격자 발표 표 대조.",
+      "stages": [
+        {
+          "stage": 1,
+          "selection_multiplier": 3,
+          "ratio": "서류 100%"
+        },
+        {
+          "stage": 2,
+          "ratio": "1단계성적 70% + 면접 30%"
+        }
+      ]
+    },
+    "estimates": {
+      "cutoff_grade_estimate": 2.75,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": null,
+        "school_record_grade_typical": 2.75,
+        "school_record_grade_floor": null,
+        "grade_stat_type": "final_registrant_avg_only (입학생 평균, 범위 없음)",
+        "methodology_note": "이미지(스캔) PDF라 표를 직접 읽어 옮겼다(자동 텍스트 추출 불가). \"실기위주(실기전형) 입시 결과(등급)\" 표의 \"입학생 평균\"(최종 등록자 기준). 1단계 합격자 평균/최저(다른 모집단)는 별도로 있으나 최종등록자 값만 채택. 경쟁률은 이 표에 없어 미기재.",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 4
+      }
+    }
+  },
+  {
+    "university": "서울과학기술대학교",
+    "campus": "서울(공릉)",
+    "department": "조형대학 조형예술학과",
+    "track_name": "학생부종합 기회균형전형_농어촌학생",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 3,
+      "ratio": "1단계 서류 100% (3배수) + 2단계 1단계성적 70% + 면접 30%",
+      "is_staged": true,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "result_date": "2026-12-18",
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 35,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울과학기술대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "not_applicable",
+      "practical_ratio_pct": 0,
+      "school_record_ratio_pct": 0,
+      "school_record_status_note": "제출서류 기반 정성평가 및 블라인드 면접으로 등급 환산표 없음.",
+      "source_page_note": "2027 수시모집요강 p.35: 제출서류 기반 정성평가 및 블라인드 면접으로 등급 환산표 없음. 일정은 p.25·p.50 원서접수·최초합격자 발표 표 대조.",
+      "stages": [
+        {
+          "stage": 1,
+          "selection_multiplier": 3,
+          "ratio": "서류 100%"
+        },
+        {
+          "stage": 2,
+          "ratio": "1단계성적 70% + 면접 30%"
+        }
+      ]
+    },
+    "estimates": {
+      "cutoff_grade_estimate": 2.75,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서울과학기술대학교/서울과학기술대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": null,
+        "school_record_grade_typical": 2.75,
         "school_record_grade_floor": null,
         "grade_stat_type": "final_registrant_avg_only (입학생 평균, 범위 없음)",
         "methodology_note": "이미지(스캔) PDF라 표를 직접 읽어 옮겼다(자동 텍스트 추출 불가). \"실기위주(실기전형) 입시 결과(등급)\" 표의 \"입학생 평균\"(최종 등록자 기준). 1단계 합격자 평균/최저(다른 모집단)는 별도로 있으나 최종등록자 값만 채택. 경쟁률은 이 표에 없어 미기재.",

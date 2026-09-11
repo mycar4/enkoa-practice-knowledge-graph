@@ -49,15 +49,22 @@
           "4": 9.9,
           "5": 9.8,
           "6": 8.7,
-          "7": 7.0,
-          "8": 6.0,
-          "9": 5.0
+          "7": 7,
+          "8": 6,
+          "9": 5
         },
         "formula_note": "반영교과(국어/수학/사회/과학/영어/한국사) 중 석차등급 상위 10과목을 이수단위 적용 없이 단순평균 (10과목 미만이면 있는 과목만 평균). 학생부교과 20%(200점)+학생부출결 10%(100점, 무결석 가정 시 만점)+실기 70%, 수능최저 미적용 (2027 모집요강 p.59, 미술학부 실기전형 기준).",
         "rule_source_page": "59, 84-87"
       },
       "practical_ratio_pct": 70,
-      "school_record_ratio_pct": 30
+      "school_record_ratio_pct": 30,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/동국대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": 4.6,
@@ -127,15 +134,22 @@
           "4": 9.9,
           "5": 9.8,
           "6": 8.7,
-          "7": 7.0,
-          "8": 6.0,
-          "9": 5.0
+          "7": 7,
+          "8": 6,
+          "9": 5
         },
         "formula_note": "반영교과(국어/수학/사회/과학/영어/한국사) 중 석차등급 상위 10과목을 이수단위 적용 없이 단순평균 (10과목 미만이면 있는 과목만 평균). 학생부교과 20%(200점)+학생부출결 10%(100점, 무결석 가정 시 만점)+실기 70%, 수능최저 미적용 (2027 모집요강 p.59, 미술학부 실기전형 기준).",
         "rule_source_page": "59, 84-87"
       },
       "practical_ratio_pct": 70,
-      "school_record_ratio_pct": 30
+      "school_record_ratio_pct": 30,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/동국대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": 5.7,
@@ -204,15 +218,22 @@
           "4": 9.9,
           "5": 9.8,
           "6": 8.7,
-          "7": 7.0,
-          "8": 6.0,
-          "9": 5.0
+          "7": 7,
+          "8": 6,
+          "9": 5
         },
         "formula_note": "반영교과(국어/수학/사회/과학/영어/한국사) 중 석차등급 상위 10과목을 이수단위 적용 없이 단순평균 (10과목 미만이면 있는 과목만 평균). 학생부교과 20%(200점)+학생부출결 10%(100점, 무결석 가정 시 만점)+실기 70%, 수능최저 미적용 (2027 모집요강 p.59, 미술학부 실기전형 기준).",
         "rule_source_page": "59, 84-87"
       },
       "practical_ratio_pct": 70,
-      "school_record_ratio_pct": 30
+      "school_record_ratio_pct": 30,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/동국대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
     },
     "estimates": {
       "cutoff_grade_estimate": 5.7,
