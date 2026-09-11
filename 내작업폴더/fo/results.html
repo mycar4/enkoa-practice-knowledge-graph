@@ -42,6 +42,17 @@
 <div class="bg-surface-container-lowest p-unit-sm rounded shadow-sm text-center border-l-4 border-outline"><div id="countDocument" class="font-headline-sm text-headline-sm text-on-surface">0</div><div class="font-label-sm text-label-sm text-on-surface-variant">서류전형</div></div>
 <div class="bg-surface-container-lowest p-unit-sm rounded shadow-sm text-center border-l-4 border-secondary"><div id="countHolistic" class="font-headline-sm text-headline-sm text-secondary">0</div><div class="font-label-sm text-label-sm text-on-surface-variant">학생부종합전형</div></div>
 </div>
+<label id="profileTrackTypeWrap" class="hidden flex items-center gap-unit-2xs font-body-sm text-body-sm text-on-surface-variant mt-unit-sm">
+  전형 유형으로 좁히기
+  <select id="profileTrackTypeSelect" class="ml-unit-2xs h-9 px-unit-xs rounded border border-outline-variant bg-surface-container-lowest text-on-surface font-body-sm text-body-sm">
+    <option value="">전체</option>
+    <option value="exact">실기종목 일치</option>
+    <option value="partial">준비 내용 확인 필요</option>
+    <option value="document">서류전형만 (실기 없음)</option>
+    <option value="holistic_review">학생부종합전형만</option>
+    <option value="academic_record">학생부교과전형만</option>
+  </select>
+</label>
 </section>
 
 <section class="px-margin-mobile lg:px-12 pt-unit-sm gap-unit-sm grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" id="cardsContainer">
@@ -271,10 +282,19 @@ function statusBadge(r) {
 }
 
 const container = document.getElementById("cardsContainer");
-if (results.length === 0) {
-  document.getElementById("emptyState").classList.remove("hidden");
-} else {
-  results.forEach(r => {
+
+// 전형 유형(실기종목 일치/서류전형/학생부종합/학생부교과)으로 리스트를 좁혀볼 수
+// 있게 - 이전에는 profile.html에서 고른 조건이 결과에 고정 반영될 뿐, 이 화면
+// 안에서 다시 좁히는 셀렉트가 없었다("성적 추천" 쪽에는 있는데 "대학 찾기" 쪽엔
+// 없다"는 피드백으로 추가).
+function renderProfileCards(list) {
+  container.innerHTML = "";
+  if (list.length === 0) {
+    document.getElementById("emptyState").classList.remove("hidden");
+    return;
+  }
+  document.getElementById("emptyState").classList.add("hidden");
+  list.forEach(r => {
     const key = trackKey(r);
     const card = document.createElement("div");
     card.className = "flex flex-col bg-surface-container-lowest rounded-lg p-unit-md gap-unit-2xs shadow-sm border border-outline-variant/30";
@@ -336,6 +356,15 @@ if (results.length === 0) {
 
   document.querySelectorAll(".evidence-btn").forEach(btn => {
     btn.addEventListener("click", () => openEvidence(btn.dataset.university, btn.dataset.campus, btn.dataset.department, btn.dataset.trackName));
+  });
+}
+
+renderProfileCards(results);
+if (results.length > 0) {
+  document.getElementById("profileTrackTypeWrap").classList.remove("hidden");
+  document.getElementById("profileTrackTypeSelect").addEventListener("change", (e) => {
+    const v = e.target.value;
+    renderProfileCards(v ? results.filter(r => r.match_status === v) : results);
   });
 }
 } // !isRecommendMode
@@ -830,57 +859,68 @@ function renderRecommendResults() {
     window.location.href = "qa.html";
   });
 
-  // 무충돌 6장 조합 자동 추천 - 지금 화면의 실기종목 칩 필터를 그대로 넘겨서
-  // "이 조건에 맞는 학교들 중" 겹치지 않는 6개를 고른다(전체 그래프가 아니라
-  // 사용자가 이미 좁혀둔 범위 안에서 골라야 의미가 있음).
+  // 무충돌 6장 조합 자동 추천 - 반드시 "지금 화면에 이미 필터·정렬까지 적용해서
+  // 보여주고 있는 currentDisplayedList" 안에서만 고른다. 처음엔 서버에 별도
+  // API(/recommend-combo)로 grades+topic_keywords만 다시 보내 전체 후보군에서
+  // 계산했었는데, 그러면 화면의 정렬 기준/전형 유형(서류·학생부종합·학생부교과)/
+  // 성별/대학명 검색 필터가 전부 무시된 채 "무작위로 아무 6개"가 나온 것처럼
+  // 보인다는 피드백을 받았다 - 사용자가 이미 좁혀둔 조건 안에서 조합을 짜야
+  // 의미가 있으므로, 서버를 다시 부르지 않고 지금 화면과 완전히 같은 리스트
+  // 위에서 그리디 겹침 제거를 그대로 재현한다(로직은 recommend_conflict_free_combo와
+  // 동일 - admission_year가 같을 때만 exam_dates 교집합을 충돌로 본다).
   document.getElementById("comboCloseBtn").addEventListener("click", () => {
     document.getElementById("comboSection").classList.add("hidden");
   });
 
-  document.getElementById("comboRecommendBtn").addEventListener("click", async () => {
+  document.getElementById("comboRecommendBtn").addEventListener("click", () => {
     const section = document.getElementById("comboSection");
-    // 이미 열려 있는 상태에서 다시 누르면 "원복"(닫기) 동작으로 - 매번 새로
-    // API를 다시 부르지 않고 그냥 토글되게 한다.
     if (!section.classList.contains("hidden")) {
       section.classList.add("hidden");
       return;
     }
-    const gradesRaw = sessionStorage.getItem("artready_recommend_grades");
-    const grades = gradesRaw ? JSON.parse(gradesRaw) : [];
     const summaryEl = document.getElementById("comboSummary");
     const listEl = document.getElementById("comboList");
     const skippedWrap = document.getElementById("comboSkippedWrap");
     const skippedList = document.getElementById("comboSkippedList");
     section.classList.remove("hidden");
     section.scrollIntoView({ behavior: "smooth", block: "start" });
-    summaryEl.textContent = "계산 중...";
-    listEl.innerHTML = "";
-    skippedWrap.classList.add("hidden");
-    try {
-      const payload = { grades, max_count: 6 };
-      if (selectedTopicFilters.size > 0) payload.topic_keywords = Array.from(selectedTopicFilters);
-      const data = await fetch(window.API_BASE_URL + "/recommend-combo", {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
-      }).then(r => r.json());
 
-      summaryEl.textContent = `적합도 순서(전년도 비교→내신영향→실기비중) 기준, 총 ${data.total_candidates_considered}개 후보 중 실기고사 날짜가 서로 겹치지 않는 ${data.count}곳을 담았습니다. 이 순서는 우열이 아니라 위 정렬 기준을 그대로 따른 결과이며, 실제 지원은 본인 준비 상황과 선호도를 함께 고려하세요.`;
-      listEl.innerHTML = (data.combo || []).map((t, i) => `
-        <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-unit-sm">
-          <p class="font-label-sm text-label-sm text-secondary">#${i + 1}</p>
-          <p class="font-body-md text-body-md text-on-surface font-medium">${t.university}${t.campus ? ` (${t.campus})` : ""}</p>
-          <p class="font-body-sm text-body-sm text-on-surface-variant">${t.department} · ${t.track_name || ""}</p>
-          <p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">실기고사: ${(t.exam_dates || []).join(", ") || "-"}</p>
-          ${t.school_record_percentage != null ? `<p class="font-body-sm text-body-sm text-on-surface-variant">학생부 환산 ${t.school_record_percentage}%</p>` : ""}
-        </div>`).join("") || `<p class="col-span-full font-body-sm text-body-sm text-on-surface-variant">겹치지 않는 조합을 찾지 못했습니다.</p>`;
-
-      if ((data.skipped_due_to_conflict || []).length > 0) {
-        skippedWrap.classList.remove("hidden");
-        skippedList.innerHTML = data.skipped_due_to_conflict.map(s => `
-          <p>· ${s.university} ${s.department} - ${(s.conflict.date || []).join(", ")}에 ${s.conflict.with_university} ${s.conflict.with_department}와 겹쳐서 제외</p>
-        `).join("");
+    const pool = currentDisplayedList.filter(r => r.calc_precision !== "not_applicable");
+    const maxCount = 6;
+    const chosen = [];
+    const skipped = [];
+    for (const cand of pool) {
+      if (chosen.length >= maxCount) break;
+      const candDates = new Set(cand.exam_dates || []);
+      let conflict = null;
+      if (candDates.size > 0) {
+        for (const c of chosen) {
+          if (cand.admission_year !== c.admission_year) continue;
+          const shared = (cand.exam_dates || []).filter(d => (c.exam_dates || []).includes(d));
+          if (shared.length) { conflict = { withUniv: c.university, withDept: c.department, dates: shared }; break; }
+        }
       }
-    } catch (err) {
-      summaryEl.innerHTML = `<span class="text-error">조합 계산에 실패했습니다: ${err}</span>`;
+      if (conflict) { skipped.push({ cand, conflict }); continue; }
+      chosen.push(cand);
+    }
+
+    summaryEl.textContent = `지금 화면에 적용된 정렬·필터 기준 그대로(총 ${pool.length}개 후보) 실기고사 날짜가 서로 겹치지 않는 ${chosen.length}곳을 담았습니다. 이 순서는 우열이 아니라 현재 화면 정렬 결과를 그대로 따른 것이며, 실제 지원은 본인 준비 상황과 선호도를 함께 고려하세요.`;
+    listEl.innerHTML = chosen.map((t, i) => `
+      <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-unit-sm">
+        <p class="font-label-sm text-label-sm text-secondary">#${i + 1}</p>
+        <p class="font-body-md text-body-md text-on-surface font-medium">${t.university}${t.campus ? ` (${t.campus})` : ""}</p>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">${t.department} · ${t.track_name || ""}</p>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">실기고사: ${(t.exam_dates || []).join(", ") || "-"}</p>
+        ${t.school_record_percentage != null ? `<p class="font-body-sm text-body-sm text-on-surface-variant">학생부 환산 ${t.school_record_percentage}%</p>` : ""}
+      </div>`).join("") || `<p class="col-span-full font-body-sm text-body-sm text-on-surface-variant">지금 필터 조건에 겹치지 않는 조합을 찾지 못했습니다. 필터를 넓혀보세요.</p>`;
+
+    if (skipped.length > 0) {
+      skippedWrap.classList.remove("hidden");
+      skippedList.innerHTML = skipped.map(s => `
+        <p>· ${s.cand.university} ${s.cand.department} - ${s.conflict.dates.join(", ")}에 ${s.conflict.withUniv} ${s.conflict.withDept}와 겹쳐서 제외</p>
+      `).join("");
+    } else {
+      skippedWrap.classList.add("hidden");
     }
   });
 
