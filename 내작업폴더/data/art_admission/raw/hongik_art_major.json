@@ -162,5 +162,55 @@
       ],
       "school_record_status": "required"
     }
+  },
+  {
+    "university": "홍익대학교",
+    "campus": "서울",
+    "department": "예술학과",
+    "track_name": "학교장추천자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 4,
+      "ratio": "학생부교과 100% (일괄합산, 단계 없음)",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": null,
+      "result_date": "2026-12-18",
+      "exam_type_name": "실기고사 없음 - 학생부교과 100% 정량 반영",
+      "allowed_materials": [],
+      "paper_size": "해당 없음 (실기 없음)",
+      "time_limit_minutes": null,
+      "csat_minimum_required": true,
+      "csat_minimum_rule": "국어, 수학, 영어, 탐구(사회/과학) 중 2개 영역 등급 합 5 이내, 한국사 4등급 이내 (2027 모집요강 p.29)",
+      "school_record_rule": {
+        "mode": "common_and_career_split_scaled",
+        "subjects": ["국어", "영어", "수학", "사회"],
+        "career_elective_included": true,
+        "credit_weighted": true,
+        "credit_cap": 100,
+        "conversion_table": {
+          "1": 100, "2": 96, "3": 89, "4": 77, "5": 60, "6": 40, "7": 23, "8": 11, "9": 0
+        },
+        "career_elective_conversion_table": { "A": 10, "B": 9, "C": 7 },
+        "formula_note": "교과점수 = (공통·일반선택과목 이수단위가중평균×0.9 + 진로선택과목 이수단위가중평균×0.9) × (반영교과 이수학점 합/1000 + 0.9) (이수학점 합의 최대값은 100). 예술학과는 인문계열과 동일하게 국어·영어·수학·사회를 반영(2027 모집요강 p.28-29, 112-113 - 세종캠퍼스 학생부교과(교과우수자전형)와 동일 학교 공통 규정). 미술우수자전형(실기/서류 기반, 이 파일의 다른 레코드)과 달리 이 전형은 실기고사가 전혀 없고 학생부교과 100%로 일괄 선발된다.",
+        "rule_source_page": "28-29, 112-113"
+      },
+      "source_url": "https://www.hongik.ac.kr/kr/admission/recruitment.do?mode=download&articleNo=152315&attachNo=91150",
+      "source_page": 27,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/홍익대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "school_record_status": "required"
+    }
   }
 ]

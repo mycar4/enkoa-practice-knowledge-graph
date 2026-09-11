@@ -8,6 +8,8 @@
       "admission_year": 2027,
       "quota": 12,
       "ratio": "학생부 30% + 실기 70%",
+      "school_record_ratio_pct": 30,
+      "practical_ratio_pct": 70,
       "is_staged": false,
       "csat_minimum_required": false,
       "school_record_status": "required",
@@ -60,6 +62,8 @@
       "admission_year": 2027,
       "quota": 17,
       "ratio": "학생부 30% + 실기 70%",
+      "school_record_ratio_pct": 30,
+      "practical_ratio_pct": 70,
       "is_staged": false,
       "csat_minimum_required": false,
       "school_record_status": "required",
@@ -110,6 +114,8 @@
       "admission_year": 2027,
       "quota": 17,
       "ratio": "학생부 30% + 실기 70%",
+      "school_record_ratio_pct": 30,
+      "practical_ratio_pct": 70,
       "is_staged": false,
       "csat_minimum_required": false,
       "school_record_status": "required",
@@ -160,6 +166,8 @@
       "admission_year": 2027,
       "quota": 17,
       "ratio": "학생부 30% + 실기 70%",
+      "school_record_ratio_pct": 30,
+      "practical_ratio_pct": 70,
       "is_staged": false,
       "csat_minimum_required": false,
       "school_record_status": "required",
@@ -210,6 +218,8 @@
       "admission_year": 2027,
       "quota": 35,
       "ratio": "학생부 30% + 실기 70%",
+      "school_record_ratio_pct": 30,
+      "practical_ratio_pct": 70,
       "is_staged": false,
       "csat_minimum_required": false,
       "school_record_status": "required",
@@ -243,6 +253,58 @@
       "source_url": "https://ipsi.kongju.ac.kr/attach/44a038e6d069249324e35d9e6f1998b6/13055e35ba7465cb478c5b4be490c5a8",
       "source_page": 59,
       "source_page_note": "모집인원: PDF 59쪽, 반영비율: PDF 61쪽, 실기유형·시간: PDF 62·68쪽, 원서접수/실기고사/발표일: PDF 24·27쪽, 학생부 반영방법: PDF 80-81쪽. 실기/실적 일반전형/만화애니메이션학부 행 대조. 상황표현 10.23/칸만화 10.24 (택1이라 응시 종목 날짜에 응시).",
+      "data_sources": [
+        {
+          "document_name": "국립공주대학교 2027학년도 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf"
+        }
+      ]
+    }
+  },
+  {
+    "university": "국립공주대학교",
+    "campus": "공주",
+    "department": "미술교육과",
+    "track_name": "학생부교과(일반전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 10,
+      "ratio": "학생부 70% + 실기 30%",
+      "school_record_ratio_pct": 70,
+      "practical_ratio_pct": 30,
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "정물소묘, 인체소묘, 인체수채화 중 택 1",
+      "allowed_materials": [],
+      "paper_size": "3절지",
+      "time_limit_minutes": 210,
+      "exam_date": "2026-10-22",
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 8,
+          "2": 7,
+          "3": 6,
+          "4": 5,
+          "5": 4,
+          "6": 3,
+          "7": 2,
+          "8": 1,
+          "9": 0
+        },
+        "formula_note": "교과성적(900점) = 변환점수평균×50 + 500(기본점수). 변환점수평균 = Σ(과목별 변환점수(1등급=8~9등급=0)×이수단위)÷Σ이수단위. 반영교과: 국어·수학·영어·한국사·사회·과학 전 과목(3학년 1학기까지, 학년별 가중치 없음). 여기서는 등급→900~500점 직접 환산(50×등급점수+500)으로 표현해 동일 결과를 재현함(2027 모집요강 p.49-50, p.80-81 - 다른 학생부교과/실기 전형과 동일한 학교 공통 규정). 출결성적(100점)·진로선택과목 가산점은 이 계산에 포함되지 않음. 정물소묘/인체소묘/인체수채화 3개 종목 모두 3절지, 3시간30분, 등급별 배점표 동일(2027 모집요강 p.54).",
+        "rule_source_page": "49-50, 54, 80-81"
+      },
+      "source_url": "https://ipsi.kongju.ac.kr/attach/44a038e6d069249324e35d9e6f1998b6/13055e35ba7465cb478c5b4be490c5a8",
+      "source_page": 45,
+      "source_page_note": "모집인원: PDF 45쪽(미술교육과, 일반전형만 10명, 자율전공/지역인재/기회균형/농어촌 미해당), 반영비율: PDF 49쪽, 실기내용·배점: PDF 50·54쪽, 원서접수/실기고사/발표일: PDF 23-24쪽, 학생부 반영방법: PDF 49-50·80-81쪽. 2026-09-11 사용자 제보로 누락 발견 - 게임디자인학과 등 5개 학과(실기/실적 일반전형, 학생부30%+실기70%)만 있고 미술교육과(학생부교과 일반전형, 학생부70%+실기30%, 완전히 다른 전형 카테고리)가 통째로 빠져 있었음.",
       "data_sources": [
         {
           "document_name": "국립공주대학교 2027학년도 수시 모집요강",

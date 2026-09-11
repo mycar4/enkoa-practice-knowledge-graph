@@ -39,20 +39,21 @@
 불러오는 중...
 </p>
 
-<!-- 처음 오는 사람은 이 화면에서 뭘 해야 하는지 모른다는 피드백 - 사용법을
-     간단히 펼쳐볼 수 있게 하고, 실제 파일 없이도 표본 성적으로 바로 결과 화면을
-     체험해볼 수 있게 샘플 3종(상위권/중위권/하위권)을 버튼 하나로 적용한다. -->
-<details class="mt-unit-lg bg-surface-container-low rounded-lg border border-outline-variant/30 p-unit-sm">
-  <summary class="font-label-md text-label-md text-on-surface cursor-pointer flex items-center gap-unit-2xs">
-    <span class="material-symbols-outlined text-[18px]">help</span>사용 안내 (처음이신가요?)
-  </summary>
-  <ol class="mt-unit-xs pl-unit-md list-decimal font-body-sm text-body-sm text-on-surface-variant space-y-unit-2xs">
+<!-- 처음 오는 사람은 이 화면에서 뭘 해야 하는지 모른다는 피드백 - 접힌 <details>는
+     너무 안 보인다는 후속 피드백을 받아, 항상 펼쳐진 눈에 띄는 안내 박스로 바꿨다.
+     실제 파일 없이도 표본 성적으로 바로 결과 화면을 체험해볼 수 있게 샘플 3종
+     (상위권/중위권/하위권)을 버튼 하나로 적용한다. -->
+<div class="mt-unit-lg bg-primary-container/10 border-2 border-primary/40 rounded-lg p-unit-md">
+  <p class="font-label-md text-label-md text-primary flex items-center gap-unit-2xs mb-unit-xs">
+    <span class="material-symbols-outlined text-[20px]">help</span>처음이신가요? 사용 방법
+  </p>
+  <ol class="pl-unit-md list-decimal font-body-sm text-body-sm text-on-surface space-y-unit-2xs">
     <li>나이스(학교종합정보) 학부모/학생 서비스에서 학교생활기록부 성적표를 txt 파일로 내려받습니다.</li>
     <li>아래 "학생부 성적표 txt 파일 업로드"에 그 파일을 올리면 표가 자동으로 채워집니다.</li>
-    <li>파일이 없거나 먼저 화면을 체험해보고 싶다면, 아래 "샘플 성적으로 체험해보기" 버튼 중 하나를 눌러보세요 - 실제 학생 데이터가 아닌 연습용 예시 성적입니다.</li>
+    <li>파일이 없거나 먼저 화면을 체험해보고 싶다면, 바로 아래 "샘플 성적으로 체험해보기" 버튼 중 하나를 눌러보세요 - 실제 학생 데이터가 아닌 연습용 예시 성적입니다.</li>
     <li>표 내용을 확인/수정한 뒤 "내게 맞는 미대 추천받기"를 누르면 대학별 공식 반영 규정으로 환산한 결과를 볼 수 있습니다.</li>
   </ol>
-</details>
+</div>
 
 <div class="mt-unit-sm flex flex-wrap items-center gap-unit-xs">
   <span class="font-body-sm text-body-sm text-on-surface-variant">샘플 성적으로 체험해보기 (연습용 예시 - 실제 데이터 아님)</span>
