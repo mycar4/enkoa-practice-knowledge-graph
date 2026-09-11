@@ -1,3 +1,4 @@
+[
 {
   "university": "계원예술대학교",
   "campus": "경기(의왕)",
@@ -38,11 +39,126 @@
     "registration_period": {
       "start": "2027-02-10",
       "end": "2027-02-12"
-    }
+    },
+    "data_sources": [
+      {
+        "document_name": "2027학년도 공식 수시모집요강",
+        "local_file": "data/art_admission_raw/prospectus/계원예술대학교_2027학년도_수시1차모집요강.pdf"
+      }
+    ]
   },
   "estimates": {
     "cutoff_grade_estimate": null,
     "cutoff_source_url": "https://ipsihogu.com/2026-%EA%B3%84%EC%9B%90%EC%98%88%EB%8C%80-%EC%88%98%EC%8B%9C%EB%93%B1%EA%B8%89/",
     "interview_summaries": []
   }
+},
+{
+  "university": "계원예술대학교",
+  "campus": "경기(의왕)",
+  "department": "공간연출과",
+  "track_name": "수시1차 일반전형(학생부위주)",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 2,
+    "ratio": "학생부 100% (고교 2학년 전체 석차등급), 일괄합산",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "school_record_ratio_pct": 100,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-30"
+    },
+    "exam_date": null,
+    "result_date": "2026-10-30",
+    "exam_type_name": "해당 없음 (학생부 100%, 실기·면접 없음)",
+    "allowed_materials": [],
+    "paper_size": null,
+    "time_limit_minutes": null,
+    "school_record_rule": {},
+    "school_record_status": "required",
+    "source_url": "https://ipsi.kaywon.ac.kr/dbimage/WebData/pdf/susi/2027_1/res/pages/pages.pdf",
+    "source_page": 3,
+    "data_sources": [
+      {
+        "document_name": "2027학년도 공식 수시모집요강",
+        "local_file": "data/art_admission_raw/prospectus/계원예술대학교_2027학년도_수시1차모집요강.pdf"
+      }
+    ],
+    "source_page_note": "모집인원표 p.7: 공간연출과 수시1차 일반전형(학생부위주) 2명. 전형요약 p.3: 반영지표는 '고교 2학년 전체 석차등급' 단일값이며 계산식은 20+{(9-2학년 석차등급)×10}(p.13~14 인근) - 과목별 이수단위 가중평균이 아니라 학교가 산출한 학년 종합 석차등급 하나만 쓰는 방식이라 현 엔진의 8개 mode 어디에도 정확히 대응하지 않아 school_record_rule을 비워 둔다. 이 raw 파일엔 원래 수시2차(서류위주) 1건만 있었고 수시1차 학생부위주 전형 전체가 누락돼 있었음(2026-09-11 Claude가 발견·보완)."
+  },
+  "estimates": {}
+},
+{
+  "university": "계원예술대학교",
+  "campus": "경기(의왕)",
+  "department": "공간연출과",
+  "track_name": "수시1차 정원외 특별전형(농어촌출신자)",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 1,
+    "ratio": "학생부 100% (고교 2학년 전체 석차등급), 일괄합산",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "school_record_ratio_pct": 100,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-30"
+    },
+    "exam_date": null,
+    "result_date": "2026-10-30",
+    "exam_type_name": "해당 없음 (학생부 100%, 실기·면접 없음)",
+    "allowed_materials": [],
+    "paper_size": null,
+    "time_limit_minutes": null,
+    "school_record_rule": {},
+    "school_record_status": "required",
+    "source_url": "https://ipsi.kaywon.ac.kr/dbimage/WebData/pdf/susi/2027_1/res/pages/pages.pdf",
+    "source_page": 3,
+    "data_sources": [
+      {
+        "document_name": "2027학년도 공식 수시모집요강",
+        "local_file": "data/art_admission_raw/prospectus/계원예술대학교_2027학년도_수시1차모집요강.pdf"
+      }
+    ],
+    "source_page_note": "모집인원표 p.7: 공간연출과 수시1차 정원외 특별전형(농·어촌출신자) 1명, 학생부 100%(2학년 전체 석차등급). 계산식 동일(20+{(9-등급)×10}) - 이유는 위 학생부위주 레코드와 동일하게 school_record_rule 비움."
+  },
+  "estimates": {}
+},
+{
+  "university": "계원예술대학교",
+  "campus": "경기(의왕)",
+  "department": "공간연출과",
+  "track_name": "수시1차 정원외 특별전형(기초생활수급자)",
+  "official_facts": {
+    "admission_year": 2027,
+    "quota": 1,
+    "ratio": "학생부 100% (고교 2학년 전체 석차등급), 일괄합산",
+    "is_staged": false,
+    "csat_minimum_required": false,
+    "school_record_ratio_pct": 100,
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-30"
+    },
+    "exam_date": null,
+    "result_date": "2026-10-30",
+    "exam_type_name": "해당 없음 (학생부 100%, 실기·면접 없음)",
+    "allowed_materials": [],
+    "paper_size": null,
+    "time_limit_minutes": null,
+    "school_record_rule": {},
+    "school_record_status": "required",
+    "source_url": "https://ipsi.kaywon.ac.kr/dbimage/WebData/pdf/susi/2027_1/res/pages/pages.pdf",
+    "source_page": 3,
+    "data_sources": [
+      {
+        "document_name": "2027학년도 공식 수시모집요강",
+        "local_file": "data/art_admission_raw/prospectus/계원예술대학교_2027학년도_수시1차모집요강.pdf"
+      }
+    ],
+    "source_page_note": "모집인원표 p.7: 공간연출과 수시1차 정원외 특별전형(기초생활수급자) 1명, 학생부 100%(2학년 전체 석차등급). 계산식 동일(20+{(9-등급)×10}) - 이유는 위 학생부위주 레코드와 동일하게 school_record_rule 비움."
+  },
+  "estimates": {}
 }
+]
