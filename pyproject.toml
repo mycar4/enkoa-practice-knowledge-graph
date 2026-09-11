@@ -69,4 +69,5 @@ dependencies = [
     "langgraph>=1.2.11",
     "pyhwp>=0.1b15",
     "olefile>=0.47",
+    "pymupdf>=1.28.2",
 ]
