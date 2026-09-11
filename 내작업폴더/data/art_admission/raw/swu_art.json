@@ -19,13 +19,20 @@
       "time_limit_minutes": 240,
       "application_period": {
         "start": "2026-09-08",
-        "end": "2026-09-15"
+        "end": "2026-09-11"
       },
-      "exam_date": "2026-09-19",
+      "exam_date": "2026-10-31",
       "result_date": "2026-11-13",
       "source_url": "https://admission.swu.ac.kr/data_new/file/flashpaper/3530441950_QWEkLXsC_afd192bd1ed533958883e87936630143e98821cc.pdf",
       "source_page": 43,
-      "gender_restriction": "female_only"
+      "gender_restriction": "female_only",
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울여자대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "source_page_note": "일정표(p.7) 재대조 결과 2건 오류 발견: (1) 원서접수 마감일이 9/15로 잘못 기재돼 있었으나 실제 9/11까지(체육 실기 마감일과 혼동 추정). (2) 산업디자인학과·공예_컬렉터블디자인전공의 실기일이 9/19(실기우수자전형_체육 날짜)로 잘못 기재돼 있었으나 실제로는 10/31(현대미술·시각디자인전공은 10/17로 별도)(2026-09-11 Claude 발견·수정)."
     }
   },
   {
@@ -48,13 +55,20 @@
       "time_limit_minutes": 240,
       "application_period": {
         "start": "2026-09-08",
-        "end": "2026-09-15"
+        "end": "2026-09-11"
       },
-      "exam_date": "2026-09-19",
+      "exam_date": "2026-10-31",
       "result_date": "2026-11-13",
       "source_url": "https://admission.swu.ac.kr/data_new/file/flashpaper/3530441950_QWEkLXsC_afd192bd1ed533958883e87936630143e98821cc.pdf",
       "source_page": 43,
-      "gender_restriction": "female_only"
+      "gender_restriction": "female_only",
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울여자대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "source_page_note": "일정표(p.7) 재대조 결과 2건 오류 발견: (1) 원서접수 마감일이 9/15로 잘못 기재돼 있었으나 실제 9/11까지(체육 실기 마감일과 혼동 추정). (2) 산업디자인학과·공예_컬렉터블디자인전공의 실기일이 9/19(실기우수자전형_체육 날짜)로 잘못 기재돼 있었으나 실제로는 10/31(현대미술·시각디자인전공은 10/17로 별도)(2026-09-11 Claude 발견·수정)."
     }
   },
   {
@@ -77,13 +91,20 @@
       "time_limit_minutes": 240,
       "application_period": {
         "start": "2026-09-08",
-        "end": "2026-09-15"
+        "end": "2026-09-11"
       },
-      "exam_date": "2026-09-19",
+      "exam_date": "2026-10-17",
       "result_date": "2026-11-13",
       "source_url": "https://admission.swu.ac.kr/data_new/file/flashpaper/3530441950_QWEkLXsC_afd192bd1ed533958883e87936630143e98821cc.pdf",
       "source_page": 43,
-      "gender_restriction": "female_only"
+      "gender_restriction": "female_only",
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울여자대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "source_page_note": "일정표(p.7) 재대조 결과 2건 오류 발견: (1) 원서접수 마감일이 9/15로 잘못 기재돼 있었으나 실제 9/11까지(체육 실기 마감일과 혼동 추정). (2) 산업디자인학과·공예_컬렉터블디자인전공의 실기일이 9/19(실기우수자전형_체육 날짜)로 잘못 기재돼 있었으나 실제로는 10/31(현대미술·시각디자인전공은 10/17로 별도)(2026-09-11 Claude 발견·수정)."
     }
   },
   {
@@ -106,13 +127,136 @@
       "time_limit_minutes": 240,
       "application_period": {
         "start": "2026-09-08",
-        "end": "2026-09-15"
+        "end": "2026-09-11"
       },
-      "exam_date": "2026-09-19",
+      "exam_date": "2026-10-17",
       "result_date": "2026-11-13",
       "source_url": "https://admission.swu.ac.kr/data_new/file/flashpaper/3530441950_QWEkLXsC_afd192bd1ed533958883e87936630143e98821cc.pdf",
       "source_page": 43,
-      "gender_restriction": "female_only"
+      "gender_restriction": "female_only",
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울여자대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "source_page_note": "일정표(p.7) 재대조 결과 2건 오류 발견: (1) 원서접수 마감일이 9/15로 잘못 기재돼 있었으나 실제 9/11까지(체육 실기 마감일과 혼동 추정). (2) 산업디자인학과·공예_컬렉터블디자인전공의 실기일이 9/19(실기우수자전형_체육 날짜)로 잘못 기재돼 있었으나 실제로는 10/31(현대미술·시각디자인전공은 10/17로 별도)(2026-09-11 Claude 발견·수정)."
     }
+  },
+  {
+    "university": "서울여자대학교",
+    "campus": "서울",
+    "department": "산업디자인학과",
+    "track_name": "학생부종합(바롬인재서류전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 6,
+      "ratio": "일괄합산: 서류 100%",
+      "is_staged": false,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "서류(학생부 등 제출서류)를 정성적으로 종합평가하는 학생부종합전형으로, 등급→점수 환산표가 없음(2027 모집요강 p.13).",
+      "csat_minimum_required": false,
+      "exam_type_name": "해당 없음 (서류평가 100%, 실기·면접 없음)",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "exam_date": null,
+      "result_date": "2026-12-18",
+      "gender_restriction": "female_only",
+      "source_url": "https://admission.swu.ac.kr/data_new/file/flashpaper/3530441950_QWEkLXsC_afd192bd1ed533958883e87936630143e98821cc.pdf",
+      "source_page": 6,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울여자대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "source_page_note": "전형별 모집단위표(p.4) 열 순서 재대조 결과, 산업디자인학과에 실기우수자(미술) 외 바롬인재서류전형 6명·바롬인재면접전형 6명이 별도로 있었으나 기존 raw 파일엔 실기전형 1건만 있었음(2026-09-11 Claude 발견·보완)."
+    },
+    "estimates": {}
+  },
+  {
+    "university": "서울여자대학교",
+    "campus": "서울",
+    "department": "산업디자인학과",
+    "track_name": "학생부종합(바롬인재면접전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 6,
+      "ratio": "1단계: 서류 100% (5배수) -> 2단계: 서류 + 면접",
+      "is_staged": true,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "서류(학생부 등 제출서류)와 면접을 정성적으로 종합평가하는 학생부종합전형으로, 등급→점수 환산표가 없음(2027 모집요강 p.13).",
+      "csat_minimum_required": false,
+      "exam_type_name": "해당 없음 (서류+면접 정성평가, 실기 없음)",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-11-28 (면접)",
+      "result_date": "2026-12-18",
+      "gender_restriction": "female_only",
+      "source_url": "https://admission.swu.ac.kr/data_new/file/flashpaper/3530441950_QWEkLXsC_afd192bd1ed533958883e87936630143e98821cc.pdf",
+      "source_page": 6,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울여자대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "stages": [
+        {"stage": 1, "selection_multiplier": 5, "ratio": "서류 100%"},
+        {"stage": 2, "ratio": "서류 + 면접"}
+      ],
+      "source_page_note": "전형별 모집단위표(p.4) 열 순서 재대조 결과 발견, 1단계 통과자 발표 11/25·면접 11/28(p.7)."
+    },
+    "estimates": {}
+  },
+  {
+    "university": "서울여자대학교",
+    "campus": "서울",
+    "department": "시각디자인전공",
+    "track_name": "학생부종합(바롬인재면접전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 8,
+      "ratio": "1단계: 서류 100% (5배수) -> 2단계: 서류 + 면접",
+      "is_staged": true,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "서류(학생부 등 제출서류)와 면접을 정성적으로 종합평가하는 학생부종합전형으로, 등급→점수 환산표가 없음(2027 모집요강 p.13).",
+      "csat_minimum_required": false,
+      "exam_type_name": "해당 없음 (서류+면접 정성평가, 실기 없음)",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-11-28 (면접)",
+      "result_date": "2026-12-18",
+      "gender_restriction": "female_only",
+      "source_url": "https://admission.swu.ac.kr/data_new/file/flashpaper/3530441950_QWEkLXsC_afd192bd1ed533958883e87936630143e98821cc.pdf",
+      "source_page": 6,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울여자대학교_2027학년도_수시모집요강.pdf"
+        }
+      ],
+      "stages": [
+        {"stage": 1, "selection_multiplier": 5, "ratio": "서류 100%"},
+        {"stage": 2, "ratio": "서류 + 면접"}
+      ],
+      "source_page_note": "전형별 모집단위표(p.4) 열 순서 재대조 결과, 시각디자인전공에 실기우수자(미술) 12명 외 바롬인재면접전형 8명이 별도로 있었으나 기존 raw 파일엔 실기전형 1건만 있었음(바롬인재서류전형은 이 전공에는 배정 없음)(2026-09-11 Claude 발견·보완)."
+    },
+    "estimates": {}
   }
 ]
