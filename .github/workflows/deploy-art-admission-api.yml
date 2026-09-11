@@ -22,6 +22,7 @@ jobs:
           host: ${{ secrets.ART_API_DEPLOY_HOST }}
           username: ${{ secrets.ART_API_DEPLOY_USER }}
           key: ${{ secrets.ART_API_DEPLOY_SSH_KEY }}
+          command_timeout: 25m
           script: |
             set -e
             cd ~/art-admission-api
