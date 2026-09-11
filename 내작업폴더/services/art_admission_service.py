@@ -2145,6 +2145,90 @@ class ArtAdmissionService:
         ))
         return results
 
+    def recommend_conflict_free_combo(self, grades: List[Dict[str, Any]],
+                                       topic_keywords: Optional[List[str]] = None,
+                                       material_query: str = "",
+                                       max_count: int = 6) -> Dict[str, Any]:
+        """수시 최대 지원 장수(max_count, 기본 6) 안에서 실기고사 날짜가 서로
+        겹치지 않는 조합을 자동으로 골라준다. recommend_universities()가 이미
+        만들어둔 적합도 순서(전년도 등록자 대비 위치 -> 내신영향 -> 실기비중)를
+        그대로 신뢰해서, 그 순서대로 훑으며 지금까지 고른 학교들과 실기일이
+        하나도 안 겹치면 담고, 겹치면 건너뛴다(그리디). 학교마다 반영교과가
+        달라 학교 간 절대 서열을 매길 수 없으므로 "최적"은 이 적합도 순서
+        기준이며, 최소 충돌·최대 개수를 보장하는 완전탐색은 하지 않는다
+        (후보 수가 많지 않아 그리디로도 실용적인 조합이 나옴)."""
+        ranked = self.recommend_universities(grades, topic_keywords=topic_keywords, material_query=material_query)
+        chosen: List[Dict[str, Any]] = []
+        skipped_due_to_conflict: List[Dict[str, Any]] = []
+        for cand in ranked:
+            if len(chosen) >= max_count:
+                break
+            cand_dates = set(cand.get("exam_dates") or [])
+            conflict = None
+            if cand_dates:
+                for c in chosen:
+                    if cand.get("admission_year") != c.get("admission_year"):
+                        continue
+                    shared = cand_dates & set(c.get("exam_dates") or [])
+                    if shared:
+                        conflict = {"with_university": c["university"], "with_department": c["department"], "date": sorted(shared)}
+                        break
+            if conflict:
+                skipped_due_to_conflict.append({
+                    "university": cand["university"], "campus": cand.get("campus"), "department": cand["department"],
+                    "track_name": cand.get("track_name"), "conflict": conflict,
+                })
+                continue
+            chosen.append(cand)
+        return {
+            "combo": chosen,
+            "count": len(chosen),
+            "max_count": max_count,
+            "skipped_due_to_conflict": skipped_due_to_conflict[:20],
+            "total_candidates_considered": len(ranked),
+        }
+
+    def simulate_practical_reversal(self, university: str, department: str, grades: List[Dict[str, Any]],
+                                     campus: Optional[str] = None, track_name: Optional[str] = None) -> Dict[str, Any]:
+        """"학생부가 약해도 실기 비중이 크면 뒤집을 수 있는가"에 답하기 위한 계산.
+        실제 합격선(총점 커트라인)은 공식적으로 공개되지 않으므로 이를 추정하거나
+        지어내지 않는다(Zero-Mixing) - 대신 반영비율 공식만으로 확정할 수 있는
+        산술적 사실만 보여준다: 지금 학생부 환산 결과로 이미 확보한 총점 비중과,
+        실기에서 0점~만점을 받았을 때 총점이 어디부터 어디까지 움직일 수 있는지의
+        범위(하한·상한)다. "합격 가능성"이 아니라 "실기가 만회해줄 수 있는 폭"만
+        정직하게 알려준다."""
+        calc = self.calculate_school_record_score(university, department, grades, campus=campus, track_name=track_name)
+        if not calc.get("available"):
+            return {**calc, "reversal_available": False}
+
+        school_weight = calc.get("school_record_ratio_pct")
+        practical_weight = calc.get("practical_ratio_pct")
+        if school_weight is None or practical_weight is None or calc.get("percentage") is None:
+            return {
+                **calc, "reversal_available": False,
+                "reversal_reason": "이 전형의 학생부/실기 반영비율(%)이 확인되지 않아 뒤집기 시뮬레이션을 제공할 수 없습니다.",
+            }
+
+        my_school_contribution = round(calc["percentage"] * school_weight / 100, 2)
+        composite_min = my_school_contribution
+        composite_max = round(my_school_contribution + practical_weight, 2)
+        return {
+            **calc,
+            "reversal_available": True,
+            "school_weight_pct": school_weight,
+            "practical_weight_pct": practical_weight,
+            "my_school_contribution_pct": my_school_contribution,
+            "composite_min_pct": composite_min,
+            "composite_max_pct": composite_max,
+            "practical_swing_pct": practical_weight,
+            "reversal_note": (
+                f"학생부 반영 결과, 총점(100% 기준) 중 이미 확보한 부분은 {my_school_contribution}%p입니다. "
+                f"이 전형은 실기 비중이 {practical_weight}%라서, 실기 점수에 따라 최종 총점은 "
+                f"최소 {composite_min}%p(실기 0점 가정)부터 최대 {composite_max}%p(실기 만점 가정)까지 움직일 수 있습니다. "
+                "이는 반영비율만으로 계산한 산술적 범위이며 실제 합격선(다른 지원자들과의 상대 경쟁)을 의미하지 않습니다."
+            ),
+        }
+
 
 # 2026-09-09 "입시 질문이 왜 이렇게 느리지" 실측으로 발견한 원인: API 엔드포인트마다,
 # 그리고 에이전트의 도구 호출마다 매번 ArtAdmissionService()를 새로 만들고 있었다 -

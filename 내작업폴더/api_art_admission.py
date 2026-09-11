@@ -234,6 +234,36 @@ def recommend_universities_endpoint(req: RecommendUniversitiesRequest):
     )
 
 
+class RecommendComboRequest(BaseModel):
+    grades: List[dict]
+    topic_keywords: Optional[List[str]] = None
+    material_query: str = ""
+    max_count: int = 6
+
+
+@app.post("/recommend-combo")
+def recommend_combo_endpoint(req: RecommendComboRequest):
+    """수시 최대 지원 장수(기본 6) 안에서 실기고사 날짜가 겹치지 않는 조합을
+    자동으로 골라준다. recommend_universities()의 적합도 순서를 그대로 신뢰해
+    그리디로 채우고, 충돌로 건너뛴 후보도 함께 보여준다(왜 빠졌는지 투명하게)."""
+    svc = get_service()
+    return svc.recommend_conflict_free_combo(
+        req.grades, topic_keywords=req.topic_keywords, material_query=req.material_query,
+        max_count=req.max_count,
+    )
+
+
+@app.post("/simulate-reversal")
+def simulate_reversal_endpoint(req: SchoolRecordRequest):
+    """"학생부가 약해도 실기 비중이 크면 뒤집을 수 있는가"를 반영비율 공식만으로
+    계산한다. 실제 합격선은 공개되지 않으므로 추정하지 않고, 실기 0점~만점일 때
+    총점이 움직이는 산술적 범위(하한/상한)만 정직하게 보여준다."""
+    svc = get_service()
+    return svc.simulate_practical_reversal(
+        req.university, req.department, req.grades, campus=req.campus, track_name=req.track_name,
+    )
+
+
 class QARequest(BaseModel):
     query: str
 

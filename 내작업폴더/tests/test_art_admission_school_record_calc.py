@@ -284,11 +284,18 @@ def test_original_15_batch2_schools_use_generalized_modes_not_hardcoding():
             assert r.get("available") is True, f"{uni} {dept}: {r.get('reason')}"
             assert abs(r["percentage"] - expected_pct) < 0.05, f"{uni} {dept}: {r['percentage']} != {expected_pct}"
 
-        # 삼육대 아트앤디자인학과는 "서류 20%"가 정성평가(학생부+인성검사 종합)라
-        # 애초에 정량 공식이 없다 - 규정 미확인이 아니라 규정 자체가 존재하지 않는
-        # 케이스이므로 available=False가 맞다(허위로 계산값을 만들면 안 됨).
+        # 2026-09-11 재검증으로 삼육대 아트앤디자인학과에 학교장추천전형(학생부20%+
+        # 실기80%, 정량 공식 확정)이 추가로 확인되어 school_record_rule이 생겼다.
+        # track_name 미지정 호출은 prefer_rule=True로 계산 가능한 트랙(학교장추천)을
+        # 우선 반환하므로 이제는 available=True가 맞다.
         syu = svc.calculate_school_record_score("삼육대학교", "아트앤디자인학과", grades)
-        assert syu.get("available") is False
+        assert syu.get("available") is True, syu.get("reason")
+        assert syu.get("track_name") == "실기/실적(학교장추천전형_미술)"
+
+        # 실기우수자전형처럼 정성 서류평가만 있는 트랙은 여전히 available=False.
+        syu_practical = svc.calculate_school_record_score(
+            "삼육대학교", "아트앤디자인학과", grades, track_name="실기/실적(실기우수자전형)")
+        assert syu_practical.get("available") is False
         print("✅ test_original_15_batch2_schools_use_generalized_modes_not_hardcoding passed!")
     finally:
         svc.close()
@@ -474,21 +481,29 @@ def test_not_applicable_schools_get_no_score_not_approximate_guess():
     반드시 None이어야 하고 calc_precision="not_applicable"로 명확히 구분되어야 한다."""
     svc = ArtAdmissionService()
     try:
-        single = svc.calculate_school_record_score("삼육대학교", "아트앤디자인학과", _GRADES)
+        # 2026-09-11 재검증으로 삼육대 아트앤디자인학과에 정량 공식이 확인된
+        # 학교장추천/농어촌학생 트랙이 추가되어, track_name 미지정 호출은
+        # prefer_rule=True로 그쪽을 우선 반환한다. 여전히 정성 서류평가뿐인
+        # 실기우수자전형으로 명시 조회해야 not_applicable 케이스를 본다.
+        single = svc.calculate_school_record_score(
+            "삼육대학교", "아트앤디자인학과", _GRADES, track_name="실기/실적(실기우수자전형)")
         assert single.get("available") is False
         assert single.get("not_applicable") is True, "not_applicable 플래그가 없으면 FO가 RULE_INCOMPLETE와 구분 못 함"
         assert single.get("reason"), "사유 없이 그냥 계산 불가라고만 하면 안 됨"
 
         results = svc.recommend_universities(_GRADES)
-        na_entries = [r for r in results if r["university"] == "삼육대학교"]
-        assert na_entries, "recommend_universities 목록에서 아예 빠지면 안 됨(트랙 존재 자체는 계속 보여줘야 함)"
+        na_entries = [r for r in results if r["university"] == "삼육대학교" and r["calc_precision"] == "not_applicable"]
+        assert na_entries, "정성평가 트랙이 recommend_universities 목록에서 아예 빠지면 안 됨(트랙 존재 자체는 계속 보여줘야 함)"
         for e in na_entries:
             assert e["calc_precision"] == "not_applicable"
             assert e["school_record_percentage"] is None, "학생부 미반영 전형인데 근사치라도 점수가 나오면 안 됨(오해 유발)"
             assert e.get("reason_summary"), "사유가 없으면 사용자가 왜 점수가 없는지 알 수 없음"
 
+        # 2026-09-11 34개교 재검증 배치에서 계원예대·서경대·서울여대·건국대 GLOCAL·
+        # 삼육대 등에 트랙(정량/정성 혼재)이 다수 추가되어 not_applicable 총량 자체가
+        # 늘었다(28 -> 57). 특정 숫자에 고정하기보다, 최소 기준선만 회귀 검증한다.
         na_count = sum(1 for r in results if r["calc_precision"] == "not_applicable")
-        assert na_count == 28, f"확인된 학생부 미반영 트랙 수(28)와 다름: {na_count}"
+        assert na_count >= 28, f"확인된 학생부 미반영 트랙 수가 기존 기준선(28) 밑으로 줄어듦: {na_count}"
 
         # 정렬 순서: exact -> approximate -> not_applicable (점수 없는 항목이 앞으로 오면 안 됨)
         precisions_in_order = [r["calc_precision"] for r in results]

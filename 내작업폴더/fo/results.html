@@ -103,11 +103,31 @@
       </select>
     </label>
   </div>
+  <button id="comboRecommendBtn" class="h-9 px-unit-sm bg-secondary text-on-secondary font-label-sm text-label-sm rounded-lg flex items-center gap-unit-2xs shrink-0">
+    <span class="material-symbols-outlined text-[16px]">auto_awesome</span>
+    무충돌 6장 조합 자동 추천
+  </button>
   <button id="askAboutResultsBtn" class="ml-auto h-9 px-unit-sm bg-primary text-on-primary font-label-sm text-label-sm rounded-lg flex items-center gap-unit-2xs shrink-0">
     <span class="material-symbols-outlined text-[16px]">forum</span>
     이 결과로 질문하기
   </button>
 </div>
+
+<!-- 무충돌 6장 조합 자동 추천 결과 -->
+<section id="comboSection" class="hidden px-margin-mobile lg:px-12 pt-unit-sm">
+  <div class="bg-secondary-container/30 border border-secondary/30 rounded-lg p-unit-md">
+    <h3 class="font-headline-sm text-headline-sm text-on-surface mb-unit-2xs flex items-center gap-unit-2xs">
+      <span class="material-symbols-outlined text-secondary">auto_awesome</span>
+      실기고사 날짜가 겹치지 않는 자동 조합
+    </h3>
+    <p id="comboSummary" class="font-body-sm text-body-sm text-on-surface-variant mb-unit-sm"></p>
+    <div id="comboList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-unit-sm"></div>
+    <div id="comboSkippedWrap" class="hidden mt-unit-md pt-unit-sm border-t border-outline-variant/30">
+      <p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-unit-2xs">날짜가 겹쳐서 빠진 후보</p>
+      <div id="comboSkippedList" class="font-body-sm text-body-sm text-on-surface-variant space-y-unit-2xs"></div>
+    </div>
+  </div>
+</section>
 <section id="recommendSection" class="hidden px-margin-mobile lg:px-12 pt-unit-sm gap-unit-sm grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"></section>
 
 <!-- 비교/일정/충돌 섹션 - 별도 상단 메뉴가 아니라 결과 화면 안에 그대로 둔다 -->
@@ -428,7 +448,7 @@ async function openBreakdown(university, campus, department, trackName) {
     const payload = { university, department, grades };
     if (campus) payload.campus = campus;
     if (trackName) payload.track_name = trackName;
-    const detail = await fetch(window.API_BASE_URL + "/calculate-school-record", {
+    const detail = await fetch(window.API_BASE_URL + "/simulate-reversal", {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
     }).then(r => r.json());
 
@@ -458,6 +478,18 @@ async function openBreakdown(university, campus, department, trackName) {
       ${detail.chosen_choice_subject ? `<p class="text-on-surface-variant">택1 자동선택 결과: <span class="font-medium text-on-surface">${detail.chosen_choice_subject}</span></p>` : ""}
       <p class="mt-unit-sm pt-unit-sm border-t border-outline-variant/30 text-on-surface-variant">${detail.formula_note || ""}</p>
       ${detail.source_url ? `<p class="mt-unit-xs"><a class="underline text-primary" href="${detail.source_url}" target="_blank" rel="noopener">공식 모집요강 원문</a></p>` : ""}
+      ${detail.reversal_available ? `
+      <div class="mt-unit-md pt-unit-sm border-t border-outline-variant/30">
+        <p class="font-label-sm text-label-sm text-secondary uppercase mb-unit-2xs flex items-center gap-unit-2xs">
+          <span class="material-symbols-outlined text-[16px]">swap_vert</span>실기로 뒤집을 수 있는 폭
+        </p>
+        <div class="relative h-3 rounded-full bg-surface-container-lowest overflow-hidden">
+          <div class="absolute inset-y-0 left-0 bg-secondary/70" style="width:${detail.composite_min_pct}%"></div>
+          <div class="absolute inset-y-0 bg-secondary/25" style="left:${detail.composite_min_pct}%;width:${(detail.composite_max_pct - detail.composite_min_pct).toFixed(2)}%"></div>
+        </div>
+        <p class="font-body-sm text-body-sm text-on-surface mt-unit-2xs">학생부로 이미 확보: <span class="font-bold text-secondary">${detail.my_school_contribution_pct}%p</span> · 실기 결과에 따라 최종 총점은 <span class="font-bold">${detail.composite_min_pct}%p ~ ${detail.composite_max_pct}%p</span> 사이에서 결정됩니다 (학생부 ${detail.school_weight_pct}% + 실기 ${detail.practical_weight_pct}% 반영비율 기준).</p>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">${detail.reversal_note || ""}</p>
+      </div>` : (detail.reversal_reason ? `<p class="mt-unit-sm text-on-surface-variant">${detail.reversal_reason}</p>` : "")}
     `;
   } catch (err) {
     body.innerHTML = `<p class="text-error">API 연결 실패: ${err}</p>`;
@@ -741,6 +773,50 @@ function renderRecommendResults() {
       sessionStorage.setItem("artready_qa_context", summary);
     }
     window.location.href = "qa.html";
+  });
+
+  // 무충돌 6장 조합 자동 추천 - 지금 화면의 실기종목 칩 필터를 그대로 넘겨서
+  // "이 조건에 맞는 학교들 중" 겹치지 않는 6개를 고른다(전체 그래프가 아니라
+  // 사용자가 이미 좁혀둔 범위 안에서 골라야 의미가 있음).
+  document.getElementById("comboRecommendBtn").addEventListener("click", async () => {
+    const gradesRaw = sessionStorage.getItem("artready_recommend_grades");
+    const grades = gradesRaw ? JSON.parse(gradesRaw) : [];
+    const section = document.getElementById("comboSection");
+    const summaryEl = document.getElementById("comboSummary");
+    const listEl = document.getElementById("comboList");
+    const skippedWrap = document.getElementById("comboSkippedWrap");
+    const skippedList = document.getElementById("comboSkippedList");
+    section.classList.remove("hidden");
+    section.scrollIntoView({ behavior: "smooth", block: "start" });
+    summaryEl.textContent = "계산 중...";
+    listEl.innerHTML = "";
+    skippedWrap.classList.add("hidden");
+    try {
+      const payload = { grades, max_count: 6 };
+      if (selectedTopicFilters.size > 0) payload.topic_keywords = Array.from(selectedTopicFilters);
+      const data = await fetch(window.API_BASE_URL + "/recommend-combo", {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
+      }).then(r => r.json());
+
+      summaryEl.textContent = `적합도 순서(전년도 비교→내신영향→실기비중) 기준, 총 ${data.total_candidates_considered}개 후보 중 실기고사 날짜가 서로 겹치지 않는 ${data.count}곳을 담았습니다. 이 순서는 우열이 아니라 위 정렬 기준을 그대로 따른 결과이며, 실제 지원은 본인 준비 상황과 선호도를 함께 고려하세요.`;
+      listEl.innerHTML = (data.combo || []).map((t, i) => `
+        <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-unit-sm">
+          <p class="font-label-sm text-label-sm text-secondary">#${i + 1}</p>
+          <p class="font-body-md text-body-md text-on-surface font-medium">${t.university}${t.campus ? ` (${t.campus})` : ""}</p>
+          <p class="font-body-sm text-body-sm text-on-surface-variant">${t.department} · ${t.track_name || ""}</p>
+          <p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">실기고사: ${(t.exam_dates || []).join(", ") || "-"}</p>
+          ${t.school_record_percentage != null ? `<p class="font-body-sm text-body-sm text-on-surface-variant">학생부 환산 ${t.school_record_percentage}%</p>` : ""}
+        </div>`).join("") || `<p class="col-span-full font-body-sm text-body-sm text-on-surface-variant">겹치지 않는 조합을 찾지 못했습니다.</p>`;
+
+      if ((data.skipped_due_to_conflict || []).length > 0) {
+        skippedWrap.classList.remove("hidden");
+        skippedList.innerHTML = data.skipped_due_to_conflict.map(s => `
+          <p>· ${s.university} ${s.department} - ${(s.conflict.date || []).join(", ")}에 ${s.conflict.with_university} ${s.conflict.with_department}와 겹쳐서 제외</p>
+        `).join("");
+      }
+    } catch (err) {
+      summaryEl.innerHTML = `<span class="text-error">조합 계산에 실패했습니다: ${err}</span>`;
+    }
   });
 
   document.getElementById("sortSelect").addEventListener("change", applyControlsAndRender);
