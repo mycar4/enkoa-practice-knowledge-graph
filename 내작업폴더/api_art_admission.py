@@ -103,6 +103,13 @@ def university_detail(university: str, campus: Optional[str] = None):
     return detail
 
 
+@app.get("/kg-graph")
+def kg_graph(university: Optional[str] = None):
+    """[④ 인터랙티브 KG 뷰어] 대학-학과-전형 구조를 vis.js용 {nodes, edges}로 반환."""
+    svc = get_service()
+    return svc.get_kg_graph(university=university)
+
+
 class PrepSearchRequest(BaseModel):
     topic_keywords: Optional[List[str]] = None
     material_query: str = ""

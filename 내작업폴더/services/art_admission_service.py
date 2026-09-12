@@ -840,6 +840,42 @@ class ArtAdmissionService:
                 r["display_name"] = r["university"]
         return rows
 
+    def get_kg_graph(self, university: Optional[str] = None) -> Dict[str, Any]:
+        """[④ 인터랙티브 KG 뷰어] 대학-학과-전형 구조를 vis.js가 바로 그릴 수 있는
+        {nodes, edges} 형태로 내보낸다. 새 비즈니스 로직이 아니라 이미 Neo4j에 있는
+        관계를 그대로 노출하는 것뿐이다. university를 주면 그 학교(모든 캠퍼스)만
+        반환해서 전체 그래프가 너무 커서 안 보이는 문제를 피한다."""
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            rows = s.run("""
+                MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(d:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
+                WHERE (t.is_superseded IS NULL OR t.is_superseded = false)
+                  AND ($university IS NULL OR u.name = $university)
+                RETURN u.name AS university, u.campus AS campus, d.name AS department,
+                       t.name AS track_name, t.quota AS quota
+                ORDER BY university, campus, department, track_name
+            """, university=university).data()
+
+        nodes: Dict[str, Dict[str, Any]] = {}
+        edges: List[Dict[str, str]] = []
+        for r in rows:
+            uni_label = r["university"] + (f" ({r['campus']}캠퍼스)" if r.get("campus") else "")
+            uni_id = f"u::{uni_label}"
+            dept_id = f"d::{uni_label}::{r['department']}"
+            track_id = f"t::{dept_id}::{r['track_name']}"
+
+            if uni_id not in nodes:
+                nodes[uni_id] = {"id": uni_id, "label": uni_label, "group": "university"}
+            if dept_id not in nodes:
+                nodes[dept_id] = {"id": dept_id, "label": r["department"], "group": "department"}
+                edges.append({"from": uni_id, "to": dept_id})
+            if track_id not in nodes:
+                quota = r.get("quota")
+                track_label = r["track_name"] + (f" ({quota}명)" if quota else "")
+                nodes[track_id] = {"id": track_id, "label": track_label, "group": "track"}
+                edges.append({"from": dept_id, "to": track_id})
+
+        return {"nodes": list(nodes.values()), "edges": edges}
+
     def get_university_detail(self, university: str, campus: Optional[str] = None) -> Dict[str, Any]:
         """campus를 주면 같은 이름의 다른 캠퍼스 데이터가 섞이지 않도록 그 캠퍼스로만
         걸러서 조회한다 (예: 홍익대 서울 선택 시 세종 데이터가 같이 나오지 않게)."""
