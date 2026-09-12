@@ -911,13 +911,50 @@ class ArtAdmissionService:
 
         return {"nodes": list(nodes.values()), "edges": edges}
 
+    # [④ KG 뷰어 - 실기종목별 보기 전용] list_exam_topic_keywords()가 쓰는
+    # _exam_keywords()는 "2글자 이상 한글이면 다 키워드"라 "문장을"/"사물의"/
+    # "사진이미지를"처럼 조사가 붙은 서술형 문구까지 실기종목으로 잘못 뽑혔다
+    # (사용자가 KG 뷰어 드롭다운에서 직접 확인). search_tracks_by_prep 등 다른
+    # 화면의 매칭 로직까지 건드리면 영향 범위가 커지므로, KG 뷰어 전용으로
+    # completeness_audit.py에서 이미 검증한 "실기 과목명다운 어미로 끝나는
+    # 조각만 채택" 방식을 그대로 재사용한다 - 소묘/수채화/한국화/발상과표현처럼
+    # 명사형 과목명만 남고, 서술형 문구는 자동으로 걸러진다.
+    _KG_TOPIC_STOP_FRAGMENTS = {
+        "고사", "당일", "제시", "제공", "사진", "이미지", "경우", "조건", "주제",
+        "선택", "가능", "방법", "형식", "포함", "해당", "없음", "실기", "이하",
+        "기준", "기재", "별도", "확인", "반영", "전용", "동일", "추정", "원문",
+        "단계", "구술", "면접", "서류", "평가", "질의응답", "학생부", "정성평가",
+    }
+    _KG_TOPIC_SUFFIXES = ("화", "묘", "조", "형", "성형", "조형", "디자인", "표현", "만화", "서예", "그라피")
+    _KG_TOPIC_SPLITTER = re.compile(r"택\s*\d|또는|중\s*택|위주|[·,/+()\[\]:;\-]")
+
+    @classmethod
+    def _kg_topic_fragments(cls, exam_name: str) -> set:
+        fragments = set()
+        for part in cls._KG_TOPIC_SPLITTER.split(exam_name or ""):
+            p = part.strip()
+            if not p or not (2 <= len(p) <= 10) or not re.fullmatch(r"[가-힣\s]+", p):
+                continue
+            p_nospace = p.replace(" ", "")
+            if p_nospace in cls._KG_TOPIC_STOP_FRAGMENTS or not p_nospace.endswith(cls._KG_TOPIC_SUFFIXES):
+                continue
+            fragments.add(p_nospace)
+        return fragments
+
+    def list_kg_topic_keywords(self, min_schools: int = 2) -> List[str]:
+        """[④ KG 뷰어 전용] "실기종목별 보기" 드롭다운에 넣을 명사형 과목명 목록.
+        min_schools 미만으로만 등장하는 특정 학교 고유 표현은 큰 주제가 아니므로 뺀다."""
+        rows = self.list_tracks_with_estimates()
+        counts: Dict[str, int] = {}
+        for r in rows:
+            for kw in self._kg_topic_fragments(r.get("exam_type_name") or ""):
+                counts[kw] = counts.get(kw, 0) + 1
+        return sorted(kw for kw, cnt in counts.items() if cnt >= min_schools)
+
     def get_kg_graph_by_topic(self, topic_keyword: str,
                                grades: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
-        """[④ KG 뷰어 - 실기종목별 보기] 학교가 아니라 실기종목("소묘", "인물수채화" 등)을
-        루트로 두고, 그 종목을 쓰는 대학/학과/전형을 모아 보여준다. 종목 판정은 이미
-        search_tracks_by_prep()/list_exam_topic_keywords()가 쓰는 것과 동일한
-        _exam_keywords() 매칭을 그대로 재사용해서, 실기종목 필터 로직이 화면마다
-        어긋나지 않게 한다."""
+        """[④ KG 뷰어 - 실기종목별 보기] 학교가 아니라 실기종목("소묘", "발상과표현" 등)을
+        루트로 두고, 그 종목을 쓰는 대학/학과/전형을 모아 보여준다."""
         rows = self.list_tracks_with_estimates()
         score_lookup = self._kg_score_lookup(grades)
         topic_id = f"topic::{topic_keyword}"
@@ -925,7 +962,7 @@ class ArtAdmissionService:
         edges: List[Dict[str, str]] = []
         for r in rows:
             exam_name = r.get("exam_type_name") or ""
-            if topic_keyword not in self._exam_keywords(exam_name):
+            if topic_keyword not in self._kg_topic_fragments(exam_name):
                 continue
             uni_label = r["university"] + (f" ({r['campus']}캠퍼스)" if r.get("campus") else "")
             uni_id = f"u::{uni_label}"
@@ -942,6 +979,73 @@ class ArtAdmissionService:
                 quota = r.get("quota")
                 track_label = (r.get("track_name") or "") + (f" ({quota}명)" if quota else "")
                 score = score_lookup.get((r["university"], r.get("campus"), r["department"], r.get("track_name")))
+                nodes[track_id] = {
+                    "id": track_id, "label": track_label, "group": "track",
+                    "title": self._kg_track_title(score),
+                }
+                edges.append({"from": dept_id, "to": track_id})
+
+        return {"nodes": list(nodes.values()), "edges": edges}
+
+    # [④ KG 뷰어 - 전형종류별 보기] results.html의 specialAdmissionTags()가 쓰는
+    # SPECIAL_ADMISSION_PATTERNS를 그대로 이식 - 학교마다 표기가 제각각인
+    # "학교장추천"/"농어촌학생"류 특별전형을 공통 키워드로 묶는 판정을 화면
+    # 두 곳(카드 필터 칩, KG 뷰어)에서 어긋나지 않게 유지한다.
+    _TRACK_TYPE_PATTERNS = [
+        ("학교장추천", re.compile(r"학교장추천")),
+        ("농어촌학생", re.compile(r"농어촌(학생|출신)")),
+        ("특수교육대상자", re.compile(r"특수교육대상자")),
+        ("특성화고", re.compile(r"특성화고(교)?(졸업자|출신)?")),
+        ("기회균형·사회통합", re.compile(r"기회균형|사회통합|고른기회|기초생활수급자")),
+        ("지역인재", re.compile(r"지역인재")),
+        ("가톨릭지도자추천", re.compile(r"가톨릭지도자")),
+        ("재림교회목회자추천", re.compile(r"재림교회")),
+        ("예체능인재", re.compile(r"예체능인재")),
+        ("특기자", re.compile(r"특기자")),
+    ]
+
+    def list_track_type_categories(self) -> List[str]:
+        """[④ KG 뷰어 전용] 지금 데이터에 실제로 존재하는 특별전형 종류만 드롭다운에 노출."""
+        rows = self.list_all_tracks_full()
+        present = set()
+        for r in rows:
+            name = r.get("track_name") or ""
+            for key, pattern in self._TRACK_TYPE_PATTERNS:
+                if pattern.search(name):
+                    present.add(key)
+        return sorted(present)
+
+    def get_kg_graph_by_track_type(self, track_type: str,
+                                    grades: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
+        """[④ KG 뷰어 - 전형종류별 보기] "학교장추천"/"농어촌학생" 같은 특별전형 종류를
+        루트로 두고, 그 종류에 해당하는 대학/학과/전형을 모아 보여준다."""
+        pattern = next((p for key, p in self._TRACK_TYPE_PATTERNS if key == track_type), None)
+        if pattern is None:
+            return {"nodes": [], "edges": []}
+        rows = self.list_all_tracks_full()
+        score_lookup = self._kg_score_lookup(grades)
+        root_id = f"tracktype::{track_type}"
+        nodes: Dict[str, Dict[str, Any]] = {root_id: {"id": root_id, "label": track_type, "group": "tracktype"}}
+        edges: List[Dict[str, str]] = []
+        for r in rows:
+            track_name = r.get("track_name") or ""
+            if not pattern.search(track_name):
+                continue
+            uni_label = r["university"] + (f" ({r['campus']}캠퍼스)" if r.get("campus") else "")
+            uni_id = f"u::{uni_label}"
+            dept_id = f"d::{uni_label}::{r['department']}"
+            track_id = f"t::{dept_id}::{track_name}"
+
+            if uni_id not in nodes:
+                nodes[uni_id] = {"id": uni_id, "label": uni_label, "group": "university"}
+                edges.append({"from": root_id, "to": uni_id})
+            if dept_id not in nodes:
+                nodes[dept_id] = {"id": dept_id, "label": r["department"], "group": "department"}
+                edges.append({"from": uni_id, "to": dept_id})
+            if track_id not in nodes:
+                quota = r.get("quota")
+                track_label = track_name + (f" ({quota}명)" if quota else "")
+                score = score_lookup.get((r["university"], r.get("campus"), r["department"], track_name))
                 nodes[track_id] = {
                     "id": track_id, "label": track_label, "group": "track",
                     "title": self._kg_track_title(score),

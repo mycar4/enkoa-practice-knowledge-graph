@@ -114,18 +114,36 @@ def kg_graph(university: Optional[str] = None):
 class KgGraphRequest(BaseModel):
     university: Optional[str] = None
     topic_keyword: Optional[str] = None
+    track_type: Optional[str] = None
     grades: Optional[List[dict]] = None
 
 
 @app.post("/kg-graph/scored")
 def kg_graph_scored(req: KgGraphRequest):
     """[④ KG 뷰어] university 지정 시 학교별 보기, topic_keyword 지정 시 실기종목별
-    보기(예: "소묘"). grades를 같이 보내면 전형 노드에 학생부 환산 결과를 툴팁으로
-    얹는다 - 계산은 기존 recommend_universities()를 그대로 재사용한다."""
+    보기(예: "소묘"), track_type 지정 시 전형종류별 보기(예: "학교장추천"). grades를
+    같이 보내면 전형 노드에 학생부 환산 결과를 툴팁으로 얹는다 - 계산은 기존
+    recommend_universities()를 그대로 재사용한다."""
     svc = get_service()
+    if req.track_type:
+        return svc.get_kg_graph_by_track_type(req.track_type, grades=req.grades)
     if req.topic_keyword:
         return svc.get_kg_graph_by_topic(req.topic_keyword, grades=req.grades)
     return svc.get_kg_graph(university=req.university, grades=req.grades)
+
+
+@app.get("/kg-topics")
+def kg_topics():
+    """[④ KG 뷰어] "실기종목별 보기" 드롭다운용 - 서술형 문구를 걸러낸 명사형 과목명만."""
+    svc = get_service()
+    return svc.list_kg_topic_keywords()
+
+
+@app.get("/kg-track-types")
+def kg_track_types():
+    """[④ KG 뷰어] "전형종류별 보기" 드롭다운용 - 지금 데이터에 실제 존재하는 특별전형 종류만."""
+    svc = get_service()
+    return svc.list_track_type_categories()
 
 
 class PrepSearchRequest(BaseModel):
