@@ -840,11 +840,41 @@ class ArtAdmissionService:
                 r["display_name"] = r["university"]
         return rows
 
-    def get_kg_graph(self, university: Optional[str] = None) -> Dict[str, Any]:
+    def _kg_score_lookup(self, grades: Optional[List[Dict[str, Any]]]) -> Dict[tuple, Dict[str, Any]]:
+        """[④ KG 뷰어] 학생이 입력한 성적이 있으면 recommend_universities()가 이미
+        계산해주는 전형별 환산 결과를 (대학,캠퍼스,학과,전형명) 키로 재사용한다 -
+        새 계산 로직을 만들지 않고 기존 엔진 결과를 그래프 노드에 얹기만 한다."""
+        if not grades:
+            return {}
+        ranked = self.recommend_universities(grades)
+        return {
+            (r["university"], r.get("campus"), r["department"], r.get("track_name")): r
+            for r in ranked
+        }
+
+    @staticmethod
+    def _kg_track_title(score: Optional[Dict[str, Any]]) -> Optional[str]:
+        """전형 노드에 마우스를 올렸을 때 보여줄 학생부 환산 요약 - 없으면 None(툴팁 생략)."""
+        if not score:
+            return None
+        if score.get("calc_precision") == "not_applicable":
+            return "이 전형은 학생부 성적을 반영하지 않습니다."
+        pct = score.get("school_record_percentage")
+        if pct is None:
+            return None
+        grade_eq = score.get("estimated_grade_equivalent")
+        precision_note = "정밀 계산" if score.get("calc_precision") == "exact" else "근사 추정"
+        grade_note = f" (원 석차등급 약 {grade_eq}등급)" if grade_eq is not None else ""
+        return f"학생부 환산 {pct}점{grade_note} - {precision_note}"
+
+    def get_kg_graph(self, university: Optional[str] = None,
+                      grades: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
         """[④ 인터랙티브 KG 뷰어] 대학-학과-전형 구조를 vis.js가 바로 그릴 수 있는
         {nodes, edges} 형태로 내보낸다. 새 비즈니스 로직이 아니라 이미 Neo4j에 있는
         관계를 그대로 노출하는 것뿐이다. university를 주면 그 학교(모든 캠퍼스)만
-        반환해서 전체 그래프가 너무 커서 안 보이는 문제를 피한다."""
+        반환해서 전체 그래프가 너무 커서 안 보이는 문제를 피한다. grades를 주면
+        전형 노드에 학생부 환산 결과를 툴팁으로 얹는다(계산 로직은 recommend_universities
+        재사용, 여기서 새로 계산하지 않음)."""
         with self.driver.session(default_access_mode=READ_ACCESS) as s:
             rows = s.run("""
                 MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(d:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
@@ -855,6 +885,7 @@ class ArtAdmissionService:
                 ORDER BY university, campus, department, track_name
             """, university=university).data()
 
+        score_lookup = self._kg_score_lookup(grades)
         nodes: Dict[str, Dict[str, Any]] = {}
         edges: List[Dict[str, str]] = []
         for r in rows:
@@ -871,7 +902,50 @@ class ArtAdmissionService:
             if track_id not in nodes:
                 quota = r.get("quota")
                 track_label = r["track_name"] + (f" ({quota}명)" if quota else "")
-                nodes[track_id] = {"id": track_id, "label": track_label, "group": "track"}
+                score = score_lookup.get((r["university"], r.get("campus"), r["department"], r["track_name"]))
+                nodes[track_id] = {
+                    "id": track_id, "label": track_label, "group": "track",
+                    "title": self._kg_track_title(score),
+                }
+                edges.append({"from": dept_id, "to": track_id})
+
+        return {"nodes": list(nodes.values()), "edges": edges}
+
+    def get_kg_graph_by_topic(self, topic_keyword: str,
+                               grades: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
+        """[④ KG 뷰어 - 실기종목별 보기] 학교가 아니라 실기종목("소묘", "인물수채화" 등)을
+        루트로 두고, 그 종목을 쓰는 대학/학과/전형을 모아 보여준다. 종목 판정은 이미
+        search_tracks_by_prep()/list_exam_topic_keywords()가 쓰는 것과 동일한
+        _exam_keywords() 매칭을 그대로 재사용해서, 실기종목 필터 로직이 화면마다
+        어긋나지 않게 한다."""
+        rows = self.list_tracks_with_estimates()
+        score_lookup = self._kg_score_lookup(grades)
+        topic_id = f"topic::{topic_keyword}"
+        nodes: Dict[str, Dict[str, Any]] = {topic_id: {"id": topic_id, "label": topic_keyword, "group": "topic"}}
+        edges: List[Dict[str, str]] = []
+        for r in rows:
+            exam_name = r.get("exam_type_name") or ""
+            if topic_keyword not in self._exam_keywords(exam_name):
+                continue
+            uni_label = r["university"] + (f" ({r['campus']}캠퍼스)" if r.get("campus") else "")
+            uni_id = f"u::{uni_label}"
+            dept_id = f"d::{uni_label}::{r['department']}"
+            track_id = f"t::{dept_id}::{r.get('track_name')}"
+
+            if uni_id not in nodes:
+                nodes[uni_id] = {"id": uni_id, "label": uni_label, "group": "university"}
+                edges.append({"from": topic_id, "to": uni_id})
+            if dept_id not in nodes:
+                nodes[dept_id] = {"id": dept_id, "label": r["department"], "group": "department"}
+                edges.append({"from": uni_id, "to": dept_id})
+            if track_id not in nodes:
+                quota = r.get("quota")
+                track_label = (r.get("track_name") or "") + (f" ({quota}명)" if quota else "")
+                score = score_lookup.get((r["university"], r.get("campus"), r["department"], r.get("track_name")))
+                nodes[track_id] = {
+                    "id": track_id, "label": track_label, "group": "track",
+                    "title": self._kg_track_title(score),
+                }
                 edges.append({"from": dept_id, "to": track_id})
 
         return {"nodes": list(nodes.values()), "edges": edges}

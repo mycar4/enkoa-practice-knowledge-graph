@@ -105,9 +105,27 @@ def university_detail(university: str, campus: Optional[str] = None):
 
 @app.get("/kg-graph")
 def kg_graph(university: Optional[str] = None):
-    """[④ 인터랙티브 KG 뷰어] 대학-학과-전형 구조를 vis.js용 {nodes, edges}로 반환."""
+    """[④ 인터랙티브 KG 뷰어] 대학-학과-전형 구조를 vis.js용 {nodes, edges}로 반환.
+    학생 성적까지 반영하려면 /kg-graph/scored(POST)를 쓴다."""
     svc = get_service()
     return svc.get_kg_graph(university=university)
+
+
+class KgGraphRequest(BaseModel):
+    university: Optional[str] = None
+    topic_keyword: Optional[str] = None
+    grades: Optional[List[dict]] = None
+
+
+@app.post("/kg-graph/scored")
+def kg_graph_scored(req: KgGraphRequest):
+    """[④ KG 뷰어] university 지정 시 학교별 보기, topic_keyword 지정 시 실기종목별
+    보기(예: "소묘"). grades를 같이 보내면 전형 노드에 학생부 환산 결과를 툴팁으로
+    얹는다 - 계산은 기존 recommend_universities()를 그대로 재사용한다."""
+    svc = get_service()
+    if req.topic_keyword:
+        return svc.get_kg_graph_by_topic(req.topic_keyword, grades=req.grades)
+    return svc.get_kg_graph(university=req.university, grades=req.grades)
 
 
 class PrepSearchRequest(BaseModel):
