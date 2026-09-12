@@ -804,9 +804,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 ENV_PATH = BASE_DIR.parent / ".env"
 load_dotenv(ENV_PATH)
 
-uri = os.getenv("AURA_URI") or os.getenv("NEO4J_URI")
-user = os.getenv("AURA_USER") or os.getenv("NEO4J_USER", "neo4j")
-pwd = os.getenv("AURA_PASSWORD") or os.getenv("NEO4J_PASSWORD")
+# 2026-09-13: art-admission은 DART-Trace 대시보드와 같은 .env를 공유하지만
+# Neo4j 인스턴스는 분리되어야 한다(DART-Trace가 AURA_URI/AURA_*를 실제로 쓰고
+# 있음이 확인됨). ART_ADMISSION_NEO4J_* 전용 변수가 있으면 그것을 최우선으로
+# 쓰고, 없을 때만 과거 호환을 위해 AURA_*/NEO4J_*로 폴백한다.
+uri = os.getenv("ART_ADMISSION_NEO4J_URI") or os.getenv("AURA_URI") or os.getenv("NEO4J_URI")
+user = os.getenv("ART_ADMISSION_NEO4J_USER") or os.getenv("AURA_USER") or os.getenv("NEO4J_USER", "neo4j")
+pwd = os.getenv("ART_ADMISSION_NEO4J_PASSWORD") or os.getenv("AURA_PASSWORD") or os.getenv("NEO4J_PASSWORD")
 
 
 class ArtAdmissionService:
@@ -960,9 +964,16 @@ class ArtAdmissionService:
         topic_id = f"topic::{topic_keyword}"
         nodes: Dict[str, Dict[str, Any]] = {topic_id: {"id": topic_id, "label": topic_keyword, "group": "topic"}}
         edges: List[Dict[str, str]] = []
+        # "완전 일치"가 아니라 "포함 여부"로 매칭한다 - 한국예술종합학교처럼
+        # exam_type_name이 "1차: 사실적 소묘 / 2차: ..."인 경우 조각 추출 결과가
+        # "사실적소묘"라는 통짜 문구가 되어 "소묘"와 정확히 안 맞아떨어져서 빠졌었다
+        # (사용자 발견 - "하나도 빠짐없이"가 목표이므로 부분 일치로 바꿔야 함).
+        # 공백 유무 차이("발상과 표현" vs "발상과표현")도 흡수하도록 글자 사이에
+        # \s*를 끼운다(completeness_audit.py에서 이미 검증한 방식과 동일).
+        topic_pattern = re.compile(r"\s*".join(re.escape(ch) for ch in topic_keyword))
         for r in rows:
             exam_name = r.get("exam_type_name") or ""
-            if topic_keyword not in self._kg_topic_fragments(exam_name):
+            if not topic_pattern.search(exam_name):
                 continue
             uni_label = r["university"] + (f" ({r['campus']}캠퍼스)" if r.get("campus") else "")
             uni_id = f"u::{uni_label}"

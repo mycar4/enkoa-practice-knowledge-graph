@@ -44,9 +44,10 @@ from dotenv import load_dotenv  # noqa: E402
 
 load_dotenv(REPO_ROOT / ".env")
 
-uri = os.getenv("AURA_URI") or os.getenv("NEO4J_URI")
-user = os.getenv("AURA_USER") or os.getenv("NEO4J_USER", "neo4j")
-pwd = os.getenv("AURA_PASSWORD") or os.getenv("NEO4J_PASSWORD")
+# 2026-09-13: art-admission 전용 Neo4j 인스턴스 - DART-Trace가 쓰는 AURA_*와 분리됨
+uri = os.getenv("ART_ADMISSION_NEO4J_URI") or os.getenv("AURA_URI") or os.getenv("NEO4J_URI")
+user = os.getenv("ART_ADMISSION_NEO4J_USER") or os.getenv("AURA_USER") or os.getenv("NEO4J_USER", "neo4j")
+pwd = os.getenv("ART_ADMISSION_NEO4J_PASSWORD") or os.getenv("AURA_PASSWORD") or os.getenv("NEO4J_PASSWORD")
 
 EXTRACTION_MODEL = "gpt-4o-mini"  # 저렴하고 충분히 정확 - 1000개+ 청크 배치 추출에 적합
 CONFIDENCE_THRESHOLD = 0.5

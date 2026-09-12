@@ -35,9 +35,10 @@ BASE_DIR = Path(__file__).resolve().parent
 REPO_ROOT = BASE_DIR.parent
 load_dotenv(REPO_ROOT / ".env")
 
-uri = os.getenv("AURA_URI") or os.getenv("NEO4J_URI")
-user = os.getenv("AURA_USER") or os.getenv("NEO4J_USER", "neo4j")
-pwd = os.getenv("AURA_PASSWORD") or os.getenv("NEO4J_PASSWORD")
+# 2026-09-13: art-admission 전용 Neo4j 인스턴스 - DART-Trace가 쓰는 AURA_*와 분리됨
+uri = os.getenv("ART_ADMISSION_NEO4J_URI") or os.getenv("AURA_URI") or os.getenv("NEO4J_URI")
+user = os.getenv("ART_ADMISSION_NEO4J_USER") or os.getenv("AURA_USER") or os.getenv("NEO4J_USER", "neo4j")
+pwd = os.getenv("ART_ADMISSION_NEO4J_PASSWORD") or os.getenv("AURA_PASSWORD") or os.getenv("NEO4J_PASSWORD")
 
 RAW_DIR = BASE_DIR / "data" / "art_admission" / "raw"
 
