@@ -28,7 +28,22 @@ jobs:
             cd ~/art-admission-api
             git pull origin main
             source venv/bin/activate
-            pip install -q fastapi "uvicorn[standard]" neo4j python-dotenv langgraph langchain-core langchain-openai sentence-transformers
+            # sentence-transformers(torch 포함)는 의존성이 무거워서, 버전이 이미 설치돼
+            # 있어도 pip이 매번 의존성 트리 전체를 다시 확인하느라 배포마다 15분 이상
+            # 걸렸다(코드 한 줄만 바뀌어도 동일) - 이게 그동안의 "배포가 느린" 진짜 원인.
+            # 의존성 목록 자체가 안 바뀌었으면 pip install을 아예 건너뛰어서 매 배포마다
+            # 반복되는 이 비용을 없앤다. 의존성을 추가/변경할 때만(이 문자열이 바뀔 때만)
+            # 다시 설치가 실행된다.
+            DEPS="fastapi uvicorn[standard] neo4j python-dotenv langgraph langchain-core langchain-openai sentence-transformers"
+            DEPS_HASH=$(echo "$DEPS" | sha256sum | cut -d' ' -f1)
+            HASH_FILE=~/art-admission-api/.deploy_deps_hash
+            if [ ! -f "$HASH_FILE" ] || [ "$(cat "$HASH_FILE")" != "$DEPS_HASH" ]; then
+              echo "의존성 목록 변경 감지 - pip install 실행"
+              pip install -q fastapi "uvicorn[standard]" neo4j python-dotenv langgraph langchain-core langchain-openai sentence-transformers
+              echo "$DEPS_HASH" > "$HASH_FILE"
+            else
+              echo "의존성 목록 변경 없음 - pip install 생략"
+            fi
             # day59~64 품질 게이트: 무거운(torch/transformers 리랭커, LLM 채점) 테스트는
             # 배포마다 비용/시간이 들어 제외하고, 결정적이고 무료인 회귀만 배포 전에
             # 강제한다 - 이번 세션에서 실제로 두 번 터진 "재료만 겹침을 실기종목 일치로
