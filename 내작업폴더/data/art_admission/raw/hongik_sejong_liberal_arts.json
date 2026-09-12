@@ -60,7 +60,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/홍익대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/홍익대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "f7f564f32c23b4f2e3f0268ffa255cab2303ae4c8ecf60ff14417995228a02e0"
         }
       ],
       "school_record_status": "required"
@@ -100,7 +101,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 홍익대학교 수시모집요강(세종캠퍼스)",
-          "local_file": "data/art_admission_raw/prospectus/홍익대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/홍익대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "f7f564f32c23b4f2e3f0268ffa255cab2303ae4c8ecf60ff14417995228a02e0"
         }
       ]
     }
@@ -166,7 +168,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/홍익대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/홍익대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "f7f564f32c23b4f2e3f0268ffa255cab2303ae4c8ecf60ff14417995228a02e0"
         }
       ],
       "school_record_status": "required"
@@ -206,7 +209,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 홍익대학교 수시모집요강(세종캠퍼스)",
-          "local_file": "data/art_admission_raw/prospectus/홍익대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/홍익대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "f7f564f32c23b4f2e3f0268ffa255cab2303ae4c8ecf60ff14417995228a02e0"
         }
       ]
     }

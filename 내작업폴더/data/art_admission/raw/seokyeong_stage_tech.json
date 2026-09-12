@@ -1,265 +1,309 @@
 [
-{
-  "university": "서경대학교",
-  "campus": "서울",
-  "department": "공연예술학부 무대기술전공(무대,조명)",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 7,
-    "ratio": "1단계: 실기 100% (선발비율 500%) -> 2단계: 학생부교과 20% + 실기 40% + 1단계성적 40%",
-    "is_staged": true,
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
-    },
-    "exam_date": "1단계: 2026-11-08(일), 2단계: 2026-11-15(일)",
-    "result_date": "2026-12-18",
-    "exam_type_name": "무대모델 제작(200점) 및 무대모델 색칠(200점) [1단계], 무대관련 질의응답(400점) [2단계]",
-    "allowed_materials": [
-      "필기도구",
-      "수채화 물감 및 용품",
-      "30cm 쇠자 및 스케일 자",
-      "지우개",
-      "접착제(록타이드401 20g)",
-      "커터칼(하드보드용)"
-    ],
-    "paper_size": "본교 제공 모델용 하드보드 및 컷팅매트",
-    "time_limit_minutes": 180,
-    "school_record_rule": {
-      "mode": "subject_group_weighted",
-      "subject_groups": {
-        "국어": 25,
-        "영어": 25,
-        "수학": 25,
-        "사회": 25
+  {
+    "university": "서경대학교",
+    "campus": "서울",
+    "department": "공연예술학부 무대기술전공(무대,조명)",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 7,
+      "ratio": "1단계: 실기 100% (선발비율 500%) -> 2단계: 학생부교과 20% + 실기 40% + 1단계성적 40%",
+      "is_staged": true,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
       },
-      "top_n_per_group": 3,
-      "career_elective_included": false,
-      "credit_weighted": true,
-      "conversion_table": {
-        "1": 100,
-        "2": 99,
-        "3": 98,
-        "4": 97,
-        "5": 96,
-        "6": 95,
-        "7": 90,
-        "8": 80,
-        "9": 60
+      "exam_date": "1단계: 2026-11-08(일), 2단계: 2026-11-15(일)",
+      "result_date": "2026-12-18",
+      "exam_type_name": "무대모델 제작(200점) 및 무대모델 색칠(200점) [1단계], 무대관련 질의응답(400점) [2단계]",
+      "allowed_materials": [
+        "필기도구",
+        "수채화 물감 및 용품",
+        "30cm 쇠자 및 스케일 자",
+        "지우개",
+        "접착제(록타이드401 20g)",
+        "커터칼(하드보드용)"
+      ],
+      "paper_size": "본교 제공 모델용 하드보드 및 컷팅매트",
+      "time_limit_minutes": 180,
+      "school_record_rule": {
+        "mode": "subject_group_weighted",
+        "subject_groups": {
+          "국어": 25,
+          "영어": 25,
+          "수학": 25,
+          "사회": 25
+        },
+        "top_n_per_group": 3,
+        "career_elective_included": false,
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 90,
+          "8": 80,
+          "9": 60
+        },
+        "formula_note": "국어/영어/수학/사회 4개 교과군 각각 상위 3과목만 반영, 교과군별로 Σ(과목별 이수단위×석차등급 배점)/Σ(이수단위)를 구한 뒤 4개 교과군을 25%씩 합산 (2027 모집요강 p.20, 42). 진로선택/전문교과/과학탐구실험은 제외. 한국사·과학 교과는 이 전형에서는 반영되지 않음.",
+        "rule_source_page": "20, 42"
       },
-      "formula_note": "국어/영어/수학/사회 4개 교과군 각각 상위 3과목만 반영, 교과군별로 Σ(과목별 이수단위×석차등급 배점)/Σ(이수단위)를 구한 뒤 4개 교과군을 25%씩 합산 (2027 모집요강 p.20, 42). 진로선택/전문교과/과학탐구실험은 제외. 한국사·과학 교과는 이 전형에서는 반영되지 않음.",
-      "rule_source_page": "20, 42"
+      "past_topics": [
+        {
+          "year": 2026,
+          "topic_text": "[2026학년도(전년도) 참고자료] 고사일 추첨된 도면을 보고 지정된 스케일로 무대모델 제작 및 지문 설명을 읽고 작화(색칠)로 표현 (2027학년도가 아닌 지난 회차 실측 수치)",
+          "source": "공식 입시결과(전년도)",
+          "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/서경대학교/서경대학교_2025학년도_수시입시결과.pdf"
+        }
+      ],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서경대학교/서경대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 23,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서경대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "a1a729435eeeaf16b6545dbc501ed8fc45381e7a8337a3f9aa722556c3a2ea6e"
+        }
+      ],
+      "school_record_status": "required"
     },
-    "past_topics": [
-      {
-        "year": 2026,
-        "topic_text": "[2026학년도(전년도) 참고자료] 고사일 추첨된 도면을 보고 지정된 스케일로 무대모델 제작 및 지문 설명을 읽고 작화(색칠)로 표현 (2027학년도가 아닌 지난 회차 실측 수치)",
-        "source": "공식 입시결과(전년도)",
-        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/서경대학교/서경대학교_2025학년도_수시입시결과.pdf"
+    "estimates": {
+      "cutoff_grade_estimate": 6.81,
+      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서경대학교/서경대학교_2026학년도_수시입시결과.pdf",
+      "interview_summaries": [],
+      "prior_year_result": {
+        "admission_year": 2026,
+        "competition_rate": 14.71,
+        "school_record_grade_typical": 4.95,
+        "school_record_grade_floor": 6.81,
+        "grade_stat_type": "50_70_cut (typical=50%cut, floor=70%cut)",
+        "methodology_note": "최종합격자(등록자 아님, 원문 제목: 최종합격자 교과성적 현황) 기준. 무대기술전공(무대)/(조명) 두 세부종목이 원문에서 한 줄로 합산 표기됨(모집 무대5+조명2=7명, 지원 84+19=103명).",
+        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서경대학교/서경대학교_2026학년도_수시입시결과.pdf",
+        "source_page": 2
       }
-    ],
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서경대학교/서경대학교_2027학년도_수시모집요강.pdf",
-    "source_page": 23,
-    "registration_period": {
-      "start": "2027-02-10",
-      "end": "2027-02-12"
-    },
-    "data_sources": [
-      {
-        "document_name": "2027학년도 공식 수시모집요강",
-        "local_file": "data/art_admission_raw/prospectus/서경대학교_2027학년도_수시모집요강.pdf"
-      }
-    ],
-    "school_record_status": "required"
-  },
-  "estimates": {
-    "cutoff_grade_estimate": 6.81,
-    "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서경대학교/서경대학교_2026학년도_수시입시결과.pdf",
-    "interview_summaries": [],
-    "prior_year_result": {
-      "admission_year": 2026,
-      "competition_rate": 14.71,
-      "school_record_grade_typical": 4.95,
-      "school_record_grade_floor": 6.81,
-      "grade_stat_type": "50_70_cut (typical=50%cut, floor=70%cut)",
-      "methodology_note": "최종합격자(등록자 아님, 원문 제목: 최종합격자 교과성적 현황) 기준. 무대기술전공(무대)/(조명) 두 세부종목이 원문에서 한 줄로 합산 표기됨(모집 무대5+조명2=7명, 지원 84+19=103명).",
-      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서경대학교/서경대학교_2026학년도_수시입시결과.pdf",
-      "source_page": 2
     }
+  },
+  {
+    "university": "서경대학교",
+    "campus": "서울",
+    "department": "공연예술학부 무대패션전공",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 15,
+      "ratio": "1단계: 실기(창의적의상조형) 1,000점 (선발비율 300%) -> 2단계: 1단계성적 + 실기구술(의상작품 분석 및 질의응답) 800점",
+      "is_staged": true,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "1단계: 2026-11-07(토), 2단계: 2026-11-14(토)",
+      "result_date": "2026-12-18",
+      "exam_type_name": "창의적의상조형 - 주제(실물/사진+주제어)에 따라 1/2 드레이핑 마네킹에 소형 의상 제작(디자인계획서 포함) [1단계, 4시간] / 의상작품 분석 및 질의응답 [2단계]",
+      "allowed_materials": [
+        "채색도구(아크릴 물감, 포스터칼라, 수채화 물감, 마카, 싸인펜, 파스텔)",
+        "연필",
+        "지우개",
+        "가위",
+        "칼",
+        "자",
+        "붓",
+        "스펀지",
+        "풀",
+        "투명테이프",
+        "양면테이프",
+        "실",
+        "휴대용 선풍기(30cm이하 1대)"
+      ],
+      "paper_size": "본교제공 1/2 드레이핑 마네킹, 한지·켄트지(4장, 8절)",
+      "time_limit_minutes": 240,
+      "school_record_rule": {
+        "mode": "subject_group_weighted",
+        "subject_groups": {
+          "국어": 25,
+          "영어": 25,
+          "수학": 25,
+          "사회": 25
+        },
+        "top_n_per_group": 3,
+        "career_elective_included": false,
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 90,
+          "8": 80,
+          "9": 60
+        },
+        "formula_note": "실기우수자전형 학생부 반영방법은 전형 공통(2027 모집요강 p.14): 국어/영어/수학/사회 4개 교과군 각 상위 3과목만 반영, 교과군별 이수단위 가중평균 후 25%씩 합산. 무대기술전공과 동일 공식.",
+        "rule_source_page": "14, 42"
+      },
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서경대학교/서경대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 23,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서경대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "a1a729435eeeaf16b6545dbc501ed8fc45381e7a8337a3f9aa722556c3a2ea6e"
+        }
+      ],
+      "school_record_status": "required",
+      "source_page_note": "모집인원표 p.4(입학정원25, 수시 실기우수 15명), 단계별 선발비율 p.14(300%), 실기고사 상세 p.17. 기존 raw 파일엔 무대기술전공(무대,조명)만 있었고 같은 공연예술학부의 무대패션전공(의상조형 실기, 시각·조형 요소 명확)이 통째로 누락돼 있었음(2026-09-11 Claude 발견·보완). 같은 학부의 '모델연기전공'과 '무대기술전공(공연기획및운영)'은 각각 워킹/연기 실기와 기획안 작성+구술(글쓰기/말하기뿐, 시각·조형 요소 없음)이라 스코프 제외."
+    },
+    "estimates": {}
+  },
+  {
+    "university": "서경대학교",
+    "campus": "서울",
+    "department": "디자인학부 VD_비주얼디자인전공",
+    "track_name": "일괄합산전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 12,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-24",
+      "result_date": "2026-12-18",
+      "exam_type_name": "발상과표현 또는 색채계획 중 택1 (제시된 소재·상황 또는 주제어·문장을 표현)",
+      "allowed_materials": [
+        "수채화 물감",
+        "색연필",
+        "유성 마카",
+        "필기도구 및 제작에 필요한 용품"
+      ],
+      "paper_size": "켄트지 4절(수채화 용지)",
+      "time_limit_minutes": 240,
+      "school_record_rule": {
+        "mode": "subject_group_weighted",
+        "subject_groups": {
+          "국어": 25,
+          "영어": 25,
+          "수학": 25,
+          "사회": 25
+        },
+        "top_n_per_group": 3,
+        "career_elective_included": false,
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 90,
+          "8": 80,
+          "9": 60
+        },
+        "formula_note": "실기우수자전형 학생부 반영방법은 전형 공통(2027 모집요강 p.14): 국어/영어/수학/사회 4개 교과군 각 상위 3과목만 반영, 교과군별 이수단위 가중평균 후 25%씩 합산.",
+        "rule_source_page": "14, 42"
+      },
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서경대학교/서경대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 22,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서경대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "a1a729435eeeaf16b6545dbc501ed8fc45381e7a8337a3f9aa722556c3a2ea6e"
+        }
+      ],
+      "school_record_status": "required",
+      "source_page_note": "모집인원표 p.4(입학정원35, 수시 실기우수 12명), 반영비율 p.10(20/80). 디자인&영상대학 소속 디자인학부는 raw 파일에 전혀 없었음(2026-09-11 Claude 발견·추가) - 같은 학부의 LF_라이프스타일디자인전공도 별도 레코드로 추가."
+    },
+    "estimates": {}
+  },
+  {
+    "university": "서경대학교",
+    "campus": "서울",
+    "department": "디자인학부 LF_라이프스타일디자인전공",
+    "track_name": "일괄합산전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 12,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-25",
+      "result_date": "2026-12-18",
+      "exam_type_name": "발상과표현 또는 색채계획 중 택1 (제시된 소재·상황 또는 주제어·문장을 표현)",
+      "allowed_materials": [
+        "수채화 물감",
+        "색연필",
+        "유성 마카",
+        "필기도구 및 제작에 필요한 용품"
+      ],
+      "paper_size": "켄트지 4절(수채화 용지)",
+      "time_limit_minutes": 240,
+      "school_record_rule": {
+        "mode": "subject_group_weighted",
+        "subject_groups": {
+          "국어": 25,
+          "영어": 25,
+          "수학": 25,
+          "사회": 25
+        },
+        "top_n_per_group": 3,
+        "career_elective_included": false,
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 90,
+          "8": 80,
+          "9": 60
+        },
+        "formula_note": "실기우수자전형 학생부 반영방법은 전형 공통(2027 모집요강 p.14): 국어/영어/수학/사회 4개 교과군 각 상위 3과목만 반영, 교과군별 이수단위 가중평균 후 25%씩 합산.",
+        "rule_source_page": "14, 42"
+      },
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서경대학교/서경대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 22,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서경대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "a1a729435eeeaf16b6545dbc501ed8fc45381e7a8337a3f9aa722556c3a2ea6e"
+        }
+      ],
+      "school_record_status": "required",
+      "source_page_note": "모집인원표 p.4(입학정원35, 수시 실기우수 12명), 반영비율 p.10(20/80)."
+    },
+    "estimates": {}
   }
-},
-{
-  "university": "서경대학교",
-  "campus": "서울",
-  "department": "공연예술학부 무대패션전공",
-  "track_name": "실기우수자전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 15,
-    "ratio": "1단계: 실기(창의적의상조형) 1,000점 (선발비율 300%) -> 2단계: 1단계성적 + 실기구술(의상작품 분석 및 질의응답) 800점",
-    "is_staged": true,
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
-    },
-    "exam_date": "1단계: 2026-11-07(토), 2단계: 2026-11-14(토)",
-    "result_date": "2026-12-18",
-    "exam_type_name": "창의적의상조형 - 주제(실물/사진+주제어)에 따라 1/2 드레이핑 마네킹에 소형 의상 제작(디자인계획서 포함) [1단계, 4시간] / 의상작품 분석 및 질의응답 [2단계]",
-    "allowed_materials": [
-      "채색도구(아크릴 물감, 포스터칼라, 수채화 물감, 마카, 싸인펜, 파스텔)",
-      "연필", "지우개", "가위", "칼", "자", "붓", "스펀지", "풀", "투명테이프", "양면테이프", "실",
-      "휴대용 선풍기(30cm이하 1대)"
-    ],
-    "paper_size": "본교제공 1/2 드레이핑 마네킹, 한지·켄트지(4장, 8절)",
-    "time_limit_minutes": 240,
-    "school_record_rule": {
-      "mode": "subject_group_weighted",
-      "subject_groups": {
-        "국어": 25,
-        "영어": 25,
-        "수학": 25,
-        "사회": 25
-      },
-      "top_n_per_group": 3,
-      "career_elective_included": false,
-      "credit_weighted": true,
-      "conversion_table": {
-        "1": 100, "2": 99, "3": 98, "4": 97, "5": 96, "6": 95, "7": 90, "8": 80, "9": 60
-      },
-      "formula_note": "실기우수자전형 학생부 반영방법은 전형 공통(2027 모집요강 p.14): 국어/영어/수학/사회 4개 교과군 각 상위 3과목만 반영, 교과군별 이수단위 가중평균 후 25%씩 합산. 무대기술전공과 동일 공식.",
-      "rule_source_page": "14, 42"
-    },
-    "past_topics": [],
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서경대학교/서경대학교_2027학년도_수시모집요강.pdf",
-    "source_page": 23,
-    "registration_period": {
-      "start": "2027-02-10",
-      "end": "2027-02-12"
-    },
-    "data_sources": [
-      {
-        "document_name": "2027학년도 공식 수시모집요강",
-        "local_file": "data/art_admission_raw/prospectus/서경대학교_2027학년도_수시모집요강.pdf"
-      }
-    ],
-    "school_record_status": "required",
-    "source_page_note": "모집인원표 p.4(입학정원25, 수시 실기우수 15명), 단계별 선발비율 p.14(300%), 실기고사 상세 p.17. 기존 raw 파일엔 무대기술전공(무대,조명)만 있었고 같은 공연예술학부의 무대패션전공(의상조형 실기, 시각·조형 요소 명확)이 통째로 누락돼 있었음(2026-09-11 Claude 발견·보완). 같은 학부의 '모델연기전공'과 '무대기술전공(공연기획및운영)'은 각각 워킹/연기 실기와 기획안 작성+구술(글쓰기/말하기뿐, 시각·조형 요소 없음)이라 스코프 제외."
-  },
-  "estimates": {}
-},
-{
-  "university": "서경대학교",
-  "campus": "서울",
-  "department": "디자인학부 VD_비주얼디자인전공",
-  "track_name": "일괄합산전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 12,
-    "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
-    "is_staged": false,
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
-    },
-    "exam_date": "2026-10-24",
-    "result_date": "2026-12-18",
-    "exam_type_name": "발상과표현 또는 색채계획 중 택1 (제시된 소재·상황 또는 주제어·문장을 표현)",
-    "allowed_materials": [
-      "수채화 물감", "색연필", "유성 마카", "필기도구 및 제작에 필요한 용품"
-    ],
-    "paper_size": "켄트지 4절(수채화 용지)",
-    "time_limit_minutes": 240,
-    "school_record_rule": {
-      "mode": "subject_group_weighted",
-      "subject_groups": {
-        "국어": 25,
-        "영어": 25,
-        "수학": 25,
-        "사회": 25
-      },
-      "top_n_per_group": 3,
-      "career_elective_included": false,
-      "credit_weighted": true,
-      "conversion_table": {
-        "1": 100, "2": 99, "3": 98, "4": 97, "5": 96, "6": 95, "7": 90, "8": 80, "9": 60
-      },
-      "formula_note": "실기우수자전형 학생부 반영방법은 전형 공통(2027 모집요강 p.14): 국어/영어/수학/사회 4개 교과군 각 상위 3과목만 반영, 교과군별 이수단위 가중평균 후 25%씩 합산.",
-      "rule_source_page": "14, 42"
-    },
-    "past_topics": [],
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서경대학교/서경대학교_2027학년도_수시모집요강.pdf",
-    "source_page": 22,
-    "registration_period": {
-      "start": "2027-02-10",
-      "end": "2027-02-12"
-    },
-    "data_sources": [
-      {
-        "document_name": "2027학년도 공식 수시모집요강",
-        "local_file": "data/art_admission_raw/prospectus/서경대학교_2027학년도_수시모집요강.pdf"
-      }
-    ],
-    "school_record_status": "required",
-    "source_page_note": "모집인원표 p.4(입학정원35, 수시 실기우수 12명), 반영비율 p.10(20/80). 디자인&영상대학 소속 디자인학부는 raw 파일에 전혀 없었음(2026-09-11 Claude 발견·추가) - 같은 학부의 LF_라이프스타일디자인전공도 별도 레코드로 추가."
-  },
-  "estimates": {}
-},
-{
-  "university": "서경대학교",
-  "campus": "서울",
-  "department": "디자인학부 LF_라이프스타일디자인전공",
-  "track_name": "일괄합산전형",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 12,
-    "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
-    "is_staged": false,
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
-    },
-    "exam_date": "2026-10-25",
-    "result_date": "2026-12-18",
-    "exam_type_name": "발상과표현 또는 색채계획 중 택1 (제시된 소재·상황 또는 주제어·문장을 표현)",
-    "allowed_materials": [
-      "수채화 물감", "색연필", "유성 마카", "필기도구 및 제작에 필요한 용품"
-    ],
-    "paper_size": "켄트지 4절(수채화 용지)",
-    "time_limit_minutes": 240,
-    "school_record_rule": {
-      "mode": "subject_group_weighted",
-      "subject_groups": {
-        "국어": 25,
-        "영어": 25,
-        "수학": 25,
-        "사회": 25
-      },
-      "top_n_per_group": 3,
-      "career_elective_included": false,
-      "credit_weighted": true,
-      "conversion_table": {
-        "1": 100, "2": 99, "3": 98, "4": 97, "5": 96, "6": 95, "7": 90, "8": 80, "9": 60
-      },
-      "formula_note": "실기우수자전형 학생부 반영방법은 전형 공통(2027 모집요강 p.14): 국어/영어/수학/사회 4개 교과군 각 상위 3과목만 반영, 교과군별 이수단위 가중평균 후 25%씩 합산.",
-      "rule_source_page": "14, 42"
-    },
-    "past_topics": [],
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/서경대학교/서경대학교_2027학년도_수시모집요강.pdf",
-    "source_page": 22,
-    "registration_period": {
-      "start": "2027-02-10",
-      "end": "2027-02-12"
-    },
-    "data_sources": [
-      {
-        "document_name": "2027학년도 공식 수시모집요강",
-        "local_file": "data/art_admission_raw/prospectus/서경대학교_2027학년도_수시모집요강.pdf"
-      }
-    ],
-    "school_record_status": "required",
-    "source_page_note": "모집인원표 p.4(입학정원35, 수시 실기우수 12명), 반영비율 p.10(20/80)."
-  },
-  "estimates": {}
-}
 ]

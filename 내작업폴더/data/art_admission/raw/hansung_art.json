@@ -53,7 +53,8 @@
       "data_sources": [
         {
           "document_name": "대입정보포털 공개 한성대학교 2027학년도 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/한성대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/한성대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "14fc5229977396f7602b817b6bc7e5b413273fc7aa54cc8917bc868f384eaf6b"
         }
       ],
       "school_record_status": "required"
@@ -128,7 +129,8 @@
       "data_sources": [
         {
           "document_name": "대입정보포털 공개 한성대학교 2027학년도 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/한성대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/한성대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "14fc5229977396f7602b817b6bc7e5b413273fc7aa54cc8917bc868f384eaf6b"
         }
       ],
       "school_record_status": "required"
@@ -202,7 +204,8 @@
       "data_sources": [
         {
           "document_name": "대입정보포털 공개 한성대학교 2027학년도 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/한성대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/한성대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "14fc5229977396f7602b817b6bc7e5b413273fc7aa54cc8917bc868f384eaf6b"
         }
       ],
       "school_record_status": "required"
@@ -276,7 +279,8 @@
       "data_sources": [
         {
           "document_name": "대입정보포털 공개 한성대학교 2027학년도 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/한성대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/한성대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "14fc5229977396f7602b817b6bc7e5b413273fc7aa54cc8917bc868f384eaf6b"
         }
       ],
       "school_record_status": "required",
@@ -348,7 +352,8 @@
       "data_sources": [
         {
           "document_name": "대입정보포털 공개 한성대학교 2027학년도 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/한성대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/한성대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "14fc5229977396f7602b817b6bc7e5b413273fc7aa54cc8917bc868f384eaf6b"
         }
       ],
       "school_record_status": "required",

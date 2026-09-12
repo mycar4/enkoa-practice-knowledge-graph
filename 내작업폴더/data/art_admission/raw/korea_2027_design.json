@@ -12,7 +12,10 @@
     "csat_minimum_rule": "국어, 수학, 영어, 탐구 4개 영역 중 3개 영역 등급의 합이 8 이내 및 한국사 4등급 이내",
     "school_record_status": "not_applicable",
     "school_record_status_note": "서류평가(학생부·창의활동보고서 등)를 다수 입학사정관이 정성적으로 종합평가하는 방식(2027 모집요강 서류평가 안내)이며 등급→점수 환산표 자체가 없음. 석차등급을 정량 환산하지 않으므로 학생부 환산 점수를 계산할 수 없습니다.",
-    "application_period": {"start": "2026-09-07", "end": "2026-09-09"},
+    "application_period": {
+      "start": "2026-09-07",
+      "end": "2026-09-09"
+    },
     "exam_type_name": "창의활동보고서·대표 이미지 기반 면접",
     "allowed_materials": [],
     "paper_size": null,
@@ -21,7 +24,24 @@
     "result_date": "2026-12-18",
     "source_url": "https://oku.korea.ac.kr/attach/202605/1780023076409_0.pdf",
     "source_page": 25,
-    "stages": [{"description": "서류평가", "ratio_desc": "100%, 모집인원의 5배수", "multiplier": 5}, {"description": "제출서류 기반 면접", "ratio_desc": "1단계 60% + 면접 40%", "multiplier": null}],
-    "data_sources": [{"document_name": "2027학년도 고려대학교 수시모집요강", "local_file": "data/art_admission_raw/prospectus/2027_korea_susi.pdf"}]
+    "stages": [
+      {
+        "description": "서류평가",
+        "ratio_desc": "100%, 모집인원의 5배수",
+        "multiplier": 5
+      },
+      {
+        "description": "제출서류 기반 면접",
+        "ratio_desc": "1단계 60% + 면접 40%",
+        "multiplier": null
+      }
+    ],
+    "data_sources": [
+      {
+        "document_name": "2027학년도 고려대학교 수시모집요강",
+        "local_file": "data/art_admission_raw/prospectus/2027_korea_susi.pdf",
+        "pdf_sha256": "75952e9293923cced9d8c47b353f3894166cd0115b770d8088c478f18f9e8e45"
+      }
+    ]
   }
 }

@@ -1,267 +1,306 @@
 [
-{
-  "university": "삼육대학교",
-  "campus": "서울",
-  "department": "아트앤디자인학과",
-  "track_name": "실기/실적(실기우수자전형)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 27,
-    "ratio": "일괄합산: 서류 20% + 실기 80%",
-    "is_staged": false,
-    "school_record_status": "not_applicable",
-    "school_record_status_note": "서류 20%는 학생부+인성검사를 종합한 정성평가이며 등급→점수 환산표가 존재하지 않음. 학생부 환산 점수를 계산할 수 없습니다.",
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
+  {
+    "university": "삼육대학교",
+    "campus": "서울",
+    "department": "아트앤디자인학과",
+    "track_name": "실기/실적(실기우수자전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 27,
+      "ratio": "일괄합산: 서류 20% + 실기 80%",
+      "is_staged": false,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "서류 20%는 학생부+인성검사를 종합한 정성평가이며 등급→점수 환산표가 존재하지 않음. 학생부 환산 점수를 계산할 수 없습니다.",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-04",
+      "result_date": "2026-11-02",
+      "exam_type_name": "기초디자인 또는 발상과표현 중 택1 (주제는 고사 당일 발표)",
+      "allowed_materials": [
+        "표현재료 자유(콜라주/부착물, 고착제 사용 금지)"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/삼육대학교/삼육대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 58,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/삼육대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "83f3a5031bfede28b5ad4e26bb0f74844ae5eee9f29b666b859e9b1670f98a68"
+        }
+      ]
     },
-    "exam_date": "2026-10-04",
-    "result_date": "2026-11-02",
-    "exam_type_name": "기초디자인 또는 발상과표현 중 택1 (주제는 고사 당일 발표)",
-    "allowed_materials": [
-      "표현재료 자유(콜라주/부착물, 고착제 사용 금지)"
-    ],
-    "paper_size": "켄트지 4절",
-    "time_limit_minutes": 240,
-    "past_topics": [],
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/삼육대학교/삼육대학교_2027학년도_수시모집요강.pdf",
-    "source_page": 58,
-    "registration_period": {
-      "start": "2027-02-10",
-      "end": "2027-02-12"
-    },
-    "data_sources": [
-      {
-        "document_name": "2027학년도 공식 수시모집요강",
-        "local_file": "data/art_admission_raw/prospectus/삼육대학교_2027학년도_수시모집요강.pdf"
-      }
-    ]
+    "estimates": {
+      "cutoff_grade_estimate": null,
+      "cutoff_source_url": null,
+      "interview_summaries": []
+    }
   },
-  "estimates": {
-    "cutoff_grade_estimate": null,
-    "cutoff_source_url": null,
-    "interview_summaries": []
+  {
+    "university": "삼육대학교",
+    "campus": "서울",
+    "department": "아트앤디자인학과",
+    "track_name": "실기/실적(학교장추천전형_미술)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 22,
+      "ratio": "일괄합산: 학생부교과 20%(200점) + 실기 80%(800점)",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-04",
+      "result_date": "2026-11-02",
+      "exam_type_name": "기초디자인 또는 발상과표현 중 택1 (주제는 고사 당일 발표) - 실기우수자전형과 동일 문제로 추정(원문에 학교장추천 전용 실기과목 별도 기재 없음)",
+      "allowed_materials": [
+        "표현재료 자유(콜라주/부착물, 고착제 사용 금지)"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "school_record_rule": {
+        "mode": "subject_group_weighted",
+        "top_k_groups": {
+          "options": [
+            "국어",
+            "영어",
+            "수학",
+            "사회"
+          ],
+          "k": 2,
+          "weight_pct_each": 50
+        },
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 96.5,
+          "5": 95,
+          "6": 92,
+          "7": 85,
+          "8": 60,
+          "9": 0
+        },
+        "formula_note": "국어/영어/수학/탐구(사회 또는 과학) 중 상위 2개 교과영역 전 과목을 이수단위 가중평균하여 반영비율(각 50%)로 합산, 100점 만점 산출 후 20% 반영(2027 모집요강 p.53-54). 진로선택과목은 성취도(A/B/C=100/99/98)로 전체 반영.",
+        "rule_source_page": "53-54"
+      },
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/삼육대학교/삼육대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 14,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/삼육대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "83f3a5031bfede28b5ad4e26bb0f74844ae5eee9f29b666b859e9b1670f98a68"
+        }
+      ],
+      "school_record_status": "required",
+      "source_page_note": "모집단위 및 전형별 모집인원표(p.14): 아트앤디자인학과 정원내 소계 55명 = 학교장추천22+재림교회목회자추천3+예체능인재3+실기우수자27. 기존 raw 파일엔 실기우수자전형 1건만 있었음(2026-09-11 Claude 발견·보완, 나머지 3건 및 정원외 2건도 함께 추가)."
+    },
+    "estimates": {}
+  },
+  {
+    "university": "삼육대학교",
+    "campus": "서울",
+    "department": "아트앤디자인학과",
+    "track_name": "실기/실적(재림교회목회자추천전형_미술)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 3,
+      "ratio": "일괄합산: 서류 20% + 실기 80%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "서류 20%는 학생부(및 재림교회 관련 서류)를 종합한 정성평가이며 등급→점수 환산표가 없음(2027 모집요강 p.12). 재림교회 목회자 자녀 등 특정 지원자격 제한이 있는 정원내 특별전형.",
+      "exam_type_name": "기초디자인 또는 발상과표현 중 택1 (주제는 고사 당일 발표) - 실기우수자전형과 동일 문제로 추정",
+      "allowed_materials": [
+        "표현재료 자유(콜라주/부착물, 고착제 사용 금지)"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-04",
+      "result_date": "2026-11-02",
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/삼육대학교/삼육대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 12,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/삼육대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "83f3a5031bfede28b5ad4e26bb0f74844ae5eee9f29b666b859e9b1670f98a68"
+        }
+      ],
+      "source_page_note": "모집단위 및 전형별 모집인원표(p.14) 재림교회목회자추천 3명."
+    },
+    "estimates": {}
+  },
+  {
+    "university": "삼육대학교",
+    "campus": "서울",
+    "department": "아트앤디자인학과",
+    "track_name": "실기/실적(예체능인재전형_미술)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 3,
+      "ratio": "1단계: 수상실적 100% (4배수) -> 2단계: 1단계성적 80% + 면접 20%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "수상실적(대회 입상 경력)과 면접으로만 선발하며 학생부 반영 자체가 없음(2027 모집요강 p.12).",
+      "exam_type_name": "해당 없음 (수상실적 서류평가 + 면접, 실기고사 없음)",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": null,
+      "result_date": "2026-11-02",
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/삼육대학교/삼육대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 12,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/삼육대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "83f3a5031bfede28b5ad4e26bb0f74844ae5eee9f29b666b859e9b1670f98a68"
+        }
+      ],
+      "stages": [
+        {
+          "stage": 1,
+          "selection_multiplier": 4,
+          "ratio": "수상실적 100%"
+        },
+        {
+          "stage": 2,
+          "ratio": "1단계성적 80% + 면접 20%"
+        }
+      ],
+      "source_page_note": "모집단위 및 전형별 모집인원표(p.14) 예체능인재 3명."
+    },
+    "estimates": {}
+  },
+  {
+    "university": "삼육대학교",
+    "campus": "서울",
+    "department": "아트앤디자인학과",
+    "track_name": "실기/실적(농어촌학생전형_미술)[정원외]",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "ratio": "일괄합산: 학생부교과 20%(200점) + 실기 80%(800점)",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-04",
+      "result_date": "2026-11-02",
+      "exam_type_name": "기초디자인 또는 발상과표현 중 택1 (주제는 고사 당일 발표) - 실기우수자전형과 동일 문제로 추정",
+      "allowed_materials": [
+        "표현재료 자유(콜라주/부착물, 고착제 사용 금지)"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "school_record_rule": {
+        "mode": "subject_group_weighted",
+        "top_k_groups": {
+          "options": [
+            "국어",
+            "영어",
+            "수학",
+            "사회"
+          ],
+          "k": 2,
+          "weight_pct_each": 50
+        },
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 96.5,
+          "5": 95,
+          "6": 92,
+          "7": 85,
+          "8": 60,
+          "9": 0
+        },
+        "formula_note": "학교장추천전형과 동일 산식(2027 모집요강 p.53-54).",
+        "rule_source_page": "53-54"
+      },
+      "past_topics": [],
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/삼육대학교/삼육대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 12,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/삼육대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "83f3a5031bfede28b5ad4e26bb0f74844ae5eee9f29b666b859e9b1670f98a68"
+        }
+      ],
+      "school_record_status": "required",
+      "source_page_note": "정원외 특별전형 목록(p.12) 농어촌(미술) 2명."
+    },
+    "estimates": {}
+  },
+  {
+    "university": "삼육대학교",
+    "campus": "서울",
+    "department": "아트앤디자인학과",
+    "track_name": "실기/실적(특수교육대상자전형_미술)[정원외]",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 4,
+      "ratio": "일괄합산: 면접 20% + 실기 80%",
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "면접 20%는 정성평가이며 학생부 등급→점수 환산표가 없음(2027 모집요강 p.12).",
+      "exam_type_name": "기초디자인 또는 발상과표현 중 택1 (주제는 고사 당일 발표) - 실기우수자전형과 동일 문제로 추정",
+      "allowed_materials": [
+        "표현재료 자유(콜라주/부착물, 고착제 사용 금지)"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-04",
+      "result_date": "2026-11-02",
+      "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/삼육대학교/삼육대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 12,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/삼육대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "83f3a5031bfede28b5ad4e26bb0f74844ae5eee9f29b666b859e9b1670f98a68"
+        }
+      ],
+      "source_page_note": "정원외 특별전형 목록(p.12) 특수교육대상자(미술) 4명."
+    },
+    "estimates": {}
   }
-},
-{
-  "university": "삼육대학교",
-  "campus": "서울",
-  "department": "아트앤디자인학과",
-  "track_name": "실기/실적(학교장추천전형_미술)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 22,
-    "ratio": "일괄합산: 학생부교과 20%(200점) + 실기 80%(800점)",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "school_record_ratio_pct": 20,
-    "practical_ratio_pct": 80,
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
-    },
-    "exam_date": "2026-10-04",
-    "result_date": "2026-11-02",
-    "exam_type_name": "기초디자인 또는 발상과표현 중 택1 (주제는 고사 당일 발표) - 실기우수자전형과 동일 문제로 추정(원문에 학교장추천 전용 실기과목 별도 기재 없음)",
-    "allowed_materials": [
-      "표현재료 자유(콜라주/부착물, 고착제 사용 금지)"
-    ],
-    "paper_size": "켄트지 4절",
-    "time_limit_minutes": 240,
-    "school_record_rule": {
-      "mode": "subject_group_weighted",
-      "top_k_groups": {
-        "options": ["국어", "영어", "수학", "사회"],
-        "k": 2,
-        "weight_pct_each": 50
-      },
-      "conversion_table": {
-        "1": 100, "2": 99, "3": 98, "4": 96.5, "5": 95, "6": 92, "7": 85, "8": 60, "9": 0
-      },
-      "formula_note": "국어/영어/수학/탐구(사회 또는 과학) 중 상위 2개 교과영역 전 과목을 이수단위 가중평균하여 반영비율(각 50%)로 합산, 100점 만점 산출 후 20% 반영(2027 모집요강 p.53-54). 진로선택과목은 성취도(A/B/C=100/99/98)로 전체 반영.",
-      "rule_source_page": "53-54"
-    },
-    "past_topics": [],
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/삼육대학교/삼육대학교_2027학년도_수시모집요강.pdf",
-    "source_page": 14,
-    "registration_period": {
-      "start": "2027-02-10",
-      "end": "2027-02-12"
-    },
-    "data_sources": [
-      {
-        "document_name": "2027학년도 공식 수시모집요강",
-        "local_file": "data/art_admission_raw/prospectus/삼육대학교_2027학년도_수시모집요강.pdf"
-      }
-    ],
-    "school_record_status": "required",
-    "source_page_note": "모집단위 및 전형별 모집인원표(p.14): 아트앤디자인학과 정원내 소계 55명 = 학교장추천22+재림교회목회자추천3+예체능인재3+실기우수자27. 기존 raw 파일엔 실기우수자전형 1건만 있었음(2026-09-11 Claude 발견·보완, 나머지 3건 및 정원외 2건도 함께 추가)."
-  },
-  "estimates": {}
-},
-{
-  "university": "삼육대학교",
-  "campus": "서울",
-  "department": "아트앤디자인학과",
-  "track_name": "실기/실적(재림교회목회자추천전형_미술)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 3,
-    "ratio": "일괄합산: 서류 20% + 실기 80%",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "school_record_status": "not_applicable",
-    "school_record_status_note": "서류 20%는 학생부(및 재림교회 관련 서류)를 종합한 정성평가이며 등급→점수 환산표가 없음(2027 모집요강 p.12). 재림교회 목회자 자녀 등 특정 지원자격 제한이 있는 정원내 특별전형.",
-    "exam_type_name": "기초디자인 또는 발상과표현 중 택1 (주제는 고사 당일 발표) - 실기우수자전형과 동일 문제로 추정",
-    "allowed_materials": [
-      "표현재료 자유(콜라주/부착물, 고착제 사용 금지)"
-    ],
-    "paper_size": "켄트지 4절",
-    "time_limit_minutes": 240,
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
-    },
-    "exam_date": "2026-10-04",
-    "result_date": "2026-11-02",
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/삼육대학교/삼육대학교_2027학년도_수시모집요강.pdf",
-    "source_page": 12,
-    "data_sources": [
-      {
-        "document_name": "2027학년도 공식 수시모집요강",
-        "local_file": "data/art_admission_raw/prospectus/삼육대학교_2027학년도_수시모집요강.pdf"
-      }
-    ],
-    "source_page_note": "모집단위 및 전형별 모집인원표(p.14) 재림교회목회자추천 3명."
-  },
-  "estimates": {}
-},
-{
-  "university": "삼육대학교",
-  "campus": "서울",
-  "department": "아트앤디자인학과",
-  "track_name": "실기/실적(예체능인재전형_미술)",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 3,
-    "ratio": "1단계: 수상실적 100% (4배수) -> 2단계: 1단계성적 80% + 면접 20%",
-    "is_staged": true,
-    "csat_minimum_required": false,
-    "school_record_status": "not_applicable",
-    "school_record_status_note": "수상실적(대회 입상 경력)과 면접으로만 선발하며 학생부 반영 자체가 없음(2027 모집요강 p.12).",
-    "exam_type_name": "해당 없음 (수상실적 서류평가 + 면접, 실기고사 없음)",
-    "allowed_materials": [],
-    "paper_size": null,
-    "time_limit_minutes": null,
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
-    },
-    "exam_date": null,
-    "result_date": "2026-11-02",
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/삼육대학교/삼육대학교_2027학년도_수시모집요강.pdf",
-    "source_page": 12,
-    "data_sources": [
-      {
-        "document_name": "2027학년도 공식 수시모집요강",
-        "local_file": "data/art_admission_raw/prospectus/삼육대학교_2027학년도_수시모집요강.pdf"
-      }
-    ],
-    "stages": [
-      {"stage": 1, "selection_multiplier": 4, "ratio": "수상실적 100%"},
-      {"stage": 2, "ratio": "1단계성적 80% + 면접 20%"}
-    ],
-    "source_page_note": "모집단위 및 전형별 모집인원표(p.14) 예체능인재 3명."
-  },
-  "estimates": {}
-},
-{
-  "university": "삼육대학교",
-  "campus": "서울",
-  "department": "아트앤디자인학과",
-  "track_name": "실기/실적(농어촌학생전형_미술)[정원외]",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 2,
-    "ratio": "일괄합산: 학생부교과 20%(200점) + 실기 80%(800점)",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "school_record_ratio_pct": 20,
-    "practical_ratio_pct": 80,
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
-    },
-    "exam_date": "2026-10-04",
-    "result_date": "2026-11-02",
-    "exam_type_name": "기초디자인 또는 발상과표현 중 택1 (주제는 고사 당일 발표) - 실기우수자전형과 동일 문제로 추정",
-    "allowed_materials": [
-      "표현재료 자유(콜라주/부착물, 고착제 사용 금지)"
-    ],
-    "paper_size": "켄트지 4절",
-    "time_limit_minutes": 240,
-    "school_record_rule": {
-      "mode": "subject_group_weighted",
-      "top_k_groups": {
-        "options": ["국어", "영어", "수학", "사회"],
-        "k": 2,
-        "weight_pct_each": 50
-      },
-      "conversion_table": {
-        "1": 100, "2": 99, "3": 98, "4": 96.5, "5": 95, "6": 92, "7": 85, "8": 60, "9": 0
-      },
-      "formula_note": "학교장추천전형과 동일 산식(2027 모집요강 p.53-54).",
-      "rule_source_page": "53-54"
-    },
-    "past_topics": [],
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/삼육대학교/삼육대학교_2027학년도_수시모집요강.pdf",
-    "source_page": 12,
-    "data_sources": [
-      {
-        "document_name": "2027학년도 공식 수시모집요강",
-        "local_file": "data/art_admission_raw/prospectus/삼육대학교_2027학년도_수시모집요강.pdf"
-      }
-    ],
-    "school_record_status": "required",
-    "source_page_note": "정원외 특별전형 목록(p.12) 농어촌(미술) 2명."
-  },
-  "estimates": {}
-},
-{
-  "university": "삼육대학교",
-  "campus": "서울",
-  "department": "아트앤디자인학과",
-  "track_name": "실기/실적(특수교육대상자전형_미술)[정원외]",
-  "official_facts": {
-    "admission_year": 2027,
-    "quota": 4,
-    "ratio": "일괄합산: 면접 20% + 실기 80%",
-    "is_staged": false,
-    "csat_minimum_required": false,
-    "school_record_status": "not_applicable",
-    "school_record_status_note": "면접 20%는 정성평가이며 학생부 등급→점수 환산표가 없음(2027 모집요강 p.12).",
-    "exam_type_name": "기초디자인 또는 발상과표현 중 택1 (주제는 고사 당일 발표) - 실기우수자전형과 동일 문제로 추정",
-    "allowed_materials": [
-      "표현재료 자유(콜라주/부착물, 고착제 사용 금지)"
-    ],
-    "paper_size": "켄트지 4절",
-    "time_limit_minutes": 240,
-    "application_period": {
-      "start": "2026-09-07",
-      "end": "2026-09-11"
-    },
-    "exam_date": "2026-10-04",
-    "result_date": "2026-11-02",
-    "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/삼육대학교/삼육대학교_2027학년도_수시모집요강.pdf",
-    "source_page": 12,
-    "data_sources": [
-      {
-        "document_name": "2027학년도 공식 수시모집요강",
-        "local_file": "data/art_admission_raw/prospectus/삼육대학교_2027학년도_수시모집요강.pdf"
-      }
-    ],
-    "source_page_note": "정원외 특별전형 목록(p.12) 특수교육대상자(미술) 4명."
-  },
-  "estimates": {}
-}
 ]

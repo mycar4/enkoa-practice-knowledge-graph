@@ -135,7 +135,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 인천대학교 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_incheon_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_incheon_susi.pdf",
+          "pdf_sha256": "cfd45df86e94cc372a25c57dcd743765fce1490ea4d500018f41fdf1e134466f"
         }
       ],
       "formula_note": "원문 p.52-53: 반영교과군별 이수단위 가중 석차등급을 등급구간 환산표로 변환하고, 교과군 반영비율 및 이수단위 가산점을 합산한다. 현 엔진의 6개 mode로는 ‘교과군별 구간 환산표 + 가산점’을 정확히 표현할 수 없어 자동 계산 규칙은 비워 둔다."
@@ -277,7 +278,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 인천대학교 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_incheon_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_incheon_susi.pdf",
+          "pdf_sha256": "cfd45df86e94cc372a25c57dcd743765fce1490ea4d500018f41fdf1e134466f"
         }
       ],
       "formula_note": "원문 p.52-53: 반영교과군별 이수단위 가중 석차등급을 등급구간 환산표로 변환하고, 교과군 반영비율 및 이수단위 가산점을 합산한다. 현 엔진의 6개 mode로는 ‘교과군별 구간 환산표 + 가산점’을 정확히 표현할 수 없어 자동 계산 규칙은 비워 둔다."
@@ -438,7 +440,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 인천대학교 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_incheon_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_incheon_susi.pdf",
+          "pdf_sha256": "cfd45df86e94cc372a25c57dcd743765fce1490ea4d500018f41fdf1e134466f"
         }
       ],
       "formula_note": "원문 p.52-53: 반영교과군별 이수단위 가중 석차등급을 등급구간 환산표로 변환하고, 교과군 반영비율 및 이수단위 가산점을 합산한다. 현 엔진의 6개 mode로는 ‘교과군별 구간 환산표 + 가산점’을 정확히 표현할 수 없어 자동 계산 규칙은 비워 둔다."
@@ -469,7 +472,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 인천대학교 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_incheon_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_incheon_susi.pdf",
+          "pdf_sha256": "cfd45df86e94cc372a25c57dcd743765fce1490ea4d500018f41fdf1e134466f"
         }
       ],
       "formula_note": "학생부교과 100% 전형. 모집요강 p.52~53의 교과군별 등급 환산·이수단위 가산 구조는 현 엔진의 6개 mode에 정확히 대응하지 않아 rule은 비움.",

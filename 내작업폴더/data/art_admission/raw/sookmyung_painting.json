@@ -84,7 +84,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/숙명여자대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/숙명여자대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "ec8b0e67063593429effb27e9d2f2093b8382e5ae161c5a903dc53f45a4d0bca"
         }
       ],
       "school_record_status": "required"
@@ -181,7 +182,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/숙명여자대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/숙명여자대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "ec8b0e67063593429effb27e9d2f2093b8382e5ae161c5a903dc53f45a4d0bca"
         }
       ],
       "school_record_status": "required"
@@ -291,7 +293,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/숙명여자대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/숙명여자대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "ec8b0e67063593429effb27e9d2f2093b8382e5ae161c5a903dc53f45a4d0bca"
         }
       ],
       "school_record_status": "required"
@@ -392,7 +395,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/숙명여자대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/숙명여자대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "ec8b0e67063593429effb27e9d2f2093b8382e5ae161c5a903dc53f45a4d0bca"
         }
       ],
       "school_record_status": "required"
@@ -493,7 +497,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/숙명여자대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/숙명여자대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "ec8b0e67063593429effb27e9d2f2093b8382e5ae161c5a903dc53f45a4d0bca"
         }
       ],
       "school_record_status": "required"
@@ -594,7 +599,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/숙명여자대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/숙명여자대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "ec8b0e67063593429effb27e9d2f2093b8382e5ae161c5a903dc53f45a4d0bca"
         }
       ],
       "school_record_status": "required"

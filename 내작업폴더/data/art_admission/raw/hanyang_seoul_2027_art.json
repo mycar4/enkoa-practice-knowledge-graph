@@ -11,16 +11,38 @@
     "csat_minimum_required": false,
     "school_record_status": "not_applicable",
     "school_record_status_note": "1단계가 학생부종합평가(정성적 종합평가, 20배수 선발)이며 등급→점수 환산표 자체가 없음. 2단계는 실기 100%로 최종 사정하여 학생부 점수 자체가 최종 반영비율에 포함되지 않음. 석차등급을 정량 환산하지 않으므로 학생부 환산 점수를 계산할 수 없습니다.",
-    "application_period": {"start": "2026-09-08", "end": "2026-09-11"},
+    "application_period": {
+      "start": "2026-09-08",
+      "end": "2026-09-11"
+    },
     "exam_type_name": "기초디자인",
-    "allowed_materials": ["채색 도구"],
+    "allowed_materials": [
+      "채색 도구"
+    ],
     "paper_size": "켄트지 3절(650×480mm)",
     "time_limit_minutes": 300,
     "exam_date": "2026-10-22",
     "result_date": "2026-11-13",
     "source_url": "https://go.hanyang.ac.kr/resources/upload_data/mojib/20260818042807559_.pdf",
     "source_page": 47,
-    "stages": [{"description": "학생부종합평가", "ratio_desc": "100%, 모집인원의 20배수", "multiplier": 20}, {"description": "기초디자인 실기", "ratio_desc": "실기 100%", "multiplier": null}],
-    "data_sources": [{"document_name": "2027학년도 한양대학교 신입학 수시 모집요강", "local_file": "data/art_admission_raw/prospectus/2027_hanyang_seoul_susi.pdf"}]
+    "stages": [
+      {
+        "description": "학생부종합평가",
+        "ratio_desc": "100%, 모집인원의 20배수",
+        "multiplier": 20
+      },
+      {
+        "description": "기초디자인 실기",
+        "ratio_desc": "실기 100%",
+        "multiplier": null
+      }
+    ],
+    "data_sources": [
+      {
+        "document_name": "2027학년도 한양대학교 신입학 수시 모집요강",
+        "local_file": "data/art_admission_raw/prospectus/2027_hanyang_seoul_susi.pdf",
+        "pdf_sha256": "3be6649b73d597a6502950e17e0871943ce7c12a45cbd6194a6ec3ecad40a230"
+      }
+    ]
   }
 }

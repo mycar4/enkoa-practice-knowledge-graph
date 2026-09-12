@@ -61,7 +61,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/명지대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/명지대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "edca402cfe17e59e311311c4b3be794f56bd6bdc6e221aa463ce3c150b58b0e9"
         }
       ],
       "school_record_status": "required"
@@ -144,7 +145,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/명지대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/명지대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "edca402cfe17e59e311311c4b3be794f56bd6bdc6e221aa463ce3c150b58b0e9"
         }
       ],
       "school_record_status": "required"
@@ -232,7 +234,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/명지대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/명지대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "edca402cfe17e59e311311c4b3be794f56bd6bdc6e221aa463ce3c150b58b0e9"
         }
       ],
       "school_record_status": "required"
@@ -315,7 +318,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/명지대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/명지대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "edca402cfe17e59e311311c4b3be794f56bd6bdc6e221aa463ce3c150b58b0e9"
         }
       ],
       "school_record_status": "required"
@@ -398,7 +402,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/명지대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/명지대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "edca402cfe17e59e311311c4b3be794f56bd6bdc6e221aa463ce3c150b58b0e9"
         }
       ],
       "school_record_status": "required"

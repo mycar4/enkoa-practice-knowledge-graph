@@ -180,3 +180,6 @@ O쪽 참고" 문구가 있으면 그 페이지의 실제 등급→점수 배점�
 8. API를 로컬로 띄워 `/universities`, `/school-record-coverage`, `/qa` 샘플 질의로 스팟 체크.
 9. git add/commit(+push). **데이터 파일만 바뀐 배치는 API 재배포가 필요 없다** — API가 Neo4j를 실시간 조회하므로. `services/art_admission_service.py`를 실제로 고친 경우에만 GitHub Actions가 자동배포한다.
 10. (선택) `내작업폴더/docs/ARTREADY_PROJECT_PROGRESS_BOARD_v1.0.md`의 대학 수 등 오래된 수치 갱신.
+11. `python 내작업폴더/tools/compute_pdf_hashes.py` 실행 - 새로 들어온 raw json의 `data_sources`에
+    원문 PDF의 SHA-256(`pdf_sha256`)을 채운다. 이후 아무 때나 `python 내작업폴더/tests/pdf_hash_check.py`를
+    돌리면 그 사이 대학이 모집요강을 정정공고로 조용히 고쳤는지(해시 불일치) 확인할 수 있다.

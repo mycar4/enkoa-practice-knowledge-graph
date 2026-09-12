@@ -67,7 +67,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 국민대학교 수시 모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf",
+          "pdf_sha256": "d1bb1fb58e2090f3691085327f022946835b2822292a95b34e99cfd57fea1d03"
         }
       ],
       "source_page_note": "2027 수시모집요강 p.10 전형일정 및 p.11 최초 합격 발표 표: 실기우수자·특기자 최초합격 발표 2026-11-10 17:00 예정."
@@ -150,7 +151,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 국민대학교 수시 모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf",
+          "pdf_sha256": "d1bb1fb58e2090f3691085327f022946835b2822292a95b34e99cfd57fea1d03"
         }
       ],
       "source_page_note": "2027 수시모집요강 p.10 전형일정 및 p.11 최초 합격 발표 표: 실기우수자·특기자 최초합격 발표 2026-11-10 17:00 예정.",
@@ -180,7 +182,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 국민대학교 수시 모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf",
+          "pdf_sha256": "d1bb1fb58e2090f3691085327f022946835b2822292a95b34e99cfd57fea1d03"
         }
       ],
       "source_page_note": "모집요강 p.8 모집인원표, p.10·11 전형일정 및 최초합격 발표, 모집요강 p.17: 입학사정관 2인의 정성적 서류 종합평가 및 학생부 확인 면접으로 등급 환산표 없음.",
@@ -211,7 +214,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 국민대학교 수시 모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf",
+          "pdf_sha256": "d1bb1fb58e2090f3691085327f022946835b2822292a95b34e99cfd57fea1d03"
         }
       ],
       "source_page_note": "모집요강 p.8 모집인원표, p.10·11 전형일정 및 최초합격 발표, 모집요강 p.17: 입학사정관 2인의 정성적 서류 종합평가 및 학생부 확인 면접으로 등급 환산표 없음.",
@@ -242,7 +246,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 국민대학교 수시 모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf",
+          "pdf_sha256": "d1bb1fb58e2090f3691085327f022946835b2822292a95b34e99cfd57fea1d03"
         }
       ],
       "source_page_note": "모집요강 p.8 모집인원표, p.10·11 전형일정 및 최초합격 발표, 모집요강 p.26: 입학사정관 2인의 정성적 서류 종합평가로 등급 환산표 없음.",
@@ -273,7 +278,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 국민대학교 수시 모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf",
+          "pdf_sha256": "d1bb1fb58e2090f3691085327f022946835b2822292a95b34e99cfd57fea1d03"
         }
       ],
       "source_page_note": "모집요강 p.8 모집인원표, p.10·11 전형일정 및 최초합격 발표, 모집요강 p.26: 입학사정관 2인의 정성적 서류 종합평가로 등급 환산표 없음.",

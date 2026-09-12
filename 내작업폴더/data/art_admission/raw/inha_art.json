@@ -58,7 +58,8 @@
       "data_sources": [
         {
           "document_name": "대입정보포털 공개 인하대학교 2027학년도 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "9dcec75a9a366986e4eac9fdea92774f7911e3957d9664568acc27c549f77412"
         }
       ],
       "school_record_status": "required"
@@ -133,7 +134,8 @@
       "data_sources": [
         {
           "document_name": "대입정보포털 공개 인하대학교 2027학년도 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "9dcec75a9a366986e4eac9fdea92774f7911e3957d9664568acc27c549f77412"
         }
       ],
       "school_record_status": "required"
@@ -208,7 +210,8 @@
       "data_sources": [
         {
           "document_name": "대입정보포털 공개 인하대학교 2027학년도 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "9dcec75a9a366986e4eac9fdea92774f7911e3957d9664568acc27c549f77412"
         }
       ],
       "school_record_status": "required"
@@ -252,7 +255,8 @@
       "data_sources": [
         {
           "document_name": "대입정보포털 공개 인하대학교 2027학년도 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "9dcec75a9a366986e4eac9fdea92774f7911e3957d9664568acc27c549f77412"
         }
       ],
       "school_record_rule": {},
@@ -295,7 +299,8 @@
       "data_sources": [
         {
           "document_name": "대입정보포털 공개 인하대학교 2027학년도 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "9dcec75a9a366986e4eac9fdea92774f7911e3957d9664568acc27c549f77412"
         }
       ],
       "school_record_rule": {},
@@ -326,7 +331,8 @@
       "data_sources": [
         {
           "document_name": "대입정보포털 공개 인하대학교 2027학년도 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "9dcec75a9a366986e4eac9fdea92774f7911e3957d9664568acc27c549f77412"
         }
       ],
       "school_record_rule": {},
@@ -357,7 +363,8 @@
       "data_sources": [
         {
           "document_name": "대입정보포털 공개 인하대학교 2027학년도 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "9dcec75a9a366986e4eac9fdea92774f7911e3957d9664568acc27c549f77412"
         }
       ],
       "school_record_rule": {},
@@ -388,7 +395,8 @@
       "data_sources": [
         {
           "document_name": "대입정보포털 공개 인하대학교 2027학년도 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "9dcec75a9a366986e4eac9fdea92774f7911e3957d9664568acc27c549f77412"
         }
       ],
       "school_record_rule": {},
@@ -450,7 +458,8 @@
       "data_sources": [
         {
           "document_name": "대입정보포털 공개 인하대학교 2027학년도 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/인하대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "9dcec75a9a366986e4eac9fdea92774f7911e3957d9664568acc27c549f77412"
         }
       ],
       "school_record_status": "required",

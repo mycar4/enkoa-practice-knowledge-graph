@@ -48,7 +48,8 @@
       "data_sources": [
         {
           "document_name": "국립공주대학교 2027학년도 수시 모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf",
+          "pdf_sha256": "a57e44fb6a476707417942d74bf32d136b491725cb04d3798a4240afc1975646"
         }
       ]
     }
@@ -100,7 +101,8 @@
       "data_sources": [
         {
           "document_name": "국립공주대학교 2027학년도 수시 모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf",
+          "pdf_sha256": "a57e44fb6a476707417942d74bf32d136b491725cb04d3798a4240afc1975646"
         }
       ]
     }
@@ -152,7 +154,8 @@
       "data_sources": [
         {
           "document_name": "국립공주대학교 2027학년도 수시 모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf",
+          "pdf_sha256": "a57e44fb6a476707417942d74bf32d136b491725cb04d3798a4240afc1975646"
         }
       ]
     }
@@ -204,7 +207,8 @@
       "data_sources": [
         {
           "document_name": "국립공주대학교 2027학년도 수시 모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf",
+          "pdf_sha256": "a57e44fb6a476707417942d74bf32d136b491725cb04d3798a4240afc1975646"
         }
       ]
     }
@@ -256,7 +260,8 @@
       "data_sources": [
         {
           "document_name": "국립공주대학교 2027학년도 수시 모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf",
+          "pdf_sha256": "a57e44fb6a476707417942d74bf32d136b491725cb04d3798a4240afc1975646"
         }
       ]
     }
@@ -308,7 +313,8 @@
       "data_sources": [
         {
           "document_name": "국립공주대학교 2027학년도 수시 모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_kongju_susi.pdf",
+          "pdf_sha256": "a57e44fb6a476707417942d74bf32d136b491725cb04d3798a4240afc1975646"
         }
       ]
     }

@@ -38,7 +38,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/덕성여자대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/덕성여자대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "9c2725ec5cfac66928a5ba993bf8ac508cbddb5245e2572285e7c63068b3f47e"
         }
       ]
     }
@@ -81,7 +82,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/덕성여자대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/덕성여자대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "9c2725ec5cfac66928a5ba993bf8ac508cbddb5245e2572285e7c63068b3f47e"
         }
       ]
     }
@@ -116,7 +118,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/덕성여자대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/덕성여자대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "9c2725ec5cfac66928a5ba993bf8ac508cbddb5245e2572285e7c63068b3f47e"
         }
       ]
     }
@@ -153,7 +156,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/덕성여자대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/덕성여자대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "9c2725ec5cfac66928a5ba993bf8ac508cbddb5245e2572285e7c63068b3f47e"
         }
       ]
     }

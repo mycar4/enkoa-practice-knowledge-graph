@@ -12,11 +12,24 @@
       "csat_minimum_required": false,
       "school_record_rule": {
         "mode": "top_n_per_year_simple_average",
-        "subjects": ["국어", "영어", "수학", "사회", "과학"],
+        "subjects": [
+          "국어",
+          "영어",
+          "수학",
+          "사회",
+          "과학"
+        ],
         "top_n_per_year": 3,
         "conversion_table": {
-          "1": 150, "2": 142.5, "3": 135, "4": 127.5, "5": 120,
-          "6": 112.5, "7": 82.5, "8": 45, "9": 0
+          "1": 150,
+          "2": 142.5,
+          "3": 135,
+          "4": 127.5,
+          "5": 120,
+          "6": 112.5,
+          "7": 82.5,
+          "8": 45,
+          "9": 0
         },
         "formula_note": "원문 p.43(뷰어 p.46): 문화예술계열전공학과(실기고사 실시학과)는 국어·영어·수학·사회(역사/도덕)·과학 교과군에서 학년별로 성적이 좋은 3과목씩(총 9과목)을 반영하며, 이수단위 가중치 없이 석차등급별 배점표(1등급150~9등급0, 실기고사 실시학과 30% 기준)로 환산한다. 반영 교과목이 없는 학년은 해당 교과를 최저등급(9등급)으로 반영. 엔진에 top_n_per_year_simple_average 모드로 지원됨(허용 8개 모드 중 하나, ART_ADMISSION_CRAWL_BRIEF.md 참고) - 미지원 모드가 아니므로 이 규칙을 다시 비우지 말 것.",
         "rule_source_page": "43-44"
@@ -38,7 +51,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 용인대학교 수시 신입생 모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_yongin_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_yongin_susi.pdf",
+          "pdf_sha256": "53c7939bb8c3196e048acf258f09fe1f7c910e36ff67fecbfd026a4294a28739"
         }
       ],
       "formula_note": "원문 인쇄 p.43~44: 문화예술계열 실기고사 학과는 국어·영어·수학·사회(역사/도덕)·과학에서 각 학년 성적 상위 3과목(총 9과목)을 이수단위 가중치 없이 석차등급 배점으로 산출하며, 반영 과목이 없는 학년은 9등급으로 처리한다. 학년별 상위 3과목 선별 규칙은 현 엔진의 허용 6개 mode에 정확히 대응하지 않아 자동 계산 규칙은 비워 둔다."
@@ -57,11 +71,24 @@
       "csat_minimum_required": false,
       "school_record_rule": {
         "mode": "top_n_per_year_simple_average",
-        "subjects": ["국어", "영어", "수학", "사회", "과학"],
+        "subjects": [
+          "국어",
+          "영어",
+          "수학",
+          "사회",
+          "과학"
+        ],
         "top_n_per_year": 3,
         "conversion_table": {
-          "1": 150, "2": 142.5, "3": 135, "4": 127.5, "5": 120,
-          "6": 112.5, "7": 82.5, "8": 45, "9": 0
+          "1": 150,
+          "2": 142.5,
+          "3": 135,
+          "4": 127.5,
+          "5": 120,
+          "6": 112.5,
+          "7": 82.5,
+          "8": 45,
+          "9": 0
         },
         "formula_note": "원문 p.43(뷰어 p.46): 문화예술계열전공학과(실기고사 실시학과)는 국어·영어·수학·사회(역사/도덕)·과학 교과군에서 학년별로 성적이 좋은 3과목씩(총 9과목)을 반영하며, 이수단위 가중치 없이 석차등급별 배점표(1등급150~9등급0, 실기고사 실시학과 30% 기준)로 환산한다. 반영 교과목이 없는 학년은 해당 교과를 최저등급(9등급)으로 반영. 엔진에 top_n_per_year_simple_average 모드로 지원됨(허용 8개 모드 중 하나, ART_ADMISSION_CRAWL_BRIEF.md 참고) - 미지원 모드가 아니므로 이 규칙을 다시 비우지 말 것.",
         "rule_source_page": "43-44"
@@ -86,7 +113,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 용인대학교 수시 신입생 모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_yongin_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_yongin_susi.pdf",
+          "pdf_sha256": "53c7939bb8c3196e048acf258f09fe1f7c910e36ff67fecbfd026a4294a28739"
         }
       ],
       "formula_note": "원문 인쇄 p.43~44: 문화예술계열 실기고사 학과는 국어·영어·수학·사회(역사/도덕)·과학에서 각 학년 성적 상위 3과목(총 9과목)을 이수단위 가중치 없이 석차등급 배점으로 산출하며, 반영 과목이 없는 학년은 9등급으로 처리한다. 학년별 상위 3과목 선별 규칙은 현 엔진의 허용 6개 mode에 정확히 대응하지 않아 자동 계산 규칙은 비워 둔다."

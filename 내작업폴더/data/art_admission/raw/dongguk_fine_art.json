@@ -61,7 +61,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/동국대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/동국대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "1b5dc92e6d536dba76627414b6d6f27a0e4f1ffc03b1561bd927675b9293a199"
         }
       ],
       "school_record_status": "required"
@@ -146,7 +147,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/동국대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/동국대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "1b5dc92e6d536dba76627414b6d6f27a0e4f1ffc03b1561bd927675b9293a199"
         }
       ],
       "school_record_status": "required"
@@ -230,7 +232,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/동국대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/동국대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "1b5dc92e6d536dba76627414b6d6f27a0e4f1ffc03b1561bd927675b9293a199"
         }
       ],
       "school_record_status": "required"

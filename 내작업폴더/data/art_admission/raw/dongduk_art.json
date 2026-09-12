@@ -58,7 +58,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/동덕여자대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/동덕여자대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "e2aef3789a9d242eed9e70c5575c82d38bbef9eadf496316882920e591e71cf1"
         }
       ],
       "school_record_status": "required"
@@ -138,7 +139,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/동덕여자대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/동덕여자대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "e2aef3789a9d242eed9e70c5575c82d38bbef9eadf496316882920e591e71cf1"
         }
       ],
       "school_record_status": "required"
@@ -218,7 +220,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/동덕여자대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/동덕여자대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "e2aef3789a9d242eed9e70c5575c82d38bbef9eadf496316882920e591e71cf1"
         }
       ],
       "school_record_status": "required"
@@ -298,7 +301,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/동덕여자대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/동덕여자대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "e2aef3789a9d242eed9e70c5575c82d38bbef9eadf496316882920e591e71cf1"
         }
       ],
       "school_record_status": "required"
@@ -378,7 +382,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/동덕여자대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/동덕여자대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "e2aef3789a9d242eed9e70c5575c82d38bbef9eadf496316882920e591e71cf1"
         }
       ],
       "school_record_status": "required"

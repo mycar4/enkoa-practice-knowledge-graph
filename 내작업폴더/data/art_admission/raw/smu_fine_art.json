@@ -57,7 +57,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/상명대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/상명대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "0d2b494786e65c0b355a3a822688da546257db49e0100ecdd814e1fc9a2c6bc8"
         }
       ],
       "school_record_status": "required"
@@ -110,7 +111,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/상명대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/상명대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "0d2b494786e65c0b355a3a822688da546257db49e0100ecdd814e1fc9a2c6bc8"
         }
       ],
       "source_page_note": "최초합격자 발표일은 전체 전형 공통 2026-12-03이며, 시간 정보는 일정 필드에서 제외함(2027 모집요강 p.42)."

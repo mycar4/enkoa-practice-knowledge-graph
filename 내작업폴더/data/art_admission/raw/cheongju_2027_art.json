@@ -31,7 +31,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 청주대학교 수시모집 모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf",
+          "pdf_sha256": "0087d6b8031b9487dea75a151fc2b1e0543fb7717cbb56fb44434ed2f20497e0"
         }
       ],
       "application_period": {
@@ -75,7 +76,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 청주대학교 수시모집 모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf",
+          "pdf_sha256": "0087d6b8031b9487dea75a151fc2b1e0543fb7717cbb56fb44434ed2f20497e0"
         }
       ],
       "application_period": {
@@ -119,7 +121,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 청주대학교 수시모집 모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf",
+          "pdf_sha256": "0087d6b8031b9487dea75a151fc2b1e0543fb7717cbb56fb44434ed2f20497e0"
         }
       ],
       "application_period": {
@@ -163,7 +166,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 청주대학교 수시모집 모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf",
+          "pdf_sha256": "0087d6b8031b9487dea75a151fc2b1e0543fb7717cbb56fb44434ed2f20497e0"
         }
       ],
       "application_period": {
@@ -207,7 +211,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 청주대학교 수시모집 모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf",
+          "pdf_sha256": "0087d6b8031b9487dea75a151fc2b1e0543fb7717cbb56fb44434ed2f20497e0"
         }
       ],
       "application_period": {
@@ -245,7 +250,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 청주대학교 수시모집 모집요강",
-          "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf"
+          "local_file": "data/art_admission_raw/prospectus/2027_cheongju_susi.pdf",
+          "pdf_sha256": "0087d6b8031b9487dea75a151fc2b1e0543fb7717cbb56fb44434ed2f20497e0"
         }
       ],
       "application_period": {

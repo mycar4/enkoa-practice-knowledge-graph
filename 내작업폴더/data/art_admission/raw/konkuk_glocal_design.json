@@ -28,7 +28,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c979cacec2c02892de9737c68a523e02d7a9b30ed90c695511fe976ec251af1d"
         }
       ]
     }
@@ -62,7 +63,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c979cacec2c02892de9737c68a523e02d7a9b30ed90c695511fe976ec251af1d"
         }
       ]
     }
@@ -96,7 +98,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c979cacec2c02892de9737c68a523e02d7a9b30ed90c695511fe976ec251af1d"
         }
       ]
     }
@@ -130,7 +133,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c979cacec2c02892de9737c68a523e02d7a9b30ed90c695511fe976ec251af1d"
         }
       ]
     }
@@ -164,7 +168,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c979cacec2c02892de9737c68a523e02d7a9b30ed90c695511fe976ec251af1d"
         }
       ]
     }
@@ -198,7 +203,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c979cacec2c02892de9737c68a523e02d7a9b30ed90c695511fe976ec251af1d"
         }
       ]
     }
@@ -232,7 +238,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c979cacec2c02892de9737c68a523e02d7a9b30ed90c695511fe976ec251af1d"
         }
       ]
     }
@@ -267,7 +274,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c979cacec2c02892de9737c68a523e02d7a9b30ed90c695511fe976ec251af1d"
         }
       ],
       "source_page_note": "모집인원표(p.89)에서 디자인조형자유전공학부의 실기우수자 71명과 별도로 실기우수(지역인재) 27명이 있음을 확인. 기존 raw 파일엔 이 27명이 실기우수자전형 본전형의 정원으로 잘못 기재돼 있었고(정정: 71명), 지역인재전형 자체는 통째로 누락돼 있었음(2026-09-11 Claude 발견·수정)."
@@ -299,10 +307,23 @@
       "time_limit_minutes": null,
       "school_record_rule": {
         "mode": "simple_weighted_average",
-        "subjects": ["국어", "영어", "수학", "사회"],
+        "subjects": [
+          "국어",
+          "영어",
+          "수학",
+          "사회"
+        ],
         "credit_weighted": true,
         "conversion_table": {
-          "1": 100, "2": 95, "3": 90, "4": 85, "5": 80, "6": 70, "7": 60, "8": 40, "9": 0
+          "1": 100,
+          "2": 95,
+          "3": 90,
+          "4": 85,
+          "5": 80,
+          "6": 70,
+          "7": 60,
+          "8": 40,
+          "9": 0
         },
         "formula_note": "예체능계 반영교과(국어·영어·수학·한국사·사회[역사/도덕 포함] 전 과목, 공통·일반·진로선택 구분 없음)를 이수단위 가중평균해 산출(2027 모집요강 p.131-133). 일반 전형은 이수단위 70단위 미만이면 감점 산식이 있으나, 특성화고교졸업자전형은 그 감점 산식을 적용하지 않음(p.134 명시) - 이 계산기는 그 예외를 자동 반영하지 않으므로 반영교과 이수단위가 70단위 미만인 지원자는 실제보다 약간 낮게 계산될 수 있음.",
         "rule_source_page": "131-134"
@@ -313,7 +334,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c979cacec2c02892de9737c68a523e02d7a9b30ed90c695511fe976ec251af1d"
         }
       ],
       "source_page_note": "모집인원표 p.89, 지원자격·기준학과 p.109, 전형방법 p.109, 학생부 반영방법(공통) p.131-134. 6개 디자인대학 학과(디자인조형자유전공학부 제외)에 이 전형이 있는데 기존 raw 파일엔 전부 빠져 있었음(2026-09-11 Claude 발견·보완)."
@@ -345,10 +367,23 @@
       "time_limit_minutes": null,
       "school_record_rule": {
         "mode": "simple_weighted_average",
-        "subjects": ["국어", "영어", "수학", "사회"],
+        "subjects": [
+          "국어",
+          "영어",
+          "수학",
+          "사회"
+        ],
         "credit_weighted": true,
         "conversion_table": {
-          "1": 100, "2": 95, "3": 90, "4": 85, "5": 80, "6": 70, "7": 60, "8": 40, "9": 0
+          "1": 100,
+          "2": 95,
+          "3": 90,
+          "4": 85,
+          "5": 80,
+          "6": 70,
+          "7": 60,
+          "8": 40,
+          "9": 0
         },
         "formula_note": "예체능계 반영교과(국어·영어·수학·한국사·사회[역사/도덕 포함] 전 과목, 공통·일반·진로선택 구분 없음)를 이수단위 가중평균해 산출(2027 모집요강 p.131-133). 특성화고교졸업자전형은 70단위 미만 감점 산식을 적용하지 않음(p.134).",
         "rule_source_page": "131-134"
@@ -359,7 +394,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c979cacec2c02892de9737c68a523e02d7a9b30ed90c695511fe976ec251af1d"
         }
       ],
       "source_page_note": "모집인원표 p.89, 지원자격·기준학과 p.109, 학생부 반영방법(공통) p.131-134."
@@ -391,10 +427,23 @@
       "time_limit_minutes": null,
       "school_record_rule": {
         "mode": "simple_weighted_average",
-        "subjects": ["국어", "영어", "수학", "사회"],
+        "subjects": [
+          "국어",
+          "영어",
+          "수학",
+          "사회"
+        ],
         "credit_weighted": true,
         "conversion_table": {
-          "1": 100, "2": 95, "3": 90, "4": 85, "5": 80, "6": 70, "7": 60, "8": 40, "9": 0
+          "1": 100,
+          "2": 95,
+          "3": 90,
+          "4": 85,
+          "5": 80,
+          "6": 70,
+          "7": 60,
+          "8": 40,
+          "9": 0
         },
         "formula_note": "예체능계 반영교과(국어·영어·수학·한국사·사회[역사/도덕 포함] 전 과목, 공통·일반·진로선택 구분 없음)를 이수단위 가중평균해 산출(2027 모집요강 p.131-133). 특성화고교졸업자전형은 70단위 미만 감점 산식을 적용하지 않음(p.134).",
         "rule_source_page": "131-134"
@@ -405,7 +454,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c979cacec2c02892de9737c68a523e02d7a9b30ed90c695511fe976ec251af1d"
         }
       ],
       "source_page_note": "모집인원표 p.89, 지원자격·기준학과 p.109, 학생부 반영방법(공통) p.131-134."
@@ -437,10 +487,23 @@
       "time_limit_minutes": null,
       "school_record_rule": {
         "mode": "simple_weighted_average",
-        "subjects": ["국어", "영어", "수학", "사회"],
+        "subjects": [
+          "국어",
+          "영어",
+          "수학",
+          "사회"
+        ],
         "credit_weighted": true,
         "conversion_table": {
-          "1": 100, "2": 95, "3": 90, "4": 85, "5": 80, "6": 70, "7": 60, "8": 40, "9": 0
+          "1": 100,
+          "2": 95,
+          "3": 90,
+          "4": 85,
+          "5": 80,
+          "6": 70,
+          "7": 60,
+          "8": 40,
+          "9": 0
         },
         "formula_note": "예체능계 반영교과(국어·영어·수학·한국사·사회[역사/도덕 포함] 전 과목, 공통·일반·진로선택 구분 없음)를 이수단위 가중평균해 산출(2027 모집요강 p.131-133). 특성화고교졸업자전형은 70단위 미만 감점 산식을 적용하지 않음(p.134).",
         "rule_source_page": "131-134"
@@ -451,7 +514,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c979cacec2c02892de9737c68a523e02d7a9b30ed90c695511fe976ec251af1d"
         }
       ],
       "source_page_note": "모집인원표 p.89, 지원자격·기준학과 p.109, 학생부 반영방법(공통) p.131-134."
@@ -483,10 +547,23 @@
       "time_limit_minutes": null,
       "school_record_rule": {
         "mode": "simple_weighted_average",
-        "subjects": ["국어", "영어", "수학", "사회"],
+        "subjects": [
+          "국어",
+          "영어",
+          "수학",
+          "사회"
+        ],
         "credit_weighted": true,
         "conversion_table": {
-          "1": 100, "2": 95, "3": 90, "4": 85, "5": 80, "6": 70, "7": 60, "8": 40, "9": 0
+          "1": 100,
+          "2": 95,
+          "3": 90,
+          "4": 85,
+          "5": 80,
+          "6": 70,
+          "7": 60,
+          "8": 40,
+          "9": 0
         },
         "formula_note": "예체능계 반영교과(국어·영어·수학·한국사·사회[역사/도덕 포함] 전 과목, 공통·일반·진로선택 구분 없음)를 이수단위 가중평균해 산출(2027 모집요강 p.131-133). 특성화고교졸업자전형은 70단위 미만 감점 산식을 적용하지 않음(p.134).",
         "rule_source_page": "131-134"
@@ -497,7 +574,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c979cacec2c02892de9737c68a523e02d7a9b30ed90c695511fe976ec251af1d"
         }
       ],
       "source_page_note": "모집인원표 p.89, 지원자격·기준학과 p.109, 학생부 반영방법(공통) p.131-134."
@@ -529,10 +607,23 @@
       "time_limit_minutes": null,
       "school_record_rule": {
         "mode": "simple_weighted_average",
-        "subjects": ["국어", "영어", "수학", "사회"],
+        "subjects": [
+          "국어",
+          "영어",
+          "수학",
+          "사회"
+        ],
         "credit_weighted": true,
         "conversion_table": {
-          "1": 100, "2": 95, "3": 90, "4": 85, "5": 80, "6": 70, "7": 60, "8": 40, "9": 0
+          "1": 100,
+          "2": 95,
+          "3": 90,
+          "4": 85,
+          "5": 80,
+          "6": 70,
+          "7": 60,
+          "8": 40,
+          "9": 0
         },
         "formula_note": "예체능계 반영교과(국어·영어·수학·한국사·사회[역사/도덕 포함] 전 과목, 공통·일반·진로선택 구분 없음)를 이수단위 가중평균해 산출(2027 모집요강 p.131-133). 특성화고교졸업자전형은 70단위 미만 감점 산식을 적용하지 않음(p.134).",
         "rule_source_page": "131-134"
@@ -543,7 +634,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/건국대학교_GLOCAL_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c979cacec2c02892de9737c68a523e02d7a9b30ed90c695511fe976ec251af1d"
         }
       ],
       "source_page_note": "모집인원표 p.89, 지원자격·기준학과 p.109, 학생부 반영방법(공통) p.131-134."

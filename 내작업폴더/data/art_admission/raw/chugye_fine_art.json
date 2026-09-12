@@ -64,7 +64,8 @@
     "data_sources": [
       {
         "document_name": "2027학년도 공식 수시모집요강",
-        "local_file": "data/art_admission_raw/prospectus/추계예술대학교_2027학년도_수시모집요강.pdf"
+        "local_file": "data/art_admission_raw/prospectus/추계예술대학교_2027학년도_수시모집요강.pdf",
+        "pdf_sha256": "dc5b2b5616696f85ce00227364105a6aafe77b5b25c07cdeb169405d71359866"
       }
     ],
     "school_record_status": "required"

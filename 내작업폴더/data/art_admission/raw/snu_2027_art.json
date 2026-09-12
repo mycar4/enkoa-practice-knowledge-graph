@@ -12,7 +12,10 @@
       "csat_minimum_required": false,
       "school_record_status": "not_applicable",
       "school_record_status_note": "1단계 서류평가가 정성적 종합평가(학업역량·자기주도적 학업태도·전공관심·지적호기심 등을 종합적으로 평가, 2027 모집요강 44쪽)이며 등급→점수 환산표 자체가 없음. 석차등급을 정량 환산하지 않으므로 학생부 환산 점수를 계산할 수 없습니다.",
-      "application_period": {"start": "2026-09-07", "end": "2026-09-09"},
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-09"
+      },
       "exam_type_name": "수묵·채색 등 전공 관련 기법 실기",
       "allowed_materials": [],
       "paper_size": null,
@@ -23,10 +26,24 @@
       "source_page": 45,
       "source_page_note": "PDF 뷰어 45쪽 / 문서 인쇄 쪽수 41쪽",
       "stages": [
-        {"description": "서류평가", "ratio_desc": "100%, 모집인원의 3배수", "multiplier": 3},
-        {"description": "실기평가 및 면접", "ratio_desc": "1단계 40% + 실기 30% + 면접 30%", "multiplier": null}
+        {
+          "description": "서류평가",
+          "ratio_desc": "100%, 모집인원의 3배수",
+          "multiplier": 3
+        },
+        {
+          "description": "실기평가 및 면접",
+          "ratio_desc": "1단계 40% + 실기 30% + 면접 30%",
+          "multiplier": null
+        }
       ],
-      "data_sources": [{"document_name": "2027학년도 서울대학교 수시모집 안내", "local_file": "data/art_admission_raw/prospectus/2027_snu_susi.pdf"}]
+      "data_sources": [
+        {
+          "document_name": "2027학년도 서울대학교 수시모집 안내",
+          "local_file": "data/art_admission_raw/prospectus/2027_snu_susi.pdf",
+          "pdf_sha256": "aff402a9364f5f56b812f2e7ca8829b1881b88b78823e4613e90c8379eeb1a19"
+        }
+      ]
     }
   },
   {
@@ -42,7 +59,10 @@
       "csat_minimum_required": false,
       "school_record_status": "not_applicable",
       "school_record_status_note": "1단계 서류평가가 정성적 종합평가(학업역량·자기주도적 학업태도·전공관심·지적호기심 등을 종합적으로 평가, 2027 모집요강 44쪽)이며 등급→점수 환산표 자체가 없음. 석차등급을 정량 환산하지 않으므로 학생부 환산 점수를 계산할 수 없습니다.",
-      "application_period": {"start": "2026-09-07", "end": "2026-09-09"},
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-09"
+      },
       "exam_type_name": "주어진 주제를 제시된 재료로 표현",
       "allowed_materials": [],
       "paper_size": null,
@@ -52,8 +72,25 @@
       "source_url": "https://admission.snu.ac.kr/webdata/admission/files/2027susi.pdf",
       "source_page": 45,
       "source_page_note": "PDF 뷰어 45쪽 / 문서 인쇄 쪽수 41쪽",
-      "stages": [{"description": "서류평가", "ratio_desc": "100%, 모집인원의 3배수", "multiplier": 3}, {"description": "실기평가 및 면접", "ratio_desc": "1단계 40% + 실기 30% + 면접 30%", "multiplier": null}],
-      "data_sources": [{"document_name": "2027학년도 서울대학교 수시모집 안내", "local_file": "data/art_admission_raw/prospectus/2027_snu_susi.pdf"}]
+      "stages": [
+        {
+          "description": "서류평가",
+          "ratio_desc": "100%, 모집인원의 3배수",
+          "multiplier": 3
+        },
+        {
+          "description": "실기평가 및 면접",
+          "ratio_desc": "1단계 40% + 실기 30% + 면접 30%",
+          "multiplier": null
+        }
+      ],
+      "data_sources": [
+        {
+          "document_name": "2027학년도 서울대학교 수시모집 안내",
+          "local_file": "data/art_admission_raw/prospectus/2027_snu_susi.pdf",
+          "pdf_sha256": "aff402a9364f5f56b812f2e7ca8829b1881b88b78823e4613e90c8379eeb1a19"
+        }
+      ]
     }
   },
   {
@@ -69,7 +106,10 @@
       "csat_minimum_required": false,
       "school_record_status": "not_applicable",
       "school_record_status_note": "1단계 서류평가가 정성적 종합평가(학업역량·자기주도적 학업태도·전공관심·지적호기심 등을 종합적으로 평가, 2027 모집요강 44쪽)이며 등급→점수 환산표 자체가 없음. 석차등급을 정량 환산하지 않으므로 학생부 환산 점수를 계산할 수 없습니다.",
-      "application_period": {"start": "2026-09-07", "end": "2026-09-09"},
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-09"
+      },
       "exam_type_name": "주어진 주제를 제시된 재료로 표현",
       "allowed_materials": [],
       "paper_size": null,
@@ -79,8 +119,25 @@
       "source_url": "https://admission.snu.ac.kr/webdata/admission/files/2027susi.pdf",
       "source_page": 45,
       "source_page_note": "PDF 뷰어 45쪽 / 문서 인쇄 쪽수 41쪽",
-      "stages": [{"description": "서류평가", "ratio_desc": "100%, 모집인원의 3배수", "multiplier": 3}, {"description": "실기평가 및 면접", "ratio_desc": "1단계 40% + 실기 30% + 면접 30%", "multiplier": null}],
-      "data_sources": [{"document_name": "2027학년도 서울대학교 수시모집 안내", "local_file": "data/art_admission_raw/prospectus/2027_snu_susi.pdf"}]
+      "stages": [
+        {
+          "description": "서류평가",
+          "ratio_desc": "100%, 모집인원의 3배수",
+          "multiplier": 3
+        },
+        {
+          "description": "실기평가 및 면접",
+          "ratio_desc": "1단계 40% + 실기 30% + 면접 30%",
+          "multiplier": null
+        }
+      ],
+      "data_sources": [
+        {
+          "document_name": "2027학년도 서울대학교 수시모집 안내",
+          "local_file": "data/art_admission_raw/prospectus/2027_snu_susi.pdf",
+          "pdf_sha256": "aff402a9364f5f56b812f2e7ca8829b1881b88b78823e4613e90c8379eeb1a19"
+        }
+      ]
     }
   },
   {
@@ -96,7 +153,10 @@
       "csat_minimum_required": false,
       "school_record_status": "not_applicable",
       "school_record_status_note": "1단계 서류평가가 정성적 종합평가(학업역량·자기주도적 학업태도·전공관심·지적호기심 등을 종합적으로 평가, 2027 모집요강 44쪽)이며 등급→점수 환산표 자체가 없음. 석차등급을 정량 환산하지 않으므로 학생부 환산 점수를 계산할 수 없습니다.",
-      "application_period": {"start": "2026-09-07", "end": "2026-09-09"},
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-09"
+      },
       "exam_type_name": "주어진 주제를 제시된 재료로 표현",
       "allowed_materials": [],
       "paper_size": null,
@@ -106,8 +166,25 @@
       "source_url": "https://admission.snu.ac.kr/webdata/admission/files/2027susi.pdf",
       "source_page": 45,
       "source_page_note": "PDF 뷰어 45쪽 / 문서 인쇄 쪽수 41쪽",
-      "stages": [{"description": "서류평가", "ratio_desc": "100%, 모집인원의 3배수", "multiplier": 3}, {"description": "실기평가 및 면접", "ratio_desc": "1단계 40% + 실기 30% + 면접 30%", "multiplier": null}],
-      "data_sources": [{"document_name": "2027학년도 서울대학교 수시모집 안내", "local_file": "data/art_admission_raw/prospectus/2027_snu_susi.pdf"}]
+      "stages": [
+        {
+          "description": "서류평가",
+          "ratio_desc": "100%, 모집인원의 3배수",
+          "multiplier": 3
+        },
+        {
+          "description": "실기평가 및 면접",
+          "ratio_desc": "1단계 40% + 실기 30% + 면접 30%",
+          "multiplier": null
+        }
+      ],
+      "data_sources": [
+        {
+          "document_name": "2027학년도 서울대학교 수시모집 안내",
+          "local_file": "data/art_admission_raw/prospectus/2027_snu_susi.pdf",
+          "pdf_sha256": "aff402a9364f5f56b812f2e7ca8829b1881b88b78823e4613e90c8379eeb1a19"
+        }
+      ]
     }
   }
 ]

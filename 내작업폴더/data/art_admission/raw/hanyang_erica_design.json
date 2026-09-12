@@ -42,7 +42,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/한양대학교_ERICA_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/한양대학교_ERICA_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "2e59db425c94064d1dca6a0a84a0d0f80b665cf14ad9ba41408bc0ecf9abf6b0"
         }
       ]
     }
@@ -70,7 +71,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/한양대학교_ERICA_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/한양대학교_ERICA_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "2e59db425c94064d1dca6a0a84a0d0f80b665cf14ad9ba41408bc0ecf9abf6b0"
         }
       ],
       "school_record_rule": {},

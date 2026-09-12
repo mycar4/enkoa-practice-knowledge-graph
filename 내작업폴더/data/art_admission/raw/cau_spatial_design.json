@@ -62,7 +62,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "44a5acd64ef3d811fabfba76f026bd506dfecf24293705b5b8838fe21fac28d4"
         }
       ],
       "school_record_status": "required"
@@ -117,7 +118,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "44a5acd64ef3d811fabfba76f026bd506dfecf24293705b5b8838fe21fac28d4"
         }
       ],
       "school_record_status": "not_applicable",
@@ -165,11 +167,23 @@
       "time_limit_minutes": 240,
       "school_record_rule": {
         "mode": "simple_weighted_average",
-        "subjects": ["국어", "영어", "사회"],
+        "subjects": [
+          "국어",
+          "영어",
+          "사회"
+        ],
         "career_elective_included": false,
         "credit_weighted": true,
         "conversion_table": {
-          "1": 10, "2": 9.6, "3": 9.2, "4": 8.8, "5": 8.2, "6": 7.6, "7": 7, "8": 6, "9": 3
+          "1": 10,
+          "2": 9.6,
+          "3": 9.2,
+          "4": 8.8,
+          "5": 8.2,
+          "6": 7.6,
+          "7": 7,
+          "8": 6,
+          "9": 3
         },
         "formula_note": "교과 환산점수 평균 = Σ(반영과목별 석차등급 환산점수×이수단위) / Σ(반영과목별 이수단위) (2027 모집요강 p.69-70, p.87-89 [표3] 실기형 환산점수표 기준 - 공간연출전공과 동일한 학교 공통 규정). 석차등급 없는 과목/진로선택과목은 반영하지 않음. 산출된 평균에 학생부 반영비율(교과15%+비교과5%=20%)을 곱해 사용 - 비교과(출결) 5%는 미인정 결석일수 기준 별도 산출(무결석 시 만점 가정)이라 이 계산기에서는 무결석으로 가정함.",
         "rule_source_page": "69-70, 87-89"
@@ -183,7 +197,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "44a5acd64ef3d811fabfba76f026bd506dfecf24293705b5b8838fe21fac28d4"
         }
       ],
       "school_record_status": "required",
@@ -216,11 +231,23 @@
       "time_limit_minutes": 240,
       "school_record_rule": {
         "mode": "simple_weighted_average",
-        "subjects": ["국어", "영어", "사회"],
+        "subjects": [
+          "국어",
+          "영어",
+          "사회"
+        ],
         "career_elective_included": false,
         "credit_weighted": true,
         "conversion_table": {
-          "1": 10, "2": 9.6, "3": 9.2, "4": 8.8, "5": 8.2, "6": 7.6, "7": 7, "8": 6, "9": 3
+          "1": 10,
+          "2": 9.6,
+          "3": 9.2,
+          "4": 8.8,
+          "5": 8.2,
+          "6": 7.6,
+          "7": 7,
+          "8": 6,
+          "9": 3
         },
         "formula_note": "교과 환산점수 평균 = Σ(반영과목별 석차등급 환산점수×이수단위) / Σ(반영과목별 이수단위) (2027 모집요강 p.69-70, p.87-89 [표3] 실기형 환산점수표 기준 - 공간연출전공과 동일한 학교 공통 규정). 석차등급 없는 과목/진로선택과목은 반영하지 않음. 산출된 평균에 학생부 반영비율(교과15%+비교과5%=20%)을 곱해 사용 - 비교과(출결) 5%는 미인정 결석일수 기준 별도 산출(무결석 시 만점 가정)이라 이 계산기에서는 무결석으로 가정함.",
         "rule_source_page": "69-70, 87-89"
@@ -234,7 +261,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "44a5acd64ef3d811fabfba76f026bd506dfecf24293705b5b8838fe21fac28d4"
         }
       ],
       "school_record_status": "required",
@@ -265,11 +293,23 @@
       "time_limit_minutes": 240,
       "school_record_rule": {
         "mode": "simple_weighted_average",
-        "subjects": ["국어", "영어", "사회"],
+        "subjects": [
+          "국어",
+          "영어",
+          "사회"
+        ],
         "career_elective_included": false,
         "credit_weighted": true,
         "conversion_table": {
-          "1": 10, "2": 9.6, "3": 9.2, "4": 8.8, "5": 8.2, "6": 7.6, "7": 7, "8": 6, "9": 3
+          "1": 10,
+          "2": 9.6,
+          "3": 9.2,
+          "4": 8.8,
+          "5": 8.2,
+          "6": 7.6,
+          "7": 7,
+          "8": 6,
+          "9": 3
         },
         "formula_note": "교과 환산점수 평균 = Σ(반영과목별 석차등급 환산점수×이수단위) / Σ(반영과목별 이수단위) (2027 모집요강 p.69-70, p.87-89 [표3] 실기형 환산점수표 기준 - 공간연출전공과 동일한 학교 공통 규정). 석차등급 없는 과목/진로선택과목은 반영하지 않음. 산출된 평균에 학생부 반영비율(교과15%+비교과5%=20%)을 곱해 사용 - 비교과(출결) 5%는 미인정 결석일수 기준 별도 산출(무결석 시 만점 가정)이라 이 계산기에서는 무결석으로 가정함.",
         "rule_source_page": "69-70, 87-89"
@@ -283,7 +323,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "44a5acd64ef3d811fabfba76f026bd506dfecf24293705b5b8838fe21fac28d4"
         }
       ],
       "school_record_status": "required",
@@ -316,11 +357,23 @@
       "time_limit_minutes": 300,
       "school_record_rule": {
         "mode": "simple_weighted_average",
-        "subjects": ["국어", "영어", "사회"],
+        "subjects": [
+          "국어",
+          "영어",
+          "사회"
+        ],
         "career_elective_included": false,
         "credit_weighted": true,
         "conversion_table": {
-          "1": 10, "2": 9.6, "3": 9.2, "4": 8.8, "5": 8.2, "6": 7.6, "7": 7, "8": 6, "9": 3
+          "1": 10,
+          "2": 9.6,
+          "3": 9.2,
+          "4": 8.8,
+          "5": 8.2,
+          "6": 7.6,
+          "7": 7,
+          "8": 6,
+          "9": 3
         },
         "formula_note": "교과 환산점수 평균 = Σ(반영과목별 석차등급 환산점수×이수단위) / Σ(반영과목별 이수단위) (2027 모집요강 p.69-70, p.87-89 [표3] 실기형 환산점수표 기준 - 공간연출전공과 동일한 학교 공통 규정). 1단계(20배수)는 학생부 100%(교과75+비교과25)로만 선발하고, 2단계 최종 점수는 학생부 20%(교과15+비교과5)+실기 80%로 다시 산출함(1단계 성적을 이월하지 않음) - 이 계산기는 2단계 최종 반영비율 기준으로 계산함. 비교과(출결) 5%는 미인정 결석일수 기준 별도 산출(무결석 시 만점 가정)이라 이 계산기에서는 무결석으로 가정함.",
         "rule_source_page": "69-70, 87-89"
@@ -334,7 +387,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "44a5acd64ef3d811fabfba76f026bd506dfecf24293705b5b8838fe21fac28d4"
         }
       ],
       "school_record_status": "required",
@@ -367,11 +421,23 @@
       "time_limit_minutes": 300,
       "school_record_rule": {
         "mode": "simple_weighted_average",
-        "subjects": ["국어", "영어", "사회"],
+        "subjects": [
+          "국어",
+          "영어",
+          "사회"
+        ],
         "career_elective_included": false,
         "credit_weighted": true,
         "conversion_table": {
-          "1": 10, "2": 9.6, "3": 9.2, "4": 8.8, "5": 8.2, "6": 7.6, "7": 7, "8": 6, "9": 3
+          "1": 10,
+          "2": 9.6,
+          "3": 9.2,
+          "4": 8.8,
+          "5": 8.2,
+          "6": 7.6,
+          "7": 7,
+          "8": 6,
+          "9": 3
         },
         "formula_note": "교과 환산점수 평균 = Σ(반영과목별 석차등급 환산점수×이수단위) / Σ(반영과목별 이수단위) (2027 모집요강 p.69-70, p.87-89 [표3] 실기형 환산점수표 기준 - 공간연출전공과 동일한 학교 공통 규정). 1단계(20배수)는 학생부 100%(교과75+비교과25)로만 선발하고, 2단계 최종 점수는 학생부 20%(교과15+비교과5)+실기 80%로 다시 산출함(1단계 성적을 이월하지 않음) - 이 계산기는 2단계 최종 반영비율 기준으로 계산함. 비교과(출결) 5%는 미인정 결석일수 기준 별도 산출(무결석 시 만점 가정)이라 이 계산기에서는 무결석으로 가정함.",
         "rule_source_page": "69-70, 87-89"
@@ -385,7 +451,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "44a5acd64ef3d811fabfba76f026bd506dfecf24293705b5b8838fe21fac28d4"
         }
       ],
       "school_record_status": "required",
@@ -418,11 +485,23 @@
       "time_limit_minutes": 300,
       "school_record_rule": {
         "mode": "simple_weighted_average",
-        "subjects": ["국어", "영어", "사회"],
+        "subjects": [
+          "국어",
+          "영어",
+          "사회"
+        ],
         "career_elective_included": false,
         "credit_weighted": true,
         "conversion_table": {
-          "1": 10, "2": 9.6, "3": 9.2, "4": 8.8, "5": 8.2, "6": 7.6, "7": 7, "8": 6, "9": 3
+          "1": 10,
+          "2": 9.6,
+          "3": 9.2,
+          "4": 8.8,
+          "5": 8.2,
+          "6": 7.6,
+          "7": 7,
+          "8": 6,
+          "9": 3
         },
         "formula_note": "교과 환산점수 평균 = Σ(반영과목별 석차등급 환산점수×이수단위) / Σ(반영과목별 이수단위) (2027 모집요강 p.69-70, p.87-89 [표3] 실기형 환산점수표 기준 - 공간연출전공과 동일한 학교 공통 규정). 1단계(20배수)는 학생부 100%(교과75+비교과25)로만 선발하고, 2단계 최종 점수는 학생부 20%(교과15+비교과5)+실기 80%로 다시 산출함(1단계 성적을 이월하지 않음) - 이 계산기는 2단계 최종 반영비율 기준으로 계산함. 비교과(출결) 5%는 미인정 결석일수 기준 별도 산출(무결석 시 만점 가정)이라 이 계산기에서는 무결석으로 가정함.",
         "rule_source_page": "69-70, 87-89"
@@ -436,7 +515,8 @@
       "data_sources": [
         {
           "document_name": "2027학년도 공식 수시모집요강",
-          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf"
+          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "44a5acd64ef3d811fabfba76f026bd506dfecf24293705b5b8838fe21fac28d4"
         }
       ],
       "school_record_status": "required",
