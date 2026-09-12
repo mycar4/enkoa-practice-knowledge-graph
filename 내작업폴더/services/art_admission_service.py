@@ -1054,6 +1054,66 @@ class ArtAdmissionService:
 
         return {"nodes": list(nodes.values()), "edges": edges}
 
+    # [④ KG 뷰어 - 전형 유형별 보기] results.html의 "전형 유형으로 좁히기" 셀렉트와
+    # 동일한 축(실기/실적위주 · 서류전형(실기없음) · 학생부종합전형 · 학생부교과전형).
+    # 위 "전형종류별 보기"(학교장추천 등 track_name 기반 특별전형)와는 완전히 다른
+    # 분류 기준이므로 헷갈리지 않게 라벨을 명확히 구분한다.
+    _ADMISSION_TYPE_LABELS = {
+        "practical": "실기/실적위주전형",
+        "portfolio": "서류전형(실기 없음)",
+        "holistic": "학생부종합전형",
+        "academic_record": "학생부교과전형",
+    }
+
+    def list_admission_type_categories(self) -> List[str]:
+        """[④ KG 뷰어 전용] 지금 데이터에 실제로 존재하는 전형 유형 라벨만 노출."""
+        rows = self.list_tracks_with_estimates()
+        present = set()
+        for r in rows:
+            category = self._document_track_category(r.get("exam_type_name")) or "practical"
+            present.add(self._ADMISSION_TYPE_LABELS[category])
+        order = list(self._ADMISSION_TYPE_LABELS.values())
+        return [label for label in order if label in present]
+
+    def get_kg_graph_by_admission_type(self, admission_type_label: str,
+                                        grades: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
+        """[④ KG 뷰어 - 전형 유형별 보기] "학생부교과전형"처럼 준비 방법이 근본적으로
+        다른 유형(실기 유무·정성/정량 평가)을 루트로 두고 해당 대학/학과/전형을 모은다."""
+        category = next((k for k, v in self._ADMISSION_TYPE_LABELS.items() if v == admission_type_label), None)
+        if category is None:
+            return {"nodes": [], "edges": []}
+        rows = self.list_tracks_with_estimates()
+        score_lookup = self._kg_score_lookup(grades)
+        root_id = f"admissiontype::{admission_type_label}"
+        nodes: Dict[str, Dict[str, Any]] = {root_id: {"id": root_id, "label": admission_type_label, "group": "admissiontype"}}
+        edges: List[Dict[str, str]] = []
+        for r in rows:
+            row_category = self._document_track_category(r.get("exam_type_name")) or "practical"
+            if row_category != category:
+                continue
+            uni_label = r["university"] + (f" ({r['campus']}캠퍼스)" if r.get("campus") else "")
+            uni_id = f"u::{uni_label}"
+            dept_id = f"d::{uni_label}::{r['department']}"
+            track_id = f"t::{dept_id}::{r.get('track_name')}"
+
+            if uni_id not in nodes:
+                nodes[uni_id] = {"id": uni_id, "label": uni_label, "group": "university"}
+                edges.append({"from": root_id, "to": uni_id})
+            if dept_id not in nodes:
+                nodes[dept_id] = {"id": dept_id, "label": r["department"], "group": "department"}
+                edges.append({"from": uni_id, "to": dept_id})
+            if track_id not in nodes:
+                quota = r.get("quota")
+                track_label = (r.get("track_name") or "") + (f" ({quota}명)" if quota else "")
+                score = score_lookup.get((r["university"], r.get("campus"), r["department"], r.get("track_name")))
+                nodes[track_id] = {
+                    "id": track_id, "label": track_label, "group": "track",
+                    "title": self._kg_track_title(score),
+                }
+                edges.append({"from": dept_id, "to": track_id})
+
+        return {"nodes": list(nodes.values()), "edges": edges}
+
     def get_university_detail(self, university: str, campus: Optional[str] = None) -> Dict[str, Any]:
         """campus를 주면 같은 이름의 다른 캠퍼스 데이터가 섞이지 않도록 그 캠퍼스로만
         걸러서 조회한다 (예: 홍익대 서울 선택 시 세종 데이터가 같이 나오지 않게)."""

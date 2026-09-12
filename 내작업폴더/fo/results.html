@@ -713,7 +713,9 @@ async function renderUniversityResults(name) {
             <div class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">작년 입시결과 기준 예상 ${est.cutoff_grade_estimate}등급 (추정치, 공식 아님) - <a class="underline text-primary" href="${est.cutoff_source_url}" target="_blank" rel="noopener">근거</a></div>
           </details>` : ""}
         <div class="flex items-center justify-between mt-unit-xs pt-unit-xs border-t border-outline-variant/20">
-          <span></span>
+          <a class="font-label-sm text-label-sm text-on-surface-variant underline inline-flex items-center gap-unit-2xs" href="kg.html?university=${encodeURIComponent(name)}">
+            <span class="material-symbols-outlined text-[14px]">hub</span>지도에서 보기
+          </a>
           ${t.source_url ? `<a class="font-label-sm text-label-sm text-primary underline" href="${t.source_url}" target="_blank" rel="noopener">공식 모집요강 원문</a>` : ""}
         </div>
       </div>
@@ -1170,6 +1172,11 @@ function renderRecommendResults() {
         <div class="flex items-center justify-between mt-unit-xs pt-unit-xs border-t border-outline-variant/20">
           <button class="breakdown-btn font-label-sm text-label-sm text-primary underline" data-university="${r.university}" data-campus="${r.campus || ""}" data-department="${r.department || ""}" data-track-name="${r.track_name || ""}">${isExact ? "계산 상세보기 · 뒤집기 시뮬레이션" : "학생부 미반영/근사 이유 보기"}</button>
           ${r.source_url ? `<a class="font-label-sm text-label-sm text-primary underline" href="${r.source_url}" target="_blank" rel="noopener">공식 모집요강 원문</a>` : ""}
+        </div>
+        <div class="mt-unit-2xs">
+          <a class="font-label-sm text-label-sm text-on-surface-variant underline inline-flex items-center gap-unit-2xs" href="kg.html?university=${encodeURIComponent(r.university)}">
+            <span class="material-symbols-outlined text-[14px]">hub</span>이 대학 지도에서 보기
+          </a>
         </div>`;
 
     return `
