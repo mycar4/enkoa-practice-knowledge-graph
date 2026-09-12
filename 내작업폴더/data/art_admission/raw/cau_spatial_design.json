@@ -101,14 +101,7 @@
       },
       "result_date": "2026-12-18",
       "school_record_rule": {},
-      "past_topics": [
-        {
-          "year": 2025,
-          "topic_text": "[2025학년도(전년도) 참고자료] 소묘(공간구성과 묘사) - 주어진 상황 및 주제를 보고 분석한 후 구체적으로 묘사하기 (2025학년도 수시 경쟁률 46.0:1, 실기평균 89.3점, 교과평균 3.7등급 - 2027학년도가 아닌 지난 회차 실측 수치)",
-          "source": "공식 입시결과(전년도)",
-          "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2025/중앙대학교/중앙대학교_2025학년도_수시입시결과.pdf"
-        }
-      ],
+      "past_topics": [],
       "source_url": "https://admission.cau.ac.kr/file/pdfDown.pdf?sfn=20260805051607003_0c37226bf7e64ad79adafec6f6fdc72c.pdf&ofn=%EC%A4%91%EC%95%99%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_%EC%97%85%EB%A1%9C%EB%93%9C%EC%9A%A9%28%EC%B5%9C%EC%A2%85%29.pdf",
       "source_page": 31,
       "registration_period": {
@@ -124,23 +117,77 @@
       ],
       "school_record_status": "not_applicable",
       "school_record_status_note": "학교생활기록부 등 제출서류를 근거로 학업 및 교내 활동을 종합적으로 평가하는 서류평가 100% 정성평가(2027 수시모집요강 p.32-33, 92).",
-      "source_page_note": "모집인원 p.31, 전형일정·서류평가 p.32-33, 정성평가 기준 p.92."
-    },
-    "estimates": {
-      "cutoff_grade_estimate": 3.3,
-      "cutoff_source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/중앙대학교/중앙대학교_2026학년도_수시입시결과.pdf",
-      "interview_summaries": [],
-      "prior_year_result": {
-        "admission_year": 2026,
-        "competition_rate": 42.9,
-        "school_record_grade_typical": 3.3,
-        "school_record_grade_floor": null,
-        "grade_stat_type": "final_registrant_avg_only (typical=합격자 교과등급 평균, 범위 데이터 없음)",
-        "fill_rate_pct": 28.6,
-        "methodology_note": "합격자(등록자 명시 없음) 교과등급 평균 - 원문은 실기전형 요약표에서 경쟁률/충원율/교과등급평균/실기점수평균만 제공, 50%/70%cut 등 세부 범위는 없음.",
-        "source_url": "http://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/중앙대학교/중앙대학교_2026학년도_수시입시결과.pdf",
-        "source_page": 1
-      }
+      "source_page_note": "모집인원 p.31, 전형일정·서류평가 p.32-33, 정성평가 기준 p.92. (2026-09-13: 이 트랙에 실기형 트랙의 지난 회차 실기전형 통계(과목/경쟁률)가 잘못 복사돼 붙어있던 것을 발견해 제거함 - 서류평가 100%라 실기고사 자체가 없고, 그 통계는 이 전형과 무관함.)"
+    }
+  },
+  {
+    "university": "중앙대학교",
+    "campus": "다빈치",
+    "department": "디자인학부",
+    "track_name": "학생부종합(융합형인재) - 실내환경디자인",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 7,
+      "ratio": "서류평가 100%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "result_date": "2026-12-18",
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://admission.cau.ac.kr/file/pdfDown.pdf?sfn=20260805051607003_0c37226bf7e64ad79adafec6f6fdc72c.pdf&ofn=%EC%A4%91%EC%95%99%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_%EC%97%85%EB%A1%9C%EB%93%9C%EC%9A%A9%28%EC%B5%9C%EC%A2%85%29.pdf",
+      "source_page": 31,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "44a5acd64ef3d811fabfba76f026bd506dfecf24293705b5b8838fe21fac28d4"
+        }
+      ],
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "학교생활기록부 등 제출서류를 근거로 학업 및 교내 활동을 종합적으로 평가하는 서류평가 100% 정성평가(2027 수시모집요강 p.32-33, 92). 디자인학부 실내환경디자인전공은 실기고사가 없는 이 전형으로만 선발됨(같은 학부의 공예/산업디자인/시각디자인과 달리 실기/실적위주전형 자체가 없음, p.20 모집인원표에서 확인).",
+      "source_page_note": "모집인원 p.31(디자인학부 실내환경디자인 7명), 전형일정·서류평가 p.32-33, 정성평가 기준 p.92."
+    }
+  },
+  {
+    "university": "중앙대학교",
+    "campus": "다빈치",
+    "department": "디자인학부",
+    "track_name": "학생부종합(융합형인재) - 패션",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 8,
+      "ratio": "서류평가 100%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "result_date": "2026-12-18",
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://admission.cau.ac.kr/file/pdfDown.pdf?sfn=20260805051607003_0c37226bf7e64ad79adafec6f6fdc72c.pdf&ofn=%EC%A4%91%EC%95%99%EB%8C%80%ED%95%99%EA%B5%90_2027%ED%95%99%EB%85%84%EB%8F%84+%EC%88%98%EC%8B%9C%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_%EC%97%85%EB%A1%9C%EB%93%9C%EC%9A%A9%28%EC%B5%9C%EC%A2%85%29.pdf",
+      "source_page": 31,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/중앙대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "44a5acd64ef3d811fabfba76f026bd506dfecf24293705b5b8838fe21fac28d4"
+        }
+      ],
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "학교생활기록부 등 제출서류를 근거로 학업 및 교내 활동을 종합적으로 평가하는 서류평가 100% 정성평가(2027 수시모집요강 p.32-33, 92). 디자인학부 패션전공은 실기고사가 없는 이 전형으로만 선발됨(같은 학부의 공예/산업디자인/시각디자인과 달리 실기/실적위주전형 자체가 없음, p.20 모집인원표에서 확인).",
+      "source_page_note": "모집인원 p.31(디자인학부 패션 8명), 전형일정·서류평가 p.32-33, 정성평가 기준 p.92."
     }
   },
   {

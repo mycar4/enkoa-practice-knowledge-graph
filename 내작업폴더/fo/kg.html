@@ -151,18 +151,29 @@ function renderGraph(graphData) {
   const container = document.getElementById("kgNetwork");
   const colorByGroup = { topic: "#0a7d3c", tracktype: "#0a7d3c", admissiontype: "#0a7d3c", university: "#0031ab", department: "#b72119", track: "#1c1b1b" };
   const sizeByGroup = { topic: 30, tracktype: 30, admissiontype: 30, university: 26, department: 18, track: 12 };
-  const nodes = new vis.DataSet(graphData.nodes.map(n => ({
-    ...n,
-    color: { background: colorByGroup[n.group] || "#747686", border: colorByGroup[n.group] || "#747686" },
-    // 흰 배경 위 흰 글씨라 안 보이던 문제 수정 - 라벨은 진한 글씨로, 어두운
-    // 노드 배경과 겹치지 않도록 노드 주변에 밝은 테두리를 살짝 둔다.
-    font: { color: "#1c1b1b", size: n.group === "university" ? 15 : (n.group === "department" ? 13 : 11), strokeWidth: 3, strokeColor: "#fcf9f8" },
-    shape: "dot",
-    size: sizeByGroup[n.group] || 12,
-    // 전형 노드에 학생부 환산 결과가 있으면(title) 마우스오버 시 브라우저
-    // 기본 툴팁으로 뜬다 - vis.js가 title 속성을 그대로 사용.
-    title: n.title || undefined,
-  })));
+  // vis.js에 노드의 "group" 필드를 그대로 넘기면 vis.js가 자체 기본 팔레트로
+  // 그 그룹을 자동 채색하는 기능이 있는데, 이게 우리가 지정한 color와 충돌해서
+  // "보기 범위"를 바꿔 다시 렌더링할 때(그룹 구성이 달라질 때) 대학 노드가
+  // 파란색 대신 vis.js 기본 노란색으로 나오는 버그가 있었다(사용자 발견).
+  // id/label/color/font/shape/size/title만 명시적으로 골라 새 객체를 만들어서
+  // "group" 필드 자체가 vis.js로 넘어가지 않게 막는다 - 항상 우리가 지정한
+  // 색만 적용됨.
+  const nodes = new vis.DataSet(graphData.nodes.map(n => {
+    const bg = colorByGroup[n.group] || "#747686";
+    return {
+      id: n.id,
+      label: n.label,
+      color: { background: bg, border: bg, highlight: { background: bg, border: bg }, hover: { background: bg, border: bg } },
+      // 흰 배경 위 흰 글씨라 안 보이던 문제 수정 - 라벨은 진한 글씨로, 어두운
+      // 노드 배경과 겹치지 않도록 노드 주변에 밝은 테두리를 살짝 둔다.
+      font: { color: "#1c1b1b", size: n.group === "university" ? 15 : (n.group === "department" ? 13 : 11), strokeWidth: 3, strokeColor: "#fcf9f8" },
+      shape: "dot",
+      size: sizeByGroup[n.group] || 12,
+      // 전형 노드에 학생부 환산 결과가 있으면(title) 마우스오버 시 브라우저
+      // 기본 툴팁으로 뜬다 - vis.js가 title 속성을 그대로 사용.
+      title: n.title || undefined,
+    };
+  }));
   const edges = new vis.DataSet(graphData.edges.map(e => ({ ...e, color: { color: "#c9c6c5" } })));
 
   document.getElementById("kgTrackCount").textContent =
