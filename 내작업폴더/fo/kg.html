@@ -36,16 +36,24 @@
 
 <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight">대학-학과-전형 지도</h1>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">
-관심 있는 대학을 하나 고르면, 그 대학의 학과와 전형이 어떻게 연결되어 있는지 지도로 보여드립니다.
-동그라미를 클릭하면 자세한 내용을 확인할 수 있습니다.
+관심 있는 대학을 하나 고르거나 "전체 대학 한번에 보기"를 선택하고, "보기 범위"로 대학만/학과까지/전형까지
+얼마나 자세히 볼지 고르세요. 동그라미를 클릭하면 자세한 내용을 확인할 수 있습니다.
 </p>
 
-<div class="mt-unit-md p-unit-sm bg-surface-container-lowest border border-outline-variant/40 rounded flex flex-col sm:flex-row gap-unit-xs sm:items-center">
+<div class="mt-unit-md p-unit-sm bg-surface-container-lowest border border-outline-variant/40 rounded flex flex-col gap-unit-sm">
+<div class="flex flex-col sm:flex-row gap-unit-xs sm:items-center">
 <label class="font-label-sm text-label-sm text-on-surface-variant uppercase shrink-0" for="kgUnivSelect">대학 선택</label>
 <select id="kgUnivSelect" class="flex-1 h-11 px-unit-sm bg-surface text-on-surface border border-outline-variant rounded font-body-md text-body-md">
 <option value="">불러오는 중...</option>
 </select>
 <p id="kgTrackCount" class="font-body-sm text-body-sm text-on-surface-variant sm:ml-unit-xs shrink-0"></p>
+</div>
+<div class="flex items-center gap-unit-md">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase shrink-0">보기 범위</span>
+<label class="inline-flex items-center gap-unit-2xs font-body-sm text-body-sm text-on-surface"><input type="radio" name="kgDepth" value="university" class="kgDepthRadio"/>대학만</label>
+<label class="inline-flex items-center gap-unit-2xs font-body-sm text-body-sm text-on-surface"><input type="radio" name="kgDepth" value="department" class="kgDepthRadio"/>학과까지</label>
+<label class="inline-flex items-center gap-unit-2xs font-body-sm text-body-sm text-on-surface"><input type="radio" name="kgDepth" value="track" class="kgDepthRadio" checked/>전형까지</label>
+</div>
 </div>
 
 <div class="mt-unit-md flex items-center gap-unit-md text-body-sm font-body-sm text-on-surface-variant">
@@ -67,6 +75,26 @@
 
 <script>
 let kgNetworkInstance = null;
+let kgFullGraph = null; // 마지막으로 서버에서 받아온 원본 그래프(대학+학과+전형 전부)
+
+const DEPTH_ORDER = { university: 0, department: 1, track: 2 };
+const DEPTH_LABEL = { university: "대학만", department: "학과까지", track: "전형까지" };
+
+function currentDepth() {
+  const checked = document.querySelector('input[name="kgDepth"]:checked');
+  return checked ? checked.value : "track";
+}
+
+// depth("university"/"department"/"track")까지만 노드/엣지를 남긴 부분 그래프를 만든다.
+// 서버는 항상 전체(대학-학과-전형)를 내려주고, 화면에서 무엇을 보여줄지만 필터링한다.
+function filterByDepth(graphData, depth) {
+  const maxLevel = DEPTH_ORDER[depth];
+  const keptIds = new Set(graphData.nodes.filter(n => DEPTH_ORDER[n.group] <= maxLevel).map(n => n.id));
+  return {
+    nodes: graphData.nodes.filter(n => keptIds.has(n.id)),
+    edges: graphData.edges.filter(e => keptIds.has(e.from) && keptIds.has(e.to)),
+  };
+}
 
 function renderGraph(graphData) {
   const container = document.getElementById("kgNetwork");
@@ -74,14 +102,16 @@ function renderGraph(graphData) {
   const nodes = new vis.DataSet(graphData.nodes.map(n => ({
     ...n,
     color: { background: colorByGroup[n.group] || "#747686", border: colorByGroup[n.group] || "#747686" },
-    font: { color: "#ffffff", size: n.group === "university" ? 16 : 12 },
+    // 흰 배경 위 흰 글씨라 안 보이던 문제 수정 - 라벨은 진한 글씨로, 어두운
+    // 노드 배경과 겹치지 않도록 노드 위쪽에 흰 테두리를 살짝 둔다.
+    font: { color: "#1c1b1b", size: n.group === "university" ? 15 : (n.group === "department" ? 13 : 11), strokeWidth: 3, strokeColor: "#fcf9f8" },
     shape: "dot",
     size: n.group === "university" ? 26 : (n.group === "department" ? 18 : 12),
   })));
   const edges = new vis.DataSet(graphData.edges.map(e => ({ ...e, color: { color: "#c9c6c5" } })));
 
   document.getElementById("kgTrackCount").textContent =
-    `학과 ${graphData.nodes.filter(n => n.group === "department").length}개 · 전형 ${graphData.nodes.filter(n => n.group === "track").length}개`;
+    `대학 ${graphData.nodes.filter(n => n.group === "university").length}개 · 학과 ${graphData.nodes.filter(n => n.group === "department").length}개 · 전형 ${graphData.nodes.filter(n => n.group === "track").length}개`;
 
   if (kgNetworkInstance) kgNetworkInstance.destroy();
   kgNetworkInstance = new vis.Network(container, { nodes, edges }, {
@@ -106,6 +136,11 @@ function renderGraph(graphData) {
   });
 }
 
+function applyDepthAndRender() {
+  if (!kgFullGraph) return;
+  renderGraph(filterByDepth(kgFullGraph, currentDepth()));
+}
+
 function loadGraph(university) {
   const errEl = document.getElementById("kgError");
   errEl.classList.add("hidden");
@@ -117,17 +152,29 @@ function loadGraph(university) {
       errEl.classList.remove("hidden");
       return;
     }
-    renderGraph(graphData);
+    kgFullGraph = graphData;
+    // 대학 전체를 한 번에 볼 때는 전형까지 다 펼치면 너무 빽빽해서 아무것도
+    // 안 보이므로, "전체 대학 보기"를 고르면 기본값을 "학과까지"로 낮춘다.
+    // 사용자가 직접 "전형까지"를 눌러 더 자세히 볼 수는 있다.
+    if (!university) {
+      const trackRadio = document.querySelector('input[name="kgDepth"][value="track"]');
+      const deptRadio = document.querySelector('input[name="kgDepth"][value="department"]');
+      if (trackRadio.checked) deptRadio.checked = true;
+    }
+    applyDepthAndRender();
   }).catch(() => {
     errEl.textContent = "지도를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.";
     errEl.classList.remove("hidden");
   });
 }
 
+document.querySelectorAll(".kgDepthRadio").forEach(r => r.addEventListener("change", applyDepthAndRender));
+
 fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
   const names = [...new Set(list.map(u => u.university))].sort();
   const select = document.getElementById("kgUnivSelect");
-  select.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join("");
+  select.innerHTML = `<option value="">🗺️ 전체 대학 한번에 보기</option>` + names.map(n => `<option value="${n}">${n}</option>`).join("");
+  select.value = names[0];
   select.addEventListener("change", () => loadGraph(select.value));
   if (names.length) loadGraph(names[0]);
 }).catch(() => {
