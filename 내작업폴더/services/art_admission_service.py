@@ -1898,7 +1898,13 @@ class ArtAdmissionService:
                     "exam_type_name": t["exam_type_name"], "shared_keywords": sorted(shared_kw),
                     "shared_materials": sorted(shared_materials), "source_url": t["source_url"],
                 })
-        results.sort(key=lambda m: -(len(m["shared_keywords"]) + len(m["shared_materials"])))
+        # shared_keywords(실기유형 자체가 겹침)가 있는 진짜 호환 학교를 항상 먼저
+        # 두고, 그 안에서 겹침 개수가 많은 순으로 정렬한다. 예전엔 재료 겹침
+        # 개수까지 합쳐서 정렬해서, 재료만 대여섯 개 겹치는 학교가 실기유형이
+        # 진짜 같은 학교보다 앞에 오는 경우가 있었다 - LLM에게 "전부 나열하라"고
+        # 시키면서 정작 가장 중요한 진짜 호환 학교가 123건 중 뒤쪽에 묻혀서,
+        # LLM이 "호환 학교 없음"으로 오답한 원인 중 하나였다(사용자 발견).
+        results.sort(key=lambda m: (not m["shared_keywords"], -len(m["shared_keywords"]), -len(m["shared_materials"])))
         return results
 
     # 실기 유형/재료 문구에 이 단어가 있으면 실기시험이 아니라 서류로 평가받는
@@ -2114,7 +2120,22 @@ class ArtAdmissionService:
         track = dept_track or (univ_tracks[0] if len(univ_tracks) == 1 else None)
         if not track:
             return []
-        return self.find_compatible_tracks(university, track["department"])
+        matches = self.find_compatible_tracks(university, track["department"])
+
+        # 2026-09-13: LLM에게 이 목록을 통째로 JSON으로 넘기면서 "빠짐없이 전부
+        # 나열하라"고 프롬프트에 못박아뒀는데, 재료만 겹치는 항목까지 합쳐 100건이
+        # 넘어가면(예: 한예종 무대미술과 기준 123건, 프롬프트 5만자↑) gpt-4o-mini가
+        # 아예 감당을 못 하고 "호환 학교를 찾지 못했습니다"라며 통째로 포기하는
+        # 현상을 실측으로 확인했다(사용자 발견 - 실제로는 21건의 진짜 실기유형
+        # 일치가 있었는데도 없다고 답함). find_compatible_tracks가 이미 shared_
+        # keywords(진짜 같은 실기유형)를 항상 앞에 정렬해두므로, 그 항목은 전부
+        # 유지하고 재료만 겹치는 긴 꼬리만 상위 몇 건으로 잘라서 프롬프트 크기를
+        # 사람이 읽어도 감당되는 수준으로 맞춘다 - 카드형 화면(대학찾기 등)의
+        # "재료만 겹침" 경고와 동일하게, 어차피 이 항목들은 "같은 실기"라고 부르면
+        # 안 되는 참고용일 뿐이라 전부 보여줄 필요가 없다.
+        exact = [m for m in matches if m["shared_keywords"]]
+        material_only = [m for m in matches if not m["shared_keywords"]][:10]
+        return exact + material_only
 
     def answer_question(self, query: str) -> Dict[str, Any]:
         """규칙기반 질의응답 - LLM 없이 그래프 사실만으로 답한다(할루시네이션 원천 차단).
