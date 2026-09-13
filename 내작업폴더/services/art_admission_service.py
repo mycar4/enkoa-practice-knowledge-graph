@@ -929,6 +929,17 @@ class ArtAdmissionService:
         grade_note = f" (원 석차등급 약 {grade_eq}등급)" if grade_eq is not None else ""
         return f"학생부 환산 {pct}점{grade_note} - {precision_note}"
 
+    @classmethod
+    def _kg_uni_label(cls, university: str, campus: Optional[str]) -> str:
+        """KG 뷰어 그래프 노드에 쓰는 대학 라벨 - 캠퍼스 구분에 더해 2년제
+        대학(현재는 서울예술대학교만)은 지도 위에서도 바로 구분되도록 표시한다.
+        "4년제/2년제는 어디서 보지?"라는 질문에 대한 답 - 대학찾기/대학지도
+        선택 목록뿐 아니라 그래프 노드 자체에도 나오게 한다."""
+        label = university + (f" ({campus}캠퍼스)" if campus else "")
+        if cls._college_type_for(university) == "2년제":
+            label += " [2년제]"
+        return label
+
     def get_kg_graph(self, university: Optional[str] = None,
                       grades: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
         """[④ 인터랙티브 KG 뷰어] 대학-학과-전형 구조를 vis.js가 바로 그릴 수 있는
@@ -951,7 +962,7 @@ class ArtAdmissionService:
         nodes: Dict[str, Dict[str, Any]] = {}
         edges: List[Dict[str, str]] = []
         for r in rows:
-            uni_label = r["university"] + (f" ({r['campus']}캠퍼스)" if r.get("campus") else "")
+            uni_label = self._kg_uni_label(r["university"], r.get("campus"))
             uni_id = f"u::{uni_label}"
             dept_id = f"d::{uni_label}::{r['department']}"
             track_id = f"t::{dept_id}::{r['track_name']}"
@@ -1043,7 +1054,7 @@ class ArtAdmissionService:
             exam_name = r.get("exam_type_name") or ""
             if not self._topic_keyword_matches(topic_keyword, exam_name):
                 continue
-            uni_label = r["university"] + (f" ({r['campus']}캠퍼스)" if r.get("campus") else "")
+            uni_label = self._kg_uni_label(r["university"], r.get("campus"))
             uni_id = f"u::{uni_label}"
             dept_id = f"d::{uni_label}::{r['department']}"
             track_id = f"t::{dept_id}::{r.get('track_name')}"
@@ -1110,7 +1121,7 @@ class ArtAdmissionService:
             track_name = r.get("track_name") or ""
             if not pattern.search(track_name):
                 continue
-            uni_label = r["university"] + (f" ({r['campus']}캠퍼스)" if r.get("campus") else "")
+            uni_label = self._kg_uni_label(r["university"], r.get("campus"))
             uni_id = f"u::{uni_label}"
             dept_id = f"d::{uni_label}::{r['department']}"
             track_id = f"t::{dept_id}::{track_name}"
@@ -1170,7 +1181,7 @@ class ArtAdmissionService:
             row_category = self._document_track_category(r.get("exam_type_name")) or "practical"
             if row_category != category:
                 continue
-            uni_label = r["university"] + (f" ({r['campus']}캠퍼스)" if r.get("campus") else "")
+            uni_label = self._kg_uni_label(r["university"], r.get("campus"))
             uni_id = f"u::{uni_label}"
             dept_id = f"d::{uni_label}::{r['department']}"
             track_id = f"t::{dept_id}::{r.get('track_name')}"

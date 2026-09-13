@@ -331,14 +331,21 @@ fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
   function labelFor(name) {
     return nameToCollegeType.get(name) === "2년제" ? `${name} (2년제)` : name;
   }
+  // "전체 대학 한번에 보기"는 지역 필터가 "전체 지역"일 때만 의미가 있다 -
+  // 특정 지역을 골랐는데도 이 옵션이 남아있으면 눌렀을 때 다른 지역 대학까지
+  // 다시 다 나와서 지역 필터를 무시한 것처럼 보인다는 사용자 지적으로 제거.
   function renderUnivOptions(regionValue) {
     const filtered = regionValue ? names.filter(n => nameToRegion.get(n) === regionValue) : names;
-    select.innerHTML = `<option value="">🗺️ 전체 대학 한번에 보기</option>` + filtered.map(n => `<option value="${n}">${labelFor(n)}</option>`).join("");
+    const allOption = regionValue ? "" : `<option value="">🗺️ 전체 대학 한번에 보기</option>`;
+    select.innerHTML = allOption + filtered.map(n => `<option value="${n}">${labelFor(n)}</option>`).join("");
   }
   renderUnivOptions("");
   regionFilter.addEventListener("change", () => {
     renderUnivOptions(regionFilter.value);
-    select.value = "";
+    // 지역을 고르면 그 지역 첫 대학을 바로 보여주고(전체 지역이면 다시
+    // "전체 대학 한번에 보기"로), 빈 화면 상태로 남지 않게 한다.
+    const filtered = regionFilter.value ? names.filter(n => nameToRegion.get(n) === regionFilter.value) : names;
+    select.value = regionFilter.value ? (filtered[0] || "") : "";
     loadCurrentSelection();
   });
 
