@@ -1751,13 +1751,23 @@ class ArtAdmissionService:
     def find_compatible_tracks(self, university: str, department: str) -> List[Dict[str, Any]]:
         """기준 전형과 실기 유형(키워드)·허용재료(키워드)가 겹치는 다른 학교 전형을 찾는다.
         즉 '소묘/연필로 준비한 과정'이 통하는 다른 학교를 찾는 게 목적이므로, 재료명도
-        전체 문자열이 아니라 단어 단위로 비교한다 - 유사도 추정(임베딩)은 쓰지 않는다."""
+        전체 문자열이 아니라 단어 단위로 비교한다 - 유사도 추정(임베딩)은 쓰지 않는다.
+
+        2026-09-13: 예전엔 여기서만 _exam_keywords()의 정확한 토큰 일치를 썼는데,
+        "한예종 무대미술과(exam_type_name='1차: 사실적 소묘 / 2차: 심층실기+구술')와
+        같은 실기로 지원 가능한 학교는?"처럼 exam_type_name이 여러 단계/조각으로
+        된 복합 문구일 때 토큰이 "사실적소묘"처럼 통짜로 뽑혀서, 정작 "소묘"만 보는
+        다른 학교와는 하나도 안 겹쳐 결과가 턱없이 적게 나오는 문제가 있었다(사용자
+        발견). 대학찾기/대학지도/입시질문에서 이미 통일한 canonical 실기종목
+        목록(list_kg_topic_keywords) + 부분일치(_topic_keyword_matches)를 그대로
+        재사용해서 "같은 실기종목"의 기준을 앱 전체에서 완전히 하나로 맞춘다."""
         tracks = self.list_all_tracks_full()
         base = next((t for t in tracks if t["university"] == university and t["department"] == department), None)
         if not base or not base.get("exam_type_name"):
             return []
 
-        base_keywords = self._exam_keywords(base["exam_type_name"])
+        canonical_topics = self.list_kg_topic_keywords(min_schools=1)
+        base_topics = {kw for kw in canonical_topics if self._topic_keyword_matches(kw, base["exam_type_name"])}
         base_material_kw = self._material_keywords(base.get("allowed_materials"))
 
         results = []
@@ -1766,7 +1776,7 @@ class ArtAdmissionService:
                 continue
             if not t.get("exam_type_name"):
                 continue
-            shared_kw = base_keywords & self._exam_keywords(t["exam_type_name"])
+            shared_kw = {kw for kw in base_topics if self._topic_keyword_matches(kw, t["exam_type_name"])}
             shared_materials = base_material_kw & self._material_keywords(t.get("allowed_materials"))
             if shared_kw or shared_materials:
                 results.append({
