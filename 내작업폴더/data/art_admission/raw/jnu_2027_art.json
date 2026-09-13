@@ -1,0 +1,430 @@
+[
+  {
+    "university": "전남대학교",
+    "campus": "광주",
+    "department": "미술학과(한국화전공)",
+    "track_name": "실기/실적(예능실기)",
+    "official_facts": {
+      "admission_year": 2027,
+      "admission_type": "수시",
+      "quota": 11,
+      "ratio": "1단계 학생부 100%(5배수) → 2단계 1단계 성적 30% + 실기 70%",
+      "is_staged": true,
+      "stages": [
+        {
+          "description": "학생부 100%",
+          "ratio_desc": "100%, 모집인원의 5배수",
+          "multiplier": 5
+        },
+        {
+          "description": "1단계 30% + 실기 70%",
+          "ratio_desc": "1단계 성적 30% + 실기 70%"
+        }
+      ],
+      "csat_minimum_required": false,
+      "csat_minimum_criteria": null,
+      "school_record_status": "required",
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "한국사",
+          "사회"
+        ],
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 95,
+          "3": 90,
+          "4": 85,
+          "5": 80,
+          "6": 75,
+          "7": 70,
+          "8": 65,
+          "9": 0
+        },
+        "formula_note": "석차등급 산출과목(공통/일반선택)은 반영교과(국어, 영어, 한국사, 사회) 이수단위 가중평균에 0.72를 곱하고 기본점수 193.5점을 합산(최대 265.5점). 진로선택 상위 3과목 성취도 환산점수(A=15, B=9, C=3) 평균에 0.3을 곱해 합산(최대 4.5점). 출결점수는 기본점수 27점 + 실질점수 3점*(1 - 결석일수/21)으로 합산(최대 30점). 총 300점 만점으로 1단계 성적 산출 (2027 수시모집요강 p.46~50).",
+        "rule_source_page": "46-50"
+      },
+      "exam_type_name": "정물수묵담채",
+      "allowed_materials": [
+        "수묵담채화 도구(시험용지 제외 일체)"
+      ],
+      "paper_size": "화선지(반절지)",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-11-24",
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "source_url": "https://admission.jnu.ac.kr/Data/tmfiles/admission/doc/2027/2027-susi-0827.pdf",
+      "source_page": 14,
+      "source_page_note": "모집인원: p.14, 전형일정: p.16, 전형요약: p.17, 전형안내: p.46, 학생부반영: p.47-50, 실기고사: p.58",
+      "data_sources": [
+        {
+          "document_name": "전남대학교 2027학년도 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_jnu_susi.pdf",
+          "pdf_sha256": "ff2239703c88b681ef02199e3be1979b1201ae90d1c03d5584845bc3804bd870"
+        }
+      ]
+    }
+  },
+  {
+    "university": "전남대학교",
+    "campus": "광주",
+    "department": "미술학과(서양화전공)",
+    "track_name": "실기/실적(예능실기)",
+    "official_facts": {
+      "admission_year": 2027,
+      "admission_type": "수시",
+      "quota": 11,
+      "ratio": "1단계 학생부 100%(5배수) → 2단계 1단계 성적 30% + 실기 70%",
+      "is_staged": true,
+      "stages": [
+        {
+          "description": "학생부 100%",
+          "ratio_desc": "100%, 모집인원의 5배수",
+          "multiplier": 5
+        },
+        {
+          "description": "1단계 30% + 실기 70%",
+          "ratio_desc": "1단계 성적 30% + 실기 70%"
+        }
+      ],
+      "csat_minimum_required": false,
+      "csat_minimum_criteria": null,
+      "school_record_status": "required",
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "한국사",
+          "사회"
+        ],
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 95,
+          "3": 90,
+          "4": 85,
+          "5": 80,
+          "6": 75,
+          "7": 70,
+          "8": 65,
+          "9": 0
+        },
+        "formula_note": "석차등급 산출과목(공통/일반선택)은 반영교과(국어, 영어, 한국사, 사회) 이수단위 가중평균에 0.72를 곱하고 기본점수 193.5점을 합산(최대 265.5점). 진로선택 상위 3과목 성취도 환산점수(A=15, B=9, C=3) 평균에 0.3을 곱해 합산(최대 4.5점). 출결점수는 기본점수 27점 + 실질점수 3점*(1 - 결석일수/21)으로 합산(최대 30점). 총 300점 만점으로 1단계 성적 산출 (2027 수시모집요강 p.46~50).",
+        "rule_source_page": "46-50"
+      },
+      "exam_type_name": "인물수채화",
+      "allowed_materials": [
+        "수채화 도구(시험용지와 화판 제외 일체)"
+      ],
+      "paper_size": "켄트지(2절지)",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-11-24",
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "source_url": "https://admission.jnu.ac.kr/Data/tmfiles/admission/doc/2027/2027-susi-0827.pdf",
+      "source_page": 14,
+      "source_page_note": "모집인원: p.14, 전형일정: p.16, 전형요약: p.17, 전형안내: p.46, 학생부반영: p.47-50, 실기고사: p.58",
+      "data_sources": [
+        {
+          "document_name": "전남대학교 2027학년도 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_jnu_susi.pdf",
+          "pdf_sha256": "ff2239703c88b681ef02199e3be1979b1201ae90d1c03d5584845bc3804bd870"
+        }
+      ]
+    }
+  },
+  {
+    "university": "전남대학교",
+    "campus": "광주",
+    "department": "미술학과(조소전공)",
+    "track_name": "실기/실적(예능실기)",
+    "official_facts": {
+      "admission_year": 2027,
+      "admission_type": "수시",
+      "quota": 11,
+      "ratio": "1단계 학생부 100%(5배수) → 2단계 1단계 성적 30% + 실기 70%",
+      "is_staged": true,
+      "stages": [
+        {
+          "description": "학생부 100%",
+          "ratio_desc": "100%, 모집인원의 5배수",
+          "multiplier": 5
+        },
+        {
+          "description": "1단계 30% + 실기 70%",
+          "ratio_desc": "1단계 성적 30% + 실기 70%"
+        }
+      ],
+      "csat_minimum_required": false,
+      "csat_minimum_criteria": null,
+      "school_record_status": "required",
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "한국사",
+          "사회"
+        ],
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 95,
+          "3": 90,
+          "4": 85,
+          "5": 80,
+          "6": 75,
+          "7": 70,
+          "8": 65,
+          "9": 0
+        },
+        "formula_note": "석차등급 산출과목(공통/일반선택)은 반영교과(국어, 영어, 한국사, 사회) 이수단위 가중평균에 0.72를 곱하고 기본점수 193.5점을 합산(최대 265.5점). 진로선택 상위 3과목 성취도 환산점수(A=15, B=9, C=3) 평균에 0.3을 곱해 합산(최대 4.5점). 출결점수는 기본점수 27점 + 실질점수 3점*(1 - 결석일수/21)으로 합산(최대 30점). 총 300점 만점으로 1단계 성적 산출 (2027 수시모집요강 p.46~50).",
+        "rule_source_page": "46-50"
+      },
+      "exam_type_name": "인체두상소조",
+      "allowed_materials": [
+        "소조 도구(점토, 돌림판, 심봉대, 좌대 제외 일체)"
+      ],
+      "paper_size": "인체두상소조 (점토, 돌림판, 심봉대, 좌대 본교 제공)",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-11-24",
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "source_url": "https://admission.jnu.ac.kr/Data/tmfiles/admission/doc/2027/2027-susi-0827.pdf",
+      "source_page": 14,
+      "source_page_note": "모집인원: p.14, 전형일정: p.16, 전형요약: p.17, 전형안내: p.46, 학생부반영: p.47-50, 실기고사: p.58",
+      "data_sources": [
+        {
+          "document_name": "전남대학교 2027학년도 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_jnu_susi.pdf",
+          "pdf_sha256": "ff2239703c88b681ef02199e3be1979b1201ae90d1c03d5584845bc3804bd870"
+        }
+      ]
+    }
+  },
+  {
+    "university": "전남대학교",
+    "campus": "광주",
+    "department": "미술학과(공예전공)",
+    "track_name": "실기/실적(예능실기)",
+    "official_facts": {
+      "admission_year": 2027,
+      "admission_type": "수시",
+      "quota": 8,
+      "ratio": "1단계 학생부 100%(5배수) → 2단계 1단계 성적 30% + 실기 70%",
+      "is_staged": true,
+      "stages": [
+        {
+          "description": "학생부 100%",
+          "ratio_desc": "100%, 모집인원의 5배수",
+          "multiplier": 5
+        },
+        {
+          "description": "1단계 30% + 실기 70%",
+          "ratio_desc": "1단계 성적 30% + 실기 70%"
+        }
+      ],
+      "csat_minimum_required": false,
+      "csat_minimum_criteria": null,
+      "school_record_status": "required",
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "한국사",
+          "사회"
+        ],
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 95,
+          "3": 90,
+          "4": 85,
+          "5": 80,
+          "6": 75,
+          "7": 70,
+          "8": 65,
+          "9": 0
+        },
+        "formula_note": "석차등급 산출과목(공통/일반선택)은 반영교과(국어, 영어, 한국사, 사회) 이수단위 가중평균에 0.72를 곱하고 기본점수 193.5점을 합산(최대 265.5점). 진로선택 상위 3과목 성취도 환산점수(A=15, B=9, C=3) 평균에 0.3을 곱해 합산(최대 4.5점). 출결점수는 기본점수 27점 + 실질점수 3점*(1 - 결석일수/21)으로 합산(최대 30점). 총 300점 만점으로 1단계 성적 산출 (2027 수시모집요강 p.46~50).",
+        "rule_source_page": "46-50"
+      },
+      "exam_type_name": "기초디자인",
+      "allowed_materials": [
+        "연필",
+        "색연필",
+        "수채화물감",
+        "포스터 칼라(단독 또는 혼용 가능, 평면도구 허용, 픽서티브 불가)"
+      ],
+      "paper_size": "켄트지(4절지)",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-11-24",
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "source_url": "https://admission.jnu.ac.kr/Data/tmfiles/admission/doc/2027/2027-susi-0827.pdf",
+      "source_page": 14,
+      "source_page_note": "모집인원: p.14, 전형일정: p.16, 전형요약: p.17, 전형안내: p.46, 학생부반영: p.47-50, 실기고사: p.58",
+      "data_sources": [
+        {
+          "document_name": "전남대학교 2027학년도 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_jnu_susi.pdf",
+          "pdf_sha256": "ff2239703c88b681ef02199e3be1979b1201ae90d1c03d5584845bc3804bd870"
+        }
+      ]
+    }
+  },
+  {
+    "university": "전남대학교",
+    "campus": "광주",
+    "department": "디자인학과",
+    "track_name": "실기/실적(예능실기)",
+    "official_facts": {
+      "admission_year": 2027,
+      "admission_type": "수시",
+      "quota": 24,
+      "ratio": "1단계 학생부 100%(5배수) → 2단계 1단계 성적 30% + 실기 70%",
+      "is_staged": true,
+      "stages": [
+        {
+          "description": "학생부 100%",
+          "ratio_desc": "100%, 모집인원의 5배수",
+          "multiplier": 5
+        },
+        {
+          "description": "1단계 30% + 실기 70%",
+          "ratio_desc": "1단계 성적 30% + 실기 70%"
+        }
+      ],
+      "csat_minimum_required": false,
+      "csat_minimum_criteria": null,
+      "school_record_status": "required",
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "한국사",
+          "사회"
+        ],
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 95,
+          "3": 90,
+          "4": 85,
+          "5": 80,
+          "6": 75,
+          "7": 70,
+          "8": 65,
+          "9": 0
+        },
+        "formula_note": "석차등급 산출과목(공통/일반선택)은 반영교과(국어, 영어, 한국사, 사회) 이수단위 가중평균에 0.72를 곱하고 기본점수 193.5점을 합산(최대 265.5점). 진로선택 상위 3과목 성취도 환산점수(A=15, B=9, C=3) 평균에 0.3을 곱해 합산(최대 4.5점). 출결점수는 기본점수 27점 + 실질점수 3점*(1 - 결석일수/21)으로 합산(최대 30점). 총 300점 만점으로 1단계 성적 산출 (2027 수시모집요강 p.46~50).",
+        "rule_source_page": "46-50"
+      },
+      "exam_type_name": "기초디자인",
+      "allowed_materials": [
+        "연필",
+        "색연필",
+        "수채화물감",
+        "포스터 칼라(단독 또는 혼용 가능, 평면도구 허용, 픽서티브 불가, 화기 사용 불가)"
+      ],
+      "paper_size": "켄트지(4절지)",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-11-24",
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "source_url": "https://admission.jnu.ac.kr/Data/tmfiles/admission/doc/2027/2027-susi-0827.pdf",
+      "source_page": 14,
+      "source_page_note": "모집인원: p.14, 전형일정: p.16, 전형요약: p.17, 전형안내: p.46, 학생부반영: p.47-50, 실기고사: p.58",
+      "data_sources": [
+        {
+          "document_name": "전남대학교 2027학년도 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_jnu_susi.pdf",
+          "pdf_sha256": "ff2239703c88b681ef02199e3be1979b1201ae90d1c03d5584845bc3804bd870"
+        }
+      ]
+    }
+  },
+  {
+    "university": "전남대학교",
+    "campus": "광주",
+    "department": "미술학과(이론전공)",
+    "track_name": "학생부교과(일반)",
+    "official_facts": {
+      "admission_year": 2027,
+      "admission_type": "수시",
+      "quota": 11,
+      "ratio": "학생부교과 100%",
+      "is_staged": false,
+      "stages": null,
+      "csat_minimum_required": true,
+      "csat_minimum_criteria": "국어, 수학, 영어, 탐구(1과목) 4개 영역 중 2개 영역의 합 8등급 이내",
+      "school_record_status": "required",
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "subjects": [
+          "국어",
+          "영어",
+          "수학",
+          "한국사",
+          "사회",
+          "과학"
+        ],
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 95,
+          "3": 90,
+          "4": 85,
+          "5": 80,
+          "6": 75,
+          "7": 70,
+          "8": 65,
+          "9": 0
+        },
+        "formula_note": "석차등급 산출과목(공통/일반선택)은 반영교과(국/수/영/사/과/한국사) 이수단위 가중평균에 2.25를 곱하고 기본점수 660점을 합산(최대 885점). 진로선택 상위 3과목 성취도 환산점수(A=15, B=9, C=3) 평균(최대 15점). 출결점수는 기본점수 90점 + 실질점수 10점*(1 - 결석일수/21)으로 합산(최대 100점). 총 1,000점 만점으로 일괄 선발 (2027 수시모집요강 p.47~50, p.59).",
+        "rule_source_page": "47-50, 59"
+      },
+      "exam_type_name": "비실기 (학생부 100%)",
+      "allowed_materials": [],
+      "paper_size": null,
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "source_url": "https://admission.jnu.ac.kr/Data/tmfiles/admission/doc/2027/2027-susi-0827.pdf",
+      "source_page": 14,
+      "source_page_note": "모집인원: p.14, 전형일정: p.16, 전형요약: p.17, 학생부반영: p.47-50, 수능최저: p.59",
+      "data_sources": [
+        {
+          "document_name": "전남대학교 2027학년도 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_jnu_susi.pdf",
+          "pdf_sha256": "ff2239703c88b681ef02199e3be1979b1201ae90d1c03d5584845bc3804bd870"
+        }
+      ]
+    }
+  }
+]

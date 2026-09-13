@@ -1,0 +1,961 @@
+[
+  {
+    "university": "부산대학교",
+    "campus": "부산",
+    "department": "미술학과(조소전공)",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 14,
+      "ratio": "실기 80% + 학생부교과 20%",
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "인물소조",
+      "allowed_materials": [
+        "소조도구 일체"
+      ],
+      "paper_size": "남 또는 여 두상 (실내용 이젤, 심봉대, 돌림판 본교 제공)",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-10-20",
+      "result_date": "2026-11-24",
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 90,
+          "8": 60,
+          "9": 0
+        },
+        "formula_note": "반영교과(국어, 수학, 영어, 사회, 과학, 한국사) 석차등급을 등급점수로 환산(1~6등급 100~95, 7등급 90, 8등급 60, 9등급 0)하여 이수단위 가중평균 산출(모집요강 p.60). 졸업예정자 3학년 1학기까지, 졸업자 3학년 2학기까지 반영. 전형별 교과배점(미술학과 20%, 조형학과/디자인학과 40%)을 곱하여 최종 교과 성적 산출.",
+        "rule_source_page": "60"
+      },
+      "source_url": "https://go.pusan.ac.kr",
+      "source_page": 50,
+      "source_page_note": "모집인원: p.50, 전형방법: p.52, 일정: p.54/p.67, 실기방법: p.72, 학생부: p.60.",
+      "data_sources": [
+        {
+          "document_name": "부산대학교 2027학년도 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_pusan_susi.pdf",
+          "pdf_sha256": "9dad1ad962e1133d92ee69ca5dc506bd68b58b2d8f7c486ddbd233a2aa5ab3d5"
+        }
+      ]
+    }
+  },
+  {
+    "university": "부산대학교",
+    "campus": "부산",
+    "department": "미술학과(조소전공)",
+    "track_name": "농어촌학생전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 1,
+      "ratio": "실기 80% + 학생부교과 20%",
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "인물소조",
+      "allowed_materials": [
+        "소조도구 일체"
+      ],
+      "paper_size": "남 또는 여 두상 (실내용 이젤, 심봉대, 돌림판 본교 제공)",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-10-20",
+      "result_date": "2026-11-24",
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 90,
+          "8": 60,
+          "9": 0
+        },
+        "formula_note": "반영교과(국어, 수학, 영어, 사회, 과학, 한국사) 석차등급을 등급점수로 환산(1~6등급 100~95, 7등급 90, 8등급 60, 9등급 0)하여 이수단위 가중평균 산출(모집요강 p.60). 졸업예정자 3학년 1학기까지, 졸업자 3학년 2학기까지 반영. 전형별 교과배점(미술학과 20%, 조형학과/디자인학과 40%)을 곱하여 최종 교과 성적 산출.",
+        "rule_source_page": "60"
+      },
+      "source_url": "https://go.pusan.ac.kr",
+      "source_page": 50,
+      "source_page_note": "모집인원: p.50, 전형방법: p.52, 일정: p.54/p.67, 실기방법: p.72, 학생부: p.60.",
+      "data_sources": [
+        {
+          "document_name": "부산대학교 2027학년도 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_pusan_susi.pdf",
+          "pdf_sha256": "9dad1ad962e1133d92ee69ca5dc506bd68b58b2d8f7c486ddbd233a2aa5ab3d5"
+        }
+      ]
+    }
+  },
+  {
+    "university": "부산대학교",
+    "campus": "부산",
+    "department": "미술학과(한국화전공)",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 14,
+      "ratio": "실기 80% + 학생부교과 20%",
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "수묵담채",
+      "allowed_materials": [
+        "수묵담채 도구 일체"
+      ],
+      "paper_size": "화선지 2절 (69×70.5cm)",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-10-22",
+      "result_date": "2026-11-24",
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 90,
+          "8": 60,
+          "9": 0
+        },
+        "formula_note": "반영교과(국어, 수학, 영어, 사회, 과학, 한국사) 석차등급을 등급점수로 환산(1~6등급 100~95, 7등급 90, 8등급 60, 9등급 0)하여 이수단위 가중평균 산출(모집요강 p.60). 졸업예정자 3학년 1학기까지, 졸업자 3학년 2학기까지 반영. 전형별 교과배점(미술학과 20%, 조형학과/디자인학과 40%)을 곱하여 최종 교과 성적 산출.",
+        "rule_source_page": "60"
+      },
+      "source_url": "https://go.pusan.ac.kr",
+      "source_page": 50,
+      "source_page_note": "모집인원: p.50, 전형방법: p.52, 일정: p.54/p.67, 실기방법: p.72, 학생부: p.60.",
+      "data_sources": [
+        {
+          "document_name": "부산대학교 2027학년도 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_pusan_susi.pdf",
+          "pdf_sha256": "9dad1ad962e1133d92ee69ca5dc506bd68b58b2d8f7c486ddbd233a2aa5ab3d5"
+        }
+      ]
+    }
+  },
+  {
+    "university": "부산대학교",
+    "campus": "부산",
+    "department": "미술학과(한국화전공)",
+    "track_name": "농어촌학생전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 1,
+      "ratio": "실기 80% + 학생부교과 20%",
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "수묵담채",
+      "allowed_materials": [
+        "수묵담채 도구 일체"
+      ],
+      "paper_size": "화선지 2절 (69×70.5cm)",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-10-22",
+      "result_date": "2026-11-24",
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 90,
+          "8": 60,
+          "9": 0
+        },
+        "formula_note": "반영교과(국어, 수학, 영어, 사회, 과학, 한국사) 석차등급을 등급점수로 환산(1~6등급 100~95, 7등급 90, 8등급 60, 9등급 0)하여 이수단위 가중평균 산출(모집요강 p.60). 졸업예정자 3학년 1학기까지, 졸업자 3학년 2학기까지 반영. 전형별 교과배점(미술학과 20%, 조형학과/디자인학과 40%)을 곱하여 최종 교과 성적 산출.",
+        "rule_source_page": "60"
+      },
+      "source_url": "https://go.pusan.ac.kr",
+      "source_page": 50,
+      "source_page_note": "모집인원: p.50, 전형방법: p.52, 일정: p.54/p.67, 실기방법: p.72, 학생부: p.60.",
+      "data_sources": [
+        {
+          "document_name": "부산대학교 2027학년도 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_pusan_susi.pdf",
+          "pdf_sha256": "9dad1ad962e1133d92ee69ca5dc506bd68b58b2d8f7c486ddbd233a2aa5ab3d5"
+        }
+      ]
+    }
+  },
+  {
+    "university": "부산대학교",
+    "campus": "부산",
+    "department": "미술학과(서양화전공)",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 16,
+      "ratio": "실기 80% + 학생부교과 20%",
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "인물수채화",
+      "allowed_materials": [
+        "수채도구 일체"
+      ],
+      "paper_size": "2절",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-10-22",
+      "result_date": "2026-11-24",
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 90,
+          "8": 60,
+          "9": 0
+        },
+        "formula_note": "반영교과(국어, 수학, 영어, 사회, 과학, 한국사) 석차등급을 등급점수로 환산(1~6등급 100~95, 7등급 90, 8등급 60, 9등급 0)하여 이수단위 가중평균 산출(모집요강 p.60). 졸업예정자 3학년 1학기까지, 졸업자 3학년 2학기까지 반영. 전형별 교과배점(미술학과 20%, 조형학과/디자인학과 40%)을 곱하여 최종 교과 성적 산출.",
+        "rule_source_page": "60"
+      },
+      "source_url": "https://go.pusan.ac.kr",
+      "source_page": 50,
+      "source_page_note": "모집인원: p.50, 전형방법: p.52, 일정: p.54/p.67, 실기방법: p.72, 학생부: p.60.",
+      "data_sources": [
+        {
+          "document_name": "부산대학교 2027학년도 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_pusan_susi.pdf",
+          "pdf_sha256": "9dad1ad962e1133d92ee69ca5dc506bd68b58b2d8f7c486ddbd233a2aa5ab3d5"
+        }
+      ]
+    }
+  },
+  {
+    "university": "부산대학교",
+    "campus": "부산",
+    "department": "미술학과(서양화전공)",
+    "track_name": "농어촌학생전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 1,
+      "ratio": "실기 80% + 학생부교과 20%",
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "인물수채화",
+      "allowed_materials": [
+        "수채도구 일체"
+      ],
+      "paper_size": "2절",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-10-22",
+      "result_date": "2026-11-24",
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 90,
+          "8": 60,
+          "9": 0
+        },
+        "formula_note": "반영교과(국어, 수학, 영어, 사회, 과학, 한국사) 석차등급을 등급점수로 환산(1~6등급 100~95, 7등급 90, 8등급 60, 9등급 0)하여 이수단위 가중평균 산출(모집요강 p.60). 졸업예정자 3학년 1학기까지, 졸업자 3학년 2학기까지 반영. 전형별 교과배점(미술학과 20%, 조형학과/디자인학과 40%)을 곱하여 최종 교과 성적 산출.",
+        "rule_source_page": "60"
+      },
+      "source_url": "https://go.pusan.ac.kr",
+      "source_page": 50,
+      "source_page_note": "모집인원: p.50, 전형방법: p.52, 일정: p.54/p.67, 실기방법: p.72, 학생부: p.60.",
+      "data_sources": [
+        {
+          "document_name": "부산대학교 2027학년도 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_pusan_susi.pdf",
+          "pdf_sha256": "9dad1ad962e1133d92ee69ca5dc506bd68b58b2d8f7c486ddbd233a2aa5ab3d5"
+        }
+      ]
+    }
+  },
+  {
+    "university": "부산대학교",
+    "campus": "부산",
+    "department": "조형학과(도예전공)",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 5,
+      "ratio": "실기 60% + 학생부교과 40%",
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "is_staged": false,
+      "csat_minimum_required": true,
+      "csat_minimum_criterion": "국어, 수학, 영어, 사/과탐 4개 영역 중 3개 영역 이상 응시, 상위 2개 합 10 이내, 한국사 4등급 이내(탐구 상위 1과목)",
+      "school_record_status": "required",
+      "exam_type_name": "발상과 표현",
+      "allowed_materials": [
+        "수채화 물감",
+        "포스터칼라",
+        "색연필",
+        "연필"
+      ],
+      "paper_size": "2절 켄트지 (1/2등분 정밀소묘 1/2, 색채표현 1/2)",
+      "time_limit_minutes": 300,
+      "exam_date": "2026-10-21",
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 90,
+          "8": 60,
+          "9": 0
+        },
+        "formula_note": "반영교과(국어, 수학, 영어, 사회, 과학, 한국사) 석차등급을 등급점수로 환산(1~6등급 100~95, 7등급 90, 8등급 60, 9등급 0)하여 이수단위 가중평균 산출(모집요강 p.60). 졸업예정자 3학년 1학기까지, 졸업자 3학년 2학기까지 반영. 전형별 교과배점(미술학과 20%, 조형학과/디자인학과 40%)을 곱하여 최종 교과 성적 산출.",
+        "rule_source_page": "60"
+      },
+      "source_url": "https://go.pusan.ac.kr",
+      "source_page": 50,
+      "source_page_note": "모집인원: p.50, 전형방법: p.52, 최저학력기준: p.53, 일정: p.54/p.67, 실기방법: p.72, 학생부: p.60.",
+      "data_sources": [
+        {
+          "document_name": "부산대학교 2027학년도 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_pusan_susi.pdf",
+          "pdf_sha256": "9dad1ad962e1133d92ee69ca5dc506bd68b58b2d8f7c486ddbd233a2aa5ab3d5"
+        }
+      ]
+    }
+  },
+  {
+    "university": "부산대학교",
+    "campus": "부산",
+    "department": "조형학과(도예전공)",
+    "track_name": "저소득층학생전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 1,
+      "ratio": "실기 60% + 학생부교과 40%",
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "발상과 표현",
+      "allowed_materials": [
+        "수채화 물감",
+        "포스터칼라",
+        "색연필",
+        "연필"
+      ],
+      "paper_size": "2절 켄트지 (1/2등분 정밀소묘 1/2, 색채표현 1/2)",
+      "time_limit_minutes": 300,
+      "exam_date": "2026-10-21",
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 90,
+          "8": 60,
+          "9": 0
+        },
+        "formula_note": "반영교과(국어, 수학, 영어, 사회, 과학, 한국사) 석차등급을 등급점수로 환산(1~6등급 100~95, 7등급 90, 8등급 60, 9등급 0)하여 이수단위 가중평균 산출(모집요강 p.60). 졸업예정자 3학년 1학기까지, 졸업자 3학년 2학기까지 반영. 전형별 교과배점(미술학과 20%, 조형학과/디자인학과 40%)을 곱하여 최종 교과 성적 산출.",
+        "rule_source_page": "60"
+      },
+      "source_url": "https://go.pusan.ac.kr",
+      "source_page": 50,
+      "source_page_note": "모집인원: p.50, 전형방법: p.52, 일정: p.54/p.67, 실기방법: p.72, 학생부: p.60.",
+      "data_sources": [
+        {
+          "document_name": "부산대학교 2027학년도 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_pusan_susi.pdf",
+          "pdf_sha256": "9dad1ad962e1133d92ee69ca5dc506bd68b58b2d8f7c486ddbd233a2aa5ab3d5"
+        }
+      ]
+    }
+  },
+  {
+    "university": "부산대학교",
+    "campus": "부산",
+    "department": "조형학과(가구목조형전공)",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 5,
+      "ratio": "실기 60% + 학생부교과 40%",
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "is_staged": false,
+      "csat_minimum_required": true,
+      "csat_minimum_criterion": "국어, 수학, 영어, 사/과탐 4개 영역 중 3개 영역 이상 응시, 상위 2개 합 10 이내, 한국사 4등급 이내(탐구 상위 1과목)",
+      "school_record_status": "required",
+      "exam_type_name": "발상과 표현",
+      "allowed_materials": [
+        "수채화 물감",
+        "포스터칼라",
+        "색연필",
+        "연필"
+      ],
+      "paper_size": "2절 켄트지 (1/2등분 정밀소묘 1/2, 색채표현 1/2)",
+      "time_limit_minutes": 300,
+      "exam_date": "2026-10-21",
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 90,
+          "8": 60,
+          "9": 0
+        },
+        "formula_note": "반영교과(국어, 수학, 영어, 사회, 과학, 한국사) 석차등급을 등급점수로 환산(1~6등급 100~95, 7등급 90, 8등급 60, 9등급 0)하여 이수단위 가중평균 산출(모집요강 p.60). 졸업예정자 3학년 1학기까지, 졸업자 3학년 2학기까지 반영. 전형별 교과배점(미술학과 20%, 조형학과/디자인학과 40%)을 곱하여 최종 교과 성적 산출.",
+        "rule_source_page": "60"
+      },
+      "source_url": "https://go.pusan.ac.kr",
+      "source_page": 50,
+      "source_page_note": "모집인원: p.50, 전형방법: p.52, 최저학력기준: p.53, 일정: p.54/p.67, 실기방법: p.72, 학생부: p.60.",
+      "data_sources": [
+        {
+          "document_name": "부산대학교 2027학년도 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_pusan_susi.pdf",
+          "pdf_sha256": "9dad1ad962e1133d92ee69ca5dc506bd68b58b2d8f7c486ddbd233a2aa5ab3d5"
+        }
+      ]
+    }
+  },
+  {
+    "university": "부산대학교",
+    "campus": "부산",
+    "department": "조형학과(가구목조형전공)",
+    "track_name": "저소득층학생전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 1,
+      "ratio": "실기 60% + 학생부교과 40%",
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "발상과 표현",
+      "allowed_materials": [
+        "수채화 물감",
+        "포스터칼라",
+        "색연필",
+        "연필"
+      ],
+      "paper_size": "2절 켄트지 (1/2등분 정밀소묘 1/2, 색채표현 1/2)",
+      "time_limit_minutes": 300,
+      "exam_date": "2026-10-21",
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 90,
+          "8": 60,
+          "9": 0
+        },
+        "formula_note": "반영교과(국어, 수학, 영어, 사회, 과학, 한국사) 석차등급을 등급점수로 환산(1~6등급 100~95, 7등급 90, 8등급 60, 9등급 0)하여 이수단위 가중평균 산출(모집요강 p.60). 졸업예정자 3학년 1학기까지, 졸업자 3학년 2학기까지 반영. 전형별 교과배점(미술학과 20%, 조형학과/디자인학과 40%)을 곱하여 최종 교과 성적 산출.",
+        "rule_source_page": "60"
+      },
+      "source_url": "https://go.pusan.ac.kr",
+      "source_page": 50,
+      "source_page_note": "모집인원: p.50, 전형방법: p.52, 일정: p.54/p.67, 실기방법: p.72, 학생부: p.60.",
+      "data_sources": [
+        {
+          "document_name": "부산대학교 2027학년도 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_pusan_susi.pdf",
+          "pdf_sha256": "9dad1ad962e1133d92ee69ca5dc506bd68b58b2d8f7c486ddbd233a2aa5ab3d5"
+        }
+      ]
+    }
+  },
+  {
+    "university": "부산대학교",
+    "campus": "부산",
+    "department": "조형학과(섬유금속전공)",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 5,
+      "ratio": "실기 60% + 학생부교과 40%",
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "is_staged": false,
+      "csat_minimum_required": true,
+      "csat_minimum_criterion": "국어, 수학, 영어, 사/과탐 4개 영역 중 3개 영역 이상 응시, 상위 2개 합 10 이내, 한국사 4등급 이내(탐구 상위 1과목)",
+      "school_record_status": "required",
+      "exam_type_name": "발상과 표현",
+      "allowed_materials": [
+        "수채화 물감",
+        "포스터칼라",
+        "색연필",
+        "연필"
+      ],
+      "paper_size": "2절 켄트지 (1/2등분 정밀소묘 1/2, 색채표현 1/2)",
+      "time_limit_minutes": 300,
+      "exam_date": "2026-10-21",
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 90,
+          "8": 60,
+          "9": 0
+        },
+        "formula_note": "반영교과(국어, 수학, 영어, 사회, 과학, 한국사) 석차등급을 등급점수로 환산(1~6등급 100~95, 7등급 90, 8등급 60, 9등급 0)하여 이수단위 가중평균 산출(모집요강 p.60). 졸업예정자 3학년 1학기까지, 졸업자 3학년 2학기까지 반영. 전형별 교과배점(미술학과 20%, 조형학과/디자인학과 40%)을 곱하여 최종 교과 성적 산출.",
+        "rule_source_page": "60"
+      },
+      "source_url": "https://go.pusan.ac.kr",
+      "source_page": 50,
+      "source_page_note": "모집인원: p.50, 전형방법: p.52, 최저학력기준: p.53, 일정: p.54/p.67, 실기방법: p.72, 학생부: p.60.",
+      "data_sources": [
+        {
+          "document_name": "부산대학교 2027학년도 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_pusan_susi.pdf",
+          "pdf_sha256": "9dad1ad962e1133d92ee69ca5dc506bd68b58b2d8f7c486ddbd233a2aa5ab3d5"
+        }
+      ]
+    }
+  },
+  {
+    "university": "부산대학교",
+    "campus": "부산",
+    "department": "조형학과(섬유금속전공)",
+    "track_name": "농어촌학생전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "ratio": "실기 60% + 학생부교과 40%",
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "발상과 표현",
+      "allowed_materials": [
+        "수채화 물감",
+        "포스터칼라",
+        "색연필",
+        "연필"
+      ],
+      "paper_size": "2절 켄트지 (1/2등분 정밀소묘 1/2, 색채표현 1/2)",
+      "time_limit_minutes": 300,
+      "exam_date": "2026-10-21",
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 90,
+          "8": 60,
+          "9": 0
+        },
+        "formula_note": "반영교과(국어, 수학, 영어, 사회, 과학, 한국사) 석차등급을 등급점수로 환산(1~6등급 100~95, 7등급 90, 8등급 60, 9등급 0)하여 이수단위 가중평균 산출(모집요강 p.60). 졸업예정자 3학년 1학기까지, 졸업자 3학년 2학기까지 반영. 전형별 교과배점(미술학과 20%, 조형학과/디자인학과 40%)을 곱하여 최종 교과 성적 산출.",
+        "rule_source_page": "60"
+      },
+      "source_url": "https://go.pusan.ac.kr",
+      "source_page": 50,
+      "source_page_note": "모집인원: p.50, 전형방법: p.52, 일정: p.54/p.67, 실기방법: p.72, 학생부: p.60.",
+      "data_sources": [
+        {
+          "document_name": "부산대학교 2027학년도 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_pusan_susi.pdf",
+          "pdf_sha256": "9dad1ad962e1133d92ee69ca5dc506bd68b58b2d8f7c486ddbd233a2aa5ab3d5"
+        }
+      ]
+    }
+  },
+  {
+    "university": "부산대학교",
+    "campus": "부산",
+    "department": "조형학과(섬유금속전공)",
+    "track_name": "저소득층학생전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "ratio": "실기 60% + 학생부교과 40%",
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "is_staged": false,
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "발상과 표현",
+      "allowed_materials": [
+        "수채화 물감",
+        "포스터칼라",
+        "색연필",
+        "연필"
+      ],
+      "paper_size": "2절 켄트지 (1/2등분 정밀소묘 1/2, 색채표현 1/2)",
+      "time_limit_minutes": 300,
+      "exam_date": "2026-10-21",
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 90,
+          "8": 60,
+          "9": 0
+        },
+        "formula_note": "반영교과(국어, 수학, 영어, 사회, 과학, 한국사) 석차등급을 등급점수로 환산(1~6등급 100~95, 7등급 90, 8등급 60, 9등급 0)하여 이수단위 가중평균 산출(모집요강 p.60). 졸업예정자 3학년 1학기까지, 졸업자 3학년 2학기까지 반영. 전형별 교과배점(미술학과 20%, 조형학과/디자인학과 40%)을 곱하여 최종 교과 성적 산출.",
+        "rule_source_page": "60"
+      },
+      "source_url": "https://go.pusan.ac.kr",
+      "source_page": 50,
+      "source_page_note": "모집인원: p.50, 전형방법: p.52, 일정: p.54/p.67, 실기방법: p.72, 학생부: p.60.",
+      "data_sources": [
+        {
+          "document_name": "부산대학교 2027학년도 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_pusan_susi.pdf",
+          "pdf_sha256": "9dad1ad962e1133d92ee69ca5dc506bd68b58b2d8f7c486ddbd233a2aa5ab3d5"
+        }
+      ]
+    }
+  },
+  {
+    "university": "부산대학교",
+    "campus": "부산",
+    "department": "디자인학과(애니메이션전공)",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 6,
+      "ratio": "1단계(5배수) 학생부교과 100%, 2단계 학생부교과 40% + 실기 60%",
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "is_staged": true,
+      "stages": [
+        {
+          "stage": 1,
+          "school_record_pct": 100,
+          "practical_pct": 0,
+          "multiplier": 5,
+          "stage_result_date": "2026-10-16"
+        },
+        {
+          "stage": 2,
+          "school_record_pct": 40,
+          "practical_pct": 60
+        }
+      ],
+      "csat_minimum_required": true,
+      "csat_minimum_criterion": "국어, 수학, 영어, 사/과탐 4개 영역 중 3개 영역 이상 응시, 상위 2개 합 10 이내, 한국사 4등급 이내(탐구 상위 1과목)",
+      "school_record_status": "required",
+      "exam_type_name": "전공적성 실기평가(상황표현/칸만화 택1)",
+      "allowed_materials": [
+        "수채화 물감",
+        "포스터칼라",
+        "색연필",
+        "마카류",
+        "연필 등"
+      ],
+      "paper_size": "4절 켄트지 (394mm x 545mm)",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-10-21",
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 90,
+          "8": 60,
+          "9": 0
+        },
+        "formula_note": "반영교과(국어, 수학, 영어, 사회, 과학, 한국사) 석차등급을 등급점수로 환산(1~6등급 100~95, 7등급 90, 8등급 60, 9등급 0)하여 이수단위 가중평균 산출(모집요강 p.60). 졸업예정자 3학년 1학기까지, 졸업자 3학년 2학기까지 반영. 전형별 교과배점(미술학과 20%, 조형학과/디자인학과 40%)을 곱하여 최종 교과 성적 산출.",
+        "rule_source_page": "60"
+      },
+      "source_url": "https://go.pusan.ac.kr",
+      "source_page": 50,
+      "source_page_note": "모집인원: p.50, 전형방법: p.52, 최저학력기준: p.53, 일정: p.54/p.67, 실기방법: p.73, 학생부: p.60.",
+      "data_sources": [
+        {
+          "document_name": "부산대학교 2027학년도 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_pusan_susi.pdf",
+          "pdf_sha256": "9dad1ad962e1133d92ee69ca5dc506bd68b58b2d8f7c486ddbd233a2aa5ab3d5"
+        }
+      ]
+    }
+  },
+  {
+    "university": "부산대학교",
+    "campus": "부산",
+    "department": "디자인학과(애니메이션전공)",
+    "track_name": "농어촌학생전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "ratio": "1단계(5배수) 학생부교과 100%, 2단계 학생부교과 40% + 실기 60%",
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "is_staged": true,
+      "stages": [
+        {
+          "stage": 1,
+          "school_record_pct": 100,
+          "practical_pct": 0,
+          "multiplier": 5,
+          "stage_result_date": "2026-10-16"
+        },
+        {
+          "stage": 2,
+          "school_record_pct": 40,
+          "practical_pct": 60
+        }
+      ],
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "전공적성 실기평가(상황표현/칸만화 택1)",
+      "allowed_materials": [
+        "수채화 물감",
+        "포스터칼라",
+        "색연필",
+        "마카류",
+        "연필 등"
+      ],
+      "paper_size": "4절 켄트지 (394mm x 545mm)",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-10-21",
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 90,
+          "8": 60,
+          "9": 0
+        },
+        "formula_note": "반영교과(국어, 수학, 영어, 사회, 과학, 한국사) 석차등급을 등급점수로 환산(1~6등급 100~95, 7등급 90, 8등급 60, 9등급 0)하여 이수단위 가중평균 산출(모집요강 p.60). 졸업예정자 3학년 1학기까지, 졸업자 3학년 2학기까지 반영. 전형별 교과배점(미술학과 20%, 조형학과/디자인학과 40%)을 곱하여 최종 교과 성적 산출.",
+        "rule_source_page": "60"
+      },
+      "source_url": "https://go.pusan.ac.kr",
+      "source_page": 50,
+      "source_page_note": "모집인원: p.50, 전형방법: p.52, 일정: p.54/p.67, 실기방법: p.73, 학생부: p.60.",
+      "data_sources": [
+        {
+          "document_name": "부산대학교 2027학년도 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_pusan_susi.pdf",
+          "pdf_sha256": "9dad1ad962e1133d92ee69ca5dc506bd68b58b2d8f7c486ddbd233a2aa5ab3d5"
+        }
+      ]
+    }
+  },
+  {
+    "university": "부산대학교",
+    "campus": "부산",
+    "department": "디자인학과(애니메이션전공)",
+    "track_name": "저소득층학생전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "ratio": "1단계(5배수) 학생부교과 100%, 2단계 학생부교과 40% + 실기 60%",
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "is_staged": true,
+      "stages": [
+        {
+          "stage": 1,
+          "school_record_pct": 100,
+          "practical_pct": 0,
+          "multiplier": 5,
+          "stage_result_date": "2026-10-16"
+        },
+        {
+          "stage": 2,
+          "school_record_pct": 40,
+          "practical_pct": 60
+        }
+      ],
+      "csat_minimum_required": false,
+      "school_record_status": "required",
+      "exam_type_name": "전공적성 실기평가(상황표현/칸만화 택1)",
+      "allowed_materials": [
+        "수채화 물감",
+        "포스터칼라",
+        "색연필",
+        "마카류",
+        "연필 등"
+      ],
+      "paper_size": "4절 켄트지 (394mm x 545mm)",
+      "time_limit_minutes": 240,
+      "exam_date": "2026-10-21",
+      "result_date": "2026-12-18",
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "school_record_rule": {
+        "mode": "simple_weighted_average",
+        "credit_weighted": true,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 97,
+          "5": 96,
+          "6": 95,
+          "7": 90,
+          "8": 60,
+          "9": 0
+        },
+        "formula_note": "반영교과(국어, 수학, 영어, 사회, 과학, 한국사) 석차등급을 등급점수로 환산(1~6등급 100~95, 7등급 90, 8등급 60, 9등급 0)하여 이수단위 가중평균 산출(모집요강 p.60). 졸업예정자 3학년 1학기까지, 졸업자 3학년 2학기까지 반영. 전형별 교과배점(미술학과 20%, 조형학과/디자인학과 40%)을 곱하여 최종 교과 성적 산출.",
+        "rule_source_page": "60"
+      },
+      "source_url": "https://go.pusan.ac.kr",
+      "source_page": 50,
+      "source_page_note": "모집인원: p.50, 전형방법: p.52, 일정: p.54/p.67, 실기방법: p.73, 학생부: p.60.",
+      "data_sources": [
+        {
+          "document_name": "부산대학교 2027학년도 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_pusan_susi.pdf",
+          "pdf_sha256": "9dad1ad962e1133d92ee69ca5dc506bd68b58b2d8f7c486ddbd233a2aa5ab3d5"
+        }
+      ]
+    }
+  }
+]
