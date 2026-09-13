@@ -850,39 +850,35 @@ function renderRecommendResults() {
     section.querySelectorAll(":scope > div").forEach(applyGlobalDetailModeToCard);
   });
 
-  // "검색조건"의 실기 종목 칩 - 대학찾기(profile.html)와 완전히 같은 /prep-topics
-  // 목록을 그대로 쓴다(하드코딩한 별도 7개 목록이 아니라, 그래프에 실제 등장하는
-  // 실기종목 키워드를 그대로 재사용 - 대학이 추가돼도 코드 수정 없이 자동 반영).
-  // 선택된 종목이 있으면 "내신 성적 기반 대학 추천" 결과 82건을 한 번 더 걸러낸다.
+  // "검색조건"의 실기 종목 칩 - 대학찾기(profile.html)·대학지도(kg.html)와
+  // 완전히 같은 /prep-topics 목록을 그대로 쓴다. 예전엔 여기 7개만 하드코딩돼
+  // 있어서(그리고 매칭도 자체 로직을 써서) "소묘" 선택 시 대학찾기·대학지도와
+  // 다른 건수가 나오는 문제가 있었다(사용자 발견 - 대학지도 15개 대학/대학찾기
+  // 22건인데 여긴 9건). 이제 목록도 매칭도 서버(services/art_admission_service.py의
+  // _topic_keyword_matches)와 완전히 동일하게 맞춘다.
   let selectedTopicFilters = new Set();
 
-  // 서버 search_tracks_by_prep()과 동일한 매칭 규칙을 클라이언트에서 그대로
-  // 재현한다: exam_type_name에서 한글 연속 구간([가-힣]{2,})을 통째로 하나의
-  // 토큰으로 뽑는다(부분일치 아님) - 그래서 "수채화"를 선택해도 "인체수채화"
-  // 전형이 잘못 걸리지 않는다(이번 세션에서 실제로 겪었던 부분일치 오탐 버그와
-  // 같은 함정을 여기서도 피해야 한다).
-  function examKeywordTokens(examTypeName) {
-    return new Set((examTypeName || "").match(/[가-힣]{2,}/g) || []);
+  // 서버 _topic_keyword_matches()와 동일한 부분일치 규칙 - 한예종처럼
+  // exam_type_name이 "1차: 사실적 소묘"인 경우나 "인물소묘"처럼 붙어있는 경우도
+  // "소묘"에 포함되도록 정확한 토큰 일치가 아니라 부분일치(공백 흡수)로 검사한다.
+  function topicKeywordMatches(topic, examTypeName) {
+    if (!topic || !examTypeName) return false;
+    const pattern = new RegExp(Array.from(topic).map(ch => ch.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("\\s*"));
+    return pattern.test(examTypeName);
   }
 
-  // profile.html(대학찾기) 01단계와 정확히 같은 7개 "큰 주제" 선택지 - /prep-topics의
-  // 원시 키워드 전체(45개+, 학교별 세부 표기 포함)가 아니라 profile.html이 쓰는
-  // 것과 동일한 큐레이션된 값·라벨 쌍을 그대로 맞춘다(사용자가 "대학찾기에서
-  // 선택가능한 7가지 영역"이라고 명시했으므로 - 두 화면에서 같은 이름의 필터가
-  // 서로 다른 목록을 가리키면 혼란을 준다).
-  const RECOMMEND_TOPIC_OPTIONS = [
-    { value: "기초디자인", label: "기초디자인" },
-    { value: "소묘", label: "소묘" },
-    { value: "수채화", label: "수채화" },
-    { value: "인체수채화", label: "인체수채화" },
-    { value: "수묵담채화", label: "한국화 (수묵담채화)" },
-    { value: "자유표현", label: "자유표현" },
-    { value: "입체적", label: "입체/조형" },
-  ];
   const topicChipContainer = document.getElementById("topicFilterChips");
-  topicChipContainer.innerHTML = RECOMMEND_TOPIC_OPTIONS.map(o => `
-    <button type="button" class="topic-filter-chip px-unit-xs h-9 rounded border border-outline-variant bg-surface-container-lowest text-on-surface-variant font-label-sm text-label-sm" data-topic="${o.value}">${o.label}</button>
-  `).join("");
+  topicChipContainer.innerHTML = `<span class="font-body-sm text-body-sm text-on-surface-variant">불러오는 중...</span>`;
+  fetch(window.API_BASE_URL + "/prep-topics").then(r => r.json()).then(topics => {
+    topicChipContainer.innerHTML = topics.map(t => `
+      <button type="button" class="topic-filter-chip px-unit-xs h-9 rounded border border-outline-variant bg-surface-container-lowest text-on-surface-variant font-label-sm text-label-sm" data-topic="${t}">${t}</button>
+    `).join("");
+    bindTopicFilterChips();
+  }).catch(() => {
+    topicChipContainer.innerHTML = `<span class="font-body-sm text-body-sm text-error">실기 종목 목록을 불러오지 못했습니다.</span>`;
+  });
+
+  function bindTopicFilterChips() {
   topicChipContainer.querySelectorAll(".topic-filter-chip").forEach(btn => {
     btn.addEventListener("click", () => {
       const topic = btn.dataset.topic;
@@ -896,6 +892,7 @@ function renderRecommendResults() {
       applyControlsAndRender();
     });
   });
+  } // bindTopicFilterChips
 
   // 학교장추천·농어촌학생·특수교육대상자 등 "특별전형 종류" 칩 - 실기종목 칩과
   // 같은 패턴이지만 축이 다르다(실기종목은 시험 내용, 이건 지원자격/전형명).
@@ -948,8 +945,7 @@ function renderRecommendResults() {
     if (academicRecordOnly) list = list.filter(r => r.is_academic_record);
     if (selectedTopicFilters.size > 0) {
       list = list.filter(r => {
-        const tokens = examKeywordTokens(r.exam_type_name);
-        for (const topic of selectedTopicFilters) { if (tokens.has(topic)) return true; }
+        for (const topic of selectedTopicFilters) { if (topicKeywordMatches(topic, r.exam_type_name)) return true; }
         return false;
       });
     }

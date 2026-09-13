@@ -2229,48 +2229,66 @@ class ArtAdmissionService:
 
         return context_tracks, context_estimates
 
-    def vector_search(self, query: str, top_k: int = 5) -> List[Dict[str, Any]]:
+    def vector_search(self, query: str, top_k: int = 5, universities: Optional[List[str]] = None) -> List[Dict[str, Any]]:
         """PDF 원문 청크(Admission_TextChunk)에 대한 순수 벡터 유사도 검색. hybrid_search가
-        기본값이지만, 벡터 인덱스만 단독으로 확인하고 싶을 때 쓴다."""
+        기본값이지만, 벡터 인덱스만 단독으로 확인하고 싶을 때 쓴다.
+        universities를 주면 그 대학 청크로만 좁혀서(post-filter) 순위를 매긴다."""
         from services.art_admission_llm import embed_text
         query_vec = embed_text(query)
+        # 벡터 인덱스 자체는 사전 필터링을 지원하지 않으므로, 대학으로 좁힐 때는
+        # 후보 풀을 훨씬 크게 뽑은 뒤 Cypher WHERE로 걸러낸다.
+        pool = max(top_k, 200) if universities else top_k
         with self.driver.session(default_access_mode=READ_ACCESS) as s:
             rows = s.run("""
-                CALL db.index.vector.queryNodes('admission_chunk_embedding', $top_k, $vec)
+                CALL db.index.vector.queryNodes('admission_chunk_embedding', $pool, $vec)
                 YIELD node, score
+                WHERE $universities IS NULL OR node.university IN $universities
                 RETURN node.university AS university, node.chunk_index AS chunk_index, node.text AS text,
                        node.page_start AS page_start, node.page_end AS page_end,
                        node.admission_year AS admission_year, node.source_file AS source_file,
                        score
                 ORDER BY score DESC
-            """, top_k=top_k, vec=query_vec).data()
+                LIMIT $top_k
+            """, pool=pool, top_k=top_k, vec=query_vec, universities=universities).data()
         return rows
 
     def hybrid_search(self, query: str, top_k: int = 5, candidate_pool: int = 15,
-                       rerank_model_id: str = "gpt-4o-mini") -> List[Dict[str, Any]]:
+                       rerank_model_id: str = "gpt-4o-mini",
+                       universities: Optional[List[str]] = None) -> List[Dict[str, Any]]:
         """벡터 유사도 검색 + 키워드(풀텍스트) 검색을 합쳐서 후보를 늘리고(재현율↑),
         LLM 재순위화로 정말 관련 있는 것만 추려낸다(정확도↑). 벡터 단독은 뜻은 비슷한데
         핵심 고유명사/숫자가 다른 문장을 헷갈릴 수 있고, 키워드 단독은 표현이 다르면
-        놓치므로 둘을 합친다."""
+        놓치므로 둘을 합친다.
+
+        2026-09-13: universities(질의에서 인식된 학교명)를 주면 그 대학 청크로만
+        좁힌다 - 예전엔 52개교 청크 전체를 놓고 유사도 순위를 매겨서, 질문에
+        학교명이 명시돼 있어도 다른 학교의 비슷한 문구가 점수를 더 높게 받아
+        정작 그 학교 내용이 밀려나는 문제가 있었다(사용자 발견 - 세종대 청크가
+        DB에 있는데도 세종대 질문 결과에 하나도 안 잡힘). 학교가 특정되면 후보
+        풀도 그 대학 것만으로 채우도록 훨씬 크게 뽑는다."""
         from services.art_admission_llm import embed_text, rerank_chunks, cross_encoder_rerank
         query_vec = embed_text(query)
+        pool = max(candidate_pool, 300) if universities else candidate_pool
 
         with self.driver.session(default_access_mode=READ_ACCESS) as s:
             vec_rows = s.run("""
                 CALL db.index.vector.queryNodes('admission_chunk_embedding', $pool, $vec)
                 YIELD node, score
+                WHERE $universities IS NULL OR node.university IN $universities
                 RETURN node.university AS university, node.chunk_index AS chunk_index, node.text AS text,
                        node.page_start AS page_start, node.page_end AS page_end,
                        node.admission_year AS admission_year, score AS vec_score
-            """, pool=candidate_pool, vec=query_vec).data()
+                LIMIT $candidate_pool
+            """, pool=pool, candidate_pool=candidate_pool, vec=query_vec, universities=universities).data()
 
             kw_rows = s.run("""
                 CALL db.index.fulltext.queryNodes('admission_chunk_fulltext', $q) YIELD node, score
+                WHERE $universities IS NULL OR node.university IN $universities
                 RETURN node.university AS university, node.chunk_index AS chunk_index, node.text AS text,
                        node.page_start AS page_start, node.page_end AS page_end,
                        node.admission_year AS admission_year, score AS kw_score
                 LIMIT $pool
-            """, q=query, pool=candidate_pool).data()
+            """, q=query, pool=candidate_pool, universities=universities).data()
 
         max_vec = max((r["vec_score"] for r in vec_rows), default=1.0) or 1.0
         max_kw = max((r["kw_score"] for r in kw_rows), default=1.0) or 1.0

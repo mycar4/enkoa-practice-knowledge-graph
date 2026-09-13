@@ -177,11 +177,13 @@ def run_qa_pipeline(svc, query: str, model_id: str = AGENT_MODEL) -> Dict[str, A
     쓴다 - LLM이 "어떤 도구를 쓸지" 고민할 필요 자체가 없어서 더 빠르고 저렴하고,
     도구 선택 실수(이번 세션의 get_university_info 누락 버그류)가 원천적으로 안 생긴다."""
     context_tracks, context_estimates = svc.build_llm_context(query)
+    anchor_names = [t["university"] for t in context_tracks]
     try:
-        context_raw = svc.hybrid_search(query, top_k=5)
+        # 질의에서 학교가 인식됐으면(anchor_names) 그 학교 청크로만 검색을 좁힌다 -
+        # 그렇지 않으면 52개교 전체를 놓고 순위를 매겨서 다른 학교 내용에 밀려날 수 있다.
+        context_raw = svc.hybrid_search(query, top_k=5, universities=sorted(set(anchor_names)) or None)
     except Exception:
         context_raw = []
-    anchor_names = [t["university"] for t in context_tracks]
     exclude_names = anchor_names + [t["department"] for t in context_tracks]
     try:
         context_graph_related = svc.get_graph_related_context(
