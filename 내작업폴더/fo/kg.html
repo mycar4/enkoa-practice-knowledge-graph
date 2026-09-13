@@ -188,8 +188,11 @@ function renderGraph(graphData) {
   }));
   const edges = new vis.DataSet(graphData.edges.map(e => ({ ...e, color: { color: "#c9c6c5" } })));
 
+  // 이 카운트는 캠퍼스가 다르면(중앙대 서울/다빈치 등) 별개 노드로 세므로,
+  // 홈 화면의 "고유 대학명" 기준 개수(예: 54개)와 다를 수 있다 - 버그가 아니라
+  // 셀 기준 차이라는 걸 문구로 명시한다(사용자 문의로 확인된 혼동 포인트).
   document.getElementById("kgTrackCount").textContent =
-    `대학 ${graphData.nodes.filter(n => n.group === "university").length}개 · 학과 ${graphData.nodes.filter(n => n.group === "department").length}개 · 전형 ${graphData.nodes.filter(n => n.group === "track").length}개`;
+    `대학 ${graphData.nodes.filter(n => n.group === "university").length}개(캠퍼스구분) · 학과 ${graphData.nodes.filter(n => n.group === "department").length}개 · 전형 ${graphData.nodes.filter(n => n.group === "track").length}개`;
 
   if (kgNetworkInstance) kgNetworkInstance.destroy();
   kgNetworkInstance = new vis.Network(container, { nodes, edges }, {
