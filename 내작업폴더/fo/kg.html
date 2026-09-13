@@ -240,14 +240,10 @@ function loadGraph(body) {
       return;
     }
     kgFullGraph = graphData;
-    // 대학 전체(university=null)나 실기종목별 보기를 한 번에 볼 때는 전형까지
-    // 다 펼치면 너무 빽빽해서 아무것도 안 보이므로 기본값을 "학과까지"로
-    // 낮춘다. 사용자가 직접 "전형까지"를 눌러 더 자세히 볼 수는 있다.
-    if (!body.university) {
-      const trackRadio = document.querySelector('input[name="kgDepth"][value="track"]');
-      const deptRadio = document.querySelector('input[name="kgDepth"][value="department"]');
-      if (trackRadio.checked) deptRadio.checked = true;
-    }
+    // 예전엔 대학 전체를 한 번에 볼 때 "학과까지"로 자동으로 낮췄었는데,
+    // 최초 접속 시 "전형까지"가 선택된 채로 보이길 원한다는 사용자 요청으로
+    // 이 자동 다운그레이드를 없앴다 - "보기 범위"는 항상 사용자가 고른 값
+    // 그대로 유지된다.
     applyDepthAndRender();
   }).catch(() => {
     errEl.textContent = "지도를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.";
