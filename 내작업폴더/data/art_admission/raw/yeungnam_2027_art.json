@@ -1,0 +1,222 @@
+[
+  {
+    "university": "영남대학교",
+    "campus": "경산",
+    "department": "회화과",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 40,
+      "ratio": "일괄합산: 학생부 240점(30%) + 실기 560점(70%) = 800점(100%)",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-21",
+      "result_date": "2026-11-17",
+      "exam_type_name": "택1(채묵화/수채화/소묘)",
+      "allowed_materials": [
+        "채묵화: 물감, 붓, 벼루, 먹, 연필, 물통, 접시, 압정 (배접화선지 2절)",
+        "수채화: 물감, 붓, 연필, 물통, 팔레트, 압정 (인체 켄트지 2절 / 정물 켄트지 3절)",
+        "소묘: 연필, 지우개, 압정 (정물 켄트지 3절)",
+        "바닥의 천은 반드시 그려야 함, 고사 당일 화지의 방향을 결정"
+      ],
+      "paper_size": "채묵화 배접화선지 2절 / 수채화 인체켄트지2절·정물켄트지3절 / 소묘 켄트지3절",
+      "time_limit_minutes": 300,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 30,
+      "practical_ratio_pct": 70,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://file.megastudy.net/FileServer/UNI_HWP/non_file/27susi/X27C08021.pdf",
+      "source_page": 37,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/영남대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c81a48989a4504d1b153bf7f1c21bec729fc7bdff859f94dc6059512b56f535a"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부 240점(30%)+실기 560점(70%)=800점(100%) 일괄합산(p.35). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리). 이 PDF는 텍스트 레이어가 없는 이미지 PDF라 각 페이지를 렌더링하여 시각적으로 확인함.",
+      "source_page_note": "모집인원 p.17(예술계열 회화과 40명), 전형방법·반영비율 p.35, 실기고사 과목·배점표 p.37, 전형일정 p.15."
+    }
+  },
+  {
+    "university": "영남대학교",
+    "campus": "경산",
+    "department": "트랜스아트과",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 38,
+      "ratio": "일괄합산: 학생부 240점(30%) + 실기 560점(70%) = 800점(100%)",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-22",
+      "result_date": "2026-11-17",
+      "exam_type_name": "택1(인체두상소조/기초디자인/사진포트폴리오심사및구술고사/영상포트폴리오심사및구술고사)",
+      "allowed_materials": [
+        "인체두상소조: 소조용 흙칼 및 소조도구",
+        "기초디자인: 드로잉채색도구 (켄트지 4절, 입체적 첨가 형식 재료 불허)",
+        "사진포트폴리오: 자작사진 8x10인치 또는 A4크기 10장(필름사진/디지털사진 중 택1) + 요약본, 구술고사(작품 진위 확인 서약서 작성)",
+        "영상포트폴리오: 3분 이내 자작비디오(USB) + 요약본, 구술고사(작품 진위 확인 서약서 작성)"
+      ],
+      "paper_size": "기초디자인 켄트지4절 / 인체두상소조·포트폴리오는 규격 없음(별표2 참조)",
+      "time_limit_minutes": null,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 30,
+      "practical_ratio_pct": 70,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://file.megastudy.net/FileServer/UNI_HWP/non_file/27susi/X27C08021.pdf",
+      "source_page": 37,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/영남대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c81a48989a4504d1b153bf7f1c21bec729fc7bdff859f94dc6059512b56f535a"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부 240점(30%)+실기 560점(70%)=800점(100%) 일괄합산(p.35). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리). 실기 4과목 중 택1(소요시간이 과목별로 상이해 time_limit_minutes는 미기재).",
+      "source_page_note": "모집인원 p.17(예술계열 트랜스아트과 38명, 별표2: 인체두상소조10/기초디자인18/사진영상포트폴리오10), 전형방법·반영비율 p.35, 실기고사 과목·배점표 p.37, 전형일정 p.15."
+    }
+  },
+  {
+    "university": "영남대학교",
+    "campus": "경산",
+    "department": "시각디자인학과",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 56,
+      "ratio": "일괄합산: 학생부 240점(30%) + 실기 560점(70%) = 800점(100%)",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-22~23",
+      "result_date": "2026-11-17",
+      "exam_type_name": "택1(기초디자인/상황표현/기초소양평가)",
+      "allowed_materials": [
+        "기초디자인: 드로잉 채색 도구 (켄트지 4절, 입체적 첨가 형식 재료 불허)",
+        "상황표현: 드로잉 채색 도구 (켄트지 4절, 인물 형태를 지나치게 과장·왜곡하지 않고 사실적으로 표현)",
+        "기초소양평가: 재료는 본교 제공(색연필, 볼펜, 플러스펜, 4B/2B연필 등 중 선택 제공, 켄트지 4절)"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": null,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 30,
+      "practical_ratio_pct": 70,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://file.megastudy.net/FileServer/UNI_HWP/non_file/27susi/X27C08021.pdf",
+      "source_page": 37,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/영남대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c81a48989a4504d1b153bf7f1c21bec729fc7bdff859f94dc6059512b56f535a"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부 240점(30%)+실기 560점(70%)=800점(100%) 일괄합산(p.35). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리). 기초소양평가는 10.22, 기초디자인·상황표현은 10.23 시행(p.15 실기고사 세부일정)이라 exam_date를 범위로 기재.",
+      "source_page_note": "모집인원 p.17(예술계열 시각디자인학과 56명), 전형방법·반영비율 p.35, 실기고사 과목·배점표 p.37, 실기고사 세부일정 p.15."
+    }
+  },
+  {
+    "university": "영남대학교",
+    "campus": "경산",
+    "department": "산업디자인학과",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 46,
+      "ratio": "일괄합산: 학생부 240점(30%) + 실기 560점(70%) = 800점(100%)",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-22",
+      "result_date": "2026-11-17",
+      "exam_type_name": "택1(기초디자인/기초소양평가)",
+      "allowed_materials": [
+        "기초디자인: 드로잉 채색 도구 (켄트지 4절, 입체적 첨가 형식 재료 불허)",
+        "기초소양평가: 재료는 본교 제공(색연필, 볼펜, 플러스펜, 4B/2B연필 등 중 선택 제공, 켄트지 4절)"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": null,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 30,
+      "practical_ratio_pct": 70,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://file.megastudy.net/FileServer/UNI_HWP/non_file/27susi/X27C08021.pdf",
+      "source_page": 38,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/영남대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c81a48989a4504d1b153bf7f1c21bec729fc7bdff859f94dc6059512b56f535a"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부 240점(30%)+실기 560점(70%)=800점(100%) 일괄합산(p.35). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원 p.17(예술계열 산업디자인학과 46명), 전형방법·반영비율 p.35, 실기고사 과목·배점표 p.38, 전형일정 p.15."
+    }
+  },
+  {
+    "university": "영남대학교",
+    "campus": "경산",
+    "department": "생활제품디자인학과",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 40,
+      "ratio": "일괄합산: 학생부 240점(30%) + 실기 560점(70%) = 800점(100%)",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-22",
+      "result_date": "2026-11-17",
+      "exam_type_name": "택1(기초디자인/기초소양평가)",
+      "allowed_materials": [
+        "기초디자인: 드로잉 채색 도구 (켄트지 4절, 입체적 첨가 형식 재료 불허)",
+        "기초소양평가: 재료는 본교 제공(색연필, 볼펜, 플러스펜, 4B/2B연필 등 중 선택 제공, 켄트지 4절)"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": null,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 30,
+      "practical_ratio_pct": 70,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://file.megastudy.net/FileServer/UNI_HWP/non_file/27susi/X27C08021.pdf",
+      "source_page": 38,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/영남대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c81a48989a4504d1b153bf7f1c21bec729fc7bdff859f94dc6059512b56f535a"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부 240점(30%)+실기 560점(70%)=800점(100%) 일괄합산(p.35). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원 p.17(예술계열 생활제품디자인학과 40명), 전형방법·반영비율 p.35, 실기고사 과목·배점표 p.38, 전형일정 p.15."
+    }
+  }
+]

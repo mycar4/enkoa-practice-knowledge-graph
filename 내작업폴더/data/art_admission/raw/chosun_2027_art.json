@@ -1,0 +1,262 @@
+[
+  {
+    "university": "조선대학교",
+    "campus": "광주",
+    "department": "미술학부",
+    "track_name": "실기전형(서양화전공)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 18,
+      "ratio": "일괄합산: 학생부(공통·일반선택 32%+진로선택 8%) 40% + 실기 60%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-24",
+      "result_date": "2026-12-18",
+      "exam_type_name": "택1(인물수채화/정물자유표현/기초디자인)",
+      "allowed_materials": [
+        "이젤, 화판(학교 제공)",
+        "수채화물감, 연필, 붓, 물통 등(인물수채화, 개인 지참)",
+        "연필, 파스텔, 콘테 등 자유(정물자유표현)",
+        "수채화물감, 포스터칼라, 파스텔, 마카, 색연필, 연필, 붓, 물통 등(기초디자인)"
+      ],
+      "paper_size": "켄트지 2절(인물수채화)/켄트지 3절(정물자유표현)/켄트지 4절(기초디자인)",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://file.megastudy.net/FileServer/UNI_HWP/non_file/27susi/X27C07017.pdf",
+      "source_page": 59,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/조선대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "7ac71a86fa59f57725e9a8ffcc5f939e28c0d9e5959ebca12329a9718ed30fb7"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부 400점(공통·일반선택32%+진로선택8%) + 실기 600점(60%) = 1,000점(최저875점) 일괄합산(p.59). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원·전형방법 p.59, 실기고사 종목·재료 상세 p.61, 전형일정 p.8."
+    }
+  },
+  {
+    "university": "조선대학교",
+    "campus": "광주",
+    "department": "미술학부",
+    "track_name": "실기전형(한국화전공)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 13,
+      "ratio": "일괄합산: 학생부(공통·일반선택 32%+진로선택 8%) 40% + 실기 60%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-24",
+      "result_date": "2026-12-18",
+      "exam_type_name": "택1(정물수묵담채/정물자유표현/기초디자인)",
+      "allowed_materials": [
+        "책상(학교 제공)",
+        "수묵화용구, 물감, 연필, 붓, 물통, 접시 등(정물수묵담채, 개인 지참)",
+        "연필, 파스텔, 콘테 등 자유(정물자유표현)",
+        "수채화물감, 포스터칼라, 파스텔, 마카, 색연필, 연필, 붓, 물통 등(기초디자인)"
+      ],
+      "paper_size": "화선지 1/2절(정물수묵담채)/켄트지 3절(정물자유표현)/켄트지 4절(기초디자인)",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://file.megastudy.net/FileServer/UNI_HWP/non_file/27susi/X27C07017.pdf",
+      "source_page": 59,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/조선대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "7ac71a86fa59f57725e9a8ffcc5f939e28c0d9e5959ebca12329a9718ed30fb7"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부 400점(공통·일반선택32%+진로선택8%) + 실기 600점(60%) = 1,000점(최저875점) 일괄합산(p.59). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원·전형방법 p.59, 실기고사 종목·재료 상세 p.61, 전형일정 p.8."
+    }
+  },
+  {
+    "university": "조선대학교",
+    "campus": "광주",
+    "department": "문화콘텐츠학부",
+    "track_name": "실기전형(현대조형미디어전공·가구도자디자인전공)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 39,
+      "ratio": "일괄합산: 학생부(공통·일반선택 32%+진로선택 8%) 40% + 실기 60%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-24",
+      "result_date": "2026-12-18",
+      "exam_type_name": "택1(인물소조/발상과표현/기초디자인)",
+      "allowed_materials": [
+        "점토, 작업대, 심봉, 돌림판(학교 제공)",
+        "조소 도구, 부목, 노끈, 분무기, 거치대(인물소조, 개인 지참)",
+        "수채화물감, 포스터칼라, 파스텔, 마카, 색연필, 연필, 붓, 물통 등(발상과표현/기초디자인)"
+      ],
+      "paper_size": "해당 없음(인물소조) / 켄트지 4절(발상과표현/기초디자인)",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://file.megastudy.net/FileServer/UNI_HWP/non_file/27susi/X27C07017.pdf",
+      "source_page": 59,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/조선대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "7ac71a86fa59f57725e9a8ffcc5f939e28c0d9e5959ebca12329a9718ed30fb7"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부 400점(공통·일반선택32%+진로선택8%) + 실기 600점(60%) = 1,000점(최저875점) 일괄합산(p.59). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리). 문화콘텐츠학부는 현대조형미디어전공/가구도자디자인전공을 묶은 39명 광역 모집단위(원문에 세부 전공별 인원 분리 없음).",
+      "source_page_note": "모집인원·전형방법 p.59, 실기고사 종목·재료 상세 p.61-62, 전형일정 p.8."
+    }
+  },
+  {
+    "university": "조선대학교",
+    "campus": "광주",
+    "department": "라이프스타일디자인학부",
+    "track_name": "실기전형(실내디자인전공)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 16,
+      "ratio": "일괄합산: 학생부(공통·일반선택 32%+진로선택 8%) 40% + 실기 60%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-24",
+      "result_date": "2026-12-18",
+      "exam_type_name": "택1(발상과표현/기초디자인)",
+      "allowed_materials": [
+        "수채화물감, 포스터칼라, 파스텔, 마카, 색연필, 연필, 붓, 물통 등"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://file.megastudy.net/FileServer/UNI_HWP/non_file/27susi/X27C07017.pdf",
+      "source_page": 59,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/조선대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "7ac71a86fa59f57725e9a8ffcc5f939e28c0d9e5959ebca12329a9718ed30fb7"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부 400점(공통·일반선택32%+진로선택8%) + 실기 600점(60%) = 1,000점(최저875점) 일괄합산(p.59). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원·전형방법 p.59, 실기고사 종목·재료 상세 p.61, 전형일정 p.8."
+    }
+  },
+  {
+    "university": "조선대학교",
+    "campus": "광주",
+    "department": "디자인공학과",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 32,
+      "ratio": "일괄합산: 학생부(공통·일반선택 32%+진로선택 8%) 40% + 실기 60%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-24",
+      "result_date": "2026-12-18",
+      "exam_type_name": "택1(발상과표현/기초디자인)",
+      "allowed_materials": [
+        "수채화물감, 포스터칼라, 파스텔, 마카, 색연필, 연필, 붓, 물통 등"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://file.megastudy.net/FileServer/UNI_HWP/non_file/27susi/X27C07017.pdf",
+      "source_page": 59,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/조선대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "7ac71a86fa59f57725e9a8ffcc5f939e28c0d9e5959ebca12329a9718ed30fb7"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부 400점(공통·일반선택32%+진로선택8%) + 실기 600점(60%) = 1,000점(최저875점) 일괄합산(p.59). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원·전형방법 p.59, 실기고사 종목·재료 상세 p.61, 전형일정 p.8."
+    }
+  },
+  {
+    "university": "조선대학교",
+    "campus": "광주",
+    "department": "만화·애니메이션학과",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 36,
+      "ratio": "일괄합산: 학생부(공통·일반선택 32%+진로선택 8%) 40% + 실기 60%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-24",
+      "result_date": "2026-12-18",
+      "exam_type_name": "택1(칸만화(4칸 이상)/상황표현)",
+      "allowed_materials": [
+        "수채화물감, 포스터칼라, 아크릴칼라, 마카, 연필, 자, 붓, 물통 등"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://file.megastudy.net/FileServer/UNI_HWP/non_file/27susi/X27C07017.pdf",
+      "source_page": 59,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/조선대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "7ac71a86fa59f57725e9a8ffcc5f939e28c0d9e5959ebca12329a9718ed30fb7"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부 400점(공통·일반선택32%+진로선택8%) + 실기 600점(60%) = 1,000점(최저875점) 일괄합산(p.59). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원·전형방법 p.59, 실기고사 종목·재료 상세 p.61-62, 전형일정 p.8."
+    }
+  }
+]
