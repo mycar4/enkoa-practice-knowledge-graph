@@ -32,9 +32,11 @@ from pydantic import BaseModel
 BASE_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(BASE_DIR))
 
+import threading  # noqa: E402
+
 from services.art_admission_service import ArtAdmissionService, get_shared_service  # noqa: E402
 from services.art_admission_llm import (  # noqa: E402
-    review_document, chat_about_review, get_available_models, MODEL_PASSWORD,
+    review_document, chat_about_review, get_available_models, MODEL_PASSWORD, warm_up_reranker,
 )
 
 DEFAULT_MODEL = "gpt-4o-mini"  # 모델을 못 고르는 나머지 엔드포인트(질의응답 등)는 항상 이 모델
@@ -80,6 +82,18 @@ def get_service() -> ArtAdmissionService:
     # 호출하는 곳들은 더 이상 finally에서 svc.close()를 부르지 않는다 - 공유
     # 인스턴스를 매 요청마다 닫아버리면 다음 요청이 죽은 드라이버를 쓰게 된다.
     return get_shared_service()
+
+
+@app.on_event("startup")
+def _warm_up_on_startup():
+    # 2026-09-13: 배포 직후 서버가 막 재시작된 상태에서 실제 사용자가 던진 첫
+    # /qa 질문이 크로스인코더 리랭커 모델 로딩 비용(약 15초)을 그대로 떠안는
+    # 문제가 실측으로 확인됐다("세종대학교 수시 제출서류는 어떻게 제출해야
+    # 해?" 질문이 22초 걸림 - 1차 호출 17.5초 vs 같은 프로세스 2차 호출 3.2초).
+    # 배포 스크립트가 재시작 직후 /health로 헬스체크하므로 여기서 동기로
+    # 모델을 로딩하면 그 헬스체크가 늦어질 수 있어, 별도 스레드에서 백그라운드로
+    # 미리 로딩해둔다 - 첫 실제 사용자 질문이 도착할 즈음엔 이미 준비돼 있다.
+    threading.Thread(target=warm_up_reranker, daemon=True).start()
 
 
 @app.get("/health")

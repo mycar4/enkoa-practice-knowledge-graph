@@ -201,6 +201,20 @@ def _get_cross_encoder():
     return _cross_encoder
 
 
+def warm_up_reranker() -> None:
+    """서버 프로세스가 막 시작됐을 때(배포 직후) 실제 사용자의 첫 /qa 질문이
+    크로스인코더 모델 로딩 비용(약 15초)을 떠안는 문제가 있었다 - 배포 직후
+    질문한 사용자가 "왜 이렇게 오래 걸리지?"라고 느낀 원인이 이거였음(실측
+    확인: 1차 호출 17.5초 vs 같은 프로세스 내 2차 호출 3.2초). 서버 시작 시
+    미리 한 번 로딩해두면 실제 사용자는 이 비용을 겪지 않는다. 실패해도
+    조용히 넘어간다 - 어차피 cross_encoder_rerank가 실패 시 LLM 재순위화로
+    자동 폴백하므로 워밍업 실패가 서비스 장애로 이어지지 않는다."""
+    try:
+        _get_cross_encoder()
+    except Exception:
+        pass
+
+
 def cross_encoder_rerank(query: str, candidates: List[Dict[str, Any]], top_k: int = 5) -> Optional[List[Dict[str, Any]]]:
     """전용 크로스인코더 리랭커(day48). LLM에게 "몇 점이야?"라고 채팅으로 물어보던
     기존 rerank_chunks와 달리, 애초에 "질문-문서 쌍 관련도 점수"만 내도록 학습된

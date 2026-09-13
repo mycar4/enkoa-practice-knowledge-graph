@@ -36,7 +36,7 @@
 <section class="flex flex-col gap-unit-xs pt-unit-sm">
 <div class="flex items-center gap-unit-xs"><span class="inline-block w-2.5 h-2.5 bg-primary-container"></span><span class="font-label-sm text-label-sm text-primary uppercase tracking-wider">ART:READY</span></div>
 <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">미술입시 질문</h1>
-<p class="font-body-md text-body-md text-on-surface-variant">외부 지식이나 실시간 검색이 아니라, <strong>저희가 직접 원문 모집요강을 대조해 구축한 지식그래프(현재 27개 대학·82개 전형)</strong>를 근거로만 답변합니다. 그래프에 등록되지 않은 대학·학과는 답변할 수 없고, 데이터에 없는 숫자는 지어내지 않고 "확인하지 못했습니다"라고 답합니다. 아래 "에이전트가 실제로 호출한 도구"에서 어떤 데이터를 근거로 답했는지 직접 확인할 수 있습니다.</p>
+<p class="font-body-md text-body-md text-on-surface-variant">외부 지식이나 실시간 검색이 아니라, <strong>저희가 직접 원문 모집요강을 대조해 구축한 지식그래프(현재 <span id="qaGraphStats">불러오는 중...</span>)</strong>를 근거로만 답변합니다. 그래프에 등록되지 않은 대학·학과는 답변할 수 없고, 데이터에 없는 숫자는 지어내지 않고 "확인하지 못했습니다"라고 답합니다. 아래 "에이전트가 실제로 호출한 도구"에서 어떤 데이터를 근거로 답했는지 직접 확인할 수 있습니다.</p>
 </section>
 
 <div id="qaContextBanner" class="hidden flex items-start gap-unit-xs bg-primary-container/20 border border-primary/30 rounded-lg p-unit-sm">
@@ -93,6 +93,16 @@
 </script>
 
 <script>
+// 예전엔 "27개 대학·82개 전형"을 직접 문구에 박아뒀는데, 그 뒤로 60개교/292건까지
+// 늘어난 뒤에도 문구가 갱신되지 않아 낡은 정보를 보여주고 있었다(index.html/
+// grades.html 등에서 이미 겪었던 것과 같은 종류의 사고 - 여기도 실제 API 값으로
+// 채워서 데이터가 바뀌면 코드 수정 없이 항상 최신 상태를 스스로 반영하게 한다).
+fetch(window.API_BASE_URL + "/stats").then(r => r.json()).then(s => {
+  document.getElementById("qaGraphStats").textContent = `${s.university_count}개 대학·${s.track_count}개 전형`;
+}).catch(() => {
+  document.getElementById("qaGraphStats").textContent = "다수 대학·전형";
+});
+
 const askBtn = document.getElementById("ask-button");
 const queryInput = document.getElementById("ai-query");
 const thread = document.getElementById("threadContainer");

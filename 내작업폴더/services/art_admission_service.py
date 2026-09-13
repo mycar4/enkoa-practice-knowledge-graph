@@ -134,6 +134,46 @@ def _resolve_university_mentions(query: str, universities: List[str]) -> List[st
     return resolve_university_mentions_detailed(query, universities)["universities"]
 
 
+_NEGATION_MARKERS_RE = re.compile(r"^\s*(은|는|이|가)?\s*(말고|제외|빼고|아닌|아니고)")
+
+
+def resolve_university_mentions_with_negation(query: str, universities: List[str]) -> Dict[str, List[str]]:
+    """"한예종 말고 다른 대학" 같은 부정 표현을 인식한다. 예전엔 이 구분이 없어서
+    _resolve_university_mentions()가 "한예종"이 언급됐다는 사실만으로 그 학교를
+    anchor로 잡아버렸다 - build_llm_context가 그 학교 트랙으로만 컨텍스트를
+    좁혀서, LLM은 애초에 다른 학교를 볼 수조차 없는 상태로 "한예종" 얘기만
+    다시 하게 됐다(사용자가 "말고 다른 대학 찾아달라"고 했는데 한예종만
+    나온 버그로 발견). 언급된 학교 표현 바로 뒤에 부정 표현이 붙어 있으면
+    그 학교는 "included"가 아니라 "excluded"로 분류한다."""
+    surface_to_universities: Dict[str, set] = {}
+    for full_name in universities:
+        for form in _auto_short_forms(full_name):
+            surface_to_universities.setdefault(form, set()).add(full_name)
+    for alias, full_name in _UNIVERSITY_ALIASES.items():
+        if full_name in universities:
+            surface_to_universities.setdefault(alias, set()).add(full_name)
+
+    included: set = set()
+    excluded: set = set()
+    for surface, cand_universities in surface_to_universities.items():
+        if not surface:
+            continue
+        start = 0
+        while True:
+            idx = query.find(surface, start)
+            if idx == -1:
+                break
+            after = query[idx + len(surface):idx + len(surface) + 6]
+            target = excluded if _NEGATION_MARKERS_RE.match(after) else included
+            target |= cand_universities
+            start = idx + 1
+
+    # 같은 대학이 긍정형("동국대") + 부정형("한예종 말고") 둘 다로 언급된 경우
+    # 명시적으로 지목된 쪽(included)을 우선한다.
+    excluded -= included
+    return {"included": sorted(included), "excluded": sorted(excluded)}
+
+
 def _extract_dates(text: Optional[str]) -> List[str]:
     """자유텍스트 일정 필드(예: '1단계: 2025-09-27, 2단계: 2025-11-01')에서
     실제 ISO 날짜만 정규식으로 뽑아낸다 - 지어내지 않고 원문에 박힌 날짜 그대로."""
@@ -2170,8 +2210,16 @@ class ArtAdmissionService:
         LLM에게는 이 반환값만 사실로 주어지며, 그 밖의 어떤 것도 지어내지 못하게 한다."""
         tracks = self.list_all_tracks_full()
         universities = sorted({t["university"] for t in tracks})
-        mentioned = _resolve_university_mentions(query, universities)
-        subset = [t for t in tracks if t["university"] in mentioned] if mentioned else tracks
+        negation = resolve_university_mentions_with_negation(query, universities)
+        mentioned, excluded = negation["included"], negation["excluded"]
+        if mentioned:
+            subset = [t for t in tracks if t["university"] in mentioned]
+        elif excluded:
+            # "한예종 말고 다른 대학" - 언급된 학교를 anchor로 삼는 대신 제외하고,
+            # 나머지 전체를 컨텍스트로 준다(전체 대학 수가 적어 전량 전달 가능).
+            subset = [t for t in tracks if t["university"] not in excluded]
+        else:
+            subset = tracks
 
         # 질의 문장 자체에 등장하는 실기유형 키워드(예: "소묘")를 뽑아, 각 트랙의
         # exam_type_name과 실제로 겹치는지 미리 계산해 LLM에게 넘긴다. 이게 없으면
