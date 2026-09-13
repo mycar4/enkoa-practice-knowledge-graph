@@ -1,10 +1,12 @@
 name: Neo4j Aura Keepalive
 
-# Neo4j Aura 무료 티어는 일정 기간 쿼리가 없으면 인스턴스를 자동 일시정지한다.
-# 새 비밀값 없이(이미 배포된 API 서버가 실제 Neo4j 자격증명을 들고 있으므로)
-# 그 API의 실제 DB 조회 엔드포인트(/stats)를 하루 2번 호출해 살아있게 유지한다.
-# 실패해도 워크플로 자체를 실패시키지 않는다(디스코드/슬랙 알림 등은 아직 없음 -
-# 필요해지면 이 파일에 실패 알림 스텝을 추가).
+# Neo4j Aura 무료 티어는 일정 기간(약 3일) 쿼리가 없으면 인스턴스를 자동
+# 일시정지한다. art-admission은 이미 배포된 API 서버의 /stats 엔드포인트를
+# 호출해 깨워왔지만, DART-Trace는 상시 API 서버 없이 Streamlit으로만 도는
+# 구조라 이 방식으로 못 깨웠다(2026-09-14 DART-Trace를 무료 인스턴스로 이전
+# 하면서 발견) - DART-Trace용 Neo4j Aura(AURA_URI)에 직접 접속해서 가벼운
+# 쿼리 하나 날리는 스텝을 추가한다. 실패해도 워크플로 자체를 실패시키지
+# 않는다(디스코드/슬랙 알림 등은 아직 없음 - 필요해지면 이 파일에 추가).
 on:
   schedule:
     - cron: "0 1 * * *"   # 매일 10:00 KST
@@ -12,9 +14,36 @@ on:
   workflow_dispatch: {}
 
 jobs:
-  ping:
+  ping-art-admission:
     runs-on: ubuntu-latest
     steps:
-      - name: Hit /stats to keep Neo4j Aura warm
+      - name: Hit /stats to keep art-admission Neo4j Aura warm
         run: |
           curl -sf --max-time 30 https://api.unsuzone.com/art-admission/stats || echo "ping failed (non-fatal)"
+
+  ping-dart-trace:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install neo4j driver
+        run: pip install -q neo4j
+      - name: Query DART-Trace Neo4j Aura to keep it warm
+        env:
+          AURA_URI: ${{ secrets.AURA_URI }}
+          AURA_USER: ${{ secrets.AURA_USER }}
+          AURA_PASSWORD: ${{ secrets.AURA_PASSWORD }}
+        run: |
+          python -c "
+          import os
+          from neo4j import GraphDatabase
+          try:
+              driver = GraphDatabase.driver(os.environ['AURA_URI'], auth=(os.environ['AURA_USER'], os.environ['AURA_PASSWORD']))
+              with driver.session() as s:
+                  s.run('RETURN 1').consume()
+              driver.close()
+              print('DART-Trace Neo4j ping ok')
+          except Exception as e:
+              print(f'ping failed (non-fatal): {e}')
+          "
