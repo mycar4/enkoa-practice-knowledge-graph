@@ -354,11 +354,14 @@ function renderProfileCards(list) {
 
     const hasCutoff = r.cutoff_grade_estimate !== null && r.cutoff_grade_estimate !== undefined && r.cutoff_source_url;
 
+    const regionBadge = r.region ? `<span class="px-unit-xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded border border-outline-variant">${r.region}</span>` : "";
+    const collegeTypeBadge = r.college_type === "2년제" ? `<span class="px-unit-xs py-0.5 bg-secondary text-on-secondary font-label-sm text-label-sm rounded">2년제</span>` : "";
     card.innerHTML = `
       <div class="flex items-center justify-between gap-unit-xs">
         <span class="font-headline-sm text-headline-sm text-on-surface">${r.university}${campusStr}</span>
         ${statusBadge(r)}
       </div>
+      <div class="flex flex-wrap gap-unit-2xs">${regionBadge}${collegeTypeBadge}</div>
       <div class="font-body-md text-body-md text-on-surface font-medium">${r.department} · ${r.track_name || ""} (${r.admission_year || "-"}학년도)</div>
       <div class="font-body-sm text-body-sm text-on-surface-variant">실기종목: ${r.exam_type_name || "-"}</div>
       <div class="font-body-sm text-body-sm text-on-surface-variant">재료: ${(r.allowed_materials || []).join(", ") || "-"} ${r.paper_size ? "· 규격: " + r.paper_size : ""}</div>
@@ -700,10 +703,14 @@ async function renderUniversityResults(name) {
     const categoryBadge = t.track_category === "practical"
       ? `<span class="px-unit-xs py-0.5 bg-primary text-on-primary font-label-sm text-label-sm rounded">${t.track_category_label}</span>`
       : `<span class="px-unit-xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded border border-outline-variant">${t.track_category_label}</span>`;
+    // 지역/4년제·2년제 배지 - 나머지는 전부 4년제라 눈에 띄게 다를 게 없으므로
+    // college_type은 2년제일 때만(현재 서울예술대학교) 표시한다.
+    const regionBadge = detail.region ? `<span class="px-unit-xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded border border-outline-variant">${detail.region}</span>` : "";
+    const collegeTypeBadge = detail.college_type === "2년제" ? `<span class="px-unit-xs py-0.5 bg-secondary text-on-secondary font-label-sm text-label-sm rounded">2년제</span>` : "";
     return `
       <div class="flex flex-col bg-surface-container-lowest rounded-lg p-unit-md gap-unit-2xs shadow-sm border border-outline-variant/30">
         <span class="font-headline-sm text-headline-sm text-on-surface">${name}${campusStr}</span>
-        <div>${categoryBadge}</div>
+        <div class="flex flex-wrap gap-unit-2xs">${categoryBadge}${regionBadge}${collegeTypeBadge}</div>
         <div class="font-body-md text-body-md text-on-surface font-medium">${t.department} · ${t.track_name || ""} (${t.admission_year || "-"}학년도)</div>
         <div class="font-body-sm text-body-sm text-on-surface-variant">실기종목: ${t.exam_type_name || "-"}</div>
         <div class="font-body-sm text-body-sm text-on-surface-variant">재료: ${(t.allowed_materials || []).join(", ") || "-"} ${t.paper_size ? "· 규격: " + t.paper_size : ""}</div>
@@ -751,9 +758,12 @@ async function renderDepartmentResults(query) {
 
   container.innerHTML = tracks.map(t => {
     const campusStr = t.campus ? ` (${t.campus}캠퍼스)` : "";
+    const regionBadge = t.region ? `<span class="px-unit-xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded border border-outline-variant">${t.region}</span>` : "";
+    const collegeTypeBadge = t.college_type === "2년제" ? `<span class="px-unit-xs py-0.5 bg-secondary text-on-secondary font-label-sm text-label-sm rounded">2년제</span>` : "";
     return `
       <div class="flex flex-col bg-surface-container-lowest rounded-lg p-unit-md gap-unit-2xs shadow-sm border border-outline-variant/30">
         <span class="font-headline-sm text-headline-sm text-on-surface">${t.university}${campusStr}</span>
+        <div class="flex flex-wrap gap-unit-2xs">${regionBadge}${collegeTypeBadge}</div>
         <div class="font-body-md text-body-md text-on-surface font-medium">${t.department} · ${t.track_name || ""} (${t.admission_year || "-"}학년도)</div>
         <div class="font-body-sm text-body-sm text-on-surface-variant">실기종목: ${t.exam_type_name || "-"}</div>
         <div class="font-body-sm text-body-sm text-on-surface-variant">모집인원: ${t.quota ?? "-"}명 · 반영비율: ${t.ratio || "-"}</div>

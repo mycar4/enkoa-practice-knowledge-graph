@@ -821,6 +821,56 @@ class ArtAdmissionService:
         if self.driver:
             self.driver.close()
 
+    # 2026-09-13: 사용자 요청으로 지역(수도권/충청/호남/영남/강원/제주) 구분과
+    # 4년제/2년제 구분을 추가한다. 이건 각 학교 모집요강 원문에서 뽑아낸 공식
+    # 사실(official_facts)이 아니라 "그 대학이 어디 있는지/몇 년제인지"라는
+    # 이미 널리 알려진 공개 정보라서, 원문 JSON을 전부 다시 열어 고치는 대신
+    # 여기 한 곳에 대학명→분류 매핑으로 관리한다(60개교 전체를 다시 검수할
+    # 필요 없이, 새 학교가 추가될 때 이 표에 한 줄만 추가하면 됨).
+    _UNIVERSITY_REGION = {
+        "가천대학교": "수도권", "경기대학교": "수도권",
+        "경북대학교": "영남", "경희대학교": "수도권", "계명대학교": "영남",
+        "계원예술대학교": "수도권", "고려대학교": "수도권", "국립공주대학교": "충청",
+        "국립한밭대학교": "충청", "국민대학교": "수도권", "남서울대학교": "충청",
+        # 건국대학교는 우리 데이터에 GLOCAL(충주) 캠퍼스만 있음(서울캠퍼스 데이터 없음) - 충청.
+        "건국대학교": "충청",
+        "단국대학교": "수도권", "대진대학교": "수도권", "덕성여자대학교": "수도권",
+        "동국대학교": "수도권", "동덕여자대학교": "수도권", "명지대학교": "수도권",
+        "목원대학교": "충청", "부산대학교": "영남", "삼육대학교": "수도권",
+        "상명대학교": "수도권", "서경대학교": "수도권", "서울과학기술대학교": "수도권",
+        "서울대학교": "수도권", "서울여자대학교": "수도권", "서울예술대학교": "수도권",
+        "성신여자대학교": "수도권", "세종대학교": "수도권", "수원대학교": "수도권",
+        "숙명여자대학교": "수도권", "신한대학교": "수도권", "영남대학교": "영남",
+        "용인대학교": "수도권", "원광대학교": "호남", "이화여자대학교": "수도권",
+        "인천가톨릭대학교": "수도권", "인천대학교": "수도권", "인하대학교": "수도권",
+        "전남대학교": "호남", "조선대학교": "호남", "중앙대학교": "수도권",
+        "청주대학교": "충청", "추계예술대학교": "수도권", "충남대학교": "충청",
+        "충북대학교": "충청", "평택대학교": "수도권", "한경국립대학교": "수도권",
+        "한국예술종합학교": "수도권", "한남대학교": "충청", "한성대학교": "수도권",
+        "한양대학교": "수도권", "협성대학교": "수도권", "호서대학교": "충청",
+        "홍익대학교": "수도권",
+    }
+    # 대학명만으로는 지역이 갈리는 예외(캠퍼스별로 실제 지역이 다른 경우)만 별도 지정.
+    # 나머지는 위 _UNIVERSITY_REGION 기본값을 그대로 쓴다(단국대 죽전/중앙대 다빈치/
+    # 경기대 수원·서울/한양대 ERICA는 전부 경기도라 수도권 기본값과 동일해서 예외 불필요).
+    _CAMPUS_REGION_OVERRIDES = {
+        ("단국대학교", "천안"): "충청",
+        ("홍익대학교", "세종"): "충청",
+    }
+    # 4년제가 기본값이고, 예외(2년제/전문학사)만 표에 올린다.
+    _TWO_YEAR_COLLEGES = {"서울예술대학교"}
+
+    @classmethod
+    def _region_for(cls, university: str, campus: Optional[str]) -> str:
+        override = cls._CAMPUS_REGION_OVERRIDES.get((university, campus))
+        if override:
+            return override
+        return cls._UNIVERSITY_REGION.get(university, "미분류")
+
+    @classmethod
+    def _college_type_for(cls, university: str) -> str:
+        return "2년제" if university in cls._TWO_YEAR_COLLEGES else "4년제"
+
     def list_universities(self) -> List[Dict[str, Any]]:
         """대학명이 같아도 캠퍼스가 다르면(예: 홍익대 서울/세종) 별개 University 노드로
         적재되어 있으므로, 여기서 각 행마다 화면 표시용 display_name을 만들어준다 -
@@ -842,7 +892,15 @@ class ArtAdmissionService:
                 r["display_name"] = f"{r['university']} ({r['campus']}캠퍼스)"
             else:
                 r["display_name"] = r["university"]
+            r["region"] = self._region_for(r["university"], r.get("campus"))
+            r["college_type"] = self._college_type_for(r["university"])
         return rows
+
+    def list_regions(self) -> List[str]:
+        """대학찾기/대학지도의 지역 필터 드롭다운용 - 실제 데이터에 존재하는 지역만 노출."""
+        regions = {r["region"] for r in self.list_universities()}
+        order = ["수도권", "충청", "호남", "영남", "강원", "제주", "미분류"]
+        return [r for r in order if r in regions] + sorted(regions - set(order))
 
     def _kg_score_lookup(self, grades: Optional[List[Dict[str, Any]]]) -> Dict[tuple, Dict[str, Any]]:
         """[④ KG 뷰어] 학생이 입력한 성적이 있으면 recommend_universities()가 이미
@@ -1185,7 +1243,11 @@ class ArtAdmissionService:
                        c.source_url AS cutoff_source_url, interviews
             """, university=university, campus=campus).data()
 
-        return {"official_tracks": tracks, "estimates_by_track": estimates}
+        return {
+            "official_tracks": tracks, "estimates_by_track": estimates,
+            "region": self._region_for(university, campus),
+            "college_type": self._college_type_for(university),
+        }
 
     def compare_tracks(self, track_keys: List[Dict[str, str]]) -> List[Dict[str, Any]]:
         """track_keys: [{"university": ..., "track_name": ...}, ...] 여러 학교 전형을 나란히 비교."""
@@ -1859,6 +1921,9 @@ class ArtAdmissionService:
             return []
         rows = self.list_tracks_with_estimates()
         results = [r for r in rows if query in (r.get("department") or "")]
+        for r in results:
+            r["region"] = self._region_for(r["university"], r.get("campus"))
+            r["college_type"] = self._college_type_for(r["university"])
         results.sort(key=lambda r: (r["university"], r.get("campus") or "", r["department"]))
         return results
 
@@ -1906,6 +1971,9 @@ class ArtAdmissionService:
         topic_set = set(topic_keywords or [])
         material_query = (material_query or "").strip()
         rows = self.list_tracks_with_estimates()
+        for r in rows:
+            r["region"] = self._region_for(r["university"], r.get("campus"))
+            r["college_type"] = self._college_type_for(r["university"])
         results = []
         for r in rows:
             exam_name = r.get("exam_type_name") or ""

@@ -50,6 +50,9 @@
 <div class="mt-unit-md p-unit-sm bg-surface-container-lowest border border-outline-variant/40 rounded">
 <label class="font-label-sm text-label-sm text-on-surface-variant uppercase" for="univSearchInput">대학명으로 바로 찾기</label>
 <div class="flex gap-unit-xs mt-unit-2xs">
+<select id="univRegionFilter" class="h-11 px-unit-xs bg-surface text-on-surface border border-outline-variant rounded font-body-md text-body-md shrink-0 w-24">
+<option value="">전체 지역</option>
+</select>
 <input id="univSearchInput" list="univSearchList" class="flex-1 h-11 px-unit-sm bg-surface text-on-surface border border-outline-variant rounded font-body-md text-body-md" placeholder="예: 중앙대학교" type="text" autocomplete="off"/>
 <datalist id="univSearchList"></datalist>
 <button id="univSearchBtn" type="button" class="h-11 px-unit-md bg-on-surface text-surface font-label-md text-label-md rounded shrink-0">검색</button>
@@ -149,7 +152,21 @@ fetch(window.API_BASE_URL + "/stats").then(r => r.json()).then(s => {
 let univSearchNames = [];
 fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
   univSearchNames = [...new Set(list.map(u => u.university))].sort();
-  document.getElementById("univSearchList").innerHTML = univSearchNames.map(n => `<option value="${n}"></option>`).join("");
+
+  // 지역 필터 - /universities가 이미 각 행에 region을 내려주므로 대학명→지역
+  // 매핑만 만들어서 자동완성 목록을 지역별로 좁힐 수 있게 한다.
+  const nameToRegion = new Map();
+  list.forEach(u => { if (!nameToRegion.has(u.university)) nameToRegion.set(u.university, u.region || "미분류"); });
+  const REGION_ORDER = ["수도권", "충청", "호남", "영남", "강원", "제주", "미분류"];
+  const presentRegions = REGION_ORDER.filter(r => [...nameToRegion.values()].includes(r));
+  const regionFilter = document.getElementById("univRegionFilter");
+  regionFilter.innerHTML = `<option value="">전체 지역</option>` + presentRegions.map(r => `<option value="${r}">${r}</option>`).join("");
+  function renderUnivDatalist(regionValue) {
+    const filtered = regionValue ? univSearchNames.filter(n => nameToRegion.get(n) === regionValue) : univSearchNames;
+    document.getElementById("univSearchList").innerHTML = filtered.map(n => `<option value="${n}"></option>`).join("");
+  }
+  renderUnivDatalist("");
+  regionFilter.addEventListener("change", () => renderUnivDatalist(regionFilter.value));
 
   // 학과명 자동완성 - /universities가 이미 대학마다 departments 배열을 내려주므로
   // 새 엔드포인트 없이 그대로 모아서 중복 제거한 목록을 쓴다.

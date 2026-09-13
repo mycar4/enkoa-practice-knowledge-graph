@@ -53,6 +53,10 @@
 
 <div id="kgUnivPanel" class="flex flex-col gap-unit-xs">
 <div class="flex flex-col sm:flex-row gap-unit-xs sm:items-center">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase shrink-0" for="kgRegionFilter">지역</label>
+<select id="kgRegionFilter" class="h-11 px-unit-sm bg-surface text-on-surface border border-outline-variant rounded font-body-md text-body-md sm:w-40">
+<option value="">전체 지역</option>
+</select>
 <label class="font-label-sm text-label-sm text-on-surface-variant uppercase shrink-0" for="kgUnivSelect">대학 선택</label>
 <select id="kgUnivSelect" class="flex-1 h-11 px-unit-sm bg-surface text-on-surface border border-outline-variant rounded font-body-md text-body-md">
 <option value="">불러오는 중...</option>
@@ -308,10 +312,45 @@ const kgDeepLinkUniversity = kgUrlParams.get("university");
 fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
   const names = [...new Set(list.map(u => u.university))].sort();
   const select = document.getElementById("kgUnivSelect");
-  select.innerHTML = `<option value="">🗺️ 전체 대학 한번에 보기</option>` + names.map(n => `<option value="${n}">${n}</option>`).join("");
+
+  // 지역(수도권/충청/호남/영남/강원/제주) 구분 - /universities가 이미 각 행에
+  // region/college_type을 내려주므로 그대로 매핑만 만든다. 2년제(현재는
+  // 서울예술대학교만)는 대학명 옆에 표시해서 4년제 대학들과 성격이 다름을
+  // 한눈에 알 수 있게 한다.
+  const nameToRegion = new Map();
+  const nameToCollegeType = new Map();
+  list.forEach(u => {
+    if (!nameToRegion.has(u.university)) nameToRegion.set(u.university, u.region || "미분류");
+    if (!nameToCollegeType.has(u.university)) nameToCollegeType.set(u.university, u.college_type || "4년제");
+  });
+  const REGION_ORDER = ["수도권", "충청", "호남", "영남", "강원", "제주", "미분류"];
+  const presentRegions = REGION_ORDER.filter(r => [...nameToRegion.values()].includes(r));
+  const regionFilter = document.getElementById("kgRegionFilter");
+  regionFilter.innerHTML = `<option value="">전체 지역</option>` + presentRegions.map(r => `<option value="${r}">${r}</option>`).join("");
+
+  function labelFor(name) {
+    return nameToCollegeType.get(name) === "2년제" ? `${name} (2년제)` : name;
+  }
+  function renderUnivOptions(regionValue) {
+    const filtered = regionValue ? names.filter(n => nameToRegion.get(n) === regionValue) : names;
+    select.innerHTML = `<option value="">🗺️ 전체 대학 한번에 보기</option>` + filtered.map(n => `<option value="${n}">${labelFor(n)}</option>`).join("");
+  }
+  renderUnivOptions("");
+  regionFilter.addEventListener("change", () => {
+    renderUnivOptions(regionFilter.value);
+    select.value = "";
+    loadCurrentSelection();
+  });
+
   // 최초 접근 시 특정 대학으로 드릴다운하지 않고 "전체 대학 한번에 보기"(value="")를
   // 기본값으로 둔다 - results.html에서 특정 대학으로 딥링크해 들어온 경우에만 예외.
-  select.value = (kgDeepLinkUniversity && names.includes(kgDeepLinkUniversity)) ? kgDeepLinkUniversity : "";
+  if (kgDeepLinkUniversity && names.includes(kgDeepLinkUniversity)) {
+    regionFilter.value = nameToRegion.get(kgDeepLinkUniversity) || "";
+    renderUnivOptions(regionFilter.value);
+    select.value = kgDeepLinkUniversity;
+  } else {
+    select.value = "";
+  }
   select.addEventListener("change", loadCurrentSelection);
   if (names.length) loadCurrentSelection();
 
@@ -344,6 +383,10 @@ fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
         deptInput.value = "";
         deptResultsEl.classList.add("hidden");
         setActiveTab("university");
+        // 지역 필터가 걸려 있으면 그 대학이 select 옵션에 아예 없을 수 있으므로,
+        // 검색으로 찾은 대학의 지역으로 필터를 맞춰서 다시 렌더링한다.
+        regionFilter.value = nameToRegion.get(uni) || "";
+        renderUnivOptions(regionFilter.value);
         select.value = uni;
         const deptRadio = document.querySelector('input[name="kgDepth"][value="department"]');
         if (deptRadio) deptRadio.checked = true;
