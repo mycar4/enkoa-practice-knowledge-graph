@@ -1,0 +1,133 @@
+[
+  {
+    "university": "서울예술대학교",
+    "campus": "안산",
+    "department": "시각디자인전공",
+    "track_name": "일반전형(실기우수)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 10,
+      "ratio": "일괄합산: 실기 80% + 학생부 20%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-30"
+      },
+      "exam_date": "2026-10-20",
+      "result_date": "2026-11-06",
+      "exam_type_name": "택1(발상과표현/기초디자인)",
+      "allowed_materials": [
+        "물감, 붓, 물통, 팔레트 등 자유로운 표현 도구 지참",
+        "발상과표현: 출제된 주제에 따라 재료·기법을 자유롭게 사용한 컬러 표현(만화·일러스트레이션·회화적 표현 모두 가능)",
+        "기초디자인: 기초조형능력을 평가할 수 있는 주제해석과 표현"
+      ],
+      "paper_size": "4절 변형 켄트지(47cm×34cm)",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://www.seoularts.ac.kr/cmm/fms/FileDown.do?atchFileId=FILE_000000000013731&fileSn=1",
+      "source_page": 46,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 수시 전문학사학위과정 신입생 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울예술대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "1b47ec33a154c179e21eadaf00091ea06c5ab9822b695a8dc940a957aea4c00f"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "일괄합산 실기 80%+학생부 20%(p.46). 등급→점수 환산 배점표(p.63 표1)는 이 발췌 영역에서 상세 확인하지 못해 반영비율만 확인됨(approximate 처리). 전문학사(2년제) 과정으로, 나머지 4년제 대학들과 학위과정 성격이 다름 - 발상과표현/기초디자인은 전문대졸이상 특별전형(면접 10분, 정원외)과는 별개로 정원내 일반전형에서 실시하는 실제 실기시험임.",
+      "source_page_note": "모집인원 p.44(입학정원43명 중 일반전형 실기우수 10명), 전형방법·반영비율 p.46, 실기고사 세부내용 p.58, 실기고사 일정 p.61."
+    }
+  },
+  {
+    "university": "서울예술대학교",
+    "campus": "안산",
+    "department": "사진전공",
+    "track_name": "일반전형(실기우수)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 27,
+      "ratio": "일괄합산: 실기 80% + 학생부 20%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-30"
+      },
+      "exam_date": "2026-10-17~22",
+      "result_date": "2026-11-06",
+      "exam_type_name": "촬영실기고사+포트폴리오평가(2종 모두 응시)",
+      "allowed_materials": [
+        "촬영실기고사(12분): 135mm급 디지털 소형 일안반사식(DSLR) 카메라, 렌즈, UV필터, 노출계, 그레이/화이트카드, 삼각대, 촬영받침대만 사용 가능(그 외 액세서리·보조도구 불가)",
+        "시험 당일 학교 제공 CF카드/SD카드에 14컷 촬영(수험번호 촬영 2컷 + 소품구성 촬영 12컷)",
+        "포트폴리오(5분 내외): 본인이 직접 작업한 단일 주제 사진 A4 또는 8x10인치 10장(낱장, 사진전용지/인화지 프린트만 인정, 아날로그/디지털·흑백/컬러 무관)"
+      ],
+      "paper_size": "포트폴리오 A4 또는 8x10인치 10장(낱장)",
+      "time_limit_minutes": null,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://www.seoularts.ac.kr/cmm/fms/FileDown.do?atchFileId=FILE_000000000013731&fileSn=1",
+      "source_page": 46,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 수시 전문학사학위과정 신입생 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울예술대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "1b47ec33a154c179e21eadaf00091ea06c5ab9822b695a8dc940a957aea4c00f"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "일괄합산 실기 80%+학생부 20%(p.46). 등급→점수 환산 배점표(p.63 표1)는 이 발췌 영역에서 상세 확인하지 못해 반영비율만 확인됨(approximate 처리). 전문학사(2년제) 과정.",
+      "source_page_note": "모집인원 p.44(입학정원42명 중 일반전형 실기우수 27명), 전형방법·반영비율 p.46, 실기고사 세부내용 p.59, 실기고사 일정 p.61."
+    }
+  },
+  {
+    "university": "서울예술대학교",
+    "campus": "안산",
+    "department": "공간디자인전공",
+    "track_name": "일반전형(실기우수)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 17,
+      "ratio": "일괄합산: 실기 80% + 학생부 20%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-30"
+      },
+      "exam_date": "2026-10-22",
+      "result_date": "2026-11-06",
+      "exam_type_name": "기초디자인",
+      "allowed_materials": [
+        "물감, 붓, 물통, 팔레트 등 자유로운 표현 도구 지참",
+        "기초조형능력을 평가할 수 있는 주제해석과 표현"
+      ],
+      "paper_size": "4절 변형 켄트지(47cm×34cm)",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://www.seoularts.ac.kr/cmm/fms/FileDown.do?atchFileId=FILE_000000000013731&fileSn=1",
+      "source_page": 46,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 수시 전문학사학위과정 신입생 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/서울예술대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "1b47ec33a154c179e21eadaf00091ea06c5ab9822b695a8dc940a957aea4c00f"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "일괄합산 실기 80%+학생부 20%(p.46). 등급→점수 환산 배점표(p.63 표1)는 이 발췌 영역에서 상세 확인하지 못해 반영비율만 확인됨(approximate 처리). 전문학사(2년제) 과정.",
+      "source_page_note": "모집인원 p.44(입학정원37명 중 일반전형 실기우수 17명), 전형방법·반영비율 p.46, 실기고사 세부내용 p.60, 실기고사 일정 p.61."
+    }
+  }
+]
