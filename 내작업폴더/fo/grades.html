@@ -39,6 +39,7 @@
 학교마다 반영교과·석차등급 환산표·이수단위 가중평균 방식이 전부 다릅니다.<br/>
 불러오는 중...
 </p>
+<div id="coverageSchoolChips" class="mt-unit-xs"></div>
 
 <!-- 처음 오는 사람은 이 화면에서 뭘 해야 하는지 모른다는 피드백 - 접힌 <details>는
      너무 안 보인다는 후속 피드백을 받아, 항상 펼쳐진 눈에 띄는 안내 박스로 바꿨다.
@@ -56,11 +57,19 @@
   </ol>
 </div>
 
-<div class="mt-unit-sm flex flex-wrap items-center gap-unit-xs">
-  <span class="font-body-sm text-body-sm text-on-surface-variant">샘플 성적으로 체험해보기 (연습용 예시 - 실제 데이터 아님)</span>
-  <button type="button" class="sample-grade-btn h-9 px-unit-sm rounded border border-outline-variant bg-surface-container-lowest text-on-surface font-label-sm text-label-sm" data-sample="upper">상위권</button>
-  <button type="button" class="sample-grade-btn h-9 px-unit-sm rounded border border-outline-variant bg-surface-container-lowest text-on-surface font-label-sm text-label-sm" data-sample="middle">중위권</button>
-  <button type="button" class="sample-grade-btn h-9 px-unit-sm rounded border border-outline-variant bg-surface-container-lowest text-on-surface font-label-sm text-label-sm" data-sample="lower">하위권</button>
+<div class="mt-unit-sm">
+  <p class="font-label-sm text-label-sm text-on-surface-variant mb-unit-xs">샘플 성적으로 체험해보기 (연습용 예시 - 실제 데이터 아님)</p>
+  <div class="grid grid-cols-3 gap-unit-xs">
+    <button type="button" class="sample-grade-btn flex flex-col items-center justify-center gap-unit-2xs h-16 rounded-lg border-2 border-outline-variant bg-surface-container-lowest text-on-surface font-label-md text-label-md hover:border-primary hover:bg-primary/5 transition-colors" data-sample="upper">
+      <span class="material-symbols-outlined text-[20px] text-primary">trending_up</span>상위권
+    </button>
+    <button type="button" class="sample-grade-btn flex flex-col items-center justify-center gap-unit-2xs h-16 rounded-lg border-2 border-outline-variant bg-surface-container-lowest text-on-surface font-label-md text-label-md hover:border-primary hover:bg-primary/5 transition-colors" data-sample="middle">
+      <span class="material-symbols-outlined text-[20px] text-primary">trending_flat</span>중위권
+    </button>
+    <button type="button" class="sample-grade-btn flex flex-col items-center justify-center gap-unit-2xs h-16 rounded-lg border-2 border-outline-variant bg-surface-container-lowest text-on-surface font-label-md text-label-md hover:border-primary hover:bg-primary/5 transition-colors" data-sample="lower">
+      <span class="material-symbols-outlined text-[20px] text-primary">trending_down</span>하위권
+    </button>
+  </div>
 </div>
 
 <fieldset class="mt-unit-lg space-y-unit-sm">
@@ -151,6 +160,21 @@ fetch(window.API_BASE_URL + "/school-record-coverage").then(r => r.json()).then(
     `학교마다 반영교과·석차등급 환산표·이수단위 가중평균 방식이 전부 다릅니다.<br/>` +
     `<span class="font-bold text-on-surface">현재 ${cov.exact_school_count}개교</span>는 공식 모집요강 원문 규정 그대로 정밀 계산하고, ` +
     `${cov.not_applicable_school_count}개교는 학생부 성적을 아예 반영하지 않는 전형(실기 100% 또는 학생부종합 정성평가)이라 계산 대상에서 제외됩니다.`;
+
+  // 사용자 요청: 개수만 보여주지 말고 실제로 연동된 학교명이 화면에 바로 보이게
+  // 한다 - <details> 등으로 접어두면 "자동으로 나왔으면"이라는 요청과 어긋나므로
+  // 칩 형태로 펼쳐서 노출한다.
+  const chipsWrap = document.getElementById("coverageSchoolChips");
+  if (chipsWrap) {
+    const chip = (name, cls) => `<span class="inline-flex items-center px-unit-xs py-0.5 rounded font-label-sm text-label-sm ${cls}">${name}</span>`;
+    const exactChips = (cov.exact_universities || []).map(n => chip(n, "bg-primary/10 text-primary")).join("");
+    const naChips = (cov.not_applicable_universities || []).map(n => chip(n, "bg-surface-container-high text-on-surface-variant")).join("");
+    chipsWrap.innerHTML =
+      `<div class="mt-unit-xs"><p class="font-label-sm text-label-sm text-on-surface-variant mb-unit-2xs">정밀 계산 가능(${(cov.exact_universities || []).length}개교)</p>` +
+      `<div class="flex flex-wrap gap-unit-2xs">${exactChips || "-"}</div></div>` +
+      `<div class="mt-unit-xs"><p class="font-label-sm text-label-sm text-on-surface-variant mb-unit-2xs">학생부 미반영 전형 보유(${(cov.not_applicable_universities || []).length}개교)</p>` +
+      `<div class="flex flex-wrap gap-unit-2xs">${naChips || "-"}</div></div>`;
+  }
 }).catch(() => {
   const el = document.getElementById("coverageNote");
   if (el) el.textContent = "학교마다 반영교과·석차등급 환산표·이수단위 가중평균 방식이 전부 다릅니다.";

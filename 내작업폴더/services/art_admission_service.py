@@ -955,6 +955,20 @@ class ArtAdmissionService:
                 counts[kw] = counts.get(kw, 0) + 1
         return sorted(kw for kw, cnt in counts.items() if cnt >= min_schools)
 
+    @staticmethod
+    def _topic_keyword_matches(topic_keyword: str, exam_name: str) -> bool:
+        """"대학찾기"(search_tracks_by_prep)와 "대학지도"(get_kg_graph_by_topic)가
+        같은 실기종목 키워드를 골랐을 때 서로 다른 대학 목록을 보여주던 버그의
+        수정본 - 두 화면이 이 함수 하나로 매칭 여부를 판정하도록 통일했다.
+        "완전 일치"가 아니라 "포함 여부"로 매칭한다 - 한국예술종합학교처럼
+        exam_type_name이 "1차: 사실적 소묘"인 경우나 단국대학교처럼 "인물소묘"처럼
+        붙어있는 경우도 "소묘"를 포함하므로 매칭돼야 한다. 공백 유무 차이
+        ("발상과 표현" vs "발상과표현")도 흡수하도록 글자 사이에 \\s*를 끼운다."""
+        if not topic_keyword or not exam_name:
+            return False
+        pattern = re.compile(r"\s*".join(re.escape(ch) for ch in topic_keyword))
+        return bool(pattern.search(exam_name))
+
     def get_kg_graph_by_topic(self, topic_keyword: str,
                                grades: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
         """[④ KG 뷰어 - 실기종목별 보기] 학교가 아니라 실기종목("소묘", "발상과표현" 등)을
@@ -964,16 +978,12 @@ class ArtAdmissionService:
         topic_id = f"topic::{topic_keyword}"
         nodes: Dict[str, Dict[str, Any]] = {topic_id: {"id": topic_id, "label": topic_keyword, "group": "topic"}}
         edges: List[Dict[str, str]] = []
-        # "완전 일치"가 아니라 "포함 여부"로 매칭한다 - 한국예술종합학교처럼
-        # exam_type_name이 "1차: 사실적 소묘 / 2차: ..."인 경우 조각 추출 결과가
-        # "사실적소묘"라는 통짜 문구가 되어 "소묘"와 정확히 안 맞아떨어져서 빠졌었다
-        # (사용자 발견 - "하나도 빠짐없이"가 목표이므로 부분 일치로 바꿔야 함).
-        # 공백 유무 차이("발상과 표현" vs "발상과표현")도 흡수하도록 글자 사이에
-        # \s*를 끼운다(completeness_audit.py에서 이미 검증한 방식과 동일).
-        topic_pattern = re.compile(r"\s*".join(re.escape(ch) for ch in topic_keyword))
+        # 매칭 판정은 _topic_keyword_matches()로 통일한다(부분 일치 + 공백 흡수) -
+        # search_tracks_by_prep("대학찾기")도 같은 함수를 쓰므로 두 화면이 항상
+        # 같은 대학 목록을 보여준다.
         for r in rows:
             exam_name = r.get("exam_type_name") or ""
-            if not topic_pattern.search(exam_name):
+            if not self._topic_keyword_matches(topic_keyword, exam_name):
                 continue
             uni_label = r["university"] + (f" ({r['campus']}캠퍼스)" if r.get("campus") else "")
             uni_id = f"u::{uni_label}"
@@ -1240,6 +1250,10 @@ class ArtAdmissionService:
             "exact_school_count": len(exact_universities),
             "not_applicable_school_count": len(na_universities),
             "total_school_count": len(all_universities),
+            # 사용자 요청: 개수만이 아니라 실제 연동된 학교명도 화면에 자동으로
+            # 보여줘야 하므로 정렬된 이름 목록도 함께 내려준다.
+            "exact_universities": sorted(exact_universities),
+            "not_applicable_universities": sorted(na_universities),
         }
 
     def _get_prior_year_results_by_track(self) -> Dict[tuple, Dict[str, Any]]:
@@ -1826,24 +1840,27 @@ class ArtAdmissionService:
             r["source_tier"] = _classify_source(r.get("source_url"))
         return rows
 
-    def list_exam_topic_keywords(self, min_schools: int = 2) -> List[str]:
-        """'큰 주제' 선택지 - exam_type_name(실기종목명)에서만 뽑은 키워드.
-        재료명(색연필/가위/고착제 등 200개+ 세부 항목)과 섞이지 않게 분리해서,
-        UI 멀티셀렉트가 소묘/수채화/한국화/기초디자인처럼 굵직한 실기 종목
-        위주로만 나오게 한다. 카테고리를 수작업으로 만든 게 아니라, 이미 데이터
-        모델에 있는 exam_type vs material 구분을 그대로 활용한 것.
-        min_schools: 이 개수 미만으로만 등장하는 단어(특정 학교 지정작품 제목 -
-        예: '돈키호테'/'브레히트' 같은 서울예대 연극 지정작품명 - 는 '실기 종목'이
-        아니라 그 학교만의 세부 사항이므로 큰 주제 목록에서 제외)."""
+    def search_tracks_by_department(self, department_query: str) -> List[Dict[str, Any]]:
+        """["대학찾기"/"대학지도" 학과 검색] 학과명을 모르는 대학명 대신 알고 있을 때
+        쓰는 검색 - "시각디자인학과"처럼 부분일치로 여러 대학에 걸쳐 찾는다.
+        같은 학과명이 여러 대학에 있을 수 있으므로 결과는 목록으로 반환한다."""
+        query = (department_query or "").strip()
+        if not query:
+            return []
         rows = self.list_tracks_with_estimates()
-        counts: Dict[str, int] = {}
-        for r in rows:
-            exam_name = r.get("exam_type_name") or ""
-            if any(marker in exam_name for marker in self._DOCUMENT_BASED_MARKERS):
-                continue  # 서류전형 표시어("서류평가"/"면접평가" 등)는 실기 종목이 아니므로 제외
-            for kw in self._exam_keywords(exam_name):
-                counts[kw] = counts.get(kw, 0) + 1
-        return sorted(kw for kw, cnt in counts.items() if cnt >= min_schools)
+        results = [r for r in rows if query in (r.get("department") or "")]
+        results.sort(key=lambda r: (r["university"], r.get("campus") or "", r["department"]))
+        return results
+
+    def list_exam_topic_keywords(self, min_schools: int = 2) -> List[str]:
+        """'큰 주제' 선택지 - "대학찾기"(01. 준비 실기 종목)에서 고를 수 있는 목록.
+        예전엔 이 목록이 `_exam_keywords()`(2글자 이상이면 다 잡는 헐거운 방식)로
+        따로 뽑혀서, "대학지도"의 "실기종목별 보기" 목록(`list_kg_topic_keywords()`,
+        명사형 어미로 끝나는 조각만 채택)과 서로 다른 선택지·다른 매칭 결과를
+        보여주는 문제가 있었다(사용자 발견 - "소묘" 선택 시 두 화면에서 대학 수가
+        다름). 이제는 완전히 같은 함수를 그대로 재사용해서 두 화면의 선택지와
+        매칭 로직이 항상 하나로 일치한다."""
+        return self.list_kg_topic_keywords(min_schools=min_schools)
 
     def list_available_prep_keywords(self) -> List[str]:
         """(레거시) exam_type+재료 전체 키워드 - 새 UI는 주제/재료를 분리해서
@@ -1914,8 +1931,11 @@ class ArtAdmissionService:
             if is_doc:
                 continue  # 서류/학생부종합 전형은 재료/실기 키워드 비교 대상이 아니므로 일반 검색에서는 제외
 
-            exam_kw = self._exam_keywords(exam_name)
-            matched_topics = topic_set & exam_kw if topic_set else set()
+            # _topic_keyword_matches()로 "대학지도"(get_kg_graph_by_topic)와 동일한
+            # 판정을 쓴다 - 예전엔 여기서만 _exam_keywords()의 정확한 토큰 일치를
+            # 써서, "인물소묘"처럼 붙어있는 실기종목명이 "소묘" 선택에서 빠지는 등
+            # 두 화면이 서로 다른 대학 목록을 보여주는 문제가 있었다(사용자 발견).
+            matched_topics = {kw for kw in topic_set if self._topic_keyword_matches(kw, exam_name)}
             matched_materials = set()
             if material_query:
                 for m in (r.get("allowed_materials") or []):

@@ -56,20 +56,31 @@
 </div>
 <p id="univSearchError" class="font-body-sm text-body-sm text-error hidden mt-unit-2xs"></p>
 </div>
+
+<!-- 대학명은 모르는데 학과명(예: "시각디자인학과")만 알고 있는 경우를 위한
+     검색 - "대학찾기에 학과로 검색하는 게 있어야 한다"는 피드백 반영. 학과명이
+     같아도 여러 대학에 있을 수 있으므로 결과는 목록으로 보여준다. -->
+<div class="mt-unit-sm p-unit-sm bg-surface-container-lowest border border-outline-variant/40 rounded">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase" for="deptSearchInput">학과명으로 찾기</label>
+<div class="flex gap-unit-xs mt-unit-2xs">
+<input id="deptSearchInput" list="deptSearchList" class="flex-1 h-11 px-unit-sm bg-surface text-on-surface border border-outline-variant rounded font-body-md text-body-md" placeholder="예: 시각디자인학과 (부분일치)" type="text" autocomplete="off"/>
+<datalist id="deptSearchList"></datalist>
+<button id="deptSearchBtn" type="button" class="h-11 px-unit-md bg-on-surface text-surface font-label-md text-label-md rounded shrink-0">검색</button>
+</div>
+<p id="deptSearchError" class="font-body-sm text-body-sm text-error hidden mt-unit-2xs"></p>
+</div>
 </section>
 
 <form class="px-margin-mobile lg:px-0 space-y-unit-lg pb-unit-xl lg:col-span-2 lg:py-unit-xl" id="profileForm" onsubmit="event.preventDefault(); runAnalysis();">
 <fieldset class="space-y-unit-sm">
 <div class="flex items-baseline justify-between"><legend class="font-label-lg text-label-lg text-on-surface flex items-center gap-unit-xs"><span class="font-label-md text-label-md px-1.5 py-0.5 bg-on-surface text-surface rounded">01</span>준비 실기 종목 (복수 선택)</legend><span class="font-label-sm text-label-sm text-primary font-bold">실제 모집요강 원문 키워드</span></div>
-<div class="grid grid-cols-2 md:grid-cols-4 gap-unit-xs" id="practicalExamGroup">
-<!-- data-exam 값은 실제 실기유형 원문 키워드 (list_exam_topic_keywords) -->
-<button class="exam-btn relative p-unit-md rounded bg-surface-container-low text-left shadow-sm flex flex-col justify-between h-20 hover:bg-surface-container-high transition-all border-2 border-transparent" data-exam="기초디자인" type="button"><span class="font-label-md text-label-md text-on-surface font-bold">기초디자인</span></button>
-<button class="exam-btn relative p-unit-md rounded bg-surface-container-low text-left shadow-sm flex flex-col justify-between h-20 hover:bg-surface-container-high transition-all border-2 border-transparent" data-exam="소묘" type="button"><span class="font-label-md text-label-md text-on-surface font-bold">소묘</span></button>
-<button class="exam-btn relative p-unit-md rounded bg-surface-container-low text-left shadow-sm flex flex-col justify-between h-20 hover:bg-surface-container-high transition-all border-2 border-transparent" data-exam="수채화" type="button"><span class="font-label-md text-label-md text-on-surface font-bold">수채화</span></button>
-<button class="exam-btn relative p-unit-md rounded bg-surface-container-low text-left shadow-sm flex flex-col justify-between h-20 hover:bg-surface-container-high transition-all border-2 border-transparent" data-exam="인체수채화" type="button"><span class="font-label-md text-label-md text-on-surface font-bold">인체수채화</span></button>
-<button class="exam-btn relative p-unit-md rounded bg-surface-container-low text-left shadow-sm flex flex-col justify-between h-20 hover:bg-surface-container-high transition-all border-2 border-transparent" data-exam="수묵담채화" type="button"><span class="font-label-md text-label-md text-on-surface font-bold">한국화 (수묵담채화)</span></button>
-<button class="exam-btn relative p-unit-md rounded bg-surface-container-low text-left shadow-sm flex flex-col justify-between h-20 hover:bg-surface-container-high transition-all border-2 border-transparent" data-exam="자유표현" type="button"><span class="font-label-md text-label-md text-on-surface font-bold">자유표현</span></button>
-<button class="exam-btn relative p-unit-md rounded bg-surface-container-low text-left shadow-sm flex flex-col justify-between h-20 hover:bg-surface-container-high transition-all border-2 border-transparent" data-exam="입체적" type="button"><span class="font-label-md text-label-md text-on-surface font-bold">입체/조형</span></button></div>
+<!-- "대학지도"(kg.html)의 "실기종목별 보기" 드롭다운과 완전히 같은 /prep-topics
+     목록을 그대로 써서 두 화면의 선택지가 항상 일치하게 한다(사용자 발견 - 예전엔
+     여기 7개만 하드코딩돼 있어 "소묘" 등 실제로 더 있는 종목이 안 보였음). 종목이
+     20개 넘게 나올 수 있어 좁은 칩 형태로 한눈에 들어오게 배치한다. -->
+<div class="flex flex-wrap gap-unit-2xs" id="practicalExamGroup">
+<span class="font-body-sm text-body-sm text-on-surface-variant">불러오는 중...</span>
+</div>
 </fieldset>
 
 <fieldset class="space-y-unit-sm">
@@ -139,6 +150,11 @@ let univSearchNames = [];
 fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
   univSearchNames = [...new Set(list.map(u => u.university))].sort();
   document.getElementById("univSearchList").innerHTML = univSearchNames.map(n => `<option value="${n}"></option>`).join("");
+
+  // 학과명 자동완성 - /universities가 이미 대학마다 departments 배열을 내려주므로
+  // 새 엔드포인트 없이 그대로 모아서 중복 제거한 목록을 쓴다.
+  const deptNames = [...new Set(list.flatMap(u => u.departments || []))].sort();
+  document.getElementById("deptSearchList").innerHTML = deptNames.map(n => `<option value="${n}"></option>`).join("");
 }).catch(() => { /* 자동완성 실패해도 직접 입력은 계속 가능해야 한다 */ });
 
 function goToUniversitySearch() {
@@ -157,11 +173,34 @@ function goToUniversitySearch() {
 document.getElementById("univSearchBtn").addEventListener("click", goToUniversitySearch);
 document.getElementById("univSearchInput").addEventListener("keydown", (e) => { if (e.key === "Enter") goToUniversitySearch(); });
 
-// 실기 종목 선택 - 눈에 띄게 구분되도록 배경/테두리/체크마크 전부 표시
+function goToDepartmentSearch() {
+  const errEl = document.getElementById("deptSearchError");
+  const typed = document.getElementById("deptSearchInput").value.trim();
+  if (!typed) {
+    errEl.textContent = "학과명을 입력해주세요.";
+    errEl.classList.remove("hidden");
+    return;
+  }
+  errEl.classList.add("hidden");
+  window.location.href = "results.html?mode=department&name=" + encodeURIComponent(typed);
+}
+document.getElementById("deptSearchBtn").addEventListener("click", goToDepartmentSearch);
+document.getElementById("deptSearchInput").addEventListener("keydown", (e) => { if (e.key === "Enter") goToDepartmentSearch(); });
+
+// 실기 종목 선택 - "대학지도"(kg.html)의 "실기종목별 보기"와 완전히 같은
+// /prep-topics 목록을 그대로 받아와 칩 형태로 렌더링한다. 종목이 20개 넘게
+// 나올 수 있어 예전의 h-20 큰 카드(2x4 그리드) 대신 작은 칩을 넓게 배치해
+// 한눈에 훑어볼 수 있게 했다.
 const selectedExams = new Set();
-document.querySelectorAll(".exam-btn").forEach(btn => {
+function makeExamChip(topic) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "exam-btn relative pl-unit-sm pr-unit-lg py-unit-xs rounded-full bg-surface-container-low text-on-surface font-label-md text-label-md border-2 border-transparent hover:bg-surface-container-high transition-all";
+  btn.dataset.exam = topic;
+  btn.textContent = topic;
+
   const check = document.createElement("span");
-  check.className = "material-symbols-outlined absolute top-1.5 right-1.5 text-on-primary text-[16px] hidden";
+  check.className = "material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-1.5 text-on-primary text-[16px] hidden";
   check.textContent = "check_circle";
   btn.appendChild(check);
 
@@ -181,11 +220,19 @@ document.querySelectorAll(".exam-btn").forEach(btn => {
     btn.classList.toggle("!bg-primary", nowSelected);
     btn.classList.toggle("!border-primary", nowSelected);
     btn.classList.toggle("shadow-md", nowSelected);
-    btn.classList.toggle("bg-surface-container-low", !nowSelected);
-    btn.querySelector("span.font-label-md").classList.toggle("!text-on-primary", nowSelected);
+    btn.classList.toggle("!text-on-primary", nowSelected);
     check.classList.toggle("hidden", !nowSelected);
     updateDocumentOnlyState();
   });
+  return btn;
+}
+fetch(window.API_BASE_URL + "/prep-topics").then(r => r.json()).then(topics => {
+  const group = document.getElementById("practicalExamGroup");
+  group.innerHTML = "";
+  topics.forEach(t => group.appendChild(makeExamChip(t)));
+}).catch(() => {
+  document.getElementById("practicalExamGroup").innerHTML =
+    `<span class="font-body-sm text-body-sm text-error">실기 종목 목록을 불러오지 못했습니다.</span>`;
 });
 
 // 전형 유형 필터(서류전형/학생부종합전형)를 고르면 실기종목/재료 선택은 검색

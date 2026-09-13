@@ -244,6 +244,7 @@ const urlParams = new URLSearchParams(location.search);
 const isRecommendMode = urlParams.get("mode") === "recommend"
   || !!sessionStorage.getItem("artready_recommend_results");
 const universityModeName = urlParams.get("mode") === "university" ? urlParams.get("name") : null;
+const departmentModeName = urlParams.get("mode") === "department" ? urlParams.get("name") : null;
 
 const raw = sessionStorage.getItem("artready_results");
 const profileRaw = sessionStorage.getItem("artready_profile");
@@ -280,6 +281,8 @@ function specialAdmissionTags(trackName) {
 
 if (universityModeName) {
   renderUniversityResults(universityModeName);
+} else if (departmentModeName) {
+  renderDepartmentResults(departmentModeName);
 } else if (isRecommendMode) {
   renderRecommendResults();
 } else if (profile) {
@@ -292,7 +295,7 @@ if (universityModeName) {
   document.getElementById("profileSummary").textContent = bits.length ? bits.join(" / ") + " 기준 결과" : "분석 결과";
 }
 
-if (!isRecommendMode && !universityModeName) {
+if (!isRecommendMode && !universityModeName && !departmentModeName) {
 const uniqCount = new Set(results.map(r => r.university)).size;
 document.getElementById("scopeLine").textContent = `분석 범위: 등록된 ${uniqCount}개 대학 전형 데이터 중 조건에 맞는 ${results.length}건`;
 
@@ -714,6 +717,49 @@ async function renderUniversityResults(name) {
           </details>` : ""}
         <div class="flex items-center justify-between mt-unit-xs pt-unit-xs border-t border-outline-variant/20">
           <a class="font-label-sm text-label-sm text-on-surface-variant underline inline-flex items-center gap-unit-2xs" href="kg.html?university=${encodeURIComponent(name)}">
+            <span class="material-symbols-outlined text-[14px]">hub</span>지도에서 보기
+          </a>
+          ${t.source_url ? `<a class="font-label-sm text-label-sm text-primary underline" href="${t.source_url}" target="_blank" rel="noopener">공식 모집요강 원문</a>` : ""}
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+async function renderDepartmentResults(query) {
+  document.getElementById("matchStatsGrid").classList.add("hidden");
+  document.getElementById("profileSummary").textContent = `학과명 "${query}" 검색 결과`;
+  document.getElementById("scopeLine").textContent = "불러오는 중...";
+  const container = document.getElementById("cardsContainer");
+  container.innerHTML = "";
+
+  let tracks;
+  try {
+    tracks = await fetch(window.API_BASE_URL + "/tracks/by-department?q=" + encodeURIComponent(query)).then(r => r.json());
+  } catch (err) {
+    document.getElementById("scopeLine").textContent = "API 연결 실패";
+    container.innerHTML = `<p class="col-span-full font-body-md text-body-md text-error py-unit-2xl text-center">API 연결에 실패했습니다 (${err}).</p>`;
+    return;
+  }
+  if (!tracks || tracks.length === 0) {
+    document.getElementById("scopeLine").textContent = "일치하는 학과를 찾지 못했습니다.";
+    container.innerHTML = `<p class="col-span-full font-body-md text-body-md text-on-surface-variant py-unit-2xl text-center">'${query}'(으)로 등록된 학과를 찾지 못했습니다. <a class="underline text-primary" href="profile.html">다시 검색해보세요</a>.</p>`;
+    return;
+  }
+  const uniqUnivCount = new Set(tracks.map(t => t.university)).size;
+  document.getElementById("scopeLine").textContent = `'${query}' 학과명을 포함한 ${uniqUnivCount}개 대학, ${tracks.length}개 전형`;
+
+  container.innerHTML = tracks.map(t => {
+    const campusStr = t.campus ? ` (${t.campus}캠퍼스)` : "";
+    return `
+      <div class="flex flex-col bg-surface-container-lowest rounded-lg p-unit-md gap-unit-2xs shadow-sm border border-outline-variant/30">
+        <span class="font-headline-sm text-headline-sm text-on-surface">${t.university}${campusStr}</span>
+        <div class="font-body-md text-body-md text-on-surface font-medium">${t.department} · ${t.track_name || ""} (${t.admission_year || "-"}학년도)</div>
+        <div class="font-body-sm text-body-sm text-on-surface-variant">실기종목: ${t.exam_type_name || "-"}</div>
+        <div class="font-body-sm text-body-sm text-on-surface-variant">모집인원: ${t.quota ?? "-"}명 · 반영비율: ${t.ratio || "-"}</div>
+        <div class="font-body-sm text-body-sm text-on-surface-variant">원서접수: ${t.application_start || "-"} ~ ${t.application_end || "-"}</div>
+        <div class="flex items-center justify-between mt-unit-xs pt-unit-xs border-t border-outline-variant/20">
+          <a class="font-label-sm text-label-sm text-on-surface-variant underline inline-flex items-center gap-unit-2xs" href="kg.html?university=${encodeURIComponent(t.university)}">
             <span class="material-symbols-outlined text-[14px]">hub</span>지도에서 보기
           </a>
           ${t.source_url ? `<a class="font-label-sm text-label-sm text-primary underline" href="${t.source_url}" target="_blank" rel="noopener">공식 모집요강 원문</a>` : ""}

@@ -51,11 +51,23 @@
 <button type="button" id="kgTabAdmissionType" class="kgTabBtn h-9 px-unit-sm rounded font-label-sm text-label-sm bg-surface-container-high text-on-surface-variant">전형 유형별 보기</button>
 </div>
 
-<div id="kgUnivPanel" class="flex flex-col sm:flex-row gap-unit-xs sm:items-center">
+<div id="kgUnivPanel" class="flex flex-col gap-unit-xs">
+<div class="flex flex-col sm:flex-row gap-unit-xs sm:items-center">
 <label class="font-label-sm text-label-sm text-on-surface-variant uppercase shrink-0" for="kgUnivSelect">대학 선택</label>
 <select id="kgUnivSelect" class="flex-1 h-11 px-unit-sm bg-surface text-on-surface border border-outline-variant rounded font-body-md text-body-md">
 <option value="">불러오는 중...</option>
 </select>
+</div>
+<!-- 대학명은 몰라도 학과명(예: "시각디자인학과")은 알고 있는 경우를 위한 검색 -
+     "대학지도에도 학과로 검색하는 게 있어야 한다"는 피드백 반영. 결과를 클릭하면
+     해당 대학으로 바로 이동한다. -->
+<div class="flex flex-col sm:flex-row gap-unit-xs sm:items-center">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase shrink-0" for="kgDeptSearchInput">학과로 찾기</label>
+<div class="flex-1 relative">
+<input id="kgDeptSearchInput" type="text" autocomplete="off" placeholder="예: 시각디자인학과 (부분일치)" class="w-full h-11 px-unit-sm bg-surface text-on-surface border border-outline-variant rounded font-body-md text-body-md"/>
+<div id="kgDeptSearchResults" class="hidden absolute z-10 top-full left-0 right-0 mt-1 max-h-64 overflow-y-auto bg-surface-container-lowest border border-outline-variant rounded shadow-lg"></div>
+</div>
+</div>
 </div>
 <div id="kgTopicPanel" class="hidden flex flex-col sm:flex-row gap-unit-xs sm:items-center">
 <label class="font-label-sm text-label-sm text-on-surface-variant uppercase shrink-0" for="kgTopicSelect">실기종목 선택</label>
@@ -298,9 +310,51 @@ fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
   const names = [...new Set(list.map(u => u.university))].sort();
   const select = document.getElementById("kgUnivSelect");
   select.innerHTML = `<option value="">🗺️ 전체 대학 한번에 보기</option>` + names.map(n => `<option value="${n}">${n}</option>`).join("");
-  select.value = (kgDeepLinkUniversity && names.includes(kgDeepLinkUniversity)) ? kgDeepLinkUniversity : names[0];
+  // 최초 접근 시 특정 대학으로 드릴다운하지 않고 "전체 대학 한번에 보기"(value="")를
+  // 기본값으로 둔다 - results.html에서 특정 대학으로 딥링크해 들어온 경우에만 예외.
+  select.value = (kgDeepLinkUniversity && names.includes(kgDeepLinkUniversity)) ? kgDeepLinkUniversity : "";
   select.addEventListener("change", loadCurrentSelection);
   if (names.length) loadCurrentSelection();
+
+  // 학과로 찾기 - /universities가 이미 대학마다 departments 배열을 내려주므로
+  // 새로 fetch하지 않고 그대로 클라이언트에서 부분일치 검색한다. 결과를 누르면
+  // "학교별 보기" 탭으로 전환하고 그 대학을 바로 선택해서 보여준다.
+  const deptInput = document.getElementById("kgDeptSearchInput");
+  const deptResultsEl = document.getElementById("kgDeptSearchResults");
+  deptInput.addEventListener("input", () => {
+    const q = deptInput.value.trim();
+    if (!q) { deptResultsEl.classList.add("hidden"); deptResultsEl.innerHTML = ""; return; }
+    const matches = [];
+    list.forEach(u => {
+      (u.departments || []).forEach(d => {
+        if (d.includes(q)) matches.push({ university: u.university, department: d });
+      });
+    });
+    if (!matches.length) {
+      deptResultsEl.innerHTML = `<div class="px-unit-sm py-unit-xs font-body-sm text-body-sm text-on-surface-variant">일치하는 학과가 없습니다.</div>`;
+      deptResultsEl.classList.remove("hidden");
+      return;
+    }
+    deptResultsEl.innerHTML = matches.slice(0, 30).map(m =>
+      `<button type="button" class="kgDeptResultItem w-full text-left px-unit-sm py-unit-xs hover:bg-surface-container-high font-body-sm text-body-sm text-on-surface" data-university="${m.university}">${m.university} · ${m.department}</button>`
+    ).join("");
+    deptResultsEl.classList.remove("hidden");
+    deptResultsEl.querySelectorAll(".kgDeptResultItem").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const uni = btn.dataset.university;
+        deptInput.value = "";
+        deptResultsEl.classList.add("hidden");
+        setActiveTab("university");
+        select.value = uni;
+        const deptRadio = document.querySelector('input[name="kgDepth"][value="department"]');
+        if (deptRadio) deptRadio.checked = true;
+        loadCurrentSelection();
+      });
+    });
+  });
+  document.addEventListener("click", (e) => {
+    if (!deptInput.contains(e.target) && !deptResultsEl.contains(e.target)) deptResultsEl.classList.add("hidden");
+  });
 }).catch(() => {
   document.getElementById("kgError").textContent = "대학 목록을 불러오지 못했습니다.";
   document.getElementById("kgError").classList.remove("hidden");

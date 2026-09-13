@@ -94,6 +94,13 @@ def list_universities():
     return svc.list_universities()
 
 
+@app.get("/tracks/by-department")
+def tracks_by_department(q: str):
+    """["대학찾기"/"대학지도" 학과 검색] 학과명 부분일치로 등록된 전형을 전부 찾는다."""
+    svc = get_service()
+    return svc.search_tracks_by_department(q)
+
+
 @app.get("/universities/{university}")
 def university_detail(university: str, campus: Optional[str] = None):
     svc = get_service()
