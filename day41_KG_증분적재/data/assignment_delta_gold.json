@@ -1,0 +1,29 @@
+[
+  {
+    "subject": "Styler.applymap_index",
+    "subject_type": "ApiElement",
+    "relation": "REPLACED_BY",
+    "object": "Styler.map_index",
+    "object_type": "ApiElement",
+    "source_doc_id": "pandas:2.1.0:deprecations",
+    "evidence": "Deprecated Styler.applymap_index(). Use the new Styler.map_index() method instead (GH 52708)"
+  },
+  {
+    "subject": "Styler.applymap",
+    "subject_type": "ApiElement",
+    "relation": "REPLACED_BY",
+    "object": "Styler.map",
+    "object_type": "ApiElement",
+    "source_doc_id": "pandas:2.1.0:deprecations",
+    "evidence": "Deprecated Styler.applymap(). Use the new Styler.map() method instead (GH 52708)"
+  },
+  {
+    "subject": "DataFrame.applymap",
+    "subject_type": "ApiElement",
+    "relation": "REPLACED_BY",
+    "object": "DataFrame.map",
+    "object_type": "ApiElement",
+    "source_doc_id": "pandas:2.1.0:deprecations",
+    "evidence": "Deprecated DataFrame.applymap(). Use the new DataFrame.map() method instead (GH 52353)"
+  }
+]

@@ -1,0 +1,74 @@
+[
+  {
+    "subject": "Keanu Reeves",
+    "subject_type": "Person",
+    "relation": "ACTED_IN",
+    "object": "The Matrix",
+    "object_type": "Movie",
+    "evidence": "it stars Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving, and Joe Pantoliano.",
+    "source_doc_id": "movies:matrix:cast"
+  },
+  {
+    "subject": "Laurence Fishburne",
+    "subject_type": "Person",
+    "relation": "ACTED_IN",
+    "object": "The Matrix",
+    "object_type": "Movie",
+    "evidence": "it stars Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving, and Joe Pantoliano.",
+    "source_doc_id": "movies:matrix:cast"
+  },
+  {
+    "subject": "Carrie-Anne Moss",
+    "subject_type": "Person",
+    "relation": "ACTED_IN",
+    "object": "The Matrix",
+    "object_type": "Movie",
+    "evidence": "it stars Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving, and Joe Pantoliano.",
+    "source_doc_id": "movies:matrix:cast"
+  },
+  {
+    "subject": "Hugo Weaving",
+    "subject_type": "Person",
+    "relation": "ACTED_IN",
+    "object": "The Matrix",
+    "object_type": "Movie",
+    "evidence": "it stars Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving, and Joe Pantoliano.",
+    "source_doc_id": "movies:matrix:cast"
+  },
+  {
+    "subject": "Joe Pantoliano",
+    "subject_type": "Person",
+    "relation": "ACTED_IN",
+    "object": "The Matrix",
+    "object_type": "Movie",
+    "evidence": "it stars Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving, and Joe Pantoliano.",
+    "source_doc_id": "movies:matrix:cast"
+  },
+  {
+    "subject": "Keanu Reeves",
+    "subject_type": "Person",
+    "relation": "ACTED_IN",
+    "object": "The Devil's Advocate",
+    "object_type": "Movie",
+    "evidence": "starring Keanu Reeves",
+    "source_doc_id": "movies:devils-advocate:intro"
+  },
+  {
+    "subject": "Al Pacino",
+    "subject_type": "Person",
+    "relation": "ACTED_IN",
+    "object": "The Devil's Advocate",
+    "object_type": "Movie",
+    "evidence": "starring Keanu Reeves, Al Pacino",
+    "source_doc_id": "movies:devils-advocate:intro"
+  },
+  {
+    "subject": "Charlize Theron",
+    "subject_type": "Person",
+    "relation": "ACTED_IN",
+    "object": "The Devil's Advocate",
+    "object_type": "Movie",
+    "evidence": "starring Keanu Reeves, Al Pacino and Charlize Theron",
+    "source_doc_id": "movies:devils-advocate:intro"
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "DEPRECATES": [
+    "Release",
+    "ApiElement",
+    "이 릴리스가 해당 API의 사용 중단을 알립니다."
+  ],
+  "REPLACED_BY": [
+    "ApiElement",
+    "ApiElement",
+    "원문이 사용 중단된 API를 대신할 새 API를 안내합니다."
+  ]
+}

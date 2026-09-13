@@ -1,0 +1,35 @@
+{
+  "demo": {
+    "source": "day42 영화 서술문 저장본의 The Matrix와 The Devil's Advocate 발췌",
+    "urls": [
+      "https://en.wikipedia.org/wiki/The_Matrix",
+      "https://en.wikipedia.org/wiki/The_Devil's_Advocate_(1997_film)"
+    ],
+    "input_snapshot": "scripts/day41_revision/inputs/movies_descriptions.json",
+    "extraction_snapshot": "scripts/day41_revision/inputs/movie_v1_runs.json",
+    "extraction": "gpt-5.6-luna와 SimpleKGPipeline을 v1 규칙으로 실제 실행한 rows. 이름과 근거를 수정하지 않음",
+    "baseline": "Neo4j Movies의 Keanu Reeves ACTED_IN The Matrix 한 관계를 표준 ID 형식으로 옮김",
+    "catalog": "영화, 배우와 장르의 내부 ID 및 별칭은 원문을 검토해 이 실습에 맞게 작성"
+  },
+  "medical_extraction": {
+    "source_file": "day40_KG_자동화_파이프라인/output/large_followalong.json",
+    "sha256": "1ee24add10cf537e87314a03aeca2e8b497fdd0e873cc94074f84fe8debf35ab",
+    "selection": "저장된 rows 전체에서 관계와 근거 필드를 그대로 복사함. 품질 검사를 통과하지 못한 행도 보존함"
+  },
+  "medical_document": {
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13494208/",
+    "source_file": "day41_KG_증분적재/data/retro_doc.json",
+    "retro_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13461326/",
+    "excerpt": "retro_doc.text의 첫 문장을 그대로 발췌"
+  },
+  "baseline": {
+    "source_url": "https://het.io/",
+    "source_files": [
+      "day41_KG_증분적재/data/hetionet_nodes.csv",
+      "day41_KG_증분적재/data/hetionet_edges.csv"
+    ],
+    "selection": "선택한 6개 노드와 Carbidopa PALLIATES Parkinson disease 관계 1개",
+    "evidence": "Hetionet CSV에는 논문별 인용문이 없어 빈 문자열로 유지함"
+  },
+  "catalog_review": "별칭과 local: ID는 이 수업에서 원문과 타입을 검토해 작성한 연결 기준이며 외부 KB 발급 ID가 아님"
+}

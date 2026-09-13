@@ -1,0 +1,53 @@
+[
+  {
+    "standard_id": "Compound::DB00190",
+    "name": "Carbidopa",
+    "entity_type": "Compound",
+    "aliases": [
+      "Carbidopa"
+    ]
+  },
+  {
+    "standard_id": "Compound::DB00230",
+    "name": "Pregabalin",
+    "entity_type": "Compound",
+    "aliases": [
+      "Pregabalin",
+      "pregabalin"
+    ]
+  },
+  {
+    "standard_id": "Compound::DB00996",
+    "name": "Gabapentin",
+    "entity_type": "Compound",
+    "aliases": [
+      "Gabapentin",
+      "gabapentin"
+    ]
+  },
+  {
+    "standard_id": "Disease::DOID:14330",
+    "name": "Parkinson's disease",
+    "entity_type": "Disease",
+    "aliases": [
+      "Parkinson's disease",
+      "Parkinson disease"
+    ]
+  },
+  {
+    "standard_id": "Disease::DOID:3310",
+    "name": "atopic dermatitis",
+    "entity_type": "Disease",
+    "aliases": [
+      "atopic dermatitis"
+    ]
+  },
+  {
+    "standard_id": "Disease::DOID:8893",
+    "name": "psoriasis",
+    "entity_type": "Disease",
+    "aliases": [
+      "psoriasis"
+    ]
+  }
+]

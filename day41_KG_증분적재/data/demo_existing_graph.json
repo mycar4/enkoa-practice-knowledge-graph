@@ -1,0 +1,185 @@
+{
+  "catalog": [
+    {
+      "standard_id": "movies:person:keanu-reeves",
+      "name": "Keanu Reeves",
+      "entity_type": "Person",
+      "aliases": [
+        "Keanu Reeves"
+      ]
+    },
+    {
+      "standard_id": "movies:person:laurence-fishburne",
+      "name": "Laurence Fishburne",
+      "entity_type": "Person",
+      "aliases": [
+        "Laurence Fishburne"
+      ]
+    },
+    {
+      "standard_id": "movies:person:carrie-anne-moss",
+      "name": "Carrie-Anne Moss",
+      "entity_type": "Person",
+      "aliases": [
+        "Carrie-Anne Moss"
+      ]
+    },
+    {
+      "standard_id": "movies:person:hugo-weaving",
+      "name": "Hugo Weaving",
+      "entity_type": "Person",
+      "aliases": [
+        "Hugo Weaving"
+      ]
+    },
+    {
+      "standard_id": "movies:person:joe-pantoliano",
+      "name": "Joe Pantoliano",
+      "entity_type": "Person",
+      "aliases": [
+        "Joe Pantoliano"
+      ]
+    },
+    {
+      "standard_id": "movies:person:al-pacino",
+      "name": "Al Pacino",
+      "entity_type": "Person",
+      "aliases": [
+        "Al Pacino"
+      ]
+    },
+    {
+      "standard_id": "movies:person:charlize-theron",
+      "name": "Charlize Theron",
+      "entity_type": "Person",
+      "aliases": [
+        "Charlize Theron"
+      ]
+    },
+    {
+      "standard_id": "movies:movie:matrix",
+      "name": "The Matrix",
+      "entity_type": "Movie",
+      "aliases": [
+        "The Matrix"
+      ]
+    },
+    {
+      "standard_id": "movies:genre:horror",
+      "name": "horror",
+      "entity_type": "Genre",
+      "aliases": [
+        "horror"
+      ]
+    },
+    {
+      "standard_id": "movies:movie:devils-advocate",
+      "name": "The Devil's Advocate",
+      "entity_type": "Movie",
+      "aliases": [
+        "The Devil's Advocate",
+        "Devil's Advocate"
+      ],
+      "review_note": "1997년 영화의 제목과 marketed as 별칭을 같은 작품으로 확인했습니다."
+    }
+  ],
+  "rows": [
+    {
+      "subject": "Keanu Reeves",
+      "subject_type": "Person",
+      "relation": "ACTED_IN",
+      "object": "The Matrix",
+      "object_type": "Movie",
+      "evidence": "it stars Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving, and Joe Pantoliano.",
+      "source_doc_id": "movies:matrix:cast",
+      "subject_id": "movies:person:keanu-reeves",
+      "object_id": "movies:movie:matrix",
+      "claim_id": "claim:6543a4d7e256d3b302b255cac21b34c9ec72a1ccaae1aef6a69bf8622fd6bc4c"
+    },
+    {
+      "subject": "Laurence Fishburne",
+      "subject_type": "Person",
+      "relation": "ACTED_IN",
+      "object": "The Matrix",
+      "object_type": "Movie",
+      "evidence": "it stars Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving, and Joe Pantoliano.",
+      "source_doc_id": "movies:matrix:cast",
+      "subject_id": "movies:person:laurence-fishburne",
+      "object_id": "movies:movie:matrix",
+      "claim_id": "claim:6c00cdf3d63c298a8b36137bdb1f3b91ce732c0827bd289cbbcd6216028fcee4"
+    },
+    {
+      "subject": "Carrie-Anne Moss",
+      "subject_type": "Person",
+      "relation": "ACTED_IN",
+      "object": "The Matrix",
+      "object_type": "Movie",
+      "evidence": "it stars Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving, and Joe Pantoliano.",
+      "source_doc_id": "movies:matrix:cast",
+      "subject_id": "movies:person:carrie-anne-moss",
+      "object_id": "movies:movie:matrix",
+      "claim_id": "claim:cb2f3caa8d82009eb313f451162d0a6b15395a61d7c6a13835030875684c20e8"
+    },
+    {
+      "subject": "Hugo Weaving",
+      "subject_type": "Person",
+      "relation": "ACTED_IN",
+      "object": "The Matrix",
+      "object_type": "Movie",
+      "evidence": "it stars Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving, and Joe Pantoliano.",
+      "source_doc_id": "movies:matrix:cast",
+      "subject_id": "movies:person:hugo-weaving",
+      "object_id": "movies:movie:matrix",
+      "claim_id": "claim:1e908a9dbd19e72b2cd14f9b93ae1d0e34d62c08b0689687bd4c607c3108a98b"
+    },
+    {
+      "subject": "Joe Pantoliano",
+      "subject_type": "Person",
+      "relation": "ACTED_IN",
+      "object": "The Matrix",
+      "object_type": "Movie",
+      "evidence": "it stars Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving, and Joe Pantoliano.",
+      "source_doc_id": "movies:matrix:cast",
+      "subject_id": "movies:person:joe-pantoliano",
+      "object_id": "movies:movie:matrix",
+      "claim_id": "claim:4bfe0e30b707e8b6eca4ead11c6c0e2154d19e8bf5e8eb1bedacd1f8d626682c"
+    },
+    {
+      "subject": "Keanu Reeves",
+      "subject_type": "Person",
+      "relation": "ACTED_IN",
+      "object": "The Devil's Advocate",
+      "object_type": "Movie",
+      "evidence": "starring Keanu Reeves",
+      "source_doc_id": "movies:devils-advocate:intro",
+      "subject_id": "movies:person:keanu-reeves",
+      "object_id": "movies:movie:devils-advocate",
+      "claim_id": "claim:df70cefd71d0a3727b3cb4a59a73ca7a592404aaff4490bddd709f66a1935661"
+    },
+    {
+      "subject": "Al Pacino",
+      "subject_type": "Person",
+      "relation": "ACTED_IN",
+      "object": "The Devil's Advocate",
+      "object_type": "Movie",
+      "evidence": "starring Keanu Reeves, Al Pacino",
+      "source_doc_id": "movies:devils-advocate:intro",
+      "subject_id": "movies:person:al-pacino",
+      "object_id": "movies:movie:devils-advocate",
+      "claim_id": "claim:df810544c4b36b2496d1c0683b1fa4498eed0ee3e453d1dd3af2045686bd8db0"
+    },
+    {
+      "subject": "Charlize Theron",
+      "subject_type": "Person",
+      "relation": "ACTED_IN",
+      "object": "The Devil's Advocate",
+      "object_type": "Movie",
+      "evidence": "starring Keanu Reeves, Al Pacino and Charlize Theron",
+      "source_doc_id": "movies:devils-advocate:intro",
+      "subject_id": "movies:person:charlize-theron",
+      "object_id": "movies:movie:devils-advocate",
+      "claim_id": "claim:c3bcc4a32fd53b57bd5d7df331d7327cf23258f4345636dc628e66a0289e825a"
+    }
+  ],
+  "source_note": "demo_batch.json의 실제 출연 추출 8행에 검토된 영화 ID를 연결했습니다. 이름과 근거는 원본 그대로입니다."
+}

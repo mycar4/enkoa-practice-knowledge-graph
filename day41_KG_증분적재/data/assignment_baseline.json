@@ -1,0 +1,9 @@
+[
+  {
+    "subject_id": "pandas:release:2.1.0",
+    "relation": "DEPRECATES",
+    "object_id": "pandas:api:DataFrame.applymap",
+    "source_doc_id": "pandas:2.1.0:deprecations",
+    "evidence": "Deprecated DataFrame.applymap(). Use the new DataFrame.map() method instead (GH 52353)"
+  }
+]

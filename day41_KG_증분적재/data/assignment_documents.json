@@ -1,0 +1,25 @@
+[
+  {
+    "doc_id": "pandas:2.1.0:deprecations",
+    "title": "pandas 2.1.0: API deprecations",
+    "url": "https://pandas.pydata.org/docs/whatsnew/v2.1.0.html",
+    "text": "What’s new in 2.1.0 (Aug 30, 2023)\n\nDeprecated Styler.applymap_index(). Use the new Styler.map_index() method instead (GH 52708)\n\nDeprecated Styler.applymap(). Use the new Styler.map() method instead (GH 52708)\n\nDeprecated DataFrame.applymap(). Use the new DataFrame.map() method instead (GH 52353)",
+    "paragraphs": [
+      "Deprecated Styler.applymap_index(). Use the new Styler.map_index() method instead (GH 52708)",
+      "Deprecated Styler.applymap(). Use the new Styler.map() method instead (GH 52708)",
+      "Deprecated DataFrame.applymap(). Use the new DataFrame.map() method instead (GH 52353)"
+    ],
+    "selection_note": "공식 제목과 Other Deprecations의 세 항목을 선택해 연결함. 링크 서식만 제거하고 항목의 문구와 순서를 유지함."
+  },
+  {
+    "doc_id": "pandas:2.2.0:deprecations",
+    "title": "pandas 2.2.0: API deprecations",
+    "url": "https://pandas.pydata.org/docs/whatsnew/v2.2.0.html",
+    "text": "What’s new in 2.2.0 (January 19, 2024)\n\nDeprecated Series.ravel(), the underlying array is already 1D, so ravel is not necessary (GH 52511)\n\nDeprecated the DataFrameGroupBy.grouper and SeriesGroupBy.grouper; these attributes will be removed in a future version of pandas (GH 56521)",
+    "paragraphs": [
+      "Deprecated Series.ravel(), the underlying array is already 1D, so ravel is not necessary (GH 52511)",
+      "Deprecated the DataFrameGroupBy.grouper and SeriesGroupBy.grouper; these attributes will be removed in a future version of pandas (GH 56521)"
+    ],
+    "selection_note": "Other Deprecations에서 대체 API 안내가 없는 두 항목을 선택함. 링크 서식만 제거하고 문구를 유지함."
+  }
+]

@@ -1,0 +1,151 @@
+{
+  "catalog": [
+    {
+      "name": "2.1.0",
+      "entity_type": "Release",
+      "standard_id": "pandas:release:2.1.0",
+      "aliases": [
+        "2.1.0"
+      ]
+    },
+    {
+      "name": "2.2.0",
+      "entity_type": "Release",
+      "standard_id": "pandas:release:2.2.0",
+      "aliases": [
+        "2.2.0"
+      ]
+    },
+    {
+      "name": "Styler.applymap_index",
+      "entity_type": "ApiElement",
+      "standard_id": "pandas:api:Styler.applymap_index",
+      "aliases": [
+        "Styler.applymap_index"
+      ]
+    },
+    {
+      "name": "Styler.applymap",
+      "entity_type": "ApiElement",
+      "standard_id": "pandas:api:Styler.applymap",
+      "aliases": [
+        "Styler.applymap"
+      ]
+    },
+    {
+      "name": "DataFrame.applymap",
+      "entity_type": "ApiElement",
+      "standard_id": "pandas:api:DataFrame.applymap",
+      "aliases": [
+        "DataFrame.applymap"
+      ]
+    },
+    {
+      "name": "DataFrame.map",
+      "entity_type": "ApiElement",
+      "standard_id": "pandas:api:DataFrame.map",
+      "aliases": [
+        "DataFrame.map"
+      ]
+    },
+    {
+      "name": "Series.ravel",
+      "entity_type": "ApiElement",
+      "standard_id": "pandas:api:Series.ravel",
+      "aliases": [
+        "Series.ravel"
+      ]
+    },
+    {
+      "name": "DataFrameGroupBy.grouper",
+      "entity_type": "ApiElement",
+      "standard_id": "pandas:api:DataFrameGroupBy.grouper",
+      "aliases": [
+        "DataFrameGroupBy.grouper"
+      ]
+    },
+    {
+      "name": "SeriesGroupBy.grouper",
+      "entity_type": "ApiElement",
+      "standard_id": "pandas:api:SeriesGroupBy.grouper",
+      "aliases": [
+        "SeriesGroupBy.grouper"
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "subject": "2.1.0",
+      "subject_type": "Release",
+      "relation": "DEPRECATES",
+      "object": "Styler.applymap_index",
+      "object_type": "ApiElement",
+      "source_doc_id": "pandas:2.1.0:deprecations",
+      "evidence": "Deprecated Styler.applymap_index(). Use the new Styler.map_index() method instead (GH 52708)",
+      "subject_id": "pandas:release:2.1.0",
+      "object_id": "pandas:api:Styler.applymap_index",
+      "claim_id": "claim:f3b9c9fa35e57e82536a0c5fd5a9cc670e9ea3720ffc8a9941d79598040c400b"
+    },
+    {
+      "subject": "2.1.0",
+      "subject_type": "Release",
+      "relation": "DEPRECATES",
+      "object": "Styler.applymap",
+      "object_type": "ApiElement",
+      "source_doc_id": "pandas:2.1.0:deprecations",
+      "evidence": "Deprecated Styler.applymap(). Use the new Styler.map() method instead (GH 52708)",
+      "subject_id": "pandas:release:2.1.0",
+      "object_id": "pandas:api:Styler.applymap",
+      "claim_id": "claim:267aad63721d8d8809e1b0ae2607dd8c830e456d41db942d86f12288f70b4633"
+    },
+    {
+      "subject": "2.1.0",
+      "subject_type": "Release",
+      "relation": "DEPRECATES",
+      "object": "DataFrame.applymap",
+      "object_type": "ApiElement",
+      "source_doc_id": "pandas:2.1.0:deprecations",
+      "evidence": "Deprecated DataFrame.applymap(). Use the new DataFrame.map() method instead (GH 52353)",
+      "subject_id": "pandas:release:2.1.0",
+      "object_id": "pandas:api:DataFrame.applymap",
+      "claim_id": "claim:74b15bda423d0e51fad4f35c30032d1f174671847fe6f86a75d2d9a76dc6e969"
+    },
+    {
+      "subject": "2.2.0",
+      "subject_type": "Release",
+      "relation": "DEPRECATES",
+      "object": "Series.ravel",
+      "object_type": "ApiElement",
+      "source_doc_id": "pandas:2.2.0:deprecations",
+      "evidence": "Deprecated Series.ravel(), the underlying array is already 1D, so ravel is not necessary (GH 52511)",
+      "subject_id": "pandas:release:2.2.0",
+      "object_id": "pandas:api:Series.ravel",
+      "claim_id": "claim:95524ef2542ea79057f979a988d3d1c3eb58f4db0a8ff546aec70e4df366114e"
+    },
+    {
+      "subject": "2.2.0",
+      "subject_type": "Release",
+      "relation": "DEPRECATES",
+      "object": "DataFrameGroupBy.grouper",
+      "object_type": "ApiElement",
+      "source_doc_id": "pandas:2.2.0:deprecations",
+      "evidence": "Deprecated the DataFrameGroupBy.grouper and SeriesGroupBy.grouper; these attributes will be removed in a future version of pandas (GH 56521)",
+      "subject_id": "pandas:release:2.2.0",
+      "object_id": "pandas:api:DataFrameGroupBy.grouper",
+      "claim_id": "claim:b12ea1060be109449a8ce95daa28b9f09f36eb40178c5467845ab5378e002d6c"
+    },
+    {
+      "subject": "2.2.0",
+      "subject_type": "Release",
+      "relation": "DEPRECATES",
+      "object": "SeriesGroupBy.grouper",
+      "object_type": "ApiElement",
+      "source_doc_id": "pandas:2.2.0:deprecations",
+      "evidence": "Deprecated the DataFrameGroupBy.grouper and SeriesGroupBy.grouper; these attributes will be removed in a future version of pandas (GH 56521)",
+      "subject_id": "pandas:release:2.2.0",
+      "object_id": "pandas:api:SeriesGroupBy.grouper",
+      "claim_id": "claim:7aaeac4a1ac23029e2078697d5afd74279e1f48ee9e48c5d5cfa3d7c6fc6cf5c"
+    }
+  ],
+  "source_note": "assignment_batch.json의 기존 사용 중단 권고 6관계에 개체 목록의 ID를 연결했습니다. 기존 원문과 인용은 유지합니다."
+}

@@ -1,0 +1,11 @@
+[
+  {
+    "standard_id": "movies:genre:supernatural-horror",
+    "name": "supernatural horror",
+    "entity_type": "Genre",
+    "aliases": [
+      "supernatural horror"
+    ],
+    "review_note": "horror보다 좁은 장르이므로 별도 ID를 부여하고 BROADER로 연결합니다."
+  }
+]

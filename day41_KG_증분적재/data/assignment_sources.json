@@ -1,0 +1,15 @@
+{
+  "url": "https://pandas.pydata.org/docs/whatsnew/v2.1.0.html",
+  "url_2": "https://pandas.pydata.org/docs/whatsnew/v2.2.0.html",
+  "source_rst": "https://raw.githubusercontent.com/pandas-dev/pandas/v2.1.0/doc/source/whatsnew/v2.1.0.rst",
+  "source_rst_2": "https://raw.githubusercontent.com/pandas-dev/pandas/v2.2.0/doc/source/whatsnew/v2.2.0.rst",
+  "section": "Other Deprecations",
+  "selection": "공식 제목과 Other Deprecations의 세 항목을 선택해 연결함. 링크 서식만 제거하고 항목의 문구와 순서를 유지함.",
+  "selection_2": "Other Deprecations에서 대체 API 안내가 없는 두 항목을 선택함. 링크 서식만 제거하고 문구를 유지함.",
+  "baseline": "선택 원문에서 사람이 작성한 기존 그래프 시드 1관계. 모델 추출 저장본이 아님.",
+  "gold": "선택한 두 원문을 읽고 사람이 작성한 9관계. 현재 추출 결과를 평가할 때 사용하며 추출 입력으로 보내지 않음.",
+  "hierarchy": "API가 어느 클래스에 속하는지는 이 수업에서 정의한 분류이며 pandas가 발급한 관계가 아님.",
+  "ids": "프로젝트에서 사용하는 내부 ID. pandas가 발급한 공식 개체 식별자가 아님.",
+  "assignment01": "v1 재실행 -> v2 규칙 확장 -> 버전이 낮은 문서만 재추출 -> 옛 행 대체와 검사, 파일 보관",
+  "assignment02": "과제 01 파일 -> 미등록 API ID 등록 -> 기존 그래프 증분 적재 -> 개념 계층 -> 재실행 및 되돌리기"
+}

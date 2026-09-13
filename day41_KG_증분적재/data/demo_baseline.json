@@ -1,0 +1,9 @@
+[
+  {
+    "subject_id": "movies:person:keanu-reeves",
+    "object_id": "movies:movie:matrix",
+    "relation": "ACTED_IN",
+    "source_doc_id": "movies:baseline",
+    "evidence": "MERGE (Keanu)-[:ACTED_IN {roles:['Neo']}]->(TheMatrix)"
+  }
+]

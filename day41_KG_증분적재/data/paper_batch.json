@@ -1,0 +1,38 @@
+[
+  {
+    "subject": "Carbidopa",
+    "subject_type": "Compound",
+    "relation": "TREATS",
+    "object": "Parkinson disease",
+    "object_type": "Disease",
+    "source_doc_id": "PMC13494208",
+    "evidence": "used to treat Parkinson disease"
+  },
+  {
+    "subject": "Tapinarof",
+    "subject_type": "Compound",
+    "relation": "TREATS",
+    "object": "atopic dermatitis",
+    "object_type": "Disease",
+    "source_doc_id": "PMC13494208",
+    "evidence": "was approved by the US Food and Drug Administration (FDA) in 2024 for the treatment of atopic dermatitis"
+  },
+  {
+    "subject": "Tapinarof",
+    "subject_type": "Compound",
+    "relation": "TREATS",
+    "object": "plaque psoriasis",
+    "object_type": "Disease",
+    "source_doc_id": "PMC13494208",
+    "evidence": "was approved by the US Food and Drug Administration (FDA) in 2022 for the treatment of plaque psoriasis"
+  },
+  {
+    "subject": "gabapentin",
+    "subject_type": "Compound",
+    "relation": "TREATS",
+    "object": "breast cancer",
+    "object_type": "Disease",
+    "source_doc_id": "PMC13461326",
+    "evidence": "In breast cancer care, gabapentin and pregabalin are used off-label"
+  }
+]

@@ -1,0 +1,23 @@
+[
+  {
+    "doc_id": "movies:baseline",
+    "title": "Neo4j Movies의 기존 출연 관계",
+    "text": "MERGE (Keanu)-[:ACTED_IN {roles:['Neo']}]->(TheMatrix)",
+    "url": "https://github.com/neo4j-graph-examples/movies",
+    "source_kind": "Neo4j Movies 샘플의 출연 관계"
+  },
+  {
+    "doc_id": "movies:matrix:cast",
+    "title": "The Matrix (1999)",
+    "text": "The Matrix (1999)\nThe first installment in the Matrix film series, it stars Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving, and Joe Pantoliano.",
+    "url": "https://en.wikipedia.org/wiki/The_Matrix",
+    "source_kind": "Wikipedia 출연진 문장 발췌. 영화 제목과 연도를 첫 줄에 붙임"
+  },
+  {
+    "doc_id": "movies:devils-advocate:intro",
+    "title": "The Devil's Advocate (1997)",
+    "text": "The Devil's Advocate (marketed as Devil's Advocate) is a 1997 American supernatural horror film directed by Taylor Hackford, written by Jonathan Lemkin and Tony Gilroy, and starring Keanu Reeves, Al Pacino and Charlize Theron.",
+    "url": "https://en.wikipedia.org/wiki/The_Devil's_Advocate_(1997_film)",
+    "source_kind": "Wikipedia 도입부의 첫 문장 그대로 발췌"
+  }
+]

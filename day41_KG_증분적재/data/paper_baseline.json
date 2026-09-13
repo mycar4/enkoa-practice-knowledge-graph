@@ -1,0 +1,9 @@
+[
+  {
+    "subject_id": "Compound::DB00190",
+    "object_id": "Disease::DOID:14330",
+    "relation": "PALLIATES",
+    "source_doc_id": "hetionet:v1.0",
+    "evidence": ""
+  }
+]

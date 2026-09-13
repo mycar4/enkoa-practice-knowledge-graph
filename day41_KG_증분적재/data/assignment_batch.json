@@ -1,0 +1,56 @@
+[
+  {
+    "subject": "2.1.0",
+    "subject_type": "Release",
+    "relation": "DEPRECATES",
+    "object": "Styler.applymap_index",
+    "object_type": "ApiElement",
+    "source_doc_id": "pandas:2.1.0:deprecations",
+    "evidence": "Deprecated Styler.applymap_index(). Use the new Styler.map_index() method instead (GH 52708)"
+  },
+  {
+    "subject": "2.1.0",
+    "subject_type": "Release",
+    "relation": "DEPRECATES",
+    "object": "Styler.applymap",
+    "object_type": "ApiElement",
+    "source_doc_id": "pandas:2.1.0:deprecations",
+    "evidence": "Deprecated Styler.applymap(). Use the new Styler.map() method instead (GH 52708)"
+  },
+  {
+    "subject": "2.1.0",
+    "subject_type": "Release",
+    "relation": "DEPRECATES",
+    "object": "DataFrame.applymap",
+    "object_type": "ApiElement",
+    "source_doc_id": "pandas:2.1.0:deprecations",
+    "evidence": "Deprecated DataFrame.applymap(). Use the new DataFrame.map() method instead (GH 52353)"
+  },
+  {
+    "subject": "2.2.0",
+    "subject_type": "Release",
+    "relation": "DEPRECATES",
+    "object": "Series.ravel",
+    "object_type": "ApiElement",
+    "source_doc_id": "pandas:2.2.0:deprecations",
+    "evidence": "Deprecated Series.ravel(), the underlying array is already 1D, so ravel is not necessary (GH 52511)"
+  },
+  {
+    "subject": "2.2.0",
+    "subject_type": "Release",
+    "relation": "DEPRECATES",
+    "object": "DataFrameGroupBy.grouper",
+    "object_type": "ApiElement",
+    "source_doc_id": "pandas:2.2.0:deprecations",
+    "evidence": "Deprecated the DataFrameGroupBy.grouper and SeriesGroupBy.grouper; these attributes will be removed in a future version of pandas (GH 56521)"
+  },
+  {
+    "subject": "2.2.0",
+    "subject_type": "Release",
+    "relation": "DEPRECATES",
+    "object": "SeriesGroupBy.grouper",
+    "object_type": "ApiElement",
+    "source_doc_id": "pandas:2.2.0:deprecations",
+    "evidence": "Deprecated the DataFrameGroupBy.grouper and SeriesGroupBy.grouper; these attributes will be removed in a future version of pandas (GH 56521)"
+  }
+]

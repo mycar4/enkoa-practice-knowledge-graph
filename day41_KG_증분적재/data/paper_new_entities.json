@@ -1,0 +1,29 @@
+[
+  {
+    "standard_id": "local:symptom:perioperative-pain",
+    "name": "perioperative pain",
+    "entity_type": "Symptom",
+    "aliases": [
+      "perioperative pain"
+    ],
+    "review_note": "원문의 증상 표현을 보존한 내부 개체이며 외부 기관의 표준 코드는 아님"
+  },
+  {
+    "standard_id": "local:symptom:neuropathic-symptoms",
+    "name": "chemotherapy-induced neuropathic symptoms",
+    "entity_type": "Symptom",
+    "aliases": [
+      "chemotherapy-induced neuropathic symptoms"
+    ],
+    "review_note": "원문의 증상 표현을 보존한 내부 개체이며 외부 기관의 표준 코드는 아님"
+  },
+  {
+    "standard_id": "local:symptom:nocturnal-discomfort",
+    "name": "nocturnal discomfort",
+    "entity_type": "Symptom",
+    "aliases": [
+      "nocturnal discomfort"
+    ],
+    "review_note": "원문의 증상 표현을 보존한 내부 개체이며 외부 기관의 표준 코드는 아님"
+  }
+]

@@ -1,0 +1,74 @@
+[
+  {
+    "child_id": "pandas:api:Styler.applymap_index",
+    "child_name": "Styler.applymap_index",
+    "parent_id": "pandas:api:Styler",
+    "parent_name": "Styler",
+    "parent_type": "ApiElement",
+    "note": "Styler.applymap_index 은 Styler 에 속한 API 다"
+  },
+  {
+    "child_id": "pandas:api:Styler.applymap",
+    "child_name": "Styler.applymap",
+    "parent_id": "pandas:api:Styler",
+    "parent_name": "Styler",
+    "parent_type": "ApiElement",
+    "note": "Styler.applymap 은 Styler 에 속한 API 다"
+  },
+  {
+    "child_id": "pandas:api:Styler.map_index",
+    "child_name": "Styler.map_index",
+    "parent_id": "pandas:api:Styler",
+    "parent_name": "Styler",
+    "parent_type": "ApiElement",
+    "note": "Styler.map_index 은 Styler 에 속한 API 다"
+  },
+  {
+    "child_id": "pandas:api:Styler.map",
+    "child_name": "Styler.map",
+    "parent_id": "pandas:api:Styler",
+    "parent_name": "Styler",
+    "parent_type": "ApiElement",
+    "note": "Styler.map 은 Styler 에 속한 API 다"
+  },
+  {
+    "child_id": "pandas:api:DataFrame.applymap",
+    "child_name": "DataFrame.applymap",
+    "parent_id": "pandas:api:DataFrame",
+    "parent_name": "DataFrame",
+    "parent_type": "ApiElement",
+    "note": "DataFrame.applymap 은 DataFrame 에 속한 API 다"
+  },
+  {
+    "child_id": "pandas:api:DataFrame.map",
+    "child_name": "DataFrame.map",
+    "parent_id": "pandas:api:DataFrame",
+    "parent_name": "DataFrame",
+    "parent_type": "ApiElement",
+    "note": "DataFrame.map 은 DataFrame 에 속한 API 다"
+  },
+  {
+    "child_id": "pandas:api:Series.ravel",
+    "child_name": "Series.ravel",
+    "parent_id": "pandas:api:Series",
+    "parent_name": "Series",
+    "parent_type": "ApiElement",
+    "note": "Series.ravel 은 Series 에 속한 API 다"
+  },
+  {
+    "child_id": "pandas:api:DataFrameGroupBy.grouper",
+    "child_name": "DataFrameGroupBy.grouper",
+    "parent_id": "pandas:api:DataFrameGroupBy",
+    "parent_name": "DataFrameGroupBy",
+    "parent_type": "ApiElement",
+    "note": "DataFrameGroupBy.grouper 은 DataFrameGroupBy 에 속한 API 다"
+  },
+  {
+    "child_id": "pandas:api:SeriesGroupBy.grouper",
+    "child_name": "SeriesGroupBy.grouper",
+    "parent_id": "pandas:api:SeriesGroupBy",
+    "parent_name": "SeriesGroupBy",
+    "parent_type": "ApiElement",
+    "note": "SeriesGroupBy.grouper 은 SeriesGroupBy 에 속한 API 다"
+  }
+]
