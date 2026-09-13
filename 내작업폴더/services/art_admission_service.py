@@ -2087,7 +2087,7 @@ class ArtAdmissionService:
         # 질의 문장 자체에 등장하는 실기유형 키워드(예: "소묘")를 뽑아, 각 트랙의
         # exam_type_name과 실제로 겹치는지 미리 계산해 LLM에게 넘긴다. 이게 없으면
         # LLM이 재료(연필 등)만 보고 스스로 "비슷한 실기"라고 짐작해버리는 문제가 있었다.
-        # search_tracks_by_prep과 완전히 같은 판정(topic_set & exam_kw 완전일치)을
+        # search_tracks_by_prep과 완전히 같은 판정(_topic_keyword_matches 부분일치)을
         # 쓰기 위해, 질의 문장에서 실제 실기종목 키워드를 뽑아낸다. 단순 substring
         # 검사(kw in query)는 "수채화"가 "인체수채화"의 부분 문자열이라 서로 다른
         # 종목을 같은 것으로 오탐지했었다(상명대 "인체수채화" 질문에 동국대 "수채화"
@@ -2124,7 +2124,7 @@ class ArtAdmissionService:
             # 문자열이 섞여 들어간 서류전형이 잘못 "실기유형 일치"로 잡히는 걸 막는다.
             "exam_type_keyword_match": (
                 self._document_track_category(t.get("exam_type_name")) is None
-                and bool(query_topic_kw & self._exam_keywords(t.get("exam_type_name") or ""))
+                and any(self._topic_keyword_matches(kw, t.get("exam_type_name") or "") for kw in query_topic_kw)
             ),
         } for t in subset]
 
