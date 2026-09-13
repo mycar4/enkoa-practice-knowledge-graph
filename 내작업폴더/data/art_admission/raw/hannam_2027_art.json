@@ -1,0 +1,129 @@
+[
+  {
+    "university": "한남대학교",
+    "campus": "대전",
+    "department": "미술교육과",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 29,
+      "ratio": "일괄합산: 학생부교과 40% + 실기 60%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-23",
+      "result_date": "2026-11-13",
+      "exam_type_name": "택1(정물소묘/기초디자인/발상과표현/정물수채화/수묵담채화(정물)/수묵담채화(인물)/소조두상/인물수채화) - 원서접수 시 1과목 선택",
+      "allowed_materials": [
+        "실기고사에 필요한 도구 일체(개인 지참)",
+        "이젤, 화판, 소조두상용 점토는 학교 제공"
+      ],
+      "paper_size": "3절 켄트지(정물소묘/인물수채화)/4절 켄트지(기초디자인/발상과표현/정물수채화)/화선지 반절(수묵담채화 정물)/화선지 2/3절(수묵담채화 인물)",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://ibsi.hannam.ac.kr/upload/GUIDES/20260529180909001.pdf",
+      "source_page": 49,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/한남대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "993500a581b512470aed3fc70e200373b9048887a5a5d4322d2a45c0dd9c326c"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 400점(40%) + 실기 600점(60%) = 1,000점 일괄합산(p.49). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원·전형방법 p.49, 실기고사 종목·출제형식 p.50, 전형일정 p.10, p.51."
+    }
+  },
+  {
+    "university": "한남대학교",
+    "campus": "대전",
+    "department": "융합디자인학과",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 74,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-23",
+      "result_date": "2026-11-13",
+      "exam_type_name": "택1(기초디자인/발상과표현) - 원서접수 시 1과목 선택, 입학홈페이지 문제은행에서 고사당일 발표",
+      "allowed_materials": [
+        "실기고사에 필요한 도구 일체(개인 지참)"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://ibsi.hannam.ac.kr/upload/GUIDES/20260529180909001.pdf",
+      "source_page": 49,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/한남대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "993500a581b512470aed3fc70e200373b9048887a5a5d4322d2a45c0dd9c326c"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 200점(20%) + 실기 800점(80%) = 1,000점 일괄합산(p.49). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원·전형방법 p.49, 실기고사 종목·출제형식 p.50, 전형일정 p.10, p.51."
+    }
+  },
+  {
+    "university": "한남대학교",
+    "campus": "대전",
+    "department": "회화과",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 30,
+      "ratio": "일괄합산: 실기 100%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-23",
+      "result_date": "2026-11-13",
+      "exam_type_name": "택1(인물수채화/소묘/정물수채화/수묵담채화/상황표현/기초디자인) - 원서접수 시 1과목 선택",
+      "allowed_materials": [
+        "실기고사에 필요한 도구 일체(개인 지참)"
+      ],
+      "paper_size": "2절 켄트지(인물수채화)/3절 켄트지(소묘)/4절 켄트지(정물수채화/상황표현/기초디자인)/화선지 반절(수묵담채화)",
+      "time_limit_minutes": 300,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 0,
+      "practical_ratio_pct": 100,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://ibsi.hannam.ac.kr/upload/GUIDES/20260529180909001.pdf",
+      "source_page": 49,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/한남대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "993500a581b512470aed3fc70e200373b9048887a5a5d4322d2a45c0dd9c326c"
+        }
+      ],
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "실기 100%로 학생부 성적을 전혀 반영하지 않음(2027 수시모집요강 p.49, 51).",
+      "source_page_note": "모집인원·전형방법 p.49, 실기고사 종목·출제형식 p.50, 전형일정 p.10, p.51."
+    }
+  }
+]

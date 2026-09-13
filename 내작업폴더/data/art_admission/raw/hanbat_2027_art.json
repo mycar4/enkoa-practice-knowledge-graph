@@ -1,0 +1,90 @@
+[
+  {
+    "university": "국립한밭대학교",
+    "campus": "대전",
+    "department": "산업디자인학과",
+    "track_name": "실기위주(실기(일반)전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 36,
+      "ratio": "일괄합산: 학생부(교과36%+비교과4%) 40% + 실기 60%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-16",
+      "result_date": "2026-11-06",
+      "exam_type_name": "기초디자인 (당일 주제 제시)",
+      "allowed_materials": [
+        "모든 색채표현재료 사용 가능",
+        "삼각자, 자, 컴퍼스 사용 가능",
+        "화지는 학교 제공"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://addon.jinhakapply.com/nesin/3004/2027/download/한밭대_수시_모집요강.pdf",
+      "source_page": 34,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/국립한밭대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "ed3b73b6664494e27ab47aa1f0bae6a1a61ee7d5bbdfaa38ad3ffdb1881e9078"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부 일반교과 180점(36%)+비교과(출결) 20점(4%) + 실기 300점(60%) = 500점 일괄합산(p.34). 반영교과는 국어/영어 상위3+수학·사회·과학 중 상위4=총10과목(석차등급), 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리). 실기 취득성적이 40% 미만이면 불합격.",
+      "source_page_note": "모집인원·전형방법 p.34, 실기고사 상세 p.35, 전형일정 p.6."
+    }
+  },
+  {
+    "university": "국립한밭대학교",
+    "campus": "대전",
+    "department": "시각·영상디자인학과",
+    "track_name": "실기위주(실기(일반)전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 35,
+      "ratio": "일괄합산: 학생부(교과36%+비교과4%) 40% + 실기 60%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-16",
+      "result_date": "2026-11-06",
+      "exam_type_name": "택1(기초디자인/상황표현/칸만화) - 당일 주제 제시, 상황표현·칸만화는 반드시 컬러 채색(흑백/드로잉만인 경우 평가 제외)",
+      "allowed_materials": [
+        "모든 색채표현재료 사용 가능",
+        "삼각자, 자, 컴퍼스 사용 가능(기초디자인)",
+        "화지는 학교 제공"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://addon.jinhakapply.com/nesin/3004/2027/download/한밭대_수시_모집요강.pdf",
+      "source_page": 34,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/국립한밭대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "ed3b73b6664494e27ab47aa1f0bae6a1a61ee7d5bbdfaa38ad3ffdb1881e9078"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부 일반교과 180점(36%)+비교과(출결) 20점(4%) + 실기 300점(60%) = 500점 일괄합산(p.34). 반영교과는 국어/영어 상위3+수학·사회·과학 중 상위4=총10과목(석차등급), 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리). 실기 취득성적이 40% 미만이면 불합격.",
+      "source_page_note": "모집인원·전형방법 p.34, 실기고사 상세 p.35, 전형일정 p.6."
+    }
+  }
+]

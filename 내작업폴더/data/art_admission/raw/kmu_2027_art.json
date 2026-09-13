@@ -1,0 +1,296 @@
+[
+  {
+    "university": "계명대학교",
+    "campus": "대구(대명캠퍼스)",
+    "department": "공예디자인과",
+    "track_name": "실기/실적(예체능전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "ratio": "일괄합산: 학생부 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-11-05 ~ 2026-11-07",
+      "result_date": "2026-12-18",
+      "exam_type_name": "택1(기초디자인 1유형/기초디자인 2유형)",
+      "allowed_materials": [
+        "실기에 필요한 도구 일체(개인 지참, 개인 화판 사용 금지)"
+      ],
+      "paper_size": "켄트지 3절(1유형)/켄트지 4절(2유형)",
+      "time_limit_minutes": 300,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://dept.kmu.ac.kr/pdfView/webtoon/43/822/fileDownload.do",
+      "source_page": 29,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/계명대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "b4255a2243b7c04be8603e07e9db7e5e615f76ec6eeb355cb91be5a29a1542ad"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부 교과성적(80점)+출결(20점) 20% + 실기 80%(p.6, p.42). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리). 같은 학부에 훨씬 큰 학생부종합(서류100%, 실기없음) 전형(31명)이 별도로 있음 - 이 실기/실적전형(2명)과는 다른 트랙.",
+      "source_page_note": "모집인원 p.11, 전형요약 p.6, 실기고사 상세 p.29, 전형일정 p.15."
+    }
+  },
+  {
+    "university": "계명대학교",
+    "campus": "대구(대명캠퍼스)",
+    "department": "산업디자인과",
+    "track_name": "실기/실적(예체능전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "ratio": "일괄합산: 학생부 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-11-05 ~ 2026-11-07",
+      "result_date": "2026-12-18",
+      "exam_type_name": "택1(기초디자인 1유형/기초디자인 2유형)",
+      "allowed_materials": [
+        "실기에 필요한 도구 일체(개인 지참, 개인 화판 사용 금지)"
+      ],
+      "paper_size": "켄트지 3절(1유형)/켄트지 4절(2유형)",
+      "time_limit_minutes": 300,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://dept.kmu.ac.kr/pdfView/webtoon/43/822/fileDownload.do",
+      "source_page": 29,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/계명대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "b4255a2243b7c04be8603e07e9db7e5e615f76ec6eeb355cb91be5a29a1542ad"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부 교과성적(80점)+출결(20점) 20% + 실기 80%(p.6, p.42). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리). 같은 학부에 훨씬 큰 학생부종합(서류100%, 실기없음) 전형(31명)이 별도로 있음 - 이 실기/실적전형(2명)과는 다른 트랙.",
+      "source_page_note": "모집인원 p.11, 전형요약 p.6, 실기고사 상세 p.29, 전형일정 p.15."
+    }
+  },
+  {
+    "university": "계명대학교",
+    "campus": "대구(대명캠퍼스)",
+    "department": "패션디자인과",
+    "track_name": "실기/실적(예체능전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "ratio": "일괄합산: 학생부 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-11-05 ~ 2026-11-07",
+      "result_date": "2026-12-18",
+      "exam_type_name": "택1(기초디자인 1유형/기초디자인 2유형)",
+      "allowed_materials": [
+        "실기에 필요한 도구 일체(개인 지참, 개인 화판 사용 금지)"
+      ],
+      "paper_size": "켄트지 3절(1유형)/켄트지 4절(2유형)",
+      "time_limit_minutes": 300,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://dept.kmu.ac.kr/pdfView/webtoon/43/822/fileDownload.do",
+      "source_page": 29,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/계명대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "b4255a2243b7c04be8603e07e9db7e5e615f76ec6eeb355cb91be5a29a1542ad"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부 교과성적(80점)+출결(20점) 20% + 실기 80%(p.6, p.42). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리). 같은 학부에 훨씬 큰 학생부종합(서류100%, 실기없음) 전형(25명)이 별도로 있음 - 이 실기/실적전형(2명)과는 다른 트랙.",
+      "source_page_note": "모집인원 p.11, 전형요약 p.6, 실기고사 상세 p.29, 전형일정 p.15."
+    }
+  },
+  {
+    "university": "계명대학교",
+    "campus": "대구(대명캠퍼스)",
+    "department": "리빙디자인과",
+    "track_name": "실기/실적(예체능전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "ratio": "일괄합산: 학생부 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-11-05 ~ 2026-11-07",
+      "result_date": "2026-12-18",
+      "exam_type_name": "택1(기초디자인 1유형/기초디자인 2유형)",
+      "allowed_materials": [
+        "실기에 필요한 도구 일체(개인 지참, 개인 화판 사용 금지)"
+      ],
+      "paper_size": "켄트지 3절(1유형)/켄트지 4절(2유형)",
+      "time_limit_minutes": 300,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://dept.kmu.ac.kr/pdfView/webtoon/43/822/fileDownload.do",
+      "source_page": 29,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/계명대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "b4255a2243b7c04be8603e07e9db7e5e615f76ec6eeb355cb91be5a29a1542ad"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부 교과성적(80점)+출결(20점) 20% + 실기 80%(p.6, p.42). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리). 같은 학부에 훨씬 큰 학생부종합(서류100%, 실기없음) 전형(32명)이 별도로 있음 - 이 실기/실적전형(2명)과는 다른 트랙.",
+      "source_page_note": "모집인원 p.11, 전형요약 p.6, 실기고사 상세 p.29, 전형일정 p.15."
+    }
+  },
+  {
+    "university": "계명대학교",
+    "campus": "대구(대명캠퍼스)",
+    "department": "시각디자인과",
+    "track_name": "실기/실적(예체능전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "ratio": "일괄합산: 학생부 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-11-05 ~ 2026-11-07",
+      "result_date": "2026-12-18",
+      "exam_type_name": "택1(기초디자인 1유형/기초디자인 2유형)",
+      "allowed_materials": [
+        "실기에 필요한 도구 일체(개인 지참, 개인 화판 사용 금지)"
+      ],
+      "paper_size": "켄트지 3절(1유형)/켄트지 4절(2유형)",
+      "time_limit_minutes": 300,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://dept.kmu.ac.kr/pdfView/webtoon/43/822/fileDownload.do",
+      "source_page": 29,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/계명대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "b4255a2243b7c04be8603e07e9db7e5e615f76ec6eeb355cb91be5a29a1542ad"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부 교과성적(80점)+출결(20점) 20% + 실기 80%(p.6, p.42). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리). 같은 학부에 훨씬 큰 학생부종합(서류100%, 실기없음) 전형(30명)이 별도로 있음 - 이 실기/실적전형(2명)과는 다른 트랙.",
+      "source_page_note": "모집인원 p.11, 전형요약 p.6, 실기고사 상세 p.29, 전형일정 p.15."
+    }
+  },
+  {
+    "university": "계명대학교",
+    "campus": "대구(대명캠퍼스)",
+    "department": "영상애니메이션과",
+    "track_name": "실기/실적(예체능전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 3,
+      "ratio": "일괄합산: 학생부 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-11-05 ~ 2026-11-07",
+      "result_date": "2026-12-18",
+      "exam_type_name": "택1(상황표현/칸만화, 칸만화 4칸 이상) - 고사당일 문제 출제",
+      "allowed_materials": [
+        "실기에 필요한 도구 일체(개인 지참, 개인 화판 사용 금지)"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://dept.kmu.ac.kr/pdfView/webtoon/43/822/fileDownload.do",
+      "source_page": 29,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/계명대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "b4255a2243b7c04be8603e07e9db7e5e615f76ec6eeb355cb91be5a29a1542ad"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부 교과성적(80점)+출결(20점) 20% + 실기 80%(p.6, p.42). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리). 같은 학부에 훨씬 큰 학생부종합(서류100%, 실기없음) 전형(36명)이 별도로 있음 - 이 실기/실적전형(3명)과는 다른 트랙.",
+      "source_page_note": "모집인원 p.11, 전형요약 p.6, 실기고사 상세 p.29, 전형일정 p.15."
+    }
+  },
+  {
+    "university": "계명대학교",
+    "campus": "대구(대명캠퍼스)",
+    "department": "웹툰과",
+    "track_name": "실기/실적(예체능전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "ratio": "일괄합산: 학생부 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-11-05 ~ 2026-11-07",
+      "result_date": "2026-12-18",
+      "exam_type_name": "택1(상황표현/칸만화, 칸만화 4칸 이상) - 고사당일 문제 출제",
+      "allowed_materials": [
+        "실기에 필요한 도구 일체(개인 지참, 개인 화판 사용 금지)"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://dept.kmu.ac.kr/pdfView/webtoon/43/822/fileDownload.do",
+      "source_page": 29,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/계명대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "b4255a2243b7c04be8603e07e9db7e5e615f76ec6eeb355cb91be5a29a1542ad"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부 교과성적(80점)+출결(20점) 20% + 실기 80%(p.6, p.42). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리). 같은 학부에 훨씬 큰 학생부종합(서류100%, 실기없음) 전형(32명)이 별도로 있음 - 이 실기/실적전형(2명)과는 다른 트랙. 회화과는 수시모집에서 실기/실적전형 정원이 0명(학생부종합 32명만 있음, 실기 자체는 정시 3명으로만 존재)이라 이 파일에서 제외함(p.11 모집인원표 확인).",
+      "source_page_note": "모집인원 p.11, 전형요약 p.6, 실기고사 상세 p.29, 전형일정 p.15."
+    }
+  }
+]

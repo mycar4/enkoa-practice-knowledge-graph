@@ -1,0 +1,47 @@
+[
+  {
+    "university": "원광대학교",
+    "campus": "익산",
+    "department": "디자인융합계열",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 45,
+      "ratio": "일괄합산: 학생부(교과+비교과) 약 38% + 실기 약 62% (교과최고590~최저500 + 비교과최고10 + 실기최고1000~최저280 = 총점1600)",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-26",
+      "result_date": null,
+      "exam_type_name": "택1(발상과표현/기초디자인/정밀묘사)",
+      "allowed_materials": [
+        "연필, 색연필, 파스텔, 수채화물감, 콩테, 포스터컬러, 아크릴컬러 등(발상과표현)",
+        "표현할 수 있는 모든 재료 허용, 입체적 첨가 형식 불허(기초디자인)",
+        "연필, 지우개, 칼(정밀묘사)",
+        "켄트지 4절(학교 제공)"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 38,
+      "practical_ratio_pct": 62,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://file.megastudy.net/FileServer/UNI_HWP/non_file/27susi/X27C06006.pdf",
+      "source_page": 62,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/원광대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "e88556fcb0cab4db39e360d1fbfeea6d5f812ef652b6811845da5399e07a225f"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "교과성적(최고590~최저500)+비교과(출결, 최고10~최저0)+실기(최고1000~최저280)=총점1600 일괄합산(p.62). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리). 디자인융합계열은 패션디자인산업전공/파인아트전공/공예문화·주얼리디자인전공/실내·산업디자인전공/시각정보디자인전공 5개 세부전공을 포함하는 광역 모집단위(입학 후 전공 배정).",
+      "source_page_note": "모집인원 p.25(디자인융합계열 145명 중 실기/실적 45명), 전형방법·일정 p.62, 실기고사 상세 p.65. 합격자 발표일은 이 발췌 영역에서 못 찾음(추후 확인 필요)."
+    }
+  }
+]
