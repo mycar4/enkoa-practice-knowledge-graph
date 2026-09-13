@@ -1,0 +1,237 @@
+[
+  {
+    "university": "호서대학교",
+    "campus": "아산",
+    "department": "시각디자인학과",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 29,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-17",
+      "result_date": "2026-11-24",
+      "exam_type_name": "택1(발상과표현/기초디자인)",
+      "allowed_materials": [
+        "켄트지·물(대학 제공)",
+        "실기재료 및 컬러 자유(개인 지참)",
+        "개인 화판, 전동 지우개, 픽사티브 사용 가능"
+      ],
+      "paper_size": "4절지, 가로 구도",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/호서대학교/호서대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 34,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/호서대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "033bf0b0ee62883ec2e76784ab56a29907d6cb57a1bb092ee064643b7460ed0f"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 200점 + 실기 800점 = 1,000점 일괄합산(p.34). 반영교과는 국어/영어/수학/사회/과학/한국사 중 석차등급 상위12+진로선택 상위3과목(A/B/C 성취도별 세부 환산식 있음, p.46) - 상위 N과목 선택 방식이라 정밀 계산 로직은 아직 없음(approximate 처리).",
+      "source_page_note": "모집인원 p.22, 전형방법·일정 p.34, 실기고사 상세 p.52, 학생부 반영방법 p.46."
+    }
+  },
+  {
+    "university": "호서대학교",
+    "campus": "아산",
+    "department": "산업디자인학과",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 23,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-17",
+      "result_date": "2026-11-24",
+      "exam_type_name": "택1(발상과표현/기초디자인)",
+      "allowed_materials": [
+        "켄트지·물(대학 제공)",
+        "실기재료 및 컬러 자유(개인 지참)",
+        "개인 화판, 전동 지우개, 픽사티브 사용 가능"
+      ],
+      "paper_size": "4절지, 가로 구도",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/호서대학교/호서대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 34,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/호서대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "033bf0b0ee62883ec2e76784ab56a29907d6cb57a1bb092ee064643b7460ed0f"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 200점 + 실기 800점 = 1,000점 일괄합산(p.34). 반영방법은 시각디자인학과와 동일(p.46) - approximate 처리.",
+      "source_page_note": "모집인원 p.22, 전형방법·일정 p.34, 실기고사 상세 p.52, 학생부 반영방법 p.46."
+    }
+  },
+  {
+    "university": "호서대학교",
+    "campus": "아산",
+    "department": "실내디자인학과",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 28,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-17",
+      "result_date": "2026-11-24",
+      "exam_type_name": "택1(발상과표현/기초디자인)",
+      "allowed_materials": [
+        "켄트지·물(대학 제공)",
+        "실기재료 및 컬러 자유(개인 지참)",
+        "개인 화판, 전동 지우개, 픽사티브 사용 가능"
+      ],
+      "paper_size": "4절지, 가로 구도",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/호서대학교/호서대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 34,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/호서대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "033bf0b0ee62883ec2e76784ab56a29907d6cb57a1bb092ee064643b7460ed0f"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 200점 + 실기 800점 = 1,000점 일괄합산(p.34). 반영방법은 시각디자인학과와 동일(p.46) - approximate 처리.",
+      "source_page_note": "모집인원 p.22, 전형방법·일정 p.34, 실기고사 상세 p.52, 학생부 반영방법 p.46."
+    }
+  },
+  {
+    "university": "호서대학교",
+    "campus": "아산",
+    "department": "디지털프로덕트디자인학과",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 20,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-17",
+      "result_date": "2026-11-24",
+      "exam_type_name": "택1(발상과표현/기초디자인)",
+      "allowed_materials": [
+        "켄트지·물(대학 제공)",
+        "실기재료 및 컬러 자유(개인 지참)",
+        "개인 화판, 전동 지우개, 픽사티브 사용 가능"
+      ],
+      "paper_size": "4절지, 가로 구도",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/호서대학교/호서대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 34,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/호서대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "033bf0b0ee62883ec2e76784ab56a29907d6cb57a1bb092ee064643b7460ed0f"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 200점 + 실기 800점 = 1,000점 일괄합산(p.34). 반영방법은 시각디자인학과와 동일(p.46) - approximate 처리.",
+      "source_page_note": "모집인원 p.22, 전형방법·일정 p.34, 실기고사 상세 p.52, 학생부 반영방법 p.46."
+    }
+  },
+  {
+    "university": "호서대학교",
+    "campus": "아산",
+    "department": "애니메이션스쿨",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 70,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-18",
+      "result_date": "2026-11-24",
+      "exam_type_name": "택1(상황표현/칸만화)",
+      "allowed_materials": [
+        "켄트지·물(대학 제공)",
+        "실기재료 및 컬러 자유(개인 지참)",
+        "개인 화판, 전동 지우개, 픽사티브 사용 가능"
+      ],
+      "paper_size": "4절지, 가로·세로 구도 자유",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/호서대학교/호서대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 34,
+      "registration_period": {
+        "start": "2027-02-10",
+        "end": "2027-02-12"
+      },
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/호서대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "033bf0b0ee62883ec2e76784ab56a29907d6cb57a1bb092ee064643b7460ed0f"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 200점 + 실기 800점 = 1,000점 일괄합산(p.34). 반영방법은 시각디자인학과와 동일(p.46) - approximate 처리.",
+      "source_page_note": "모집인원 p.22-23, 전형방법·일정 p.34, 실기고사 상세 p.52, 학생부 반영방법 p.46."
+    }
+  }
+]

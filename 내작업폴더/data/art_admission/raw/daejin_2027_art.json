@@ -1,0 +1,132 @@
+[
+  {
+    "university": "대진대학교",
+    "campus": "포천",
+    "department": "미술만화게임학부",
+    "track_name": "실기/실적위주(실기우수자전형) - 만화게임그래픽전공",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 50,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-24",
+      "result_date": "2026-11-13",
+      "exam_type_name": "택1(칸만화/상황표현/발상과 표현/이미지보드/인물화/두상모델링)",
+      "allowed_materials": [
+        "이젤(학교 제공)",
+        "켄트지(학교 제공, 4절지 또는 3절지)",
+        "기타 실기도구 개인 지참"
+      ],
+      "paper_size": "켄트지 4절지(칸만화/상황표현/발상과표현/이미지보드), 켄트지 3절지(인물화)",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/대진대학교/대진대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 55,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/대진대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "7b056f3f4d7f9bc78f7e75803599ca885f4b4e9944ba4c22d65a54c756c8578c"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 200점 + 실기 800점 = 1,000점 일괄합산(p.34). 반영과목은 국어/영어/수학/사회/한국사/과학 중 상위 18개(진로선택 최대 8과목, A=1등급/B=2등급/C=4등급 환산), 상위 15과목 이수단위가중평균 석차등급을 30단계 구간표(p.47)로 환산하는 방식 - 이 학교 고유의 구간표 방식이라 raw_score/max_score 정밀 계산 로직은 아직 없음(반영비율만 확인, approximate로 처리됨).",
+      "source_page_note": "모집인원 p.12, 전형방법·일정 p.33-34, 실기고사 상세 p.55, 학생부교과 반영방법 p.47."
+    }
+  },
+  {
+    "university": "대진대학교",
+    "campus": "포천",
+    "department": "시각디자인학과",
+    "track_name": "실기/실적위주(실기우수자전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 20,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-23",
+      "result_date": "2026-11-13",
+      "exam_type_name": "택1(발상과 표현/기초디자인)",
+      "allowed_materials": [
+        "켄트지(학교 제공, 4절)",
+        "연필, 물감, 지우개, 압정, 제도기, 자 등(개인 지참)"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/대진대학교/대진대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 57,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/대진대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "7b056f3f4d7f9bc78f7e75803599ca885f4b4e9944ba4c22d65a54c756c8578c"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 200점 + 실기 800점 = 1,000점 일괄합산(p.34). 반영방법은 만화게임그래픽전공과 동일 규정(p.47 참고) - 30단계 구간표 방식이라 raw_score/max_score 정밀 계산 로직은 아직 없음(반영비율만 확인, approximate로 처리됨). 픽사티브 사용 및 개인 제작 도구 사용 불가.",
+      "source_page_note": "모집인원 p.12, 전형방법·일정 p.33-34, 실기고사 상세 p.57, 학생부교과 반영방법 p.47."
+    }
+  },
+  {
+    "university": "대진대학교",
+    "campus": "포천",
+    "department": "산업디자인학과",
+    "track_name": "실기/실적위주(실기우수자전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 20,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-23",
+      "result_date": "2026-11-13",
+      "exam_type_name": "택1(발상과 표현/기초디자인)",
+      "allowed_materials": [
+        "켄트지(학교 제공, 4절)",
+        "연필, 물감, 지우개, 압정, 제도기, 자 등(개인 지참)"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/대진대학교/대진대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 57,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/대진대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "7b056f3f4d7f9bc78f7e75803599ca885f4b4e9944ba4c22d65a54c756c8578c"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 200점 + 실기 800점 = 1,000점 일괄합산(p.34). 반영방법은 만화게임그래픽전공과 동일 규정(p.47 참고) - 30단계 구간표 방식이라 raw_score/max_score 정밀 계산 로직은 아직 없음(반영비율만 확인, approximate로 처리됨). 픽사티브 사용 및 개인 제작 도구 사용 불가.",
+      "source_page_note": "모집인원 p.12, 전형방법·일정 p.33-34, 실기고사 상세 p.57, 학생부교과 반영방법 p.47."
+    }
+  }
+]

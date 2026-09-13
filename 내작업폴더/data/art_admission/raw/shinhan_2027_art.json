@@ -1,0 +1,131 @@
+[
+  {
+    "university": "신한대학교",
+    "campus": "의정부",
+    "department": "산업디자인학과",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 10,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-24 ~ 2026-10-25",
+      "result_date": "2026-11-16 ~ 2026-11-17",
+      "exam_type_name": "기초디자인 (주어진 개체를 이용하여 화면을 구성하는 능력)",
+      "allowed_materials": [
+        "켄트지 4절지(학교 제공)",
+        "채색도구 및 표현재료(개인 지참)"
+      ],
+      "paper_size": "켄트지 4절지",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/신한대학교/신한대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 42,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/신한대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "47acf1b58eed48cc009b0f717ce810d10bacff64f6d4d6335b073b0f7de83e99"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 200점 + 실기 800점 = 1,000점 일괄합산(p.42). 반영교과는 국어/영어/수학/사회/과학/한국사 중 우수 10개 과목(석차등급→점수 환산표 있음: 1=100,2=99,3=97.5...9=68, 진로선택 A=99/B=96/C=82), 이 학교 고유의 '고정 과목군 없는 상위 N과목 선택' 방식이라 raw_score/max_score 정밀 계산 로직은 아직 없음(반영비율만 확인, approximate로 처리됨).",
+      "source_page_note": "모집인원·전형방법 p.42, 실기고사 상세 p.45, 전형일정 p.18, 학생부교과 반영방법 p.43."
+    }
+  },
+  {
+    "university": "신한대학교",
+    "campus": "의정부",
+    "department": "패션디자인학과",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 10,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-24 ~ 2026-10-25",
+      "result_date": "2026-11-16 ~ 2026-11-17",
+      "exam_type_name": "택1(기초디자인/발상과표현/사고의전환) - 원서접수 시 1개 종목 선택",
+      "allowed_materials": [
+        "켄트지 4절지(학교 제공)",
+        "채색도구 및 표현재료(개인 지참)"
+      ],
+      "paper_size": "켄트지 4절지",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/신한대학교/신한대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 42,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/신한대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "47acf1b58eed48cc009b0f717ce810d10bacff64f6d4d6335b073b0f7de83e99"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 200점 + 실기 800점 = 1,000점 일괄합산(p.42). 반영방법은 산업디자인학과와 동일 규정(p.43) - 상위 N과목 선택 방식이라 정밀 계산 로직은 아직 없음(approximate 처리).",
+      "source_page_note": "모집인원·전형방법 p.42, 실기고사 상세 p.45, 전형일정 p.18, 학생부교과 반영방법 p.43."
+    }
+  },
+  {
+    "university": "신한대학교",
+    "campus": "의정부",
+    "department": "실내디자인학과",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 8,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-24 ~ 2026-10-25",
+      "result_date": "2026-11-16 ~ 2026-11-17",
+      "exam_type_name": "택1(기초디자인/발상과표현) - 원서접수 시 1개 종목 선택",
+      "allowed_materials": [
+        "켄트지 4절지(학교 제공)",
+        "채색도구 및 표현재료(개인 지참)"
+      ],
+      "paper_size": "켄트지 4절지",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/신한대학교/신한대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 42,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/신한대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "47acf1b58eed48cc009b0f717ce810d10bacff64f6d4d6335b073b0f7de83e99"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 200점 + 실기 800점 = 1,000점 일괄합산(p.42). 반영방법은 산업디자인학과와 동일 규정(p.43) - 상위 N과목 선택 방식이라 정밀 계산 로직은 아직 없음(approximate 처리).",
+      "source_page_note": "모집인원·전형방법 p.42, 실기고사 상세 p.45, 전형일정 p.18, 학생부교과 반영방법 p.43."
+    }
+  }
+]

@@ -1,0 +1,176 @@
+[
+  {
+    "university": "경북대학교",
+    "campus": "대구",
+    "department": "미술학과",
+    "track_name": "실기전형(한국화)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 13,
+      "ratio": "일괄합산: 학생부교과 30% + 실기 70%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": null,
+      "result_date": "2026-12-18",
+      "exam_type_name": "택1(정물수묵채색화/정물연필소묘)",
+      "allowed_materials": [
+        "수묵채색화 도구 일체 [화선지(69x70.5cm)/이젤/화판/집게는 학교 제공]",
+        "4B연필, 지우개, 칼 [켄트지(2절)/이젤/화판/집게는 학교 제공, 정물연필소묘]"
+      ],
+      "paper_size": "화선지 69x70.5cm(수묵채색화) / 켄트지 2절(연필소묘)",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": true,
+      "csat_minimum_rule": "미술학과는 수능최저학력기준 적용됨(2027 모집요강 p.76-77 참조, 이 발췌 영역엔 구체 기준 없음)",
+      "school_record_ratio_pct": 30,
+      "practical_ratio_pct": 70,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/경북대학교/경북대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 63,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/경북대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c837d1d0ae82d7a8dc473198ae6dd7422bc69d36892ff83c716811d2d8e5ede8"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 150점 + 실기 350점 = 500점 일괄합산(p.63). 실기고사 성적이 총 배점의 60% 미만이면 정원과 무관하게 불합격. 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원 p.12-13(15쪽 세부), 전형방법 p.63, 실기고사 상세 p.66, 실기고사 일시는 이 문서에서 못 찾음(추후 확인 필요)."
+    }
+  },
+  {
+    "university": "경북대학교",
+    "campus": "대구",
+    "department": "미술학과",
+    "track_name": "실기전형(서양화)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 14,
+      "ratio": "일괄합산: 학생부교과 30% + 실기 70%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": null,
+      "result_date": "2026-12-18",
+      "exam_type_name": "인물화 (채색도구 자유 선택)",
+      "allowed_materials": [
+        "채색도구(수채물감/과슈/아크릴물감/파스텔/색연필 중 자유 선택)",
+        "4B연필, 지우개, 칼 [켄트지(2절)/이젤/화판/집게/정착액은 학교 제공]"
+      ],
+      "paper_size": "켄트지 2절",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": true,
+      "csat_minimum_rule": "미술학과는 수능최저학력기준 적용됨(2027 모집요강 p.76-77 참조, 이 발췌 영역엔 구체 기준 없음)",
+      "school_record_ratio_pct": 30,
+      "practical_ratio_pct": 70,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/경북대학교/경북대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 63,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/경북대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c837d1d0ae82d7a8dc473198ae6dd7422bc69d36892ff83c716811d2d8e5ede8"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 150점 + 실기 350점 = 500점 일괄합산(p.63). 실기고사 성적이 총 배점의 60% 미만이면 정원과 무관하게 불합격. 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원 p.12-13(15쪽 세부), 전형방법 p.63, 실기고사 상세 p.66, 실기고사 일시는 이 문서에서 못 찾음(추후 확인 필요)."
+    }
+  },
+  {
+    "university": "경북대학교",
+    "campus": "대구",
+    "department": "미술학과",
+    "track_name": "실기전형(조소)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 13,
+      "ratio": "일괄합산: 학생부교과 30% + 실기 70%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": null,
+      "result_date": "2026-12-18",
+      "exam_type_name": "인물소조",
+      "allowed_materials": [
+        "소조용 도구 일체 [점토, 심봉대는 학교 제공]"
+      ],
+      "paper_size": "해당 없음(입체 조형)",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": true,
+      "csat_minimum_rule": "미술학과는 수능최저학력기준 적용됨(2027 모집요강 p.76-77 참조, 이 발췌 영역엔 구체 기준 없음)",
+      "school_record_ratio_pct": 30,
+      "practical_ratio_pct": 70,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/경북대학교/경북대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 63,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/경북대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c837d1d0ae82d7a8dc473198ae6dd7422bc69d36892ff83c716811d2d8e5ede8"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 150점 + 실기 350점 = 500점 일괄합산(p.63). 실기고사 성적이 총 배점의 60% 미만이면 정원과 무관하게 불합격. 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원 p.12-13(15쪽 세부), 전형방법 p.63, 실기고사 상세 p.66, 실기고사 일시는 이 문서에서 못 찾음(추후 확인 필요)."
+    }
+  },
+  {
+    "university": "경북대학교",
+    "campus": "대구",
+    "department": "디자인학과",
+    "track_name": "실기전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 15,
+      "ratio": "일괄합산: 학생부교과 40% + 실기 60%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": null,
+      "result_date": "2026-12-18",
+      "exam_type_name": "택1(사고의 전환/기초디자인) - 주제는 고사 당일 추첨(주제어+사진)",
+      "allowed_materials": [
+        "색채도구 일체(개인 지참)"
+      ],
+      "paper_size": "2절(54x78cm, 사고의전환) / 3절(48x64cm, 기초디자인)",
+      "time_limit_minutes": 300,
+      "csat_minimum_required": true,
+      "csat_minimum_rule": "디자인학과는 수능최저학력기준 적용됨(2027 모집요강 p.76-77 참조, 이 발췌 영역엔 구체 기준 없음)",
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/경북대학교/경북대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 63,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/경북대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "c837d1d0ae82d7a8dc473198ae6dd7422bc69d36892ff83c716811d2d8e5ede8"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 200점 + 실기 300점 = 500점 일괄합산(p.63). 실기고사 성적이 총 배점의 60% 미만이면 정원과 무관하게 불합격. 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원 p.12-13(15쪽 세부), 전형방법 p.63, 실기고사 상세 p.66, 실기고사 일시는 이 문서에서 못 찾음(추후 확인 필요)."
+    }
+  }
+]

@@ -1,0 +1,174 @@
+[
+  {
+    "university": "충북대학교",
+    "campus": "청주",
+    "department": "미술학과",
+    "track_name": "실기우수자전형(동양화)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 10,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-17",
+      "result_date": "2026-12-18",
+      "exam_type_name": "택1(수묵담채정물화/수묵담채인물화/인체소묘/인체수채화)",
+      "allowed_materials": [
+        "붓, 먹, 벼루, 동양화 물감, 물통 등(수묵담채)",
+        "붓, 수채화 물감, 집게, 연필, 지우개, 물통 등(인체수채화)",
+        "연필(인체소묘, 연필로만)"
+      ],
+      "paper_size": "반절(수묵담채정물화/인물화), 3절 켄트지(인체소묘/인체수채화)",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/충북대학교/충북대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 63,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/충북대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "0710f709aa77c5d83a1297cbe46dc0bd3fa6aa6ba8c91dae6faa124f93de7bf9"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 20점(기본점수 10점+실질반영 10점) + 실기 80점(기본점수40점+실질반영40점) = 100점 일괄합산(p.63). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원·전형방법 p.63, 실기고사 종목·배점·준비물 p.64, 전형일정 p.64."
+    }
+  },
+  {
+    "university": "충북대학교",
+    "campus": "청주",
+    "department": "미술학과",
+    "track_name": "실기우수자전형(서양화)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 9,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-17",
+      "result_date": "2026-12-18",
+      "exam_type_name": "택1(인체수채화/인체소묘)",
+      "allowed_materials": [
+        "붓, 수채화 물감, 집게, 연필, 지우개, 물통 등(인체수채화)",
+        "연필(인체소묘, 연필로만)"
+      ],
+      "paper_size": "3절 켄트지",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/충북대학교/충북대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 63,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/충북대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "0710f709aa77c5d83a1297cbe46dc0bd3fa6aa6ba8c91dae6faa124f93de7bf9"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 20점(기본점수 10점+실질반영 10점) + 실기 80점(기본점수40점+실질반영40점) = 100점 일괄합산(p.63). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원·전형방법 p.63, 실기고사 종목·배점·준비물 p.64, 전형일정 p.64."
+    }
+  },
+  {
+    "university": "충북대학교",
+    "campus": "청주",
+    "department": "미술학과",
+    "track_name": "실기우수자전형(조소)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 10,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-17",
+      "result_date": "2026-12-18",
+      "exam_type_name": "택1(주제가 있는 인물소조/모델링 인물소조/인체소묘)",
+      "allowed_materials": [
+        "헤라, 줄칼 등 소조 도구",
+        "연필(인체소묘, 연필로만)"
+      ],
+      "paper_size": "3절 켄트지(인체소묘)",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/충북대학교/충북대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 63,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/충북대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "0710f709aa77c5d83a1297cbe46dc0bd3fa6aa6ba8c91dae6faa124f93de7bf9"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 20점(기본점수 10점+실질반영 10점) + 실기 80점(기본점수40점+실질반영40점) = 100점 일괄합산(p.63). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원·전형방법 p.63, 실기고사 종목·배점·준비물 p.64, 전형일정 p.64."
+    }
+  },
+  {
+    "university": "충북대학교",
+    "campus": "청주",
+    "department": "디자인학과",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 5,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-17",
+      "result_date": "2026-12-18",
+      "exam_type_name": "기초디자인",
+      "allowed_materials": [
+        "평면표현 재료 및 도구 일체(포스터 칼라, 수채화물감, 연필, 색연필, 마카, 파스텔, 콩테, 붓, 물통, 자, 지우개, 칼, 팔레트 등)"
+      ],
+      "paper_size": "4절 켄트지",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/충북대학교/충북대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 63,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/충북대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "0710f709aa77c5d83a1297cbe46dc0bd3fa6aa6ba8c91dae6faa124f93de7bf9"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 20점(기본점수 10점+실질반영 10점) + 실기 80점(기본점수40점+실질반영40점) = 100점 일괄합산(p.63). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원·전형방법 p.63, 실기고사 종목·배점·준비물 p.64, 전형일정 p.64."
+    }
+  }
+]

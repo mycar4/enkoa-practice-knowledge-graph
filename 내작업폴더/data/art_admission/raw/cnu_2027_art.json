@@ -1,0 +1,130 @@
+[
+  {
+    "university": "충남대학교",
+    "campus": "대전",
+    "department": "회화과",
+    "track_name": "일반전형(한국화)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 13,
+      "ratio": "일괄합산: 학생부(교과90점+비교과10점) + 실기 200점 = 300점",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-31",
+      "result_date": "2026-12-18",
+      "exam_type_name": "택1(정물 수묵담채화/인물 수묵담채화/인체연필소묘)",
+      "allowed_materials": [
+        "옥당지(대학 지급)",
+        "먹, 붓, 벼루, 개인물통, 압정, 칼, 연필, 지우개, 동양화물감, 접시(개인 지참, 수묵담채화)",
+        "연필, 지우개, 칼(개인 지참, 인체연필소묘)"
+      ],
+      "paper_size": "옥당지(반절, 정물) / 옥당지 2/3절(90x70cm, 인물) / 켄트지 2절(인체연필소묘, 세로형)",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 33.3,
+      "practical_ratio_pct": 66.7,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/충남대학교/충남대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 56,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/충남대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "a72f0ede6dbedb264e36f4eb16200dc4d0d3f289967ba72d89fbae1d75c6c00d"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학교생활기록부(교과 90점+비교과 10점) + 실기 200점 = 전형총점 300점 일괄사정(p.56). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원·전형방법 p.56, 실기고사 상세 p.59, 전형일정 p.12."
+    }
+  },
+  {
+    "university": "충남대학교",
+    "campus": "대전",
+    "department": "회화과",
+    "track_name": "일반전형(서양화)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 13,
+      "ratio": "일괄합산: 학생부(교과90점+비교과10점) + 실기 200점 = 300점",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-31",
+      "result_date": "2026-12-18",
+      "exam_type_name": "택1(정물수채화/인물수채화)",
+      "allowed_materials": [
+        "개인물통, 팔레트, 수채화물감, 붓, 연필, 지우개, 칼(개인 지참)"
+      ],
+      "paper_size": "켄트지 2절(정물: 가로형, 인물: 세로형)",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 33.3,
+      "practical_ratio_pct": 66.7,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/충남대학교/충남대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 56,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/충남대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "a72f0ede6dbedb264e36f4eb16200dc4d0d3f289967ba72d89fbae1d75c6c00d"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학교생활기록부(교과 90점+비교과 10점) + 실기 200점 = 전형총점 300점 일괄사정(p.56). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원·전형방법 p.56, 실기고사 상세 p.59, 전형일정 p.12."
+    }
+  },
+  {
+    "university": "충남대학교",
+    "campus": "대전",
+    "department": "조소과",
+    "track_name": "일반전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 14,
+      "ratio": "일괄합산: 학생부(교과90점+비교과10점) + 실기 200점 = 300점",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-11-01",
+      "result_date": "2026-12-18",
+      "exam_type_name": "택1(소조(점토) 인물모델링/소조(점토) 주제두상)",
+      "allowed_materials": [
+        "소조 도구(개인 지참)"
+      ],
+      "paper_size": "해당 없음(입체 조형)",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 33.3,
+      "practical_ratio_pct": 66.7,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/충남대학교/충남대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 56,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/충남대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "a72f0ede6dbedb264e36f4eb16200dc4d0d3f289967ba72d89fbae1d75c6c00d"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학교생활기록부(교과 90점+비교과 10점) + 실기 200점 = 전형총점 300점 일괄사정(p.56). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원·전형방법 p.56, 실기고사 상세 p.59, 전형일정 p.12."
+    }
+  }
+]

@@ -1,0 +1,202 @@
+[
+  {
+    "university": "협성대학교",
+    "campus": "화성",
+    "department": "디자인 자율전공학부",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 32,
+      "ratio": "일괄합산: 실기 100%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-11-07",
+      "result_date": "2026-12-18",
+      "exam_type_name": "기초디자인",
+      "allowed_materials": [],
+      "paper_size": "모집요강에 상세 명시 안 됨 (실기이미지는 학교 홈페이지 공개)",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 0,
+      "practical_ratio_pct": 100,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/협성대학교/협성대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 22,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/협성대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "1857a017e30b4e104d54dd5586d964b1073ad3204ff63c593bb7691e764a3b1a"
+        }
+      ],
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "실기 100%로 학생부 성적을 전혀 반영하지 않음(2027 수시모집요강 p.22).",
+      "source_page_note": "모집인원 p.3, 전형방법·실기고사 p.22, 전형일정 p.6."
+    }
+  },
+  {
+    "university": "협성대학교",
+    "campus": "화성",
+    "department": "실내디자인학과",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 19,
+      "ratio": "일괄합산: 학생부교과 30% + 실기 70%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-11-01",
+      "result_date": "2026-12-18",
+      "exam_type_name": "기초디자인",
+      "allowed_materials": [],
+      "paper_size": "모집요강에 상세 명시 안 됨 (실기이미지는 학교 홈페이지 공개)",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 30,
+      "practical_ratio_pct": 70,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/협성대학교/협성대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 22,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/협성대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "1857a017e30b4e104d54dd5586d964b1073ad3204ff63c593bb7691e764a3b1a"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 30% + 실기 70% 일괄합산(2027 수시모집요강 p.22). 등급→점수 환산 배점표는 이 문서에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원 p.3-4, 전형방법·실기고사 p.22, 전형일정 p.7."
+    }
+  },
+  {
+    "university": "협성대학교",
+    "campus": "화성",
+    "department": "가구디자인학과",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 17,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-31",
+      "result_date": "2026-12-18",
+      "exam_type_name": "기초디자인",
+      "allowed_materials": [],
+      "paper_size": "모집요강에 상세 명시 안 됨 (실기이미지는 학교 홈페이지 공개)",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/협성대학교/협성대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 22,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/협성대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "1857a017e30b4e104d54dd5586d964b1073ad3204ff63c593bb7691e764a3b1a"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 20% + 실기 80% 일괄합산(2027 수시모집요강 p.22). 등급→점수 환산 배점표는 이 문서에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원 p.3-4, 전형방법·실기고사 p.22, 전형일정 p.7."
+    }
+  },
+  {
+    "university": "협성대학교",
+    "campus": "화성",
+    "department": "산업디자인학과",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 20,
+      "ratio": "일괄합산: 학생부교과 30% + 실기 70%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-25",
+      "result_date": "2026-12-18",
+      "exam_type_name": "기초디자인",
+      "allowed_materials": [],
+      "paper_size": "모집요강에 상세 명시 안 됨 (실기이미지는 학교 홈페이지 공개)",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 30,
+      "practical_ratio_pct": 70,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/협성대학교/협성대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 22,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/협성대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "1857a017e30b4e104d54dd5586d964b1073ad3204ff63c593bb7691e764a3b1a"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 30% + 실기 70% 일괄합산(2027 수시모집요강 p.22). 등급→점수 환산 배점표는 이 문서에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원 p.3-4, 전형방법·실기고사 p.22, 전형일정 p.7."
+    }
+  },
+  {
+    "university": "협성대학교",
+    "campus": "화성",
+    "department": "시각디자인학과",
+    "track_name": "실기우수자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 25,
+      "ratio": "일괄합산: 학생부교과 30% + 실기 70%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-24",
+      "result_date": "2026-12-18",
+      "exam_type_name": "기초디자인",
+      "allowed_materials": [],
+      "paper_size": "모집요강에 상세 명시 안 됨 (실기이미지는 학교 홈페이지 공개)",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 30,
+      "practical_ratio_pct": 70,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/협성대학교/협성대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 22,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/협성대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "1857a017e30b4e104d54dd5586d964b1073ad3204ff63c593bb7691e764a3b1a"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 30% + 실기 70% 일괄합산(2027 수시모집요강 p.22). 등급→점수 환산 배점표는 이 문서에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원 p.3-4, 전형방법·실기고사 p.22, 전형일정 p.7."
+    }
+  }
+]

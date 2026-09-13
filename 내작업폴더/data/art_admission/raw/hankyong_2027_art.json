@@ -1,0 +1,39 @@
+[
+  {
+    "university": "한경국립대학교",
+    "campus": "안성",
+    "department": "의류산업학과",
+    "track_name": "실기위주(디자인_안성)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 6,
+      "ratio": "일괄합산: 학생부교과 40% + 실기 60%",
+      "is_staged": false,
+      "application_period": null,
+      "exam_date": "2026-10-29",
+      "result_date": "2026-11-18",
+      "exam_type_name": "실기고사 (세부 종목·재료·규격은 이 모집요강 문서에 명시되어 있지 않음 - 별도 실기고사 안내문 확인 필요)",
+      "allowed_materials": [],
+      "paper_size": "모집요강에 명시 안 됨",
+      "time_limit_minutes": null,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 40,
+      "practical_ratio_pct": 60,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/한경국립대학교/한경국립대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 24,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/한경국립대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "13d30557c77015aad78ed5f1877f2a32214291d9700eada1099e5bd963bd818d"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부 교과성적 400점 + 실기 600점 = 1,000점 일괄합산(2027 수시모집요강 p.24). 반영교과의 등급별 환산 배점표(예: 1등급=X점)는 원문에 없어 raw_score/max_score 정밀 계산은 불가하고, 반영교과·비율만 확인됨.",
+      "source_page_note": "모집단위·모집인원 p.4-5(디자인예술스포츠대학 의류산업학과), 전형방법·일정 p.24. 실기고사 세부 종목/재료/규격은 이 문서에 없음 - 확인 필요."
+    }
+  }
+]

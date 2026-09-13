@@ -1,0 +1,128 @@
+[
+  {
+    "university": "남서울대학교",
+    "campus": "천안",
+    "department": "시각미디어디자인학과",
+    "track_name": "실기위주(일반전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 57,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-16",
+      "result_date": "2026-11-17",
+      "exam_type_name": "택1(기초디자인/발상과표현/상황표현) - 문제은행식 출제, 당일 추첨",
+      "allowed_materials": [
+        "연필(모든 종류), 수채화물감, 아크릴물감, 포스터칼라, 마커, 파스텔, 색연필, 파레트, 붓, 물통 등"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/남서울대학교/남서울대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 34,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/남서울대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "de7d366bac0aa2a1af543c392a70427b91142908c85122dddd678ee0970cc44f"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 20% + 실기 80% 일괄합산(p.34, 예능 기준). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원·전형방법 p.34, 실기고사 종목·일정·준비물 p.40, 전형일정 p.7-8. 지역인재전형(7명, 충청권 고교 한정)도 동일 방식으로 별도 존재."
+    }
+  },
+  {
+    "university": "남서울대학교",
+    "campus": "천안",
+    "department": "공간조형디자인학과",
+    "track_name": "실기위주(일반전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 46,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-16",
+      "result_date": "2026-11-17",
+      "exam_type_name": "택1(기초디자인/발상과표현) - 문제은행식 출제, 당일 추첨",
+      "allowed_materials": [
+        "연필(모든 종류), 수채화물감, 아크릴물감, 포스터칼라, 마커, 파스텔, 색연필, 파레트, 붓, 물통 등"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/남서울대학교/남서울대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 34,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/남서울대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "de7d366bac0aa2a1af543c392a70427b91142908c85122dddd678ee0970cc44f"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 20% + 실기 80% 일괄합산(p.34, 예능 기준). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원·전형방법 p.34, 실기고사 종목·일정·준비물 p.40, 전형일정 p.7-8. 지역인재전형(7명, 충청권 고교 한정)도 동일 방식으로 별도 존재."
+    }
+  },
+  {
+    "university": "남서울대학교",
+    "campus": "천안",
+    "department": "영상예술디자인학과",
+    "track_name": "실기위주(일반전형)",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 51,
+      "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
+      "is_staged": false,
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-10-17",
+      "result_date": "2026-11-17",
+      "exam_type_name": "택1(기초디자인/상황표현/칸만화) - 문제은행식 출제, 당일 추첨",
+      "allowed_materials": [
+        "연필(모든 종류), 수채화물감, 아크릴물감, 포스터칼라, 마커, 파스텔, 색연필, 파레트, 붓, 물통 등"
+      ],
+      "paper_size": "켄트지 4절",
+      "time_limit_minutes": 240,
+      "csat_minimum_required": false,
+      "school_record_ratio_pct": 20,
+      "practical_ratio_pct": 80,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/남서울대학교/남서울대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 34,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/남서울대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "de7d366bac0aa2a1af543c392a70427b91142908c85122dddd678ee0970cc44f"
+        }
+      ],
+      "school_record_status": "required",
+      "school_record_status_note": "학생부교과 20% + 실기 80% 일괄합산(p.34, 예능 기준). 등급→점수 환산 배점표는 이 발췌 영역에 없어 반영비율만 확인됨(approximate 처리).",
+      "source_page_note": "모집인원·전형방법 p.34, 실기고사 종목·일정·준비물 p.40, 전형일정 p.7-8. 지역인재전형(7명, 충청권 고교 한정)도 동일 방식으로 별도 존재."
+    }
+  }
+]

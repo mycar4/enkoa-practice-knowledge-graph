@@ -1,0 +1,82 @@
+[
+  {
+    "university": "세종대학교",
+    "campus": "서울",
+    "department": "창의소프트학부",
+    "track_name": "디자인이노베이션전공",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 48,
+      "ratio": "1단계(3배수): 서류평가 100% -> 2단계: 1단계 성적 60% + 면접 40%",
+      "is_staged": true,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-11-21",
+      "result_date": "2026-12-18",
+      "exam_type_name": "제시문 기반 면접 - 전공적합성 발표자료 작성(40분, 연필 이용) 후 3~5분 발표 및 질의응답, 실기고사 없음",
+      "allowed_materials": [
+        "연필(학교 제공 양식에 작성)"
+      ],
+      "paper_size": "해당 없음 (비실기 면접)",
+      "time_limit_minutes": 40,
+      "csat_minimum_required": false,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/세종대학교/세종대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 13,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/세종대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "088654b6c8910d6dce2bdbccf2beee6dd889c5420d79febb036d9675128d9ac4"
+        }
+      ],
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "학교생활기록부 교과/비교과에 대한 평가영역별(학업역량+창의융합역량, 탐구역량, 성장역량, 공동체역량) 정량·정성 평가를 종합하는 학생부종합(세종인재면접형) 전형 - 실기고사(그림 그리기 등)가 아니라 제시문 기반 면접(발표자료 작성 후 구술)으로 평가함(2027 수시모집요강 p.13-14).",
+      "source_page_note": "모집인원 p.13, 전형방법·전형일정 p.13-14, 면접 방식 상세 p.26."
+    }
+  },
+  {
+    "university": "세종대학교",
+    "campus": "서울",
+    "department": "창의소프트학부",
+    "track_name": "만화애니메이션텍전공",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 48,
+      "ratio": "1단계(3배수): 서류평가 100% -> 2단계: 1단계 성적 60% + 면접 40%",
+      "is_staged": true,
+      "application_period": {
+        "start": "2026-09-08",
+        "end": "2026-09-11"
+      },
+      "exam_date": "2026-11-21",
+      "result_date": "2026-12-18",
+      "exam_type_name": "제시문 기반 면접 - 전공적합성 발표자료 작성(40분, 연필 이용) 후 3~5분 발표 및 질의응답, 실기고사 없음",
+      "allowed_materials": [
+        "연필(학교 제공 양식에 작성)"
+      ],
+      "paper_size": "해당 없음 (비실기 면접)",
+      "time_limit_minutes": 40,
+      "csat_minimum_required": false,
+      "school_record_rule": {},
+      "past_topics": [],
+      "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/세종대학교/세종대학교_2027학년도_수시모집요강.pdf",
+      "source_page": 13,
+      "registration_period": null,
+      "data_sources": [
+        {
+          "document_name": "2027학년도 공식 수시모집요강",
+          "local_file": "data/art_admission_raw/prospectus/세종대학교_2027학년도_수시모집요강.pdf",
+          "pdf_sha256": "088654b6c8910d6dce2bdbccf2beee6dd889c5420d79febb036d9675128d9ac4"
+        }
+      ],
+      "school_record_status": "not_applicable",
+      "school_record_status_note": "학교생활기록부 교과/비교과에 대한 평가영역별(학업역량+창의융합역량, 탐구역량, 성장역량, 공동체역량) 정량·정성 평가를 종합하는 학생부종합(세종인재면접형) 전형 - 실기고사(그림 그리기 등)가 아니라 제시문 기반 면접(발표자료 작성 후 구술)으로 평가함(2027 수시모집요강 p.13-14).",
+      "source_page_note": "모집인원 p.13, 전형방법·전형일정 p.13-14, 면접 방식 상세 p.26."
+    }
+  }
+]
