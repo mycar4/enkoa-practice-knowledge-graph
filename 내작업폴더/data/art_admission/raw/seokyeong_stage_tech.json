@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 7,
+      "competition_applicant_count": 111,
+      "competition_rate": 15.86,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://go.skuniv.ac.kr/",
       "ratio": "1단계: 실기 100% (선발비율 500%) -> 2단계: 학생부교과 20% + 실기 40% + 1단계성적 40%",
       "is_staged": true,
       "application_period": {
@@ -98,6 +102,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 15,
+      "competition_applicant_count": 137,
+      "competition_rate": 9.13,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://go.skuniv.ac.kr/",
       "ratio": "1단계: 실기(창의적의상조형) 1,000점 (선발비율 300%) -> 2단계: 1단계성적 + 실기구술(의상작품 분석 및 질의응답) 800점",
       "is_staged": true,
       "application_period": {
@@ -176,6 +184,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 12,
+      "competition_applicant_count": 595,
+      "competition_rate": 49.58,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://go.skuniv.ac.kr/",
       "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
       "is_staged": false,
       "application_period": {
@@ -245,6 +257,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 12,
+      "competition_applicant_count": 609,
+      "competition_rate": 50.75,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://go.skuniv.ac.kr/",
       "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
       "is_staged": false,
       "application_period": {

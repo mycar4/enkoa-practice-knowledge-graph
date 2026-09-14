@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 15,
+      "competition_applicant_count": 144,
+      "competition_rate": 9.6,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.dongguk.edu/admission/html/rolling/data.asp",
       "ratio": "일괄합산: 실기 70% + 학생부교과 20% + 학생부출결 10% (수능최저 미적용)",
       "is_staged": false,
       "application_period": {
@@ -92,6 +96,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 15,
+      "competition_applicant_count": 204,
+      "competition_rate": 13.6,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.dongguk.edu/admission/html/rolling/data.asp",
       "ratio": "일괄합산: 실기 70% + 학생부교과 20% + 학생부출결 10% (수능최저 미적용)",
       "is_staged": false,
       "application_period": {
@@ -178,6 +186,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 15,
+      "competition_applicant_count": 685,
+      "competition_rate": 45.67,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.dongguk.edu/admission/html/rolling/data.asp",
       "ratio": "일괄합산: 실기 70% + 학생부교과 20% + 학생부출결 10% (수능최저 미적용)",
       "is_staged": false,
       "application_period": {

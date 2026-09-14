@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 17,
+      "competition_applicant_count": 114,
+      "competition_rate": 6.71,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.duksung.ac.kr/",
       "ratio": "일괄합산: 실기 100%",
       "is_staged": false,
       "school_record_status": "not_applicable",
@@ -52,6 +56,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 18,
+      "competition_applicant_count": 399,
+      "competition_rate": 22.17,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.duksung.ac.kr/",
       "ratio": "일괄합산: 실기 100%",
       "is_staged": false,
       "school_record_status": "not_applicable",
@@ -96,6 +104,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 26,
+      "competition_applicant_count": 1496,
+      "competition_rate": 57.54,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.duksung.ac.kr/",
       "ratio": "일괄합산: 실기 100%",
       "is_staged": false,
       "school_record_status": "not_applicable",
@@ -132,6 +144,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 10,
+      "competition_applicant_count": 245,
+      "competition_rate": 24.5,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.duksung.ac.kr/",
       "ratio": "일괄합산: 실기 100%",
       "is_staged": false,
       "school_record_status": "not_applicable",

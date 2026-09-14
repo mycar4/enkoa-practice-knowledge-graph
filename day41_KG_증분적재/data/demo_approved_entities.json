@@ -1,0 +1,21 @@
+[
+  {
+    "standard_id": "movies:movie:devils-advocate",
+    "name": "The Devil's Advocate",
+    "entity_type": "Movie",
+    "aliases": [
+      "The Devil's Advocate",
+      "Devil's Advocate"
+    ],
+    "review_note": "1997년 영화의 제목과 marketed as 별칭을 같은 작품으로 확인했습니다."
+  },
+  {
+    "standard_id": "movies:genre:supernatural-horror",
+    "name": "supernatural horror",
+    "entity_type": "Genre",
+    "aliases": [
+      "supernatural horror"
+    ],
+    "review_note": "horror보다 좁은 장르이므로 별도 ID를 부여하고 BROADER로 연결합니다."
+  }
+]

@@ -1,0 +1,47 @@
+[
+  {
+    "standard_id": "local:compound:tapinarof",
+    "name": "Tapinarof",
+    "entity_type": "Compound",
+    "aliases": [
+      "Tapinarof"
+    ],
+    "review_note": "원문의 약물 이름을 확인함. 기존 Hetionet 부분집합에 없어 내부 ID를 부여함"
+  },
+  {
+    "standard_id": "local:disease:plaque-psoriasis",
+    "name": "plaque psoriasis",
+    "entity_type": "Disease",
+    "aliases": [
+      "plaque psoriasis"
+    ],
+    "review_note": "psoriasis보다 구체적인 병형이므로 기존의 넓은 개념과 합치지 않음"
+  },
+  {
+    "standard_id": "local:symptom:perioperative-pain",
+    "name": "perioperative pain",
+    "entity_type": "Symptom",
+    "aliases": [
+      "perioperative pain"
+    ],
+    "review_note": "원문의 증상 표현을 보존한 내부 개체이며 외부 기관의 표준 코드는 아님"
+  },
+  {
+    "standard_id": "local:symptom:neuropathic-symptoms",
+    "name": "chemotherapy-induced neuropathic symptoms",
+    "entity_type": "Symptom",
+    "aliases": [
+      "chemotherapy-induced neuropathic symptoms"
+    ],
+    "review_note": "원문의 증상 표현을 보존한 내부 개체이며 외부 기관의 표준 코드는 아님"
+  },
+  {
+    "standard_id": "local:symptom:nocturnal-discomfort",
+    "name": "nocturnal discomfort",
+    "entity_type": "Symptom",
+    "aliases": [
+      "nocturnal discomfort"
+    ],
+    "review_note": "원문의 증상 표현을 보존한 내부 개체이며 외부 기관의 표준 코드는 아님"
+  }
+]

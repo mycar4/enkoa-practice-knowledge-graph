@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Styler.map_index",
+    "entity_type": "ApiElement",
+    "standard_id": "pandas:api:Styler.map_index",
+    "aliases": [
+      "Styler.map_index"
+    ],
+    "review_note": "원문의 Use the new ... method instead에서 대체 API임을 확인함. 기존 API와 다른 개체로 등록함."
+  },
+  {
+    "name": "Styler.map",
+    "entity_type": "ApiElement",
+    "standard_id": "pandas:api:Styler.map",
+    "aliases": [
+      "Styler.map"
+    ],
+    "review_note": "원문의 Use the new ... method instead에서 대체 API임을 확인함. 기존 API와 다른 개체로 등록함."
+  }
+]

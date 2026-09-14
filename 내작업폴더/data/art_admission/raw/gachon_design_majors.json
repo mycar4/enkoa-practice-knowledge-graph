@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 25,
+      "competition_applicant_count": 180,
+      "competition_rate": 7.2,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.gachon.ac.kr/",
       "ratio": "실기 70% + 학생부교과 30% (일괄합산)",
       "is_staged": false,
       "application_period": {
@@ -95,6 +99,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 30,
+      "competition_applicant_count": 743,
+      "competition_rate": 24.77,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.gachon.ac.kr/",
       "ratio": "실기 70% + 학생부교과 30% (일괄합산)",
       "is_staged": false,
       "application_period": {
@@ -190,6 +198,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 30,
+      "competition_applicant_count": 681,
+      "competition_rate": 22.7,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.gachon.ac.kr/",
       "ratio": "실기 70% + 학생부교과 30% (일괄합산)",
       "is_staged": false,
       "application_period": {

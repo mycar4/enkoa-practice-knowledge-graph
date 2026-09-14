@@ -1,0 +1,10 @@
+[
+  {
+    "child_id": "local:disease:plaque-psoriasis",
+    "child_name": "plaque psoriasis",
+    "parent_id": "Disease::DOID:8893",
+    "parent_name": "psoriasis",
+    "parent_type": "Disease",
+    "note": "합치지 않기로 한 병형을 넓은 개념 아래에 두어 상위 개념으로도 찾히게 함"
+  }
+]

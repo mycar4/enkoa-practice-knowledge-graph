@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 48,
+      "competition_applicant_count": 496,
+      "competition_rate": 10.33,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.sejong.edu/",
       "ratio": "1단계(3배수): 서류평가 100% -> 2단계: 1단계 성적 60% + 면접 40%",
       "is_staged": true,
       "application_period": {
@@ -47,6 +51,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 48,
+      "competition_applicant_count": 454,
+      "competition_rate": 9.46,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.sejong.edu/",
       "ratio": "1단계(3배수): 서류평가 100% -> 2단계: 1단계 성적 60% + 면접 40%",
       "is_staged": true,
       "application_period": {

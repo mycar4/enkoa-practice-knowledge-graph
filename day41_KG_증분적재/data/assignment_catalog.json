@@ -1,0 +1,74 @@
+[
+  {
+    "name": "2.1.0",
+    "entity_type": "Release",
+    "standard_id": "pandas:release:2.1.0",
+    "aliases": [
+      "2.1.0"
+    ]
+  },
+  {
+    "name": "2.2.0",
+    "entity_type": "Release",
+    "standard_id": "pandas:release:2.2.0",
+    "aliases": [
+      "2.2.0"
+    ]
+  },
+  {
+    "name": "Styler.applymap_index",
+    "entity_type": "ApiElement",
+    "standard_id": "pandas:api:Styler.applymap_index",
+    "aliases": [
+      "Styler.applymap_index"
+    ]
+  },
+  {
+    "name": "Styler.applymap",
+    "entity_type": "ApiElement",
+    "standard_id": "pandas:api:Styler.applymap",
+    "aliases": [
+      "Styler.applymap"
+    ]
+  },
+  {
+    "name": "DataFrame.applymap",
+    "entity_type": "ApiElement",
+    "standard_id": "pandas:api:DataFrame.applymap",
+    "aliases": [
+      "DataFrame.applymap"
+    ]
+  },
+  {
+    "name": "DataFrame.map",
+    "entity_type": "ApiElement",
+    "standard_id": "pandas:api:DataFrame.map",
+    "aliases": [
+      "DataFrame.map"
+    ]
+  },
+  {
+    "name": "Series.ravel",
+    "entity_type": "ApiElement",
+    "standard_id": "pandas:api:Series.ravel",
+    "aliases": [
+      "Series.ravel"
+    ]
+  },
+  {
+    "name": "DataFrameGroupBy.grouper",
+    "entity_type": "ApiElement",
+    "standard_id": "pandas:api:DataFrameGroupBy.grouper",
+    "aliases": [
+      "DataFrameGroupBy.grouper"
+    ]
+  },
+  {
+    "name": "SeriesGroupBy.grouper",
+    "entity_type": "ApiElement",
+    "standard_id": "pandas:api:SeriesGroupBy.grouper",
+    "aliases": [
+      "SeriesGroupBy.grouper"
+    ]
+  }
+]

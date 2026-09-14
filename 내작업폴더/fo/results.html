@@ -1177,10 +1177,24 @@ function renderRecommendResults() {
         실기 결과에 따라 최종 총점 <span class="font-bold text-secondary">${contribution}%p ~ ${compositeMax}%p</span> 사이 (학생부로 이미 ${contribution}%p 확보)
       </div>`;
     }
+    const pyr = r.prior_year_result;
+    // 2026-09-14: 원서접수 마감 후 학교가 공식 발표한 실질경쟁률(official_facts,
+    // 자리는 이미 t.competition_rate)이 채워지기 시작했다. 전년도 추정치(pyr.competition_rate,
+    // estimates 계열)와 나란히 비교해서 보여주되, 두 값의 출처 등급이 다르다는 걸
+    // 헷갈리지 않게 "공식 발표" / "작년 참고"로 명확히 구분해 표기한다(Zero-Mixing 원칙 -
+    // 값을 하나로 합치거나 같은 라벨을 쓰지 않는다).
+    const competitionLine = (r.competition_rate != null || (pyr && pyr.competition_rate != null))
+      ? `<div class="font-body-sm text-body-sm text-on-surface-variant">경쟁률: ${
+          r.competition_rate != null
+            ? `<span class="text-primary font-medium">${r.competition_rate}:1(공식발표${r.competition_applicant_count != null ? `, ${r.competition_applicant_count}명 지원` : ""})</span>`
+            : "금년도 미발표"
+        }${pyr && pyr.competition_rate != null ? ` · 작년(참고) ${pyr.competition_rate}:1` : ""}</div>`
+      : "";
     const scheduleBlock = `
       ${r.exam_type_name ? `<div class="font-body-sm text-body-sm text-on-surface-variant">실기종목: ${r.exam_type_name}</div>` : ""}
       ${(r.allowed_materials && r.allowed_materials.length) || r.paper_size ? `<div class="font-body-sm text-body-sm text-on-surface-variant">재료: ${(r.allowed_materials || []).join(", ") || "-"}${r.paper_size ? " · 규격: " + r.paper_size : ""}</div>` : ""}
       <div class="font-body-sm text-body-sm text-on-surface-variant">모집인원: ${r.quota ?? "-"}명</div>
+      ${competitionLine}
       <div class="font-body-sm text-body-sm text-on-surface-variant">원서접수: ${r.application_start || "-"} ~ ${r.application_end || "-"}</div>
       <div class="font-body-sm text-body-sm text-on-surface-variant">실기고사: ${(r.exam_dates || []).join(", ") || "-"} · 발표: ${r.result_date || "-"}</div>
     `;
@@ -1190,7 +1204,6 @@ function renderRecommendResults() {
           ? ` <span class="text-outline">- 실기 비중이 높다는 것은 내신이 낮아도 합격하기 쉽다는 의미가 아닙니다. 지원자의 실기 수준에 따라 결과가 크게 달라질 수 있습니다.</span>`
           : "") +
         `</div>` : "";
-    const pyr = r.prior_year_result;
     // 대학찾기 카드의 "비공식 참고 정보" <details>와 같은 패턴 - 요약 한 줄만 기본
     // 노출하고, 클릭해야 근거/주의문구 전체가 펼쳐진다(정보는 중요하니 없애지 않고
     // 접어서 카드 길이만 줄인다).

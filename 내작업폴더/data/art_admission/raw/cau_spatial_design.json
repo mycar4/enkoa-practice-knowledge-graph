@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 7,
+      "competition_applicant_count": 332,
+      "competition_rate": 47.43,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.cau.ac.kr/submenu.do?menuurl=oG08risXFa2m%2bdEZZm03Xw%3d%3d",
       "ratio": "1단계(5배수): 학생부 20%(교과 15%+출결 5%)+실기 80% -> 2단계: 1단계 성적 70%+2단계 실기(질의응답) 30% (단계별 전형)",
       "is_staged": true,
       "application_period": {
@@ -93,6 +97,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 4,
+      "competition_applicant_count": 102,
+      "competition_rate": 25.5,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.cau.ac.kr/submenu.do?menuurl=oG08risXFa2m%2bdEZZm03Xw%3d%3d",
       "ratio": "서류평가 100%",
       "is_staged": false,
       "application_period": {
@@ -128,6 +136,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 7,
+      "competition_applicant_count": 115,
+      "competition_rate": 16.43,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.cau.ac.kr/submenu.do?menuurl=oG08risXFa2m%2bdEZZm03Xw%3d%3d",
       "ratio": "서류평가 100%",
       "is_staged": false,
       "application_period": {
@@ -163,6 +175,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 8,
+      "competition_applicant_count": 115,
+      "competition_rate": 14.38,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.cau.ac.kr/submenu.do?menuurl=oG08risXFa2m%2bdEZZm03Xw%3d%3d",
       "ratio": "서류평가 100%",
       "is_staged": false,
       "application_period": {
@@ -198,6 +214,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 13,
+      "competition_applicant_count": 149,
+      "competition_rate": 11.46,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.cau.ac.kr/submenu.do?menuurl=oG08risXFa2m%2bdEZZm03Xw%3d%3d",
       "ratio": "일괄합산: 학생부 20%(교과15%+비교과5%) + 실기 80%",
       "school_record_ratio_pct": 20,
       "practical_ratio_pct": 80,
@@ -260,6 +280,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 11,
+      "competition_applicant_count": 209,
+      "competition_rate": 19.0,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.cau.ac.kr/submenu.do?menuurl=oG08risXFa2m%2bdEZZm03Xw%3d%3d",
       "ratio": "일괄합산: 학생부 20%(교과15%+비교과5%) + 실기 80%",
       "school_record_ratio_pct": 20,
       "practical_ratio_pct": 80,
@@ -324,6 +348,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 13,
+      "competition_applicant_count": 158,
+      "competition_rate": 12.15,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.cau.ac.kr/submenu.do?menuurl=oG08risXFa2m%2bdEZZm03Xw%3d%3d",
       "ratio": "일괄합산: 학생부 20%(교과15%+비교과5%) + 실기 80%",
       "school_record_ratio_pct": 20,
       "practical_ratio_pct": 80,
@@ -386,6 +414,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 4,
+      "competition_applicant_count": 85,
+      "competition_rate": 21.25,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.cau.ac.kr/submenu.do?menuurl=oG08risXFa2m%2bdEZZm03Xw%3d%3d",
       "ratio": "1단계(20배수): 학생부 100%(교과75%+비교과25%) -> 2단계: 학생부 20%(교과15%+비교과5%) + 실기 80%",
       "school_record_ratio_pct": 20,
       "practical_ratio_pct": 80,
@@ -450,6 +482,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 5,
+      "competition_applicant_count": 123,
+      "competition_rate": 24.6,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.cau.ac.kr/submenu.do?menuurl=oG08risXFa2m%2bdEZZm03Xw%3d%3d",
       "ratio": "1단계(20배수): 학생부 100%(교과75%+비교과25%) -> 2단계: 학생부 20%(교과15%+비교과5%) + 실기 80%",
       "school_record_ratio_pct": 20,
       "practical_ratio_pct": 80,
@@ -514,6 +550,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 6,
+      "competition_applicant_count": 121,
+      "competition_rate": 20.17,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.cau.ac.kr/submenu.do?menuurl=oG08risXFa2m%2bdEZZm03Xw%3d%3d",
       "ratio": "1단계(20배수): 학생부 100%(교과75%+비교과25%) -> 2단계: 학생부 20%(교과15%+비교과5%) + 실기 80%",
       "school_record_ratio_pct": 20,
       "practical_ratio_pct": 80,

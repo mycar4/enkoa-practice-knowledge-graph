@@ -5,7 +5,11 @@
   "track_name": "실기우수자전형",
   "official_facts": {
     "admission_year": 2027,
-    "quota": 30,
+      "quota": 30,
+      "competition_applicant_count": 271,
+      "competition_rate": 9.03,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.gachon.ac.kr/",
     "ratio": "실기 70% + 학생부교과 30% (일괄합산)",
     "is_staged": false,
     "application_period": {

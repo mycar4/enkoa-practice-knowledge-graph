@@ -1,0 +1,129 @@
+{
+  "catalog": [
+    {
+      "standard_id": "Compound::DB00190",
+      "name": "Carbidopa",
+      "entity_type": "Compound",
+      "aliases": [
+        "Carbidopa"
+      ]
+    },
+    {
+      "standard_id": "Compound::DB00230",
+      "name": "Pregabalin",
+      "entity_type": "Compound",
+      "aliases": [
+        "Pregabalin",
+        "pregabalin"
+      ]
+    },
+    {
+      "standard_id": "Compound::DB00996",
+      "name": "Gabapentin",
+      "entity_type": "Compound",
+      "aliases": [
+        "Gabapentin",
+        "gabapentin"
+      ]
+    },
+    {
+      "standard_id": "Disease::DOID:14330",
+      "name": "Parkinson's disease",
+      "entity_type": "Disease",
+      "aliases": [
+        "Parkinson's disease",
+        "Parkinson disease"
+      ]
+    },
+    {
+      "standard_id": "Disease::DOID:3310",
+      "name": "atopic dermatitis",
+      "entity_type": "Disease",
+      "aliases": [
+        "atopic dermatitis"
+      ]
+    },
+    {
+      "standard_id": "Disease::DOID:8893",
+      "name": "psoriasis",
+      "entity_type": "Disease",
+      "aliases": [
+        "psoriasis"
+      ]
+    },
+    {
+      "standard_id": "local:compound:tapinarof",
+      "name": "Tapinarof",
+      "entity_type": "Compound",
+      "aliases": [
+        "Tapinarof"
+      ],
+      "review_note": "원문의 약물 이름을 확인함. 기존 Hetionet 부분집합에 없어 내부 ID를 부여함"
+    },
+    {
+      "standard_id": "local:disease:plaque-psoriasis",
+      "name": "plaque psoriasis",
+      "entity_type": "Disease",
+      "aliases": [
+        "plaque psoriasis"
+      ],
+      "review_note": "psoriasis보다 구체적인 병형이므로 기존의 넓은 개념과 합치지 않음"
+    }
+  ],
+  "rows": [
+    {
+      "subject_id": "Compound::DB00190",
+      "object_id": "Disease::DOID:14330",
+      "relation": "PALLIATES",
+      "source_doc_id": "hetionet:v1.0",
+      "evidence": "",
+      "subject": "Carbidopa",
+      "subject_type": "Compound",
+      "object": "Parkinson's disease",
+      "object_type": "Disease",
+      "claim_id": "claim:a7ba03da91ca1a2a32a1839f6becce5962ac163d170f9d78693e9a7e0464c3ce"
+    },
+    {
+      "subject": "Carbidopa",
+      "subject_type": "Compound",
+      "relation": "TREATS",
+      "object": "Parkinson disease",
+      "object_type": "Disease",
+      "source_doc_id": "PMC13494208",
+      "evidence": "used to treat Parkinson disease",
+      "subject_id": "Compound::DB00190",
+      "object_id": "Disease::DOID:14330",
+      "claim_id": "claim:837fd1da10ef47bf86c5bb4587ffb41c34c5eaa76d3d5ead3c82c0e5363186cf"
+    },
+    {
+      "subject": "Tapinarof",
+      "subject_type": "Compound",
+      "relation": "TREATS",
+      "object": "atopic dermatitis",
+      "object_type": "Disease",
+      "source_doc_id": "PMC13494208",
+      "evidence": "Tapinarof (3,5-dihydroxy-4-isopropylstilbene) is the first-in-class nonsteroidal, topical AHR agonist (Kd: 100–200 nM) that was approved by the US Food and Drug Administration (FDA) in 2022 for the treatment of plaque psoriasis and in 2024 for the treatment of atopic dermatitis.",
+      "subject_id": "local:compound:tapinarof",
+      "object_id": "Disease::DOID:3310",
+      "claim_id": "claim:55d6a5df5949eb071bd286879149396ef7e32be61e23575bbb43a4471981eca1"
+    },
+    {
+      "subject": "Tapinarof",
+      "subject_type": "Compound",
+      "relation": "TREATS",
+      "object": "plaque psoriasis",
+      "object_type": "Disease",
+      "source_doc_id": "PMC13494208",
+      "evidence": "was approved by the US Food and Drug Administration (FDA) in 2022 for the treatment of plaque psoriasis",
+      "subject_id": "local:compound:tapinarof",
+      "object_id": "local:disease:plaque-psoriasis",
+      "claim_id": "claim:77a561f21cd35cd3adef72a5e7e7d4feda32e225434bed40932a648b8396dc2b"
+    }
+  ],
+  "source_note": "Hetionet 완화 1관계와 논문의 치료 3관계를 시작 그래프로 사용합니다. paper_batch.json 원본은 유지합니다.",
+  "review_notes": [
+    "Tapinarof의 atopic dermatitis 치료 관계는 유지하고, 원문과 달랐던 evidence를 출처의 승인 문장 전체로 교정했습니다.",
+    "gabapentin이 breast cancer를 치료한다는 행은 원문이 뒷받침하지 않아 시작 그래프에서 제외했습니다. 이 원문은 새 증상 관계만 추출할 때 다시 읽습니다.",
+    "Hetionet 관계의 evidence는 원자료에 문장 인용이 없어 빈 문자열을 유지했습니다. 이 행을 논문 LLM 추출로 간주하지 않습니다."
+  ]
+}

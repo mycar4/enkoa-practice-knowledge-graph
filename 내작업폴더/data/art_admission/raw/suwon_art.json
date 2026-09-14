@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 60,
+      "competition_applicant_count": 588,
+      "competition_rate": 9.8,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.suwon.ac.kr/",
       "ratio": "일괄합산(실질반영비율): 학생부 11.1%(명목20%) + 실기 88.9%(명목80%)",
       "is_staged": false,
       "csat_minimum_required": false,
@@ -85,6 +89,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 33,
+      "competition_applicant_count": 1122,
+      "competition_rate": 34.0,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.suwon.ac.kr/",
       "ratio": "일괄합산(실질반영비율): 학생부 11.1%(명목20%) + 실기 88.9%(명목80%)",
       "is_staged": false,
       "csat_minimum_required": false,
@@ -163,6 +171,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 20,
+      "competition_applicant_count": 631,
+      "competition_rate": 31.55,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.suwon.ac.kr/",
       "ratio": "일괄합산(실질반영비율): 학생부 11.1%(명목20%) + 실기 88.9%(명목80%)",
       "is_staged": false,
       "csat_minimum_required": false,
@@ -241,6 +253,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 17,
+      "competition_applicant_count": 530,
+      "competition_rate": 31.18,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.suwon.ac.kr/",
       "ratio": "일괄합산(실질반영비율): 학생부 11.1%(명목20%) + 실기 88.9%(명목80%)",
       "is_staged": false,
       "csat_minimum_required": false,

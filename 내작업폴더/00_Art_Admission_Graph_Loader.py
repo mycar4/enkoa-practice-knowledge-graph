@@ -21,6 +21,7 @@ import sys
 import json
 import glob
 import argparse
+from datetime import datetime, timezone
 from pathlib import Path
 from neo4j import GraphDatabase, WRITE_ACCESS, READ_ACCESS
 from dotenv import load_dotenv
@@ -87,7 +88,7 @@ def validate_record(rec: dict, filename: str) -> list:
     return errors
 
 
-def load_one_record_tx(tx, rec: dict):
+def load_one_record_tx(tx, rec: dict, batch_id: str):
     university = rec["university"]
     campus = rec.get("campus", "")
     department = rec["department"]
@@ -116,7 +117,12 @@ def load_one_record_tx(tx, rec: dict):
             t.school_record_rule_json = $school_record_rule_json,
             t.school_record_status = $school_record_status,
             t.school_record_status_note = $school_record_status_note,
-            t.gender_restriction = $gender_restriction
+            t.gender_restriction = $gender_restriction,
+            t.competition_applicant_count = $competition_applicant_count,
+            t.competition_rate = $competition_rate,
+            t.competition_rate_announced_at = $competition_rate_announced_at,
+            t.competition_rate_source_url = $competition_rate_source_url,
+            t.last_loaded_batch_id = $batch_id
 
         MERGE (e:Admission_ExamType {name: $exam_type_name, track_name: $track_name, university: $university, department: $department})
         MERGE (t)-[:REQUIRES_EXAM]->(e)
@@ -149,6 +155,11 @@ def load_one_record_tx(tx, rec: dict):
          school_record_status=of.get("school_record_status"),
          school_record_status_note=of.get("school_record_status_note"),
          gender_restriction=of.get("gender_restriction"),
+         competition_applicant_count=of.get("competition_applicant_count"),
+         competition_rate=of.get("competition_rate"),
+         competition_rate_announced_at=of.get("competition_rate_announced_at"),
+         competition_rate_source_url=of.get("competition_rate_source_url"),
+         batch_id=batch_id,
          exam_type_name=of.get("exam_type_name", "미지정"),
          allowed_materials=of.get("allowed_materials", []),
          paper_size=of.get("paper_size"), time_limit_minutes=of.get("time_limit_minutes"),
@@ -256,15 +267,18 @@ def main():
         print("\nDRY-RUN 완료 (DB 쓰기 0건). --commit 플래그로 재실행 시 실제 적재됩니다.")
         return
 
+    batch_id = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
     driver = GraphDatabase.driver(uri, auth=(user, pwd))
     try:
         with driver.session(default_access_mode=WRITE_ACCESS) as session:
             for rec in records:
-                session.execute_write(load_one_record_tx, rec)
+                session.execute_write(load_one_record_tx, rec, batch_id)
         with driver.session(default_access_mode=READ_ACCESS) as session:
             u_cnt = session.run("MATCH (n:Admission_University) RETURN count(n) AS c").single()["c"]
             t_cnt = session.run("MATCH (n:Admission_Track) RETURN count(n) AS c").single()["c"]
-        print(f"[커밋 완료] Admission_University={u_cnt}, Admission_Track={t_cnt}")
+        print(f"[커밋 완료] Admission_University={u_cnt}, Admission_Track={t_cnt}, batch_id={batch_id}")
+        print(f"  이번 배치가 건드린 Track 조회: MATCH (t:Admission_Track {{last_loaded_batch_id: '{batch_id}'}}) RETURN t")
     finally:
         driver.close()
 

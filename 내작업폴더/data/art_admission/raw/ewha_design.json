@@ -5,7 +5,11 @@
   "track_name": "예체능서류전형",
   "official_facts": {
     "admission_year": 2027,
-    "quota": 24,
+      "quota": 24,
+      "competition_applicant_count": 431,
+      "competition_rate": 17.96,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.ewha.ac.kr/",
     "ratio": "1단계(4배수): 서류 100% -> 2단계: 1단계 성적 80% + 면접 20%",
     "is_staged": true,
     "csat_minimum_required": true,

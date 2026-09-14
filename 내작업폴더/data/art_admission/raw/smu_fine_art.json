@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 10,
+      "competition_applicant_count": 408,
+      "competition_rate": 40.8,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.smu.ac.kr/_seoul/main.html",
       "ratio": "일괄합산: 학생부교과 30% + 실기 70%",
       "is_staged": false,
       "application_period": {
@@ -87,6 +91,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 9,
+      "competition_applicant_count": 156,
+      "competition_rate": 17.33,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.smu.ac.kr/_seoul/main.html",
       "ratio": "1단계(5배수): 서류평가 100% -> 2단계: 1단계 성적(서류평가) 60% + 면접평가 40%, 전형총점 1,000점",
       "is_staged": true,
       "csat_minimum_required": false,

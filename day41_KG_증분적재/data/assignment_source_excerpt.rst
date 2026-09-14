@@ -1,0 +1,3 @@
+- Deprecated :meth:`.Styler.applymap_index`. Use the new :meth:`.Styler.map_index` method instead (:issue:`52708`)
+- Deprecated :meth:`.Styler.applymap`. Use the new :meth:`.Styler.map` method instead (:issue:`52708`)
+- Deprecated :meth:`DataFrame.applymap`. Use the new :meth:`DataFrame.map` method instead (:issue:`52353`)

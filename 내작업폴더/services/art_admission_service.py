@@ -1335,6 +1335,10 @@ class ArtAdmissionService:
                        t.school_record_status AS school_record_status,
                        t.school_record_status_note AS school_record_status_note,
                        t.gender_restriction AS gender_restriction,
+                       t.competition_rate AS competition_rate,
+                       t.competition_applicant_count AS competition_applicant_count,
+                       t.competition_rate_announced_at AS competition_rate_announced_at,
+                       t.competition_rate_source_url AS competition_rate_source_url,
                        e.name AS exam_type_name, e.allowed_materials AS allowed_materials,
                        e.paper_size AS paper_size, e.time_limit_minutes AS time_limit_minutes,
                        sch.application_start AS application_start, sch.application_end AS application_end,
@@ -2522,6 +2526,10 @@ class ArtAdmissionService:
                 "allowed_materials": t.get("allowed_materials"), "paper_size": t.get("paper_size"),
                 "application_start": t.get("application_start"), "application_end": t.get("application_end"),
                 "exam_dates": t.get("exam_dates"), "result_date": t.get("result_date"),
+                "competition_rate": t.get("competition_rate"),
+                "competition_applicant_count": t.get("competition_applicant_count"),
+                "competition_rate_announced_at": t.get("competition_rate_announced_at"),
+                "competition_rate_source_url": t.get("competition_rate_source_url"),
             }
             doc_category = self._document_track_category(t.get("exam_type_name"))
             entry["is_document_based"] = doc_category == "portfolio"

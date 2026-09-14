@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 21,
+      "competition_applicant_count": 390,
+      "competition_rate": 18.57,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://iphak.mju.ac.kr/",
       "ratio": "일괄합산: 실기 70% + 학생부교과 20% + 출결 10%",
       "is_staged": false,
       "application_period": {
@@ -91,6 +95,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 21,
+      "competition_applicant_count": 304,
+      "competition_rate": 14.48,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://iphak.mju.ac.kr/",
       "ratio": "일괄합산: 실기 70% + 학생부교과 20% + 출결 10%",
       "is_staged": false,
       "application_period": {
@@ -175,6 +183,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 11,
+      "competition_applicant_count": 544,
+      "competition_rate": 49.45,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://iphak.mju.ac.kr/",
       "ratio": "일괄합산: 실기 70% + 학생부교과 20% + 출결 10%",
       "is_staged": false,
       "application_period": {
@@ -264,6 +276,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 10,
+      "competition_applicant_count": 160,
+      "competition_rate": 16.0,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://iphak.mju.ac.kr/",
       "ratio": "일괄합산: 실기 70% + 학생부교과 20% + 출결 10%",
       "is_staged": false,
       "application_period": {
@@ -348,6 +364,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 21,
+      "competition_applicant_count": 460,
+      "competition_rate": 21.9,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://iphak.mju.ac.kr/",
       "ratio": "일괄합산: 실기 70% + 학생부교과 20% + 출결 10%",
       "is_staged": false,
       "application_period": {

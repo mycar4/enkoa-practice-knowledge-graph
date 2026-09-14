@@ -1,0 +1,10 @@
+[
+  {
+    "child_id": "movies:genre:supernatural-horror",
+    "child_name": "supernatural horror",
+    "parent_id": "movies:genre:horror",
+    "parent_name": "horror",
+    "parent_type": "Genre",
+    "note": "이 프로젝트의 장르 계층에서 초자연적 공포를 공포의 하위 장르로 둡니다."
+  }
+]

@@ -1,0 +1,2 @@
+- Deprecated :meth:`Series.ravel`, the underlying array is already 1D, so ravel is not necessary (:issue:`52511`)
+- Deprecated the :attr:`.DataFrameGroupBy.grouper` and :attr:`SeriesGroupBy.grouper`; these attributes will be removed in a future version of pandas (:issue:`56521`)
