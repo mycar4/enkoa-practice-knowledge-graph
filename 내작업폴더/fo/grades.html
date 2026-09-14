@@ -74,7 +74,7 @@
 
 <fieldset class="mt-unit-lg space-y-unit-sm">
 <div class="flex items-baseline justify-between"><legend class="font-label-lg text-label-lg text-on-surface">학생부 성적표 파일 업로드 (txt 또는 나이스 학교생활기록 html)</legend><span class="font-label-sm text-label-sm text-primary font-bold">필수</span></div>
-<p class="font-body-sm text-body-sm text-on-surface-variant">나이스 학생부 성적표 txt, 또는 나이스 대국민서비스에서 "학교생활기록부 조회" 화면을 "다른 이름으로 저장 → 웹페이지, 완전"으로 저장한 html 파일을 업로드하면 아래 표가 자동으로 채워집니다.</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">나이스 학생부 성적표 txt, 또는 나이스 대국민서비스에서 "학교생활기록부 조회" 화면을 브라우저 우측 상단 점 세 개 메뉴(⋮) → 저장 및 공유 → 다른 이름으로 페이지 저장 → 파일형식 "웹페이지, 전체"로 저장한 html 파일을 업로드하면 아래 표가 자동으로 채워집니다.</p>
 <input type="file" id="txtUploadInput" accept=".txt,text/plain,.html,.htm,text/html" class="w-full text-body-sm text-on-surface-variant file:mr-unit-sm file:py-unit-xs file:px-unit-sm file:rounded file:border-0 file:bg-primary file:text-on-primary file:font-label-sm file:text-label-sm file:cursor-pointer"/>
 <p id="uploadNotice" class="font-label-sm text-label-sm text-primary hidden"></p>
 <p id="uploadError" class="font-body-sm text-body-sm text-error hidden"></p>
@@ -365,7 +365,8 @@ function parseGradeSheetTxt(text) {
   return { rows, errors };
 }
 
-// 2026-09-14: 나이스 "학교생활기록부 조회" 화면을 "웹페이지, 완전"으로 저장한 html도
+// 2026-09-14: 나이스 "학교생활기록부 조회" 화면을 (브라우저 ⋮ 메뉴 → 저장 및 공유 →
+// 다른 이름으로 페이지 저장 → 파일형식 "웹페이지, 전체") 저장한 html도
 // 업로드할 수 있게 추가 - 기존 txt와 달리 실제 표(<table role="table">)가 DOM에 그대로
 // 있어서 브라우저 DOMParser로 안전하게 읽을 수 있다(정규식으로 태그를 직접 자르지 않음).
 // 헤더 텍스트로 표 종류를 식별한다(칸 순서가 아니라 이름으로 매칭 - 나이스가 열 순서를
