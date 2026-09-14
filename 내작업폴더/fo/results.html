@@ -796,11 +796,17 @@ async function renderDepartmentResults(query) {
     const regionBadge = t.region ? `<span class="px-unit-xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded border border-outline-variant">${t.region}</span>` : "";
     const collegeTypeBadge = t.college_type === "2년제" ? `<span class="px-unit-xs py-0.5 bg-secondary text-on-secondary font-label-sm text-label-sm rounded">2년제</span>` : "";
     const similar = similarByDept.get(deptKey(t)) || [];
+    // 2026-09-15: score는 코사인 유사도(0~1) 원값 그대로다 - "검증된 사실"이 아니라
+    // 교육과정 텍스트 임베딩 간 거리이므로, 사용자가 오해하지 않도록 "유사도"라는
+    // 말과 함께 %로만 표시한다("일치율"/"매칭률" 같은 확정적 표현은 쓰지 않음).
     const similarBlock = similar.length ? `
         <details class="mt-unit-2xs">
-          <summary class="font-label-sm text-label-sm text-outline cursor-pointer">비슷한 학과 ${similar.length}곳 (같은 계열 태그 기준)</summary>
+          <summary class="font-label-sm text-label-sm text-outline cursor-pointer">비슷한 학과 ${similar.length}곳 (같은 계열 태그 기준, 교육과정 임베딩 유사도)</summary>
           <ul class="mt-unit-2xs flex flex-col gap-unit-3xs">
-            ${similar.map(s => `<li class="font-body-sm text-body-sm text-on-surface-variant">${s.university}${s.campus ? ` (${s.campus}캠퍼스)` : ""} · ${s.department}</li>`).join("")}
+            ${similar.map(s => `<li class="font-body-sm text-body-sm text-on-surface-variant flex items-center justify-between gap-unit-xs">
+              <span>${s.university}${s.campus ? ` (${s.campus}캠퍼스)` : ""} · ${s.department}</span>
+              <span class="shrink-0 px-unit-2xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded">유사도 ${Math.round((s.score || 0) * 100)}%</span>
+            </li>`).join("")}
           </ul>
         </details>` : "";
     return `

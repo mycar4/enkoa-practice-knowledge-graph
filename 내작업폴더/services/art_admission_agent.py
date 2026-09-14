@@ -139,6 +139,26 @@ def get_university_info(university: str, campus: str = "") -> str:
 
 
 @tool
+def find_similar_departments(university: str, department: str, campus: str = "", top_k: int = 5) -> str:
+    """"OO학과랑 비슷한 학과 어디 있어?" 같은 질문에 쓴다. 학과명 표기가 학교마다
+    달라도("애니메이션학과(4컷)" vs "만화애니메이션텍전공") 교육과정이 비슷하면 찾아준다 -
+    관리자가 승인한 표준 계열 태그가 같은 학과들 중에서만 비교하므로(예: "회화·한국화"
+    안에서만), 전혀 다른 계열끼리 우연히 비슷하게 나오는 오매칭을 막는다.
+    similarity_pct는 교육과정 텍스트 임베딩 간 코사인 유사도를 %로 바꾼 값이다 -
+    이건 사람이 검증한 사실이 아니라 통계적 유사도이므로, 답변에서 "N% 유사"처럼
+    수치 그대로 전달하되 "확실히 같다/증명됐다"처럼 단정하지 말 것. standard_tag가
+    없어서 결과가 비어 있으면 "아직 이 학과는 계열 분류/커리큘럼 데이터가 없어
+    비교할 수 없다"고 정직하게 답할 것(추측으로 채우지 말 것)."""
+    svc = _get_service()
+    rows = svc.find_similar_departments(university, department, campus=campus or None, top_k=top_k)
+    trimmed = [{
+        "university": r["university"], "campus": r.get("campus"), "department": r["department"],
+        "standard_tag": r.get("standard_tag"), "similarity_pct": round((r.get("score") or 0) * 100, 1),
+    } for r in rows]
+    return json.dumps({"count": len(trimmed), "similar": trimmed}, ensure_ascii=False)
+
+
+@tool
 def search_tracks(topic_keywords: List[str] = [], material_query: str = "", document_only: bool = False) -> str:
     """학생이 준비 중인 실기 종목(topic_keywords, 예: ["소묘"], ["기초디자인"])이나 재료
     (material_query, 예: "연필")로 지원 가능한 대학 전형을 찾는다. 결과의 match_status가
@@ -255,7 +275,7 @@ def recommend_by_grades(grades: List[Dict[str, Any]], topic_keywords: List[str] 
     }, ensure_ascii=False, default=str)
 
 
-TOOLS = [get_university_info, search_tracks, compare_tracks, check_schedule_conflicts, get_calendar, recommend_by_grades, get_competition_rate_ranking]
+TOOLS = [get_university_info, find_similar_departments, search_tracks, compare_tracks, check_schedule_conflicts, get_calendar, recommend_by_grades, get_competition_rate_ranking]
 
 
 def run_qa_pipeline(svc, query: str, model_id: str = AGENT_MODEL) -> Dict[str, Any]:
@@ -385,8 +405,11 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
                 # 반환한 학교를 전부 놓쳐서, 정상 답변까지 "환각 의심"으로 오탐했다
                 # (2026-09-14 사용자 실측 제보로 발견 - 스크린샷에서 recommend_by_grades가
                 # 호출됐고 답변의 학교들이 실제로 그 결과 안에 있었는데도 경고가 떴었음).
+                # find_similar_departments는 "similar" 키를 쓴다(2026-09-15 추가) - 같은
+                # 이유로 여기 안 넣으면 유사 학과 답변마다 오탐이 재발한다.
                 for row in (parsed.get("results", []) or parsed.get("tracks", [])
-                            or parsed.get("combo", []) or parsed.get("ranking", []) or []):
+                            or parsed.get("combo", []) or parsed.get("ranking", [])
+                            or parsed.get("similar", []) or []):
                     if isinstance(row, dict) and row.get("university"):
                         grounded_universities.add(row["university"])
                         _add_grounded_track(row)

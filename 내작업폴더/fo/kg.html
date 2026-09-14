@@ -109,6 +109,19 @@
 <p id="kgTrackCount" class="font-body-sm text-body-sm text-on-surface-variant sm:ml-unit-xs shrink-0"></p>
 </div>
 
+<!-- 2026-09-15: [④ 표준 계열 태그 필터] 학과 노드를 색으로만 구분하던 것에서
+     한 걸음 더 나아가, 특정 계열(예: "회화·한국화")만 골라서 그 학과와 연결된
+     대학·전형만 남기고 보여준다 - 사용자가 "이 색 기준으로 걸러서 볼 수 있냐"고
+     물어본 것에 대한 답. 태그 없는 학과(자율전공 등)는 필터를 걸면 자연히
+     빠진다(아직 분류가 안 된 것뿐이지 숨기는 게 아님을 안내 문구로 명시). -->
+<div class="flex flex-wrap items-center gap-unit-md">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase shrink-0" for="kgTagFilter">표준 계열 태그로 보기</label>
+<select id="kgTagFilter" class="h-11 px-unit-sm bg-surface text-on-surface border border-outline-variant rounded font-body-md text-body-md sm:w-56">
+<option value="">전체 (필터 없음)</option>
+</select>
+<p class="font-body-sm text-body-sm text-on-surface-variant">태그가 아직 없는 학과(자율전공 등)는 특정 태그를 고르면 함께 숨겨집니다.</p>
+</div>
+
 <p id="kgGradeStatus" class="font-body-sm text-body-sm text-on-surface-variant"></p>
 </div>
 
@@ -170,6 +183,42 @@ function filterByDepth(graphData, depth) {
     nodes: graphData.nodes.filter(n => keptIds.has(n.id)),
     edges: graphData.edges.filter(e => keptIds.has(e.from) && keptIds.has(e.to)),
   };
+}
+
+// [④ 표준 계열 태그 필터] tag가 비어있으면 그대로 반환. 아니면 해당 태그의
+// 학과 노드만 남기고, 그 학과에 연결된 조상(대학)/자손(전형) 노드만 함께
+// 남긴다 - 태그가 없거나 다른 태그인 학과, 그리고 그 학과만 연결된 대학·전형은
+// 전부 빠진다. 루트 노드(topic/tracktype/admissiontype)는 항상 남긴다.
+function filterByTag(graphData, tag) {
+  if (!tag) return graphData;
+  const keptDeptIds = new Set(graphData.nodes.filter(n => n.group === "department" && n.standard_tag === tag).map(n => n.id));
+  if (!keptDeptIds.size) return { nodes: [], edges: [] };
+
+  const parentOf = new Map(); // childId -> parentId
+  graphData.edges.forEach(e => parentOf.set(e.to, e.from));
+
+  const keptIds = new Set(keptDeptIds);
+  // 학과의 조상(대학, 그리고 있다면 루트)을 계속 따라 올라가며 추가
+  keptDeptIds.forEach(id => {
+    let cur = id;
+    while (parentOf.has(cur)) {
+      cur = parentOf.get(cur);
+      keptIds.add(cur);
+    }
+  });
+  // 학과의 자손(전형)을 추가
+  graphData.edges.forEach(e => {
+    if (keptDeptIds.has(e.from)) keptIds.add(e.to);
+  });
+
+  return {
+    nodes: graphData.nodes.filter(n => keptIds.has(n.id)),
+    edges: graphData.edges.filter(e => keptIds.has(e.from) && keptIds.has(e.to)),
+  };
+}
+
+function currentTagFilter() {
+  return document.getElementById("kgTagFilter").value;
 }
 
 // 2026-09-15: 학과 표준 계열 태그(10개 카테고리, 관리자 승인 기반)별 색상 -
@@ -249,7 +298,7 @@ function renderGraph(graphData) {
 
 function applyDepthAndRender() {
   if (!kgFullGraph) return;
-  renderGraph(filterByDepth(kgFullGraph, currentDepth()));
+  renderGraph(filterByTag(filterByDepth(kgFullGraph, currentDepth()), currentTagFilter()));
 }
 
 function loadGraph(body) {
@@ -299,6 +348,12 @@ function loadCurrentSelection() {
 }
 
 document.querySelectorAll(".kgDepthRadio").forEach(r => r.addEventListener("change", applyDepthAndRender));
+
+// 태그 드롭다운 옵션은 TAG_COLORS 키(10개 표준 계열)를 그대로 쓴다 - 색상 범례와
+// 필터 목록이 항상 같은 태그 집합을 참조하도록 한 곳(TAG_COLORS)에서만 관리.
+document.getElementById("kgTagFilter").innerHTML = `<option value="">전체 (필터 없음)</option>` +
+  Object.keys(TAG_COLORS).map(t => `<option value="${t}">${t}</option>`).join("");
+document.getElementById("kgTagFilter").addEventListener("change", applyDepthAndRender);
 
 const KG_TAB_IDS = { university: "kgTabUniv", topic: "kgTabTopic", trackType: "kgTabTrackType", admissionType: "kgTabAdmissionType" };
 const KG_PANEL_IDS = { university: "kgUnivPanel", topic: "kgTopicPanel", trackType: "kgTrackTypePanel", admissionType: "kgAdmissionTypePanel" };
