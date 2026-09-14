@@ -16,7 +16,7 @@ import datetime
 from urllib.parse import urlparse
 from pathlib import Path
 from typing import Dict, Any, List, Optional
-from neo4j import GraphDatabase, READ_ACCESS
+from neo4j import GraphDatabase, READ_ACCESS, WRITE_ACCESS
 from dotenv import load_dotenv
 
 # 학교 자체 공식 도메인(신뢰도 상) 목록 - 여기 없는 나머지(주로 CDN 미러)는
@@ -1047,6 +1047,51 @@ class ArtAdmissionService:
                 WHERE $campus IS NULL OR u.campus = $campus
                 SET d.standard_tag = $tag
             """, university=university, department=department, tag=tag, campus=campus)
+
+    def set_department_curriculum(self, university: str, department: str, department_intro: str,
+                                   curriculum_subjects: List[str], campus: Optional[str] = None,
+                                   source_note: Optional[str] = None) -> None:
+        """[교육과정 원문 저장] 15개교 파일럿에서 GPT/Claude가 수집한 학과 소개와
+        교육과정 과목 리스트를 raw JSON 재적재 경로와 분리해서 저장한다(태그와 같은
+        이유 - 메인 로더 재실행이 이 데이터를 덮어쓰면 안 됨). 이후
+        04_Department_Embedding_Indexer.py가 이 두 필드를 합쳐 임베딩을 만든다."""
+        with self.driver.session(default_access_mode=WRITE_ACCESS) as s:
+            s.run("""
+                MATCH (u:Admission_University {name: $university})-[:HAS_DEPARTMENT]->(d:Admission_Department {name: $department})
+                WHERE $campus IS NULL OR u.campus = $campus
+                SET d.department_intro = $intro,
+                    d.curriculum_subjects = $subjects,
+                    d.curriculum_source_note = $source_note
+            """, university=university, department=department, campus=campus,
+                 intro=department_intro, subjects=curriculum_subjects, source_note=source_note)
+
+    def find_similar_departments(self, university: str, department: str, campus: Optional[str] = None,
+                                  top_k: int = 5) -> List[Dict[str, Any]]:
+        """[유사 학과 추천] 대상 학과와 같은 standard_tag를 가진 학과들 중에서만
+        임베딩 벡터 코사인 유사도로 top-K를 찾는다. 태그로 먼저 후보군을 좁히는 이유는
+        태그 없이 전체 학과를 비교하면 노이즈(예: 공예과와 영상학과가 우연히 비슷하게
+        나옴)가 커지기 때문 - list_standard_department_tags()의 10개 카테고리 안에서만
+        비교해야 설명 가능한 추천이 된다."""
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            target = s.run("""
+                MATCH (u:Admission_University {name: $university})-[:HAS_DEPARTMENT]->(d:Admission_Department {name: $department})
+                WHERE $campus IS NULL OR u.campus = $campus
+                RETURN d.embedding AS embedding, d.standard_tag AS tag
+            """, university=university, department=department, campus=campus).single()
+            if not target or not target["embedding"]:
+                return []
+            rows = s.run("""
+                CALL db.index.vector.queryNodes('admission_department_embedding', $k, $vec)
+                YIELD node, score
+                MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(node)
+                WHERE node.standard_tag = $tag AND NOT (u.name = $university AND node.name = $department)
+                RETURN u.name AS university, u.campus AS campus, node.name AS department,
+                       node.standard_tag AS standard_tag, score
+                ORDER BY score DESC
+                LIMIT $k
+            """, k=top_k, vec=target["embedding"], tag=target["tag"],
+                 university=university, department=department).data()
+            return rows
 
     @classmethod
     def _region_for(cls, university: str, campus: Optional[str]) -> str:
