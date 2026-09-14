@@ -1259,6 +1259,10 @@ class ArtAdmissionService:
                 RETURN d.name AS department, t.name AS track_name, t.quota AS quota, t.ratio AS ratio,
                        t.is_staged AS is_staged, t.source_url AS source_url, t.source_page AS source_page,
                        t.admission_year AS admission_year,
+                       t.competition_rate AS competition_rate,
+                       t.competition_applicant_count AS competition_applicant_count,
+                       t.competition_rate_announced_at AS competition_rate_announced_at,
+                       t.competition_rate_source_url AS competition_rate_source_url,
                        e.name AS exam_type_name, e.allowed_materials AS allowed_materials,
                        e.paper_size AS paper_size, e.time_limit_minutes AS time_limit_minutes,
                        sch.application_start AS application_start, sch.application_end AS application_end,
@@ -1291,7 +1295,10 @@ class ArtAdmissionService:
                 OPTIONAL MATCH (t)-[:HAS_INTERVIEW_SUMMARY]->(iv:Admission_InterviewSummary)
                 WITH d, t, c, collect(DISTINCT {title: iv.title, url: iv.url, channel: iv.channel, summary: iv.summary}) AS interviews
                 RETURN d.name AS department, t.name AS track_name, c.cutoff_grade_estimate AS cutoff_grade_estimate,
-                       c.source_url AS cutoff_source_url, interviews
+                       c.source_url AS cutoff_source_url,
+                       c.prior_year_admission_year AS prior_year_admission_year,
+                       c.prior_year_competition_rate AS prior_year_competition_rate,
+                       interviews
             """, university=university, campus=campus).data()
 
         return {

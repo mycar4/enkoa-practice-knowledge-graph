@@ -698,6 +698,15 @@ async function renderUniversityResults(name) {
     const est = estimatesByKey.get(`${t.department}::${t.track_name}`);
     const campusStr = t.campus ? ` (${t.campus}캠퍼스)` : "";
     const hasCutoff = est && est.cutoff_grade_estimate != null && est.cutoff_source_url;
+    // 2026-09-14: 성적추천 카드와 동일한 규칙 - 올해 공식 발표 경쟁률(t.competition_rate)과
+    // 작년 참고치(est.prior_year_competition_rate)를 나란히 보여주되 라벨로 구분한다.
+    const competitionLine = (t.competition_rate != null || (est && est.prior_year_competition_rate != null))
+      ? `<div class="font-body-sm text-body-sm text-on-surface-variant">경쟁률: ${
+          t.competition_rate != null
+            ? `<span class="text-primary font-medium">${t.competition_rate}:1(공식발표${t.competition_applicant_count != null ? `, ${t.competition_applicant_count}명 지원` : ""})</span>`
+            : "금년도 미발표"
+        }${est && est.prior_year_competition_rate != null ? ` · 작년(참고) ${est.prior_year_competition_rate}:1` : ""}</div>`
+      : "";
     // 전형유형 태그 - 실기/실적위주만 강조색, 서류/학생부계열은 중립색(실기가 아니라는
     // 걸 한눈에 구분하기 위함). 백엔드 _document_track_category() 판정을 그대로 노출.
     const categoryBadge = t.track_category === "practical"
@@ -715,6 +724,7 @@ async function renderUniversityResults(name) {
         <div class="font-body-sm text-body-sm text-on-surface-variant">실기종목: ${t.exam_type_name || "-"}</div>
         <div class="font-body-sm text-body-sm text-on-surface-variant">재료: ${(t.allowed_materials || []).join(", ") || "-"} ${t.paper_size ? "· 규격: " + t.paper_size : ""}</div>
         <div class="font-body-sm text-body-sm text-on-surface-variant">모집인원: ${t.quota ?? "-"}명 ${t.time_limit_minutes ? "· 시험시간 " + t.time_limit_minutes + "분" : ""}</div>
+        ${competitionLine}
         <div class="font-body-sm text-body-sm text-on-surface-variant">원서접수: ${t.application_start || "-"} ~ ${t.application_end || "-"}</div>
         <div class="font-body-sm text-body-sm text-on-surface-variant">실기고사: ${(t.exam_dates || []).join(", ") || "-"} · 발표: ${t.result_date || "-"}</div>
         ${hasCutoff ? `
