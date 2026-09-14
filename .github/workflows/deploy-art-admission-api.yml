@@ -50,7 +50,19 @@ jobs:
             # 배포마다 비용/시간이 들어 제외하고, 결정적이고 무료인 회귀만 배포 전에
             # 강제한다 - 이번 세션에서 실제로 두 번 터진 "재료만 겹침을 실기종목 일치로
             # 오판" 버그가 재발하면 여기서 막혀 배포 자체가 실패한다.
-            python 내작업폴더/tests/ci_quality_gate.py
+            # 2026-09-14: 텍스트 문구 하나만 고친 fo/ 정적 페이지 배포도 매번 이 게이트가
+            # Neo4j Aura에 실제 쿼리를 여러 번 날리느라 10분 넘게 걸렸다(사용자 실측 제보) -
+            # 이번 배치로 pull된 커밋들이 fo/ 정적 파일만 건드렸으면(백엔드 파이썬 코드
+            # 변화 없음) 게이트 자체를 건너뛴다. fo/ 밖의 파일이 하나라도 섞여 있으면
+            # 안전하게 그대로 실행한다.
+            CHANGED_FILES=$(git diff --name-only HEAD@{1} HEAD 2>/dev/null || echo "__UNKNOWN__")
+            if [ "$CHANGED_FILES" = "__UNKNOWN__" ] || echo "$CHANGED_FILES" | grep -qv '^내작업폴더/fo/'; then
+              echo "백엔드 변경 감지(또는 변경 파일 확인 불가) - 품질 게이트 실행"
+              python 내작업폴더/tests/ci_quality_gate.py
+            else
+              echo "fo/ 정적 페이지만 변경됨 - 품질 게이트 생략"
+              echo "$CHANGED_FILES"
+            fi
             sudo systemctl restart art-admission-api
             sleep 2
             curl -sf http://127.0.0.1:8001/health
