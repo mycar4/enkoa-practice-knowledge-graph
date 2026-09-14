@@ -380,7 +380,13 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
             # 누락돼서 정상 답변까지 "환각 의심"으로 오탐할 수 있다).
             try:
                 parsed = json.loads(content)
-                for row in parsed.get("results", []) or parsed.get("tracks", []) or []:
+                # recommend_by_grades는 "combo"(선택된 조합), get_competition_rate_ranking은
+                # "ranking" 키를 쓴다 - "results"/"tracks"만 보던 원래 코드는 이 두 도구가
+                # 반환한 학교를 전부 놓쳐서, 정상 답변까지 "환각 의심"으로 오탐했다
+                # (2026-09-14 사용자 실측 제보로 발견 - 스크린샷에서 recommend_by_grades가
+                # 호출됐고 답변의 학교들이 실제로 그 결과 안에 있었는데도 경고가 떴었음).
+                for row in (parsed.get("results", []) or parsed.get("tracks", [])
+                            or parsed.get("combo", []) or parsed.get("ranking", []) or []):
                     if isinstance(row, dict) and row.get("university"):
                         grounded_universities.add(row["university"])
                         _add_grounded_track(row)
