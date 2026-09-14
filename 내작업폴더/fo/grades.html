@@ -50,8 +50,9 @@
     <span class="material-symbols-outlined text-[20px]">help</span>처음이신가요? 사용 방법
   </p>
   <ol class="pl-unit-md list-decimal font-body-sm text-body-sm text-on-surface space-y-unit-2xs">
-    <li>나이스(학교종합정보) 학부모/학생 서비스에서 학교생활기록부 성적표를 txt 파일로 내려받습니다.</li>
-    <li>아래 "학생부 성적표 txt 파일 업로드"에 그 파일을 올리면 표가 자동으로 채워집니다.</li>
+    <li>나이스 대국민서비스(학부모/학생) 로그인 → 자녀의 "학교생활기록부 조회" 화면에서 성적·출결·봉사활동 항목을 체크하고 조회합니다. (나이스에는 "txt로 내려받기" 기능이 없습니다 - html 화면을 그대로 저장해서 씁니다.)</li>
+    <li>그 화면에서 브라우저 우측 상단 점 세 개 메뉴(⋮) → 저장 및 공유 → 다른 이름으로 페이지 저장 → 파일형식 "웹페이지, 전체"로 저장합니다.</li>
+    <li>아래 "학생부 성적표 파일 업로드"에 그 html 파일을 올리면 표가 자동으로 채워집니다.</li>
     <li>파일이 없거나 먼저 화면을 체험해보고 싶다면, 바로 아래 "샘플 성적으로 체험해보기" 버튼 중 하나를 눌러보세요 - 실제 학생 데이터가 아닌 연습용 예시 성적입니다.</li>
     <li>표 내용을 확인/수정한 뒤 "내게 맞는 미대 추천받기"를 누르면 대학별 공식 반영 규정으로 환산한 결과를 볼 수 있습니다.</li>
   </ol>
@@ -73,9 +74,18 @@
 </div>
 
 <fieldset class="mt-unit-lg space-y-unit-sm">
-<div class="flex items-baseline justify-between"><legend class="font-label-lg text-label-lg text-on-surface">학생부 성적표 파일 업로드 (txt 또는 나이스 학교생활기록 html)</legend><span class="font-label-sm text-label-sm text-primary font-bold">필수</span></div>
-<p class="font-body-sm text-body-sm text-on-surface-variant">나이스 학생부 성적표 txt, 또는 나이스 대국민서비스에서 "학교생활기록부 조회" 화면을 브라우저 우측 상단 점 세 개 메뉴(⋮) → 저장 및 공유 → 다른 이름으로 페이지 저장 → 파일형식 "웹페이지, 전체"로 저장한 html 파일을 업로드하면 아래 표가 자동으로 채워집니다.</p>
+<div class="flex items-baseline justify-between"><legend class="font-label-lg text-label-lg text-on-surface">학생부 성적표 파일 업로드 (나이스 학교생활기록 html 권장, txt도 가능)</legend><span class="font-label-sm text-label-sm text-primary font-bold">필수</span></div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">나이스 대국민서비스에서 "학교생활기록부 조회" 화면을 브라우저 우측 상단 점 세 개 메뉴(⋮) → 저장 및 공유 → 다른 이름으로 페이지 저장 → 파일형식 "웹페이지, 전체"로 저장한 html 파일을 업로드하면 아래 표가 자동으로 채워집니다. 직접 정리한 txt 파일이 있다면 그것도 업로드할 수 있습니다.</p>
 <input type="file" id="txtUploadInput" accept=".txt,text/plain,.html,.htm,text/html" class="w-full text-body-sm text-on-surface-variant file:mr-unit-sm file:py-unit-xs file:px-unit-sm file:rounded file:border-0 file:bg-primary file:text-on-primary file:font-label-sm file:text-label-sm file:cursor-pointer"/>
+<!-- 2026-09-14: "샘플을 눌렀는지, 파일을 올렸는지"가 화면에 안 남아서 나중에 헷갈린다는
+     피드백 - 지금 적용된 데이터 출처(샘플 or 실제 파일명)를 계속 보이는 줄로 고정
+     표시한다. 실제 파일을 올리면 샘플 선택 표시는 지우고 파일명을 최우선으로 보여준다
+     (반대로 샘플을 다시 누르면 파일명 표시는 지운다) - 항상 "지금 뭘 근거로 표가
+     채워졌는지" 하나만 명확하게 남도록. -->
+<div id="dataSourceStatus" class="hidden flex items-center gap-unit-2xs bg-surface-container-low rounded p-unit-xs">
+  <span class="material-symbols-outlined text-[16px] text-primary">check_circle</span>
+  <span id="dataSourceStatusText" class="font-label-sm text-label-sm text-on-surface"></span>
+</div>
 <p id="uploadNotice" class="font-label-sm text-label-sm text-primary hidden"></p>
 <p id="uploadError" class="font-body-sm text-body-sm text-error hidden"></p>
 </fieldset>
@@ -380,6 +390,8 @@ function parseNeisHtml(htmlText) {
   const errors = [];
   let unexcusedAbsenceDays = 0;
   let serviceHoursTotal = 0;
+  let hasAttendanceTable = false;
+  let hasServiceTable = false;
   let generalYearSeq = 0;
   let careerYearSeq = 0;
 
@@ -429,6 +441,7 @@ function parseNeisHtml(htmlText) {
       }
     } else if (headers.includes("미인정") && headers.includes("질병")) {
       // 출결상황: "미인정" 열이 학기/학년별로 여러 개일 수 있어 전부 합산.
+      hasAttendanceTable = true;
       const idxs = headers.reduce((acc, h, i) => (h === "미인정" ? [...acc, i] : acc), []);
       for (const r of dataRows(table)) {
         for (const i of idxs) {
@@ -437,6 +450,7 @@ function parseNeisHtml(htmlText) {
         }
       }
     } else if (headers.includes("누계시간") && headers.includes("시간")) {
+      hasServiceTable = true;
       const timeIdx = headers.indexOf("시간");
       for (const r of dataRows(table)) {
         const v = parseFloat(r[timeIdx]);
@@ -448,7 +462,29 @@ function parseNeisHtml(htmlText) {
   if (rows.length === 0) {
     errors.push("이 html에서 석차등급이 매겨진 교과 성적을 찾지 못했습니다 - 나이스에서 '학교생활기록부 조회' 화면이 실제로 표가 보이는 상태(조회 버튼을 누른 뒤)에서 저장했는지 확인해주세요.");
   }
-  return { rows, errors, unexcusedAbsenceDays, serviceHoursTotal };
+  return {
+    rows, errors,
+    unexcusedAbsenceDays: hasAttendanceTable ? unexcusedAbsenceDays : null,
+    serviceHoursTotal: hasServiceTable ? serviceHoursTotal : null,
+  };
+}
+
+// 2026-09-14: "지금 표가 뭘 근거로 채워졌는지"(샘플 어떤 등급 / 실제 파일 어떤 이름)를
+// 계속 보이는 상태로 남긴다 - 샘플 버튼을 누르면 그 버튼에 선택 표시를 하고, 실제
+// 파일을 올리면 샘플 선택 표시는 지우고 파일명을 최우선으로 보여준다(반대 방향도
+// 마찬가지 - 샘플을 다시 누르면 파일명 표시는 지운다). 서로 배타적인 "현재 데이터 출처"
+// 하나만 항상 명확히 남기기 위함(사용자 피드백).
+function setDataSourceStatus(text) {
+  const box = document.getElementById("dataSourceStatus");
+  const textEl = document.getElementById("dataSourceStatusText");
+  textEl.textContent = text;
+  box.classList.remove("hidden");
+}
+function clearSampleButtonSelection() {
+  document.querySelectorAll(".sample-grade-btn").forEach(b => {
+    b.classList.remove("border-primary", "bg-primary/10");
+    b.dataset.selected = "false";
+  });
 }
 
 function applyParsedRows(result, sourceLabel) {
@@ -467,16 +503,18 @@ function applyParsedRows(result, sourceLabel) {
   saveDraft();
   // 출결/봉사시간은 추출만 해서 보여주고, 아직 학교별 환산 계산에는 반영하지 않는다
   // (중앙대=출결, 경희대=봉사시간 등 학교마다 반영 공식이 달라 개별 검증 후 연결 예정 -
-  // 지금 반영하는 척하면 안 쓰는 값을 쓴 것처럼 오해를 준다).
+  // 지금 반영하는 척하면 안 쓰는 값을 쓴 것처럼 오해를 준다). null이 아니면(=파일에
+  // 그 표 자체가 있었으면) 0이어도 "0일/0시간"으로 보여준다 - "표는 있었는데 0"과
+  // "표 자체가 없어서 모름"을 구분해야 정직하기 때문(사용자 피드백).
   const extraParts = [];
-  if (unexcusedAbsenceDays !== undefined && unexcusedAbsenceDays > 0) {
-    extraParts.push(`미인정 결석 ${unexcusedAbsenceDays}일 인식됨`);
+  if (unexcusedAbsenceDays != null) {
+    extraParts.push(`입시 관련 - 미인정 결석 ${unexcusedAbsenceDays}일`);
   }
-  if (serviceHoursTotal !== undefined && serviceHoursTotal > 0) {
-    extraParts.push(`봉사활동 누계 ${serviceHoursTotal}시간 인식됨`);
+  if (serviceHoursTotal != null) {
+    extraParts.push(`봉사활동 누계 ${serviceHoursTotal}시간`);
   }
   const extraNote = extraParts.length
-    ? ` (${extraParts.join(", ")} - 아직 학교별 환산 계산에는 반영되지 않으며, 향후 학교별 검증 후 연결 예정입니다)`
+    ? ` (${extraParts.join(", ")} 인식됨 - 아직 학교별 환산 계산에는 반영되지 않으며, 향후 학교별 검증 후 연결 예정입니다)`
     : "";
   noticeEl.textContent = `${sourceLabel}에서 ${rows.length}개 과목을 불러왔습니다. 아래 표에서 확인·수정할 수 있습니다.${extraNote}`;
   noticeEl.classList.remove("hidden");
@@ -490,7 +528,15 @@ document.getElementById("txtUploadInput").addEventListener("change", (e) => {
   const reader = new FileReader();
   reader.onload = () => {
     const result = isHtml ? parseNeisHtml(reader.result) : parseGradeSheetTxt(reader.result);
-    applyParsedRows(result, "업로드한 파일");
+    if (result.errors && result.errors.length) {
+      applyParsedRows(result, "업로드한 파일");
+      return;
+    }
+    // 실제 파일 업로드가 샘플보다 우선이다 - 샘플 선택 표시를 지우고 파일명을 계속
+    // 보이는 상태로 고정한다.
+    clearSampleButtonSelection();
+    setDataSourceStatus(`선택된 파일: ${file.name}`);
+    applyParsedRows(result, `파일 "${file.name}"`);
   };
   reader.onerror = () => {
     errorEl.textContent = "파일을 읽는 중 오류가 발생했습니다.";
@@ -722,6 +768,14 @@ const SAMPLE_GRADE_LABELS = { upper: "상위권 샘플", middle: "중위권 샘�
 document.querySelectorAll(".sample-grade-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     const key = btn.dataset.sample;
+    // 실제 파일 업로드 입력값을 지워서 "파일이 아니라 샘플을 쓰고 있다"는 걸
+    // input 자체 상태로도 맞춰준다(재업로드 없이 같은 파일을 다시 선택해도
+    // change 이벤트가 안 뜨는 브라우저 동작과 무관하게 상태를 항상 일치시킴).
+    document.getElementById("txtUploadInput").value = "";
+    clearSampleButtonSelection();
+    btn.classList.add("border-primary", "bg-primary/10");
+    btn.dataset.selected = "true";
+    setDataSourceStatus(`선택된 샘플: ${SAMPLE_GRADE_LABELS[key]}`);
     applyParsedRows(parseGradeSheetTxt(SAMPLE_GRADE_TEXTS[key]), SAMPLE_GRADE_LABELS[key]);
   });
 });
