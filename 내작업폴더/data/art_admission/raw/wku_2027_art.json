@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 45,
+      "competition_applicant_count": 152,
+      "competition_rate": 3.38,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.wku.ac.kr/",
       "ratio": "일괄합산: 학생부(교과+비교과) 약 38% + 실기 약 62% (교과최고590~최저500 + 비교과최고10 + 실기최고1000~최저280 = 총점1600)",
       "is_staged": false,
       "application_period": {

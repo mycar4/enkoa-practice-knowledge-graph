@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 10,
+      "competition_applicant_count": 131,
+      "competition_rate": 13.1,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.shinhan.ac.kr/",
       "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
       "is_staged": false,
       "application_period": {
@@ -50,6 +54,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 10,
+      "competition_applicant_count": 137,
+      "competition_rate": 13.7,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.shinhan.ac.kr/",
       "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
       "is_staged": false,
       "application_period": {
@@ -93,6 +101,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 8,
+      "competition_applicant_count": 112,
+      "competition_rate": 14.0,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.shinhan.ac.kr/",
       "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
       "is_staged": false,
       "application_period": {

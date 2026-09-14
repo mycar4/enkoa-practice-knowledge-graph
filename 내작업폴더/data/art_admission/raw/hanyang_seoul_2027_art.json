@@ -5,7 +5,11 @@
   "track_name": "실기/실적(미술특기자)",
   "official_facts": {
     "admission_year": 2027,
-    "quota": 22,
+      "quota": 22,
+      "competition_applicant_count": 603,
+      "competition_rate": 27.41,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://go.hanyang.ac.kr/",
     "ratio": "1단계 학생부종합평가 100%(20배수) → 2단계 기초디자인 실기 100%",
     "is_staged": true,
     "csat_minimum_required": false,

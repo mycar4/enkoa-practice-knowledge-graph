@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 40,
+      "competition_applicant_count": 145,
+      "competition_rate": 3.63,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://enter.yu.ac.kr/",
       "ratio": "일괄합산: 학생부 240점(30%) + 실기 560점(70%) = 800점(100%)",
       "is_staged": false,
       "application_period": {
@@ -52,6 +56,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 38,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": null,
       "ratio": "일괄합산: 학생부 240점(30%) + 실기 560점(70%) = 800점(100%)",
       "is_staged": false,
       "application_period": {
@@ -97,6 +105,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 56,
+      "competition_applicant_count": 270,
+      "competition_rate": 4.82,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://enter.yu.ac.kr/",
       "ratio": "일괄합산: 학생부 240점(30%) + 실기 560점(70%) = 800점(100%)",
       "is_staged": false,
       "application_period": {
@@ -141,6 +153,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 46,
+      "competition_applicant_count": 186,
+      "competition_rate": 4.04,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://enter.yu.ac.kr/",
       "ratio": "일괄합산: 학생부 240점(30%) + 실기 560점(70%) = 800점(100%)",
       "is_staged": false,
       "application_period": {
@@ -184,6 +200,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 40,
+      "competition_applicant_count": 155,
+      "competition_rate": 3.88,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://enter.yu.ac.kr/",
       "ratio": "일괄합산: 학생부 240점(30%) + 실기 560점(70%) = 800점(100%)",
       "is_staged": false,
       "application_period": {

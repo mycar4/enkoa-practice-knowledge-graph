@@ -6,6 +6,10 @@
   "official_facts": {
     "admission_year": 2027,
     "quota": 182,
+    "competition_applicant_count": null,
+    "competition_rate": null,
+    "competition_rate_announced_at": null,
+    "competition_rate_source_url": null,
     "ratio": "1단계(3배수): 학생부교과 20% + 서류(미활보) 80% -> 2단계: 1단계 서류성적 40% + 면접 60%",
     "is_staged": true,
     "application_period": {

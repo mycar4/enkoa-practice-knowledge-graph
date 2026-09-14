@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 14,
+      "competition_applicant_count": 101,
+      "competition_rate": 7.21,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.inu.ac.kr/",
       "ratio": "학생부교과 30% + 실기 70%",
       "is_staged": false,
       "csat_minimum_required": false,
@@ -150,6 +154,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 15,
+      "competition_applicant_count": 235,
+      "competition_rate": 15.67,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.inu.ac.kr/",
       "ratio": "학생부교과 30% + 실기 70%",
       "is_staged": false,
       "csat_minimum_required": false,
@@ -293,6 +301,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 33,
+      "competition_applicant_count": 228,
+      "competition_rate": 6.91,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.inu.ac.kr/",
       "ratio": "1단계 학생부교과 100%(6배수) → 2단계 학생부교과 30% + 실기 70%",
       "is_staged": true,
       "csat_minimum_required": false,
@@ -455,6 +467,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 9,
+      "competition_applicant_count": 177,
+      "competition_rate": 19.67,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.inu.ac.kr/",
       "ratio": "학생부교과 100%",
       "is_staged": false,
       "csat_minimum_required": false,

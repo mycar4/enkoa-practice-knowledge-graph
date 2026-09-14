@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 57,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": null,
       "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
       "is_staged": false,
       "application_period": {
@@ -49,6 +53,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 46,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": null,
       "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
       "is_staged": false,
       "application_period": {
@@ -91,6 +99,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 51,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": null,
       "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
       "is_staged": false,
       "application_period": {

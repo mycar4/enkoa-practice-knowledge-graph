@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 1,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": null,
       "ratio": "1단계 서류평가 100%(3배수) → 2단계 1단계 성적 40% + 실기평가 30% + 면접 30%",
       "is_staged": true,
       "csat_minimum_required": false,
@@ -54,6 +58,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 1,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": null,
       "ratio": "1단계 서류평가 100%(3배수) → 2단계 1단계 성적 40% + 실기평가 30% + 면접 30%",
       "is_staged": true,
       "csat_minimum_required": false,
@@ -101,6 +109,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 1,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": null,
       "ratio": "1단계 서류평가 100%(3배수) → 2단계 1단계 성적 40% + 실기평가 30% + 면접 30%",
       "is_staged": true,
       "csat_minimum_required": false,
@@ -148,6 +160,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 1,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": null,
       "ratio": "1단계 서류평가 100%(3배수) → 2단계 1단계 성적 40% + 실기평가 30% + 면접 30%",
       "is_staged": true,
       "csat_minimum_required": false,

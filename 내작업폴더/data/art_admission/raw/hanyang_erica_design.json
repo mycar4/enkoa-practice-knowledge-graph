@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 40,
+      "competition_applicant_count": 724,
+      "competition_rate": 18.1,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://goerica.hanyang.ac.kr/",
       "ratio": "1단계(10배수): 학생부 종합평가 100% -> 2단계: 실기 80% + 1단계 성적 20%",
       "is_staged": true,
       "csat_minimum_required": false,
@@ -56,6 +60,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 17,
+      "competition_applicant_count": 210,
+      "competition_rate": 12.35,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://goerica.hanyang.ac.kr/",
       "ratio": "학교생활기록부 서류평가 100%",
       "is_staged": false,
       "csat_minimum_required": false,

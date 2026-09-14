@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 6,
+      "competition_applicant_count": 35,
+      "competition_rate": 5.83,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.hknu.ac.kr/",
       "ratio": "일괄합산: 학생부교과 40% + 실기 60%",
       "is_staged": false,
       "application_period": null,

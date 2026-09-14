@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 2,
+      "competition_applicant_count": 8,
+      "competition_rate": 4.0,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.kmu.ac.kr/",
       "ratio": "일괄합산: 학생부 20% + 실기 80%",
       "is_staged": false,
       "application_period": {
@@ -49,6 +53,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 2,
+      "competition_applicant_count": 5,
+      "competition_rate": 2.5,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.kmu.ac.kr/",
       "ratio": "일괄합산: 학생부 20% + 실기 80%",
       "is_staged": false,
       "application_period": {
@@ -91,6 +99,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 2,
+      "competition_applicant_count": 11,
+      "competition_rate": 5.5,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.kmu.ac.kr/",
       "ratio": "일괄합산: 학생부 20% + 실기 80%",
       "is_staged": false,
       "application_period": {
@@ -133,6 +145,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 2,
+      "competition_applicant_count": 4,
+      "competition_rate": 2.0,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.kmu.ac.kr/",
       "ratio": "일괄합산: 학생부 20% + 실기 80%",
       "is_staged": false,
       "application_period": {
@@ -175,6 +191,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 2,
+      "competition_applicant_count": 6,
+      "competition_rate": 3.0,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.kmu.ac.kr/",
       "ratio": "일괄합산: 학생부 20% + 실기 80%",
       "is_staged": false,
       "application_period": {
@@ -217,6 +237,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 3,
+      "competition_applicant_count": 14,
+      "competition_rate": 4.67,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.kmu.ac.kr/",
       "ratio": "일괄합산: 학생부 20% + 실기 80%",
       "is_staged": false,
       "application_period": {
@@ -259,6 +283,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 2,
+      "competition_applicant_count": 10,
+      "competition_rate": 5.0,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.kmu.ac.kr/",
       "ratio": "일괄합산: 학생부 20% + 실기 80%",
       "is_staged": false,
       "application_period": {

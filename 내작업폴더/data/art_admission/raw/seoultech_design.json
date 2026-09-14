@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 19,
+      "competition_applicant_count": 240,
+      "competition_rate": 12.63,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.seoultech.ac.kr/",
       "ratio": "1단계(8배수): 학생부교과 100% -> 2단계: 실기 100%",
       "is_staged": true,
       "application_period": {
@@ -85,6 +89,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 13,
+      "competition_applicant_count": 131,
+      "competition_rate": 10.08,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.seoultech.ac.kr/",
       "ratio": "1단계(8배수): 학생부교과 100% -> 2단계: 실기 100%",
       "is_staged": true,
       "application_period": {
@@ -163,6 +171,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 12,
+      "competition_applicant_count": 150,
+      "competition_rate": 12.5,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.seoultech.ac.kr/",
       "ratio": "1단계(8배수): 학생부교과 100% -> 2단계: 실기 100%",
       "is_staged": true,
       "application_period": {
@@ -241,6 +253,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 14,
+      "competition_applicant_count": 180,
+      "competition_rate": 12.86,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.seoultech.ac.kr/",
       "ratio": "1단계(8배수): 학생부교과 100% -> 2단계: 실기 100%",
       "is_staged": true,
       "application_period": {
@@ -319,6 +335,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 15,
+      "competition_applicant_count": 162,
+      "competition_rate": 10.8,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.seoultech.ac.kr/",
       "ratio": "1단계(8배수): 학생부교과 100% -> 2단계: 실기 100%",
       "is_staged": true,
       "application_period": {
@@ -397,6 +417,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 3,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": null,
       "ratio": "1단계 서류 100% (3배수) + 2단계 1단계성적 70% + 면접 30%",
       "is_staged": true,
       "application_period": {
@@ -459,6 +483,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 3,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": null,
       "ratio": "1단계 서류 100% (3배수) + 2단계 1단계성적 70% + 면접 30%",
       "is_staged": true,
       "application_period": {
@@ -521,6 +549,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 1,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": null,
       "ratio": "1단계 서류 100% (3배수) + 2단계 1단계성적 70% + 면접 30%",
       "is_staged": true,
       "application_period": {
@@ -583,6 +615,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 1,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": null,
       "ratio": "1단계 서류 100% (3배수) + 2단계 1단계성적 70% + 면접 30%",
       "is_staged": true,
       "application_period": {
@@ -645,6 +681,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 1,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": null,
       "ratio": "1단계 서류 100% (3배수) + 2단계 1단계성적 70% + 면접 30%",
       "is_staged": true,
       "application_period": {
@@ -707,6 +747,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 3,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": null,
       "ratio": "1단계 서류 100% (3배수) + 2단계 1단계성적 70% + 면접 30%",
       "is_staged": true,
       "application_period": {
@@ -769,6 +813,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 4,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": null,
       "ratio": "1단계 서류 100% (3배수) + 2단계 1단계성적 70% + 면접 30%",
       "is_staged": true,
       "application_period": {
@@ -831,6 +879,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 3,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": null,
       "ratio": "1단계 서류 100% (3배수) + 2단계 1단계성적 70% + 면접 30%",
       "is_staged": true,
       "application_period": {

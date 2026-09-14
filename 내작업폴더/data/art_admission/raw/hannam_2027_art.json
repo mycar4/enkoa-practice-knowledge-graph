@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 29,
+      "competition_applicant_count": 190,
+      "competition_rate": 6.55,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ibsi.hannam.ac.kr/",
       "ratio": "일괄합산: 학생부교과 40% + 실기 60%",
       "is_staged": false,
       "application_period": {
@@ -50,6 +54,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 74,
+      "competition_applicant_count": 410,
+      "competition_rate": 5.54,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ibsi.hannam.ac.kr/",
       "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
       "is_staged": false,
       "application_period": {
@@ -92,6 +100,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 30,
+      "competition_applicant_count": 177,
+      "competition_rate": 5.9,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ibsi.hannam.ac.kr/",
       "ratio": "일괄합산: 실기 100%",
       "is_staged": false,
       "application_period": {

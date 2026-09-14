@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 13,
+      "competition_applicant_count": 71,
+      "competition_rate": 5.46,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.knu.ac.kr/",
       "ratio": "일괄합산: 학생부교과 30% + 실기 70%",
       "is_staged": false,
       "application_period": {
@@ -51,6 +55,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 14,
+      "competition_applicant_count": 104,
+      "competition_rate": 7.43,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.knu.ac.kr/",
       "ratio": "일괄합산: 학생부교과 30% + 실기 70%",
       "is_staged": false,
       "application_period": {
@@ -95,6 +103,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 13,
+      "competition_applicant_count": 80,
+      "competition_rate": 6.15,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.knu.ac.kr/",
       "ratio": "일괄합산: 학생부교과 30% + 실기 70%",
       "is_staged": false,
       "application_period": {
@@ -138,6 +150,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 15,
+      "competition_applicant_count": 281,
+      "competition_rate": 18.73,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.knu.ac.kr/",
       "ratio": "일괄합산: 학생부교과 40% + 실기 60%",
       "is_staged": false,
       "application_period": {

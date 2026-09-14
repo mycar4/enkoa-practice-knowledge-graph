@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 10,
+      "competition_applicant_count": 51,
+      "competition_rate": 5.1,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.chungbuk.ac.kr/",
       "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
       "is_staged": false,
       "application_period": {
@@ -51,6 +55,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 9,
+      "competition_applicant_count": 57,
+      "competition_rate": 6.33,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.chungbuk.ac.kr/",
       "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
       "is_staged": false,
       "application_period": {
@@ -94,6 +102,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 10,
+      "competition_applicant_count": 55,
+      "competition_rate": 5.5,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.chungbuk.ac.kr/",
       "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
       "is_staged": false,
       "application_period": {
@@ -137,6 +149,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 5,
+      "competition_applicant_count": 76,
+      "competition_rate": 15.2,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.chungbuk.ac.kr/",
       "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
       "is_staged": false,
       "application_period": {

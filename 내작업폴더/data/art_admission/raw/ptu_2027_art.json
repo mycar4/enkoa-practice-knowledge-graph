@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 20,
+      "competition_applicant_count": 271,
+      "competition_rate": 13.55,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.ptu.ac.kr/",
       "ratio": "일괄합산: 실기 100%",
       "is_staged": false,
       "application_period": {
@@ -53,6 +57,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 20,
+      "competition_applicant_count": 235,
+      "competition_rate": 11.75,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.ptu.ac.kr/",
       "ratio": "일괄합산: 실기 100%",
       "is_staged": false,
       "application_period": {

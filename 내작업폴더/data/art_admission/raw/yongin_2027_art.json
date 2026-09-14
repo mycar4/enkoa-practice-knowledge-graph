@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 25,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": null,
       "ratio": "학교생활기록부 30% + 실기 70%",
       "is_staged": false,
       "csat_minimum_required": false,
@@ -66,6 +70,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 10,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": null,
       "ratio": "학교생활기록부 30% + 실기 70%",
       "is_staged": false,
       "csat_minimum_required": false,

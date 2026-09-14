@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 6,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": null,
       "ratio": "1단계(10배수): 학생부(교과·비교과) 100% -> 2단계: 1단계성적 10% + 실기고사 90%",
       "is_staged": true,
       "application_period": {
@@ -102,6 +106,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 8,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": null,
       "ratio": "1단계(20배수): 학생부(교과·비교과) 100% -> 2단계: 1단계성적 10% + 실기고사 90%",
       "is_staged": true,
       "application_period": {
@@ -196,6 +204,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 6,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": null,
       "ratio": "1단계(20배수): 학생부(교과·비교과) 100% -> 2단계: 1단계성적 10% + 실기고사 90%",
       "is_staged": true,
       "application_period": {

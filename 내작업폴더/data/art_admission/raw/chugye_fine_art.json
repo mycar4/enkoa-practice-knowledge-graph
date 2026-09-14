@@ -6,6 +6,10 @@
   "official_facts": {
     "admission_year": 2027,
     "quota": 45,
+    "competition_applicant_count": null,
+    "competition_rate": null,
+    "competition_rate_announced_at": null,
+    "competition_rate_source_url": null,
     "ratio": "실기 80% + 학생부 20% (일괄합산, 수능최저 없음)",
     "is_staged": false,
     "application_period": {

@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 29,
+      "competition_applicant_count": 300,
+      "competition_rate": 10.34,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.hoseo.edu/",
       "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
       "is_staged": false,
       "application_period": {
@@ -54,6 +58,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 23,
+      "competition_applicant_count": 206,
+      "competition_rate": 8.96,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.hoseo.edu/",
       "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
       "is_staged": false,
       "application_period": {
@@ -101,6 +109,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 28,
+      "competition_applicant_count": 233,
+      "competition_rate": 8.32,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.hoseo.edu/",
       "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
       "is_staged": false,
       "application_period": {
@@ -148,6 +160,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 20,
+      "competition_applicant_count": 155,
+      "competition_rate": 7.75,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.hoseo.edu/",
       "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
       "is_staged": false,
       "application_period": {
@@ -195,6 +211,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 70,
+      "competition_applicant_count": 1272,
+      "competition_rate": 18.17,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.hoseo.edu/",
       "ratio": "일괄합산: 학생부교과 20% + 실기 80%",
       "is_staged": false,
       "application_period": {

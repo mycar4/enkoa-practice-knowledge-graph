@@ -5,7 +5,11 @@
   "track_name": "특기자전형(디자인조형)",
   "official_facts": {
     "admission_year": 2027,
-    "quota": 15,
+      "quota": 15,
+      "competition_applicant_count": 319,
+      "competition_rate": 21.27,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.korea.ac.kr/",
     "ratio": "1단계 서류 100%(5배수) → 2단계 1단계 성적 60% + 제출서류 기반 면접 40%",
     "is_staged": true,
     "csat_minimum_required": true,

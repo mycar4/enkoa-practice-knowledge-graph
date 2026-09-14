@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 13,
+      "competition_applicant_count": 119,
+      "competition_rate": 9.15,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.cnu.ac.kr/",
       "ratio": "일괄합산: 학생부(교과90점+비교과10점) + 실기 200점 = 300점",
       "is_staged": false,
       "application_period": {
@@ -51,6 +55,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 13,
+      "competition_applicant_count": 129,
+      "competition_rate": 9.92,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.cnu.ac.kr/",
       "ratio": "일괄합산: 학생부(교과90점+비교과10점) + 실기 200점 = 300점",
       "is_staged": false,
       "application_period": {
@@ -93,6 +101,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 14,
+      "competition_applicant_count": 193,
+      "competition_rate": 13.79,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://ipsi.cnu.ac.kr/",
       "ratio": "일괄합산: 학생부(교과90점+비교과10점) + 실기 200점 = 300점",
       "is_staged": false,
       "application_period": {
