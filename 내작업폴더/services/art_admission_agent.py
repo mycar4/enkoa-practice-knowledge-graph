@@ -38,7 +38,15 @@ AGENT_MODEL = "gpt-4o-mini"  # 공개 API 원칙과 동일하게 항상 이 모�
 # 여러 개 순서대로 조합해야 하는 진짜 복합 질의만 LangGraph 에이전트로 넘긴다.
 # 이렇게 하면 (1) 단순 질의에서 "LLM이 엉뚱한 도구를 고르는" 이번 세션의 버그
 # 유형 자체가 구조적으로 안 생기고, (2) LLM 왕복 횟수가 줄어 더 빠르고 싸다.
-_COMPOUND_SIGNAL_WORDS = ["비교", "겹치", "충돌", "동시", "같이 지원", "함께 지원", "캘린더", "일정표"]
+_COMPOUND_SIGNAL_WORDS = [
+    "비교", "겹치", "충돌", "동시", "같이 지원", "함께 지원", "캘린더", "일정표",
+    # 2026-09-14: "내신 3등급에 기초디자인인데 어디 찔러야 해?" 같은 성적기반 추천
+    # 질문이 단순 질의로 분류돼 run_qa_pipeline(도구 없음, RAG만)으로 가는 바람에
+    # recommend_by_grades 도구를 아예 못 부르고 "신중히 지원하세요" 식 원론적 답변만
+    # 나가던 문제(사용자 발견) - 이 신호어가 있으면 무조건 도구를 쓰는 run_agent로
+    # 보내서 실제 계산 엔진을 태우게 한다.
+    "등급", "내신", "찔러", "지원해야", "붙을", "합격 가능", "추천해",
+]
 
 
 def _is_compound_query(query: str, all_universities: List[str]) -> bool:
@@ -70,6 +78,14 @@ match_status가 "exact"인 것만 그렇게 부르고, "partial"인 것은 "재�
 뒤, compare_tracks와 check_schedule_conflicts를 순서대로 호출해 실기고사 충돌 여부까지
 확인한 뒤 답하십시오. 일정 정보가 없으면 "일정 정보가 적재되지 않았습니다. 공식
 모집요강을 재확인하세요."라고 명시하십시오.
+
+학생이 자기 내신 등급(또는 성취도)과 준비 중인 실기 종목을 같이 말하며 "어디 찔러야
+해", "무슨 전형이 유리해", "합격 가능성", "추천해줘"처럼 실제 지원 대상을 물으면
+반드시 recommend_by_grades를 쓰십시오. 이건 이 서비스의 "성적 추천" 화면과 완전히
+같은 계산 엔진이라, 실제 계산 없이 "실기 비중과 내신을 종합적으로 고려해 신중히
+지원하십시오" 같은 원론적 조언만 하고 끝내는 것은 이 질문 유형에서는 오답입니다.
+학생이 등급을 말하지 않은 과목은 grades 배열에 넣지 말고, 말한 과목만으로 도구를
+호출하십시오(모르는 과목 등급을 지어내지 않음).
 
 실기고사일이 겹치면 정확히 "실기고사일이 겹칩니다. 동시 지원 가능 여부와 준비 일정을
 확인하세요."라는 취지로만 안내하고, "한 곳만 지원해야 한다"거나 "동시에 지원할 수
@@ -168,7 +184,42 @@ def get_calendar(selections: List[Dict[str, str]]) -> str:
     return json.dumps({"events": filtered}, ensure_ascii=False, default=str)
 
 
-TOOLS = [get_university_info, search_tracks, compare_tracks, check_schedule_conflicts, get_calendar]
+@tool
+def recommend_by_grades(grades: List[Dict[str, Any]], topic_keywords: List[str] = [], material_query: str = "") -> str:
+    """학생의 내신 성적과 준비 중인 실기 종목을 함께 주면, results.html/grades.html의
+    "성적 추천" 화면과 완전히 같은 계산 엔진(recommend_conflict_free_combo)으로 실제
+    지원할 만한 전형을 골라준다. "내신 3등급에 기초디자인인데 어디 찔러야 해?" 같은
+    질문에는 반드시 이 도구를 써야 한다 - 문서 검색(search_tracks)만으로는 학생부
+    환산 계산을 못 하므로 "신중히 지원하세요" 같은 원론적 답변만 나오게 된다(2026-09-14
+    사용자 발견 - 화면에서는 되는데 챗봇에서만 안 되던 근본 원인).
+    수시 최대 6장 제한 안에서 실기고사 날짜가 서로 안 겹치는 조합도 같이 짜준다.
+
+    grades 형식(리스트, 과목마다 하나씩):
+    - 일반/공통선택과목: {"subject_group": "국어", "grade": 3, "credit": 4}
+      (subject_group은 "국어"/"수학"/"영어"/"사회"/"과학"/"한국사"/"예술 계열" 등 나이스
+      교과 분류명, grade는 1~9 석차등급, credit은 이수단위 - 사용자가 "국어 3등급"처럼만
+      말해도 credit은 3~4 정도로 합리적으로 채워 넣는다)
+    - 진로선택과목(성취도 A/B/C만 있고 석차등급이 없는 과목): {"subject_group": "예술",
+      "career_elective": true, "achievement": "A", "credit": 2}
+    사용자가 등급을 일부만 말했으면(예: "국영수만 알려줬다") 아는 과목만 넣는다 -
+    모르는 과목을 지어내 채우지 않는다. topic_keywords는 실기 종목(예: ["기초디자인"]),
+    material_query는 준비한 재료(예: "수채화")."""
+    svc = _get_service()
+    result = svc.recommend_conflict_free_combo(grades, topic_keywords=topic_keywords, material_query=material_query)
+    combo = [{
+        "university": c["university"], "campus": c.get("campus"), "department": c["department"],
+        "track_name": c.get("track_name"), "exam_type_name": c.get("exam_type_name"),
+        "school_record_percentage": c.get("school_record_percentage"), "calc_precision": c.get("calc_precision"),
+        "reason_summary": c.get("reason_summary"), "exam_dates": c.get("exam_dates"),
+        "source_url": c.get("source_url"),
+    } for c in result["combo"]]
+    return json.dumps({
+        "combo": combo, "count": result["count"],
+        "total_candidates_considered": result["total_candidates_considered"],
+    }, ensure_ascii=False, default=str)
+
+
+TOOLS = [get_university_info, search_tracks, compare_tracks, check_schedule_conflicts, get_calendar, recommend_by_grades]
 
 
 def run_qa_pipeline(svc, query: str, model_id: str = AGENT_MODEL) -> Dict[str, Any]:
