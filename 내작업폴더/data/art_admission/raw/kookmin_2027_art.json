@@ -2,13 +2,13 @@
   {
     "university": "국민대학교",
     "campus": "서울",
-    "department": "디자인학과·공예학과",
+    "department": "조형대학 공업디자인학과",
     "track_name": "미술·조형 특기자전형",
     "official_facts": {
       "admission_year": 2027,
-      "quota": 13,
-      "competition_applicant_count": 48,
-      "competition_rate": 3.69,
+      "quota": 2,
+      "competition_applicant_count": null,
+      "competition_rate": null,
       "competition_rate_announced_at": "2026-09-11",
       "competition_rate_source_url": "https://admission.kookmin.ac.kr/",
       "ratio": "1단계 입상성적 100%(6배수) → 2단계 1단계 성적 40% + 면접 45% + 학생부교과 15%",
@@ -75,7 +75,639 @@
           "pdf_sha256": "d1bb1fb58e2090f3691085327f022946835b2822292a95b34e99cfd57fea1d03"
         }
       ],
-      "source_page_note": "2027 수시모집요강 p.10 전형일정 및 p.11 최초 합격 발표 표: 실기우수자·특기자 최초합격 발표 2026-11-10 17:00 예정."
+      "source_page_note": "2027 수시모집요강 p.10 전형일정 및 p.11 최초 합격 발표 표: 실기우수자·특기자 최초합격 발표 2026-11-10 17:00 예정. [2026-09-15 수정: 원문에는 '디자인학과·공예학과' 통합 레코드가 존재하지 않음 - p.9 입학정원표 조형대학 9개 개별학과, p.12 전형별 모집인원표 특기자(정원내) 열의 학과별 정원으로 분할(공업디자인학과=2명). 경쟁률은 9개 학과 합산 공지(48명 지원)라 학과별 분리 불가 - null 처리."
+    }
+  },
+  {
+    "university": "국민대학교",
+    "campus": "서울",
+    "department": "조형대학 시각디자인학과",
+    "track_name": "미술·조형 특기자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 1,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.kookmin.ac.kr/",
+      "ratio": "1단계 입상성적 100%(6배수) → 2단계 1단계 성적 40% + 면접 45% + 학생부교과 15%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "school_record_rule": {
+        "mode": "common_and_career_split_scaled",
+        "subjects": [
+          "국어",
+          "영어"
+        ],
+        "common_weight": 0.85,
+        "career_weight": 0.15,
+        "use_credit_scale": false,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 95,
+          "5": 90,
+          "6": 70,
+          "7": 50,
+          "8": 30,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 98,
+          "C": 90
+        },
+        "career_elective_max_count": 3,
+        "formula_note": "교과성적 = 공통·일반선택(국어·영어, 석차등급, 이수단위가중평균)×0.85 + 진로선택(상위 3과목, 성취도)×0.15 (2027 모집요강 p.69-70). 원문은 예체능계 진로선택 반영교과를 국어·영어·예술·체육으로 더 넓게 잡지만(공통은 국어·영어만), 계산 엔진 제약상 여기서는 국어·영어로만 통일했다 - 예술·체육 진로선택과목이 있는 학생은 실제보다 약간 보수적으로(낮게) 계산될 수 있음.",
+        "rule_source_page": "69-70"
+      },
+      "school_record_status": "required",
+      "exam_type_name": "포트폴리오 기반 구술면접",
+      "allowed_materials": [],
+      "paper_size": "작품 1점당 A3 단면 이내, 최대 10점",
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": "2026-11-10",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "source_url": "https://admission.kookmin.ac.kr/common/file_download.php?col=1&id=contents&no=180",
+      "source_page": 52,
+      "stages": [
+        {
+          "description": "입상성적",
+          "ratio_desc": "100%, 모집인원의 6배수",
+          "multiplier": 6
+        },
+        {
+          "description": "작품집 기반 구술면접 및 학생부교과",
+          "ratio_desc": "1단계 40% + 면접 45% + 학생부교과 15%",
+          "multiplier": null
+        }
+      ],
+      "data_sources": [
+        {
+          "document_name": "2027학년도 국민대학교 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf",
+          "pdf_sha256": "d1bb1fb58e2090f3691085327f022946835b2822292a95b34e99cfd57fea1d03"
+        }
+      ],
+      "source_page_note": "2027 수시모집요강 p.10 전형일정 및 p.11 최초 합격 발표 표: 실기우수자·특기자 최초합격 발표 2026-11-10 17:00 예정. [2026-09-15 수정: 원문에는 '디자인학과·공예학과' 통합 레코드가 존재하지 않음 - p.9 입학정원표 조형대학 9개 개별학과, p.12 전형별 모집인원표 특기자(정원내) 열의 학과별 정원으로 분할(시각디자인학과=1명). 경쟁률은 9개 학과 합산 공지(48명 지원)라 학과별 분리 불가 - null 처리."
+    }
+  },
+  {
+    "university": "국민대학교",
+    "campus": "서울",
+    "department": "조형대학 금속공예학과",
+    "track_name": "미술·조형 특기자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.kookmin.ac.kr/",
+      "ratio": "1단계 입상성적 100%(6배수) → 2단계 1단계 성적 40% + 면접 45% + 학생부교과 15%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "school_record_rule": {
+        "mode": "common_and_career_split_scaled",
+        "subjects": [
+          "국어",
+          "영어"
+        ],
+        "common_weight": 0.85,
+        "career_weight": 0.15,
+        "use_credit_scale": false,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 95,
+          "5": 90,
+          "6": 70,
+          "7": 50,
+          "8": 30,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 98,
+          "C": 90
+        },
+        "career_elective_max_count": 3,
+        "formula_note": "교과성적 = 공통·일반선택(국어·영어, 석차등급, 이수단위가중평균)×0.85 + 진로선택(상위 3과목, 성취도)×0.15 (2027 모집요강 p.69-70). 원문은 예체능계 진로선택 반영교과를 국어·영어·예술·체육으로 더 넓게 잡지만(공통은 국어·영어만), 계산 엔진 제약상 여기서는 국어·영어로만 통일했다 - 예술·체육 진로선택과목이 있는 학생은 실제보다 약간 보수적으로(낮게) 계산될 수 있음.",
+        "rule_source_page": "69-70"
+      },
+      "school_record_status": "required",
+      "exam_type_name": "포트폴리오 기반 구술면접",
+      "allowed_materials": [],
+      "paper_size": "작품 1점당 A3 단면 이내, 최대 10점",
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": "2026-11-10",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "source_url": "https://admission.kookmin.ac.kr/common/file_download.php?col=1&id=contents&no=180",
+      "source_page": 52,
+      "stages": [
+        {
+          "description": "입상성적",
+          "ratio_desc": "100%, 모집인원의 6배수",
+          "multiplier": 6
+        },
+        {
+          "description": "작품집 기반 구술면접 및 학생부교과",
+          "ratio_desc": "1단계 40% + 면접 45% + 학생부교과 15%",
+          "multiplier": null
+        }
+      ],
+      "data_sources": [
+        {
+          "document_name": "2027학년도 국민대학교 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf",
+          "pdf_sha256": "d1bb1fb58e2090f3691085327f022946835b2822292a95b34e99cfd57fea1d03"
+        }
+      ],
+      "source_page_note": "2027 수시모집요강 p.10 전형일정 및 p.11 최초 합격 발표 표: 실기우수자·특기자 최초합격 발표 2026-11-10 17:00 예정. [2026-09-15 수정: 원문에는 '디자인학과·공예학과' 통합 레코드가 존재하지 않음 - p.9 입학정원표 조형대학 9개 개별학과, p.12 전형별 모집인원표 특기자(정원내) 열의 학과별 정원으로 분할(금속공예학과=2명). 경쟁률은 9개 학과 합산 공지(48명 지원)라 학과별 분리 불가 - null 처리."
+    }
+  },
+  {
+    "university": "국민대학교",
+    "campus": "서울",
+    "department": "조형대학 도자공예학과",
+    "track_name": "미술·조형 특기자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.kookmin.ac.kr/",
+      "ratio": "1단계 입상성적 100%(6배수) → 2단계 1단계 성적 40% + 면접 45% + 학생부교과 15%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "school_record_rule": {
+        "mode": "common_and_career_split_scaled",
+        "subjects": [
+          "국어",
+          "영어"
+        ],
+        "common_weight": 0.85,
+        "career_weight": 0.15,
+        "use_credit_scale": false,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 95,
+          "5": 90,
+          "6": 70,
+          "7": 50,
+          "8": 30,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 98,
+          "C": 90
+        },
+        "career_elective_max_count": 3,
+        "formula_note": "교과성적 = 공통·일반선택(국어·영어, 석차등급, 이수단위가중평균)×0.85 + 진로선택(상위 3과목, 성취도)×0.15 (2027 모집요강 p.69-70). 원문은 예체능계 진로선택 반영교과를 국어·영어·예술·체육으로 더 넓게 잡지만(공통은 국어·영어만), 계산 엔진 제약상 여기서는 국어·영어로만 통일했다 - 예술·체육 진로선택과목이 있는 학생은 실제보다 약간 보수적으로(낮게) 계산될 수 있음.",
+        "rule_source_page": "69-70"
+      },
+      "school_record_status": "required",
+      "exam_type_name": "포트폴리오 기반 구술면접",
+      "allowed_materials": [],
+      "paper_size": "작품 1점당 A3 단면 이내, 최대 10점",
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": "2026-11-10",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "source_url": "https://admission.kookmin.ac.kr/common/file_download.php?col=1&id=contents&no=180",
+      "source_page": 52,
+      "stages": [
+        {
+          "description": "입상성적",
+          "ratio_desc": "100%, 모집인원의 6배수",
+          "multiplier": 6
+        },
+        {
+          "description": "작품집 기반 구술면접 및 학생부교과",
+          "ratio_desc": "1단계 40% + 면접 45% + 학생부교과 15%",
+          "multiplier": null
+        }
+      ],
+      "data_sources": [
+        {
+          "document_name": "2027학년도 국민대학교 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf",
+          "pdf_sha256": "d1bb1fb58e2090f3691085327f022946835b2822292a95b34e99cfd57fea1d03"
+        }
+      ],
+      "source_page_note": "2027 수시모집요강 p.10 전형일정 및 p.11 최초 합격 발표 표: 실기우수자·특기자 최초합격 발표 2026-11-10 17:00 예정. [2026-09-15 수정: 원문에는 '디자인학과·공예학과' 통합 레코드가 존재하지 않음 - p.9 입학정원표 조형대학 9개 개별학과, p.12 전형별 모집인원표 특기자(정원내) 열의 학과별 정원으로 분할(도자공예학과=2명). 경쟁률은 9개 학과 합산 공지(48명 지원)라 학과별 분리 불가 - null 처리."
+    }
+  },
+  {
+    "university": "국민대학교",
+    "campus": "서울",
+    "department": "조형대학 의상디자인학과",
+    "track_name": "미술·조형 특기자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 1,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.kookmin.ac.kr/",
+      "ratio": "1단계 입상성적 100%(6배수) → 2단계 1단계 성적 40% + 면접 45% + 학생부교과 15%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "school_record_rule": {
+        "mode": "common_and_career_split_scaled",
+        "subjects": [
+          "국어",
+          "영어"
+        ],
+        "common_weight": 0.85,
+        "career_weight": 0.15,
+        "use_credit_scale": false,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 95,
+          "5": 90,
+          "6": 70,
+          "7": 50,
+          "8": 30,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 98,
+          "C": 90
+        },
+        "career_elective_max_count": 3,
+        "formula_note": "교과성적 = 공통·일반선택(국어·영어, 석차등급, 이수단위가중평균)×0.85 + 진로선택(상위 3과목, 성취도)×0.15 (2027 모집요강 p.69-70). 원문은 예체능계 진로선택 반영교과를 국어·영어·예술·체육으로 더 넓게 잡지만(공통은 국어·영어만), 계산 엔진 제약상 여기서는 국어·영어로만 통일했다 - 예술·체육 진로선택과목이 있는 학생은 실제보다 약간 보수적으로(낮게) 계산될 수 있음.",
+        "rule_source_page": "69-70"
+      },
+      "school_record_status": "required",
+      "exam_type_name": "포트폴리오 기반 구술면접",
+      "allowed_materials": [],
+      "paper_size": "작품 1점당 A3 단면 이내, 최대 10점",
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": "2026-11-10",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "source_url": "https://admission.kookmin.ac.kr/common/file_download.php?col=1&id=contents&no=180",
+      "source_page": 52,
+      "stages": [
+        {
+          "description": "입상성적",
+          "ratio_desc": "100%, 모집인원의 6배수",
+          "multiplier": 6
+        },
+        {
+          "description": "작품집 기반 구술면접 및 학생부교과",
+          "ratio_desc": "1단계 40% + 면접 45% + 학생부교과 15%",
+          "multiplier": null
+        }
+      ],
+      "data_sources": [
+        {
+          "document_name": "2027학년도 국민대학교 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf",
+          "pdf_sha256": "d1bb1fb58e2090f3691085327f022946835b2822292a95b34e99cfd57fea1d03"
+        }
+      ],
+      "source_page_note": "2027 수시모집요강 p.10 전형일정 및 p.11 최초 합격 발표 표: 실기우수자·특기자 최초합격 발표 2026-11-10 17:00 예정. [2026-09-15 수정: 원문에는 '디자인학과·공예학과' 통합 레코드가 존재하지 않음 - p.9 입학정원표 조형대학 9개 개별학과, p.12 전형별 모집인원표 특기자(정원내) 열의 학과별 정원으로 분할(의상디자인학과=1명). 경쟁률은 9개 학과 합산 공지(48명 지원)라 학과별 분리 불가 - null 처리."
+    }
+  },
+  {
+    "university": "국민대학교",
+    "campus": "서울",
+    "department": "조형대학 공간디자인학과",
+    "track_name": "미술·조형 특기자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 1,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.kookmin.ac.kr/",
+      "ratio": "1단계 입상성적 100%(6배수) → 2단계 1단계 성적 40% + 면접 45% + 학생부교과 15%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "school_record_rule": {
+        "mode": "common_and_career_split_scaled",
+        "subjects": [
+          "국어",
+          "영어"
+        ],
+        "common_weight": 0.85,
+        "career_weight": 0.15,
+        "use_credit_scale": false,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 95,
+          "5": 90,
+          "6": 70,
+          "7": 50,
+          "8": 30,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 98,
+          "C": 90
+        },
+        "career_elective_max_count": 3,
+        "formula_note": "교과성적 = 공통·일반선택(국어·영어, 석차등급, 이수단위가중평균)×0.85 + 진로선택(상위 3과목, 성취도)×0.15 (2027 모집요강 p.69-70). 원문은 예체능계 진로선택 반영교과를 국어·영어·예술·체육으로 더 넓게 잡지만(공통은 국어·영어만), 계산 엔진 제약상 여기서는 국어·영어로만 통일했다 - 예술·체육 진로선택과목이 있는 학생은 실제보다 약간 보수적으로(낮게) 계산될 수 있음.",
+        "rule_source_page": "69-70"
+      },
+      "school_record_status": "required",
+      "exam_type_name": "포트폴리오 기반 구술면접",
+      "allowed_materials": [],
+      "paper_size": "작품 1점당 A3 단면 이내, 최대 10점",
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": "2026-11-10",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "source_url": "https://admission.kookmin.ac.kr/common/file_download.php?col=1&id=contents&no=180",
+      "source_page": 52,
+      "stages": [
+        {
+          "description": "입상성적",
+          "ratio_desc": "100%, 모집인원의 6배수",
+          "multiplier": 6
+        },
+        {
+          "description": "작품집 기반 구술면접 및 학생부교과",
+          "ratio_desc": "1단계 40% + 면접 45% + 학생부교과 15%",
+          "multiplier": null
+        }
+      ],
+      "data_sources": [
+        {
+          "document_name": "2027학년도 국민대학교 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf",
+          "pdf_sha256": "d1bb1fb58e2090f3691085327f022946835b2822292a95b34e99cfd57fea1d03"
+        }
+      ],
+      "source_page_note": "2027 수시모집요강 p.10 전형일정 및 p.11 최초 합격 발표 표: 실기우수자·특기자 최초합격 발표 2026-11-10 17:00 예정. [2026-09-15 수정: 원문에는 '디자인학과·공예학과' 통합 레코드가 존재하지 않음 - p.9 입학정원표 조형대학 9개 개별학과, p.12 전형별 모집인원표 특기자(정원내) 열의 학과별 정원으로 분할(공간디자인학과=1명). 경쟁률은 9개 학과 합산 공지(48명 지원)라 학과별 분리 불가 - null 처리."
+    }
+  },
+  {
+    "university": "국민대학교",
+    "campus": "서울",
+    "department": "조형대학 영상디자인학과",
+    "track_name": "미술·조형 특기자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 1,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.kookmin.ac.kr/",
+      "ratio": "1단계 입상성적 100%(6배수) → 2단계 1단계 성적 40% + 면접 45% + 학생부교과 15%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "school_record_rule": {
+        "mode": "common_and_career_split_scaled",
+        "subjects": [
+          "국어",
+          "영어"
+        ],
+        "common_weight": 0.85,
+        "career_weight": 0.15,
+        "use_credit_scale": false,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 95,
+          "5": 90,
+          "6": 70,
+          "7": 50,
+          "8": 30,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 98,
+          "C": 90
+        },
+        "career_elective_max_count": 3,
+        "formula_note": "교과성적 = 공통·일반선택(국어·영어, 석차등급, 이수단위가중평균)×0.85 + 진로선택(상위 3과목, 성취도)×0.15 (2027 모집요강 p.69-70). 원문은 예체능계 진로선택 반영교과를 국어·영어·예술·체육으로 더 넓게 잡지만(공통은 국어·영어만), 계산 엔진 제약상 여기서는 국어·영어로만 통일했다 - 예술·체육 진로선택과목이 있는 학생은 실제보다 약간 보수적으로(낮게) 계산될 수 있음.",
+        "rule_source_page": "69-70"
+      },
+      "school_record_status": "required",
+      "exam_type_name": "포트폴리오 기반 구술면접",
+      "allowed_materials": [],
+      "paper_size": "작품 1점당 A3 단면 이내, 최대 10점",
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": "2026-11-10",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "source_url": "https://admission.kookmin.ac.kr/common/file_download.php?col=1&id=contents&no=180",
+      "source_page": 52,
+      "stages": [
+        {
+          "description": "입상성적",
+          "ratio_desc": "100%, 모집인원의 6배수",
+          "multiplier": 6
+        },
+        {
+          "description": "작품집 기반 구술면접 및 학생부교과",
+          "ratio_desc": "1단계 40% + 면접 45% + 학생부교과 15%",
+          "multiplier": null
+        }
+      ],
+      "data_sources": [
+        {
+          "document_name": "2027학년도 국민대학교 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf",
+          "pdf_sha256": "d1bb1fb58e2090f3691085327f022946835b2822292a95b34e99cfd57fea1d03"
+        }
+      ],
+      "source_page_note": "2027 수시모집요강 p.10 전형일정 및 p.11 최초 합격 발표 표: 실기우수자·특기자 최초합격 발표 2026-11-10 17:00 예정. [2026-09-15 수정: 원문에는 '디자인학과·공예학과' 통합 레코드가 존재하지 않음 - p.9 입학정원표 조형대학 9개 개별학과, p.12 전형별 모집인원표 특기자(정원내) 열의 학과별 정원으로 분할(영상디자인학과=1명). 경쟁률은 9개 학과 합산 공지(48명 지원)라 학과별 분리 불가 - null 처리."
+    }
+  },
+  {
+    "university": "국민대학교",
+    "campus": "서울",
+    "department": "조형대학 자동차·운송디자인학과",
+    "track_name": "미술·조형 특기자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 2,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.kookmin.ac.kr/",
+      "ratio": "1단계 입상성적 100%(6배수) → 2단계 1단계 성적 40% + 면접 45% + 학생부교과 15%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "school_record_rule": {
+        "mode": "common_and_career_split_scaled",
+        "subjects": [
+          "국어",
+          "영어"
+        ],
+        "common_weight": 0.85,
+        "career_weight": 0.15,
+        "use_credit_scale": false,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 95,
+          "5": 90,
+          "6": 70,
+          "7": 50,
+          "8": 30,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 98,
+          "C": 90
+        },
+        "career_elective_max_count": 3,
+        "formula_note": "교과성적 = 공통·일반선택(국어·영어, 석차등급, 이수단위가중평균)×0.85 + 진로선택(상위 3과목, 성취도)×0.15 (2027 모집요강 p.69-70). 원문은 예체능계 진로선택 반영교과를 국어·영어·예술·체육으로 더 넓게 잡지만(공통은 국어·영어만), 계산 엔진 제약상 여기서는 국어·영어로만 통일했다 - 예술·체육 진로선택과목이 있는 학생은 실제보다 약간 보수적으로(낮게) 계산될 수 있음.",
+        "rule_source_page": "69-70"
+      },
+      "school_record_status": "required",
+      "exam_type_name": "포트폴리오 기반 구술면접",
+      "allowed_materials": [],
+      "paper_size": "작품 1점당 A3 단면 이내, 최대 10점",
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": "2026-11-10",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "source_url": "https://admission.kookmin.ac.kr/common/file_download.php?col=1&id=contents&no=180",
+      "source_page": 52,
+      "stages": [
+        {
+          "description": "입상성적",
+          "ratio_desc": "100%, 모집인원의 6배수",
+          "multiplier": 6
+        },
+        {
+          "description": "작품집 기반 구술면접 및 학생부교과",
+          "ratio_desc": "1단계 40% + 면접 45% + 학생부교과 15%",
+          "multiplier": null
+        }
+      ],
+      "data_sources": [
+        {
+          "document_name": "2027학년도 국민대학교 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf",
+          "pdf_sha256": "d1bb1fb58e2090f3691085327f022946835b2822292a95b34e99cfd57fea1d03"
+        }
+      ],
+      "source_page_note": "2027 수시모집요강 p.10 전형일정 및 p.11 최초 합격 발표 표: 실기우수자·특기자 최초합격 발표 2026-11-10 17:00 예정. [2026-09-15 수정: 원문에는 '디자인학과·공예학과' 통합 레코드가 존재하지 않음 - p.9 입학정원표 조형대학 9개 개별학과, p.12 전형별 모집인원표 특기자(정원내) 열의 학과별 정원으로 분할(자동차·운송디자인학과=2명). 경쟁률은 9개 학과 합산 공지(48명 지원)라 학과별 분리 불가 - null 처리."
+    }
+  },
+  {
+    "university": "국민대학교",
+    "campus": "서울",
+    "department": "조형대학 AI디자인학과",
+    "track_name": "미술·조형 특기자전형",
+    "official_facts": {
+      "admission_year": 2027,
+      "quota": 1,
+      "competition_applicant_count": null,
+      "competition_rate": null,
+      "competition_rate_announced_at": "2026-09-11",
+      "competition_rate_source_url": "https://admission.kookmin.ac.kr/",
+      "ratio": "1단계 입상성적 100%(6배수) → 2단계 1단계 성적 40% + 면접 45% + 학생부교과 15%",
+      "is_staged": true,
+      "csat_minimum_required": false,
+      "school_record_rule": {
+        "mode": "common_and_career_split_scaled",
+        "subjects": [
+          "국어",
+          "영어"
+        ],
+        "common_weight": 0.85,
+        "career_weight": 0.15,
+        "use_credit_scale": false,
+        "conversion_table": {
+          "1": 100,
+          "2": 99,
+          "3": 98,
+          "4": 95,
+          "5": 90,
+          "6": 70,
+          "7": 50,
+          "8": 30,
+          "9": 0
+        },
+        "career_elective_conversion_table": {
+          "A": 100,
+          "B": 98,
+          "C": 90
+        },
+        "career_elective_max_count": 3,
+        "formula_note": "교과성적 = 공통·일반선택(국어·영어, 석차등급, 이수단위가중평균)×0.85 + 진로선택(상위 3과목, 성취도)×0.15 (2027 모집요강 p.69-70). 원문은 예체능계 진로선택 반영교과를 국어·영어·예술·체육으로 더 넓게 잡지만(공통은 국어·영어만), 계산 엔진 제약상 여기서는 국어·영어로만 통일했다 - 예술·체육 진로선택과목이 있는 학생은 실제보다 약간 보수적으로(낮게) 계산될 수 있음.",
+        "rule_source_page": "69-70"
+      },
+      "school_record_status": "required",
+      "exam_type_name": "포트폴리오 기반 구술면접",
+      "allowed_materials": [],
+      "paper_size": "작품 1점당 A3 단면 이내, 최대 10점",
+      "time_limit_minutes": null,
+      "exam_date": null,
+      "result_date": "2026-11-10",
+      "application_period": {
+        "start": "2026-09-07",
+        "end": "2026-09-11"
+      },
+      "source_url": "https://admission.kookmin.ac.kr/common/file_download.php?col=1&id=contents&no=180",
+      "source_page": 52,
+      "stages": [
+        {
+          "description": "입상성적",
+          "ratio_desc": "100%, 모집인원의 6배수",
+          "multiplier": 6
+        },
+        {
+          "description": "작품집 기반 구술면접 및 학생부교과",
+          "ratio_desc": "1단계 40% + 면접 45% + 학생부교과 15%",
+          "multiplier": null
+        }
+      ],
+      "data_sources": [
+        {
+          "document_name": "2027학년도 국민대학교 수시 모집요강",
+          "local_file": "data/art_admission_raw/prospectus/2027_kookmin_susi.pdf",
+          "pdf_sha256": "d1bb1fb58e2090f3691085327f022946835b2822292a95b34e99cfd57fea1d03"
+        }
+      ],
+      "source_page_note": "2027 수시모집요강 p.10 전형일정 및 p.11 최초 합격 발표 표: 실기우수자·특기자 최초합격 발표 2026-11-10 17:00 예정. [2026-09-15 수정: 원문에는 '디자인학과·공예학과' 통합 레코드가 존재하지 않음 - p.9 입학정원표 조형대학 9개 개별학과, p.12 전형별 모집인원표 특기자(정원내) 열의 학과별 정원으로 분할(AI디자인학과=1명). 경쟁률은 9개 학과 합산 공지(48명 지원)라 학과별 분리 불가 - null 처리."
     }
   },
   {
