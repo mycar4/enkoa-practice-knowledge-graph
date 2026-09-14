@@ -7,6 +7,10 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 18,
+      "competition_applicant_count": 476,
+      "competition_rate": 26.44,
+      "competition_rate_announced_at": null,
+      "competition_rate_source_url": "https://www.karts.ac.kr/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_000000000007",
       "ratio": "1차: 실기 80%+고교내신 20% -> 2차: 심층실기 60%+구술 40% (2단계 전형)",
       "is_staged": true,
       "application_period": {
@@ -243,11 +247,11 @@
       "interview_summaries": [],
       "prior_year_result": {
         "admission_year": 2026,
-        "competition_rate": 27.39,
+        "competition_rate": 27.33,
         "school_record_grade_typical": null,
         "school_record_grade_floor": null,
         "grade_stat_type": "competition_rate_only (학생부 성적 데이터 없음)",
-        "methodology_note": "사용자가 직접 확보한 한국예술종합학교 공식 게시자료 \"2026학년도 예술사(대학)과정 신입생 모집 지원-합격자 현황(정원내 일반/특별전형)\"에서 확인(모집18명/지원493명/예비합격설정인원15명). 학생부 등급 자료는 이 문서에 없음.",
+        "methodology_note": "사용자가 직접 확보한 한국예술종합학교 공식 게시자료 \"2027학년도 10월입시 예술사과정 지원현황(공지)\"에서 2026학년도 비교값으로 확인(모집18명/지원492명/합격15명) - 이전에 다른 공식 게시자료(\"2026학년도 신입생 모집 지원-합격자 현황\") 기준 493명으로 기록했던 것과 1명 차이가 있으나, 이번 문서 수치로 갱신함. 학생부 등급 자료는 이 문서에 없음.",
         "source_url": null,
         "source_page": 1
       }
