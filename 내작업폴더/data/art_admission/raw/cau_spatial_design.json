@@ -70,7 +70,10 @@
           "pdf_sha256": "44a5acd64ef3d811fabfba76f026bd506dfecf24293705b5b8838fe21fac28d4"
         }
       ],
-      "school_record_status": "required"
+      "school_record_status": "required",
+      "stage_ratio_label": "1단계",
+      "stage_practical_ratio_pct": 80,
+      "stage_school_record_ratio_pct": 20
     },
     "estimates": {
       "cutoff_grade_estimate": 3.3,
@@ -471,7 +474,10 @@
         }
       ],
       "school_record_status": "required",
-      "source_page_note": "2026-09-11 완결성 감사 도구로 발견된 누락. 디자인학부의 실내환경디자인·패션은 이 실기형(공예/산업디자인/시각디자인만 명시) 표에 없어 별도 전형(학생부위주 등)일 가능성이 있음 - 별도 확인 필요, 이번엔 원문에서 실기형으로 명확히 확인된 3개 전공만 추가함. 모집인원: p.67, 반영비율: p.69, 실기과제: p.74, 전형일정: p.68."
+      "source_page_note": "2026-09-11 완결성 감사 도구로 발견된 누락. 디자인학부의 실내환경디자인·패션은 이 실기형(공예/산업디자인/시각디자인만 명시) 표에 없어 별도 전형(학생부위주 등)일 가능성이 있음 - 별도 확인 필요, 이번엔 원문에서 실기형으로 명확히 확인된 3개 전공만 추가함. 모집인원: p.67, 반영비율: p.69, 실기과제: p.74, 전형일정: p.68.",
+      "stage_ratio_label": "2단계",
+      "stage_practical_ratio_pct": 80,
+      "stage_school_record_ratio_pct": 20
     }
   },
   {
@@ -539,7 +545,10 @@
         }
       ],
       "school_record_status": "required",
-      "source_page_note": "2026-09-11 완결성 감사 도구로 발견된 누락. 모집인원: p.67, 반영비율: p.69, 실기과제: p.74, 전형일정: p.68."
+      "source_page_note": "2026-09-11 완결성 감사 도구로 발견된 누락. 모집인원: p.67, 반영비율: p.69, 실기과제: p.74, 전형일정: p.68.",
+      "stage_ratio_label": "2단계",
+      "stage_practical_ratio_pct": 80,
+      "stage_school_record_ratio_pct": 20
     }
   },
   {
@@ -607,7 +616,10 @@
         }
       ],
       "school_record_status": "required",
-      "source_page_note": "2026-09-11 완결성 감사 도구로 발견된 누락. 모집인원: p.67, 반영비율: p.69, 실기과제: p.74, 전형일정: p.68."
+      "source_page_note": "2026-09-11 완결성 감사 도구로 발견된 누락. 모집인원: p.67, 반영비율: p.69, 실기과제: p.74, 전형일정: p.68.",
+      "stage_ratio_label": "2단계",
+      "stage_practical_ratio_pct": 80,
+      "stage_school_record_ratio_pct": 20
     }
   }
 ]

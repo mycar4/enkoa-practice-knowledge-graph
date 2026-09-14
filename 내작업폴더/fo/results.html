@@ -1175,17 +1175,29 @@ function renderRecommendResults() {
     // 인라인으로 붙이지 않고 별도 블록 줄로 분리해 항상 깔끔하게 줄바꿈되게 했다.
     const gradeEqLine = (!isNotApplicable && gradeEq !== null && gradeEq !== undefined)
       ? `<div class="font-body-md text-body-md text-on-surface font-medium">반영교과 기준 원 석차등급: 약 <span class="text-primary">${gradeEq}등급</span></div><div class="font-label-sm text-label-sm text-on-surface-variant font-normal">(학교 간 비교 가능한 참고값)</div>` : "";
+    // 2026-09-14: 단계형(2단계) 전형은 한 단계 안에서만 "실기X%+학생부Y%"처럼
+    // 두 값이 섞이는 경우가 있다(예: 1단계 실기80%+학생부20% → 2단계 심층실기).
+    // 전체 전형의 최종 총점 공식이 아니라 그 "한 단계만의" 비율이므로, 반영비율
+    // 표시나 실기결과 시뮬레이션에 이 값을 쓸 때는 몇 단계 값인지 라벨을 절대
+    // 생략하지 않는다(사용자 지적 - 단계 표기 없이 보여주면 전체 총점으로
+    // 오해하게 됨). 단계별로 명확히 못 쪼개는 전형(3단계 이상 배점, 학생부종합
+    // 등)은 여기서도 값을 지어내지 않고 비워둔다.
+    const hasFlatRatio = r.practical_ratio_pct != null && r.school_record_ratio_pct != null;
+    const hasStageRatio = !hasFlatRatio && r.stage_practical_ratio_pct != null && r.stage_school_record_ratio_pct != null;
+    const effPractical = hasFlatRatio ? r.practical_ratio_pct : (hasStageRatio ? r.stage_practical_ratio_pct : null);
+    const effRecord = hasFlatRatio ? r.school_record_ratio_pct : (hasStageRatio ? r.stage_school_record_ratio_pct : null);
+    const stageNote = hasStageRatio ? ` <span class="text-error font-bold">*${r.stage_ratio_label}</span>` : "";
     // 뒤집기 시뮬레이션(모달) 없이도 카드에서 바로 보이도록, 이미 카드에 있는
     // 값(school_record_percentage/반영비율)만으로 동일한 산술을 클라이언트에서
-    // 그대로 재현한다 - 별도 API 호출 불필요. 단계별(1차/2차) 전형처럼 단일
-    // 반영비율 쌍이 없는 경우는 여기서도 정직하게 숨긴다(지어내지 않음).
+    // 그대로 재현한다 - 별도 API 호출 불필요. 단계별로도 못 쪼개는 전형은
+    // 여기서도 정직하게 숨긴다(지어내지 않음).
     let reversalLine = "";
-    if (isExact && pct != null && r.school_record_ratio_pct != null && r.practical_ratio_pct != null) {
-      const contribution = Math.round(pct * r.school_record_ratio_pct / 100 * 100) / 100;
-      const compositeMax = Math.round((contribution + r.practical_ratio_pct) * 100) / 100;
+    if (isExact && pct != null && effRecord != null && effPractical != null) {
+      const contribution = Math.round(pct * effRecord / 100 * 100) / 100;
+      const compositeMax = Math.round((contribution + effPractical) * 100) / 100;
       reversalLine = `<div class="font-body-sm text-body-sm text-on-surface bg-secondary-container/20 rounded p-unit-2xs flex items-center gap-unit-2xs">
         <span class="material-symbols-outlined text-[16px] text-secondary">swap_vert</span>
-        실기 결과에 따라 최종 총점 <span class="font-bold text-secondary">${contribution}%p ~ ${compositeMax}%p</span> 사이 (학생부로 이미 ${contribution}%p 확보)
+        실기 결과에 따라 최종 총점 <span class="font-bold text-secondary">${contribution}%p ~ ${compositeMax}%p</span> 사이 (학생부로 이미 ${contribution}%p 확보)${stageNote}
       </div>`;
     }
     const pyr = r.prior_year_result;
@@ -1209,9 +1221,9 @@ function renderRecommendResults() {
       <div class="font-body-sm text-body-sm text-on-surface-variant">원서접수: ${r.application_start || "-"} ~ ${r.application_end || "-"}</div>
       <div class="font-body-sm text-body-sm text-on-surface-variant">실기고사: ${(r.exam_dates || []).join(", ") || "-"} · 발표: ${r.result_date || "-"}</div>
     `;
-    const ratioLine = (!isNotApplicable && (r.practical_ratio_pct != null || r.school_record_ratio_pct != null))
-      ? `<div class="font-body-sm text-body-sm text-on-surface-variant">반영비율: 실기 ${r.practical_ratio_pct ?? "-"}% · 학생부 ${r.school_record_ratio_pct ?? "-"}%` +
-        (r.practical_ratio_pct != null && r.practical_ratio_pct >= 70
+    const ratioLine = (!isNotApplicable && (effPractical != null || effRecord != null))
+      ? `<div class="font-body-sm text-body-sm text-on-surface-variant">반영비율: 실기 ${effPractical ?? "-"}% · 학생부 ${effRecord ?? "-"}%${stageNote}` +
+        (effPractical != null && effPractical >= 70
           ? ` <span class="text-outline">- 실기 비중이 높다는 것은 내신이 낮아도 합격하기 쉽다는 의미가 아닙니다. 지원자의 실기 수준에 따라 결과가 크게 달라질 수 있습니다.</span>`
           : "") +
         `</div>` : "";

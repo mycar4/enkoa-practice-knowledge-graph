@@ -68,7 +68,10 @@
           "pdf_sha256": "788741d76936f67f55731821711c3a636ec7c6aad36b9454fa692a3f20deb23b"
         }
       ],
-      "school_record_status": "required"
+      "school_record_status": "required",
+      "stage_ratio_label": "2단계",
+      "stage_practical_ratio_pct": 80,
+      "stage_school_record_ratio_pct": 20
     },
     "estimates": {
       "cutoff_grade_estimate": 4.7,
@@ -155,7 +158,10 @@
           "pdf_sha256": "788741d76936f67f55731821711c3a636ec7c6aad36b9454fa692a3f20deb23b"
         }
       ],
-      "school_record_status": "required"
+      "school_record_status": "required",
+      "stage_ratio_label": "2단계",
+      "stage_practical_ratio_pct": 80,
+      "stage_school_record_ratio_pct": 20
     },
     "estimates": {
       "cutoff_grade_estimate": 4.65,
@@ -242,7 +248,10 @@
           "pdf_sha256": "788741d76936f67f55731821711c3a636ec7c6aad36b9454fa692a3f20deb23b"
         }
       ],
-      "school_record_status": "required"
+      "school_record_status": "required",
+      "stage_ratio_label": "2단계",
+      "stage_practical_ratio_pct": 80,
+      "stage_school_record_ratio_pct": 20
     },
     "estimates": {
       "cutoff_grade_estimate": 4.16,

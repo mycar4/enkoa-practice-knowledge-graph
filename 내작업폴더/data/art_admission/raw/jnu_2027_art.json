@@ -72,7 +72,10 @@
           "local_file": "data/art_admission_raw/prospectus/2027_jnu_susi.pdf",
           "pdf_sha256": "ff2239703c88b681ef02199e3be1979b1201ae90d1c03d5584845bc3804bd870"
         }
-      ]
+      ],
+      "stage_ratio_label": "2단계",
+      "stage_practical_ratio_pct": 70,
+      "stage_school_record_ratio_pct": 30
     }
   },
   {
@@ -148,7 +151,10 @@
           "local_file": "data/art_admission_raw/prospectus/2027_jnu_susi.pdf",
           "pdf_sha256": "ff2239703c88b681ef02199e3be1979b1201ae90d1c03d5584845bc3804bd870"
         }
-      ]
+      ],
+      "stage_ratio_label": "2단계",
+      "stage_practical_ratio_pct": 70,
+      "stage_school_record_ratio_pct": 30
     }
   },
   {
@@ -224,7 +230,10 @@
           "local_file": "data/art_admission_raw/prospectus/2027_jnu_susi.pdf",
           "pdf_sha256": "ff2239703c88b681ef02199e3be1979b1201ae90d1c03d5584845bc3804bd870"
         }
-      ]
+      ],
+      "stage_ratio_label": "2단계",
+      "stage_practical_ratio_pct": 70,
+      "stage_school_record_ratio_pct": 30
     }
   },
   {
@@ -303,7 +312,10 @@
           "local_file": "data/art_admission_raw/prospectus/2027_jnu_susi.pdf",
           "pdf_sha256": "ff2239703c88b681ef02199e3be1979b1201ae90d1c03d5584845bc3804bd870"
         }
-      ]
+      ],
+      "stage_ratio_label": "2단계",
+      "stage_practical_ratio_pct": 70,
+      "stage_school_record_ratio_pct": 30
     }
   },
   {
@@ -382,7 +394,10 @@
           "local_file": "data/art_admission_raw/prospectus/2027_jnu_susi.pdf",
           "pdf_sha256": "ff2239703c88b681ef02199e3be1979b1201ae90d1c03d5584845bc3804bd870"
         }
-      ]
+      ],
+      "stage_ratio_label": "2단계",
+      "stage_practical_ratio_pct": 70,
+      "stage_school_record_ratio_pct": 30
     }
   },
   {

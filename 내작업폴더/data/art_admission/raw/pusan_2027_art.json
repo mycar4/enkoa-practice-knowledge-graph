@@ -865,7 +865,10 @@
           "local_file": "data/art_admission_raw/prospectus/2027_pusan_susi.pdf",
           "pdf_sha256": "9dad1ad962e1133d92ee69ca5dc506bd68b58b2d8f7c486ddbd233a2aa5ab3d5"
         }
-      ]
+      ],
+      "stage_ratio_label": "2단계",
+      "stage_practical_ratio_pct": 60,
+      "stage_school_record_ratio_pct": 40
     }
   },
   {
@@ -942,7 +945,10 @@
           "local_file": "data/art_admission_raw/prospectus/2027_pusan_susi.pdf",
           "pdf_sha256": "9dad1ad962e1133d92ee69ca5dc506bd68b58b2d8f7c486ddbd233a2aa5ab3d5"
         }
-      ]
+      ],
+      "stage_ratio_label": "2단계",
+      "stage_practical_ratio_pct": 60,
+      "stage_school_record_ratio_pct": 40
     }
   },
   {
@@ -1019,7 +1025,10 @@
           "local_file": "data/art_admission_raw/prospectus/2027_pusan_susi.pdf",
           "pdf_sha256": "9dad1ad962e1133d92ee69ca5dc506bd68b58b2d8f7c486ddbd233a2aa5ab3d5"
         }
-      ]
+      ],
+      "stage_ratio_label": "2단계",
+      "stage_practical_ratio_pct": 60,
+      "stage_school_record_ratio_pct": 40
     }
   }
 ]

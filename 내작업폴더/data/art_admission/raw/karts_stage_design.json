@@ -239,7 +239,10 @@
         }
       ],
       "school_record_status": "required",
-      "source_page_note": "최초합격자 발표는 1차/2차가 구분되어 있으며, 본 필드는 2차(최종) 합격자 발표일(2026-11-06)만 저장함(2027 모집요강 p.21)."
+      "source_page_note": "최초합격자 발표는 1차/2차가 구분되어 있으며, 본 필드는 2차(최종) 합격자 발표일(2026-11-06)만 저장함(2027 모집요강 p.21).",
+      "stage_ratio_label": "1단계",
+      "stage_practical_ratio_pct": 80,
+      "stage_school_record_ratio_pct": 20
     },
     "estimates": {
       "cutoff_grade_estimate": null,
@@ -265,18 +268,6 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 40,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
       "competition_applicant_count": null,
       "competition_rate": null,
       "competition_rate_announced_at": null,
@@ -492,7 +483,10 @@
         }
       ],
       "school_record_status": "required",
-      "source_page_note": "모집인원 p.2(계 40명, 특별전형 없음), 일정(11월입시) p.6, 전형방법 p.58, 학생부 공통사항 p.73-74. 기존 raw 파일엔 무대미술과(연극원)만 있고 미술원 소속 조형예술과·디자인과·건축과가 통째로 누락돼 있었음(2026-09-11 Claude가 발견·보완) - 미술이론과는 전형 전 과정이 논술/구술뿐이라(시각·조형 실기 요소 없음) 수집 대상에서 제외."
+      "source_page_note": "모집인원 p.2(계 40명, 특별전형 없음), 일정(11월입시) p.6, 전형방법 p.58, 학생부 공통사항 p.73-74. 기존 raw 파일엔 무대미술과(연극원)만 있고 미술원 소속 조형예술과·디자인과·건축과가 통째로 누락돼 있었음(2026-09-11 Claude가 발견·보완) - 미술이론과는 전형 전 과정이 논술/구술뿐이라(시각·조형 실기 요소 없음) 수집 대상에서 제외.",
+      "stage_ratio_label": "1단계",
+      "stage_practical_ratio_pct": 80,
+      "stage_school_record_ratio_pct": 20
     },
     "estimates": {}
   },
@@ -504,18 +498,6 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 20,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
       "competition_applicant_count": null,
       "competition_rate": null,
       "competition_rate_announced_at": null,
@@ -731,7 +713,10 @@
         }
       ],
       "school_record_status": "required",
-      "source_page_note": "모집인원 p.2(계 20명, 특별전형 없음), 일정(11월입시) p.6, 전형방법 p.59, 학생부 공통사항 p.73-74."
+      "source_page_note": "모집인원 p.2(계 20명, 특별전형 없음), 일정(11월입시) p.6, 전형방법 p.59, 학생부 공통사항 p.73-74.",
+      "stage_ratio_label": "1단계",
+      "stage_practical_ratio_pct": 80,
+      "stage_school_record_ratio_pct": 20
     },
     "estimates": {}
   },
@@ -743,18 +728,6 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 20,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
       "competition_applicant_count": null,
       "competition_rate": null,
       "competition_rate_announced_at": null,
