@@ -68,8 +68,107 @@
           "B": 80,
           "C": 60
         },
-        "formula_note": "반영교과: 국어·영어(전 과목) + 국어·영어 진로선택과목 중 우수 상위 3개. 교과성적 = (공통·일반선택 이수단위가중평균×0.8) + (진로선택 이수단위가중평균×0.2). 진로선택 성취평가등급이 1개도 없으면 공통·일반선택만 100% 반영 (2027 모집요강 p.111-112, 실기우수자전형 기준).",
-        "rule_source_page": "111-112"
+        "formula_note": "반영교과: 국어·영어(전 과목) + 국어·영어 진로선택과목 중 우수 상위 3개. 교과성적 = (공통·일반선택 이수단위가중평균×0.8) + (진로선택 이수단위가중평균×0.2). 진로선택 성취평가등급이 1개도 없으면 공통·일반선택만 100% 반영 (2027 모집요강 p.111-112, 실기우수자전형 기준). 학생부 반영점수 = 교과성적(A)x7.0 + 비교과·출결봉사성적(B)x3.0(전형총점 1000=1단계 성적, p.111-113). 출결 0~50점+봉사 0~50점=B, 각각 원문 배점표(p.113)로 산출 - subject_weight_pct(70)/attendance_weight_pct(15)/service_weight_pct(15)로 수학적으로 동일하게 저장(2026-09-14 나이스 출결·봉사 데이터로 반영 시작).",
+        "rule_source_page": "111-112",
+        "subject_weight_pct": 70,
+        "attendance_weight_pct": 15,
+        "service_weight_pct": 15,
+        "attendance_band_max": 50,
+        "service_band_max": 50,
+        "attendance_bands": [
+          {
+            "max_days": 2,
+            "score": 50
+          },
+          {
+            "max_days": 4,
+            "score": 45
+          },
+          {
+            "max_days": 6,
+            "score": 40
+          },
+          {
+            "max_days": 8,
+            "score": 35
+          },
+          {
+            "max_days": 10,
+            "score": 30
+          },
+          {
+            "max_days": 12,
+            "score": 25
+          },
+          {
+            "max_days": 14,
+            "score": 20
+          },
+          {
+            "max_days": 16,
+            "score": 15
+          },
+          {
+            "max_days": 18,
+            "score": 10
+          },
+          {
+            "max_days": 20,
+            "score": 5
+          },
+          {
+            "max_days": null,
+            "score": 0
+          }
+        ],
+        "service_bands": [
+          {
+            "min_hours": 0,
+            "max_hours": 0,
+            "score": 0
+          },
+          {
+            "min_hours": 1,
+            "max_hours": 2,
+            "score": 12
+          },
+          {
+            "min_hours": 3,
+            "max_hours": 4,
+            "score": 18
+          },
+          {
+            "min_hours": 5,
+            "max_hours": 6,
+            "score": 24
+          },
+          {
+            "min_hours": 7,
+            "max_hours": 8,
+            "score": 30
+          },
+          {
+            "min_hours": 9,
+            "max_hours": 10,
+            "score": 35
+          },
+          {
+            "min_hours": 11,
+            "max_hours": 12,
+            "score": 40
+          },
+          {
+            "min_hours": 13,
+            "max_hours": 14,
+            "score": 45
+          },
+          {
+            "min_hours": 15,
+            "max_hours": null,
+            "score": 50
+          }
+        ],
+        "attendance_service_source_page": "111-113 (경희대 2027 모집요강)"
       },
       "practical_ratio_pct": 90,
       "school_record_ratio_pct": 10,
@@ -169,8 +268,107 @@
           "B": 80,
           "C": 60
         },
-        "formula_note": "반영교과: 국어·영어(전 과목) + 국어·영어 진로선택과목 중 우수 상위 3개. 교과성적 = (공통·일반선택 이수단위가중평균×0.8) + (진로선택 이수단위가중평균×0.2). 진로선택 성취평가등급이 1개도 없으면 공통·일반선택만 100% 반영 (2027 모집요강 p.111-112, 실기우수자전형 기준).",
-        "rule_source_page": "111-112"
+        "formula_note": "반영교과: 국어·영어(전 과목) + 국어·영어 진로선택과목 중 우수 상위 3개. 교과성적 = (공통·일반선택 이수단위가중평균×0.8) + (진로선택 이수단위가중평균×0.2). 진로선택 성취평가등급이 1개도 없으면 공통·일반선택만 100% 반영 (2027 모집요강 p.111-112, 실기우수자전형 기준). 학생부 반영점수 = 교과성적(A)x7.0 + 비교과·출결봉사성적(B)x3.0(전형총점 1000=1단계 성적, p.111-113). 출결 0~50점+봉사 0~50점=B, 각각 원문 배점표(p.113)로 산출 - subject_weight_pct(70)/attendance_weight_pct(15)/service_weight_pct(15)로 수학적으로 동일하게 저장(2026-09-14 나이스 출결·봉사 데이터로 반영 시작).",
+        "rule_source_page": "111-112",
+        "subject_weight_pct": 70,
+        "attendance_weight_pct": 15,
+        "service_weight_pct": 15,
+        "attendance_band_max": 50,
+        "service_band_max": 50,
+        "attendance_bands": [
+          {
+            "max_days": 2,
+            "score": 50
+          },
+          {
+            "max_days": 4,
+            "score": 45
+          },
+          {
+            "max_days": 6,
+            "score": 40
+          },
+          {
+            "max_days": 8,
+            "score": 35
+          },
+          {
+            "max_days": 10,
+            "score": 30
+          },
+          {
+            "max_days": 12,
+            "score": 25
+          },
+          {
+            "max_days": 14,
+            "score": 20
+          },
+          {
+            "max_days": 16,
+            "score": 15
+          },
+          {
+            "max_days": 18,
+            "score": 10
+          },
+          {
+            "max_days": 20,
+            "score": 5
+          },
+          {
+            "max_days": null,
+            "score": 0
+          }
+        ],
+        "service_bands": [
+          {
+            "min_hours": 0,
+            "max_hours": 0,
+            "score": 0
+          },
+          {
+            "min_hours": 1,
+            "max_hours": 2,
+            "score": 12
+          },
+          {
+            "min_hours": 3,
+            "max_hours": 4,
+            "score": 18
+          },
+          {
+            "min_hours": 5,
+            "max_hours": 6,
+            "score": 24
+          },
+          {
+            "min_hours": 7,
+            "max_hours": 8,
+            "score": 30
+          },
+          {
+            "min_hours": 9,
+            "max_hours": 10,
+            "score": 35
+          },
+          {
+            "min_hours": 11,
+            "max_hours": 12,
+            "score": 40
+          },
+          {
+            "min_hours": 13,
+            "max_hours": 14,
+            "score": 45
+          },
+          {
+            "min_hours": 15,
+            "max_hours": null,
+            "score": 50
+          }
+        ],
+        "attendance_service_source_page": "111-113 (경희대 2027 모집요강)"
       },
       "practical_ratio_pct": 90,
       "school_record_ratio_pct": 10,
@@ -272,8 +470,107 @@
           "B": 80,
           "C": 60
         },
-        "formula_note": "반영교과: 국어·영어(전 과목) + 국어·영어 진로선택과목 중 우수 상위 3개. 교과성적 = (공통·일반선택 이수단위가중평균×0.8) + (진로선택 이수단위가중평균×0.2). 진로선택 성취평가등급이 1개도 없으면 공통·일반선택만 100% 반영 (2027 모집요강 p.111-112, 실기우수자전형 기준).",
-        "rule_source_page": "111-112"
+        "formula_note": "반영교과: 국어·영어(전 과목) + 국어·영어 진로선택과목 중 우수 상위 3개. 교과성적 = (공통·일반선택 이수단위가중평균×0.8) + (진로선택 이수단위가중평균×0.2). 진로선택 성취평가등급이 1개도 없으면 공통·일반선택만 100% 반영 (2027 모집요강 p.111-112, 실기우수자전형 기준). 학생부 반영점수 = 교과성적(A)x7.0 + 비교과·출결봉사성적(B)x3.0(전형총점 1000=1단계 성적, p.111-113). 출결 0~50점+봉사 0~50점=B, 각각 원문 배점표(p.113)로 산출 - subject_weight_pct(70)/attendance_weight_pct(15)/service_weight_pct(15)로 수학적으로 동일하게 저장(2026-09-14 나이스 출결·봉사 데이터로 반영 시작).",
+        "rule_source_page": "111-112",
+        "subject_weight_pct": 70,
+        "attendance_weight_pct": 15,
+        "service_weight_pct": 15,
+        "attendance_band_max": 50,
+        "service_band_max": 50,
+        "attendance_bands": [
+          {
+            "max_days": 2,
+            "score": 50
+          },
+          {
+            "max_days": 4,
+            "score": 45
+          },
+          {
+            "max_days": 6,
+            "score": 40
+          },
+          {
+            "max_days": 8,
+            "score": 35
+          },
+          {
+            "max_days": 10,
+            "score": 30
+          },
+          {
+            "max_days": 12,
+            "score": 25
+          },
+          {
+            "max_days": 14,
+            "score": 20
+          },
+          {
+            "max_days": 16,
+            "score": 15
+          },
+          {
+            "max_days": 18,
+            "score": 10
+          },
+          {
+            "max_days": 20,
+            "score": 5
+          },
+          {
+            "max_days": null,
+            "score": 0
+          }
+        ],
+        "service_bands": [
+          {
+            "min_hours": 0,
+            "max_hours": 0,
+            "score": 0
+          },
+          {
+            "min_hours": 1,
+            "max_hours": 2,
+            "score": 12
+          },
+          {
+            "min_hours": 3,
+            "max_hours": 4,
+            "score": 18
+          },
+          {
+            "min_hours": 5,
+            "max_hours": 6,
+            "score": 24
+          },
+          {
+            "min_hours": 7,
+            "max_hours": 8,
+            "score": 30
+          },
+          {
+            "min_hours": 9,
+            "max_hours": 10,
+            "score": 35
+          },
+          {
+            "min_hours": 11,
+            "max_hours": 12,
+            "score": 40
+          },
+          {
+            "min_hours": 13,
+            "max_hours": 14,
+            "score": 45
+          },
+          {
+            "min_hours": 15,
+            "max_hours": null,
+            "score": 50
+          }
+        ],
+        "attendance_service_source_page": "111-113 (경희대 2027 모집요강)"
       },
       "practical_ratio_pct": 90,
       "school_record_ratio_pct": 10,

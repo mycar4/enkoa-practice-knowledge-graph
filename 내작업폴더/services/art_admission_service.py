@@ -215,10 +215,17 @@ def _apply_attendance_service_extras(rule: Dict[str, Any], result: Optional[Dict
     rule에 attendance_bands/service_bands가 없는 학교(대다수)는 그냥 원래 결과를
     그대로 반환 - 이 로직이 있는 학교에만 영향을 준다.
 
-    학교 원문 예(중앙대 2027 모집요강 p.89 [표5], 실기/실적(실기형) 기준):
+    학교 원문 예 1(중앙대 2027 모집요강 p.89 [표5], 실기/실적(실기형) 기준):
     미인정 결석 1일 이하=10, 2~3일=9.2, 4~5일=7.8, 6~7일=5.6, 8~9일=4.2, 10일 이상=3.4
     (교과 15% + 비교과·출결 5%로 학생부 20% 구성 - subject_weight_pct=15,
-    attendance_weight_pct=5로 원문 반영비율 그대로 저장)."""
+    attendance_weight_pct=5, attendance_band_max=10(기본값, 생략 가능)).
+
+    학교 원문 예 2(경희대 2027 모집요강 p.111-113, 실기우수자전형(한국화·회화·조소)
+    기준): 출결·봉사 배점표가 각각 0~50점 만점이라(중앙대의 0~10과 스케일이 다름)
+    band 점수를 그대로 쓰면 안 되고, attendance_band_max/service_band_max로 그
+    학교의 만점을 알려줘야 max_score(보통 100)에 맞게 정규화된다 - subject_weight_pct=70,
+    attendance_weight_pct=15, service_weight_pct=15(공식 A×7.0+B×3.0에서 B가
+    출결+봉사 각 50점씩이라 30%를 15%씩 균등 분할한 것과 수학적으로 동일함)."""
     if not result or not extra:
         return result
     max_score = result.get("max_score") or 10
@@ -235,8 +242,9 @@ def _apply_attendance_service_extras(rule: Dict[str, Any], result: Optional[Dict
                 att_score = band["score"]
                 break
         if att_score is not None:
+            band_max = rule.get("attendance_band_max", 10)
             w = rule.get("attendance_weight_pct", 0)
-            components.append((att_score / 10 * max_score, w))
+            components.append((att_score / band_max * max_score, w))
             total_weight += w
             result["attendance_score_raw"] = att_score
             result["attendance_days_used"] = att_days
@@ -252,8 +260,9 @@ def _apply_attendance_service_extras(rule: Dict[str, Any], result: Optional[Dict
                 svc_score = band["score"]
                 break
         if svc_score is not None:
+            band_max = rule.get("service_band_max", 10)
             w = rule.get("service_weight_pct", 0)
-            components.append((svc_score / 10 * max_score, w))
+            components.append((svc_score / band_max * max_score, w))
             total_weight += w
             result["service_score_raw"] = svc_score
             result["service_hours_used"] = svc_hours
