@@ -46,6 +46,10 @@ _COMPOUND_SIGNAL_WORDS = [
     # 나가던 문제(사용자 발견) - 이 신호어가 있으면 무조건 도구를 쓰는 run_agent로
     # 보내서 실제 계산 엔진을 태우게 한다.
     "등급", "내신", "찔러", "지원해야", "붙을", "합격 가능", "추천해",
+    # 랭킹/집계 질문("경쟁률 제일 높은 학교는?")도 get_competition_rate_ranking
+    # 도구가 있어야만 답할 수 있는데, 신호어가 없으면 qa_pipeline(도구 없음)으로
+    # 새서 "확인하지 못했습니다"만 나온다(2026-09-14 사용자 테스트로 발견).
+    "경쟁률", "제일", "가장 높은", "가장 낮은", "순위", "랭킹",
 ]
 
 
@@ -129,6 +133,7 @@ def get_university_info(university: str, campus: str = "") -> str:
         "department": t.get("department"), "track_name": t.get("track_name"),
         "exam_type_name": t.get("exam_type_name"), "allowed_materials": t.get("allowed_materials"),
         "quota": t.get("quota"), "exam_dates": t.get("exam_dates"), "source_url": t.get("source_url"),
+        "competition_rate": t.get("competition_rate"), "competition_applicant_count": t.get("competition_applicant_count"),
     } for t in detail.get("official_tracks", [])]
     return json.dumps({"university": university, "count": len(tracks), "tracks": tracks}, ensure_ascii=False)
 
@@ -169,6 +174,37 @@ def check_schedule_conflicts(selections: List[Dict[str, str]]) -> str:
     svc = _get_service()
     result = svc.simulate_multi_apply(selections)
     return json.dumps(result, ensure_ascii=False, default=str)
+
+
+@tool
+def get_competition_rate_ranking(topic_keywords: List[str] = [], top_n: int = 10, order: str = "desc") -> str:
+    """"경쟁률 제일 높은/낮은 학교는?" 같은 랭킹/집계 질문에 쓴다. 개별 학교 비교용
+    도구(get_university_info/search_tracks)는 조건에 맞는 목록만 줄 뿐 "전체 중 1등"을
+    가려낼 수 없어서 이런 질문엔 항상 "확인하지 못했습니다"만 나오던 문제(2026-09-14
+    사용자 발견)를 이 도구로 메운다. 2027학년도 공식 발표 경쟁률(competition_rate)이
+    있는 전형만 대상으로 하며, 아직 학교가 발표 안 한 전형은 순위에서 제외한다(0으로
+    지어내지 않음). order="asc"면 경쟁률 낮은 순(안정 지원 후보 찾기용).
+    competition_rate는 배수(예: 9.03은 "9.03:1", 9.03%가 아님) - 답변에 %를 붙이지 말 것."""
+    svc = _get_service()
+    tracks = svc.list_all_tracks_full()
+    if topic_keywords:
+        from services.art_admission_service import ArtAdmissionService
+        tracks = [
+            t for t in tracks
+            if any(ArtAdmissionService._topic_keyword_matches(kw, t.get("exam_type_name") or "") for kw in topic_keywords)
+        ]
+    rated = [t for t in tracks if t.get("competition_rate") is not None]
+    rated.sort(key=lambda t: t["competition_rate"], reverse=(order != "asc"))
+    trimmed = [{
+        "university": t["university"], "campus": t.get("campus"), "department": t["department"],
+        "track_name": t.get("track_name"), "competition_rate": t["competition_rate"],
+        "competition_applicant_count": t.get("competition_applicant_count"),
+        "quota": t.get("quota"), "source_url": t.get("competition_rate_source_url") or t.get("source_url"),
+    } for t in rated[:top_n]]
+    return json.dumps({
+        "count": len(trimmed), "total_with_official_rate": len(rated), "total_tracks_considered": len(tracks),
+        "ranking": trimmed,
+    }, ensure_ascii=False, default=str)
 
 
 @tool
@@ -219,7 +255,7 @@ def recommend_by_grades(grades: List[Dict[str, Any]], topic_keywords: List[str] 
     }, ensure_ascii=False, default=str)
 
 
-TOOLS = [get_university_info, search_tracks, compare_tracks, check_schedule_conflicts, get_calendar, recommend_by_grades]
+TOOLS = [get_university_info, search_tracks, compare_tracks, check_schedule_conflicts, get_calendar, recommend_by_grades, get_competition_rate_ranking]
 
 
 def run_qa_pipeline(svc, query: str, model_id: str = AGENT_MODEL) -> Dict[str, Any]:
