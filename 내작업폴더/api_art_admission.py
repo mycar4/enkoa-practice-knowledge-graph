@@ -115,6 +115,15 @@ def tracks_by_department(q: str):
     return svc.search_tracks_by_department(q)
 
 
+@app.get("/similar-departments")
+def similar_departments(university: str, department: str, campus: Optional[str] = None, top_k: int = 5):
+    """["학과명으로 찾기" 결과 보강] 찾은 학과와 같은 표준 계열 태그 안에서만 임베딩
+    유사도 top-K를 반환한다. 태그나 임베딩이 아직 없는 학과는 빈 목록을 반환한다
+    (에러가 아니라 "아직 비교 데이터가 없다"는 정상 상태)."""
+    svc = get_service()
+    return svc.find_similar_departments(university, department, campus=campus, top_k=top_k)
+
+
 @app.get("/universities/{university}")
 def university_detail(university: str, campus: Optional[str] = None):
     svc = get_service()

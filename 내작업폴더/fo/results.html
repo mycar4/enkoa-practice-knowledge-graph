@@ -774,10 +774,35 @@ async function renderDepartmentResults(query) {
   const uniqUnivCount = new Set(tracks.map(t => t.university)).size;
   document.getElementById("scopeLine").textContent = `'${query}' 학과명을 포함한 ${uniqUnivCount}개 대학, ${tracks.length}개 전형`;
 
+  // 2026-09-15: [④ 유사 학과 추천] 같은 학과(대학+캠퍼스+학과명)가 전형별로 여러 번
+  // 나오므로, 중복 호출을 피하려고 유니크 학과 단위로만 /similar-departments를 부른다.
+  // 태그/임베딩이 아직 없는 학과는 빈 배열이 오므로 그 경우엔 섹션 자체를 생략한다.
+  const deptKey = (t) => `${t.university}::${t.campus || ""}::${t.department}`;
+  const uniqDepts = [...new Map(tracks.map(t => [deptKey(t), t])).values()];
+  const similarByDept = new Map();
+  await Promise.all(uniqDepts.map(async (t) => {
+    try {
+      const params = new URLSearchParams({ university: t.university, department: t.department });
+      if (t.campus) params.set("campus", t.campus);
+      const similar = await fetch(window.API_BASE_URL + "/similar-departments?" + params.toString()).then(r => r.json());
+      similarByDept.set(deptKey(t), Array.isArray(similar) ? similar : []);
+    } catch {
+      similarByDept.set(deptKey(t), []);
+    }
+  }));
+
   container.innerHTML = tracks.map(t => {
     const campusStr = t.campus ? ` (${t.campus}캠퍼스)` : "";
     const regionBadge = t.region ? `<span class="px-unit-xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded border border-outline-variant">${t.region}</span>` : "";
     const collegeTypeBadge = t.college_type === "2년제" ? `<span class="px-unit-xs py-0.5 bg-secondary text-on-secondary font-label-sm text-label-sm rounded">2년제</span>` : "";
+    const similar = similarByDept.get(deptKey(t)) || [];
+    const similarBlock = similar.length ? `
+        <details class="mt-unit-2xs">
+          <summary class="font-label-sm text-label-sm text-outline cursor-pointer">비슷한 학과 ${similar.length}곳 (같은 계열 태그 기준)</summary>
+          <ul class="mt-unit-2xs flex flex-col gap-unit-3xs">
+            ${similar.map(s => `<li class="font-body-sm text-body-sm text-on-surface-variant">${s.university}${s.campus ? ` (${s.campus}캠퍼스)` : ""} · ${s.department}</li>`).join("")}
+          </ul>
+        </details>` : "";
     return `
       <div class="flex flex-col bg-surface-container-lowest rounded-lg p-unit-md gap-unit-2xs shadow-sm border border-outline-variant/30">
         <span class="font-headline-sm text-headline-sm text-on-surface">${t.university}${campusStr}</span>
@@ -786,6 +811,7 @@ async function renderDepartmentResults(query) {
         <div class="font-body-sm text-body-sm text-on-surface-variant">실기종목: ${t.exam_type_name || "-"}</div>
         <div class="font-body-sm text-body-sm text-on-surface-variant">모집인원: ${t.quota ?? "-"}명 · 반영비율: ${t.ratio || "-"}</div>
         <div class="font-body-sm text-body-sm text-on-surface-variant">원서접수: ${t.application_start || "-"} ~ ${t.application_end || "-"}</div>
+        ${similarBlock}
         <div class="flex items-center justify-between mt-unit-xs pt-unit-xs border-t border-outline-variant/20">
           <a class="font-label-sm text-label-sm text-on-surface-variant underline inline-flex items-center gap-unit-2xs" href="kg.html?university=${encodeURIComponent(t.university)}">
             <span class="material-symbols-outlined text-[14px]">hub</span>지도에서 보기
