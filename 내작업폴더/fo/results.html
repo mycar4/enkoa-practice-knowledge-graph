@@ -85,6 +85,7 @@
       <option value="score">학교 배점표 환산점수 높은 순</option>
       <option value="competition">2026년 경쟁률 낮은 순</option>
       <option value="practical">실기비중 높은 순</option>
+      <option value="reversal">실기 결과에 따른 최종 총점(상한) 높은 순</option>
     </select>
   </label>
   <div class="flex items-start gap-unit-2xs flex-wrap">
@@ -996,6 +997,19 @@ function renderRecommendResults() {
         if (bp == null) return -1;
         return bp - ap;
       });
+    } else if (sortBy === "reversal") {
+      // 사용자 요청(2026-09-14): "실기 결과에 따른 최종 총점"(학생부로 이미 확보한
+      // 점수 + 실기 만점 시 최대치)이 높은 순으로도 볼 수 있게 추가 - 학생부만으로는
+      // 밀리더라도 실기 비중이 크면 최종적으로 더 높은 총점까지 노려볼 수 있는
+      // 학교를 찾는 용도. 값을 계산할 수 없는 학교(단계형 등으로 반영비율 자체가
+      // 없는 경우)는 맨 뒤로 보낸다(0으로 지어내지 않음).
+      list.sort((a, b) => {
+        const am = computeReversalMax(a), bm = computeReversalMax(b);
+        if (am == null && bm == null) return 0;
+        if (am == null) return 1;
+        if (bm == null) return -1;
+        return bm - am;
+      });
     }
     // sortBy === "default"는 서버가 이미 정렬해서 내려준 순서(전년도tier -> 내신영향
     // -> 실기비중 -> 원등급) 그대로 유지하되, 필터만 다시 적용한 상태를 그대로 쓴다.
@@ -1122,6 +1136,28 @@ function renderRecommendResults() {
     panel.classList.toggle("flex", !nowHidden);
   });
 
+  // 2026-09-14: "정렬 기준"에 실기결과 시뮬레이션(실기 결과에 따른 최종 총점 상한)을
+  // 추가하기 위한 공용 계산 함수 - 카드에 표시하는 reversalLine과 완전히 같은 산식을
+  // 써야 정렬 순서와 카드에 보이는 숫자가 어긋나지 않는다(그래서 renderCards 안에
+  // 중복 구현하지 않고 여기서 한 번만 계산해 양쪽에서 재사용한다).
+  function computeReversal(r) {
+    if (r.calc_precision !== "exact") return null;
+    const pct = r.school_record_percentage;
+    if (pct == null) return null;
+    const hasFlatRatio = r.practical_ratio_pct != null && r.school_record_ratio_pct != null;
+    const hasStageRatio = !hasFlatRatio && r.stage_practical_ratio_pct != null && r.stage_school_record_ratio_pct != null;
+    const effPractical = hasFlatRatio ? r.practical_ratio_pct : (hasStageRatio ? r.stage_practical_ratio_pct : null);
+    const effRecord = hasFlatRatio ? r.school_record_ratio_pct : (hasStageRatio ? r.stage_school_record_ratio_pct : null);
+    if (effPractical == null || effRecord == null) return null;
+    const contribution = Math.round(pct * effRecord / 100 * 100) / 100;
+    const compositeMax = Math.round((contribution + effPractical) * 100) / 100;
+    const stageNote = hasStageRatio ? ` <span class="text-error font-bold">*${r.stage_ratio_label}</span>` : "";
+    return { contribution, compositeMax, stageNote };
+  }
+  function computeReversalMax(r) {
+    return computeReversal(r)?.compositeMax ?? null;
+  }
+
   function renderCards(list) {
   if (list.length === 0) {
     section.innerHTML = `<p class="col-span-full font-body-md text-body-md text-on-surface-variant py-unit-2xl text-center">선택한 조건에 맞는 전형이 없습니다. 필터를 해제해보세요.</p>`;
@@ -1192,12 +1228,11 @@ function renderRecommendResults() {
     // 그대로 재현한다 - 별도 API 호출 불필요. 단계별로도 못 쪼개는 전형은
     // 여기서도 정직하게 숨긴다(지어내지 않음).
     let reversalLine = "";
-    if (isExact && pct != null && effRecord != null && effPractical != null) {
-      const contribution = Math.round(pct * effRecord / 100 * 100) / 100;
-      const compositeMax = Math.round((contribution + effPractical) * 100) / 100;
+    const reversal = computeReversal(r);
+    if (reversal) {
       reversalLine = `<div class="font-body-sm text-body-sm text-on-surface bg-secondary-container/20 rounded p-unit-2xs flex items-center gap-unit-2xs">
         <span class="material-symbols-outlined text-[16px] text-secondary">swap_vert</span>
-        실기 결과에 따라 최종 총점 <span class="font-bold text-secondary">${contribution}%p ~ ${compositeMax}%p</span> 사이 (학생부로 이미 ${contribution}%p 확보)${stageNote}
+        실기 결과에 따라 최종 총점 <span class="font-bold text-secondary">${reversal.contribution}%p ~ ${reversal.compositeMax}%p</span> 사이 (학생부로 이미 ${reversal.contribution}%p 확보)${reversal.stageNote}
       </div>`;
     }
     const pyr = r.prior_year_result;
