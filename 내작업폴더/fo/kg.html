@@ -172,6 +172,16 @@ function filterByDepth(graphData, depth) {
   };
 }
 
+// 2026-09-15: 학과 표준 계열 태그(10개 카테고리, 관리자 승인 기반)별 색상 -
+// "학과명 표기가 학교마다 달라도 실제로는 같은 계열"이라는 걸 그래프에서
+// 한눈에 보이게 하기 위함. 태그가 아직 없는 학과(자율전공 등)는 기존 단색을 그대로 쓴다.
+const TAG_COLORS = {
+  "시각·브랜딩": "#b72119", "산업·제품": "#8a4b08", "공간·전시": "#6b5e00",
+  "패션·섬유": "#a3006b", "공예·도예·금속": "#7a4a00", "회화·한국화": "#8f2d56",
+  "조소·입체": "#5c4a9c", "영상·애니": "#0f6d8c", "웹툰·게임": "#0a7d3c",
+  "융합·AI디자인": "#4a5568",
+};
+
 function renderGraph(graphData) {
   const container = document.getElementById("kgNetwork");
   const colorByGroup = { topic: "#0a7d3c", tracktype: "#0a7d3c", admissiontype: "#0a7d3c", university: "#0031ab", department: "#b72119", track: "#1c1b1b" };
@@ -184,7 +194,8 @@ function renderGraph(graphData) {
   // "group" 필드 자체가 vis.js로 넘어가지 않게 막는다 - 항상 우리가 지정한
   // 색만 적용됨.
   const nodes = new vis.DataSet(graphData.nodes.map(n => {
-    const bg = colorByGroup[n.group] || "#747686";
+    const bg = (n.group === "department" && n.standard_tag && TAG_COLORS[n.standard_tag])
+      || colorByGroup[n.group] || "#747686";
     return {
       id: n.id,
       label: n.label,
@@ -223,6 +234,9 @@ function renderGraph(graphData) {
     const groupLabel = { topic: "실기종목", tracktype: "전형종류", admissiontype: "전형 유형", university: "대학", department: "학과", track: "전형" }[node.group] || "";
     document.getElementById("kgDetailTitle").textContent = `${groupLabel} · ${node.label}`;
     let body = "연결된 하위 항목을 펼쳐서 구조를 확인해보세요.";
+    if (node.group === "department" && node.standard_tag) {
+      body = `표준 계열 태그: ${node.standard_tag}\n\n` + body;
+    }
     if (node.group === "track") {
       body = node.title
         ? node.title + "\n\n자세한 모집요강 원문·반영비율은 '대학 찾기'에서 해당 대학을 검색해 확인하세요."

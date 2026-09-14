@@ -718,10 +718,16 @@ async function renderUniversityResults(name) {
     // college_type은 2년제일 때만(현재 서울예술대학교) 표시한다.
     const regionBadge = detail.region ? `<span class="px-unit-xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded border border-outline-variant">${detail.region}</span>` : "";
     const collegeTypeBadge = detail.college_type === "2년제" ? `<span class="px-unit-xs py-0.5 bg-secondary text-on-secondary font-label-sm text-label-sm rounded">2년제</span>` : "";
+    // 2026-09-15: 학과명 표기가 학교마다 제각각이라("애니메이션학과(4컷)" 등) 유사 학과를
+    // 못 알아보는 문제를 완화하기 위한 표준 계열 태그(10개 카테고리, 관리자 승인 기반).
+    // 아직 태그가 없는 학과(자율전공 등)는 배지를 그냥 생략한다.
+    const tagBadge = t.standard_department_tag
+      ? `<span class="px-unit-xs py-0.5 bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm rounded">${t.standard_department_tag}</span>`
+      : "";
     return `
       <div class="flex flex-col bg-surface-container-lowest rounded-lg p-unit-md gap-unit-2xs shadow-sm border border-outline-variant/30">
         <span class="font-headline-sm text-headline-sm text-on-surface">${name}${campusStr}</span>
-        <div class="flex flex-wrap gap-unit-2xs">${categoryBadge}${regionBadge}${collegeTypeBadge}</div>
+        <div class="flex flex-wrap gap-unit-2xs">${categoryBadge}${tagBadge}${regionBadge}${collegeTypeBadge}</div>
         <div class="font-body-md text-body-md text-on-surface font-medium">${t.department} · ${t.track_name || ""} (${t.admission_year || "-"}학년도)</div>
         <div class="font-body-sm text-body-sm text-on-surface-variant">실기종목: ${t.exam_type_name || "-"}</div>
         <div class="font-body-sm text-body-sm text-on-surface-variant">재료: ${(t.allowed_materials || []).join(", ") || "-"} ${t.paper_size ? "· 규격: " + t.paper_size : ""}</div>

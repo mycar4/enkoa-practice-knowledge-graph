@@ -1187,6 +1187,7 @@ class ArtAdmissionService:
                 WHERE (t.is_superseded IS NULL OR t.is_superseded = false)
                   AND ($university IS NULL OR u.name = $university)
                 RETURN u.name AS university, u.campus AS campus, d.name AS department,
+                       d.standard_tag AS standard_department_tag,
                        t.name AS track_name, t.quota AS quota
                 ORDER BY university, campus, department, track_name
             """, university=university).data()
@@ -1203,7 +1204,10 @@ class ArtAdmissionService:
             if uni_id not in nodes:
                 nodes[uni_id] = {"id": uni_id, "label": uni_label, "group": "university"}
             if dept_id not in nodes:
-                nodes[dept_id] = {"id": dept_id, "label": r["department"], "group": "department"}
+                nodes[dept_id] = {
+                    "id": dept_id, "label": r["department"], "group": "department",
+                    "standard_tag": r.get("standard_department_tag"),
+                }
                 edges.append({"from": uni_id, "to": dept_id})
             if track_id not in nodes:
                 quota = r.get("quota")
@@ -1312,7 +1316,10 @@ class ArtAdmissionService:
                 nodes[uni_id] = {"id": uni_id, "label": uni_label, "group": "university"}
                 edges.append({"from": topic_id, "to": uni_id})
             if dept_id not in nodes:
-                nodes[dept_id] = {"id": dept_id, "label": r["department"], "group": "department"}
+                nodes[dept_id] = {
+                    "id": dept_id, "label": r["department"], "group": "department",
+                    "standard_tag": r.get("standard_department_tag"),
+                }
                 edges.append({"from": uni_id, "to": dept_id})
             if track_id not in nodes:
                 quota = r.get("quota")
@@ -1379,7 +1386,10 @@ class ArtAdmissionService:
                 nodes[uni_id] = {"id": uni_id, "label": uni_label, "group": "university"}
                 edges.append({"from": root_id, "to": uni_id})
             if dept_id not in nodes:
-                nodes[dept_id] = {"id": dept_id, "label": r["department"], "group": "department"}
+                nodes[dept_id] = {
+                    "id": dept_id, "label": r["department"], "group": "department",
+                    "standard_tag": r.get("standard_department_tag"),
+                }
                 edges.append({"from": uni_id, "to": dept_id})
             if track_id not in nodes:
                 quota = r.get("quota")
@@ -1439,7 +1449,10 @@ class ArtAdmissionService:
                 nodes[uni_id] = {"id": uni_id, "label": uni_label, "group": "university"}
                 edges.append({"from": root_id, "to": uni_id})
             if dept_id not in nodes:
-                nodes[dept_id] = {"id": dept_id, "label": r["department"], "group": "department"}
+                nodes[dept_id] = {
+                    "id": dept_id, "label": r["department"], "group": "department",
+                    "standard_tag": r.get("standard_department_tag"),
+                }
                 edges.append({"from": uni_id, "to": dept_id})
             if track_id not in nodes:
                 quota = r.get("quota")
@@ -1465,7 +1478,8 @@ class ArtAdmissionService:
                 OPTIONAL MATCH (e)-[:HAD_PAST_TOPIC]->(p:Admission_PastTopic)
                 OPTIONAL MATCH (t)-[:HAS_SCHEDULE]->(sch:Admission_Schedule)
                 WITH d, t, e, sch, collect(DISTINCT {year: p.year, topic_text: p.topic_text, source: p.source, source_url: p.source_url}) AS past_topics
-                RETURN d.name AS department, t.name AS track_name, t.quota AS quota, t.ratio AS ratio,
+                RETURN d.name AS department, d.standard_tag AS standard_department_tag,
+                       t.name AS track_name, t.quota AS quota, t.ratio AS ratio,
                        t.is_staged AS is_staged, t.source_url AS source_url, t.source_page AS source_page,
                        t.admission_year AS admission_year,
                        t.competition_rate AS competition_rate,
@@ -2190,6 +2204,7 @@ class ArtAdmissionService:
                 OPTIONAL MATCH (t)-[:HAS_SCHEDULE]->(sch:Admission_Schedule)
                 OPTIONAL MATCH (t)-[:ESTIMATED_CUTOFF]->(c:Admission_CutoffEstimate)
                 RETURN u.name AS university, u.campus AS campus, d.name AS department,
+                       d.standard_tag AS standard_department_tag,
                        t.name AS track_name, t.admission_year AS admission_year,
                        t.quota AS quota, t.ratio AS ratio, t.source_url AS source_url,
                        e.name AS exam_type_name, e.allowed_materials AS allowed_materials,
