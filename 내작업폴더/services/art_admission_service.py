@@ -936,6 +936,35 @@ class ArtAdmissionService:
     # 4년제가 기본값이고, 예외(2년제/전문학사)만 표에 올린다.
     _TWO_YEAR_COLLEGES = {"서울예술대학교"}
 
+    # 2026-09-14: 학과명만으로는 학교마다 표기가 제각각이라("애니메이션학과(4컷)" vs
+    # "만화애니메이션텍전공") 유사 학과를 안정적으로 묶을 수 없다 - 15개교 파일럿으로
+    # 시작하는 "표준 계열 태그 + 임베딩 후보 + 관리자 승인" 파이프라인의 확정 태그
+    # 목록. 태그의 "정답의 언어" 역할을 이 목록이 하고, 임베딩은 후보만 제안한다.
+    _STANDARD_DEPARTMENT_TAGS = (
+        "시각·브랜딩", "산업·제품", "공간·전시", "패션·섬유", "공예·도예·금속",
+        "회화·한국화", "조소·입체", "영상·애니", "웹툰·게임", "융합·AI디자인",
+    )
+
+    def list_standard_department_tags(self) -> List[str]:
+        """[표준 계열 태그] 관리자가 학과에 붙일 수 있는 확정 태그 후보 목록.
+        임베딩 유사도가 아무리 좋아 보여도 이 목록 밖의 이름을 새로 만들지 않는다 -
+        태그 체계가 흔들리면 사용자에게 보여줄 분류명 자체가 불안정해지기 때문."""
+        return list(self._STANDARD_DEPARTMENT_TAGS)
+
+    def set_department_tag(self, university: str, department: str, tag: str, campus: Optional[str] = None) -> None:
+        """[표준 계열 태그 저장] raw JSON 재적재(00_Art_Admission_Graph_Loader.py) 경로와
+        완전히 분리된 저장 함수다 - 메인 로더가 매번 학교 JSON을 통째로 재적재할 때
+        이 태그까지 덮어써서 관리자가 승인한 태그가 날아가는 사고를 막기 위함이다.
+        관리자 승인 UI/스크립트에서만 호출한다."""
+        if tag not in self._STANDARD_DEPARTMENT_TAGS:
+            raise ValueError(f"표준 태그 목록에 없는 값입니다: {tag!r} (목록: {self._STANDARD_DEPARTMENT_TAGS})")
+        with self.driver.session(default_access_mode=WRITE_ACCESS) as s:
+            s.run("""
+                MATCH (u:Admission_University {name: $university})-[:HAS_DEPARTMENT]->(d:Admission_Department {name: $department})
+                WHERE $campus IS NULL OR u.campus = $campus
+                SET d.standard_tag = $tag
+            """, university=university, department=department, tag=tag, campus=campus)
+
     @classmethod
     def _region_for(cls, university: str, campus: Optional[str]) -> str:
         override = cls._CAMPUS_REGION_OVERRIDES.get((university, campus))
@@ -1346,10 +1375,13 @@ class ArtAdmissionService:
                 OPTIONAL MATCH (t)-[:ESTIMATED_CUTOFF]->(c:Admission_CutoffEstimate)
                 OPTIONAL MATCH (t)-[:HAS_INTERVIEW_SUMMARY]->(iv:Admission_InterviewSummary)
                 WITH d, t, c, collect(DISTINCT {title: iv.title, url: iv.url, channel: iv.channel, summary: iv.summary}) AS interviews
+                OPTIONAL MATCH (t)-[:HAS_YEARLY_RESULT]->(yr:Admission_YearlyResult)
+                WITH d, t, c, interviews, yr ORDER BY yr.admission_year DESC
+                WITH d, t, c, interviews, collect(yr)[0] AS yr
                 RETURN d.name AS department, t.name AS track_name, c.cutoff_grade_estimate AS cutoff_grade_estimate,
                        c.source_url AS cutoff_source_url,
-                       c.prior_year_admission_year AS prior_year_admission_year,
-                       c.prior_year_competition_rate AS prior_year_competition_rate,
+                       yr.admission_year AS prior_year_admission_year,
+                       yr.competition_rate AS prior_year_competition_rate,
                        interviews
             """, university=university, campus=campus).data()
 
@@ -1385,6 +1417,7 @@ class ArtAdmissionService:
                 OPTIONAL MATCH (t)-[:REQUIRES_EXAM]->(e:Admission_ExamType)
                 OPTIONAL MATCH (t)-[:HAS_SCHEDULE]->(sch:Admission_Schedule)
                 RETURN u.name AS university, u.campus AS campus, d.name AS department, t.name AS track_name,
+                       d.standard_tag AS standard_department_tag,
                        t.quota AS quota, t.ratio AS ratio, t.source_url AS source_url,
                        t.admission_year AS admission_year,
                        t.practical_ratio_pct AS practical_ratio_pct,
@@ -1436,27 +1469,34 @@ class ArtAdmissionService:
         }
 
     def _get_prior_year_results_by_track(self) -> Dict[tuple, Dict[str, Any]]:
-        """전년도 등록자 성적 추정치(Admission_CutoffEstimate) 전용 조회 - list_all_tracks_full()과
+        """전년도 등록자 성적 추정치(Admission_YearlyResult) 전용 조회 - list_all_tracks_full()과
         의도적으로 분리된 별도 쿼리다. list_all_tracks_full()은 official_facts만 반환한다고
         문서화돼 있는데(Zero-Mixing), 이 추정치는 대학 자체 CDN에 공개된 '전년도 입시결과'
         문서에서 뽑은 값이라 official_facts가 아니라 estimates 계열이다. 호출부(recommend_
         universities)에서 반드시 별도 키(prior_year_result)로 붙여서 절대 같은 카드에서
-        공식 사실과 섞어 표시하지 않게 한다."""
+        공식 사실과 섞어 표시하지 않게 한다.
+
+        2026-09-14: Admission_YearlyResult로 분리(연도가 MERGE 키에 포함돼 매년 값이
+        누적되지, 예전처럼 덮어써지지 않음 - day41 스타일 증분 누적). 지금은 트랙당
+        최신 연도 하나만 골라 기존 호출부와 같은 모양으로 돌려주지만, 나중에
+        "최근 N개년 추이"가 필요해지면 이 함수 대신 전체 연도를 다 가져오는 별도
+        메서드를 추가하면 된다(이 함수의 반환 모양은 안 바꿔도 됨)."""
         with self.driver.session(default_access_mode=READ_ACCESS) as s:
             rows = s.run("""
                 MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(d:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
-                      -[:ESTIMATED_CUTOFF]->(c:Admission_CutoffEstimate)
-                WHERE c.prior_year_admission_year IS NOT NULL
+                      -[:HAS_YEARLY_RESULT]->(yr:Admission_YearlyResult)
+                WITH u, d, t, yr ORDER BY yr.admission_year DESC
+                WITH u, d, t, collect(yr)[0] AS yr
                 RETURN u.name AS university, u.campus AS campus, d.name AS department, t.name AS track_name,
-                       c.prior_year_admission_year AS admission_year,
-                       c.prior_year_competition_rate AS competition_rate,
-                       c.prior_year_grade_typical AS school_record_grade_typical,
-                       c.prior_year_grade_floor AS school_record_grade_floor,
-                       c.prior_year_grade_stat_type AS grade_stat_type,
-                       c.prior_year_fill_rate_pct AS fill_rate_pct,
-                       c.prior_year_methodology_note AS methodology_note,
-                       c.prior_year_source_url AS source_url,
-                       c.prior_year_source_page AS source_page
+                       yr.admission_year AS admission_year,
+                       yr.competition_rate AS competition_rate,
+                       yr.grade_typical AS school_record_grade_typical,
+                       yr.grade_floor AS school_record_grade_floor,
+                       yr.grade_stat_type AS grade_stat_type,
+                       yr.fill_rate_pct AS fill_rate_pct,
+                       yr.methodology_note AS methodology_note,
+                       yr.source_url AS source_url,
+                       yr.source_page AS source_page
             """).data()
         return {(r["university"], r.get("campus"), r["department"], r["track_name"]): r for r in rows}
 

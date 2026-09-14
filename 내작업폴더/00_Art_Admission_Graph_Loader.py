@@ -200,24 +200,38 @@ def load_one_record_tx(tx, rec: dict, batch_id: str):
              source=topic.get("source"), source_url=topic.get("source_url"))
 
     # 추정치/후기 - official_facts와 완전히 분리된 관계 타입으로만 연결 (Zero-Mixing)
-    pyr = est.get("prior_year_result") or {}
-    if est.get("cutoff_grade_estimate") is not None or pyr:
+    if est.get("cutoff_grade_estimate") is not None:
         tx.run("""
             MATCH (t:Admission_Track {name: $track_name, university: $university, department: $department})
             MERGE (c:Admission_CutoffEstimate {track_name: $track_name, university: $university, department: $department})
             MERGE (t)-[:ESTIMATED_CUTOFF]->(c)
-            SET c.cutoff_grade_estimate = $cutoff, c.source_url = $source_url, c.data_tier = 'ESTIMATE_NOT_OFFICIAL',
-                c.prior_year_admission_year = $pyr_year,
-                c.prior_year_competition_rate = $pyr_competition_rate,
-                c.prior_year_grade_typical = $pyr_grade_typical,
-                c.prior_year_grade_floor = $pyr_grade_floor,
-                c.prior_year_grade_stat_type = $pyr_grade_stat_type,
-                c.prior_year_fill_rate_pct = $pyr_fill_rate_pct,
-                c.prior_year_methodology_note = $pyr_methodology_note,
-                c.prior_year_source_url = $pyr_source_url,
-                c.prior_year_source_page = $pyr_source_page
+            SET c.cutoff_grade_estimate = $cutoff, c.source_url = $source_url, c.data_tier = 'ESTIMATE_NOT_OFFICIAL'
         """, university=university, department=department, track_name=track_name,
-             cutoff=est.get("cutoff_grade_estimate"), source_url=est.get("cutoff_source_url"),
+             cutoff=est.get("cutoff_grade_estimate"), source_url=est.get("cutoff_source_url"))
+
+    # 2026-09-14: 전년도 입결을 Track 하위 단일 노드(Admission_CutoffEstimate)의
+    # flat 필드로 욱여넣던 구조는 MERGE 키에 연도가 없어서, 다음 학년도 갱신 때
+    # 새 연도 값이 이전 연도 값을 그냥 덮어써 버린다 - "최근 3개년 추이" 같은
+    # 시계열 조회가 원천적으로 불가능했다. Admission_YearlyResult를 연도까지
+    # 포함한 키로 분리해서, 매년 새 노드가 "추가"되게 한다(과거 연도 보존).
+    # 지금은 raw JSON에 연도가 1개뿐이라 당장 시계열이 생기진 않지만, 내년
+    # 갱신부터는 자동으로 2개년 이상이 쌓인다(스키마를 미리 준비해두는 것).
+    pyr = est.get("prior_year_result") or {}
+    if pyr and pyr.get("admission_year") is not None:
+        tx.run("""
+            MATCH (t:Admission_Track {name: $track_name, university: $university, department: $department})
+            MERGE (yr:Admission_YearlyResult {track_name: $track_name, university: $university, department: $department, admission_year: $pyr_year})
+            MERGE (t)-[:HAS_YEARLY_RESULT]->(yr)
+            SET yr.competition_rate = $pyr_competition_rate,
+                yr.grade_typical = $pyr_grade_typical,
+                yr.grade_floor = $pyr_grade_floor,
+                yr.grade_stat_type = $pyr_grade_stat_type,
+                yr.fill_rate_pct = $pyr_fill_rate_pct,
+                yr.methodology_note = $pyr_methodology_note,
+                yr.source_url = $pyr_source_url,
+                yr.source_page = $pyr_source_page,
+                yr.data_tier = 'ESTIMATE_NOT_OFFICIAL'
+        """, university=university, department=department, track_name=track_name,
              pyr_year=pyr.get("admission_year"),
              pyr_competition_rate=pyr.get("competition_rate"),
              pyr_grade_typical=pyr.get("school_record_grade_typical"),
