@@ -54,6 +54,7 @@
 <button aria-label="질문 실행" class="h-10 px-unit-md bg-primary text-on-primary font-label-md text-label-md rounded-lg flex items-center gap-unit-xs shrink-0 transition-transform active:scale-95 shadow-sm" id="ask-button"><span>분석</span><span class="material-symbols-outlined text-[18px]">arrow_forward</span></button>
 </div>
 <div class="flex gap-unit-xs overflow-x-auto py-unit-2xs scrollbar-none" id="suggestChips">
+<button class="suggest-chip shrink-0 px-unit-sm py-1 bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-sm text-label-sm rounded-lg transition-colors">국어3 영어3 수학4 사회2등급이고 기초디자인 준비 중인데 어디 찔러야 해?</button>
 <button class="suggest-chip shrink-0 px-unit-sm py-1 bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-sm text-label-sm rounded-lg transition-colors">한예종 무대미술과와 같은 실기로 지원 가능한 학교는?</button>
 <button class="suggest-chip shrink-0 px-unit-sm py-1 bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-sm text-label-sm rounded-lg transition-colors">홍익대 미술활동보고서로 지원 가능한 전형 알려줘</button>
 </div>
@@ -244,9 +245,9 @@ function askQuestion() {
         <div class="flex items-center gap-unit-xs"><div class="w-7 h-7 rounded-lg bg-primary-container flex items-center justify-center text-on-primary"><span class="material-symbols-outlined text-[18px]">auto_awesome</span></div><span class="font-label-md text-label-md text-on-surface font-bold">ART:READY AI</span></div>
         <span class="font-label-sm text-label-sm text-outline">${res.model || ""}</span>
       </div>
+      ${buildGroundedPanel(res)}
       <div class="bg-surface-container-low p-unit-md rounded-lg font-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-line">${formatAnswer(res.answer || "응답 없음")}</div>
       ${warningBlock}
-      ${buildGroundedPanel(res)}
       ${buildToolTrace(res)}
       <p class="font-body-sm text-body-sm text-error bg-error-container/30 p-unit-xs rounded">※ 주의: 최종 세부 요강은 해당 대학 입학처의 공식 공지를 반드시 재확인하십시오.</p>
     `;
