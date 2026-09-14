@@ -1080,14 +1080,30 @@ class ArtAdmissionService:
     @classmethod
     def _kg_topic_fragments(cls, exam_name: str) -> set:
         fragments = set()
+
+        def _try_add(candidate: str):
+            c = candidate.strip()
+            if not c or not (2 <= len(c) <= 10) or not re.fullmatch(r"[가-힣\s]+", c):
+                return
+            c_nospace = c.replace(" ", "")
+            if c_nospace in cls._KG_TOPIC_STOP_FRAGMENTS or not c_nospace.endswith(cls._KG_TOPIC_SUFFIXES):
+                return
+            fragments.add(c_nospace)
+
         for part in cls._KG_TOPIC_SPLITTER.split(exam_name or ""):
             p = part.strip()
-            if not p or not (2 <= len(p) <= 10) or not re.fullmatch(r"[가-힣\s]+", p):
-                continue
-            p_nospace = p.replace(" ", "")
-            if p_nospace in cls._KG_TOPIC_STOP_FRAGMENTS or not p_nospace.endswith(cls._KG_TOPIC_SUFFIXES):
-                continue
-            fragments.add(p_nospace)
+            _try_add(p)
+            # "문장제시 자유표현"처럼 띄어쓰기로만 구분된 여러 낱말이 구분자 없이
+            # 한 조각으로 남는 경우, 전체를 붙인 통짜 후보("문장제시자유표현")만
+            # 뽑으면 다른 학교의 "자유표현"(가천대) 단독 표기와 같은 키워드로
+            # 안 묶여서 min_schools 기준을 못 넘긴다(2026-09-14 사용자 발견 -
+            # 가천대/경희대/조선대 모두 "자유표현"을 쓰는데 목록엔 안 뜸). 공백
+            # 기준으로 쪼갠 낱말도 별도 후보로 같이 넣어서 이런 경우를 흡수한다
+            # ("발상과 표현"처럼 붙여 써야 의미 있는 통짜 후보는 위에서 이미 넣었으므로
+            # 손실 없음 - 이 블록은 추가만 할 뿐 기존 통짜 후보를 대체하지 않는다).
+            if " " in p:
+                for word in p.split():
+                    _try_add(word)
         return fragments
 
     def list_kg_topic_keywords(self, min_schools: int = 2) -> List[str]:
