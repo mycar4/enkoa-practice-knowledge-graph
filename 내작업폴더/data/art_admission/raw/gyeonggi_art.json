@@ -61,7 +61,8 @@
           "C": 95
         },
         "formula_note": "예술체육대학(과학 제외) 반영교과: 국어, 수학, 영어, 통합사회/사회, 한국사 - 전 과목(공통·일반선택+진로선택 구분없이 학년/학기 가중치 없이 반영). 평균점수 = (공통·일반선택 이수단위가중평균×0.9) + (진로선택 성취도 이수단위가중평균×0.1). 진로선택과목이 없으면 공통·일반선택만 100% 반영. 이 교과 점수에 별도로 비교과(출결) 점수가 더해져 최종 학생부 반영점수가 되나, 이 계산기는 교과 부분만 계산한다 (2027 모집요강 p.37-38, 41-42, 실기/실적 예능실기우수자전형 - 예술체육대학 기준).",
-        "rule_source_page": "37-38, 41-42"
+        "rule_source_page": "37-38, 41-42",
+        "attendance_service_investigation_note": "2026-09-15 확인: 2027 모집요강 p.42-47 전체 대조 결과, 비교과(출결) 반영 대상 전형(p.44)에 예능실기우수자전형은 포함되지 않음(학교장추천·농어촌학생·기초생활수급자·체육특기자만 해당). 즉 이 전형은 출결을 수치로 반영하지 않으며, attendance_bands/attendance_formula를 추가할 근거가 원문에 없음 - 재조사 불필요."
       },
       "source_url": "https://enter.kyonggi.ac.kr/ajaxfile/FR_SVC/FileDown.do?GBN=X01&BOARD_SEQ=1&SITE_NO=2&BBS_SEQ=4366&FILE_SEQ=25",
       "source_page": 47,
@@ -159,7 +160,8 @@
           "C": 95
         },
         "formula_note": "예술체육대학(과학 제외) 반영교과: 국어, 수학, 영어, 통합사회/사회, 한국사 - 전 과목(공통·일반선택+진로선택 구분없이 학년/학기 가중치 없이 반영). 평균점수 = (공통·일반선택 이수단위가중평균×0.9) + (진로선택 성취도 이수단위가중평균×0.1). 진로선택과목이 없으면 공통·일반선택만 100% 반영. 이 교과 점수에 별도로 비교과(출결) 점수가 더해져 최종 학생부 반영점수가 되나, 이 계산기는 교과 부분만 계산한다 (2027 모집요강 p.37-38, 41-42, 실기/실적 예능실기우수자전형 - 예술체육대학 기준).",
-        "rule_source_page": "37-38, 41-42"
+        "rule_source_page": "37-38, 41-42",
+        "attendance_service_investigation_note": "2026-09-15 확인: 2027 모집요강 p.42-47 전체 대조 결과, 비교과(출결) 반영 대상 전형(p.44)에 예능실기우수자전형은 포함되지 않음(학교장추천·농어촌학생·기초생활수급자·체육특기자만 해당). 즉 이 전형은 출결을 수치로 반영하지 않으며, attendance_bands/attendance_formula를 추가할 근거가 원문에 없음 - 재조사 불필요."
       },
       "source_url": "https://enter.kyonggi.ac.kr/ajaxfile/FR_SVC/FileDown.do?GBN=X01&BOARD_SEQ=1&SITE_NO=2&BBS_SEQ=4366&FILE_SEQ=25",
       "source_page": 47,
@@ -251,7 +253,8 @@
           "C": 95
         },
         "formula_note": "예술체육대학(과학 제외) 반영교과: 국어, 수학, 영어, 통합사회/사회, 한국사 - 전 과목(공통·일반선택+진로선택 구분없이 학년/학기 가중치 없이 반영). 평균점수 = (공통·일반선택 이수단위가중평균×0.9) + (진로선택 성취도 이수단위가중평균×0.1). 진로선택과목이 없으면 공통·일반선택만 100% 반영. 이 교과 점수에 별도로 비교과(출결) 점수가 더해져 최종 학생부 반영점수가 되나, 이 계산기는 교과 부분만 계산한다 (2027 모집요강 p.37-38, 41-42, 실기/실적 예능실기우수자전형 - 예술체육대학 기준).",
-        "rule_source_page": "37-38, 41-42"
+        "rule_source_page": "37-38, 41-42",
+        "attendance_service_investigation_note": "2026-09-15 확인: 2027 모집요강 p.42-47 전체 대조 결과, 비교과(출결) 반영 대상 전형(p.44)에 예능실기우수자전형은 포함되지 않음(학교장추천·농어촌학생·기초생활수급자·체육특기자만 해당). 즉 이 전형은 출결을 수치로 반영하지 않으며, attendance_bands/attendance_formula를 추가할 근거가 원문에 없음 - 재조사 불필요."
       },
       "source_url": "https://enter.kyonggi.ac.kr/ajaxfile/FR_SVC/FileDown.do?GBN=X01&BOARD_SEQ=1&SITE_NO=2&BBS_SEQ=4366&FILE_SEQ=25",
       "source_page": 47,
@@ -348,7 +351,8 @@
           "C": 95
         },
         "formula_note": "예술체육대학(과학 제외) 반영교과: 국어, 수학, 영어, 통합사회/사회, 한국사 - 전 과목(공통·일반선택+진로선택 구분없이 학년/학기 가중치 없이 반영). 평균점수 = (공통·일반선택 이수단위가중평균×0.9) + (진로선택 성취도 이수단위가중평균×0.1). 진로선택과목이 없으면 공통·일반선택만 100% 반영. 이 교과 점수에 별도로 비교과(출결) 점수가 더해져 최종 학생부 반영점수가 되나, 이 계산기는 교과 부분만 계산한다 (2027 모집요강 p.37-38, 41-42, 실기/실적 예능실기우수자전형 - 예술체육대학 기준).",
-        "rule_source_page": "37-38, 41-42"
+        "rule_source_page": "37-38, 41-42",
+        "attendance_service_investigation_note": "2026-09-15 확인: 2027 모집요강 p.42-47 전체 대조 결과, 비교과(출결) 반영 대상 전형(p.44)에 예능실기우수자전형은 포함되지 않음(학교장추천·농어촌학생·기초생활수급자·체육특기자만 해당). 즉 이 전형은 출결을 수치로 반영하지 않으며, attendance_bands/attendance_formula를 추가할 근거가 원문에 없음 - 재조사 불필요."
       },
       "source_url": "https://enter.kyonggi.ac.kr/ajaxfile/FR_SVC/FileDown.do?GBN=X01&BOARD_SEQ=1&SITE_NO=2&BBS_SEQ=4366&FILE_SEQ=25",
       "source_page": 47,
@@ -436,7 +440,8 @@
           "C": 95
         },
         "formula_note": "예술체육대학(과학 제외) 반영교과: 국어, 수학, 영어, 통합사회/사회, 한국사 - 전 과목(공통·일반선택+진로선택 구분없이 학년/학기 가중치 없이 반영). 평균점수 = (공통·일반선택 이수단위가중평균×0.9) + (진로선택 성취도 이수단위가중평균×0.1). 진로선택과목이 없으면 공통·일반선택만 100% 반영. 이 교과 점수에 별도로 비교과(출결) 점수가 더해져 최종 학생부 반영점수가 되나, 이 계산기는 교과 부분만 계산한다 (2027 모집요강 p.37-38, 41-42, 실기/실적 예능실기우수자전형 - 예술체육대학 기준).",
-        "rule_source_page": "37-38, 41-42"
+        "rule_source_page": "37-38, 41-42",
+        "attendance_service_investigation_note": "2026-09-15 확인: 2027 모집요강 p.42-47 전체 대조 결과, 비교과(출결) 반영 대상 전형(p.44)에 예능실기우수자전형은 포함되지 않음(학교장추천·농어촌학생·기초생활수급자·체육특기자만 해당). 즉 이 전형은 출결을 수치로 반영하지 않으며, attendance_bands/attendance_formula를 추가할 근거가 원문에 없음 - 재조사 불필요."
       },
       "source_url": "https://enter.kyonggi.ac.kr/ajaxfile/FR_SVC/FileDown.do?GBN=X01&BOARD_SEQ=1&SITE_NO=2&BBS_SEQ=4366&FILE_SEQ=25",
       "source_page": 47,
@@ -473,18 +478,6 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 4,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
       "competition_applicant_count": null,
       "competition_rate": null,
       "competition_rate_announced_at": null,
@@ -588,18 +581,6 @@
       "competition_rate": null,
       "competition_rate_announced_at": null,
       "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
       "ratio": "학교생활기록부 교과 90%(90점) + 비교과(출결) 10%(10점)",
       "is_staged": false,
       "csat_minimum_required": false,
@@ -684,18 +665,6 @@
       "competition_rate": null,
       "competition_rate_announced_at": null,
       "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
       "ratio": "1단계 서류평가(학교생활기록부) 100%(3배수) → 2단계 1단계 성적 70% + 면접 30%",
       "is_staged": true,
       "csat_minimum_required": false,
@@ -753,18 +722,6 @@
     "official_facts": {
       "admission_year": 2027,
       "quota": 24,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
       "competition_applicant_count": null,
       "competition_rate": null,
       "competition_rate_announced_at": null,
