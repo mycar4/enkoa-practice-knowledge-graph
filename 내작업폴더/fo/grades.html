@@ -201,6 +201,15 @@ const SUBJECTS = ["국어", "영어", "수학", "사회", "과학", "한국사",
 const DEFAULT_SUBJECTS = ["국어", "영어", "수학", "사회", "과학"];
 const rowsBody = document.getElementById("gradeRows");
 const DRAFT_KEY = "artready_grades_draft";
+// 2026-09-14: 나이스 html에서 인식한 출결/봉사시간을 성적표(행)와 별도로 세션에 저장
+// 해뒀다가, "성적으로 대학 추천받기" 요청에 실어 보낸다 - 이 값이 있는 학교(현재
+// 중앙대=출결)만 실제 환산에 반영되고, 없는 학교는 그냥 무시된다.
+const EXTRA_DRAFT_KEY = "artready_grades_extra_draft";
+let lastParsedExtra = { unexcused_absence_days: null, service_hours: null };
+try {
+  const savedExtra = JSON.parse(sessionStorage.getItem(EXTRA_DRAFT_KEY) || "null");
+  if (savedExtra) lastParsedExtra = savedExtra;
+} catch (e) { /* 무시 */ }
 let rowSeq = 0;
 
 // row 상태 하나가 바뀔 때마다(과목/진로선택/등급/성취도/이수단위 변경, 행 추가/삭제)
@@ -514,10 +523,18 @@ function applyParsedRows(result, sourceLabel) {
     extraParts.push(`봉사활동 누계 ${serviceHoursTotal}시간`);
   }
   const extraNote = extraParts.length
-    ? ` (${extraParts.join(", ")} 인식됨 - 아직 학교별 환산 계산에는 반영되지 않으며, 향후 학교별 검증 후 연결 예정입니다)`
+    ? ` (${extraParts.join(", ")} 인식됨 - 반영교과 감점표가 확인된 학교(예: 중앙대=출결)에서만 실제 계산에 쓰이고, 나머지 학교는 무시됩니다)`
     : "";
   noticeEl.textContent = `${sourceLabel}에서 ${rows.length}개 과목을 불러왔습니다. 아래 표에서 확인·수정할 수 있습니다.${extraNote}`;
   noticeEl.classList.remove("hidden");
+
+  // 2026-09-14: txt 업로드나 샘플은 unexcusedAbsenceDays/serviceHoursTotal 자체가
+  // undefined라 여기서 null로 정리하고, html에서 실제로 인식된 값만 남긴다.
+  lastParsedExtra = {
+    unexcused_absence_days: unexcusedAbsenceDays != null ? unexcusedAbsenceDays : null,
+    service_hours: serviceHoursTotal != null ? serviceHoursTotal : null,
+  };
+  try { sessionStorage.setItem(EXTRA_DRAFT_KEY, JSON.stringify(lastParsedExtra)); } catch (e) { /* 무시 */ }
 }
 
 document.getElementById("txtUploadInput").addEventListener("change", (e) => {
@@ -794,6 +811,10 @@ document.getElementById("resetBtn").addEventListener("click", () => {
   if (!confirm("입력한 성적을 전부 초기화할까요?")) return;
   sessionStorage.removeItem(DRAFT_KEY);
   sessionStorage.removeItem(MATERIAL_DRAFT_KEY);
+  sessionStorage.removeItem(EXTRA_DRAFT_KEY);
+  lastParsedExtra = { unexcused_absence_days: null, service_hours: null };
+  clearSampleButtonSelection();
+  document.getElementById("dataSourceStatus").classList.add("hidden");
   document.getElementById("draftNotice").classList.add("hidden");
   materialInput.value = "";
   resetRows();
@@ -838,7 +859,11 @@ document.getElementById("submitBtn").addEventListener("click", () => {
   fetch(window.API_BASE_URL + "/recommend-universities", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ grades, material_query: materialQuery }),
+    body: JSON.stringify({
+      grades, material_query: materialQuery,
+      unexcused_absence_days: lastParsedExtra.unexcused_absence_days,
+      service_hours: lastParsedExtra.service_hours,
+    }),
   }).then(r => r.json()).then(results => {
     // profile.html 쪽과 대칭 - 대학찾기 결과가 sessionStorage에 남아있어도
     // 이 플로우로 들어온 뒤에는 항상 성적추천 화면이 맞다(대학찾기 잔여 데이터가

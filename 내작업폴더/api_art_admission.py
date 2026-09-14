@@ -293,6 +293,11 @@ class RecommendUniversitiesRequest(BaseModel):
     grades: List[dict]
     topic_keywords: Optional[List[str]] = None
     material_query: str = ""
+    # 2026-09-14: 나이스 html 업로드에서 인식한 출결/봉사시간 - 지금은 중앙대(출결)
+    # 처럼 원문 감점표를 school_record_rule에 넣어둔 학교에만 실제로 반영된다
+    # (rule에 attendance_bands/service_bands가 없는 대다수 학교는 그냥 무시됨).
+    unexcused_absence_days: Optional[int] = None
+    service_hours: Optional[float] = None
 
 
 @app.post("/recommend-universities")
@@ -307,6 +312,7 @@ def recommend_universities_endpoint(req: RecommendUniversitiesRequest):
     svc = get_service()
     return svc.recommend_universities(
         req.grades, topic_keywords=req.topic_keywords, material_query=req.material_query,
+        unexcused_absence_days=req.unexcused_absence_days, service_hours=req.service_hours,
     )
 
 
@@ -315,6 +321,8 @@ class RecommendComboRequest(BaseModel):
     topic_keywords: Optional[List[str]] = None
     material_query: str = ""
     max_count: int = 6
+    unexcused_absence_days: Optional[int] = None
+    service_hours: Optional[float] = None
 
 
 @app.post("/recommend-combo")
@@ -326,6 +334,7 @@ def recommend_combo_endpoint(req: RecommendComboRequest):
     return svc.recommend_conflict_free_combo(
         req.grades, topic_keywords=req.topic_keywords, material_query=req.material_query,
         max_count=req.max_count,
+        unexcused_absence_days=req.unexcused_absence_days, service_hours=req.service_hours,
     )
 
 

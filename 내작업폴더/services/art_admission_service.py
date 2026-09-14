@@ -207,6 +207,63 @@ def _raw_grade_avg(items_with_grade: List[tuple]) -> Optional[float]:
     return round(sum(g * c for g, c in pairs) / total_credit, 2)
 
 
+def _apply_attendance_service_extras(rule: Dict[str, Any], result: Optional[Dict[str, Any]],
+                                      extra: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    """2026-09-14: 출결(미인정 결석일수)·봉사활동(누계시간)을 학생부 반영점수에 실제로
+    섞어 넣는 공용 후처리 - _calc_school_record_raw_score()의 모드별 로직은 전혀 안
+    건드리고, 그 결과(raw_score, max_score)에 원문 감점표대로 가중평균만 얹는다.
+    rule에 attendance_bands/service_bands가 없는 학교(대다수)는 그냥 원래 결과를
+    그대로 반환 - 이 로직이 있는 학교에만 영향을 준다.
+
+    학교 원문 예(중앙대 2027 모집요강 p.89 [표5], 실기/실적(실기형) 기준):
+    미인정 결석 1일 이하=10, 2~3일=9.2, 4~5일=7.8, 6~7일=5.6, 8~9일=4.2, 10일 이상=3.4
+    (교과 15% + 비교과·출결 5%로 학생부 20% 구성 - subject_weight_pct=15,
+    attendance_weight_pct=5로 원문 반영비율 그대로 저장)."""
+    if not result or not extra:
+        return result
+    max_score = result.get("max_score") or 10
+    subject_weight = rule.get("subject_weight_pct")
+    components = [(result["raw_score"], subject_weight)] if subject_weight else [(result["raw_score"], 1)]
+    total_weight = subject_weight or 1
+
+    att_bands = rule.get("attendance_bands")
+    att_days = extra.get("unexcused_absence_days")
+    if att_bands and att_days is not None:
+        att_score = None
+        for band in att_bands:
+            if band.get("max_days") is None or att_days <= band["max_days"]:
+                att_score = band["score"]
+                break
+        if att_score is not None:
+            w = rule.get("attendance_weight_pct", 0)
+            components.append((att_score / 10 * max_score, w))
+            total_weight += w
+            result["attendance_score_raw"] = att_score
+            result["attendance_days_used"] = att_days
+
+    svc_bands = rule.get("service_bands")
+    svc_hours = extra.get("service_hours")
+    if svc_bands and svc_hours is not None:
+        svc_score = None
+        for band in svc_bands:
+            lo = band.get("min_hours", 0)
+            hi = band.get("max_hours")
+            if svc_hours >= lo and (hi is None or svc_hours <= hi):
+                svc_score = band["score"]
+                break
+        if svc_score is not None:
+            w = rule.get("service_weight_pct", 0)
+            components.append((svc_score / 10 * max_score, w))
+            total_weight += w
+            result["service_score_raw"] = svc_score
+            result["service_hours_used"] = svc_hours
+
+    if len(components) > 1 and total_weight:
+        result["raw_score_subject_only"] = result["raw_score"]
+        result["raw_score"] = round(sum(v * w for v, w in components) / total_weight, 4)
+    return result
+
+
 def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
     """school_record_rule(원문 모집요강에서 그대로 옮긴 반영교과/환산표/공식)에 따라
     학생 성적을 그 학교 공식 그대로 환산한다. 등급 곡선을 임의로 지어내지 않고,
@@ -2596,7 +2653,9 @@ class ArtAdmissionService:
 
     def recommend_universities(self, grades: List[Dict[str, Any]],
                                 topic_keywords: Optional[List[str]] = None,
-                                material_query: str = "") -> List[Dict[str, Any]]:
+                                material_query: str = "",
+                                unexcused_absence_days: Optional[int] = None,
+                                service_hours: Optional[float] = None) -> List[Dict[str, Any]]:
         """성적 기반 대학/학과 추천. 학생부 반영 규정을 원문으로 확보한 5개교는
         calc_precision="exact"로 실제 환산점수를, 나머지는 "approximate"로 비율 기반
         근사치를 매겨 항상 구분해서 내려준다 - "합격 가능성"을 단정하지 않고, 학생부
@@ -2654,6 +2713,10 @@ class ArtAdmissionService:
                 entry["reason_summary"] = t.get("school_record_status_note") or "이 전형은 학생부 성적을 반영하지 않습니다."
             elif rule:
                 calc = _calc_school_record_raw_score(rule, grades)
+                calc = _apply_attendance_service_extras(
+                    rule, calc,
+                    {"unexcused_absence_days": unexcused_absence_days, "service_hours": service_hours},
+                )
                 if calc and calc.get("max_score"):
                     pct = round(calc["raw_score"] / calc["max_score"] * 100, 2)
                     entry["calc_precision"] = "exact"
@@ -2742,7 +2805,9 @@ class ArtAdmissionService:
     def recommend_conflict_free_combo(self, grades: List[Dict[str, Any]],
                                        topic_keywords: Optional[List[str]] = None,
                                        material_query: str = "",
-                                       max_count: int = 6) -> Dict[str, Any]:
+                                       max_count: int = 6,
+                                       unexcused_absence_days: Optional[int] = None,
+                                       service_hours: Optional[float] = None) -> Dict[str, Any]:
         """수시 최대 지원 장수(max_count, 기본 6) 안에서 실기고사 날짜가 서로
         겹치지 않는 조합을 자동으로 골라준다. recommend_universities()가 이미
         만들어둔 적합도 순서(전년도 등록자 대비 위치 -> 내신영향 -> 실기비중)를
@@ -2751,7 +2816,10 @@ class ArtAdmissionService:
         달라 학교 간 절대 서열을 매길 수 없으므로 "최적"은 이 적합도 순서
         기준이며, 최소 충돌·최대 개수를 보장하는 완전탐색은 하지 않는다
         (후보 수가 많지 않아 그리디로도 실용적인 조합이 나옴)."""
-        ranked = self.recommend_universities(grades, topic_keywords=topic_keywords, material_query=material_query)
+        ranked = self.recommend_universities(
+            grades, topic_keywords=topic_keywords, material_query=material_query,
+            unexcused_absence_days=unexcused_absence_days, service_hours=service_hours,
+        )
         chosen: List[Dict[str, Any]] = []
         skipped_due_to_conflict: List[Dict[str, Any]] = []
         for cand in ranked:
