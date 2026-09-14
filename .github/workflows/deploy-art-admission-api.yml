@@ -11,6 +11,8 @@ on:
       - "내작업폴더/services/art_admission_service.py"
       - "내작업폴더/services/art_admission_llm.py"
       - "내작업폴더/services/art_admission_agent.py"
+      - "내작업폴더/fo/**"
+  workflow_dispatch: {}
 
 jobs:
   deploy:
