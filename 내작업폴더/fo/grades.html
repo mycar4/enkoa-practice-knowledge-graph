@@ -73,9 +73,9 @@
 </div>
 
 <fieldset class="mt-unit-lg space-y-unit-sm">
-<div class="flex items-baseline justify-between"><legend class="font-label-lg text-label-lg text-on-surface">학생부 성적표 txt 파일 업로드</legend><span class="font-label-sm text-label-sm text-primary font-bold">필수</span></div>
-<p class="font-body-sm text-body-sm text-on-surface-variant">나이스 학생부 성적표를 "[N학년 M학기]" 구분과 학기/교과/과목/학점수/원점수·평균/성취도/석차등급 열이 포함된 txt로 내려받아 업로드하면 아래 표가 자동으로 채워집니다.</p>
-<input type="file" id="txtUploadInput" accept=".txt,text/plain" class="w-full text-body-sm text-on-surface-variant file:mr-unit-sm file:py-unit-xs file:px-unit-sm file:rounded file:border-0 file:bg-primary file:text-on-primary file:font-label-sm file:text-label-sm file:cursor-pointer"/>
+<div class="flex items-baseline justify-between"><legend class="font-label-lg text-label-lg text-on-surface">학생부 성적표 파일 업로드 (txt 또는 나이스 학교생활기록 html)</legend><span class="font-label-sm text-label-sm text-primary font-bold">필수</span></div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">나이스 학생부 성적표 txt, 또는 나이스 대국민서비스에서 "학교생활기록부 조회" 화면을 "다른 이름으로 저장 → 웹페이지, 완전"으로 저장한 html 파일을 업로드하면 아래 표가 자동으로 채워집니다.</p>
+<input type="file" id="txtUploadInput" accept=".txt,text/plain,.html,.htm,text/html" class="w-full text-body-sm text-on-surface-variant file:mr-unit-sm file:py-unit-xs file:px-unit-sm file:rounded file:border-0 file:bg-primary file:text-on-primary file:font-label-sm file:text-label-sm file:cursor-pointer"/>
 <p id="uploadNotice" class="font-label-sm text-label-sm text-primary hidden"></p>
 <p id="uploadError" class="font-body-sm text-body-sm text-error hidden"></p>
 </fieldset>
@@ -365,12 +365,97 @@ function parseGradeSheetTxt(text) {
   return { rows, errors };
 }
 
-function applyParsedGradeText(text, sourceLabel) {
+// 2026-09-14: 나이스 "학교생활기록부 조회" 화면을 "웹페이지, 완전"으로 저장한 html도
+// 업로드할 수 있게 추가 - 기존 txt와 달리 실제 표(<table role="table">)가 DOM에 그대로
+// 있어서 브라우저 DOMParser로 안전하게 읽을 수 있다(정규식으로 태그를 직접 자르지 않음).
+// 헤더 텍스트로 표 종류를 식별한다(칸 순서가 아니라 이름으로 매칭 - 나이스가 열 순서를
+// 바꿔도 안 깨짐). 교과성적 표는 학년마다 별도 표로 반복되는데 표 자체엔 "학년"이 없어서,
+// 같은 종류 표가 나오는 순서(1번째=1학년, 2번째=2학년, 3번째=3학년)로 추정한다 - 나이스가
+// 항상 학년 순으로 출력하기 때문(다른 순서로 나오는 경우는 발견되지 않았음).
+function parseNeisHtml(htmlText) {
+  const doc = new DOMParser().parseFromString(htmlText, "text/html");
+  const tables = Array.from(doc.querySelectorAll('table[role="table"]'));
+  const rows = [];
+  const errors = [];
+  let unexcusedAbsenceDays = 0;
+  let serviceHoursTotal = 0;
+  let generalYearSeq = 0;
+  let careerYearSeq = 0;
+
+  function headerRow(table) {
+    return Array.from(table.querySelectorAll("thead th")).map(th => th.textContent.trim());
+  }
+  function dataRows(table) {
+    return Array.from(table.querySelectorAll("tbody tr")).map(
+      tr => Array.from(tr.querySelectorAll("td")).map(td => td.textContent.trim())
+    );
+  }
+  function cell(row, headers, name) {
+    const i = headers.indexOf(name);
+    return i === -1 ? "" : (row[i] || "");
+  }
+
+  for (const table of tables) {
+    const headers = headerRow(table);
+    if (!headers.length) continue;
+
+    if (headers.includes("석차등급") && headers.includes("교과") && headers.includes("학점수")) {
+      generalYearSeq += 1;
+      const year = String(Math.min(generalYearSeq, 3));
+      for (const r of dataRows(table)) {
+        const grade = cell(r, headers, "석차등급");
+        if (!/^\d+$/.test(grade)) continue; // "." 등 비반영 과목은 건너뜀(지어내지 않음)
+        rows.push({
+          subject: mapSubjectText(cell(r, headers, "교과")),
+          year, semester: cell(r, headers, "학기") || "1",
+          credit: cell(r, headers, "학점수") || "1",
+          career_elective: false, grade, achievement: "",
+        });
+      }
+    } else if (headers.includes("성취도별 분포비율") && headers.includes("교과")) {
+      careerYearSeq += 1;
+      const year = String(Math.min(careerYearSeq, 3));
+      for (const r of dataRows(table)) {
+        const achRaw = cell(r, headers, "성취도(수강자수)");
+        const achMatch = achRaw.match(/^([ABC])/);
+        if (!achMatch) continue;
+        rows.push({
+          subject: mapSubjectText(cell(r, headers, "교과")),
+          year, semester: cell(r, headers, "학기") || "1",
+          credit: cell(r, headers, "학점수") || "1",
+          career_elective: true, grade: "", achievement: achMatch[1],
+        });
+      }
+    } else if (headers.includes("미인정") && headers.includes("질병")) {
+      // 출결상황: "미인정" 열이 학기/학년별로 여러 개일 수 있어 전부 합산.
+      const idxs = headers.reduce((acc, h, i) => (h === "미인정" ? [...acc, i] : acc), []);
+      for (const r of dataRows(table)) {
+        for (const i of idxs) {
+          const v = parseInt((r[i] || "").replace(/[^\d]/g, ""), 10);
+          if (!isNaN(v)) unexcusedAbsenceDays += v;
+        }
+      }
+    } else if (headers.includes("누계시간") && headers.includes("시간")) {
+      const timeIdx = headers.indexOf("시간");
+      for (const r of dataRows(table)) {
+        const v = parseFloat(r[timeIdx]);
+        if (!isNaN(v)) serviceHoursTotal += v;
+      }
+    }
+  }
+
+  if (rows.length === 0) {
+    errors.push("이 html에서 석차등급이 매겨진 교과 성적을 찾지 못했습니다 - 나이스에서 '학교생활기록부 조회' 화면이 실제로 표가 보이는 상태(조회 버튼을 누른 뒤)에서 저장했는지 확인해주세요.");
+  }
+  return { rows, errors, unexcusedAbsenceDays, serviceHoursTotal };
+}
+
+function applyParsedRows(result, sourceLabel) {
   const noticeEl = document.getElementById("uploadNotice");
   const errorEl = document.getElementById("uploadError");
   noticeEl.classList.add("hidden");
   errorEl.classList.add("hidden");
-  const { rows, errors } = parseGradeSheetTxt(text);
+  const { rows, errors, unexcusedAbsenceDays, serviceHoursTotal } = result;
   if (errors.length > 0) {
     errorEl.textContent = errors.join(" ");
     errorEl.classList.remove("hidden");
@@ -379,7 +464,20 @@ function applyParsedGradeText(text, sourceLabel) {
   rowsBody.innerHTML = "";
   rows.forEach(r => addRow(r.subject, r));
   saveDraft();
-  noticeEl.textContent = `${sourceLabel}에서 ${rows.length}개 과목을 불러왔습니다. 아래 표에서 확인·수정할 수 있습니다.`;
+  // 출결/봉사시간은 추출만 해서 보여주고, 아직 학교별 환산 계산에는 반영하지 않는다
+  // (중앙대=출결, 경희대=봉사시간 등 학교마다 반영 공식이 달라 개별 검증 후 연결 예정 -
+  // 지금 반영하는 척하면 안 쓰는 값을 쓴 것처럼 오해를 준다).
+  const extraParts = [];
+  if (unexcusedAbsenceDays !== undefined && unexcusedAbsenceDays > 0) {
+    extraParts.push(`미인정 결석 ${unexcusedAbsenceDays}일 인식됨`);
+  }
+  if (serviceHoursTotal !== undefined && serviceHoursTotal > 0) {
+    extraParts.push(`봉사활동 누계 ${serviceHoursTotal}시간 인식됨`);
+  }
+  const extraNote = extraParts.length
+    ? ` (${extraParts.join(", ")} - 아직 학교별 환산 계산에는 반영되지 않으며, 향후 학교별 검증 후 연결 예정입니다)`
+    : "";
+  noticeEl.textContent = `${sourceLabel}에서 ${rows.length}개 과목을 불러왔습니다. 아래 표에서 확인·수정할 수 있습니다.${extraNote}`;
   noticeEl.classList.remove("hidden");
 }
 
@@ -387,8 +485,12 @@ document.getElementById("txtUploadInput").addEventListener("change", (e) => {
   const file = e.target.files[0];
   if (!file) return;
   const errorEl = document.getElementById("uploadError");
+  const isHtml = /\.html?$/i.test(file.name) || file.type === "text/html";
   const reader = new FileReader();
-  reader.onload = () => applyParsedGradeText(reader.result, "업로드한 파일");
+  reader.onload = () => {
+    const result = isHtml ? parseNeisHtml(reader.result) : parseGradeSheetTxt(reader.result);
+    applyParsedRows(result, "업로드한 파일");
+  };
   reader.onerror = () => {
     errorEl.textContent = "파일을 읽는 중 오류가 발생했습니다.";
     errorEl.classList.remove("hidden");
@@ -619,7 +721,7 @@ const SAMPLE_GRADE_LABELS = { upper: "상위권 샘플", middle: "중위권 샘�
 document.querySelectorAll(".sample-grade-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     const key = btn.dataset.sample;
-    applyParsedGradeText(SAMPLE_GRADE_TEXTS[key], SAMPLE_GRADE_LABELS[key]);
+    applyParsedRows(parseGradeSheetTxt(SAMPLE_GRADE_TEXTS[key]), SAMPLE_GRADE_LABELS[key]);
   });
 });
 
