@@ -58,7 +58,49 @@
           "9": 5
         },
         "formula_note": "반영교과(국어/수학/사회/과학/영어/한국사) 중 석차등급 상위 10과목을 이수단위 적용 없이 단순평균 (10과목 미만이면 있는 과목만 평균). 학생부교과 20%(200점)+학생부출결 10%(100점, 무결석 가정 시 만점)+실기 70%, 수능최저 미적용 (2027 모집요강 p.59, 미술학부 실기전형 기준).",
-        "rule_source_page": "59, 84-87"
+        "rule_source_page": "59, 84-87",
+        "subject_weight_pct": 67,
+        "attendance_weight_pct": 33,
+        "attendance_band_max": 10,
+        "attendance_bands": [
+          {
+            "max_days": 3,
+            "score": 10
+          },
+          {
+            "max_days": 6,
+            "score": 9.4
+          },
+          {
+            "max_days": 9,
+            "score": 8.8
+          },
+          {
+            "max_days": 12,
+            "score": 8.2
+          },
+          {
+            "max_days": 15,
+            "score": 7.6
+          },
+          {
+            "max_days": 18,
+            "score": 7.0
+          },
+          {
+            "max_days": 21,
+            "score": 6.4
+          },
+          {
+            "max_days": 24,
+            "score": 5.8
+          },
+          {
+            "max_days": null,
+            "score": 5.0
+          }
+        ],
+        "attendance_service_source_page": "86"
       },
       "practical_ratio_pct": 70,
       "school_record_ratio_pct": 30,
@@ -148,7 +190,49 @@
           "9": 5
         },
         "formula_note": "반영교과(국어/수학/사회/과학/영어/한국사) 중 석차등급 상위 10과목을 이수단위 적용 없이 단순평균 (10과목 미만이면 있는 과목만 평균). 학생부교과 20%(200점)+학생부출결 10%(100점, 무결석 가정 시 만점)+실기 70%, 수능최저 미적용 (2027 모집요강 p.59, 미술학부 실기전형 기준).",
-        "rule_source_page": "59, 84-87"
+        "rule_source_page": "59, 84-87",
+        "subject_weight_pct": 67,
+        "attendance_weight_pct": 33,
+        "attendance_band_max": 10,
+        "attendance_bands": [
+          {
+            "max_days": 3,
+            "score": 10
+          },
+          {
+            "max_days": 6,
+            "score": 9.4
+          },
+          {
+            "max_days": 9,
+            "score": 8.8
+          },
+          {
+            "max_days": 12,
+            "score": 8.2
+          },
+          {
+            "max_days": 15,
+            "score": 7.6
+          },
+          {
+            "max_days": 18,
+            "score": 7.0
+          },
+          {
+            "max_days": 21,
+            "score": 6.4
+          },
+          {
+            "max_days": 24,
+            "score": 5.8
+          },
+          {
+            "max_days": null,
+            "score": 5.0
+          }
+        ],
+        "attendance_service_source_page": "86"
       },
       "practical_ratio_pct": 70,
       "school_record_ratio_pct": 30,
@@ -237,7 +321,49 @@
           "9": 5
         },
         "formula_note": "반영교과(국어/수학/사회/과학/영어/한국사) 중 석차등급 상위 10과목을 이수단위 적용 없이 단순평균 (10과목 미만이면 있는 과목만 평균). 학생부교과 20%(200점)+학생부출결 10%(100점, 무결석 가정 시 만점)+실기 70%, 수능최저 미적용 (2027 모집요강 p.59, 미술학부 실기전형 기준).",
-        "rule_source_page": "59, 84-87"
+        "rule_source_page": "59, 84-87",
+        "subject_weight_pct": 67,
+        "attendance_weight_pct": 33,
+        "attendance_band_max": 10,
+        "attendance_bands": [
+          {
+            "max_days": 3,
+            "score": 10
+          },
+          {
+            "max_days": 6,
+            "score": 9.4
+          },
+          {
+            "max_days": 9,
+            "score": 8.8
+          },
+          {
+            "max_days": 12,
+            "score": 8.2
+          },
+          {
+            "max_days": 15,
+            "score": 7.6
+          },
+          {
+            "max_days": 18,
+            "score": 7.0
+          },
+          {
+            "max_days": 21,
+            "score": 6.4
+          },
+          {
+            "max_days": 24,
+            "score": 5.8
+          },
+          {
+            "max_days": null,
+            "score": 5.0
+          }
+        ],
+        "attendance_service_source_page": "86"
       },
       "practical_ratio_pct": 70,
       "school_record_ratio_pct": 30,

@@ -11,18 +11,6 @@
       "competition_rate": null,
       "competition_rate_announced_at": null,
       "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
       "ratio": "일괄합산: 학생부(교과36%+비교과4%) 40% + 실기 60%",
       "is_staged": false,
       "application_period": {
@@ -42,7 +30,34 @@
       "csat_minimum_required": false,
       "school_record_ratio_pct": 40,
       "practical_ratio_pct": 60,
-      "school_record_rule": {},
+      "school_record_rule": {
+        "subject_weight_pct": 90,
+        "attendance_weight_pct": 10,
+        "attendance_band_max": 20,
+        "attendance_bands": [
+          {
+            "max_days": 0,
+            "score": 20
+          },
+          {
+            "max_days": 2,
+            "score": 18
+          },
+          {
+            "max_days": 6,
+            "score": 16
+          },
+          {
+            "max_days": 10,
+            "score": 13
+          },
+          {
+            "max_days": null,
+            "score": 10
+          }
+        ],
+        "attendance_service_source_page": "35, 68"
+      },
       "past_topics": [],
       "source_url": "https://addon.jinhakapply.com/nesin/3004/2027/download/한밭대_수시_모집요강.pdf",
       "source_page": 34,
@@ -71,18 +86,6 @@
       "competition_rate": null,
       "competition_rate_announced_at": null,
       "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
-      "competition_applicant_count": null,
-      "competition_rate": null,
-      "competition_rate_announced_at": null,
-      "competition_rate_source_url": null,
       "ratio": "일괄합산: 학생부(교과36%+비교과4%) 40% + 실기 60%",
       "is_staged": false,
       "application_period": {
@@ -102,7 +105,34 @@
       "csat_minimum_required": false,
       "school_record_ratio_pct": 40,
       "practical_ratio_pct": 60,
-      "school_record_rule": {},
+      "school_record_rule": {
+        "subject_weight_pct": 90,
+        "attendance_weight_pct": 10,
+        "attendance_band_max": 20,
+        "attendance_bands": [
+          {
+            "max_days": 0,
+            "score": 20
+          },
+          {
+            "max_days": 2,
+            "score": 18
+          },
+          {
+            "max_days": 6,
+            "score": 16
+          },
+          {
+            "max_days": 10,
+            "score": 13
+          },
+          {
+            "max_days": null,
+            "score": 10
+          }
+        ],
+        "attendance_service_source_page": "35, 68"
+      },
       "past_topics": [],
       "source_url": "https://addon.jinhakapply.com/nesin/3004/2027/download/한밭대_수시_모집요강.pdf",
       "source_page": 34,

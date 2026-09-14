@@ -30,7 +30,38 @@
       "csat_minimum_required": false,
       "school_record_ratio_pct": 33.3,
       "practical_ratio_pct": 66.7,
-      "school_record_rule": {},
+      "school_record_rule": {
+        "subject_weight_pct": 80,
+        "attendance_weight_pct": 20,
+        "attendance_band_max": 10,
+        "attendance_bands": [
+          {
+            "max_days": 3,
+            "score": 10
+          },
+          {
+            "max_days": 7,
+            "score": 8
+          },
+          {
+            "max_days": 12,
+            "score": 6
+          },
+          {
+            "max_days": 18,
+            "score": 4
+          },
+          {
+            "max_days": 25,
+            "score": 2
+          },
+          {
+            "max_days": null,
+            "score": 0
+          }
+        ],
+        "attendance_service_source_page": "87, 89"
+      },
       "past_topics": [],
       "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/충남대학교/충남대학교_2027학년도_수시모집요강.pdf",
       "source_page": 56,
@@ -76,7 +107,38 @@
       "csat_minimum_required": false,
       "school_record_ratio_pct": 33.3,
       "practical_ratio_pct": 66.7,
-      "school_record_rule": {},
+      "school_record_rule": {
+        "subject_weight_pct": 80,
+        "attendance_weight_pct": 20,
+        "attendance_band_max": 10,
+        "attendance_bands": [
+          {
+            "max_days": 3,
+            "score": 10
+          },
+          {
+            "max_days": 7,
+            "score": 8
+          },
+          {
+            "max_days": 12,
+            "score": 6
+          },
+          {
+            "max_days": 18,
+            "score": 4
+          },
+          {
+            "max_days": 25,
+            "score": 2
+          },
+          {
+            "max_days": null,
+            "score": 0
+          }
+        ],
+        "attendance_service_source_page": "87, 89"
+      },
       "past_topics": [],
       "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/충남대학교/충남대학교_2027학년도_수시모집요강.pdf",
       "source_page": 56,
@@ -122,7 +184,38 @@
       "csat_minimum_required": false,
       "school_record_ratio_pct": 33.3,
       "practical_ratio_pct": 66.7,
-      "school_record_rule": {},
+      "school_record_rule": {
+        "subject_weight_pct": 80,
+        "attendance_weight_pct": 20,
+        "attendance_band_max": 10,
+        "attendance_bands": [
+          {
+            "max_days": 3,
+            "score": 10
+          },
+          {
+            "max_days": 7,
+            "score": 8
+          },
+          {
+            "max_days": 12,
+            "score": 6
+          },
+          {
+            "max_days": 18,
+            "score": 4
+          },
+          {
+            "max_days": 25,
+            "score": 2
+          },
+          {
+            "max_days": null,
+            "score": 0
+          }
+        ],
+        "attendance_service_source_page": "87, 89"
+      },
       "past_topics": [],
       "source_url": "https://cdn013.negagea.net/dgsmidc/omr/seoul/web/univ_info2026/충남대학교/충남대학교_2027학년도_수시모집요강.pdf",
       "source_page": 56,

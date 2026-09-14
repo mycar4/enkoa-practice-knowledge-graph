@@ -58,7 +58,12 @@
           "C": 94
         },
         "formula_note": "반영교과: 예체능계열은 국어·영어 전 과목(공통·일반선택+진로선택 모두, 상한 없음). 교과성적 = [Σ(과목별 환산점수×이수학점) + (반영교과 내 모든 이수과목 이수학점 합×0.05)] / Σ(이수학점). 실기70%+학생부교과20%(200점)+출결10%(100점, 무결석 가정) (2027 모집요강 p.83-84).",
-        "rule_source_page": "83-84"
+        "rule_source_page": "83-84",
+        "subject_weight_pct": 67,
+        "attendance_weight_pct": 33,
+        "attendance_formula": "max(0, 100 - days)",
+        "attendance_formula_max": 100,
+        "attendance_service_source_page": "84"
       },
       "practical_ratio_pct": 70,
       "school_record_ratio_pct": 30,
@@ -146,7 +151,12 @@
           "C": 94
         },
         "formula_note": "반영교과: 예체능계열은 국어·영어 전 과목(공통·일반선택+진로선택 모두, 상한 없음). 교과성적 = [Σ(과목별 환산점수×이수학점) + (반영교과 내 모든 이수과목 이수학점 합×0.05)] / Σ(이수학점). 실기70%+학생부교과20%(200점)+출결10%(100점, 무결석 가정) (2027 모집요강 p.83-84).",
-        "rule_source_page": "83-84"
+        "rule_source_page": "83-84",
+        "subject_weight_pct": 67,
+        "attendance_weight_pct": 33,
+        "attendance_formula": "max(0, 100 - days)",
+        "attendance_formula_max": 100,
+        "attendance_service_source_page": "84"
       },
       "practical_ratio_pct": 70,
       "school_record_ratio_pct": 30,
@@ -239,7 +249,12 @@
           "C": 94
         },
         "formula_note": "반영교과: 예체능계열은 국어·영어 전 과목(공통·일반선택+진로선택 모두, 상한 없음). 교과성적 = [Σ(과목별 환산점수×이수학점) + (반영교과 내 모든 이수과목 이수학점 합×0.05)] / Σ(이수학점). 실기70%+학생부교과20%(200점)+출결10%(100점, 무결석 가정) (2027 모집요강 p.83-84).",
-        "rule_source_page": "83-84"
+        "rule_source_page": "83-84",
+        "subject_weight_pct": 67,
+        "attendance_weight_pct": 33,
+        "attendance_formula": "max(0, 100 - days)",
+        "attendance_formula_max": 100,
+        "attendance_service_source_page": "84"
       },
       "practical_ratio_pct": 70,
       "school_record_ratio_pct": 30,
@@ -327,7 +342,12 @@
           "C": 94
         },
         "formula_note": "반영교과: 예체능계열은 국어·영어 전 과목(공통·일반선택+진로선택 모두, 상한 없음). 교과성적 = [Σ(과목별 환산점수×이수학점) + (반영교과 내 모든 이수과목 이수학점 합×0.05)] / Σ(이수학점). 실기70%+학생부교과20%(200점)+출결10%(100점, 무결석 가정) (2027 모집요강 p.83-84).",
-        "rule_source_page": "83-84"
+        "rule_source_page": "83-84",
+        "subject_weight_pct": 67,
+        "attendance_weight_pct": 33,
+        "attendance_formula": "max(0, 100 - days)",
+        "attendance_formula_max": 100,
+        "attendance_service_source_page": "84"
       },
       "practical_ratio_pct": 70,
       "school_record_ratio_pct": 30,
@@ -415,7 +435,12 @@
           "C": 94
         },
         "formula_note": "반영교과: 예체능계열은 국어·영어 전 과목(공통·일반선택+진로선택 모두, 상한 없음). 교과성적 = [Σ(과목별 환산점수×이수학점) + (반영교과 내 모든 이수과목 이수학점 합×0.05)] / Σ(이수학점). 실기70%+학생부교과20%(200점)+출결10%(100점, 무결석 가정) (2027 모집요강 p.83-84).",
-        "rule_source_page": "83-84"
+        "rule_source_page": "83-84",
+        "subject_weight_pct": 67,
+        "attendance_weight_pct": 33,
+        "attendance_formula": "max(0, 100 - days)",
+        "attendance_formula_max": 100,
+        "attendance_service_source_page": "84"
       },
       "practical_ratio_pct": 70,
       "school_record_ratio_pct": 30,

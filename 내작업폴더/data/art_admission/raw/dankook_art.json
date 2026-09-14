@@ -41,7 +41,37 @@
           "9": 0
         },
         "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
-        "rule_source_page": "82-83"
+        "rule_source_page": "82-83",
+        "subject_weight_pct": 95,
+        "attendance_weight_pct": 5,
+        "attendance_band_max": 100,
+        "attendance_bands": [
+          {
+            "max_days": 5,
+            "score": 100
+          },
+          {
+            "max_days": 10,
+            "score": 98
+          },
+          {
+            "max_days": 15,
+            "score": 94
+          },
+          {
+            "max_days": 20,
+            "score": 80
+          },
+          {
+            "max_days": 30,
+            "score": 60
+          },
+          {
+            "max_days": null,
+            "score": 0
+          }
+        ],
+        "attendance_service_source_page": "81"
       },
       "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
       "source_page": 48,
@@ -131,7 +161,37 @@
           "9": 0
         },
         "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
-        "rule_source_page": "82-83"
+        "rule_source_page": "82-83",
+        "subject_weight_pct": 95,
+        "attendance_weight_pct": 5,
+        "attendance_band_max": 100,
+        "attendance_bands": [
+          {
+            "max_days": 5,
+            "score": 100
+          },
+          {
+            "max_days": 10,
+            "score": 98
+          },
+          {
+            "max_days": 15,
+            "score": 94
+          },
+          {
+            "max_days": 20,
+            "score": 80
+          },
+          {
+            "max_days": 30,
+            "score": 60
+          },
+          {
+            "max_days": null,
+            "score": 0
+          }
+        ],
+        "attendance_service_source_page": "81"
       },
       "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
       "source_page": 48,
@@ -221,7 +281,37 @@
           "9": 0
         },
         "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
-        "rule_source_page": "82-83"
+        "rule_source_page": "82-83",
+        "subject_weight_pct": 95,
+        "attendance_weight_pct": 5,
+        "attendance_band_max": 100,
+        "attendance_bands": [
+          {
+            "max_days": 5,
+            "score": 100
+          },
+          {
+            "max_days": 10,
+            "score": 98
+          },
+          {
+            "max_days": 15,
+            "score": 94
+          },
+          {
+            "max_days": 20,
+            "score": 80
+          },
+          {
+            "max_days": 30,
+            "score": 60
+          },
+          {
+            "max_days": null,
+            "score": 0
+          }
+        ],
+        "attendance_service_source_page": "81"
       },
       "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
       "source_page": 48,
@@ -312,7 +402,37 @@
           "9": 0
         },
         "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
-        "rule_source_page": "82-83"
+        "rule_source_page": "82-83",
+        "subject_weight_pct": 95,
+        "attendance_weight_pct": 5,
+        "attendance_band_max": 100,
+        "attendance_bands": [
+          {
+            "max_days": 5,
+            "score": 100
+          },
+          {
+            "max_days": 10,
+            "score": 98
+          },
+          {
+            "max_days": 15,
+            "score": 94
+          },
+          {
+            "max_days": 20,
+            "score": 80
+          },
+          {
+            "max_days": 30,
+            "score": 60
+          },
+          {
+            "max_days": null,
+            "score": 0
+          }
+        ],
+        "attendance_service_source_page": "81"
       },
       "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
       "source_page": 76,
@@ -388,7 +508,37 @@
           "9": 0
         },
         "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
-        "rule_source_page": "82-83"
+        "rule_source_page": "82-83",
+        "subject_weight_pct": 95,
+        "attendance_weight_pct": 5,
+        "attendance_band_max": 100,
+        "attendance_bands": [
+          {
+            "max_days": 5,
+            "score": 100
+          },
+          {
+            "max_days": 10,
+            "score": 98
+          },
+          {
+            "max_days": 15,
+            "score": 94
+          },
+          {
+            "max_days": 20,
+            "score": 80
+          },
+          {
+            "max_days": 30,
+            "score": 60
+          },
+          {
+            "max_days": null,
+            "score": 0
+          }
+        ],
+        "attendance_service_source_page": "81"
       },
       "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
       "source_page": 76,
@@ -464,7 +614,37 @@
           "9": 0
         },
         "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
-        "rule_source_page": "82-83"
+        "rule_source_page": "82-83",
+        "subject_weight_pct": 95,
+        "attendance_weight_pct": 5,
+        "attendance_band_max": 100,
+        "attendance_bands": [
+          {
+            "max_days": 5,
+            "score": 100
+          },
+          {
+            "max_days": 10,
+            "score": 98
+          },
+          {
+            "max_days": 15,
+            "score": 94
+          },
+          {
+            "max_days": 20,
+            "score": 80
+          },
+          {
+            "max_days": 30,
+            "score": 60
+          },
+          {
+            "max_days": null,
+            "score": 0
+          }
+        ],
+        "attendance_service_source_page": "81"
       },
       "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
       "source_page": 76,
@@ -540,7 +720,37 @@
           "9": 0
         },
         "formula_note": "예능계열(체육교육과 제외) 반영교과: 국어, 영어, 사회(한국사 포함). 반영교과 내 이수 전 과목(석차등급 있는 과목만)을 이수단위 가중평균. 학년별 가중치 없음, 재학생은 3학년 1학기까지·졸업생은 3학년 2학기까지 반영 (2027 모집요강 p.82, Ⅷ.학교생활기록부 반영방법 - 죽전/천안 캠퍼스 공통 규정). 참고: 원문은 성취도만 있는 진로선택과목도 A=1등급/B=3등급/C=5등급 상당으로 환산해 반영하나, 이 계산기는 석차등급이 있는 과목만 반영한다(성취도만 있는 과목을 반영하려면 grade 필드에 환산된 등급을 직접 입력).",
-        "rule_source_page": "82-83"
+        "rule_source_page": "82-83",
+        "subject_weight_pct": 95,
+        "attendance_weight_pct": 5,
+        "attendance_band_max": 100,
+        "attendance_bands": [
+          {
+            "max_days": 5,
+            "score": 100
+          },
+          {
+            "max_days": 10,
+            "score": 98
+          },
+          {
+            "max_days": 15,
+            "score": 94
+          },
+          {
+            "max_days": 20,
+            "score": 80
+          },
+          {
+            "max_days": 30,
+            "score": 60
+          },
+          {
+            "max_days": null,
+            "score": 0
+          }
+        ],
+        "attendance_service_source_page": "81"
       },
       "source_url": "https://ipsi.dankook.ac.kr/bbs/filedown.php?bbsid=juk_info&file_seq=6830",
       "source_page": 76,

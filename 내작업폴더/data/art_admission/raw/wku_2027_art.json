@@ -31,7 +31,38 @@
       "csat_minimum_required": false,
       "school_record_ratio_pct": 38,
       "practical_ratio_pct": 62,
-      "school_record_rule": {},
+      "school_record_rule": {
+        "subject_weight_pct": 90,
+        "attendance_weight_pct": 10,
+        "attendance_band_max": 10,
+        "attendance_bands": [
+          {
+            "max_days": 3,
+            "score": 10
+          },
+          {
+            "max_days": 6,
+            "score": 8
+          },
+          {
+            "max_days": 15,
+            "score": 6
+          },
+          {
+            "max_days": 30,
+            "score": 4
+          },
+          {
+            "max_days": 49,
+            "score": 2
+          },
+          {
+            "max_days": null,
+            "score": 0
+          }
+        ],
+        "attendance_service_source_page": "72-73"
+      },
       "past_topics": [],
       "source_url": "https://file.megastudy.net/FileServer/UNI_HWP/non_file/27susi/X27C06006.pdf",
       "source_page": 62,

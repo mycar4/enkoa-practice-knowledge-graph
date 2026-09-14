@@ -57,7 +57,49 @@
           "C": 96
         },
         "formula_note": "미술대학 반영교과: 국어, 영어(필수) + 사회 또는 수학 중 성적이 좋은 1개 교과(이수단위 비교 없이 실제 계산해서 더 유리한 쪽 선택). 반영교과 내 1,2,3학년 전 과목(석차등급) + 진로선택과목(교과영역별 상위 4과목, 성취도 A=1등급/B=2등급/C=4등급 상당)을 이수단위 가중평균. 산출된 교과성적에 실기/실적전형은 상수 0.9를 곱해 최종 반영(2027 모집요강 p.55-57, 실기/실적 일반학생전형 - 미술대학 기준).",
-        "rule_source_page": "55-57"
+        "rule_source_page": "55-57",
+        "subject_weight_pct": 90,
+        "attendance_weight_pct": 10,
+        "attendance_band_max": 10.0,
+        "attendance_bands": [
+          {
+            "max_days": 1,
+            "score": 10.0
+          },
+          {
+            "max_days": 4,
+            "score": 9.9
+          },
+          {
+            "max_days": 7,
+            "score": 9.8
+          },
+          {
+            "max_days": 10,
+            "score": 9.7
+          },
+          {
+            "max_days": 13,
+            "score": 9.6
+          },
+          {
+            "max_days": 16,
+            "score": 9.5
+          },
+          {
+            "max_days": 19,
+            "score": 9.4
+          },
+          {
+            "max_days": 22,
+            "score": 9.2
+          },
+          {
+            "max_days": null,
+            "score": 9.0
+          }
+        ],
+        "attendance_service_source_page": "58"
       },
       "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
       "source_page": 50,
@@ -154,7 +196,49 @@
           "C": 96
         },
         "formula_note": "미술대학 반영교과: 국어, 영어(필수) + 사회 또는 수학 중 성적이 좋은 1개 교과(이수단위 비교 없이 실제 계산해서 더 유리한 쪽 선택). 반영교과 내 1,2,3학년 전 과목(석차등급) + 진로선택과목(교과영역별 상위 4과목, 성취도 A=1등급/B=2등급/C=4등급 상당)을 이수단위 가중평균. 산출된 교과성적에 실기/실적전형은 상수 0.9를 곱해 최종 반영(2027 모집요강 p.55-57, 실기/실적 일반학생전형 - 미술대학 기준).",
-        "rule_source_page": "55-57"
+        "rule_source_page": "55-57",
+        "subject_weight_pct": 90,
+        "attendance_weight_pct": 10,
+        "attendance_band_max": 10.0,
+        "attendance_bands": [
+          {
+            "max_days": 1,
+            "score": 10.0
+          },
+          {
+            "max_days": 4,
+            "score": 9.9
+          },
+          {
+            "max_days": 7,
+            "score": 9.8
+          },
+          {
+            "max_days": 10,
+            "score": 9.7
+          },
+          {
+            "max_days": 13,
+            "score": 9.6
+          },
+          {
+            "max_days": 16,
+            "score": 9.5
+          },
+          {
+            "max_days": 19,
+            "score": 9.4
+          },
+          {
+            "max_days": 22,
+            "score": 9.2
+          },
+          {
+            "max_days": null,
+            "score": 9.0
+          }
+        ],
+        "attendance_service_source_page": "58"
       },
       "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
       "source_page": 50,
@@ -242,7 +326,49 @@
           "C": 96
         },
         "formula_note": "미술대학 반영교과: 국어, 영어(필수) + 사회 또는 수학 중 성적이 좋은 1개 교과(이수단위 비교 없이 실제 계산해서 더 유리한 쪽 선택). 반영교과 내 1,2,3학년 전 과목(석차등급) + 진로선택과목(교과영역별 상위 4과목, 성취도 A=1등급/B=2등급/C=4등급 상당)을 이수단위 가중평균. 산출된 교과성적에 실기/실적전형은 상수 0.9를 곱해 최종 반영(2027 모집요강 p.55-57, 실기/실적 일반학생전형 - 미술대학 기준).",
-        "rule_source_page": "55-57"
+        "rule_source_page": "55-57",
+        "subject_weight_pct": 90,
+        "attendance_weight_pct": 10,
+        "attendance_band_max": 10.0,
+        "attendance_bands": [
+          {
+            "max_days": 1,
+            "score": 10.0
+          },
+          {
+            "max_days": 4,
+            "score": 9.9
+          },
+          {
+            "max_days": 7,
+            "score": 9.8
+          },
+          {
+            "max_days": 10,
+            "score": 9.7
+          },
+          {
+            "max_days": 13,
+            "score": 9.6
+          },
+          {
+            "max_days": 16,
+            "score": 9.5
+          },
+          {
+            "max_days": 19,
+            "score": 9.4
+          },
+          {
+            "max_days": 22,
+            "score": 9.2
+          },
+          {
+            "max_days": null,
+            "score": 9.0
+          }
+        ],
+        "attendance_service_source_page": "58"
       },
       "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
       "source_page": 50,
@@ -330,7 +456,49 @@
           "C": 96
         },
         "formula_note": "미술대학 반영교과: 국어, 영어(필수) + 사회 또는 수학 중 성적이 좋은 1개 교과(이수단위 비교 없이 실제 계산해서 더 유리한 쪽 선택). 반영교과 내 1,2,3학년 전 과목(석차등급) + 진로선택과목(교과영역별 상위 4과목, 성취도 A=1등급/B=2등급/C=4등급 상당)을 이수단위 가중평균. 산출된 교과성적에 실기/실적전형은 상수 0.9를 곱해 최종 반영(2027 모집요강 p.55-57, 실기/실적 일반학생전형 - 미술대학 기준).",
-        "rule_source_page": "55-57"
+        "rule_source_page": "55-57",
+        "subject_weight_pct": 90,
+        "attendance_weight_pct": 10,
+        "attendance_band_max": 10.0,
+        "attendance_bands": [
+          {
+            "max_days": 1,
+            "score": 10.0
+          },
+          {
+            "max_days": 4,
+            "score": 9.9
+          },
+          {
+            "max_days": 7,
+            "score": 9.8
+          },
+          {
+            "max_days": 10,
+            "score": 9.7
+          },
+          {
+            "max_days": 13,
+            "score": 9.6
+          },
+          {
+            "max_days": 16,
+            "score": 9.5
+          },
+          {
+            "max_days": 19,
+            "score": 9.4
+          },
+          {
+            "max_days": 22,
+            "score": 9.2
+          },
+          {
+            "max_days": null,
+            "score": 9.0
+          }
+        ],
+        "attendance_service_source_page": "58"
       },
       "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
       "source_page": 50,
@@ -418,7 +586,49 @@
           "C": 96
         },
         "formula_note": "미술대학 반영교과: 국어, 영어(필수) + 사회 또는 수학 중 성적이 좋은 1개 교과(이수단위 비교 없이 실제 계산해서 더 유리한 쪽 선택). 반영교과 내 1,2,3학년 전 과목(석차등급) + 진로선택과목(교과영역별 상위 4과목, 성취도 A=1등급/B=2등급/C=4등급 상당)을 이수단위 가중평균. 산출된 교과성적에 실기/실적전형은 상수 0.9를 곱해 최종 반영(2027 모집요강 p.55-57, 실기/실적 일반학생전형 - 미술대학 기준).",
-        "rule_source_page": "55-57"
+        "rule_source_page": "55-57",
+        "subject_weight_pct": 90,
+        "attendance_weight_pct": 10,
+        "attendance_band_max": 10.0,
+        "attendance_bands": [
+          {
+            "max_days": 1,
+            "score": 10.0
+          },
+          {
+            "max_days": 4,
+            "score": 9.9
+          },
+          {
+            "max_days": 7,
+            "score": 9.8
+          },
+          {
+            "max_days": 10,
+            "score": 9.7
+          },
+          {
+            "max_days": 13,
+            "score": 9.6
+          },
+          {
+            "max_days": 16,
+            "score": 9.5
+          },
+          {
+            "max_days": 19,
+            "score": 9.4
+          },
+          {
+            "max_days": 22,
+            "score": 9.2
+          },
+          {
+            "max_days": null,
+            "score": 9.0
+          }
+        ],
+        "attendance_service_source_page": "58"
       },
       "source_url": "https://ipsi.sungshin.ac.kr/bbs/filedown.php?bbsid=dataroom&file_seq=2919",
       "source_page": 50,

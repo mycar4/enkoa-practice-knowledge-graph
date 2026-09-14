@@ -10,6 +10,7 @@
 
 import os
 import re
+import math
 import json
 import datetime
 from urllib.parse import urlparse
@@ -207,6 +208,16 @@ def _raw_grade_avg(items_with_grade: List[tuple]) -> Optional[float]:
     return round(sum(g * c for g, c in pairs) / total_credit, 2)
 
 
+_ATTENDANCE_FORMULA_SAFE_NAMES = {"min": min, "max": max, "floor": math.floor, "abs": abs}
+
+
+def _eval_attendance_formula(formula: str, days: float) -> float:
+    """rule["attendance_formula"]에 원문 그대로 옮긴 수식 문자열(예: 전남대 2027
+    모집요강 p.50 실기/실적(예능실기) 3)출결 성적 반영: '27 + (1 - min(days,21)/21) * 3')을
+    안전하게 계산한다. min/max/floor/abs만 허용하고 그 외 이름은 전부 차단."""
+    return eval(formula, {"__builtins__": {}}, {**_ATTENDANCE_FORMULA_SAFE_NAMES, "days": days})
+
+
 def _apply_attendance_service_extras(rule: Dict[str, Any], result: Optional[Dict[str, Any]],
                                       extra: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
     """2026-09-14: 출결(미인정 결석일수)·봉사활동(누계시간)을 학생부 반영점수에 실제로
@@ -234,20 +245,26 @@ def _apply_attendance_service_extras(rule: Dict[str, Any], result: Optional[Dict
     total_weight = subject_weight or 1
 
     att_bands = rule.get("attendance_bands")
+    att_formula = rule.get("attendance_formula")
     att_days = extra.get("unexcused_absence_days")
+    att_score = None
     if att_bands and att_days is not None:
-        att_score = None
         for band in att_bands:
             if band.get("max_days") is None or att_days <= band["max_days"]:
                 att_score = band["score"]
                 break
-        if att_score is not None:
-            band_max = rule.get("attendance_band_max", 10)
-            w = rule.get("attendance_weight_pct", 0)
-            components.append((att_score / band_max * max_score, w))
-            total_weight += w
-            result["attendance_score_raw"] = att_score
-            result["attendance_days_used"] = att_days
+    elif att_formula and att_days is not None:
+        try:
+            att_score = _eval_attendance_formula(att_formula, att_days)
+        except Exception:
+            att_score = None
+    if att_score is not None:
+        band_max = rule.get("attendance_band_max") or rule.get("attendance_formula_max", 10)
+        w = rule.get("attendance_weight_pct", 0)
+        components.append((att_score / band_max * max_score, w))
+        total_weight += w
+        result["attendance_score_raw"] = att_score
+        result["attendance_days_used"] = att_days
 
     svc_bands = rule.get("service_bands")
     svc_hours = extra.get("service_hours")

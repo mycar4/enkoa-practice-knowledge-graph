@@ -28,7 +28,13 @@
       "csat_minimum_required": false,
       "school_record_ratio_pct": 20,
       "practical_ratio_pct": 80,
-      "school_record_rule": {},
+      "school_record_rule": {
+        "subject_weight_pct": 80,
+        "attendance_weight_pct": 20,
+        "attendance_formula": "max(0, 20 - days)",
+        "attendance_formula_max": 20,
+        "attendance_service_source_page": "42"
+      },
       "past_topics": [],
       "source_url": "https://dept.kmu.ac.kr/pdfView/webtoon/43/822/fileDownload.do",
       "source_page": 29,
@@ -74,7 +80,13 @@
       "csat_minimum_required": false,
       "school_record_ratio_pct": 20,
       "practical_ratio_pct": 80,
-      "school_record_rule": {},
+      "school_record_rule": {
+        "subject_weight_pct": 80,
+        "attendance_weight_pct": 20,
+        "attendance_formula": "max(0, 20 - days)",
+        "attendance_formula_max": 20,
+        "attendance_service_source_page": "42"
+      },
       "past_topics": [],
       "source_url": "https://dept.kmu.ac.kr/pdfView/webtoon/43/822/fileDownload.do",
       "source_page": 29,
@@ -120,7 +132,13 @@
       "csat_minimum_required": false,
       "school_record_ratio_pct": 20,
       "practical_ratio_pct": 80,
-      "school_record_rule": {},
+      "school_record_rule": {
+        "subject_weight_pct": 80,
+        "attendance_weight_pct": 20,
+        "attendance_formula": "max(0, 20 - days)",
+        "attendance_formula_max": 20,
+        "attendance_service_source_page": "42"
+      },
       "past_topics": [],
       "source_url": "https://dept.kmu.ac.kr/pdfView/webtoon/43/822/fileDownload.do",
       "source_page": 29,
@@ -166,7 +184,13 @@
       "csat_minimum_required": false,
       "school_record_ratio_pct": 20,
       "practical_ratio_pct": 80,
-      "school_record_rule": {},
+      "school_record_rule": {
+        "subject_weight_pct": 80,
+        "attendance_weight_pct": 20,
+        "attendance_formula": "max(0, 20 - days)",
+        "attendance_formula_max": 20,
+        "attendance_service_source_page": "42"
+      },
       "past_topics": [],
       "source_url": "https://dept.kmu.ac.kr/pdfView/webtoon/43/822/fileDownload.do",
       "source_page": 29,
@@ -212,7 +236,13 @@
       "csat_minimum_required": false,
       "school_record_ratio_pct": 20,
       "practical_ratio_pct": 80,
-      "school_record_rule": {},
+      "school_record_rule": {
+        "subject_weight_pct": 80,
+        "attendance_weight_pct": 20,
+        "attendance_formula": "max(0, 20 - days)",
+        "attendance_formula_max": 20,
+        "attendance_service_source_page": "42"
+      },
       "past_topics": [],
       "source_url": "https://dept.kmu.ac.kr/pdfView/webtoon/43/822/fileDownload.do",
       "source_page": 29,
@@ -258,7 +288,13 @@
       "csat_minimum_required": false,
       "school_record_ratio_pct": 20,
       "practical_ratio_pct": 80,
-      "school_record_rule": {},
+      "school_record_rule": {
+        "subject_weight_pct": 80,
+        "attendance_weight_pct": 20,
+        "attendance_formula": "max(0, 20 - days)",
+        "attendance_formula_max": 20,
+        "attendance_service_source_page": "42"
+      },
       "past_topics": [],
       "source_url": "https://dept.kmu.ac.kr/pdfView/webtoon/43/822/fileDownload.do",
       "source_page": 29,
@@ -304,7 +340,13 @@
       "csat_minimum_required": false,
       "school_record_ratio_pct": 20,
       "practical_ratio_pct": 80,
-      "school_record_rule": {},
+      "school_record_rule": {
+        "subject_weight_pct": 80,
+        "attendance_weight_pct": 20,
+        "attendance_formula": "max(0, 20 - days)",
+        "attendance_formula_max": 20,
+        "attendance_service_source_page": "42"
+      },
       "past_topics": [],
       "source_url": "https://dept.kmu.ac.kr/pdfView/webtoon/43/822/fileDownload.do",
       "source_page": 29,

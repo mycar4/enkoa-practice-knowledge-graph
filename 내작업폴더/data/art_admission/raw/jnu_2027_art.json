@@ -49,7 +49,12 @@
           "9": 0
         },
         "formula_note": "석차등급 산출과목(공통/일반선택)은 반영교과(국어, 영어, 한국사, 사회) 이수단위 가중평균에 0.72를 곱하고 기본점수 193.5점을 합산(최대 265.5점). 진로선택 상위 3과목 성취도 환산점수(A=15, B=9, C=3) 평균에 0.3을 곱해 합산(최대 4.5점). 출결점수는 기본점수 27점 + 실질점수 3점*(1 - 결석일수/21)으로 합산(최대 30점). 총 300점 만점으로 1단계 성적 산출 (2027 수시모집요강 p.46~50).",
-        "rule_source_page": "46-50"
+        "rule_source_page": "46-50",
+        "subject_weight_pct": 90,
+        "attendance_weight_pct": 10,
+        "attendance_formula": "27 + (1 - min(days,21)/21) * 3",
+        "attendance_formula_max": 30,
+        "attendance_service_source_page": 50
       },
       "exam_type_name": "정물수묵담채",
       "allowed_materials": [
@@ -128,7 +133,12 @@
           "9": 0
         },
         "formula_note": "석차등급 산출과목(공통/일반선택)은 반영교과(국어, 영어, 한국사, 사회) 이수단위 가중평균에 0.72를 곱하고 기본점수 193.5점을 합산(최대 265.5점). 진로선택 상위 3과목 성취도 환산점수(A=15, B=9, C=3) 평균에 0.3을 곱해 합산(최대 4.5점). 출결점수는 기본점수 27점 + 실질점수 3점*(1 - 결석일수/21)으로 합산(최대 30점). 총 300점 만점으로 1단계 성적 산출 (2027 수시모집요강 p.46~50).",
-        "rule_source_page": "46-50"
+        "rule_source_page": "46-50",
+        "subject_weight_pct": 90,
+        "attendance_weight_pct": 10,
+        "attendance_formula": "27 + (1 - min(days,21)/21) * 3",
+        "attendance_formula_max": 30,
+        "attendance_service_source_page": 50
       },
       "exam_type_name": "인물수채화",
       "allowed_materials": [
@@ -207,7 +217,12 @@
           "9": 0
         },
         "formula_note": "석차등급 산출과목(공통/일반선택)은 반영교과(국어, 영어, 한국사, 사회) 이수단위 가중평균에 0.72를 곱하고 기본점수 193.5점을 합산(최대 265.5점). 진로선택 상위 3과목 성취도 환산점수(A=15, B=9, C=3) 평균에 0.3을 곱해 합산(최대 4.5점). 출결점수는 기본점수 27점 + 실질점수 3점*(1 - 결석일수/21)으로 합산(최대 30점). 총 300점 만점으로 1단계 성적 산출 (2027 수시모집요강 p.46~50).",
-        "rule_source_page": "46-50"
+        "rule_source_page": "46-50",
+        "subject_weight_pct": 90,
+        "attendance_weight_pct": 10,
+        "attendance_formula": "27 + (1 - min(days,21)/21) * 3",
+        "attendance_formula_max": 30,
+        "attendance_service_source_page": 50
       },
       "exam_type_name": "인체두상소조",
       "allowed_materials": [
@@ -286,7 +301,12 @@
           "9": 0
         },
         "formula_note": "석차등급 산출과목(공통/일반선택)은 반영교과(국어, 영어, 한국사, 사회) 이수단위 가중평균에 0.72를 곱하고 기본점수 193.5점을 합산(최대 265.5점). 진로선택 상위 3과목 성취도 환산점수(A=15, B=9, C=3) 평균에 0.3을 곱해 합산(최대 4.5점). 출결점수는 기본점수 27점 + 실질점수 3점*(1 - 결석일수/21)으로 합산(최대 30점). 총 300점 만점으로 1단계 성적 산출 (2027 수시모집요강 p.46~50).",
-        "rule_source_page": "46-50"
+        "rule_source_page": "46-50",
+        "subject_weight_pct": 90,
+        "attendance_weight_pct": 10,
+        "attendance_formula": "27 + (1 - min(days,21)/21) * 3",
+        "attendance_formula_max": 30,
+        "attendance_service_source_page": 50
       },
       "exam_type_name": "기초디자인",
       "allowed_materials": [
@@ -368,7 +388,12 @@
           "9": 0
         },
         "formula_note": "석차등급 산출과목(공통/일반선택)은 반영교과(국어, 영어, 한국사, 사회) 이수단위 가중평균에 0.72를 곱하고 기본점수 193.5점을 합산(최대 265.5점). 진로선택 상위 3과목 성취도 환산점수(A=15, B=9, C=3) 평균에 0.3을 곱해 합산(최대 4.5점). 출결점수는 기본점수 27점 + 실질점수 3점*(1 - 결석일수/21)으로 합산(최대 30점). 총 300점 만점으로 1단계 성적 산출 (2027 수시모집요강 p.46~50).",
-        "rule_source_page": "46-50"
+        "rule_source_page": "46-50",
+        "subject_weight_pct": 90,
+        "attendance_weight_pct": 10,
+        "attendance_formula": "27 + (1 - min(days,21)/21) * 3",
+        "attendance_formula_max": 30,
+        "attendance_service_source_page": 50
       },
       "exam_type_name": "기초디자인",
       "allowed_materials": [
@@ -442,7 +467,12 @@
           "9": 0
         },
         "formula_note": "석차등급 산출과목(공통/일반선택)은 반영교과(국/수/영/사/과/한국사) 이수단위 가중평균에 2.25를 곱하고 기본점수 660점을 합산(최대 885점). 진로선택 상위 3과목 성취도 환산점수(A=15, B=9, C=3) 평균(최대 15점). 출결점수는 기본점수 90점 + 실질점수 10점*(1 - 결석일수/21)으로 합산(최대 100점). 총 1,000점 만점으로 일괄 선발 (2027 수시모집요강 p.47~50, p.59).",
-        "rule_source_page": "47-50, 59"
+        "rule_source_page": "47-50, 59",
+        "subject_weight_pct": 90,
+        "attendance_weight_pct": 10,
+        "attendance_formula": "90 + (1 - min(days,21)/21) * 10",
+        "attendance_formula_max": 100,
+        "attendance_service_source_page": 50
       },
       "exam_type_name": "비실기 (학생부 100%)",
       "allowed_materials": [],
