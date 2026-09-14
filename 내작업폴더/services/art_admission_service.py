@@ -272,6 +272,42 @@ def _calc_school_record_raw_score(rule: Dict[str, Any], grades: List[Dict[str, A
             raw_pool.append((weight, g.get("grade")))
             details.append({"subject_group": g.get("subject_group"), "grade": g.get("grade"), "credit": credit, "score": s, "semester": g.get("semester")})
 
+        # 2026-09-14: 목원대처럼 "일반선택 상위 N과목 + 진로선택 상위 M과목"을 같이
+        # 반영하는 학교용 - 기존에는 이 모드가 진로선택을 통째로 뺐는데(사용자가 나이스
+        # 공식 산출내역과 대조해서 등급 불일치를 발견함, 2.00 vs 2.38), 그건 "이 모드는
+        # 진로선택 미반영"이라는 잘못된 일반화였다. career_elective_top_n이 지정된
+        # 학교만 진로선택 상위 M과목을 별도로 뽑아 pool에 합친다(원문에 이 규정이
+        # 없는 학교는 기존과 동일하게 진로선택 미반영 유지).
+        career_elective_top_n = rule.get("career_elective_top_n")
+        # career_elective_grade_table: 성취도(A/B/C) -> 등급 숫자(예: 목원대 A=2등급).
+        # 이 등급 숫자를 conversion_table에 다시 통과시켜 최종 점수를 얻는다(나이스
+        # 공식 산출내역과 동일한 2단계 변환 - achievement -> grade -> point). "achievement를
+        # 바로 점수로 매핑"하면 등급표를 두 번 쓰는 의미가 없어지고, 원문이 실제로
+        # "성취도를 석차등급으로 환산"이라고 명시한 표현과도 안 맞는다.
+        ce_grade_table = {str(k): v for k, v in (rule.get("career_elective_grade_table") or {}).items()}
+        if career_elective_top_n and ce_grade_table:
+            ce_candidates = []
+            for g in grades:
+                if not g.get("career_elective"):
+                    continue
+                if subjects and g.get("subject_group") not in subjects:
+                    continue
+                ce_grade = ce_grade_table.get(str(g.get("achievement")))
+                s = _score_for_grade(ce_grade) if ce_grade is not None else None
+                if s is not None:
+                    ce_candidates.append((g, s, ce_grade))
+            ce_candidates.sort(key=lambda x: -x[1])
+            for g, s, ce_grade in ce_candidates[:career_elective_top_n]:
+                credit = g.get("credit") or 1
+                weight = credit if credit_weighted else 1
+                pool.append((s, weight))
+                # 목원대 원문 자체가 "성취도를 석차등급으로 환산해 반영"이라 명시하므로,
+                # 여기서는 raw_grade_average(원 석차등급 참고값)에도 이 환산등급을
+                # 그대로 포함한다 - 다른 모드(all_subjects_plus_career_elective 등)가
+                # 진로선택을 raw_grade_average에서 빼는 것과는 다른, 이 학교 고유 규정.
+                raw_pool.append((weight, ce_grade))
+                details.append({"subject_group": g.get("subject_group"), "achievement": g.get("achievement"), "grade": ce_grade, "credit": credit, "score": s, "semester": g.get("semester")})
+
         if not pool:
             return None
 

@@ -32,7 +32,7 @@
       "school_record_rule": {
         "mode": "simple_weighted_average",
         "credit_weighted": false,
-        "top_n": 8,
+        "top_n": 5,
         "conversion_table": {
           "1": 100,
           "2": 95,
@@ -45,7 +45,13 @@
           "9": 50
         },
         "formula_note": "학년 구분 없이 석차등급 상위 5과목과 진로선택과목 상위 3과목 총 8개 과목의 등급 반영(모집요강 p.43). 진로선택과목 성취도 환산: A=2등급, B=3등급, C=4등급. 등급 환산점수(1등급 100점 ~ 9등급 50점). 학생부 반영점수 = ∑(과목별석차등급 환산점수) × 학생부총점 ÷ 800.",
-        "rule_source_page": "43"
+        "rule_source_page": "43",
+        "career_elective_top_n": 3,
+        "career_elective_grade_table": {
+          "A": 2,
+          "B": 3,
+          "C": 4
+        }
       },
       "source_url": "https://enter.mokwon.ac.kr",
       "source_page": 27,
@@ -87,7 +93,7 @@
       "school_record_rule": {
         "mode": "simple_weighted_average",
         "credit_weighted": false,
-        "top_n": 8,
+        "top_n": 5,
         "conversion_table": {
           "1": 100,
           "2": 95,
@@ -100,7 +106,13 @@
           "9": 50
         },
         "formula_note": "학년 구분 없이 석차등급 상위 5과목과 진로선택과목 상위 3과목 총 8개 과목의 등급 반영(모집요강 p.43). 진로선택과목 성취도 환산: A=2등급, B=3등급, C=4등급. 등급 환산점수(1등급 100점 ~ 9등급 50점). 학생부 반영점수 = ∑(과목별석차등급 환산점수) × 학생부총점 ÷ 800.",
-        "rule_source_page": "43"
+        "rule_source_page": "43",
+        "career_elective_top_n": 3,
+        "career_elective_grade_table": {
+          "A": 2,
+          "B": 3,
+          "C": 4
+        }
       },
       "source_url": "https://enter.mokwon.ac.kr",
       "source_page": 9,
@@ -228,7 +240,7 @@
       "school_record_rule": {
         "mode": "simple_weighted_average",
         "credit_weighted": false,
-        "top_n": 8,
+        "top_n": 5,
         "conversion_table": {
           "1": 100,
           "2": 95,
@@ -241,7 +253,13 @@
           "9": 50
         },
         "formula_note": "학년 구분 없이 석차등급 상위 5과목과 진로선택과목 상위 3과목 총 8개 과목의 등급 반영(모집요강 p.43). 진로선택과목 성취도 환산: A=2등급, B=3등급, C=4등급. 등급 환산점수(1등급 100점 ~ 9등급 50점). 학생부 반영점수 = ∑(과목별석차등급 환산점수) × 학생부총점 ÷ 800.",
-        "rule_source_page": "43"
+        "rule_source_page": "43",
+        "career_elective_top_n": 3,
+        "career_elective_grade_table": {
+          "A": 2,
+          "B": 3,
+          "C": 4
+        }
       },
       "source_url": "https://enter.mokwon.ac.kr",
       "source_page": 9,
@@ -326,7 +344,7 @@
       "school_record_rule": {
         "mode": "simple_weighted_average",
         "credit_weighted": false,
-        "top_n": 8,
+        "top_n": 5,
         "conversion_table": {
           "1": 100,
           "2": 95,
@@ -339,7 +357,13 @@
           "9": 50
         },
         "formula_note": "학년 구분 없이 석차등급 상위 5과목과 진로선택과목 상위 3과목 총 8개 과목의 등급 반영(모집요강 p.43). 진로선택과목 성취도 환산: A=2등급, B=3등급, C=4등급. 등급 환산점수(1등급 100점 ~ 9등급 50점). 학생부 반영점수 = ∑(과목별석차등급 환산점수) × 학생부총점 ÷ 800.",
-        "rule_source_page": "43"
+        "rule_source_page": "43",
+        "career_elective_top_n": 3,
+        "career_elective_grade_table": {
+          "A": 2,
+          "B": 3,
+          "C": 4
+        }
       },
       "source_url": "https://enter.mokwon.ac.kr",
       "source_page": 9,
@@ -424,7 +448,7 @@
       "school_record_rule": {
         "mode": "simple_weighted_average",
         "credit_weighted": false,
-        "top_n": 8,
+        "top_n": 5,
         "conversion_table": {
           "1": 100,
           "2": 95,
@@ -437,7 +461,13 @@
           "9": 50
         },
         "formula_note": "학년 구분 없이 석차등급 상위 5과목과 진로선택과목 상위 3과목 총 8개 과목의 등급 반영(모집요강 p.43). 진로선택과목 성취도 환산: A=2등급, B=3등급, C=4등급. 등급 환산점수(1등급 100점 ~ 9등급 50점). 학생부 반영점수 = ∑(과목별석차등급 환산점수) × 학생부총점 ÷ 800.",
-        "rule_source_page": "43"
+        "rule_source_page": "43",
+        "career_elective_top_n": 3,
+        "career_elective_grade_table": {
+          "A": 2,
+          "B": 3,
+          "C": 4
+        }
       },
       "source_url": "https://enter.mokwon.ac.kr",
       "source_page": 9,
@@ -522,7 +552,7 @@
       "school_record_rule": {
         "mode": "simple_weighted_average",
         "credit_weighted": false,
-        "top_n": 8,
+        "top_n": 5,
         "conversion_table": {
           "1": 100,
           "2": 95,
@@ -535,7 +565,13 @@
           "9": 50
         },
         "formula_note": "학년 구분 없이 석차등급 상위 5과목과 진로선택과목 상위 3과목 총 8개 과목의 등급 반영(모집요강 p.43). 진로선택과목 성취도 환산: A=2등급, B=3등급, C=4등급. 등급 환산점수(1등급 100점 ~ 9등급 50점). 학생부 반영점수 = ∑(과목별석차등급 환산점수) × 학생부총점 ÷ 800.",
-        "rule_source_page": "43"
+        "rule_source_page": "43",
+        "career_elective_top_n": 3,
+        "career_elective_grade_table": {
+          "A": 2,
+          "B": 3,
+          "C": 4
+        }
       },
       "source_url": "https://enter.mokwon.ac.kr",
       "source_page": 9,
@@ -620,7 +656,7 @@
       "school_record_rule": {
         "mode": "simple_weighted_average",
         "credit_weighted": false,
-        "top_n": 8,
+        "top_n": 5,
         "conversion_table": {
           "1": 100,
           "2": 95,
@@ -633,7 +669,13 @@
           "9": 50
         },
         "formula_note": "학년 구분 없이 석차등급 상위 5과목과 진로선택과목 상위 3과목 총 8개 과목의 등급 반영(모집요강 p.43). 진로선택과목 성취도 환산: A=2등급, B=3등급, C=4등급. 등급 환산점수(1등급 100점 ~ 9등급 50점). 학생부 반영점수 = ∑(과목별석차등급 환산점수) × 학생부총점 ÷ 800.",
-        "rule_source_page": "43"
+        "rule_source_page": "43",
+        "career_elective_top_n": 3,
+        "career_elective_grade_table": {
+          "A": 2,
+          "B": 3,
+          "C": 4
+        }
       },
       "source_url": "https://enter.mokwon.ac.kr",
       "source_page": 9,
@@ -718,7 +760,7 @@
       "school_record_rule": {
         "mode": "simple_weighted_average",
         "credit_weighted": false,
-        "top_n": 8,
+        "top_n": 5,
         "conversion_table": {
           "1": 100,
           "2": 95,
@@ -731,7 +773,13 @@
           "9": 50
         },
         "formula_note": "학년 구분 없이 석차등급 상위 5과목과 진로선택과목 상위 3과목 총 8개 과목의 등급 반영(모집요강 p.43). 진로선택과목 성취도 환산: A=2등급, B=3등급, C=4등급. 등급 환산점수(1등급 100점 ~ 9등급 50점). 학생부 반영점수 = ∑(과목별석차등급 환산점수) × 학생부총점 ÷ 800.",
-        "rule_source_page": "43"
+        "rule_source_page": "43",
+        "career_elective_top_n": 3,
+        "career_elective_grade_table": {
+          "A": 2,
+          "B": 3,
+          "C": 4
+        }
       },
       "source_url": "https://enter.mokwon.ac.kr",
       "source_page": 9,
@@ -816,7 +864,7 @@
       "school_record_rule": {
         "mode": "simple_weighted_average",
         "credit_weighted": false,
-        "top_n": 8,
+        "top_n": 5,
         "conversion_table": {
           "1": 100,
           "2": 95,
@@ -829,7 +877,13 @@
           "9": 50
         },
         "formula_note": "학년 구분 없이 석차등급 상위 5과목과 진로선택과목 상위 3과목 총 8개 과목의 등급 반영(모집요강 p.43). 진로선택과목 성취도 환산: A=2등급, B=3등급, C=4등급. 등급 환산점수(1등급 100점 ~ 9등급 50점). 학생부 반영점수 = ∑(과목별석차등급 환산점수) × 학생부총점 ÷ 800.",
-        "rule_source_page": "43"
+        "rule_source_page": "43",
+        "career_elective_top_n": 3,
+        "career_elective_grade_table": {
+          "A": 2,
+          "B": 3,
+          "C": 4
+        }
       },
       "source_url": "https://enter.mokwon.ac.kr",
       "source_page": 9,
@@ -871,7 +925,7 @@
       "school_record_rule": {
         "mode": "simple_weighted_average",
         "credit_weighted": false,
-        "top_n": 8,
+        "top_n": 5,
         "conversion_table": {
           "1": 100,
           "2": 95,
@@ -884,7 +938,13 @@
           "9": 50
         },
         "formula_note": "학년 구분 없이 석차등급 상위 5과목과 진로선택과목 상위 3과목 총 8개 과목의 등급 반영(모집요강 p.43). 진로선택과목 성취도 환산: A=2등급, B=3등급, C=4등급. 등급 환산점수(1등급 100점 ~ 9등급 50점). 학생부 반영점수 = ∑(과목별석차등급 환산점수) × 학생부총점 ÷ 800.",
-        "rule_source_page": "43"
+        "rule_source_page": "43",
+        "career_elective_top_n": 3,
+        "career_elective_grade_table": {
+          "A": 2,
+          "B": 3,
+          "C": 4
+        }
       },
       "source_url": "https://enter.mokwon.ac.kr",
       "source_page": 9,
@@ -969,7 +1029,7 @@
       "school_record_rule": {
         "mode": "simple_weighted_average",
         "credit_weighted": false,
-        "top_n": 8,
+        "top_n": 5,
         "conversion_table": {
           "1": 100,
           "2": 95,
@@ -982,7 +1042,13 @@
           "9": 50
         },
         "formula_note": "학년 구분 없이 석차등급 상위 5과목과 진로선택과목 상위 3과목 총 8개 과목의 등급 반영(모집요강 p.43). 진로선택과목 성취도 환산: A=2등급, B=3등급, C=4등급. 등급 환산점수(1등급 100점 ~ 9등급 50점). 학생부 반영점수 = ∑(과목별석차등급 환산점수) × 학생부총점 ÷ 800.",
-        "rule_source_page": "43"
+        "rule_source_page": "43",
+        "career_elective_top_n": 3,
+        "career_elective_grade_table": {
+          "A": 2,
+          "B": 3,
+          "C": 4
+        }
       },
       "source_url": "https://enter.mokwon.ac.kr",
       "source_page": 9,
@@ -1024,7 +1090,7 @@
       "school_record_rule": {
         "mode": "simple_weighted_average",
         "credit_weighted": false,
-        "top_n": 8,
+        "top_n": 5,
         "conversion_table": {
           "1": 100,
           "2": 95,
@@ -1037,7 +1103,13 @@
           "9": 50
         },
         "formula_note": "학년 구분 없이 석차등급 상위 5과목과 진로선택과목 상위 3과목 총 8개 과목의 등급 반영(모집요강 p.43). 진로선택과목 성취도 환산: A=2등급, B=3등급, C=4등급. 등급 환산점수(1등급 100점 ~ 9등급 50점). 학생부 반영점수 = ∑(과목별석차등급 환산점수) × 학생부총점 ÷ 800.",
-        "rule_source_page": "43"
+        "rule_source_page": "43",
+        "career_elective_top_n": 3,
+        "career_elective_grade_table": {
+          "A": 2,
+          "B": 3,
+          "C": 4
+        }
       },
       "source_url": "https://enter.mokwon.ac.kr",
       "source_page": 9,
@@ -1122,7 +1194,7 @@
       "school_record_rule": {
         "mode": "simple_weighted_average",
         "credit_weighted": false,
-        "top_n": 8,
+        "top_n": 5,
         "conversion_table": {
           "1": 100,
           "2": 95,
@@ -1135,7 +1207,13 @@
           "9": 50
         },
         "formula_note": "학년 구분 없이 석차등급 상위 5과목과 진로선택과목 상위 3과목 총 8개 과목의 등급 반영(모집요강 p.43). 진로선택과목 성취도 환산: A=2등급, B=3등급, C=4등급. 등급 환산점수(1등급 100점 ~ 9등급 50점). 학생부 반영점수 = ∑(과목별석차등급 환산점수) × 학생부총점 ÷ 800.",
-        "rule_source_page": "43"
+        "rule_source_page": "43",
+        "career_elective_top_n": 3,
+        "career_elective_grade_table": {
+          "A": 2,
+          "B": 3,
+          "C": 4
+        }
       },
       "source_url": "https://enter.mokwon.ac.kr",
       "source_page": 9,
@@ -1177,7 +1255,7 @@
       "school_record_rule": {
         "mode": "simple_weighted_average",
         "credit_weighted": false,
-        "top_n": 8,
+        "top_n": 5,
         "conversion_table": {
           "1": 100,
           "2": 95,
@@ -1190,7 +1268,13 @@
           "9": 50
         },
         "formula_note": "학년 구분 없이 석차등급 상위 5과목과 진로선택과목 상위 3과목 총 8개 과목의 등급 반영(모집요강 p.43). 진로선택과목 성취도 환산: A=2등급, B=3등급, C=4등급. 등급 환산점수(1등급 100점 ~ 9등급 50점). 학생부 반영점수 = ∑(과목별석차등급 환산점수) × 학생부총점 ÷ 800.",
-        "rule_source_page": "43"
+        "rule_source_page": "43",
+        "career_elective_top_n": 3,
+        "career_elective_grade_table": {
+          "A": 2,
+          "B": 3,
+          "C": 4
+        }
       },
       "source_url": "https://enter.mokwon.ac.kr",
       "source_page": 9,
@@ -1275,7 +1359,7 @@
       "school_record_rule": {
         "mode": "simple_weighted_average",
         "credit_weighted": false,
-        "top_n": 8,
+        "top_n": 5,
         "conversion_table": {
           "1": 100,
           "2": 95,
@@ -1288,7 +1372,13 @@
           "9": 50
         },
         "formula_note": "학년 구분 없이 석차등급 상위 5과목과 진로선택과목 상위 3과목 총 8개 과목의 등급 반영(모집요강 p.43). 진로선택과목 성취도 환산: A=2등급, B=3등급, C=4등급. 등급 환산점수(1등급 100점 ~ 9등급 50점). 학생부 반영점수 = ∑(과목별석차등급 환산점수) × 학생부총점 ÷ 800.",
-        "rule_source_page": "43"
+        "rule_source_page": "43",
+        "career_elective_top_n": 3,
+        "career_elective_grade_table": {
+          "A": 2,
+          "B": 3,
+          "C": 4
+        }
       },
       "source_url": "https://enter.mokwon.ac.kr",
       "source_page": 9,
