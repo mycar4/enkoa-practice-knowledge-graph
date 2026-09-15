@@ -1247,14 +1247,21 @@ function renderRecommendResults() {
     }
 
     summaryEl.textContent = `지금 화면에 적용된 필터 조건(총 ${pool.length}개 후보) 안에서, 실기 결과까지 반영한 최종 총점이 높은 순으로 실기고사 날짜가 서로 겹치지 않는 ${chosen.length}곳을 담았습니다. #1이 가장 유리한 조합이며, 실제 지원은 본인 준비 상황과 선호도를 함께 고려하세요.`;
-    listEl.innerHTML = chosen.map((t, i) => `
+    // 2026-09-15: "1순위가 왜 1순위인지 모르겠다"는 피드백 - 카드에 학생부 환산 %만
+    // 나와서 이 조합의 실제 정렬 기준(실기 결과 반영 최종 총점, computeReversalMax)이
+    // 안 보였다. 순위를 매긴 값을 학생부 환산과 나란히 굵게 표시한다.
+    listEl.innerHTML = chosen.map((t, i) => {
+      const reversalMax = computeReversalMax(t);
+      return `
       <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-unit-sm">
         <p class="font-label-sm text-label-sm text-secondary">#${i + 1}</p>
         <p class="font-body-md text-body-md text-on-surface font-medium">${t.university}${t.campus ? ` (${t.campus})` : ""}</p>
         <p class="font-body-sm text-body-sm text-on-surface-variant">${t.department} · ${t.track_name || ""}</p>
         <p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">실기고사: ${(t.exam_dates || []).join(", ") || "-"}</p>
-        ${t.school_record_percentage != null ? `<p class="font-body-sm text-body-sm text-on-surface-variant">학생부 환산 ${t.school_record_percentage}%</p>` : ""}
-      </div>`).join("") || `<p class="col-span-full font-body-sm text-body-sm text-on-surface-variant">지금 필터 조건에 겹치지 않는 조합을 찾지 못했습니다. 필터를 넓혀보세요.</p>`;
+        ${reversalMax != null ? `<p class="font-body-sm text-body-sm text-on-surface font-semibold">정렬 기준(실기 결과 반영 최종 총점 상한): ${reversalMax}%</p>` : `<p class="font-body-sm text-body-sm text-on-surface-variant">정렬 기준 값 계산 불가(반영비율 정보 없음) - 목록 뒤쪽에 배치됨</p>`}
+        ${t.school_record_percentage != null ? `<p class="font-body-sm text-body-sm text-on-surface-variant">참고: 학생부 환산 ${t.school_record_percentage}%</p>` : ""}
+      </div>`;
+    }).join("") || `<p class="col-span-full font-body-sm text-body-sm text-on-surface-variant">지금 필터 조건에 겹치지 않는 조합을 찾지 못했습니다. 필터를 넓혀보세요.</p>`;
 
     if (skipped.length > 0) {
       skippedWrap.classList.remove("hidden");
