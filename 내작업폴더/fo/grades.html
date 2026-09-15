@@ -412,8 +412,21 @@ function parseNeisHtml(htmlText) {
       tr => Array.from(tr.querySelectorAll("td")).map(td => td.textContent.trim())
     );
   }
-  function cell(row, headers, name) {
+  // 2026-09-15: 나이스 표는 "학년" 같은 앞쪽 열을 rowspan으로 묶어서, 같은 학년의
+  // 2번째·3번째 <tr>부터는 그 td 자체가 없다(rowspan이 있는 열만큼 앞이 통째로
+  // 빠짐). thead 기준 인덱스를 그대로 쓰면 이런 행에서 한 칸씩 밀려 엉뚱한 값을
+  // 읽는다(실사례: 봉사활동 누계시간이 "시간" 대신 읽혀서 26시간으로 잘못 합산됨,
+  // 실제로는 13시간). rowspan은 항상 맨 앞쪽 열부터 생략되므로, 실제 행의 길이가
+  // 헤더보다 짧은 만큼(offset)을 헤더 인덱스에서 빼서 뒤에서부터 맞춰 읽는다.
+  function alignedIndex(headers, row, name) {
     const i = headers.indexOf(name);
+    if (i === -1) return -1;
+    const offset = headers.length - row.length;
+    const idx = i - offset;
+    return idx >= 0 ? idx : -1;
+  }
+  function cell(row, headers, name) {
+    const i = alignedIndex(headers, row, name);
     return i === -1 ? "" : (row[i] || "");
   }
 
@@ -451,18 +464,22 @@ function parseNeisHtml(htmlText) {
     } else if (headers.includes("미인정") && headers.includes("질병")) {
       // 출결상황: "미인정" 열이 학기/학년별로 여러 개일 수 있어 전부 합산.
       hasAttendanceTable = true;
-      const idxs = headers.reduce((acc, h, i) => (h === "미인정" ? [...acc, i] : acc), []);
+      const nameIdxs = headers.reduce((acc, h, i) => (h === "미인정" ? [...acc, i] : acc), []);
       for (const r of dataRows(table)) {
-        for (const i of idxs) {
-          const v = parseInt((r[i] || "").replace(/[^\d]/g, ""), 10);
+        const offset = headers.length - r.length;
+        for (const i of nameIdxs) {
+          const idx = i - offset;
+          if (idx < 0) continue;
+          const v = parseInt((r[idx] || "").replace(/[^\d]/g, ""), 10);
           if (!isNaN(v)) unexcusedAbsenceDays += v;
         }
       }
     } else if (headers.includes("누계시간") && headers.includes("시간")) {
       hasServiceTable = true;
-      const timeIdx = headers.indexOf("시간");
       for (const r of dataRows(table)) {
-        const v = parseFloat(r[timeIdx]);
+        const idx = alignedIndex(headers, r, "시간");
+        if (idx === -1) continue;
+        const v = parseFloat(r[idx]);
         if (!isNaN(v)) serviceHoursTotal += v;
       }
     }
@@ -817,6 +834,9 @@ document.getElementById("resetBtn").addEventListener("click", () => {
   document.getElementById("dataSourceStatus").classList.add("hidden");
   document.getElementById("draftNotice").classList.add("hidden");
   materialInput.value = "";
+  // 초기화 시 파일 입력창의 선택된 파일명도 함께 지워야 한다 - 그동안 value를
+  // 비우지 않아서 다른 항목은 다 초기화되는데 파일명만 화면에 남아있었다.
+  document.getElementById("txtUploadInput").value = "";
   resetRows();
 });
 

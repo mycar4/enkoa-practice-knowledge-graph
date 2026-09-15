@@ -118,7 +118,7 @@
 <div class="flex flex-col items-center gap-unit-2xs text-center"><svg width="16" height="16" viewBox="0 0 16 16"><polygon points="8,1 15,15 1,15" fill="#E34234"/></svg><span class="font-label-sm text-label-sm text-on-surface font-bold">판단·리스크 신호</span><span class="font-label-sm text-label-sm text-on-surface-variant">Line</span></div>
 </div>
 <!-- 그래프로 전환된 뒤에만 보이는 이전/다음 순환 + 지도 보기 버튼 -->
-<div id="heroGraphControls" class="hidden w-full max-w-md flex-col items-center gap-unit-sm">
+<div id="heroGraphControls" class="hidden w-full max-w-md flex-col items-center gap-unit-sm opacity-0 transition-opacity duration-700">
 <div class="flex items-center justify-between w-full">
 <button id="heroPrevDesktop" type="button" aria-label="이전 대학" class="w-9 h-9 rounded-full bg-surface-container-low text-on-surface flex items-center justify-center hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[20px]">chevron_left</span></button>
 <span id="heroUnivLabelDesktop" class="font-label-md text-label-md text-on-surface text-center flex-1 truncate px-unit-xs"></span>
@@ -238,17 +238,29 @@ function renderHeroGraphPreview(containerId, graphData, { zoomable = false, full
   if (!container || typeof vis === "undefined") return null;
   const colorByGroup = { university: "#0031ab", department: "#b72119", track: "#1c1b1b" };
   const rawNodes = full ? graphData.nodes : graphData.nodes.slice(0, 40);
+  // 2026-09-15: 중앙대처럼 한 대학이 캠퍼스별로 여러 university 노드(서울캠퍼스/
+  // 다빈치캠퍼스 등)로 나뉘는 경우가 있는데, 전부 (0,0)에 고정해버리면 라벨이
+  // 완전히 겹쳐 글자가 뒤섞여 보였다(사용자 스크린샷으로 발견). university
+  // 노드가 여러 개면 각각 다른 x좌표를 줘서 겹치지 않게 하고, 하나뿐일 때만
+  // 정확히 중앙(0,0)에 고정한다.
+  let universitySeq = 0;
+  const universityCount = rawNodes.filter(n => n.group === "university").length;
   const nodes = new vis.DataSet(rawNodes.map(n => {
     const bg = colorByGroup[n.group] || "#747686";
     const isUniversity = n.group === "university";
+    let fixedX;
+    if (isUniversity && !full) {
+      fixedX = universityCount > 1 ? (universitySeq - (universityCount - 1) / 2) * 220 : 0;
+      universitySeq += 1;
+    }
     return {
       id: n.id, label: n.label, shape: "dot",
       size: isUniversity ? 24 : (n.group === "department" ? 14 : 9),
       color: { background: bg, border: bg },
       font: { size: zoomable ? 13 : 11, color: "#1c1b1b" },
-      // 대학 노드만 캔버스 중앙에 고정 - 나머지는 물리엔진이 자유롭게 배치한다.
+      // 대학 노드만 캔버스 중앙(들)에 고정 - 나머지는 물리엔진이 자유롭게 배치한다.
       fixed: isUniversity && !full ? { x: true, y: true } : false,
-      x: isUniversity && !full ? 0 : undefined,
+      x: isUniversity && !full ? fixedX : undefined,
       y: isUniversity && !full ? 0 : undefined,
       mass: isUniversity ? 3 : 1,
     };
@@ -285,7 +297,15 @@ function heroSwapToGraph() {
   // Point/Line/Plane 범례는 도형이 떠 있을 때만 의미가 있으므로 그래프로 전환되면
   // 숨기고, 그 자리에 이전/다음 + 지도 보기 버튼을 보여준다.
   if (legend) { legend.classList.add("opacity-0"); setTimeout(() => legend.classList.add("hidden"), 700); }
-  if (controls) { controls.classList.remove("hidden"); controls.classList.add("flex"); }
+  // 2026-09-15: 범례는 700ms에 걸쳐 서서히 사라지는데 대학명/버튼 영역은 즉시
+  // 나타나서 "튀는" 느낌이 든다는 피드백 - display:none을 풀자마자 바로 opacity를
+  // 바꾸면 브라우저가 전환을 건너뛰므로, 한 프레임 쉬었다가 opacity-0을 떼어내서
+  // 같은 700ms 페이드인으로 자연스럽게 나타나게 한다.
+  if (controls) {
+    controls.classList.remove("hidden");
+    controls.classList.add("flex");
+    requestAnimationFrame(() => requestAnimationFrame(() => controls.classList.remove("opacity-0")));
+  }
   document.getElementById("heroExpandDesktop")?.classList.remove("hidden");
   document.getElementById("heroExpandDesktop")?.classList.add("flex");
 
