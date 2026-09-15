@@ -192,6 +192,25 @@ fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
   document.getElementById("deptSearchList").innerHTML = deptNames.map(n => `<option value="${n}"></option>`).join("");
 }).catch(() => { /* 자동완성 실패해도 직접 입력은 계속 가능해야 한다 */ });
 
+// 2026-09-15: 이미 값이 채워진 상태에서 드롭다운 화살표(▼)를 누르면 브라우저가
+// 현재 입력값과 일치하는 항목만(대개 1개 또는 0개) 필터링해서 보여줘서 "처음
+// 눌렀을 때처럼 전체 목록이 안 나온다"는 피드백을 받았다 - 포커스가 들어오는
+// 시점(화살표 클릭도 포커스를 발생시킴)에 입력값을 잠깐 비워 datalist가 필터링
+// 없이 전체 목록을 보여주게 하고, 아무것도 새로 선택하지 않고 벗어나면(blur) 원래
+// 값을 되살린다.
+function enableFullListOnFocus(inputEl) {
+  let savedValue = "";
+  inputEl.addEventListener("focus", () => {
+    savedValue = inputEl.value;
+    inputEl.value = "";
+  });
+  inputEl.addEventListener("blur", () => {
+    if (!inputEl.value) inputEl.value = savedValue;
+  });
+}
+enableFullListOnFocus(document.getElementById("univSearchInput"));
+enableFullListOnFocus(document.getElementById("deptSearchInput"));
+
 function goToUniversitySearch() {
   const errEl = document.getElementById("univSearchError");
   const typed = document.getElementById("univSearchInput").value.trim();
