@@ -198,14 +198,20 @@ fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
 // 시점(화살표 클릭도 포커스를 발생시킴)에 입력값을 잠깐 비워 datalist가 필터링
 // 없이 전체 목록을 보여주게 하고, 아무것도 새로 선택하지 않고 벗어나면(blur) 원래
 // 값을 되살린다.
+// 값을 비우면 원래 placeholder(예시 문구)가 대신 보여서 "선택한 값이 사라졌다"는
+// 인상을 준다 - 비우는 동안만 placeholder를 "기존 선택: OO"로 바꿔 목록이 열려
+// 있는 짧은 순간에도 방금 고른 값이 뭐였는지 계속 보이게 한다.
 function enableFullListOnFocus(inputEl) {
   let savedValue = "";
+  const originalPlaceholder = inputEl.placeholder;
   inputEl.addEventListener("focus", () => {
     savedValue = inputEl.value;
     inputEl.value = "";
+    if (savedValue) inputEl.placeholder = `기존 선택: ${savedValue}`;
   });
   inputEl.addEventListener("blur", () => {
     if (!inputEl.value) inputEl.value = savedValue;
+    inputEl.placeholder = originalPlaceholder;
   });
 }
 enableFullListOnFocus(document.getElementById("univSearchInput"));
