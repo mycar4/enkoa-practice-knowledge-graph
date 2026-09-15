@@ -42,26 +42,23 @@
 <div class="flex items-center gap-unit-xs"><span class="inline-block w-2.5 h-2.5 bg-primary-container"></span><span class="font-label-sm text-label-sm text-primary uppercase tracking-wider">ART:READY</span></div>
 <a href="profile.html" class="lg:hidden h-9 px-unit-sm rounded bg-primary text-on-primary font-label-sm text-label-sm flex items-center gap-unit-2xs shrink-0 transition-colors hover:bg-primary-container"><span>학생 분석 시작</span></a>
 </div>
-<div class="relative">
-<!-- 모바일 전용: 브랜드 도형(원/사각형/삼각형)을 헤드라인 뒤에 옅은 배경으로 깔아 아이덴티티를 은은하게 부각 -->
-<div class="lg:hidden absolute -inset-x-2 -inset-y-1 z-0 flex items-center justify-center opacity-20 pointer-events-none overflow-hidden" aria-hidden="true">
-<svg width="240" height="240" viewBox="0 0 380 280" xmlns="http://www.w3.org/2000/svg">
-<rect x="190" y="50" width="160" height="160" fill="#151515"/>
-<polygon points="290,215 190,20 380,20" fill="#E34234"/>
-<circle cx="90" cy="150" r="85" fill="#1647D8"/>
-</svg>
-</div>
+<div class="relative hidden lg:block">
 <h1 class="relative z-10 font-headline-lg-mobile text-headline-lg-mobile lg:font-display-xl lg:text-display-xl text-on-surface tracking-tight">감으로 상담하던<br/>미술입시를 데이터로.</h1>
 <p class="relative z-10 font-body-md text-body-md lg:font-body-lg lg:text-body-lg text-on-surface-variant mt-unit-sm leading-relaxed max-w-lg">준비 중인 실기와 공식 모집요강을 비교해<br/>상담에서 검토할 전형과 확인할 일정을 찾습니다.</p>
 </div>
 
-<!-- 모바일에서도 도형 아이덴티티가 바로 보이게: 컴팩트 가로 배지 -->
-<div class="flex lg:hidden items-center gap-unit-md mt-unit-md p-unit-sm bg-surface-container-lowest rounded shadow-sm">
-<div class="flex items-center gap-unit-xs"><span class="w-5 h-5 rounded-full bg-primary inline-block shrink-0"></span><span class="font-label-sm text-label-sm text-on-surface-variant">학생 조건</span></div>
-<span class="material-symbols-outlined text-outline text-[16px]">arrow_forward</span>
-<div class="flex items-center gap-unit-xs"><span class="w-5 h-5 bg-on-surface inline-block shrink-0"></span><span class="font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap">전형 데이터</span></div>
-<span class="material-symbols-outlined text-outline text-[16px]">arrow_forward</span>
-<div class="flex items-center gap-unit-xs"><svg width="18" height="18" viewBox="0 0 18 18" class="shrink-0"><polygon points="9,1 17,17 1,17" fill="#E34234"/></svg><span class="font-label-sm text-label-sm text-on-surface-variant">판단 신호</span></div>
+<!-- 2026-09-15: 모바일은 헤드라인+배지 줄을 지식그래프 미리보기로 완전히 교체한다
+     (사용자 명시 결정 - 텍스트 설명 대신 실제 데이터로 바로 임팩트를 준다).
+     이전/다음 버튼으로 대학을 가나다순으로 순환하며 보여주고, "대학 지도 보기"는
+     버튼 형태로 노출한다. -->
+<div class="lg:hidden mt-unit-sm">
+<div id="heroGraphPreviewMobile" class="w-full h-56 rounded-lg border border-outline-variant/40 bg-surface-container-lowest"></div>
+<div class="flex items-center justify-between mt-unit-xs">
+<button id="heroPrevMobile" type="button" aria-label="이전 대학" class="w-9 h-9 rounded-full bg-surface-container-low text-on-surface flex items-center justify-center hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[20px]">chevron_left</span></button>
+<span id="heroUnivLabelMobile" class="font-label-md text-label-md text-on-surface text-center flex-1 truncate px-unit-xs">불러오는 중...</span>
+<button id="heroNextMobile" type="button" aria-label="다음 대학" class="w-9 h-9 rounded-full bg-surface-container-low text-on-surface flex items-center justify-center hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[20px]">chevron_right</span></button>
+</div>
+<a href="kg.html" class="mt-unit-sm w-full h-11 px-unit-md bg-on-surface text-surface flex items-center justify-center gap-unit-2xs rounded font-label-md text-label-md shadow-sm">대학 지도 보기<span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
 </div>
 
 <div class="flex flex-col sm:flex-row lg:flex-col gap-unit-xs mt-unit-lg max-w-md">
@@ -91,21 +88,23 @@
 </svg>
 <div id="heroGraphPreview" class="absolute inset-0 rounded-lg border border-outline-variant/40 bg-surface-container-lowest opacity-0 pointer-events-none transition-opacity duration-700"></div>
 </div>
-<div class="grid grid-cols-3 gap-unit-md w-full max-w-md">
+<!-- Point/Line/Plane 범례는 최초 도형이 떠 있는 동안에만 의미가 있다 - 그래프로
+     전환되면 JS(heroSwapToGraph)가 이 블록을 숨긴다. -->
+<div id="heroShapesLegend" class="grid grid-cols-3 gap-unit-md w-full max-w-md transition-opacity duration-700">
 <div class="flex flex-col items-center gap-unit-2xs text-center"><span class="w-4 h-4 rounded-full bg-primary inline-block"></span><span class="font-label-sm text-label-sm text-on-surface font-bold">학생 프로필</span><span class="font-label-sm text-label-sm text-on-surface-variant">Point</span></div>
 <div class="flex flex-col items-center gap-unit-2xs text-center"><span class="w-4 h-4 bg-on-surface inline-block"></span><span class="font-label-sm text-label-sm text-on-surface font-bold">등록된 대학 전형 데이터</span><span class="font-label-sm text-label-sm text-on-surface-variant">Plane</span></div>
 <div class="flex flex-col items-center gap-unit-2xs text-center"><svg width="16" height="16" viewBox="0 0 16 16"><polygon points="8,1 15,15 1,15" fill="#E34234"/></svg><span class="font-label-sm text-label-sm text-on-surface font-bold">판단·리스크 신호</span><span class="font-label-sm text-label-sm text-on-surface-variant">Line</span></div>
 </div>
-<a href="kg.html" class="font-label-md text-label-md text-primary underline inline-flex items-center gap-unit-2xs">전체 지도 보기<span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
+<!-- 그래프로 전환된 뒤에만 보이는 이전/다음 순환 + 지도 보기 버튼 -->
+<div id="heroGraphControls" class="hidden w-full max-w-md flex-col items-center gap-unit-sm">
+<div class="flex items-center justify-between w-full">
+<button id="heroPrevDesktop" type="button" aria-label="이전 대학" class="w-9 h-9 rounded-full bg-surface-container-low text-on-surface flex items-center justify-center hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[20px]">chevron_left</span></button>
+<span id="heroUnivLabelDesktop" class="font-label-md text-label-md text-on-surface text-center flex-1 truncate px-unit-xs"></span>
+<button id="heroNextDesktop" type="button" aria-label="다음 대학" class="w-9 h-9 rounded-full bg-surface-container-low text-on-surface flex items-center justify-center hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[20px]">chevron_right</span></button>
 </div>
-</section>
-
-<!-- 모바일: 헤드라인~판단신호 배지 줄은 그대로 두고(피드백 반영 - 기존 내용 숨기지
-     않음), 그 아래에 지식그래프 미리보기를 별도 섹션으로 추가한다. 데스크톱과 같은
-     실제 데이터를 쓰되, 모바일은 애니메이션 전환 없이 바로 그래프로 보여준다. -->
-<section class="lg:hidden px-margin-mobile pb-unit-lg">
-<div id="heroGraphPreviewMobile" class="w-full h-56 rounded-lg border border-outline-variant/40 bg-surface-container-lowest"></div>
-<a href="kg.html" class="mt-unit-sm font-label-md text-label-md text-primary underline inline-flex items-center gap-unit-2xs">전체 지도 보기<span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
+<a href="kg.html" class="w-full h-11 px-unit-md bg-on-surface text-surface flex items-center justify-center gap-unit-2xs rounded font-label-md text-label-md shadow-sm">대학 지도 보기<span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
+</div>
+</div>
 </section>
 
 <section class="px-margin-mobile lg:px-12 py-unit-lg lg:pb-unit-3xl">
@@ -188,11 +187,12 @@ fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
 </script>
 
 <script>
-// [메인 히어로 지식그래프 미리보기] 목업이 아니라 /kg-graph가 내려주는 홍익대학교
-// 실제 구조를 그대로 그린다 - "보기 전용"이라는 걸 분명히 하려고 물리엔진/줌/드래그/
+// [메인 히어로 지식그래프 미리보기] 목업이 아니라 /kg-graph가 내려주는 실제 대학
+// 구조를 그대로 그린다 - "보기 전용"이라는 걸 분명히 하려고 물리엔진/줌/드래그/
 // 클릭을 전부 끈다(대형 서비스가 우리 데이터를 통째로 긁어가는 상호작용 통로를
 // 열어주지 않기 위함이기도 하다). 데스크톱은 도형이 먼저 뜨고 1초 뒤 이 그래프로
-// 전환되고, 모바일은 애니메이션 없이 바로 그래프만 보여준다(공간이 좁아서).
+// 전환되고, 모바일은 헤드라인·배지 영역 자체를 이 그래프로 완전히 대체한다
+// (2026-09-15 사용자 결정). 이전/다음 버튼으로 등록된 대학을 가나다순으로 순환한다.
 function renderHeroGraphPreview(containerId, graphData) {
   const container = document.getElementById(containerId);
   if (!container || typeof vis === "undefined") return;
@@ -211,21 +211,53 @@ function renderHeroGraphPreview(containerId, graphData) {
   });
 }
 
-fetch(window.API_BASE_URL + "/kg-graph?university=" + encodeURIComponent("홍익대학교")).then(r => r.json()).then(graphData => {
-  if (!graphData.nodes || !graphData.nodes.length) return;
+let heroUnivNames = [];
+let heroUnivIndex = 0;
+let heroSwappedToGraph = false;
 
-  renderHeroGraphPreview("heroGraphPreviewMobile", graphData);
+function heroSwapToGraph() {
+  if (heroSwappedToGraph) return;
+  heroSwappedToGraph = true;
+  const shapes = document.getElementById("heroShapes");
+  const preview = document.getElementById("heroGraphPreview");
+  const legend = document.getElementById("heroShapesLegend");
+  const controls = document.getElementById("heroGraphControls");
+  if (shapes) shapes.classList.add("opacity-0");
+  if (preview) preview.classList.remove("opacity-0");
+  // Point/Line/Plane 범례는 도형이 떠 있을 때만 의미가 있으므로 그래프로 전환되면
+  // 숨기고, 그 자리에 이전/다음 + 지도 보기 버튼을 보여준다.
+  if (legend) { legend.classList.add("opacity-0"); setTimeout(() => legend.classList.add("hidden"), 700); }
+  if (controls) { controls.classList.remove("hidden"); controls.classList.add("flex"); }
+}
 
-  // 데스크톱: 1초 뒤 도형(heroShapes)을 페이드아웃하고 그래프(heroGraphPreview)를
-  // 페이드인한다 - 둘 다 같은 자리에 absolute로 겹쳐뒀으므로 opacity만 바꾸면 된다.
-  renderHeroGraphPreview("heroGraphPreview", graphData);
-  setTimeout(() => {
-    const shapes = document.getElementById("heroShapes");
-    const preview = document.getElementById("heroGraphPreview");
-    if (!shapes || !preview) return;
-    shapes.classList.add("opacity-0");
-    preview.classList.remove("opacity-0");
-  }, 1000);
-}).catch(() => { /* 미리보기 실패해도 도형은 그대로 남아있으니 화면이 깨지지 않는다 */ });
+async function loadHeroUniversity(index) {
+  if (!heroUnivNames.length) return;
+  heroUnivIndex = ((index % heroUnivNames.length) + heroUnivNames.length) % heroUnivNames.length;
+  const name = heroUnivNames[heroUnivIndex];
+  const desktopLabel = document.getElementById("heroUnivLabelDesktop");
+  const mobileLabel = document.getElementById("heroUnivLabelMobile");
+  if (desktopLabel) desktopLabel.textContent = name;
+  if (mobileLabel) mobileLabel.textContent = name;
+  try {
+    const graphData = await fetch(window.API_BASE_URL + "/kg-graph?university=" + encodeURIComponent(name)).then(r => r.json());
+    if (!graphData.nodes || !graphData.nodes.length) return;
+    renderHeroGraphPreview("heroGraphPreviewMobile", graphData);
+    renderHeroGraphPreview("heroGraphPreview", graphData);
+    // 최초 1회만 도형->그래프 전환 애니메이션(1초 뒤), 이후 이전/다음 클릭은 바로 반영.
+    if (!heroSwappedToGraph) setTimeout(heroSwapToGraph, 1000);
+  } catch { /* 이 대학만 실패해도 이전 화면이 남아있으니 깨지지 않는다 */ }
+}
+
+document.getElementById("heroPrevDesktop")?.addEventListener("click", () => loadHeroUniversity(heroUnivIndex - 1));
+document.getElementById("heroNextDesktop")?.addEventListener("click", () => loadHeroUniversity(heroUnivIndex + 1));
+document.getElementById("heroPrevMobile")?.addEventListener("click", () => loadHeroUniversity(heroUnivIndex - 1));
+document.getElementById("heroNextMobile")?.addEventListener("click", () => loadHeroUniversity(heroUnivIndex + 1));
+
+fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
+  // 가나다순 - 대학명 문자열 기본 정렬이 곧 가나다순이다.
+  heroUnivNames = [...new Set(list.map(u => u.university))].sort((a, b) => a.localeCompare(b, "ko"));
+  const startIdx = Math.max(0, heroUnivNames.indexOf("홍익대학교"));
+  loadHeroUniversity(startIdx);
+}).catch(() => { /* 목록을 못 불러오면 도형만 남고 그래프 전환은 생략된다 */ });
 </script>
 </body></html>
