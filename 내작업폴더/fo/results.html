@@ -817,7 +817,7 @@ async function renderDepartmentResults(query, mode) {
     // 학과명으로 결과 화면을 새로 그리는 게 가장 간단하고 일관된 동선이다.
     const similarBlock = similar.length ? `
         <details class="mt-unit-2xs">
-          <summary class="font-label-sm text-label-sm text-outline cursor-pointer">비슷한 학과 ${similar.length}곳 (같은 계열 태그 기준, 교육과정 유사도)</summary>
+          <summary class="font-label-md text-label-md text-primary font-bold cursor-pointer flex items-center gap-unit-2xs"><span class="material-symbols-outlined text-[16px]">auto_awesome</span>비슷한 학과 ${similar.length}곳 (같은 계열 태그 기준, 교육과정 유사도)</summary>
           <ul class="mt-unit-2xs flex flex-col gap-unit-3xs">
             ${similar.map(s => `<li class="font-body-sm text-body-sm">
               <a href="results.html?mode=department&name=${encodeURIComponent(s.department)}" class="flex items-center justify-between gap-unit-xs text-on-surface-variant hover:text-primary hover:underline">
@@ -1412,7 +1412,7 @@ function renderRecommendResults() {
     const recSimilar = recommendSimilarByDept.get(recommendDeptKey(r)) || [];
     const recSimilarBlock = recSimilar.length ? `
       <details class="mt-unit-2xs">
-        <summary class="font-label-sm text-label-sm text-outline cursor-pointer">비슷한 학과 ${recSimilar.length}곳 (같은 계열 태그 기준, 교육과정 유사도)</summary>
+        <summary class="font-label-md text-label-md text-primary font-bold cursor-pointer flex items-center gap-unit-2xs"><span class="material-symbols-outlined text-[16px]">auto_awesome</span>비슷한 학과 ${recSimilar.length}곳 (같은 계열 태그 기준, 교육과정 유사도)</summary>
         <ul class="mt-unit-2xs flex flex-col gap-unit-3xs">
           ${recSimilar.map(s => `<li class="font-body-sm text-body-sm">
             <a href="results.html?mode=department&name=${encodeURIComponent(s.department)}" class="flex items-center justify-between gap-unit-xs text-on-surface-variant hover:text-primary hover:underline">
