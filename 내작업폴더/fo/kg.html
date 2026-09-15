@@ -239,6 +239,27 @@ function renderGraph(graphData) {
   const container = document.getElementById("kgNetwork");
   const colorByGroup = { topic: "#0a7d3c", tracktype: "#0a7d3c", admissiontype: "#0a7d3c", university: "#0031ab", department: "#b72119", track: "#1c1b1b" };
   const sizeByGroup = { topic: 30, tracktype: 30, admissiontype: 30, university: 26, department: 18, track: 12 };
+  // 2026-09-15: "노드 크기가 전부 똑같다"는 피드백 - 학과가 1개인 대학이나
+  // 학과가 20개인 대학이나 똑같은 크기로 나오는 게 이상하다는 지적을 받았다.
+  // 백엔드 변경 없이, 이미 받은 edges 배열만으로 각 노드의 연결 개수(차수)를
+  // 세서 대학/학과 노드 크기에 비례 반영한다(전형 노드는 그대로 - 맨 끝
+  // 잎노드라 차수가 항상 1이라 의미가 없음). 정원(quota)은 별도 필드로 안 내려오고
+  // 라벨 문자열에 "(20명)" 형태로만 있어서, 정규식으로 뽑아 전형행 엣지 굵기에 쓴다.
+  const degreeById = {};
+  graphData.edges.forEach(e => {
+    degreeById[e.from] = (degreeById[e.from] || 0) + 1;
+    degreeById[e.to] = (degreeById[e.to] || 0) + 1;
+  });
+  function scaledSize(group, id, base) {
+    if (group !== "university" && group !== "department") return base;
+    const degree = degreeById[id] || 1;
+    // sqrt로 완만하게 키운다 - 선형으로 하면 학과 30개짜리 대학이 화면을 다 덮음.
+    return Math.round(base * Math.min(2.6, 0.7 + Math.sqrt(degree) * 0.35));
+  }
+  function quotaFromLabel(label) {
+    const m = /\((\d+)\s*명\)/.exec(label || "");
+    return m ? parseInt(m[1], 10) : null;
+  }
   // vis.js에 노드의 "group" 필드를 그대로 넘기면 vis.js가 자체 기본 팔레트로
   // 그 그룹을 자동 채색하는 기능이 있는데, 이게 우리가 지정한 color와 충돌해서
   // "보기 범위"를 바꿔 다시 렌더링할 때(그룹 구성이 달라질 때) 대학 노드가
@@ -257,13 +278,21 @@ function renderGraph(graphData) {
       // 노드 배경과 겹치지 않도록 노드 주변에 밝은 테두리를 살짝 둔다.
       font: { color: "#1c1b1b", size: n.group === "university" ? 15 : (n.group === "department" ? 13 : 11), strokeWidth: 3, strokeColor: "#fcf9f8" },
       shape: "dot",
-      size: sizeByGroup[n.group] || 12,
+      size: scaledSize(n.group, n.id, sizeByGroup[n.group] || 12),
       // 전형 노드에 학생부 환산 결과가 있으면(title) 마우스오버 시 브라우저
       // 기본 툴팁으로 뜬다 - vis.js가 title 속성을 그대로 사용.
       title: n.title || undefined,
     };
   }));
-  const edges = new vis.DataSet(graphData.edges.map(e => ({ ...e, color: { color: "#c9c6c5" } })));
+  const nodeById = {};
+  graphData.nodes.forEach(n => { nodeById[n.id] = n; });
+  const edges = new vis.DataSet(graphData.edges.map(e => {
+    // 학과→전형 엣지만 정원 굵기를 반영한다(대학→학과 엣지는 정원 개념이 없음).
+    const toNode = nodeById[e.to];
+    const quota = toNode && toNode.group === "track" ? quotaFromLabel(toNode.label) : null;
+    const width = quota ? Math.min(8, 1 + Math.sqrt(quota) * 0.6) : 1;
+    return { ...e, color: { color: "#c9c6c5" }, width };
+  }));
 
   // 이 카운트는 캠퍼스가 다르면(중앙대 서울/다빈치 등) 별개 노드로 세므로,
   // 홈 화면의 "고유 대학명" 기준 개수(예: 54개)와 다를 수 있다 - 버그가 아니라
