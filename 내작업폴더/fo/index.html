@@ -155,14 +155,14 @@ AI는 대학을 결정하지 않습니다. 공식 모집요강 원문 데이터�
 <!-- [히어로 그래프 확대 보기] PC/모바일 공용 모달 - 미리보기와 같은 비상호작용
      네트워크를 더 큰 캔버스에 다시 그린다(줌은 허용해서 자세히 보게 하되, 노드
      드래그/클릭은 여전히 막아 데이터를 그대로 긁어가는 통로는 열지 않는다). -->
-<div id="heroGraphModal" class="hidden fixed inset-0 z-[60] bg-on-surface/60 items-center justify-center p-unit-md" role="dialog" aria-modal="true">
-<div class="bg-surface rounded-lg shadow-lg w-full max-w-4xl flex flex-col gap-unit-sm p-unit-md">
-<div class="flex items-center justify-between">
+<div id="heroGraphModal" class="hidden fixed inset-0 z-[60] bg-surface flex-col" role="dialog" aria-modal="true">
+<div class="flex items-center justify-between px-unit-md py-unit-sm border-b border-outline-variant/40 shrink-0">
 <span id="heroModalTitle" class="font-headline-sm text-headline-sm text-on-surface"></span>
 <button id="heroModalClose" type="button" aria-label="닫기" class="w-9 h-9 rounded-full hover:bg-surface-container-low flex items-center justify-center"><span class="material-symbols-outlined text-[22px]">close</span></button>
 </div>
-<div id="heroGraphModalNetwork" class="w-full h-[70vh] rounded border border-outline-variant/40"></div>
-<a href="kg.html" class="self-center h-11 px-unit-lg bg-on-surface text-surface flex items-center justify-center gap-unit-2xs rounded font-label-md text-label-md shadow-sm">전체 지도에서 더 보기<span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
+<div id="heroGraphModalNetwork" class="w-full flex-1 min-h-0"></div>
+<div class="flex justify-center px-unit-md py-unit-sm border-t border-outline-variant/40 shrink-0">
+<button id="heroModalFullMap" type="button" class="h-11 px-unit-lg bg-on-surface text-surface flex items-center justify-center gap-unit-2xs rounded font-label-md text-label-md shadow-sm">전체지도보기<span class="material-symbols-outlined text-[18px]">arrow_forward</span></button>
 </div>
 </div>
 </main>
@@ -229,32 +229,43 @@ fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
 // 열어주지 않기 위함이기도 하다). 데스크톱은 도형이 먼저 뜨고 1초 뒤 이 그래프로
 // 전환되고, 모바일은 헤드라인·배지 영역 자체를 이 그래프로 완전히 대체한다
 // (2026-09-15 사용자 결정). 이전/다음 버튼으로 등록된 대학을 가나다순으로 순환한다.
-// 2026-09-15: forceAtlas2 물리엔진은 "연결이 많은 노드"를 중앙으로 끌어당겨서,
-// 학과 노드(전형이 여러 개 매달림)가 대학 노드보다 시각적으로 더 "허브"처럼
-// 보이는 문제가 있었다(사용자 스크린샷으로 발견). 계층형(hierarchical) 레이아웃
-// 으로 바꿔 대학을 항상 0단(최상단), 학과를 1단, 전형을 2단으로 고정한다 -
-// 연결 개수와 무관하게 대학이 항상 시각적 루트가 된다.
-const HERO_LEVEL_BY_GROUP = { university: 0, department: 1, track: 2 };
-function renderHeroGraphPreview(containerId, graphData, { zoomable = false } = {}) {
+// 2026-09-15: 계층형(hierarchical) 레이아웃을 처음 시도했지만 "너무 딱딱한 표
+// (격자) 느낌"이라는 피드백을 받았다 - 물리엔진(forceAtlas2)의 자유로운 느낌은
+// 되살리되, 대학 노드만 캔버스 중앙에 고정(fixed)해서 "학과가 더 허브처럼 보이는"
+// 원래 문제도 함께 해결한다(연결 개수와 무관하게 대학이 항상 중심에 있음).
+function renderHeroGraphPreview(containerId, graphData, { zoomable = false, full = false } = {}) {
   const container = document.getElementById(containerId);
   if (!container || typeof vis === "undefined") return null;
   const colorByGroup = { university: "#0031ab", department: "#b72119", track: "#1c1b1b" };
-  const nodes = new vis.DataSet(graphData.nodes.slice(0, 40).map(n => {
+  const rawNodes = full ? graphData.nodes : graphData.nodes.slice(0, 40);
+  const nodes = new vis.DataSet(rawNodes.map(n => {
     const bg = colorByGroup[n.group] || "#747686";
-    return { id: n.id, label: n.label, shape: "dot", size: n.group === "university" ? 22 : (n.group === "department" ? 14 : 9),
-             level: HERO_LEVEL_BY_GROUP[n.group] ?? 2,
-             color: { background: bg, border: bg }, font: { size: zoomable ? 13 : 11, color: "#1c1b1b" } };
+    const isUniversity = n.group === "university";
+    return {
+      id: n.id, label: n.label, shape: "dot",
+      size: isUniversity ? 24 : (n.group === "department" ? 14 : 9),
+      color: { background: bg, border: bg },
+      font: { size: zoomable ? 13 : 11, color: "#1c1b1b" },
+      // 대학 노드만 캔버스 중앙에 고정 - 나머지는 물리엔진이 자유롭게 배치한다.
+      fixed: isUniversity && !full ? { x: true, y: true } : false,
+      x: isUniversity && !full ? 0 : undefined,
+      y: isUniversity && !full ? 0 : undefined,
+      mass: isUniversity ? 3 : 1,
+    };
   }));
   const keptIds = new Set(nodes.map(n => n.id));
   const edges = new vis.DataSet(graphData.edges.filter(e => keptIds.has(e.from) && keptIds.has(e.to)).map(e => ({ ...e, color: { color: "#c9c6c5" } })));
   const network = new vis.Network(container, { nodes, edges }, {
-    layout: { hierarchical: { direction: "UD", sortMethod: "directed", nodeSpacing: zoomable ? 140 : 90, levelSeparation: zoomable ? 140 : 90 } },
-    physics: false,
+    layout: { improvedLayout: true },
+    physics: { solver: "forceAtlas2Based", forceAtlas2Based: { springLength: full ? 60 : 90, avoidOverlap: 0.5 }, stabilization: { iterations: full ? 200 : 120 } },
     // 미리보기(zoomable=false)는 줌/드래그를 전부 막고, 확대 모달(zoomable=true)은
     // 스크롤 줌만 허용해 자세히 볼 수 있게 한다 - 노드 드래그/클릭은 모달에서도 계속 막는다.
     interaction: { dragNodes: false, dragView: zoomable, zoomView: zoomable, selectable: false, hover: false },
   });
-  if (zoomable) network.once("afterDrawing", () => network.fit({ animation: false }));
+  // 2026-09-15: "디자인 비율이 이상하다"는 피드백 - 그래프가 컨테이너를 꽉 채우지
+  // 못하고 한쪽에 몰려 보이던 문제. 안정화가 끝나면 항상 fit()으로 컨테이너에
+  // 맞춰 재배치한다(미리보기도 모달도 동일하게 적용).
+  network.once("stabilizationIterationsDone", () => network.fit({ animation: false }));
   return network;
 }
 
@@ -282,6 +293,11 @@ function heroSwapToGraph() {
   // 전환한다(사용자 최종 확정 - 완전 삭제가 아니라 데스크톱과 동일한 스왑 방식).
   document.getElementById("heroMobileIntro")?.classList.add("hidden");
   document.getElementById("heroMobileGraphWrap")?.classList.remove("hidden");
+  // 2026-09-15: [모바일 초기 렌더 깨짐 버그 수정] heroMobileGraphWrap이 hidden
+  // (display:none)인 동안 vis.Network를 만들면 컨테이너 크기를 0으로 계산해서
+  // 그 이후 보여져도 레이아웃이 깨진 채 굳어있었다(사용자 스크린샷으로 발견).
+  // 컨테이너가 실제로 보이게 된 지금 이 시점에야 처음으로 모바일 그래프를 그린다.
+  if (heroLastGraphData) renderHeroGraphPreview("heroGraphPreviewMobile", heroLastGraphData);
 }
 
 let heroLastGraphData = null;
@@ -300,9 +316,10 @@ async function loadHeroUniversity(index) {
     if (!graphData.nodes || !graphData.nodes.length) return;
     heroLastGraphData = graphData;
     heroLastUnivName = name;
-    renderHeroGraphPreview("heroGraphPreviewMobile", graphData);
     renderHeroGraphPreview("heroGraphPreview", graphData);
-    // 최초 1회만 도형->그래프 전환 애니메이션(1초 뒤), 이후 이전/다음 클릭은 바로 반영.
+    // 모바일 컨테이너가 이미 보이는 상태(스왑 이후 이전/다음 클릭)일 때만 바로
+    // 그린다 - 최초 1회는 heroSwapToGraph가 보여주는 시점에 직접 그린다.
+    if (heroSwappedToGraph) renderHeroGraphPreview("heroGraphPreviewMobile", graphData);
     if (!heroSwappedToGraph) setTimeout(heroSwapToGraph, 1000);
   } catch { /* 이 대학만 실패해도 이전 화면이 남아있으니 깨지지 않는다 */ }
 }
@@ -321,6 +338,14 @@ function openHeroGraphModal() {
   modal.classList.remove("hidden");
   modal.classList.add("flex");
   heroModalNetwork = renderHeroGraphPreview("heroGraphModalNetwork", heroLastGraphData, { zoomable: true });
+  // 열 때마다 해당 대학 단일 그래프로 리셋하므로 "전체지도보기" 버튼도 다시 노출한다.
+  heroFullMapLoaded = false;
+  const fullMapBtn = document.getElementById("heroModalFullMap");
+  if (fullMapBtn) {
+    fullMapBtn.hidden = false;
+    fullMapBtn.disabled = false;
+    fullMapBtn.innerHTML = "전체지도보기<span class=\"material-symbols-outlined text-[18px]\">arrow_forward</span>";
+  }
 }
 function closeHeroGraphModal() {
   const modal = document.getElementById("heroGraphModal");
@@ -328,9 +353,31 @@ function closeHeroGraphModal() {
   modal.classList.remove("flex");
   if (heroModalNetwork) { heroModalNetwork.destroy(); heroModalNetwork = null; }
 }
+let heroFullMapLoaded = false;
+async function loadFullGraphIntoModal() {
+  const btn = document.getElementById("heroModalFullMap");
+  if (heroFullMapLoaded || !btn) return;
+  heroFullMapLoaded = true;
+  btn.disabled = true;
+  const originalLabel = btn.innerHTML;
+  btn.innerHTML = "전체 지도 불러오는 중...";
+  try {
+    const fullGraphData = await fetch(window.API_BASE_URL + "/kg-graph").then(r => r.json());
+    if (!fullGraphData.nodes || !fullGraphData.nodes.length) throw new Error("empty");
+    document.getElementById("heroModalTitle").textContent = "전체 지도";
+    if (heroModalNetwork) { heroModalNetwork.destroy(); heroModalNetwork = null; }
+    heroModalNetwork = renderHeroGraphPreview("heroGraphModalNetwork", fullGraphData, { zoomable: true, full: true });
+    btn.hidden = true;
+  } catch {
+    heroFullMapLoaded = false;
+    btn.disabled = false;
+    btn.innerHTML = originalLabel;
+  }
+}
 document.getElementById("heroExpandDesktop")?.addEventListener("click", openHeroGraphModal);
 document.getElementById("heroExpandMobile")?.addEventListener("click", openHeroGraphModal);
 document.getElementById("heroModalClose")?.addEventListener("click", closeHeroGraphModal);
+document.getElementById("heroModalFullMap")?.addEventListener("click", loadFullGraphIntoModal);
 document.getElementById("heroGraphModal")?.addEventListener("click", (e) => { if (e.target.id === "heroGraphModal") closeHeroGraphModal(); });
 
 fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
