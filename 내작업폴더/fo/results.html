@@ -1151,6 +1151,20 @@ function renderRecommendResults() {
   // qa.html로 넘긴다. 원본 JSON 전체가 아니라 사람이 읽을 수 있는 요약 문장으로
   // 넘기는 이유: 에이전트가 어차피 자기 도구(search_tracks 등)로 실제 그래프를 다시
   // 조회해서 답하므로, 여기서는 "어떤 학교들 얘기인지"만 정확히 짚어주면 된다.
+  // 2026-09-15: "지금 성적으로 유리한 순으로 뽑아줘" 같은 후속 질문에 챗봇이
+  // "데이터 없음"으로 기권하던 버그 발견 - 대학명/학과명 요약만 넘기고 정작 원본
+  // 내신 성적(국어3·영어4 등)은 안 넘겨서, recommend_by_grades 도구를 다시 호출할
+  // 재료가 에이전트에 전혀 없었다. grades.html이 이미 sessionStorage에 저장해둔
+  // artready_recommend_grades를 읽어서 사람이 읽을 수 있는 문장으로 같이 붙인다.
+  function formatGradesForContext() {
+    let grades = [];
+    try { grades = JSON.parse(sessionStorage.getItem("artready_recommend_grades") || "[]"); } catch (e) { /* 무시 */ }
+    if (!grades.length) return "";
+    const parts = grades.map(g => g.career_elective
+      ? `${g.subject_group}(진로선택) ${g.achievement}`
+      : `${g.subject_group} ${g.grade}등급(${g.credit}단위)`);
+    return `[학생 내신 원본: ${parts.join(", ")}]`;
+  }
   let currentDisplayedList = [];
   document.getElementById("askAboutResultsBtn").addEventListener("click", () => {
     const top = currentDisplayedList.filter(r => r.calc_precision !== "not_applicable").slice(0, 5);
@@ -1163,7 +1177,9 @@ function renderRecommendResults() {
         return `${i + 1}. ${r.university} ${r.department}(${r.track_name || ""})${tier ? " - " + tier : ""}`;
       }).join(" / ");
       const naCount = currentDisplayedList.filter(r => r.calc_precision === "not_applicable").length;
-      const summary = `[내신 성적 기반 추천 결과 참고 - 상위 ${top.length}곳: ${lines}]` +
+      const gradesLine = formatGradesForContext();
+      const summary = (gradesLine ? gradesLine + " " : "") +
+        `[내신 성적 기반 추천 결과 참고 - 상위 ${top.length}곳: ${lines}]` +
         (naCount > 0 ? ` (이 외 학생부 미반영 전형 ${naCount}곳은 제외)` : "");
       sessionStorage.setItem("artready_qa_context", summary);
     }
@@ -1173,12 +1189,15 @@ function renderRecommendResults() {
   // 무충돌 6장 조합 자동 추천 - 반드시 "지금 화면에 이미 필터·정렬까지 적용해서
   // 보여주고 있는 currentDisplayedList" 안에서만 고른다. 처음엔 서버에 별도
   // API(/recommend-combo)로 grades+topic_keywords만 다시 보내 전체 후보군에서
-  // 계산했었는데, 그러면 화면의 정렬 기준/전형 유형(서류·학생부종합·학생부교과)/
-  // 성별/대학명 검색 필터가 전부 무시된 채 "무작위로 아무 6개"가 나온 것처럼
-  // 보인다는 피드백을 받았다 - 사용자가 이미 좁혀둔 조건 안에서 조합을 짜야
-  // 의미가 있으므로, 서버를 다시 부르지 않고 지금 화면과 완전히 같은 리스트
-  // 위에서 그리디 겹침 제거를 그대로 재현한다(로직은 recommend_conflict_free_combo와
-  // 동일 - admission_year가 같을 때만 exam_dates 교집합을 충돌로 본다).
+  // 계산했었는데, 그러면 화면의 전형 유형(서류·학생부종합·학생부교과)/성별/대학명
+  // 검색 필터가 전부 무시된 채 "무작위로 아무 6개"가 나온 것처럼 보인다는 피드백을
+  // 받았다 - 사용자가 이미 좁혀둔 필터 조건 안에서 조합을 짜야 의미가 있으므로,
+  // 서버를 다시 부르지 않고 지금 화면과 같은 필터가 적용된 리스트 위에서 그리디
+  // 겹침 제거를 그대로 재현한다(로직은 recommend_conflict_free_combo와 동일 -
+  // admission_year가 같을 때만 exam_dates 교집합을 충돌로 본다). 다만 화면의
+  // "정렬" 드롭다운(등급순/경쟁률순 등)은 무시하고, 항상 "합격 확률이 높은 순"
+  // 기준(computeReversalMax)으로 다시 정렬해서 겹침 제거를 수행한다(2026-09-15
+  // 사용자 요청 - 자동 추천은 사용자가 보고 있던 임의 정렬이 아니라 유리한 순이어야 함).
   document.getElementById("comboCloseBtn").addEventListener("click", () => {
     document.getElementById("comboSection").classList.add("hidden");
   });
@@ -1196,7 +1215,19 @@ function renderRecommendResults() {
     section.classList.remove("hidden");
     section.scrollIntoView({ behavior: "smooth", block: "start" });
 
-    const pool = currentDisplayedList.filter(r => r.calc_precision !== "not_applicable");
+    // 2026-09-15: "무충돌 6장 자동 추천은 화면에 걸어둔 정렬(예: 등급순)을 그대로
+    // 따라간다"는 이전 설계(2026-09-14)를 사용자가 다시 바꿨다 - 필터(성별/전형유형/
+    // 실기종목/대학명 검색)는 그대로 존중하되, 겹치지 않는 후보를 고를 때의 우선순위는
+    // "합격 확률이 높은 순 = 실기 결과까지 반영한 최종 총점(computeReversalMax) 높은
+    // 순"으로 항상 고정한다 - 사용자가 화면에서 다른 정렬(예: 경쟁률순)을 보고 있어도
+    // 자동 추천만큼은 이 기준으로 뽑는다. 값을 계산할 수 없는 후보는 맨 뒤로 보낸다.
+    const pool = currentDisplayedList.filter(r => r.calc_precision !== "not_applicable").slice().sort((a, b) => {
+      const am = computeReversalMax(a), bm = computeReversalMax(b);
+      if (am == null && bm == null) return 0;
+      if (am == null) return 1;
+      if (bm == null) return -1;
+      return bm - am;
+    });
     const maxCount = 6;
     const chosen = [];
     const skipped = [];
@@ -1215,7 +1246,7 @@ function renderRecommendResults() {
       chosen.push(cand);
     }
 
-    summaryEl.textContent = `지금 화면에 적용된 정렬·필터 기준 그대로(총 ${pool.length}개 후보) 실기고사 날짜가 서로 겹치지 않는 ${chosen.length}곳을 담았습니다. 이 순서는 우열이 아니라 현재 화면 정렬 결과를 그대로 따른 것이며, 실제 지원은 본인 준비 상황과 선호도를 함께 고려하세요.`;
+    summaryEl.textContent = `지금 화면에 적용된 필터 조건(총 ${pool.length}개 후보) 안에서, 실기 결과까지 반영한 최종 총점이 높은 순으로 실기고사 날짜가 서로 겹치지 않는 ${chosen.length}곳을 담았습니다. #1이 가장 유리한 조합이며, 실제 지원은 본인 준비 상황과 선호도를 함께 고려하세요.`;
     listEl.innerHTML = chosen.map((t, i) => `
       <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-unit-sm">
         <p class="font-label-sm text-label-sm text-secondary">#${i + 1}</p>
