@@ -1065,6 +1065,23 @@ class ArtAdmissionService:
             """, university=university, department=department, campus=campus,
                  intro=department_intro, subjects=curriculum_subjects, source_note=source_note)
 
+    def get_department_curriculum(self, university: str, department: str, campus: Optional[str] = None) -> Dict[str, Any]:
+        """[교육과정 원문 보기] set_department_curriculum()으로 저장해둔 학과 소개·
+        실제 과목 목록을 그대로 돌려준다 - 지금까지는 04_Department_Embedding_Indexer.py가
+        임베딩을 만드는 재료로만 쓰였고 화면에 노출하는 곳이 없었다("유사도는 보여주면서
+        정작 그 근거인 교과목 자체는 안 보여준다"는 지적 반영). 데이터가 없으면 빈 값으로
+        정직하게 반환한다(지어내지 않음)."""
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            row = s.run("""
+                MATCH (u:Admission_University {name: $university})-[:HAS_DEPARTMENT]->(d:Admission_Department {name: $department})
+                WHERE $campus IS NULL OR u.campus = $campus
+                RETURN d.department_intro AS department_intro, d.curriculum_subjects AS curriculum_subjects,
+                       d.curriculum_source_note AS source_url, d.standard_tag AS standard_tag
+            """, university=university, department=department, campus=campus).single()
+        if not row:
+            return {}
+        return dict(row)
+
     def find_similar_departments(self, university: str, department: str, campus: Optional[str] = None,
                                   top_k: int = 5) -> List[Dict[str, Any]]:
         """[유사 학과 추천] 대상 학과와 같은 standard_tag를 가진 학과들 중에서만
@@ -2227,6 +2244,22 @@ class ArtAdmissionService:
             return []
         rows = self.list_tracks_with_estimates()
         results = [r for r in rows if query in (r.get("department") or "")]
+        for r in results:
+            r["region"] = self._region_for(r["university"], r.get("campus"))
+            r["college_type"] = self._college_type_for(r["university"])
+        results.sort(key=lambda r: (r["university"], r.get("campus") or "", r["department"]))
+        return results
+
+    def search_tracks_by_tag(self, tag: str) -> List[Dict[str, Any]]:
+        """[표준 계열 태그로 찾기] kg.html 대학지도의 태그 필터와 results.html을
+        연결하는 진입점 - "이 계열로 검색하기"를 누르면 태그가 같은 학과의 전형을
+        전부 모아 보여준다. search_tracks_by_department와 반환 형태를 맞춰서
+        같은 카드 렌더링 로직을 재사용할 수 있게 한다."""
+        tag = (tag or "").strip()
+        if not tag:
+            return []
+        rows = self.list_all_tracks_full()
+        results = [r for r in rows if r.get("standard_department_tag") == tag]
         for r in results:
             r["region"] = self._region_for(r["university"], r.get("campus"))
             r["college_type"] = self._college_type_for(r["university"])

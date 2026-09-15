@@ -20,6 +20,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"surface-container-lowest":"#ffffff","outline":"#747686","surface-variant":"#e5e2e1","surface-container-low":"#f6f3f2","primary-container":"#1647d8","on-background":"#1c1b1b","background":"#fcf9f8","on-primary":"#ffffff","primary":"#0031ab","on-surface":"#1c1b1b","error":"#ba1a1a","surface-container-highest":"#e5e2e1","surface-container":"#f0edec","on-surface-variant":"#434655","secondary":"#b72119","on-secondary":"#ffffff","surface-container-high":"#eae7e7","surface":"#fcf9f8","tertiary":"#745b00","on-tertiary":"#ffffff","error-container":"#ffdad6"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"gutter-mobile":"1rem","unit-md":"1rem","margin-desktop":"3rem","unit-xl":"2rem","unit-3xl":"4rem","unit-lg":"1.5rem","unit-xs":"0.25rem","unit-sm":"0.5rem","gutter-desktop":"1.5rem","margin-mobile":"1.25rem","unit-2xl":"3rem","unit-2xs":"0.125rem"},"fontFamily":{"label-lg":["Space Grotesk"],"headline-md":["Noto Sans"],"body-lg":["Noto Sans"],"label-md":["Space Grotesk"],"headline-lg":["Noto Sans"],"body-md":["Noto Sans"],"headline-sm":["Noto Sans"],"display-xl-mobile":["Space Grotesk"],"body-sm":["Noto Sans"],"label-sm":["Space Grotesk"],"display-xl":["Space Grotesk"],"headline-lg-mobile":["Noto Sans"]},"fontSize":{"label-lg":["14px",{"lineHeight":"18px","letterSpacing":"0.05em","fontWeight":"700"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"700"}],"body-lg":["17px",{"lineHeight":"26px","letterSpacing":"-0.01em","fontWeight":"400"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.06em","fontWeight":"600"}],"headline-lg":["36px",{"lineHeight":"46px","letterSpacing":"-0.02em","fontWeight":"700"}],"body-md":["15px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"400"}],"headline-sm":["20px",{"lineHeight":"28px","letterSpacing":"0em","fontWeight":"600"}],"display-xl-mobile":["38px",{"lineHeight":"44px","letterSpacing":"-0.02em","fontWeight":"700"}],"body-sm":["13px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"400"}],"label-sm":["10px",{"lineHeight":"14px","letterSpacing":"0.08em","fontWeight":"700"}],"display-xl":["56px",{"lineHeight":"64px","letterSpacing":"-0.03em","fontWeight":"700"}],"headline-lg-mobile":["26px",{"lineHeight":"34px","letterSpacing":"-0.01em","fontWeight":"700"}]}}}}</script>
 <script src="config.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.9/standalone/umd/vis-network.min.js"></script>
 </head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen">
 <header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 lg:h-20 px-gutter-mobile lg:px-12 max-w-[1440px] mx-auto flex items-center justify-between">
 <a href="index.html" class="flex items-center gap-unit-sm shrink-0"><svg width="28" height="20" viewBox="0 0 72 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#1647D8"/><rect x="26" y="2" width="20" height="20" fill="#151515"/><polygon points="60,2 70,22 50,22" fill="#E34234"/></svg><span class="font-label-lg text-label-lg text-on-surface tracking-wider">ART:READY</span></a>
@@ -76,19 +77,35 @@
 </div>
 </div>
 
-<!-- 데스크톱 히어로 비주얼: 도형 크기/의미를 크게 부각 (Kandinsky Point/Line/Plane 원칙 그대로) -->
+<!-- 데스크톱 히어로 비주얼: 도형(Kandinsky Point/Line/Plane)이 먼저 뜨고, 1초 뒤
+     실제 홍익대학교 지식그래프 미리보기로 자연스럽게 전환된다 - "첫 화면 임팩트는
+     챗봇보다 우리가 실제로 만든 지식그래프 쪽이 낫다"는 논의를 반영. 목업이 아니라
+     /kg-graph가 내려주는 진짜 데이터라 설득력이 있고, 상호작용(줌/드래그/클릭)은
+     막아 "미리보기"라는 걸 분명히 하며 전체 데이터를 그대로 긁어가진 못하게 한다. -->
 <div class="hidden lg:flex flex-col items-center justify-center gap-unit-lg">
-<svg width="380" height="280" viewBox="0 0 380 280" xmlns="http://www.w3.org/2000/svg">
+<div class="relative w-[380px] h-[280px]">
+<svg id="heroShapes" width="380" height="280" viewBox="0 0 380 280" xmlns="http://www.w3.org/2000/svg" class="absolute inset-0 transition-opacity duration-700">
 <rect x="190" y="50" width="160" height="160" fill="#151515"/>
 <polygon points="290,215 190,20 380,20" fill="#E34234" opacity="0.92"/>
 <circle cx="90" cy="150" r="85" fill="#1647D8"/>
 </svg>
+<div id="heroGraphPreview" class="absolute inset-0 rounded-lg border border-outline-variant/40 bg-surface-container-lowest opacity-0 pointer-events-none transition-opacity duration-700"></div>
+</div>
 <div class="grid grid-cols-3 gap-unit-md w-full max-w-md">
 <div class="flex flex-col items-center gap-unit-2xs text-center"><span class="w-4 h-4 rounded-full bg-primary inline-block"></span><span class="font-label-sm text-label-sm text-on-surface font-bold">학생 프로필</span><span class="font-label-sm text-label-sm text-on-surface-variant">Point</span></div>
 <div class="flex flex-col items-center gap-unit-2xs text-center"><span class="w-4 h-4 bg-on-surface inline-block"></span><span class="font-label-sm text-label-sm text-on-surface font-bold">등록된 대학 전형 데이터</span><span class="font-label-sm text-label-sm text-on-surface-variant">Plane</span></div>
 <div class="flex flex-col items-center gap-unit-2xs text-center"><svg width="16" height="16" viewBox="0 0 16 16"><polygon points="8,1 15,15 1,15" fill="#E34234"/></svg><span class="font-label-sm text-label-sm text-on-surface font-bold">판단·리스크 신호</span><span class="font-label-sm text-label-sm text-on-surface-variant">Line</span></div>
 </div>
+<a href="kg.html" class="font-label-md text-label-md text-primary underline inline-flex items-center gap-unit-2xs">전체 지도 보기<span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
 </div>
+</section>
+
+<!-- 모바일: 헤드라인~판단신호 배지 줄은 그대로 두고(피드백 반영 - 기존 내용 숨기지
+     않음), 그 아래에 지식그래프 미리보기를 별도 섹션으로 추가한다. 데스크톱과 같은
+     실제 데이터를 쓰되, 모바일은 애니메이션 전환 없이 바로 그래프로 보여준다. -->
+<section class="lg:hidden px-margin-mobile pb-unit-lg">
+<div id="heroGraphPreviewMobile" class="w-full h-56 rounded-lg border border-outline-variant/40 bg-surface-container-lowest"></div>
+<a href="kg.html" class="mt-unit-sm font-label-md text-label-md text-primary underline inline-flex items-center gap-unit-2xs">전체 지도 보기<span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
 </section>
 
 <section class="px-margin-mobile lg:px-12 py-unit-lg lg:pb-unit-3xl">
@@ -168,5 +185,47 @@ fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
 }).catch(() => {
   document.getElementById("univListChips").innerHTML = '<span class="font-body-sm text-body-sm text-error">API 연결 실패 - 학교 목록을 불러오지 못했습니다.</span>';
 });
+</script>
+
+<script>
+// [메인 히어로 지식그래프 미리보기] 목업이 아니라 /kg-graph가 내려주는 홍익대학교
+// 실제 구조를 그대로 그린다 - "보기 전용"이라는 걸 분명히 하려고 물리엔진/줌/드래그/
+// 클릭을 전부 끈다(대형 서비스가 우리 데이터를 통째로 긁어가는 상호작용 통로를
+// 열어주지 않기 위함이기도 하다). 데스크톱은 도형이 먼저 뜨고 1초 뒤 이 그래프로
+// 전환되고, 모바일은 애니메이션 없이 바로 그래프만 보여준다(공간이 좁아서).
+function renderHeroGraphPreview(containerId, graphData) {
+  const container = document.getElementById(containerId);
+  if (!container || typeof vis === "undefined") return;
+  const colorByGroup = { university: "#0031ab", department: "#b72119", track: "#1c1b1b" };
+  const nodes = new vis.DataSet(graphData.nodes.slice(0, 40).map(n => {
+    const bg = colorByGroup[n.group] || "#747686";
+    return { id: n.id, label: n.label, shape: "dot", size: n.group === "university" ? 20 : (n.group === "department" ? 13 : 8),
+             color: { background: bg, border: bg }, font: { size: 11, color: "#1c1b1b" } };
+  }));
+  const keptIds = new Set(nodes.map(n => n.id));
+  const edges = new vis.DataSet(graphData.edges.filter(e => keptIds.has(e.from) && keptIds.has(e.to)).map(e => ({ ...e, color: { color: "#c9c6c5" } })));
+  new vis.Network(container, { nodes, edges }, {
+    layout: { improvedLayout: true },
+    physics: { solver: "forceAtlas2Based", forceAtlas2Based: { springLength: 80 }, stabilization: { iterations: 100 } },
+    interaction: { dragNodes: false, dragView: false, zoomView: false, selectable: false, hover: false },
+  });
+}
+
+fetch(window.API_BASE_URL + "/kg-graph?university=" + encodeURIComponent("홍익대학교")).then(r => r.json()).then(graphData => {
+  if (!graphData.nodes || !graphData.nodes.length) return;
+
+  renderHeroGraphPreview("heroGraphPreviewMobile", graphData);
+
+  // 데스크톱: 1초 뒤 도형(heroShapes)을 페이드아웃하고 그래프(heroGraphPreview)를
+  // 페이드인한다 - 둘 다 같은 자리에 absolute로 겹쳐뒀으므로 opacity만 바꾸면 된다.
+  renderHeroGraphPreview("heroGraphPreview", graphData);
+  setTimeout(() => {
+    const shapes = document.getElementById("heroShapes");
+    const preview = document.getElementById("heroGraphPreview");
+    if (!shapes || !preview) return;
+    shapes.classList.add("opacity-0");
+    preview.classList.remove("opacity-0");
+  }, 1000);
+}).catch(() => { /* 미리보기 실패해도 도형은 그대로 남아있으니 화면이 깨지지 않는다 */ });
 </script>
 </body></html>

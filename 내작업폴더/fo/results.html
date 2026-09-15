@@ -247,6 +247,7 @@ const isRecommendMode = urlParams.get("mode") === "recommend"
   || !!sessionStorage.getItem("artready_recommend_results");
 const universityModeName = urlParams.get("mode") === "university" ? urlParams.get("name") : null;
 const departmentModeName = urlParams.get("mode") === "department" ? urlParams.get("name") : null;
+const tagModeName = urlParams.get("mode") === "tag" ? urlParams.get("name") : null;
 
 const raw = sessionStorage.getItem("artready_results");
 const profileRaw = sessionStorage.getItem("artready_profile");
@@ -284,7 +285,9 @@ function specialAdmissionTags(trackName) {
 if (universityModeName) {
   renderUniversityResults(universityModeName);
 } else if (departmentModeName) {
-  renderDepartmentResults(departmentModeName);
+  renderDepartmentResults(departmentModeName, "department");
+} else if (tagModeName) {
+  renderDepartmentResults(tagModeName, "tag");
 } else if (isRecommendMode) {
   renderRecommendResults();
 } else if (profile) {
@@ -751,28 +754,38 @@ async function renderUniversityResults(name) {
   }).join("");
 }
 
-async function renderDepartmentResults(query) {
+async function renderDepartmentResults(query, mode) {
+  // mode: "department"(부분일치 학과명 검색, 기본) | "tag"(표준 계열 태그로 검색 -
+  // kg.html의 "이 계열로 검색하기"에서 넘어옴). 두 모드가 카드 렌더링을 그대로
+  // 공유하고, 데이터를 가져오는 엔드포인트와 안내 문구만 다르다.
+  const isTagMode = mode === "tag";
   document.getElementById("matchStatsGrid").classList.add("hidden");
-  document.getElementById("profileSummary").textContent = `학과명 "${query}" 검색 결과`;
+  document.getElementById("profileSummary").textContent = isTagMode
+    ? `계열 "${query}" 검색 결과` : `학과명 "${query}" 검색 결과`;
   document.getElementById("scopeLine").textContent = "불러오는 중...";
   const container = document.getElementById("cardsContainer");
   container.innerHTML = "";
 
+  const fetchUrl = isTagMode
+    ? window.API_BASE_URL + "/tracks/by-tag?tag=" + encodeURIComponent(query)
+    : window.API_BASE_URL + "/tracks/by-department?q=" + encodeURIComponent(query);
   let tracks;
   try {
-    tracks = await fetch(window.API_BASE_URL + "/tracks/by-department?q=" + encodeURIComponent(query)).then(r => r.json());
+    tracks = await fetch(fetchUrl).then(r => r.json());
   } catch (err) {
     document.getElementById("scopeLine").textContent = "API 연결 실패";
     container.innerHTML = `<p class="col-span-full font-body-md text-body-md text-error py-unit-2xl text-center">API 연결에 실패했습니다 (${err}).</p>`;
     return;
   }
   if (!tracks || tracks.length === 0) {
-    document.getElementById("scopeLine").textContent = "일치하는 학과를 찾지 못했습니다.";
+    document.getElementById("scopeLine").textContent = isTagMode ? "이 계열로 등록된 학과를 찾지 못했습니다." : "일치하는 학과를 찾지 못했습니다.";
     container.innerHTML = `<p class="col-span-full font-body-md text-body-md text-on-surface-variant py-unit-2xl text-center">'${query}'(으)로 등록된 학과를 찾지 못했습니다. <a class="underline text-primary" href="profile.html">다시 검색해보세요</a>.</p>`;
     return;
   }
   const uniqUnivCount = new Set(tracks.map(t => t.university)).size;
-  document.getElementById("scopeLine").textContent = `'${query}' 학과명을 포함한 ${uniqUnivCount}개 대학, ${tracks.length}개 전형`;
+  document.getElementById("scopeLine").textContent = isTagMode
+    ? `'${query}' 계열 학과 ${uniqUnivCount}개 대학, ${tracks.length}개 전형`
+    : `'${query}' 학과명을 포함한 ${uniqUnivCount}개 대학, ${tracks.length}개 전형`;
 
   // 2026-09-15: [④ 유사 학과 추천] 같은 학과(대학+캠퍼스+학과명)가 전형별로 여러 번
   // 나오므로, 중복 호출을 피하려고 유니크 학과 단위로만 /similar-departments를 부른다.
@@ -799,16 +812,28 @@ async function renderDepartmentResults(query) {
     // 2026-09-15: score는 코사인 유사도(0~1) 원값 그대로다 - "검증된 사실"이 아니라
     // 교육과정 텍스트 임베딩 간 거리이므로, 사용자가 오해하지 않도록 "유사도"라는
     // 말과 함께 %로만 표시한다("일치율"/"매칭률" 같은 확정적 표현은 쓰지 않음).
+    // 2026-09-15: 비슷한 학과 항목을 클릭 가능하게 - 이름만 나열되고 다시 검색창에
+    // 손으로 타이핑해야 했던 "막다른 길" 문제("유기적인 검색이 안 된다") 반영.
+    // 학과명으로 결과 화면을 새로 그리는 게 가장 간단하고 일관된 동선이다.
     const similarBlock = similar.length ? `
         <details class="mt-unit-2xs">
-          <summary class="font-label-sm text-label-sm text-outline cursor-pointer">비슷한 학과 ${similar.length}곳 (같은 계열 태그 기준, 교육과정 임베딩 유사도)</summary>
+          <summary class="font-label-sm text-label-sm text-outline cursor-pointer">비슷한 학과 ${similar.length}곳 (같은 계열 태그 기준, 교육과정 유사도)</summary>
           <ul class="mt-unit-2xs flex flex-col gap-unit-3xs">
-            ${similar.map(s => `<li class="font-body-sm text-body-sm text-on-surface-variant flex items-center justify-between gap-unit-xs">
-              <span>${s.university}${s.campus ? ` (${s.campus}캠퍼스)` : ""} · ${s.department}</span>
-              <span class="shrink-0 px-unit-2xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded">유사도 ${Math.round((s.score || 0) * 100)}%</span>
+            ${similar.map(s => `<li class="font-body-sm text-body-sm">
+              <a href="results.html?mode=department&name=${encodeURIComponent(s.department)}" class="flex items-center justify-between gap-unit-xs text-on-surface-variant hover:text-primary hover:underline">
+                <span>${s.university}${s.campus ? ` (${s.campus}캠퍼스)` : ""} · ${s.department}</span>
+                <span class="shrink-0 px-unit-2xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded">유사도 ${Math.round((s.score || 0) * 100)}%</span>
+              </a>
             </li>`).join("")}
           </ul>
         </details>` : "";
+    // 2026-09-15: [교육과정 원문 보기] 유사도 근거인 실제 교과목을 직접 볼 수 있게
+    // <details>를 열 때만 지연 로딩한다(카드 수만큼 미리 다 불러오면 낭비이므로).
+    const curriculumBlock = `
+        <details class="mt-unit-2xs curriculumDetails" data-university="${t.university.replace(/"/g, '&quot;')}" data-department="${t.department.replace(/"/g, '&quot;')}" data-campus="${(t.campus || "").replace(/"/g, '&quot;')}">
+          <summary class="font-label-sm text-label-sm text-outline cursor-pointer">이 학과 교육과정 보기</summary>
+          <div class="curriculumBody mt-unit-2xs font-body-sm text-body-sm text-on-surface-variant">불러오는 중...</div>
+        </details>`;
     return `
       <div class="flex flex-col bg-surface-container-lowest rounded-lg p-unit-md gap-unit-2xs shadow-sm border border-outline-variant/30">
         <span class="font-headline-sm text-headline-sm text-on-surface">${t.university}${campusStr}</span>
@@ -818,15 +843,57 @@ async function renderDepartmentResults(query) {
         <div class="font-body-sm text-body-sm text-on-surface-variant">모집인원: ${t.quota ?? "-"}명 · 반영비율: ${t.ratio || "-"}</div>
         <div class="font-body-sm text-body-sm text-on-surface-variant">원서접수: ${t.application_start || "-"} ~ ${t.application_end || "-"}</div>
         ${similarBlock}
-        <div class="flex items-center justify-between mt-unit-xs pt-unit-xs border-t border-outline-variant/20">
+        ${curriculumBlock}
+        <div class="flex flex-wrap items-center gap-x-unit-sm gap-y-unit-2xs mt-unit-xs pt-unit-xs border-t border-outline-variant/20">
           <a class="font-label-sm text-label-sm text-on-surface-variant underline inline-flex items-center gap-unit-2xs" href="kg.html?university=${encodeURIComponent(t.university)}">
             <span class="material-symbols-outlined text-[14px]">hub</span>지도에서 보기
+          </a>
+          <a class="font-label-sm text-label-sm text-on-surface-variant underline inline-flex items-center gap-unit-2xs askAboutTrack" href="qa.html"
+             data-question="${(t.university + " " + t.department + " " + (t.track_name || "") + "에 대해 알려줘").replace(/"/g, '&quot;')}">
+            <span class="material-symbols-outlined text-[14px]">forum</span>이 전형 질문하기
           </a>
           ${t.source_url ? `<a class="font-label-sm text-label-sm text-primary underline" href="${t.source_url}" target="_blank" rel="noopener">공식 모집요강 원문</a>` : ""}
         </div>
       </div>
     `;
   }).join("");
+  container.querySelectorAll(".askAboutTrack").forEach(a => {
+    a.addEventListener("click", () => {
+      sessionStorage.setItem("artready_qa_prefill", a.dataset.question);
+    });
+  });
+  bindCurriculumDetails(container);
+}
+
+// [교육과정 원문 보기] 여러 화면(학과명/계열 검색, 성적추천)이 공유하는 지연 로딩
+// 바인더 - <details>가 처음 열릴 때만 /department-curriculum을 부르고, 두 번째
+// 열 때부터는 이미 채운 내용을 그대로 보여준다(재요청 없음).
+function bindCurriculumDetails(scopeEl) {
+  scopeEl.querySelectorAll(".curriculumDetails").forEach(det => {
+    det.addEventListener("toggle", async () => {
+      if (!det.open || det.dataset.loaded) return;
+      det.dataset.loaded = "1";
+      const body = det.querySelector(".curriculumBody");
+      const params = new URLSearchParams({ university: det.dataset.university, department: det.dataset.department });
+      if (det.dataset.campus) params.set("campus", det.dataset.campus);
+      try {
+        const data = await fetch(window.API_BASE_URL + "/department-curriculum?" + params.toString()).then(r => r.json());
+        if (!data || !data.curriculum_subjects || !data.curriculum_subjects.length) {
+          body.textContent = "아직 이 학과의 교육과정 원문을 확보하지 못했습니다.";
+          return;
+        }
+        body.innerHTML = `
+          ${data.department_intro ? `<p class="mb-unit-2xs">${data.department_intro}</p>` : ""}
+          <div class="flex flex-wrap gap-unit-3xs">
+            ${data.curriculum_subjects.map(s => `<span class="px-unit-2xs py-0.5 bg-surface-container rounded font-label-sm text-label-sm">${s}</span>`).join("")}
+          </div>
+          ${data.source_url ? `<a class="inline-block mt-unit-2xs text-primary underline" href="${data.source_url}" target="_blank" rel="noopener">출처</a>` : ""}
+        `;
+      } catch {
+        body.textContent = "교육과정 정보를 불러오지 못했습니다.";
+      }
+    });
+  });
 }
 
 function renderRecommendResults() {
@@ -852,6 +919,27 @@ function renderRecommendResults() {
 
   const recommendRaw = sessionStorage.getItem("artready_recommend_results");
   const recommendResults = recommendRaw ? JSON.parse(recommendRaw) : [];
+
+  // 2026-09-15: [④ 유사 학과 추천] "학과명으로 찾기"에만 있던 비슷한 학과 기능을
+  // 성적추천 카드에도 동일하게 노출한다("성적추천에서도 비슷한 학과 클릭 이동 가능"
+  // 피드백 반영). 학과 단위로 중복 없이 한 번만 조회하고, 완료되면 이미 그려진
+  // 카드를 다시 그려서 채운다(초기 렌더는 이 fetch를 기다리지 않아 화면이 먼저 뜬다).
+  const recommendSimilarByDept = new Map();
+  const recommendDeptKey = (r) => `${r.university}::${r.campus || ""}::${r.department}`;
+  (async () => {
+    const uniqDepts = [...new Map(recommendResults.map(r => [recommendDeptKey(r), r])).values()];
+    await Promise.all(uniqDepts.map(async (r) => {
+      try {
+        const params = new URLSearchParams({ university: r.university, department: r.department });
+        if (r.campus) params.set("campus", r.campus);
+        const similar = await fetch(window.API_BASE_URL + "/similar-departments?" + params.toString()).then(res => res.json());
+        recommendSimilarByDept.set(recommendDeptKey(r), Array.isArray(similar) ? similar : []);
+      } catch {
+        recommendSimilarByDept.set(recommendDeptKey(r), []);
+      }
+    }));
+    if (typeof applyControlsAndRender === "function") applyControlsAndRender();
+  })();
   const section = document.getElementById("recommendSection");
   section.classList.remove("hidden");
   document.getElementById("recommendDisclaimer").classList.remove("hidden");
@@ -1319,6 +1407,26 @@ function renderRecommendResults() {
       </details>` : "";
     const reasonLine = r.reason_summary
       ? `<div class="font-body-sm text-body-sm text-on-surface bg-surface-container-low rounded p-unit-xs mt-unit-2xs"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase">${isNotApplicable ? "해당 없음 사유" : "추천 이유"}</span><br/>${r.reason_summary}</div>` : "";
+    // 2026-09-15: [④ 유사 학과 추천] "학과명으로 찾기"와 동일한 카드/클릭 규칙 -
+    // 태그·임베딩이 없는 학과는 빈 배열이라 자연히 섹션이 생략된다.
+    const recSimilar = recommendSimilarByDept.get(recommendDeptKey(r)) || [];
+    const recSimilarBlock = recSimilar.length ? `
+      <details class="mt-unit-2xs">
+        <summary class="font-label-sm text-label-sm text-outline cursor-pointer">비슷한 학과 ${recSimilar.length}곳 (같은 계열 태그 기준, 교육과정 유사도)</summary>
+        <ul class="mt-unit-2xs flex flex-col gap-unit-3xs">
+          ${recSimilar.map(s => `<li class="font-body-sm text-body-sm">
+            <a href="results.html?mode=department&name=${encodeURIComponent(s.department)}" class="flex items-center justify-between gap-unit-xs text-on-surface-variant hover:text-primary hover:underline">
+              <span>${s.university}${s.campus ? ` (${s.campus}캠퍼스)` : ""} · ${s.department}</span>
+              <span class="shrink-0 px-unit-2xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded">유사도 ${Math.round((s.score || 0) * 100)}%</span>
+            </a>
+          </li>`).join("")}
+        </ul>
+      </details>` : "";
+    const recCurriculumBlock = `
+      <details class="mt-unit-2xs curriculumDetails" data-university="${r.university.replace(/"/g, '&quot;')}" data-department="${(r.department || "").replace(/"/g, '&quot;')}" data-campus="${(r.campus || "").replace(/"/g, '&quot;')}">
+        <summary class="font-label-sm text-label-sm text-outline cursor-pointer">이 학과 교육과정 보기</summary>
+        <div class="curriculumBody mt-unit-2xs font-body-sm text-body-sm text-on-surface-variant">불러오는 중...</div>
+      </details>`;
 
     // 카드 하나에 정보가 너무 많이 항상 펼쳐져 있으면 모바일에서 스크롤이 길어진다는
     // 피드백 - 학교/학과/원등급/환산점수까지는 훑어보는 데 필요한 핵심이라 항상
@@ -1334,9 +1442,15 @@ function renderRecommendResults() {
           <button class="breakdown-btn font-label-sm text-label-sm text-primary underline" data-university="${r.university}" data-campus="${r.campus || ""}" data-department="${r.department || ""}" data-track-name="${r.track_name || ""}">${isExact ? "계산 상세보기 · 뒤집기 시뮬레이션" : "학생부 미반영/근사 이유 보기"}</button>
           ${r.source_url ? `<a class="font-label-sm text-label-sm text-primary underline" href="${r.source_url}" target="_blank" rel="noopener">공식 모집요강 원문</a>` : ""}
         </div>
-        <div class="mt-unit-2xs">
+        ${recSimilarBlock}
+        ${recCurriculumBlock}
+        <div class="mt-unit-2xs flex flex-wrap items-center gap-x-unit-sm gap-y-unit-2xs">
           <a class="font-label-sm text-label-sm text-on-surface-variant underline inline-flex items-center gap-unit-2xs" href="kg.html?university=${encodeURIComponent(r.university)}">
             <span class="material-symbols-outlined text-[14px]">hub</span>이 대학 지도에서 보기
+          </a>
+          <a class="font-label-sm text-label-sm text-on-surface-variant underline inline-flex items-center gap-unit-2xs askAboutTrack" href="qa.html"
+             data-question="${(r.university + " " + r.department + " " + (r.track_name || "") + "에 대해 알려줘").replace(/"/g, '&quot;')}">
+            <span class="material-symbols-outlined text-[14px]">forum</span>이 전형 질문하기
           </a>
         </div>`;
 
@@ -1363,6 +1477,12 @@ function renderRecommendResults() {
   document.querySelectorAll(".breakdown-btn").forEach(btn => {
     btn.addEventListener("click", () => openBreakdown(btn.dataset.university, btn.dataset.campus, btn.dataset.department, btn.dataset.trackName));
   });
+  document.querySelectorAll(".askAboutTrack").forEach(a => {
+    a.addEventListener("click", () => {
+      sessionStorage.setItem("artready_qa_prefill", a.dataset.question);
+    });
+  });
+  bindCurriculumDetails(section);
   // 새로 그려진 카드마다 지금 전역 요약보기/전체보기 상태를 그대로 반영해둔다
   // (필터·정렬이 바뀌어 카드가 다시 그려져도 전역 토글 상태가 유지되게).
   section.querySelectorAll(":scope > div").forEach(applyGlobalDetailModeToCard);

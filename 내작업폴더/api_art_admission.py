@@ -115,6 +115,23 @@ def tracks_by_department(q: str):
     return svc.search_tracks_by_department(q)
 
 
+@app.get("/tracks/by-tag")
+def tracks_by_tag(tag: str):
+    """[표준 계열 태그로 찾기] 대학지도(kg.html)의 태그 필터에서 "이 계열로 검색하기"를
+    누르면 여기로 와서, 같은 태그의 학과 전형을 전부 모아 보여준다."""
+    svc = get_service()
+    return svc.search_tracks_by_tag(tag)
+
+
+@app.get("/department-curriculum")
+def department_curriculum(university: str, department: str, campus: Optional[str] = None):
+    """[교육과정 원문 보기] 학과 소개 + 실제 반영 교과목 목록. 아직 수집 안 된
+    학과는 빈 값(200)으로 응답한다 - 데이터가 없다는 것도 유효한 답이라 404로
+    취급하지 않는다."""
+    svc = get_service()
+    return svc.get_department_curriculum(university, department, campus=campus)
+
+
 @app.get("/similar-departments")
 def similar_departments(university: str, department: str, campus: Optional[str] = None, top_k: int = 5):
     """["학과명으로 찾기" 결과 보강] 찾은 학과와 같은 표준 계열 태그 안에서만 임베딩
@@ -200,6 +217,15 @@ def prep_topics():
     """"큰 주제" 선택지 - FO의 실기종목 선택 UI에 그대로 넣을 값."""
     svc = get_service()
     return svc.list_exam_topic_keywords()
+
+
+@app.get("/department-tags")
+def department_tags():
+    """[표준 계열 태그 목록] profile.html "계열로 찾기"/kg.html 태그 필터가 공유하는
+    10개 카테고리 - 한 곳(list_standard_department_tags)에서만 관리해 화면마다
+    다른 목록이 나오지 않게 한다."""
+    svc = get_service()
+    return svc.list_standard_department_tags()
 
 
 @app.get("/stats")

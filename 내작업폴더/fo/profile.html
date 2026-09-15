@@ -71,6 +71,23 @@
 <button id="deptSearchBtn" type="button" class="h-11 px-unit-md bg-on-surface text-surface font-label-md text-label-md rounded shrink-0">검색</button>
 </div>
 <p id="deptSearchError" class="font-body-sm text-body-sm text-error hidden mt-unit-2xs"></p>
+<!-- 2026-09-15: "유사학과 기능이 생겼는데 아무도 모른다" 문제 반영 - 검색 결과에
+     비슷한 학과가 함께 나온다는 걸 진입 지점에서 먼저 알려준다. -->
+<p class="font-label-sm text-label-sm text-primary mt-unit-xs flex items-center gap-unit-2xs">
+<span class="material-symbols-outlined text-[16px]">auto_awesome</span>검색 결과에 학과명이 달라도 커리큘럼이 비슷한 다른 학교 학과도 함께 보여드려요.
+</p>
+</div>
+
+<!-- 계열(표준 태그)로 찾기 - 대학지도(kg.html)의 태그 필터와 같은 목록을 써서
+     "이 계열 전체"를 학과명을 몰라도 탐색할 수 있게 한다. -->
+<div class="mt-unit-sm p-unit-sm bg-surface-container-lowest border border-outline-variant/40 rounded">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase" for="tagSearchSelect">계열로 찾기</label>
+<div class="flex gap-unit-xs mt-unit-2xs">
+<select id="tagSearchSelect" class="flex-1 h-11 px-unit-sm bg-surface text-on-surface border border-outline-variant rounded font-body-md text-body-md">
+<option value="">계열 선택 (예: 회화·한국화, 시각·브랜딩...)</option>
+</select>
+<button id="tagSearchBtn" type="button" class="h-11 px-unit-md bg-on-surface text-surface font-label-md text-label-md rounded shrink-0">검색</button>
+</div>
 </div>
 </section>
 
@@ -204,6 +221,19 @@ function goToDepartmentSearch() {
 }
 document.getElementById("deptSearchBtn").addEventListener("click", goToDepartmentSearch);
 document.getElementById("deptSearchInput").addEventListener("keydown", (e) => { if (e.key === "Enter") goToDepartmentSearch(); });
+
+// "계열로 찾기" - kg.html 태그 필터와 같은 /department-tags 목록을 그대로 쓴다.
+fetch(window.API_BASE_URL + "/department-tags").then(r => r.json()).then(tags => {
+  const select = document.getElementById("tagSearchSelect");
+  select.innerHTML = `<option value="">계열 선택 (예: 회화·한국화, 시각·브랜딩...)</option>` +
+    tags.map(t => `<option value="${t}">${t}</option>`).join("");
+}).catch(() => { /* 실패해도 다른 검색 방법은 그대로 쓸 수 있어야 한다 */ });
+
+document.getElementById("tagSearchBtn").addEventListener("click", () => {
+  const tag = document.getElementById("tagSearchSelect").value;
+  if (!tag) return;
+  window.location.href = "results.html?mode=tag&name=" + encodeURIComponent(tag);
+});
 
 // 실기 종목 선택 - "대학지도"(kg.html)의 "실기종목별 보기"와 완전히 같은
 // /prep-topics 목록을 그대로 받아와 칩 형태로 렌더링한다. 종목이 20개 넘게

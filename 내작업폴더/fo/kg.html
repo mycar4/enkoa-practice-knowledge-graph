@@ -119,6 +119,10 @@
 <select id="kgTagFilter" class="h-11 px-unit-sm bg-surface text-on-surface border border-outline-variant rounded font-body-md text-body-md sm:w-56">
 <option value="">전체 (필터 없음)</option>
 </select>
+<!-- 2026-09-15: 대학지도의 태그 필터가 "보여주기"만 하고 끝나던 걸, results.html의
+     학과 검색과 연결한다("메뉴 간 흐름이 안 된다"는 지적 반영) - 이 대학지도 안에서만
+     보지 말고, 이 계열 전체 학과·전형 목록으로 바로 넘어갈 수 있게. -->
+<a id="kgTagSearchLink" href="#" class="hidden font-label-md text-label-md text-primary underline inline-flex items-center gap-unit-2xs">이 계열로 검색하기<span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
 <p class="font-body-sm text-body-sm text-on-surface-variant">태그가 아직 없는 학과(자율전공 등)는 특정 태그를 고르면 함께 숨겨집니다.</p>
 </div>
 
@@ -353,7 +357,13 @@ document.querySelectorAll(".kgDepthRadio").forEach(r => r.addEventListener("chan
 // 필터 목록이 항상 같은 태그 집합을 참조하도록 한 곳(TAG_COLORS)에서만 관리.
 document.getElementById("kgTagFilter").innerHTML = `<option value="">전체 (필터 없음)</option>` +
   Object.keys(TAG_COLORS).map(t => `<option value="${t}">${t}</option>`).join("");
-document.getElementById("kgTagFilter").addEventListener("change", applyDepthAndRender);
+document.getElementById("kgTagFilter").addEventListener("change", () => {
+  applyDepthAndRender();
+  const tag = currentTagFilter();
+  const link = document.getElementById("kgTagSearchLink");
+  link.classList.toggle("hidden", !tag);
+  if (tag) link.href = "results.html?mode=tag&name=" + encodeURIComponent(tag);
+});
 
 const KG_TAB_IDS = { university: "kgTabUniv", topic: "kgTabTopic", trackType: "kgTabTrackType", admissionType: "kgTabAdmissionType" };
 const KG_PANEL_IDS = { university: "kgUnivPanel", topic: "kgTopicPanel", trackType: "kgTrackTypePanel", admissionType: "kgAdmissionTypePanel" };

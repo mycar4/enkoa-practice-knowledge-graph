@@ -194,12 +194,25 @@ const chatHistory = [];  // day50~56 에이전트 멀티턴 - [{role, content}, 
 const qaContext = sessionStorage.getItem("artready_qa_context");
 if (qaContext) {
   document.getElementById("qaContextBanner").classList.remove("hidden");
-  document.getElementById("qaContextText").textContent = "성적 추천 결과를 기준으로 질문합니다: " + qaContext;
+  // 2026-09-15: 이전엔 "성적 추천 결과를 기준으로 질문합니다"로 고정돼 있었는데,
+  // 결과 카드의 "이 전형 질문하기"처럼 성적추천이 아닌 경로에서도 이 배너를 쓰게
+  // 되면서 문구를 일반화했다 - 내용 자체(qaContext)가 이미 맥락을 설명해준다.
+  document.getElementById("qaContextText").textContent = "이 내용을 기준으로 질문합니다: " + qaContext;
 }
 document.getElementById("qaContextClear").addEventListener("click", () => {
   sessionStorage.removeItem("artready_qa_context");
   document.getElementById("qaContextBanner").classList.add("hidden");
 });
+
+// [④ "이 전형 질문하기"] results.html 카드에서 넘어오면 질문창에 바로 채워서
+// 보여준다 - 손으로 다시 타이핑하지 않아도 되고, 자동 전송은 하지 않아 사용자가
+// 원하면 수정 후 보낼 수 있게 한다.
+const qaPrefill = sessionStorage.getItem("artready_qa_prefill");
+if (qaPrefill) {
+  sessionStorage.removeItem("artready_qa_prefill");
+  queryInput.value = qaPrefill;
+  queryInput.focus();
+}
 
 function askQuestion() {
   const val = queryInput.value.trim();
