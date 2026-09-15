@@ -1557,6 +1557,7 @@ class ArtAdmissionService:
             for key in track_keys:
                 row = s.run("""
                     MATCH (u:Admission_University {name: $university})-[:HAS_DEPARTMENT]->(:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track {name: $track_name})
+                    WHERE t.is_superseded IS NULL OR t.is_superseded = false
                     OPTIONAL MATCH (t)-[:REQUIRES_EXAM]->(e:Admission_ExamType)
                     OPTIONAL MATCH (t)-[:HAS_SCHEDULE]->(sch:Admission_Schedule)
                     RETURN u.name AS university, t.name AS track_name, t.ratio AS ratio,

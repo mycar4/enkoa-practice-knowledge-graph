@@ -125,7 +125,8 @@ def load_one_record_tx(tx, rec: dict, batch_id: str):
             t.competition_rate = $competition_rate,
             t.competition_rate_announced_at = $competition_rate_announced_at,
             t.competition_rate_source_url = $competition_rate_source_url,
-            t.last_loaded_batch_id = $batch_id
+            t.last_loaded_batch_id = $batch_id,
+            t.is_superseded = false
 
         MERGE (e:Admission_ExamType {name: $exam_type_name, track_name: $track_name, university: $university, department: $department})
         MERGE (t)-[:REQUIRES_EXAM]->(e)
@@ -289,15 +290,38 @@ def main():
 
     batch_id = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
+    # 2026-09-15: is_superseded 도입 - Admission_Track의 MERGE 키에는 admission_year가
+    # 없어서 "같은 전형명"에 새 연도가 들어오면 그냥 덮어써진다(문제 없음). 하지만
+    # 학교가 전형명을 바꾸거나 폐지하면 옛 전형명의 Track 노드는 아무도 안 건드려서
+    # 옛 연도 값을 단 채로 영원히 남아있고, 조회 API는 지금 유효한 전형인 것처럼
+    # 그대로 보여준다. 이번 배치가 대학별로 가장 최신으로 확인한 admission_year보다
+    # 낮은 연도를 달고, 이번 배치에서 건드리지도 않은 Track만 골라 is_superseded로
+    # 표시해서 조회에서 걸러낼 수 있게 한다(삭제는 하지 않음 - 과거 이력 보존).
+    uni_max_year = {}
+    for rec in records:
+        y = rec["official_facts"].get("admission_year")
+        if not y:
+            continue
+        key = (rec["university"], rec.get("campus"))
+        uni_max_year[key] = max(uni_max_year.get(key, 0), y)
+
     driver = GraphDatabase.driver(uri, auth=(user, pwd))
     try:
         with driver.session(default_access_mode=WRITE_ACCESS) as session:
             for rec in records:
                 session.execute_write(load_one_record_tx, rec, batch_id)
+            for (university, campus), max_year in uni_max_year.items():
+                session.run("""
+                    MATCH (u:Admission_University {name: $university, campus: $campus})
+                          -[:HAS_DEPARTMENT]->(:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
+                    WHERE t.last_loaded_batch_id <> $batch_id AND t.admission_year < $max_year
+                    SET t.is_superseded = true
+                """, university=university, campus=campus, batch_id=batch_id, max_year=max_year)
         with driver.session(default_access_mode=READ_ACCESS) as session:
             u_cnt = session.run("MATCH (n:Admission_University) RETURN count(n) AS c").single()["c"]
             t_cnt = session.run("MATCH (n:Admission_Track) RETURN count(n) AS c").single()["c"]
-        print(f"[커밋 완료] Admission_University={u_cnt}, Admission_Track={t_cnt}, batch_id={batch_id}")
+            superseded_cnt = session.run("MATCH (n:Admission_Track {is_superseded: true}) RETURN count(n) AS c").single()["c"]
+        print(f"[커밋 완료] Admission_University={u_cnt}, Admission_Track={t_cnt} (구버전 is_superseded={superseded_cnt}), batch_id={batch_id}")
         print(f"  이번 배치가 건드린 Track 조회: MATCH (t:Admission_Track {{last_loaded_batch_id: '{batch_id}'}}) RETURN t")
     finally:
         driver.close()
