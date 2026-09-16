@@ -25,12 +25,15 @@
 import os
 import sys
 import json
+import time
 import argparse
+import threading
 from pathlib import Path
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from neo4j import GraphDatabase, WRITE_ACCESS, READ_ACCESS
+from neo4j.exceptions import ServiceUnavailable, TransientError
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -61,6 +64,35 @@ MAX_WORKERS = 3  # 2026-09-16: gpt-5.6-luna는 신형/제한적 모델이라 8�
 # 재시도 로직(art_admission_llm._call_openai_messages)을 넣었지만, 애초에 순간
 # 동시 요청 자체를 줄이는 게 더 안전하다 - 배치 작업이라 느려져도 무관.
 ALLOWED_CANON_TYPES = {"university", "department", "exam_type", "material"}
+
+# 2026-09-16: [재개(resume) 체크포인트] 4,016개 청크를 gpt-5.6-luna로 재추출하다가
+# 두 번 연속 중간에 끊긴 사고(1차: Neo4j 쓰기 단계 NotALeader, 2차: OpenAI 지출한도
+# 초과)가 있었다 - 둘 다 "이미 LLM 호출까지는 끝난 비싼 결과"를 통째로 날리고
+# 처음부터 다시 돈을 써야 하는 구조였다. 청크 단위로 추출 결과를 로컬 파일에
+# 즉시 저장해두고, 다음 실행 시 이미 처리된 청크는 LLM을 다시 안 부르고 캐시를
+# 그대로 쓴다 - 중간에 몇 번을 끊겨도 "이미 낸 돈"이 사라지지 않는다.
+CHECKPOINT_PATH = BASE_DIR / "data" / "art_admission" / ".entity_extraction_checkpoint.json"
+_checkpoint_lock = threading.Lock()
+
+
+def _load_checkpoint() -> dict:
+    if not CHECKPOINT_PATH.exists():
+        return {}
+    try:
+        with open(CHECKPOINT_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}  # 손상된 체크포인트는 안전하게 무시(전체 재추출로 폴백)
+
+
+def _save_checkpoint(checkpoint: dict):
+    # 여러 워커가 동시에 완료될 때마다 호출되므로 락으로 보호. 4천여 건 규모라
+    # 매번 전체 덮어쓰기해도 비용이 크지 않다(수 KB~수백 KB 수준).
+    with _checkpoint_lock:
+        tmp_path = CHECKPOINT_PATH.with_suffix(".tmp")
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            json.dump(checkpoint, f, ensure_ascii=False)
+        tmp_path.replace(CHECKPOINT_PATH)  # 원자적 교체 - 쓰다가 끊겨도 파일이 안 깨짐
 
 _EXTRACTION_SYSTEM_PROMPT = """당신은 미술 실기 입시 도우미의 개체명 추출기입니다.
 아래 "알려진 개체 목록"과 본문 발췌를 보고, 본문에 실제로 등장하는 미술 실기 입시
@@ -132,8 +164,13 @@ def extract_entities_llm(chunk_text: str, known_entities: dict) -> list:
                 cleaned = cleaned[4:]
         parsed = json.loads(cleaned)
         raw_entities = parsed.get("entities", [])
-    except Exception as e:
-        return []  # 실패한 청크는 조용히 스킵 (호출부에서 실패 건수 집계)
+    except Exception:
+        # 2026-09-16: 예전엔 여기서 조용히 []를 반환했는데, 그러면 "API 호출이
+        # 429/네트워크 오류로 실패한 것"과 "정상 호출했는데 진짜 엔티티가 0개인 것"을
+        # 구분할 수 없어서, 체크포인트에 실패까지 "완료(0건)"로 저장해버리는 사고가
+        # 났다(레이트리밋 걸린 청크가 영원히 재시도 안 되고 스킵됨). 실패는 그대로
+        # 위로 올려서 호출부가 체크포인트에 안 남기고 다음 실행에서 재시도하게 한다.
+        raise
 
     result = []
     seen = set()
@@ -217,6 +254,7 @@ def main():
     parser = argparse.ArgumentParser(description="LLM 기반 개체 추출(MENTIONS) + PageRank/커뮤니티")
     parser.add_argument("--commit", action="store_true", help="실제 적재 (미지정 시 DRY-RUN)")
     parser.add_argument("--limit", type=int, default=0, help="처리할 청크 수 제한 (0=전체, 테스트용)")
+    parser.add_argument("--fresh", action="store_true", help="체크포인트를 무시하고 전체 청크를 처음부터 재추출")
     args = parser.parse_args()
 
     driver = GraphDatabase.driver(uri, auth=(user, pwd))
@@ -231,6 +269,14 @@ def main():
             """).data()
         if args.limit:
             chunks = chunks[: args.limit]
+
+        checkpoint = {} if args.fresh else _load_checkpoint()
+        if args.fresh and CHECKPOINT_PATH.exists():
+            CHECKPOINT_PATH.unlink()
+        already_done = [ch for ch in chunks if f"{ch['university']}||{ch['chunk_index']}" in checkpoint]
+        todo = [ch for ch in chunks if f"{ch['university']}||{ch['chunk_index']}" not in checkpoint]
+        if already_done:
+            print(f"체크포인트에서 {len(already_done)}건 재사용(LLM 재호출 없음), 신규 {len(todo)}건만 호출")
         print(f"청크 {len(chunks)}건에 대해 LLM 구조화 추출 수행 중 (model={EXTRACTION_MODEL}, "
               f"동시 {MAX_WORKERS}개, confidence>={CONFIDENCE_THRESHOLD})...")
 
@@ -240,19 +286,43 @@ def main():
         failed = 0
         done = 0
 
+        # 체크포인트에 이미 있는 결과부터 채워 넣는다(LLM 호출 없음, 비용 0).
+        for ch in already_done:
+            key = (ch["university"], ch["chunk_index"])
+            found = checkpoint[f"{ch['university']}||{ch['chunk_index']}"]
+            chunk_mentions[key] = found
+            for item in found:
+                entity_types.setdefault(item["name"], item["type"])
+                entity_chunk_map[item["name"]].add(key)
+            done += 1
+
         with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
-            futures = {pool.submit(extract_entities_llm, ch["text"], known_entities): (ch["university"], ch["chunk_index"]) for ch in chunks}
+            futures = {pool.submit(extract_entities_llm, ch["text"], known_entities): ch for ch in todo}
             for fut in as_completed(futures):
-                key = futures[fut]
+                ch = futures[fut]
+                key = (ch["university"], ch["chunk_index"])
                 try:
                     found = fut.result()
-                except Exception:
+                except Exception as e:
+                    # 2026-09-16: 실패(레이트리밋/지출한도/네트워크 등)는 체크포인트에
+                    # 절대 남기지 않는다 - 남기면 다음 실행에서 "이미 처리됨"으로 착각해
+                    # 영원히 스킵된다. chunk_mentions에도 빈 리스트로 채워서 이번 실행의
+                    # 집계(총 멘션 수 등)에는 반영하되, 파일 체크포인트만 건너뛴다.
                     found = []
                     failed += 1
+                    chunk_mentions[key] = found
+                    done += 1
+                    if done % 100 == 0:
+                        print(f"  진행: {done}/{len(chunks)}")
+                    continue
                 chunk_mentions[key] = found
                 for item in found:
                     entity_types.setdefault(item["name"], item["type"])
                     entity_chunk_map[item["name"]].add(key)
+                # 청크 하나 끝날 때마다 바로 체크포인트에 반영 - 중간에 끊겨도
+                # 지금까지 성공한 만큼은 다음 실행에서 그대로 재사용된다.
+                checkpoint[f"{ch['university']}||{ch['chunk_index']}"] = found
+                _save_checkpoint(checkpoint)
                 done += 1
                 if done % 100 == 0:
                     print(f"  진행: {done}/{len(chunks)}")
@@ -309,26 +379,66 @@ def main():
             return
 
         with driver.session(default_access_mode=WRITE_ACCESS) as s:
-            s.run("MATCH (e:Admission_Entity) DETACH DELETE e")
-            for name, etype in entity_types.items():
-                s.run(
-                    "MERGE (e:Admission_Entity {name: $name}) SET e.type = $etype, e.llm_discovered = $is_new",
-                    name=name, etype=etype, is_new=(name in new_entities),
-                )
-            for (univ, idx), found in chunk_mentions.items():
-                for item in found:
-                    s.run("""
-                        MATCH (c:Admission_TextChunk {university: $univ, chunk_index: $idx})
-                        MATCH (e:Admission_Entity {name: $name})
-                        MERGE (c)-[:MENTIONS]->(e)
-                    """, univ=univ, idx=idx, name=item["name"])
-            for (a, b), weight in cooccur.items():
-                s.run("""
-                    MATCH (ea:Admission_Entity {name: $a})
-                    MATCH (eb:Admission_Entity {name: $b})
+            # 2026-09-16: 예전엔 엔티티/MENTIONS/CO_OCCURS_WITH를 건마다 개별 s.run()으로
+            # 썼다 - 21,166건짜리 배치에서 이 방식이 왕복 21,166번을 만들어 Neo4j Aura의
+            # 일시적 NotALeader(리더 재선출) 오류를 만날 확률도 높이고, 한 번 걸리면 그
+            # 지점까지 다 날아갔다(실측 사고). UNWIND로 배치 묶어서 왕복 횟수를 크게
+            # 줄이고, 각 배치 호출에 재시도(지수 백오프)를 걸어 일시적 오류에도 안전하게
+            # 만든다.
+            def _run_with_retry(query, **params):
+                last_err = None
+                for attempt in range(5):
+                    try:
+                        return s.run(query, **params)
+                    except (ServiceUnavailable, TransientError) as e:
+                        last_err = e
+                        if attempt == 4:
+                            raise
+                        wait = 2 ** attempt
+                        print(f"  [Neo4j 일시 오류, {wait}초 후 재시도 {attempt+1}/4] {e}")
+                        time.sleep(wait)
+                raise last_err
+
+            def _batched(iterable, size):
+                buf = []
+                for item in iterable:
+                    buf.append(item)
+                    if len(buf) >= size:
+                        yield buf
+                        buf = []
+                if buf:
+                    yield buf
+
+            _run_with_retry("MATCH (e:Admission_Entity) DETACH DELETE e")
+
+            entity_rows = [{"name": name, "etype": etype, "is_new": (name in new_entities)}
+                           for name, etype in entity_types.items()]
+            for batch in _batched(entity_rows, 300):
+                _run_with_retry("""
+                    UNWIND $rows AS row
+                    MERGE (e:Admission_Entity {name: row.name})
+                    SET e.type = row.etype, e.llm_discovered = row.is_new
+                """, rows=batch)
+
+            mention_rows = [{"univ": univ, "idx": idx, "name": item["name"]}
+                            for (univ, idx), found in chunk_mentions.items() for item in found]
+            for batch in _batched(mention_rows, 300):
+                _run_with_retry("""
+                    UNWIND $rows AS row
+                    MATCH (c:Admission_TextChunk {university: row.univ, chunk_index: row.idx})
+                    MATCH (e:Admission_Entity {name: row.name})
+                    MERGE (c)-[:MENTIONS]->(e)
+                """, rows=batch)
+
+            cooccur_rows = [{"a": a, "b": b, "weight": weight} for (a, b), weight in cooccur.items()]
+            for batch in _batched(cooccur_rows, 300):
+                _run_with_retry("""
+                    UNWIND $rows AS row
+                    MATCH (ea:Admission_Entity {name: row.a})
+                    MATCH (eb:Admission_Entity {name: row.b})
                     MERGE (ea)-[r:CO_OCCURS_WITH]-(eb)
-                    SET r.weight = $weight
-                """, a=a, b=b, weight=weight)
+                    SET r.weight = row.weight
+                """, rows=batch)
         print(f"[커밋 완료] Admission_Entity={len(entity_types)}, MENTIONS={total_mentions}, CO_OCCURS_WITH={len(cooccur)}")
 
         # PageRank + Louvain: 이 Aura 티어는 gds.graph.project()가 유료 GDS 세션을
