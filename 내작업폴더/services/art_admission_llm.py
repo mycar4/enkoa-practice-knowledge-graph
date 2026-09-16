@@ -50,6 +50,15 @@ def get_available_models() -> List[Dict[str, Any]]:
     return MODEL_REGISTRY
 
 
+# 2026-09-16: LLM 호출 예외(레이트리밋/지출한도/네트워크 오류 등)의 원문 메시지를
+# 그대로 사용자에게 보여주면 "project_spend_limit_exceeded"처럼 내부 결제 상태나
+# OpenAI 대시보드 URL까지 그대로 노출된다(실측 발견). 이 모듈의 모든 LLM 호출
+# 실패 경로가 이 문구 하나로 통일해서 답하고, 실제 원인은 print로 서버 로그에만
+# 남긴다 - api_art_admission.py에도 같은 문구의 사본이 있다(엔드포인트 레벨의
+# 마지막 방어선용, 이 모듈이 예외를 안 삼키고 그냥 raise하는 경로를 위함).
+_LLM_FRIENDLY_ERROR = "현재 AI 서비스 고도화 작업이 진행 중이라 일시적으로 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요."
+
+
 def _model_info(model_id: str) -> Dict[str, Any]:
     for m in MODEL_REGISTRY:
         if m["id"] == model_id:
@@ -449,8 +458,13 @@ def answer_with_llm(context_tracks: List[Dict[str, Any]], context_estimates: Lis
     try:
         answer = _call_llm(_QA_SYSTEM_PROMPT, user_prompt, model_id, temperature=0.0)
     except Exception as e:
+        # 2026-09-16: 여기서 예외를 삼키고 "answer" 필드에 원문 그대로 넣어 반환하는
+        # 구조라, api_art_admission.py의 /qa, /agent-chat try/except(원문 에러 노출
+        # 방지용)를 그대로 통과해 사용자 화면에 지출한도 초과 메시지가 그대로 샜었다
+        # (실측 발견). 원인은 로그에만 남기고, 사용자에게는 순화된 문구만 준다.
+        print(f"[answer_with_llm] LLM 호출 실패: {e}")
         return {
-            "answer": f"⚠️ AI 답변 생성 실패: {e}\n\n(위쪽 규칙기반 조회 결과를 참고해주세요.)",
+            "answer": _LLM_FRIENDLY_ERROR + "\n\n(위쪽 규칙기반 조회 결과를 참고해주세요.)",
             "model": model_id,
             "grounded_on": [],
             "error": True,
@@ -579,7 +593,8 @@ def review_document(text: str, model_id: str = "gpt-4o-mini", doc_type: str = "�
     try:
         feedback = _call_llm(_REVIEW_SYSTEM_PROMPT, user_prompt, model_id, temperature=0.3)
     except Exception as e:
-        return {"feedback": f"⚠️ AI 첨삭 실패: {e}", "model": model_id, "error": True}
+        print(f"[review_document] LLM 호출 실패: {e}")
+        return {"feedback": _LLM_FRIENDLY_ERROR, "model": model_id, "error": True}
 
     return {"feedback": feedback, "model": model_id}
 
@@ -609,7 +624,8 @@ def chat_about_review(doc_text: str, doc_type: str, history: List[Dict[str, str]
     try:
         reply = _call_llm_messages(messages, model_id, temperature=0.3)
     except Exception as e:
-        return {"reply": f"⚠️ AI 응답 실패: {e}", "model": model_id, "error": True}
+        print(f"[chat_about_review] LLM 호출 실패: {e}")
+        return {"reply": _LLM_FRIENDLY_ERROR, "model": model_id, "error": True}
 
     return {"reply": reply, "model": model_id}
 
