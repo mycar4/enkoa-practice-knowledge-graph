@@ -49,7 +49,12 @@ uri = os.getenv("ART_ADMISSION_NEO4J_URI") or os.getenv("AURA_URI") or os.getenv
 user = os.getenv("ART_ADMISSION_NEO4J_USER") or os.getenv("AURA_USER") or os.getenv("NEO4J_USER", "neo4j")
 pwd = os.getenv("ART_ADMISSION_NEO4J_PASSWORD") or os.getenv("AURA_PASSWORD") or os.getenv("NEO4J_PASSWORD")
 
-EXTRACTION_MODEL = "gpt-4o-mini"  # 저렴하고 충분히 정확 - 1000개+ 청크 배치 추출에 적합
+EXTRACTION_MODEL = "gpt-5.6-luna"  # 2026-09-16: 60개 청크 샘플 실측 결과 gpt-4o-mini는
+# 93%(56/60) 청크에서 엔티티를 하나도 못 찾았다(원문 검증 필터를 거의 통과 못 함) - 반면
+# gpt-5.6-luna(추론 모델)는 같은 60개에서 32배 많은 엔티티를 찾았고 필터도 훨씬 잘 통과했다.
+# 이 스크립트는 도구 호출(tool calling) 없이 순수 텍스트 프롬프트만 쓰므로 /v1/responses
+# 마이그레이션 없이 모델명만 바꿔도 그대로 동작한다. 전체 4,016개 청크 기준 비용은
+# 약 $8.6(추정)로 무시 가능한 수준, 소요 시간은 약 1시간(배치 작업이라 무관).
 CONFIDENCE_THRESHOLD = 0.5
 MAX_WORKERS = 8  # OpenAI 레이트리밋 감안한 동시 호출 수
 ALLOWED_CANON_TYPES = {"university", "department", "exam_type", "material"}
