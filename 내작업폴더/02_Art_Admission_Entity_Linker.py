@@ -56,7 +56,10 @@ EXTRACTION_MODEL = "gpt-5.6-luna"  # 2026-09-16: 60개 청크 샘플 실측 결�
 # 마이그레이션 없이 모델명만 바꿔도 그대로 동작한다. 전체 4,016개 청크 기준 비용은
 # 약 $8.6(추정)로 무시 가능한 수준, 소요 시간은 약 1시간(배치 작업이라 무관).
 CONFIDENCE_THRESHOLD = 0.5
-MAX_WORKERS = 8  # OpenAI 레이트리밋 감안한 동시 호출 수
+MAX_WORKERS = 3  # 2026-09-16: gpt-5.6-luna는 신형/제한적 모델이라 8개 동시 호출이
+# 429(Too Many Requests)를 유발했다(전체 4,016건이 빈 결과로 조용히 실패한 사고).
+# 재시도 로직(art_admission_llm._call_openai_messages)을 넣었지만, 애초에 순간
+# 동시 요청 자체를 줄이는 게 더 안전하다 - 배치 작업이라 느려져도 무관.
 ALLOWED_CANON_TYPES = {"university", "department", "exam_type", "material"}
 
 _EXTRACTION_SYSTEM_PROMPT = """당신은 미술 실기 입시 도우미의 개체명 추출기입니다.

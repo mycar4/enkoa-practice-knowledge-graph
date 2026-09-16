@@ -15,6 +15,7 @@
 
 import os
 import json
+import time
 import urllib.request
 import urllib.error
 from typing import Dict, Any, List, Optional
@@ -106,9 +107,25 @@ def _call_openai_messages(messages: List[Dict[str, str]], model: str, temperatur
         data=json.dumps(payload).encode("utf-8"),
         headers=headers,
     )
-    with urllib.request.urlopen(req, timeout=_llm_timeout_seconds(model)) as resp:
-        body = json.loads(resp.read().decode("utf-8"))
-    return body["choices"][0]["message"]["content"]
+    # 2026-09-16: gpt-5.6-luna로 4,016개 청크를 8개 동시 호출로 밀어붙이다가
+    # 429(Too Many Requests)에 전부 걸려버린 사고가 있었다 - 이 함수를 부르는
+    # 쪽(예: 02_Art_Admission_Entity_Linker.py의 extract_entities_llm)이 예외를
+    # 조용히 삼키고 빈 결과를 반환하는 구조라, 레이트리밋에 걸려도 "실패"로
+    # 안 잡히고 그냥 "아무것도 못 찾았다"로 보여서 원인 파악이 어려웠다. 429/5xx는
+    # 여기서 지수 백오프로 몇 번 재시도해서, 호출부까지 레이트리밋이 새어나가지
+    # 않게 막는다(호출부 코드는 손댈 필요 없음).
+    last_err = None
+    for attempt in range(4):
+        try:
+            with urllib.request.urlopen(req, timeout=_llm_timeout_seconds(model)) as resp:
+                body = json.loads(resp.read().decode("utf-8"))
+            return body["choices"][0]["message"]["content"]
+        except urllib.error.HTTPError as e:
+            last_err = e
+            if e.code not in (429, 500, 502, 503, 504) or attempt == 3:
+                raise
+            time.sleep(2 ** attempt)  # 1, 2, 4초
+    raise last_err
 
 
 def _call_anthropic_messages(messages: List[Dict[str, str]], model: str, temperature: float = 0.0) -> str:

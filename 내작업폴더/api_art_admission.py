@@ -388,13 +388,31 @@ class QARequest(BaseModel):
     query: str
 
 
+# 2026-09-16: LLM 호출 예외(레이트리밋/지출한도/네트워크 오류 등)의 원문 메시지를
+# 그대로 사용자에게 보여주면 "project_spend_limit_exceeded"처럼 내부 결제 상태나
+# 심지어 OpenAI 대시보드 URL까지 그대로 노출된다(실측 발견 - 사용자 화면에 결제
+# 한도 초과 메시지가 그대로 떴음). 원인이 뭐든 사용자에게는 서비스 운영 사정으로만
+# 안내하고, 실제 원인은 서버 로그에만 남긴다.
+_LLM_FRIENDLY_ERROR = "현재 AI 서비스 고도화 작업이 진행 중이라 일시적으로 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요."
+
+
 @app.post("/qa")
 def qa(req: QARequest):
     """04 EVIDENCE 화면 - 기존 질의응답 탭의 AI 답변 파이프라인 그대로.
     항상 gpt-4o-mini만 쓴다(공개 API에서 프리미엄 모델 비용 노출 방지)."""
     from services.art_admission_agent import run_qa_pipeline
     svc = get_service()
-    return run_qa_pipeline(svc, req.query, model_id=DEFAULT_MODEL)
+    try:
+        return run_qa_pipeline(svc, req.query, model_id=DEFAULT_MODEL)
+    except Exception as e:
+        print(f"[/qa] LLM 호출 실패: {e}")  # 원인은 서버 로그에만 남김
+        return {
+            "answer": _LLM_FRIENDLY_ERROR,
+            "model": DEFAULT_MODEL,
+            "context_tracks": [],
+            "grounded_tracks": [],
+            "error": True,
+        }
 
 
 class AgentChatRequest(BaseModel):
@@ -412,8 +430,9 @@ def agent_chat_endpoint(req: AgentChatRequest):
     try:
         return route_and_answer(req.query, req.history)
     except Exception as e:
+        print(f"[/agent-chat] LLM 호출 실패: {e}")  # 원인은 서버 로그에만 남김
         return {
-            "answer": f"⚠️ 에이전트 답변 생성 실패: {e}",
+            "answer": _LLM_FRIENDLY_ERROR,
             "model": "gpt-4o-mini",
             "tool_trace": [],
             "error": True,
