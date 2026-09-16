@@ -41,8 +41,17 @@ MODEL_REGISTRY: List[Dict[str, Any]] = [
     {"id": "gpt-4o", "label": "GPT-4o (OpenAI)", "provider": "openai", "available": bool(_OPENAI_KEY), "gated": False},
     {"id": "gpt-5.5", "label": "GPT-5.5 (OpenAI, 최신·고급)", "provider": "openai", "available": bool(_OPENAI_KEY), "gated": True},
     {"id": "o4-mini", "label": "o4-mini (OpenAI, 추론 특화·고급)", "provider": "openai", "available": bool(_OPENAI_KEY), "gated": True},
-    {"id": "claude-3-5-sonnet-latest", "label": "Claude 3.5 Sonnet (Anthropic, 최신·고급)", "provider": "anthropic", "available": bool(_ANTHROPIC_KEY), "gated": True},
-    {"id": "gemini-1.5-pro", "label": "Gemini 1.5 Pro (Google, 최신·고급)", "provider": "gemini", "available": bool(_GEMINI_KEY), "gated": True},
+    # 2026-09-16: 엔티티 추출 모델 비교 실측용으로 추가. gpt-5.6-luna는 이전엔 여기
+    # 등록 안 된 채로도 "우연히" 정상 동작했다(_model_info 폴백이 registry[0]로
+    # 떨어져도 provider가 마침 openai로 같았기 때문) - 아래 _model_info 수정으로
+    # 그런 우연에 기대는 구조 자체를 없앴으므로, 실제 쓰는 모델은 전부 명시 등록한다.
+    {"id": "gpt-5.6-luna", "label": "GPT-5.6 Luna (OpenAI, 추론 모델)", "provider": "openai", "available": bool(_OPENAI_KEY), "gated": True},
+    {"id": "claude-sonnet-5", "label": "Claude Sonnet 5 (Anthropic, 최신·고급)", "provider": "anthropic", "available": bool(_ANTHROPIC_KEY), "gated": True},
+    {"id": "claude-opus-5", "label": "Claude Opus 5 (Anthropic, 최상급)", "provider": "anthropic", "available": bool(_ANTHROPIC_KEY), "gated": True},
+    # 2026-09-16: gemini-1.5-pro, gemini-2.5-pro 둘 다 단종/신규사용자 차단 확인됨
+    # (직접 호출해서 확인 - 2.5-pro는 "no longer available to new users" 에러,
+    # 3.1-pro-preview로 옮기라고 API가 직접 안내함). 안내받은 대로 사용한다.
+    {"id": "gemini-3.1-pro-preview", "label": "Gemini 3.1 Pro Preview (Google, 최신·고급)", "provider": "gemini", "available": bool(_GEMINI_KEY), "gated": True},
 ]
 
 
@@ -63,7 +72,12 @@ def _model_info(model_id: str) -> Dict[str, Any]:
     for m in MODEL_REGISTRY:
         if m["id"] == model_id:
             return m
-    return MODEL_REGISTRY[0]
+    # 2026-09-16: 예전엔 등록 안 된 모델명이 오면 조용히 MODEL_REGISTRY[0](gpt-4o-mini)
+    # 정보로 대체했다 - provider까지 gpt-4o-mini 걸로 가져다 쓰다 보니, "claude-sonnet-5"
+    # 처럼 다른 provider용 모델명을 실수로 넣으면 그 이름 그대로 OpenAI 엔드포인트로
+    # 보내버려 엉뚱한 404 에러가 났다(실측 발견 - 원인 파악에 시간이 걸림). 모르는
+    # 모델은 추측하지 말고 바로 에러를 내서, 등록을 빠뜨렸다는 걸 즉시 알 수 있게 한다.
+    raise ValueError(f"'{model_id}'는 MODEL_REGISTRY에 등록되지 않은 모델입니다. 등록 후 다시 시도하세요.")
 
 
 # gpt-5 계열/추론 특화 모델(o1/o3/o4)은 temperature를 기본값(1) 말고는 받지 않는다
@@ -147,7 +161,12 @@ def _call_anthropic_messages(messages: List[Dict[str, str]], model: str, tempera
         "x-api-key": _ANTHROPIC_KEY,
         "anthropic-version": "2023-06-01",
     }
-    payload = {"model": model, "system": system_prompt, "messages": conv, "max_tokens": 1024, "temperature": temperature}
+    payload: Dict[str, Any] = {"model": model, "system": system_prompt, "messages": conv, "max_tokens": 1024}
+    # 2026-09-16: claude-sonnet-5/opus-5(추론 모델)는 temperature 파라미터 자체를
+    # 거부한다("temperature is deprecated for this model" - 실제 호출로 확인). OpenAI의
+    # gpt-5/o-계열과 같은 패턴이라 같은 접두어 목록으로 판단해 아예 안 보낸다.
+    if not model.startswith(("claude-sonnet-5", "claude-opus-5")):
+        payload["temperature"] = temperature
     req = urllib.request.Request(
         "https://api.anthropic.com/v1/messages",
         data=json.dumps(payload).encode("utf-8"),
