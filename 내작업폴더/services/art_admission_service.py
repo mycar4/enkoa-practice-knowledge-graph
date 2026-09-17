@@ -1962,7 +1962,16 @@ class ArtAdmissionService:
         해소한 정식 university/department명. 이걸 안 받고 질문 원문 문자열에 개체명이
         그대로 있는지만 보면, 사용자가 약칭을 쓸 때(예: "중앙대") 개체명("중앙대학교")이
         원문에 없어서 매칭이 통째로 실패한다 - 실제로 겪은 버그라 정식명은 anchor_names로
-        직접 받고, 질문 원문 부분일치는 보조 수단으로만 쓴다."""
+        직접 받고, 질문 원문 부분일치는 보조 수단으로만 쓴다.
+
+        2026-09-17: 커뮤니티(동시출현 기반 Louvain)를 감사해보니, 한 대학의 학부소개
+        "표"처럼 한 청크에 여러 학과/단과대학이 나열되기만 해도 전혀 무관한 것들까지
+        같은 커뮤니티로 묶였다(예: 한성대 커뮤니티에 컴퓨터공학부·전기전자공학부가
+        예술학부와 함께 섞여 있었음 - 실측: 라벨 붙은 24개 커뮤니티 중 20개가 내부
+        동시출현 관계의 65~100%가 "1회성"이었음). 이 상태로 그대로 추천하면 실기전형이
+        아예 없는 학과를 "관련 학과"로 잘못 추천할 위험이 있어, 실제 구조화 데이터에
+        실기전형(Admission_Track)이 연결된 학과/이미 등재된 대학만 추천 후보로
+        한정한다 - 커뮤니티가 아무리 세게 묶어도 이 검증을 통과 못하면 걸러낸다."""
         exclude = set(exclude_names or [])
         anchors = set(anchor_names or [])
         entities = self._all_entities()
@@ -1974,12 +1983,24 @@ class ArtAdmissionService:
         if not communities:
             return []
 
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            valid_names = {r["name"] for r in s.run("""
+                MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(d:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
+                WHERE t.is_superseded IS NULL OR t.is_superseded = false
+                RETURN DISTINCT u.name AS name
+                UNION
+                MATCH (:Admission_University)-[:HAS_DEPARTMENT]->(d:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
+                WHERE t.is_superseded IS NULL OR t.is_superseded = false
+                RETURN DISTINCT d.name AS name
+            """).data()}
+
         related = [
             e for e in entities
             if e.get("community") in communities
             and e["name"] not in matched_names
             and e["name"] not in exclude
             and e["type"] in ("university", "department")
+            and e["name"] in valid_names
         ]
         related.sort(key=lambda e: -(e.get("pagerank") or 0))
         return [
