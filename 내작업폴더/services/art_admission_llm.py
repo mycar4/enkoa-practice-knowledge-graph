@@ -430,16 +430,29 @@ def _self_check_grounding(answer: str, context_tracks: List[Dict[str, Any]],
     return issues
 
 
+_GIVE_UP_PHRASES = ("확인하지 못했습니다", "찾지 못했습니다", "찾을 수 없습니다")
+
+
 def _self_check_compat_claim(answer: str, context_compatible_tracks: List[Dict[str, Any]]) -> List[str]:
     """재료만 겹치는 걸 '같은 실기'/'호환'이라고 부르면 안 된다는 규칙(§4)을 코드로 재검증.
-    답변에 '호환'/'같은 실기' 표현이 있는데 shared_keywords(실기유형 자체 일치)가 있는
-    후보가 하나도 없으면, 근거 없이 그 표현을 썼다는 뜻이다."""
-    if "호환" not in answer and "같은 실기" not in answer:
-        return []
+    두 방향의 실수를 모두 잡는다:
+    1. (과잉 주장) 답변에 '호환'/'같은 실기' 표현이 있는데 shared_keywords(실기유형
+       자체 일치)가 있는 후보가 하나도 없으면, 근거 없이 그 표현을 썼다는 뜻이다.
+    2. (포기) context_compatible_tracks에 shared_keywords가 있는 진짜 호환 학교가
+       있는데도 답변이 '확인하지 못했습니다'류로 포기하면, 근거를 두고도 안 쓴
+       것이다(2026-09-18 실측 발견 - 한예종 무대미술과 질문에서 context에 21건의
+       진짜 호환 학교가 있었는데도 gpt-4o-mini가 반복해서 포기하는 현상 확인)."""
+    warnings = []
     has_exact_match = any((c.get("shared_keywords") or []) for c in context_compatible_tracks)
-    if not has_exact_match:
-        return ["'호환'/'같은 실기' 표현이 쓰였지만 실기유형 자체가 일치하는(shared_keywords) 근거가 없습니다"]
-    return []
+    if ("호환" in answer or "같은 실기" in answer) and not has_exact_match:
+        warnings.append("'호환'/'같은 실기' 표현이 쓰였지만 실기유형 자체가 일치하는(shared_keywords) 근거가 없습니다")
+    if has_exact_match and any(p in answer for p in _GIVE_UP_PHRASES):
+        warnings.append(
+            "context_compatible_tracks 안에 실기유형이 실제로 일치하는(shared_keywords) 학교가 "
+            "있는데도 답변이 '확인하지 못했다'는 취지로 포기했습니다 - 그 목록을 실제로 사용해서 "
+            "구체적인 학교 이름과 실기유형을 나열해 답하십시오"
+        )
+    return warnings
 
 
 def answer_with_llm(context_tracks: List[Dict[str, Any]], context_estimates: List[Dict[str, Any]],
