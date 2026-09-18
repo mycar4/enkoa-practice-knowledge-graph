@@ -1084,31 +1084,49 @@ class ArtAdmissionService:
 
     def find_similar_departments(self, university: str, department: str, campus: Optional[str] = None,
                                   top_k: int = 5) -> List[Dict[str, Any]]:
-        """[유사 학과 추천] 대상 학과와 같은 standard_tag를 가진 학과들 중에서만
-        임베딩 벡터 코사인 유사도로 top-K를 찾는다. 태그로 먼저 후보군을 좁히는 이유는
-        태그 없이 전체 학과를 비교하면 노이즈(예: 공예과와 영상학과가 우연히 비슷하게
-        나옴)가 커지기 때문 - list_standard_department_tags()의 10개 카테고리 안에서만
-        비교해야 설명 가능한 추천이 된다."""
+        """[유사 학과 추천] 2026-09-18: 03_Art_Admission_Relationship_Builder.py가
+        배치로 미리 계산해 저장한 SIMILAR_TO 관계를 그래프 순회로 먼저 조회한다
+        (즉석 벡터 계산 대비 실측 약 10배 빠름, 결과는 100% 동일 - 같은 코사인
+        유사도를 배치 시점에 미리 계산해 저장한 것뿐이므로). 그 관계가 아직 없는
+        학과(배치 이후 신규 추가된 학교 등)만 예전 방식(벡터 인덱스 즉석 계산)으로
+        폴백한다 - 배치를 안 돌린 신규 데이터도 항상 답이 나오게 하기 위함."""
         with self.driver.session(default_access_mode=READ_ACCESS) as s:
-            target = s.run("""
+            rows = s.run("""
                 MATCH (u:Admission_University {name: $university})-[:HAS_DEPARTMENT]->(d:Admission_Department {name: $department})
                 WHERE $campus IS NULL OR u.campus = $campus
-                RETURN d.embedding AS embedding, d.standard_tag AS tag
-            """, university=university, department=department, campus=campus).single()
-            if not target or not target["embedding"]:
-                return []
-            rows = s.run("""
-                CALL db.index.vector.queryNodes('admission_department_embedding', $k, $vec)
-                YIELD node, score
-                MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(node)
-                WHERE node.standard_tag = $tag AND NOT (u.name = $university AND node.name = $department)
-                RETURN u.name AS university, u.campus AS campus, node.name AS department,
-                       node.standard_tag AS standard_tag, score
-                ORDER BY score DESC
+                MATCH (d)-[r:SIMILAR_TO]-(d2:Admission_Department)<-[:HAS_DEPARTMENT]-(u2:Admission_University)
+                RETURN u2.name AS university, u2.campus AS campus, d2.name AS department,
+                       d2.standard_tag AS standard_tag, r.similarity_pct AS similarity_pct
+                ORDER BY r.similarity_pct DESC
                 LIMIT $k
-            """, k=top_k, vec=target["embedding"], tag=target["tag"],
-                 university=university, department=department).data()
-            return rows
+            """, university=university, department=department, campus=campus, k=top_k).data()
+            if rows:
+                return [{**{k2: v for k2, v in r.items() if k2 != "similarity_pct"},
+                          "score": r["similarity_pct"] / 100.0} for r in rows]
+            return self._find_similar_departments_live(s, university, department, campus, top_k)
+
+    @staticmethod
+    def _find_similar_departments_live(s, university: str, department: str, campus: Optional[str],
+                                        top_k: int) -> List[Dict[str, Any]]:
+        """SIMILAR_TO 배치 미실행 학과용 폴백 - 예전 즉석 벡터 계산 방식 그대로."""
+        target = s.run("""
+            MATCH (u:Admission_University {name: $university})-[:HAS_DEPARTMENT]->(d:Admission_Department {name: $department})
+            WHERE $campus IS NULL OR u.campus = $campus
+            RETURN d.embedding AS embedding, d.standard_tag AS tag
+        """, university=university, department=department, campus=campus).single()
+        if not target or not target["embedding"]:
+            return []
+        return s.run("""
+            CALL db.index.vector.queryNodes('admission_department_embedding', $k, $vec)
+            YIELD node, score
+            MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(node)
+            WHERE node.standard_tag = $tag AND NOT (u.name = $university AND node.name = $department)
+            RETURN u.name AS university, u.campus AS campus, node.name AS department,
+                   node.standard_tag AS standard_tag, score
+            ORDER BY score DESC
+            LIMIT $k
+        """, k=top_k, vec=target["embedding"], tag=target["tag"],
+             university=university, department=department).data()
 
     def find_similar_departments_batch(self, requests: List[Dict[str, Any]], top_k: int = 5) -> Dict[str, List[Dict[str, Any]]]:
         """[유사 학과 추천 배치] 2026-09-18: results.html이 유니크 학과 개수만큼(최대
@@ -1116,32 +1134,28 @@ class ArtAdmissionService:
         호스트당 동시연결 6개 제한에 걸려 같은 페이지의 다른 작은 요청(/prep-topics 등)
         까지 연결 슬롯을 못 잡고 대기하며 체감 속도가 느려지는 문제가 실측 확인됐다
         (서버 nginx가 HTTP/2 미지원). 요청 개수 자체를 1개로 줄이기 위한 배치 버전 -
-        DB 세션 하나로 순차 처리하지만, 네트워크 왕복은 프론트엔드 기준 1회로 끝난다."""
+        DB 세션 하나로 순차 처리하지만, 네트워크 왕복은 프론트엔드 기준 1회로 끝난다.
+        2026-09-18: find_similar_departments()와 동일하게, 배치로 미리 계산된
+        SIMILAR_TO 관계를 우선 조회하고 없을 때만 즉석 계산으로 폴백한다."""
         result: Dict[str, List[Dict[str, Any]]] = {}
         with self.driver.session(default_access_mode=READ_ACCESS) as s:
             for req in requests:
                 university, department, campus = req.get("university"), req.get("department"), req.get("campus")
                 key = f"{university}::{campus or ''}::{department}"
-                target = s.run("""
+                rows = s.run("""
                     MATCH (u:Admission_University {name: $university})-[:HAS_DEPARTMENT]->(d:Admission_Department {name: $department})
                     WHERE $campus IS NULL OR u.campus = $campus
-                    RETURN d.embedding AS embedding, d.standard_tag AS tag
-                """, university=university, department=department, campus=campus).single()
-                if not target or not target["embedding"]:
-                    result[key] = []
-                    continue
-                rows = s.run("""
-                    CALL db.index.vector.queryNodes('admission_department_embedding', $k, $vec)
-                    YIELD node, score
-                    MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(node)
-                    WHERE node.standard_tag = $tag AND NOT (u.name = $university AND node.name = $department)
-                    RETURN u.name AS university, u.campus AS campus, node.name AS department,
-                           node.standard_tag AS standard_tag, score
-                    ORDER BY score DESC
+                    MATCH (d)-[r:SIMILAR_TO]-(d2:Admission_Department)<-[:HAS_DEPARTMENT]-(u2:Admission_University)
+                    RETURN u2.name AS university, u2.campus AS campus, d2.name AS department,
+                           d2.standard_tag AS standard_tag, r.similarity_pct AS similarity_pct
+                    ORDER BY r.similarity_pct DESC
                     LIMIT $k
-                """, k=top_k, vec=target["embedding"], tag=target["tag"],
-                     university=university, department=department).data()
-                result[key] = rows
+                """, university=university, department=department, campus=campus, k=top_k).data()
+                if rows:
+                    result[key] = [{**{k2: v for k2, v in r.items() if k2 != "similarity_pct"},
+                                     "score": r["similarity_pct"] / 100.0} for r in rows]
+                else:
+                    result[key] = self._find_similar_departments_live(s, university, department, campus, top_k)
         return result
 
     @classmethod
@@ -2184,8 +2198,47 @@ class ArtAdmissionService:
 
     def find_compatible_tracks(self, university: str, department: str) -> List[Dict[str, Any]]:
         """기준 전형과 실기 유형(키워드)·허용재료(키워드)가 겹치는 다른 학교 전형을 찾는다.
-        즉 '소묘/연필로 준비한 과정'이 통하는 다른 학교를 찾는 게 목적이므로, 재료명도
-        전체 문자열이 아니라 단어 단위로 비교한다 - 유사도 추정(임베딩)은 쓰지 않는다.
+        2026-09-18: 03_Art_Admission_Relationship_Builder.py가 배치로 미리 계산해 저장한
+        COMPATIBLE_WITH 관계를 그래프 순회로 먼저 조회한다(즉석 계산 대비 실측 약 10배
+        빠름, 결과 100% 동일 확인됨). 그 관계가 없는 기준 전형(배치 이후 신규 추가된
+        학교 등)만 예전 즉석 계산 방식으로 폴백한다."""
+        # base 전형을 찾으려고 전체 299개 트랙(list_all_tracks_full, 즉석 계산 지연의
+        # 실제 원인이었음 - 2026-09-18 실측 2,159ms)을 매번 불러오지 않고, 이 학과의
+        # 전형만 가볍게 직접 조회한다. 전체 목록은 폴백(라이브 계산)이 필요할 때만
+        # 그때 가서 불러온다.
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            base_row = s.run("""
+                MATCH (u:Admission_University {name: $university})-[:HAS_DEPARTMENT]->
+                      (d:Admission_Department {name: $department})-[:HAS_TRACK]->(t:Admission_Track)
+                WHERE t.is_superseded IS NULL OR t.is_superseded = false
+                OPTIONAL MATCH (t)-[:REQUIRES_EXAM]->(e:Admission_ExamType)
+                RETURN t.name AS track_name, e.name AS exam_type_name, e.allowed_materials AS allowed_materials
+                LIMIT 1
+            """, university=university, department=department).single()
+            if not base_row or not base_row["exam_type_name"]:
+                return []
+
+            rows = s.run("""
+                MATCH (t1:Admission_Track {university: $u, department: $d, name: $t})-[r:COMPATIBLE_WITH]-(t2:Admission_Track)
+                OPTIONAL MATCH (t2)-[:REQUIRES_EXAM]->(e2:Admission_ExamType)
+                RETURN t2.university AS university, t2.department AS department, t2.name AS track_name,
+                       t2.admission_year AS admission_year, t2.source_url AS source_url,
+                       e2.name AS exam_type_name, r.shared_keywords AS shared_keywords,
+                       r.shared_materials AS shared_materials
+            """, u=university, d=department, t=base_row["track_name"]).data()
+        if not rows:
+            tracks = self.list_all_tracks_full()
+            base = {"track_name": base_row["track_name"], "exam_type_name": base_row["exam_type_name"],
+                    "allowed_materials": base_row["allowed_materials"]}
+            return self._find_compatible_tracks_live(tracks, university, department, base)
+        results = [{**r, "shared_keywords": r["shared_keywords"] or [], "shared_materials": r["shared_materials"] or []}
+                   for r in rows]
+        results.sort(key=lambda m: (not m["shared_keywords"], -len(m["shared_keywords"]), -len(m["shared_materials"])))
+        return results
+
+    def _find_compatible_tracks_live(self, tracks: List[Dict[str, Any]], university: str, department: str,
+                                      base: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """COMPATIBLE_WITH 배치 미실행 기준 전형용 폴백 - 예전 즉석 키워드 계산 방식 그대로.
 
         2026-09-13: 예전엔 여기서만 _exam_keywords()의 정확한 토큰 일치를 썼는데,
         "한예종 무대미술과(exam_type_name='1차: 사실적 소묘 / 2차: 심층실기+구술')와
@@ -2195,11 +2248,6 @@ class ArtAdmissionService:
         발견). 대학찾기/대학지도/입시질문에서 이미 통일한 canonical 실기종목
         목록(list_kg_topic_keywords) + 부분일치(_topic_keyword_matches)를 그대로
         재사용해서 "같은 실기종목"의 기준을 앱 전체에서 완전히 하나로 맞춘다."""
-        tracks = self.list_all_tracks_full()
-        base = next((t for t in tracks if t["university"] == university and t["department"] == department), None)
-        if not base or not base.get("exam_type_name"):
-            return []
-
         canonical_topics = self.list_kg_topic_keywords(min_schools=1)
         base_topics = {kw for kw in canonical_topics if self._topic_keyword_matches(kw, base["exam_type_name"])}
         base_material_kw = self._material_keywords(base.get("allowed_materials"))
