@@ -789,21 +789,27 @@ async function renderDepartmentResults(query, mode) {
     : `'${query}' 학과명을 포함한 ${uniqUnivCount}개 대학, ${tracks.length}개 전형`;
 
   // 2026-09-15: [④ 유사 학과 추천] 같은 학과(대학+캠퍼스+학과명)가 전형별로 여러 번
-  // 나오므로, 중복 호출을 피하려고 유니크 학과 단위로만 /similar-departments를 부른다.
+  // 나오므로, 중복 호출을 피하려고 유니크 학과 단위로만 조회한다.
   // 태그/임베딩이 아직 없는 학과는 빈 배열이 오므로 그 경우엔 섹션 자체를 생략한다.
+  // 2026-09-18: 유니크 학과 개수만큼(최대 200개 이상) /similar-departments를 Promise.all로
+  // 동시에 부르던 걸 배치 엔드포인트 1회 호출로 교체 - HTTP/1.1 호스트당 동시연결 6개
+  // 제한에 걸려 같은 화면의 /prep-topics 등 다른 요청까지 순서가 밀리던 문제를 해결한다
+  // (실측: 개별 호출은 0.2~0.5초로 빠른데도, 200개가 동시에 몰리면 대기열이 길어짐).
   const deptKey = (t) => `${t.university}::${t.campus || ""}::${t.department}`;
   const uniqDepts = [...new Map(tracks.map(t => [deptKey(t), t])).values()];
   const similarByDept = new Map();
-  await Promise.all(uniqDepts.map(async (t) => {
-    try {
-      const params = new URLSearchParams({ university: t.university, department: t.department });
-      if (t.campus) params.set("campus", t.campus);
-      const similar = await fetch(window.API_BASE_URL + "/similar-departments?" + params.toString()).then(r => r.json());
-      similarByDept.set(deptKey(t), Array.isArray(similar) ? similar : []);
-    } catch {
-      similarByDept.set(deptKey(t), []);
+  try {
+    const items = uniqDepts.map(t => ({ university: t.university, department: t.department, campus: t.campus || null }));
+    const batch = await fetch(window.API_BASE_URL + "/similar-departments/batch", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items }),
+    }).then(r => r.json());
+    for (const t of uniqDepts) {
+      similarByDept.set(deptKey(t), Array.isArray(batch[deptKey(t)]) ? batch[deptKey(t)] : []);
     }
-  }));
+  } catch {
+    for (const t of uniqDepts) similarByDept.set(deptKey(t), []);
+  }
 
   container.innerHTML = tracks.map(t => {
     const campusStr = t.campus ? ` (${t.campus}캠퍼스)` : "";
@@ -927,18 +933,22 @@ function renderRecommendResults() {
   // 카드를 다시 그려서 채운다(초기 렌더는 이 fetch를 기다리지 않아 화면이 먼저 뜬다).
   const recommendSimilarByDept = new Map();
   const recommendDeptKey = (r) => `${r.university}::${r.campus || ""}::${r.department}`;
+  // 2026-09-18: 여기가 실제로 "성적추천" 화면에서 느려진다고 실측 제보된 지점 -
+  // 유니크 학과 개수만큼(최대 200개 이상) 동시 호출하던 걸 배치 1회 호출로 교체.
   (async () => {
     const uniqDepts = [...new Map(recommendResults.map(r => [recommendDeptKey(r), r])).values()];
-    await Promise.all(uniqDepts.map(async (r) => {
-      try {
-        const params = new URLSearchParams({ university: r.university, department: r.department });
-        if (r.campus) params.set("campus", r.campus);
-        const similar = await fetch(window.API_BASE_URL + "/similar-departments?" + params.toString()).then(res => res.json());
-        recommendSimilarByDept.set(recommendDeptKey(r), Array.isArray(similar) ? similar : []);
-      } catch {
-        recommendSimilarByDept.set(recommendDeptKey(r), []);
+    try {
+      const items = uniqDepts.map(r => ({ university: r.university, department: r.department, campus: r.campus || null }));
+      const batch = await fetch(window.API_BASE_URL + "/similar-departments/batch", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items }),
+      }).then(res => res.json());
+      for (const r of uniqDepts) {
+        recommendSimilarByDept.set(recommendDeptKey(r), Array.isArray(batch[recommendDeptKey(r)]) ? batch[recommendDeptKey(r)] : []);
       }
-    }));
+    } catch {
+      for (const r of uniqDepts) recommendSimilarByDept.set(recommendDeptKey(r), []);
+    }
     if (typeof applyControlsAndRender === "function") applyControlsAndRender();
   })();
   const section = document.getElementById("recommendSection");

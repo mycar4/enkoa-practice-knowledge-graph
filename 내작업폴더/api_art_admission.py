@@ -141,6 +141,22 @@ def similar_departments(university: str, department: str, campus: Optional[str] 
     return svc.find_similar_departments(university, department, campus=campus, top_k=top_k)
 
 
+class SimilarDepartmentsBatchRequest(BaseModel):
+    items: List[dict]  # [{"university": ..., "department": ..., "campus": ...}, ...]
+    top_k: int = 5
+
+
+@app.post("/similar-departments/batch")
+def similar_departments_batch(req: SimilarDepartmentsBatchRequest):
+    """2026-09-18: results.html이 유니크 학과 개수만큼(최대 200개 이상) /similar-departments를
+    동시에(Promise.all) 호출하는 바람에, 서버(nginx, HTTP/1.1)의 호스트당 동시연결 6개
+    제한에 걸려 같은 화면의 다른 요청(/prep-topics 등)까지 순서가 밀리며 체감 속도가
+    느려지는 문제를 실측으로 확인했다. 요청 개수를 1개로 합쳐 이 병목을 없앤다.
+    응답 키는 "대학::캠퍼스::학과" 형식(campus 없으면 빈 문자열)."""
+    svc = get_service()
+    return svc.find_similar_departments_batch(req.items, top_k=req.top_k)
+
+
 @app.get("/universities/{university}")
 def university_detail(university: str, campus: Optional[str] = None):
     svc = get_service()

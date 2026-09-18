@@ -1110,6 +1110,40 @@ class ArtAdmissionService:
                  university=university, department=department).data()
             return rows
 
+    def find_similar_departments_batch(self, requests: List[Dict[str, Any]], top_k: int = 5) -> Dict[str, List[Dict[str, Any]]]:
+        """[유사 학과 추천 배치] 2026-09-18: results.html이 유니크 학과 개수만큼(최대
+        200개 이상) /similar-departments를 Promise.all로 동시에 쏘는 바람에, HTTP/1.1의
+        호스트당 동시연결 6개 제한에 걸려 같은 페이지의 다른 작은 요청(/prep-topics 등)
+        까지 연결 슬롯을 못 잡고 대기하며 체감 속도가 느려지는 문제가 실측 확인됐다
+        (서버 nginx가 HTTP/2 미지원). 요청 개수 자체를 1개로 줄이기 위한 배치 버전 -
+        DB 세션 하나로 순차 처리하지만, 네트워크 왕복은 프론트엔드 기준 1회로 끝난다."""
+        result: Dict[str, List[Dict[str, Any]]] = {}
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            for req in requests:
+                university, department, campus = req.get("university"), req.get("department"), req.get("campus")
+                key = f"{university}::{campus or ''}::{department}"
+                target = s.run("""
+                    MATCH (u:Admission_University {name: $university})-[:HAS_DEPARTMENT]->(d:Admission_Department {name: $department})
+                    WHERE $campus IS NULL OR u.campus = $campus
+                    RETURN d.embedding AS embedding, d.standard_tag AS tag
+                """, university=university, department=department, campus=campus).single()
+                if not target or not target["embedding"]:
+                    result[key] = []
+                    continue
+                rows = s.run("""
+                    CALL db.index.vector.queryNodes('admission_department_embedding', $k, $vec)
+                    YIELD node, score
+                    MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(node)
+                    WHERE node.standard_tag = $tag AND NOT (u.name = $university AND node.name = $department)
+                    RETURN u.name AS university, u.campus AS campus, node.name AS department,
+                           node.standard_tag AS standard_tag, score
+                    ORDER BY score DESC
+                    LIMIT $k
+                """, k=top_k, vec=target["embedding"], tag=target["tag"],
+                     university=university, department=department).data()
+                result[key] = rows
+        return result
+
     @classmethod
     def _region_for(cls, university: str, campus: Optional[str]) -> str:
         override = cls._CAMPUS_REGION_OVERRIDES.get((university, campus))
