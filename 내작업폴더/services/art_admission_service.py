@@ -1956,6 +1956,113 @@ class ArtAdmissionService:
         edges = [{"from": r["a"], "to": r["b"], "weight": r["weight"]} for r in edge_rows]
         return {"nodes": nodes, "edges": edges}
 
+    def get_kg_entity_graph(self, min_weight: int = 2) -> Dict[str, Any]:
+        """[④ KG 뷰어 - 2층 비정형 의미망 단독 보기] get_entity_graph_view()와 같은
+        데이터를 쓰지만, kg.html의 vis.js 렌더러가 기대하는 "group" 필드로 내보낸다
+        (get_entity_graph_view()는 Streamlit 내부 pyvis 뷰어 전용이라 "kind" 필드를
+        쓰므로 그대로 재사용하지 않고 얇은 어댑터로 새로 만든다 - 기존 내부 도구를
+        건드리지 않기 위함). 2026-09-18: 지금까지 이 2층 그래프는 계산까지 다 돼
+        있었는데 FO로 나가는 API/화면이 없었다(사용자 발견) - 이 함수가 그 문을 연다."""
+        raw = self.get_entity_graph_view(min_weight=min_weight)
+        nodes = [{
+            "id": n["id"], "label": n["label"], "group": n["kind"], "title": n["title"],
+        } for n in raw["nodes"]]
+        return {"nodes": nodes, "edges": raw["edges"]}
+
+    def get_combined_kg_graph(self, university: str, min_weight: int = 2) -> Dict[str, Any]:
+        """[④ KG 뷰어 - 1층+2층 연계 보기] 특정 대학 하나로 범위를 좁혀서, 1층
+        (대학-학과-전형, get_kg_graph)과 2층(LLM이 원문에서 뽑은 개체, Admission_Entity)을
+        같은 화면에 함께 그린다. 대학 하나로 좁히는 이유: 2층 전체(5천개+ 개체)를
+        그대로 합치면 그래프가 감당 안 되게 커진다 - 이미 kg.html이 대학 단위로
+        1층을 보여주는 것과 같은 이유.
+
+        2026-09-18 실측 확인: 1층(Department)과 2층(Entity)을 잇는 실제 그래프
+        관계(엣지)는 DB에 전혀 없다(Department-Entity 직접 관계 0건). 두 계층이
+        같은 것을 가리킨다는 걸 알 수 있는 유일한 단서는 "이름이 같다"는 것뿐이다
+        (예: Department.name="시각디자인학과" == Entity.name="시각디자인학과").
+        그래서 이 함수가 하는 일은 새 그래프 알고리즘이 아니라, 그 이름 일치를
+        찾아서 점선(SAME_AS_ENTITY)으로 이어주는 것 - 사용자가 "1층에서 말하는
+        이 학과가 2층 원문에서는 어떤 맥락으로 언급되는지"를 한 화면에서 볼 수 있게
+        한다.
+
+        2026-09-18 실측으로 발견한 오염(사용자 지적): "중앙대학교"라는 이름의
+        Entity 노드가 계명대·국민대·추계예술대·한경국립대 PDF에서도 언급돼 전부
+        하나의 전역 노드로 묶여 있다(다른 학교 원문이 "중앙대학교 사례 참고"처럼
+        비교 인용을 하는 경우). 그래서 이름만으로 전역 Entity를 끌어오면 다른
+        학교 원문에서 나온 맥락이 섞여 보일 위험이 있다 - 반드시 이 대학 자신의
+        TextChunk가 실제로 MENTIONS한 엔티티로만 범위를 좁힌다(entity.name이
+        아니라 "이 학교 원문이 실제로 언급했는가"가 진짜 앵커 조건)."""
+        layer1 = self.get_kg_graph(university=university)
+        dept_names = {n["label"] for n in layer1["nodes"] if n["group"] == "department"}
+        uni_names = {university}
+        anchor_labels = dept_names | uni_names
+
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            entity_rows = s.run("""
+                MATCH (c:Admission_TextChunk {university: $university})-[:MENTIONS]->(e:Admission_Entity)
+                WHERE e.name IN $anchor_names
+                RETURN DISTINCT e.name AS name, e.type AS type, e.pagerank AS pagerank,
+                       e.community AS community, e.community_label AS community_label,
+                       e.llm_discovered AS llm_discovered
+            """, university=university, anchor_names=list(anchor_labels)).data()
+            anchor_entity_names = [r["name"] for r in entity_rows]
+            # 이웃 개체(co-occurs)도 "이 학교 원문에 실제로 등장하는 개체"로만
+            # 좁힌다 - CO_OCCURS_WITH의 weight는 전체 학교 통틀어 집계된 것이라,
+            # 이 제한이 없으면 다른 학교 원문에서만 나온 개체가 섞여 들어온다.
+            neighbor_rows = s.run("""
+                MATCH (c:Admission_TextChunk {university: $university})-[:MENTIONS]->(a:Admission_Entity)
+                WHERE a.name IN $anchors
+                MATCH (a)-[r:CO_OCCURS_WITH]-(b:Admission_Entity)
+                WHERE r.weight >= $min_weight
+                  AND EXISTS { MATCH (:Admission_TextChunk {university: $university})-[:MENTIONS]->(b) }
+                RETURN DISTINCT b.name AS name, b.type AS type, b.pagerank AS pagerank,
+                       b.community AS community, b.community_label AS community_label,
+                       b.llm_discovered AS llm_discovered
+                LIMIT 60
+            """, university=university, anchors=anchor_entity_names, min_weight=min_weight).data()
+            edge_rows = s.run("""
+                MATCH (c:Admission_TextChunk {university: $university})-[:MENTIONS]->(a:Admission_Entity)
+                WHERE a.name IN $anchors
+                MATCH (a)-[r:CO_OCCURS_WITH]-(b:Admission_Entity)
+                WHERE a.name < b.name AND r.weight >= $min_weight
+                  AND EXISTS { MATCH (:Admission_TextChunk {university: $university})-[:MENTIONS]->(b) }
+                RETURN DISTINCT a.name AS a, b.name AS b, r.weight AS weight
+                LIMIT 150
+            """, university=university, anchors=anchor_entity_names, min_weight=min_weight).data()
+
+        seen = {r["name"] for r in entity_rows}
+        entity_nodes_data = list(entity_rows)
+        for r in neighbor_rows:
+            if r["name"] not in seen:
+                seen.add(r["name"])
+                entity_nodes_data.append(r)
+
+        nodes = list(layer1["nodes"])
+        edges = list(layer1["edges"])
+        for r in entity_nodes_data:
+            eid = f"e::{r['name']}"
+            nodes.append({
+                "id": eid, "label": r["name"],
+                "group": f"entity_{r['type']}" if not r.get("llm_discovered") else "entity_llm_new",
+                "title": (f"{r['name']} ({r['type']}) pagerank={r.get('pagerank') or 0:.4f} "
+                          f"community={r.get('community')} [{r.get('community_label') or ''}]"),
+            })
+        for r in edge_rows:
+            edges.append({"from": f"e::{r['a']}", "to": f"e::{r['b']}", "weight": r["weight"], "kind": "co_occurs"})
+
+        # 1층<->2층 연결: 이름이 일치하는 학과/대학 노드만 점선으로 잇는다(실제
+        # 그래프 관계가 아니라 이름 일치 기반 - 위 docstring 참고).
+        uni_label = self._kg_uni_label(university, None)
+        for n in layer1["nodes"]:
+            if n["group"] == "department" and n["label"] in seen:
+                edges.append({"from": n["id"], "to": f"e::{n['label']}", "kind": "same_as_entity", "dashes": True})
+        if university in seen:
+            for n in layer1["nodes"]:
+                if n["group"] == "university":
+                    edges.append({"from": n["id"], "to": f"e::{university}", "kind": "same_as_entity", "dashes": True})
+
+        return {"nodes": nodes, "edges": edges}
+
     def get_architecture_overview(self) -> Dict[str, Any]:
         """'지식그래프가 실제로 뭐고 어떻게 만들어졌는지'를 보여주는 메타 그래프.
         노드/엣지 개수는 전부 지금 이 순간 DB에서 직접 센 실측치다 - 어떤 값도
@@ -2801,6 +2908,32 @@ class ArtAdmissionService:
         "포트폴리오 설명글": ["포트폴리오", "블라인드", "분량", "글자", "유의사항"],
         "기타 서류": ["블라인드", "분량", "글자", "표절", "대필", "유의사항"],
     }
+
+    # 2026-09-18: [서류첨삭 학교 선택 필터] "이 학교가 자기소개서를 받는지"는
+    # 구조화 JSON에는 없는 정보다(표에 없는 서류 안내 문구라서) - 실제 PDF 원문
+    # (TextChunk)에 그 서류명이 등장하는 학교만 필터링 근거로 삼는다. "기타 서류"는
+    # 특정 서류명이 아니라 무필터(전체 허용) 신호다.
+    _DOC_TYPE_PRIMARY_KEYWORD: Dict[str, str] = {
+        "자기소개서": "자기소개서",
+        "미술활동보고서": "미술활동보고서",
+        "포트폴리오 설명글": "포트폴리오",
+    }
+
+    def list_universities_with_document_type(self, doc_type: str) -> Optional[List[str]]:
+        """문서 종류별로 실제 원문에 그 서류 관련 언급이 있는 학교만 반환한다.
+        반환값이 None이면 "필터링 근거 자체가 없다"(기타 서류)는 뜻이므로 호출부는
+        전체 학교를 보여줘야 한다 - 빈 리스트([])와 구분해야, "찾아봤지만 0개 학교"
+        와 "애초에 필터링 대상이 아님"을 혼동하지 않는다."""
+        keyword = self._DOC_TYPE_PRIMARY_KEYWORD.get(doc_type)
+        if not keyword:
+            return None
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            rows = s.run("""
+                MATCH (c:Admission_TextChunk)
+                WHERE c.text CONTAINS $keyword
+                RETURN DISTINCT c.university AS university
+            """, keyword=keyword).data()
+        return sorted({r["university"] for r in rows})
 
     def get_document_rule_excerpts(self, university: str, doc_type: str, top_k: int = 6) -> List[Dict[str, Any]]:
         """서류 첨삭 학교별 규정 반영: 학교마다 서류 규정(블라인드 평가, 분량/글자 제한,

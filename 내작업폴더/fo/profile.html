@@ -40,6 +40,12 @@
 </div>
 <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight">학생 조건을<br class="hidden lg:block"/> 알려주세요.</h1>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">실기 종목은 전형의 실기유형과 비교합니다.<br/>재료·규격은 보조 조건으로만 사용합니다.</p>
+<!-- 2026-09-18: "왼쪽(개별 즉시검색)과 오른쪽(01~03 조합검색)이 서로 다른 방식인데
+     안내가 없다"는 피드백 반영 - 왼쪽 블록 진입부에 이 박스가 "바로 결과 보기"용
+     지름길이고, 오른쪽 01~03과는 서로 무관하게 독립적으로 동작한다는 걸 명시. -->
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-unit-xs flex items-center gap-unit-2xs">
+<span class="material-symbols-outlined text-[16px]">bolt</span>아래 3개는 각각 독립적으로 바로 결과를 보여주는 빠른 검색입니다(하나만 입력해도 됨).
+</p>
 <div class="mt-unit-md bg-surface-container-low p-unit-sm rounded flex items-center justify-between">
 <div class="flex items-center gap-unit-xs"><span class="material-symbols-outlined text-primary text-[18px]">verified</span><span class="font-label-sm text-label-sm text-on-surface">등록된 모집요강 데이터 불러오기 완료</span></div>
 <span id="db-count" class="font-label-sm text-label-sm text-on-surface-variant">- 개교 연동중</span>
@@ -93,6 +99,12 @@
 </section>
 
 <form class="px-margin-mobile lg:px-0 space-y-unit-lg pb-unit-xl lg:col-span-2 lg:py-unit-xl" id="profileForm" onsubmit="event.preventDefault(); runAnalysis();">
+<!-- 2026-09-18: 왼쪽(개별 즉시검색)과 이 01~03 블록이 서로 다른 방식이라는 걸
+     여기서도 한 번 더 명시 - 01~03은 서로 조합돼서 "내게 맞는 미대 찾기" 결과에
+     함께 반영된다(왼쪽 블록과 달리 여러 조건을 동시에 좁혀나가는 방식). -->
+<p class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-unit-2xs -mt-unit-xs">
+<span class="material-symbols-outlined text-[16px]">filter_alt</span>아래 01~03은 서로 조합되는 조건입니다 - 채운 만큼 좁혀서 "내게 맞는 미대 찾기" 결과 하나로 합쳐 보여드려요.
+</p>
 <fieldset class="space-y-unit-sm">
 <div class="flex items-baseline justify-between"><legend class="font-label-lg text-label-lg text-on-surface flex items-center gap-unit-xs"><span class="font-label-md text-label-md px-1.5 py-0.5 bg-on-surface text-surface rounded">01</span>준비 실기 종목 (복수 선택)</legend><span class="font-label-sm text-label-sm text-primary font-bold">실제 모집요강 원문 키워드</span></div>
 <!-- "대학지도"(kg.html)의 "실기종목별 보기" 드롭다운과 완전히 같은 /prep-topics

@@ -220,6 +220,26 @@ def kg_admission_types():
     return svc.list_admission_type_categories()
 
 
+@app.get("/entity-graph")
+def entity_graph(min_weight: int = 2):
+    """[④ KG 뷰어 - 2층 비정형 의미망] 2026-09-18: 이 그래프(LLM이 원문에서 뽑은
+    개체+동시출현+커뮤니티)는 이미 계산까지 다 돼 있었는데 FO로 나가는 API가
+    없었다(사용자 발견 - Streamlit 내부 QC 도구에만 있었음). 그 문을 연다."""
+    svc = get_service()
+    return svc.get_kg_entity_graph(min_weight=min_weight)
+
+
+@app.get("/kg-graph/combined")
+def kg_graph_combined(university: str, min_weight: int = 2):
+    """[④ KG 뷰어 - 1층(공식 팩트)+2층(비정형 의미망) 연계 보기] 대학 하나로 범위를
+    좁혀서 두 계층을 한 화면에 그린다. 둘을 잇는 실제 그래프 관계는 DB에 없으므로
+    (실측 확인 - Department-Entity 직접 관계 0건), 이름이 일치하는 학과/대학만
+    점선으로 이어서 "1층에서 말하는 이 학과가 원문에서는 어떻게 언급되는지"를
+    보여준다."""
+    svc = get_service()
+    return svc.get_combined_kg_graph(university, min_weight=min_weight)
+
+
 class PrepSearchRequest(BaseModel):
     topic_keywords: Optional[List[str]] = None
     material_query: str = ""
@@ -461,6 +481,19 @@ def review_models_endpoint():
     노출한다(실제 API 키는 절대 포함 안 됨). gated=True인 모델은 FO가 비밀번호
     입력창을 같이 보여줘야 한다."""
     return get_available_models()
+
+
+@app.get("/universities-by-doc-type")
+def universities_by_doc_type(doc_type: str):
+    """[서류첨삭 학교 선택 필터] 2026-09-18: "문서종류에 맞는 지원학교만 선택
+    가능하게" 요청 반영 - 실제 원문에 그 서류명이 등장하는 학교만 골라준다.
+    응답이 {"filtered": false}면 그 문서 종류는 필터링 근거가 없다는 뜻이므로
+    (예: "기타 서류") FO는 전체 학교 목록을 그대로 보여줘야 한다."""
+    svc = get_service()
+    universities = svc.list_universities_with_document_type(doc_type)
+    if universities is None:
+        return {"filtered": False, "universities": []}
+    return {"filtered": True, "universities": universities}
 
 
 class ReviewRequest(BaseModel):

@@ -301,6 +301,30 @@ if (universityModeName) {
   document.getElementById("profileSummary").textContent = bits.length ? bits.join(" / ") + " 기준 결과" : "분석 결과";
 }
 
+// 2026-09-18: "유사도 %(커리큘럼 임베딩)"만 보여주면 어떤 근거로 추천됐는지 알기
+// 어렵다는 지적 반영 - 실측 검증 결과 SIMILAR_TO(커리큘럼 유사도)와 COMPATIBLE_WITH
+// (실제 실기유형/재료 일치)는 서로 다른 신호라(상관은 있지만 완전히 겹치지 않음,
+// 71.3% vs 베이스라인 54.9%), 섞지 않고 둘 다 보여준다. renderDepartmentResults와
+// renderRecommendResults 양쪽에서 공유하는 전역 함수.
+//
+// 2026-09-18 배포 후 실측 버그: 이 함수를 원래 아래 if(...) 블록 "안"에 넣었더니,
+// mode=department/university/recommend일 때는 이 블록 자체가 실행되지 않아
+// (Annex B 함수 호이스팅 규칙상) compatMatchBadge가 선언만 되고 undefined로
+// 남아 "compatMatchBadge is not a function" 런타임 에러가 났다(브라우저 콘솔로
+// 사용자가 직접 잡아냄 - results.html?mode=department에서 카드가 통째로 안 뜸).
+// 이 if 블록은 mode가 전부 아닐 때(기본 실기검색 결과)만 실행되므로, 그 안에
+// 있던 함수는 그 모드에서만 안전했다 - 이 함수처럼 여러 모드에서 공유해야 하는
+// 함수는 반드시 이 if문 "바깥"(무조건 실행되는 위치)에 둬야 한다.
+function compatMatchBadge(s) {
+  if (s.compatible_match === "exact") {
+    return `<span class="shrink-0 px-unit-2xs py-0.5 bg-primary/10 text-primary font-label-sm text-label-sm rounded">실기유형도 겹침</span>`;
+  }
+  if (s.compatible_match === "partial") {
+    return `<span class="shrink-0 px-unit-2xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded">재료만 겹침</span>`;
+  }
+  return `<span class="shrink-0 px-unit-2xs py-0.5 bg-surface-container text-outline font-label-sm text-label-sm rounded">실기전형은 다름</span>`;
+}
+
 if (!isRecommendMode && !universityModeName && !departmentModeName) {
 const uniqCount = new Set(results.map(r => r.university)).size;
 document.getElementById("scopeLine").textContent = `분석 범위: 등록된 ${uniqCount}개 대학 전형 데이터 중 조건에 맞는 ${results.length}건`;
@@ -313,21 +337,6 @@ document.getElementById("countDocument").textContent = counts.document;
 document.getElementById("countHolistic").textContent = counts.holistic_review;
 
 function fmtDate(d) { return d || "-"; }
-
-// 2026-09-18: "유사도 %(커리큘럼 임베딩)"만 보여주면 어떤 근거로 추천됐는지 알기
-// 어렵다는 지적 반영 - 실측 검증 결과 SIMILAR_TO(커리큘럼 유사도)와 COMPATIBLE_WITH
-// (실제 실기유형/재료 일치)는 서로 다른 신호라(상관은 있지만 완전히 겹치지 않음,
-// 71.3% vs 베이스라인 54.9%), 섞지 않고 둘 다 보여준다. renderDepartmentResults와
-// renderRecommendResults 양쪽에서 공유하는 전역 함수.
-function compatMatchBadge(s) {
-  if (s.compatible_match === "exact") {
-    return `<span class="shrink-0 px-unit-2xs py-0.5 bg-primary/10 text-primary font-label-sm text-label-sm rounded">실기유형도 겹침</span>`;
-  }
-  if (s.compatible_match === "partial") {
-    return `<span class="shrink-0 px-unit-2xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded">재료만 겹침</span>`;
-  }
-  return `<span class="shrink-0 px-unit-2xs py-0.5 bg-surface-container text-outline font-label-sm text-label-sm rounded">실기전형은 다름</span>`;
-}
 
 function statusBadge(r) {
   if (r.match_status === "exact") {

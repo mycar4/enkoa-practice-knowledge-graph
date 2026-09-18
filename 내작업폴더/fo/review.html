@@ -44,6 +44,7 @@
 <div>
 <label class="font-label-lg text-label-lg text-on-surface block mb-unit-xs" for="univSelect">지원 학교 선택 (선택)</label>
 <select class="w-full h-11 px-unit-sm bg-surface-container-lowest border border-outline-variant rounded font-body-md text-body-md" id="univSelect"><option value="">학교 미선택 (일반 첨삭)</option></select>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-unit-2xs">아래 문서 종류를 바꾸면, 실제 원문에 그 서류 안내가 있는 학교만 골라서 보여드려요.</p>
 </div>
 <div>
 <label class="font-label-lg text-label-lg text-on-surface block mb-unit-xs" for="docType">문서 종류</label>
@@ -116,14 +117,33 @@
 </script>
 
 <script>
-fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
+let allUniversities = [];
+function renderUnivSelectOptions(allowedNames) {
   const sel = document.getElementById("univSelect");
-  list.forEach(u => {
-    const opt = document.createElement("option");
-    opt.value = u.university; opt.textContent = u.display_name || u.university;
-    sel.appendChild(opt);
-  });
+  const prevValue = sel.value;
+  const list = allowedNames ? allUniversities.filter(u => allowedNames.includes(u.university)) : allUniversities;
+  sel.innerHTML = '<option value="">학교 미선택 (일반 첨삭)</option>' + list.map(u =>
+    `<option value="${u.university}">${u.display_name || u.university}</option>`
+  ).join("");
+  // 이전에 고른 학교가 새 문서종류 필터에서도 여전히 유효하면 그대로 유지,
+  // 아니면 "일반 첨삭"으로 되돌린다(엉뚱한 학교가 선택된 채 남지 않도록).
+  sel.value = list.some(u => u.university === prevValue) ? prevValue : "";
+}
+fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
+  allUniversities = list;
+  renderUnivSelectOptions(null);
 }).catch(() => {});
+
+// 2026-09-18: "문서종류에 맞는 지원학교만 선택 가능하게" 요청 반영 - 자기소개서/
+// 미술활동보고서/포트폴리오 설명글은 실제로 그 서류를 언급하는 학교 원문이 있는
+// 곳만 골라 보여준다("기타 서류"는 특정 서류명이 아니라 필터링 근거가 없어
+// filtered:false로 오고, 이때는 전체 학교를 그대로 보여준다).
+document.getElementById("docType").addEventListener("change", (e) => {
+  fetch(window.API_BASE_URL + "/universities-by-doc-type?doc_type=" + encodeURIComponent(e.target.value))
+    .then(r => r.json())
+    .then(res => renderUnivSelectOptions(res.filtered ? res.universities : null))
+    .catch(() => renderUnivSelectOptions(null));
+});
 
 // AI 모델 선택 - 기본 모델은 누구나 바로 쓸 수 있고, 고급(gated) 모델은
 // 비밀번호 입력창이 같이 나타난다. 비밀번호는 서버에서 검증하며, 틀리거나

@@ -150,6 +150,21 @@ def build_entity_dictionary(driver):
     return entities
 
 
+def _filter_cross_university_noise(found: list, own_university: str) -> list:
+    """2026-09-18 실측 발견(사용자 지적): 계명대학교 원문의 "공학계열 연합전공
+    참여대학 명단"(기계공학과/자동차공학과 등 - 미술 실기와 전혀 무관)에 "중앙대학교"
+    라는 이름이 그냥 나열돼 있었을 뿐인데, LLM이 university 타입 엔티티로 뽑아냈고
+    Admission_Entity의 MERGE 키가 이름뿐이라(출처 구분 없음) 중앙대 자기 원문에서
+    나온 진짜 개체와 하나로 합쳐진 사례를 발견했다. 어제 발견한 "같은 표에 있으면
+    관련 있다고 착각"하는 오염과 동일 계열의 문제 - 프롬프트 지시만으로는 이런
+    맥락 판단(진짜 관련 언급 vs 무관한 나열)을 신뢰성 있게 못 맡긴다(이 세션에서
+    반복 확인). 그래서 결정론적으로 처리한다: 이 서비스는 "그 학교 자신의 실기
+    전형"만 다루므로, 청크 소속 대학과 이름이 다른 university 타입 엔티티는
+    대부분 무관한 나열/비교 인용이다 - 추출 단계에서 버린다. 체크포인트에 이미
+    저장된 결과에도 그대로 적용 가능(LLM 재호출 없이 무료로 정리됨)."""
+    return [item for item in found if not (item["type"] == "university" and item["name"] != own_university)]
+
+
 def extract_entities_llm(chunk_text: str, known_entities: dict) -> list:
     """청크 1건에 대해 LLM 구조화 추출 + 원문검증 + 신뢰도필터를 수행한다.
     반환: [{"name": canonical, "type": type, "is_new": bool}, ...] (신뢰도/검증 통과분만)"""
@@ -289,7 +304,7 @@ def main():
         # 체크포인트에 이미 있는 결과부터 채워 넣는다(LLM 호출 없음, 비용 0).
         for ch in already_done:
             key = (ch["university"], ch["chunk_index"])
-            found = checkpoint[f"{ch['university']}||{ch['chunk_index']}"]
+            found = _filter_cross_university_noise(checkpoint[f"{ch['university']}||{ch['chunk_index']}"], ch["university"])
             chunk_mentions[key] = found
             for item in found:
                 entity_types.setdefault(item["name"], item["type"])
@@ -315,6 +330,7 @@ def main():
                     if done % 100 == 0:
                         print(f"  진행: {done}/{len(chunks)}")
                     continue
+                found = _filter_cross_university_noise(found, ch["university"])
                 chunk_mentions[key] = found
                 for item in found:
                     entity_types.setdefault(item["name"], item["type"])
@@ -441,58 +457,170 @@ def main():
                 """, rows=batch)
         print(f"[커밋 완료] Admission_Entity={len(entity_types)}, MENTIONS={total_mentions}, CO_OCCURS_WITH={len(cooccur)}")
 
-        # PageRank + Louvain: 이 Aura 티어는 gds.graph.project()가 유료 GDS 세션을
-        # 요구해서(직접 호출해 확인함) networkx로 로컬 계산 후 SET으로 기록한다.
+        # 2026-09-17: 커뮤니티 오염 방지 필터를 여기(메인 파이프라인)로 영구 이전.
+        # 예전엔 이 필터를 별도 1회성 스크립트(recompute_community_clean.py)로만 돌려서,
+        # 이 스크립트를 다시 실행할 때마다(예: 신규 대학 추가) 오염이 재발하고 매번 손으로
+        # 재적용해야 했다 - 실제로 그 사고가 재발한 적이 있어 아예 여기 박아넣는다.
+        # 실기전형(Admission_Track)이 실제로 연결된 것으로 검증된 university/department만
+        # 커뮤니티 계산 대상으로 남기고, 나머지는 처음부터 계산에서 뺀다(exam_type/전형방식/
+        # 평가기준 등 다른 타입은 그대로 둠 - 이건 학과/대학이 아니라 원래도 검증 대상 아님).
+        with driver.session(default_access_mode=READ_ACCESS) as s:
+            valid_names = {r["name"] for r in s.run("""
+                MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(d:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
+                WHERE t.is_superseded IS NULL OR t.is_superseded = false
+                RETURN DISTINCT u.name AS name
+                UNION
+                MATCH (:Admission_University)-[:HAS_DEPARTMENT]->(d:Admission_Department)-[:HAS_TRACK]->(t:Admission_Track)
+                WHERE t.is_superseded IS NULL OR t.is_superseded = false
+                RETURN DISTINCT d.name AS name
+            """).data()}
+        excluded_names = {name for name, typ in entity_types.items()
+                           if typ in ("university", "department") and name not in valid_names}
+        print(f"[커뮤니티 오염 방지] 전체 개체 {len(entity_types)}개 중 검증 안 된 university/department "
+              f"{len(excluded_names)}개는 커뮤니티/PageRank 계산 대상에서 제외")
+
+        # PageRank + Louvain: 2026-09-17 AGA(Aura Graph Analytics) 세션으로 전환.
+        # 예전엔 "이 Aura 티어는 gds.graph.project()가 유료 GDS 세션을 요구한다"고 보고
+        # networkx 로컬 계산으로 우회했으나, Aura가 세션 기반 GDS(AGA)를 무료 티어에도
+        # 제공한 뒤로는 그 우회가 필요 없다 - 실측(2026-09-17)으로 세션 생성→프로젝션→
+        # pageRank.mutate→louvain.mutate→graph.nodeProperties.write 전 과정을 검증했다.
+        # AURA_API_CLIENT_ID/SECRET/TENANT_ID는 Neo4j DB 접속정보와 별개로 Aura 콘솔
+        # "API Key" 메뉴에서 발급받는 자격증명이다 - .env에 없으면 이 블록 전체를 건너뛴다.
+        community_of: dict = {}
+        community_labels: dict = {}
         try:
-            import networkx as nx
-            from networkx.algorithms.community import louvain_communities
+            from graphdatascience.session import GdsSessions, AuraAPICredentials, DbmsConnectionInfo, SessionMemory
 
-            G = nx.Graph()
-            for name in entity_types:
-                G.add_node(name)
-            for (a, b), weight in cooccur.items():
-                G.add_edge(a, b, weight=weight)
+            aga_client_id = os.getenv("AURA_API_CLIENT_ID")
+            aga_client_secret = os.getenv("AURA_API_CLIENT_SECRET")
+            aga_tenant_id = os.getenv("AURA_API_TENANT_ID")
+            if not (aga_client_id and aga_client_secret and aga_tenant_id):
+                raise RuntimeError("AURA_API_CLIENT_ID/SECRET/TENANT_ID가 .env에 없음 - AGA 세션 생성 불가")
 
-            pagerank = nx.pagerank(G, weight="weight") if G.number_of_edges() > 0 else {n: 0.0 for n in G.nodes}
-            communities = louvain_communities(G, weight="weight", seed=42) if G.number_of_edges() > 0 else []
-            community_of = {name: idx for idx, comm in enumerate(communities) for name in comm}
+            sessions = GdsSessions(api_credentials=AuraAPICredentials(aga_client_id, aga_client_secret, aga_tenant_id))
+            db_connection = DbmsConnectionInfo(uri=uri, username=user, password=pwd)
+            session_name = "art-admission-community"
+            gds = sessions.get_or_create(session_name=session_name, memory=SessionMemory.m_2GB, db_connection=db_connection)
+            graph_name = "art_admission_cooccurs"
+            try:
+                excluded_list_literal = "[" + ", ".join(json.dumps(n) for n in excluded_names) + "]"
+                project_query = f"""
+                    MATCH (a:Admission_Entity)-[r:CO_OCCURS_WITH]-(b:Admission_Entity)
+                    WHERE NOT a.name IN {excluded_list_literal} AND NOT b.name IN {excluded_list_literal}
+                    RETURN gds.graph.project('{graph_name}', a, b, {{relationshipProperties: {{weight: coalesce(r.weight, 1.0)}}}})
+                """
+                G, _ = gds.graph.project(graph_name, project_query)
+                if G.node_count() == 0:
+                    print("ℹ️ CO_OCCURS_WITH 관계가 0건이라 PageRank/Louvain을 건너뜀 (엔티티 추출을 먼저 실행해야 함)")
+                else:
+                    gds.pageRank.mutate(G, mutateProperty="pagerank", relationshipWeightProperty="weight")
+                    gds.louvain.mutate(G, mutateProperty="community", relationshipWeightProperty="weight")
+                    gds.graph.nodeProperties.write(G, ["pagerank", "community"])
+                    print(f"[AGA PageRank/Louvain 계산+저장 완료] (세션={session_name}, 노드={G.node_count()}, 관계={G.relationship_count()})")
 
-            # GraphRAG 스타일 커뮤니티 요약: 크기 2 이상인 커뮤니티마다 LLM 라벨 1회 호출
-            community_labels = {}
-            sizable = [c for c in communities if len(c) >= 2]
-            print(f"\n커뮤니티 {len(communities)}개 중 {len(sizable)}개(크기>=2)에 LLM 라벨 부여 중...")
-            with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
-                label_futures = {pool.submit(label_community_llm, list(c)): idx for idx, c in enumerate(communities) if len(c) >= 2}
-                for fut in as_completed(label_futures):
-                    idx = label_futures[fut]
-                    try:
-                        community_labels[idx] = fut.result()
-                    except Exception:
-                        community_labels[idx] = ""
+                    # community_label은 GDS가 못 붙여주니 그래프에서 방금 쓴 값을 읽어와 LLM으로 라벨링
+                    with driver.session(default_access_mode=READ_ACCESS) as s:
+                        rows = s.run("""
+                            MATCH (e:Admission_Entity) WHERE e.community IS NOT NULL
+                            RETURN e.name AS name, e.community AS community
+                        """).data()
+                    by_community: dict = defaultdict(list)
+                    for r in rows:
+                        by_community[r["community"]].append(r["name"])
+                        community_of[r["name"]] = r["community"]
 
-            with driver.session(default_access_mode=WRITE_ACCESS) as s:
-                for name in entity_types:
-                    cidx = community_of.get(name, -1)
-                    s.run("""
-                        MATCH (e:Admission_Entity {name: $name})
-                        SET e.pagerank = $pagerank, e.community = $community, e.community_label = $label
-                    """, name=name, pagerank=float(pagerank.get(name, 0.0)), community=cidx,
-                        label=community_labels.get(cidx, ""))
-            print(f"[PageRank/Louvain/커뮤니티라벨 완료] (networkx 로컬 계산, {len(communities)}개 커뮤니티)")
+                    sizable = {cidx: names for cidx, names in by_community.items() if len(names) >= 2}
+                    print(f"\n커뮤니티 {len(by_community)}개 중 {len(sizable)}개(크기>=2)에 LLM 라벨 부여 중...")
+                    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
+                        label_futures = {pool.submit(label_community_llm, names): cidx for cidx, names in sizable.items()}
+                        for fut in as_completed(label_futures):
+                            cidx = label_futures[fut]
+                            try:
+                                community_labels[cidx] = fut.result()
+                            except Exception:
+                                community_labels[cidx] = ""
 
-            top = sorted(pagerank.items(), key=lambda kv: -kv[1])[:10]
-            print("\n[PageRank 상위 10개 개체]")
-            for name, score in top:
-                print(f"  {name} ({entity_types[name]}) pagerank={score:.4f} community={community_of.get(name)} "
-                      f"label={community_labels.get(community_of.get(name), '')}")
-
-            print("\n[커뮤니티별 구성 예시 (상위 5개, 라벨 포함)]")
-            for comm in sorted(communities, key=len, reverse=True)[:5]:
-                idx = community_of[next(iter(comm))]
-                names = [f"{n}({entity_types[n]})" for n in list(comm)[:8]]
-                print(f"  [{community_labels.get(idx, '(라벨없음)')}] ({len(comm)}개): {', '.join(names)}")
+                    with driver.session(default_access_mode=WRITE_ACCESS) as s:
+                        for cidx, names in by_community.items():
+                            s.run("""
+                                UNWIND $names AS name
+                                MATCH (e:Admission_Entity {name: name})
+                                SET e.community_label = $label
+                            """, names=names, label=community_labels.get(cidx, ""))
+                        if excluded_names:
+                            s.run("""
+                                UNWIND $names AS name
+                                MATCH (e:Admission_Entity {name: name})
+                                REMOVE e.community, e.community_label, e.pagerank
+                            """, names=list(excluded_names))
+                    print(f"[커뮤니티 라벨 저장 완료] ({len(by_community)}개 커뮤니티, 제외 {len(excluded_names)}개는 REMOVE)")
+            finally:
+                try:
+                    gds.graph.drop(graph_name, failIfMissing=False)
+                except Exception:
+                    pass
+                sessions.delete(session_name=session_name)
         except Exception as e:
-            print(f"ℹ️ PageRank/Louvain 계산 실패: {e}")
+            # 2026-09-17: AGA가 실제 데이터 규모(노드 5천대)에서 클라이언트-서버 프로토콜
+            # 불일치로 보이는 에러("sessionId 또는 memory 파라미터 필요")를 내서, 지금
+            # 규모에서는 이미 검증된 networkx 로컬 계산으로 폴백한다 - 전국 확장으로
+            # 노드가 훨씬 커지면 AGA 쪽을 다시 조사해야 한다.
+            print(f"ℹ️ AGA PageRank/Louvain 계산 실패, networkx 로컬 계산으로 폴백: {e}")
+            try:
+                import networkx as nx
+                from networkx.algorithms.community import louvain_communities
+
+                G = nx.Graph()
+                for name in entity_types:
+                    if name in excluded_names:
+                        continue
+                    G.add_node(name)
+                for (a, b), weight in cooccur.items():
+                    if a in excluded_names or b in excluded_names:
+                        continue
+                    G.add_edge(a, b, weight=weight)
+
+                pagerank = nx.pagerank(G, weight="weight") if G.number_of_edges() > 0 else {n: 0.0 for n in G.nodes}
+                communities = louvain_communities(G, weight="weight", seed=42) if G.number_of_edges() > 0 else []
+                community_of = {name: idx for idx, comm in enumerate(communities) for name in comm}
+
+                sizable_comms = [c for c in communities if len(c) >= 2]
+                print(f"\n커뮤니티 {len(communities)}개 중 {len(sizable_comms)}개(크기>=2)에 LLM 라벨 부여 중...")
+                with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
+                    label_futures = {pool.submit(label_community_llm, list(c)): idx for idx, c in enumerate(communities) if len(c) >= 2}
+                    for fut in as_completed(label_futures):
+                        idx = label_futures[fut]
+                        try:
+                            community_labels[idx] = fut.result()
+                        except Exception:
+                            community_labels[idx] = ""
+
+                with driver.session(default_access_mode=WRITE_ACCESS) as s:
+                    for name in entity_types:
+                        if name in excluded_names:
+                            continue
+                        cidx = community_of.get(name, -1)
+                        s.run("""
+                            MATCH (e:Admission_Entity {name: $name})
+                            SET e.pagerank = $pagerank, e.community = $community, e.community_label = $label
+                        """, name=name, pagerank=float(pagerank.get(name, 0.0)), community=cidx,
+                            label=community_labels.get(cidx, ""))
+                    if excluded_names:
+                        s.run("""
+                            UNWIND $names AS name
+                            MATCH (e:Admission_Entity {name: name})
+                            REMOVE e.community, e.community_label, e.pagerank
+                        """, names=list(excluded_names))
+                print(f"[networkx 폴백 PageRank/Louvain/커뮤니티라벨 완료] ({len(communities)}개 커뮤니티, "
+                      f"제외 {len(excluded_names)}개는 community 속성 REMOVE)")
+
+                top = sorted(pagerank.items(), key=lambda kv: -kv[1])[:10]
+                print("\n[PageRank 상위 10개 개체]")
+                for name, score in top:
+                    print(f"  {name} ({entity_types[name]}) pagerank={score:.4f} community={community_of.get(name)} "
+                          f"label={community_labels.get(community_of.get(name), '')}")
+            except Exception as e2:
+                print(f"ℹ️ networkx 폴백도 실패: {e2}")
     finally:
         driver.close()
 
