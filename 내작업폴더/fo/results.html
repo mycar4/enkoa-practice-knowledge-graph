@@ -314,6 +314,21 @@ document.getElementById("countHolistic").textContent = counts.holistic_review;
 
 function fmtDate(d) { return d || "-"; }
 
+// 2026-09-18: "유사도 %(커리큘럼 임베딩)"만 보여주면 어떤 근거로 추천됐는지 알기
+// 어렵다는 지적 반영 - 실측 검증 결과 SIMILAR_TO(커리큘럼 유사도)와 COMPATIBLE_WITH
+// (실제 실기유형/재료 일치)는 서로 다른 신호라(상관은 있지만 완전히 겹치지 않음,
+// 71.3% vs 베이스라인 54.9%), 섞지 않고 둘 다 보여준다. renderDepartmentResults와
+// renderRecommendResults 양쪽에서 공유하는 전역 함수.
+function compatMatchBadge(s) {
+  if (s.compatible_match === "exact") {
+    return `<span class="shrink-0 px-unit-2xs py-0.5 bg-primary/10 text-primary font-label-sm text-label-sm rounded">실기유형도 겹침</span>`;
+  }
+  if (s.compatible_match === "partial") {
+    return `<span class="shrink-0 px-unit-2xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded">재료만 겹침</span>`;
+  }
+  return `<span class="shrink-0 px-unit-2xs py-0.5 bg-surface-container text-outline font-label-sm text-label-sm rounded">실기전형은 다름</span>`;
+}
+
 function statusBadge(r) {
   if (r.match_status === "exact") {
     return `<span class="px-unit-xs py-0.5 bg-primary text-on-primary font-label-sm text-label-sm rounded">실기종목 일치</span>`;
@@ -829,7 +844,10 @@ async function renderDepartmentResults(query, mode) {
             ${similar.map(s => `<li class="font-body-sm text-body-sm">
               <a href="results.html?mode=department&name=${encodeURIComponent(s.department)}" class="flex items-center justify-between gap-unit-xs text-on-surface-variant hover:text-primary hover:underline">
                 <span>${s.university}${s.campus ? ` (${s.campus}캠퍼스)` : ""} · ${s.department}</span>
-                <span class="shrink-0 px-unit-2xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded">유사도 ${Math.round((s.score || 0) * 100)}%</span>
+                <span class="flex items-center gap-unit-2xs shrink-0">
+                  <span class="px-unit-2xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded">유사도 ${Math.round((s.score || 0) * 100)}%</span>
+                  ${compatMatchBadge(s)}
+                </span>
               </a>
             </li>`).join("")}
           </ul>
@@ -1466,7 +1484,10 @@ function renderRecommendResults() {
           ${recSimilar.map(s => `<li class="font-body-sm text-body-sm">
             <a href="results.html?mode=department&name=${encodeURIComponent(s.department)}" class="flex items-center justify-between gap-unit-xs text-on-surface-variant hover:text-primary hover:underline">
               <span>${s.university}${s.campus ? ` (${s.campus}캠퍼스)` : ""} · ${s.department}</span>
-              <span class="shrink-0 px-unit-2xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded">유사도 ${Math.round((s.score || 0) * 100)}%</span>
+              <span class="flex items-center gap-unit-2xs shrink-0">
+                <span class="px-unit-2xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded">유사도 ${Math.round((s.score || 0) * 100)}%</span>
+                ${compatMatchBadge(s)}
+              </span>
             </a>
           </li>`).join("")}
         </ul>

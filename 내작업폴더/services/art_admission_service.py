@@ -1095,8 +1095,13 @@ class ArtAdmissionService:
                 MATCH (u:Admission_University {name: $university})-[:HAS_DEPARTMENT]->(d:Admission_Department {name: $department})
                 WHERE $campus IS NULL OR u.campus = $campus
                 MATCH (d)-[r:SIMILAR_TO]-(d2:Admission_Department)<-[:HAS_DEPARTMENT]-(u2:Admission_University)
+                OPTIONAL MATCH (d)-[:HAS_TRACK]->(:Admission_Track)-[cw:COMPATIBLE_WITH]-(:Admission_Track)<-[:HAS_TRACK]-(d2)
+                WITH u2, d2, r, collect(DISTINCT cw.match_type) AS match_types
                 RETURN u2.name AS university, u2.campus AS campus, d2.name AS department,
-                       d2.standard_tag AS standard_tag, r.similarity_pct AS similarity_pct
+                       d2.standard_tag AS standard_tag, r.similarity_pct AS similarity_pct,
+                       CASE WHEN 'exact' IN match_types THEN 'exact'
+                            WHEN 'partial' IN match_types THEN 'partial'
+                            ELSE null END AS compatible_match
                 ORDER BY r.similarity_pct DESC
                 LIMIT $k
             """, university=university, department=department, campus=campus, k=top_k).data()
@@ -1108,7 +1113,10 @@ class ArtAdmissionService:
     @staticmethod
     def _find_similar_departments_live(s, university: str, department: str, campus: Optional[str],
                                         top_k: int) -> List[Dict[str, Any]]:
-        """SIMILAR_TO 배치 미실행 학과용 폴백 - 예전 즉석 벡터 계산 방식 그대로."""
+        """SIMILAR_TO 배치 미실행 학과용 폴백 - 예전 즉석 벡터 계산 방식 그대로.
+        2026-09-18: 커리큘럼 유사도(score)만으로는 "왜 추천됐는지" 근거가 약하다는
+        지적(§실기전형 일치 여부는 별개 신호) 반영 - 실제 COMPATIBLE_WITH(실기유형/
+        재료 겹침) 존재 여부도 함께 붙여서, 화면이 두 신호를 구분해 보여줄 수 있게 한다."""
         target = s.run("""
             MATCH (u:Admission_University {name: $university})-[:HAS_DEPARTMENT]->(d:Admission_Department {name: $department})
             WHERE $campus IS NULL OR u.campus = $campus
@@ -1116,17 +1124,24 @@ class ArtAdmissionService:
         """, university=university, department=department, campus=campus).single()
         if not target or not target["embedding"]:
             return []
-        return s.run("""
+        rows = s.run("""
             CALL db.index.vector.queryNodes('admission_department_embedding', $k, $vec)
             YIELD node, score
             MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(node)
             WHERE node.standard_tag = $tag AND NOT (u.name = $university AND node.name = $department)
+            OPTIONAL MATCH (:Admission_Department {university: $university, name: $department})-[:HAS_TRACK]->
+                           (:Admission_Track)-[cw:COMPATIBLE_WITH]-(:Admission_Track)<-[:HAS_TRACK]-(node)
+            WITH u, node, score, collect(DISTINCT cw.match_type) AS match_types
             RETURN u.name AS university, u.campus AS campus, node.name AS department,
-                   node.standard_tag AS standard_tag, score
+                   node.standard_tag AS standard_tag, score,
+                   CASE WHEN 'exact' IN match_types THEN 'exact'
+                        WHEN 'partial' IN match_types THEN 'partial'
+                        ELSE null END AS compatible_match
             ORDER BY score DESC
             LIMIT $k
         """, k=top_k, vec=target["embedding"], tag=target["tag"],
              university=university, department=department).data()
+        return rows
 
     def find_similar_departments_batch(self, requests: List[Dict[str, Any]], top_k: int = 5) -> Dict[str, List[Dict[str, Any]]]:
         """[유사 학과 추천 배치] 2026-09-18: results.html이 유니크 학과 개수만큼(최대
@@ -1146,8 +1161,13 @@ class ArtAdmissionService:
                     MATCH (u:Admission_University {name: $university})-[:HAS_DEPARTMENT]->(d:Admission_Department {name: $department})
                     WHERE $campus IS NULL OR u.campus = $campus
                     MATCH (d)-[r:SIMILAR_TO]-(d2:Admission_Department)<-[:HAS_DEPARTMENT]-(u2:Admission_University)
+                    OPTIONAL MATCH (d)-[:HAS_TRACK]->(:Admission_Track)-[cw:COMPATIBLE_WITH]-(:Admission_Track)<-[:HAS_TRACK]-(d2)
+                    WITH u2, d2, r, collect(DISTINCT cw.match_type) AS match_types
                     RETURN u2.name AS university, u2.campus AS campus, d2.name AS department,
-                           d2.standard_tag AS standard_tag, r.similarity_pct AS similarity_pct
+                           d2.standard_tag AS standard_tag, r.similarity_pct AS similarity_pct,
+                           CASE WHEN 'exact' IN match_types THEN 'exact'
+                                WHEN 'partial' IN match_types THEN 'partial'
+                                ELSE null END AS compatible_match
                     ORDER BY r.similarity_pct DESC
                     LIMIT $k
                 """, university=university, department=department, campus=campus, k=top_k).data()
