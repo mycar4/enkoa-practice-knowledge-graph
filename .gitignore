@@ -32,6 +32,7 @@ lib/
 # 진짜 소스코드라 예외로 커밋한다 (검증용 FO + Stitch 디자인 원본).
 !내작업폴더/fo/*.html
 !내작업폴더/stitch_art_admissions_intelligence_fo/**/code.html
+!franchise/web/**/index.html
 
 # 엔티티 추출 재개(resume) 체크포인트 - 로컬 캐시, 커밋 대상 아님
 내작업폴더/data/art_admission/.entity_extraction_checkpoint.json
