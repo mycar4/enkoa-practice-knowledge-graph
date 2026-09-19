@@ -360,13 +360,31 @@ const container = document.getElementById("cardsContainer");
 // 있게 - 이전에는 profile.html에서 고른 조건이 결과에 고정 반영될 뿐, 이 화면
 // 안에서 다시 좁히는 셀렉트가 없었다("성적 추천" 쪽에는 있는데 "대학 찾기" 쪽엔
 // 없다"는 피드백으로 추가).
-function renderProfileCards(list) {
+async function renderProfileCards(list) {
   container.innerHTML = "";
   if (list.length === 0) {
     document.getElementById("emptyState").classList.remove("hidden");
     return;
   }
   document.getElementById("emptyState").classList.add("hidden");
+  // 2026-09-18: "학과명으로 찾기"/"성적추천"에만 있던 비슷한 학과 기능이 이
+  // 기본 실기종목 검색 결과에는 없었다(사용자 발견) - 같은 배치 엔드포인트로
+  // 동일하게 붙인다.
+  const profileDeptKey = (r) => `${r.university}::${r.campus || ""}::${r.department}`;
+  const uniqProfileDepts = [...new Map(list.map(r => [profileDeptKey(r), r])).values()];
+  const profileSimilarByDept = new Map();
+  try {
+    const items = uniqProfileDepts.map(r => ({ university: r.university, department: r.department, campus: r.campus || null }));
+    const batch = await fetch(window.API_BASE_URL + "/similar-departments/batch", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items }),
+    }).then(res => res.json());
+    for (const r of uniqProfileDepts) {
+      profileSimilarByDept.set(profileDeptKey(r), Array.isArray(batch[profileDeptKey(r)]) ? batch[profileDeptKey(r)] : []);
+    }
+  } catch {
+    for (const r of uniqProfileDepts) profileSimilarByDept.set(profileDeptKey(r), []);
+  }
   list.forEach(r => {
     const key = trackKey(r);
     const card = document.createElement("div");
@@ -386,6 +404,27 @@ function renderProfileCards(list) {
 
     const regionBadge = r.region ? `<span class="px-unit-xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded border border-outline-variant">${r.region}</span>` : "";
     const collegeTypeBadge = r.college_type === "2년제" ? `<span class="px-unit-xs py-0.5 bg-secondary text-on-secondary font-label-sm text-label-sm rounded">2년제</span>` : "";
+    const profileSimilar = profileSimilarByDept.get(profileDeptKey(r)) || [];
+    const profileSimilarBlock = profileSimilar.length ? `
+        <details class="mt-unit-2xs">
+          <summary class="font-label-md text-label-md text-primary font-bold cursor-pointer flex items-center gap-unit-2xs"><span class="material-symbols-outlined text-[16px]">auto_awesome</span>비슷한 학과 ${profileSimilar.length}곳 (같은 계열 태그 기준, 교육과정 유사도)</summary>
+          <ul class="mt-unit-2xs flex flex-col gap-unit-3xs">
+            ${profileSimilar.map(s => `<li class="font-body-sm text-body-sm">
+              <a href="results.html?mode=department&name=${encodeURIComponent(s.department)}" class="flex items-center justify-between gap-unit-xs text-on-surface-variant hover:text-primary hover:underline">
+                <span>${s.university}${s.campus ? ` (${s.campus}캠퍼스)` : ""} · ${s.department}</span>
+                <span class="flex items-center gap-unit-2xs shrink-0">
+                  <span class="px-unit-2xs py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded">유사도 ${Math.round((s.score || 0) * 100)}%</span>
+                  ${compatMatchBadge(s)}
+                </span>
+              </a>
+            </li>`).join("")}
+          </ul>
+        </details>` : "";
+    const profileCurriculumBlock = `
+        <details class="mt-unit-2xs curriculumDetails" data-university="${r.university.replace(/"/g, '&quot;')}" data-department="${(r.department || "").replace(/"/g, '&quot;')}" data-campus="${(r.campus || "").replace(/"/g, '&quot;')}">
+          <summary class="font-label-sm text-label-sm text-outline cursor-pointer">이 학과 교육과정 보기</summary>
+          <div class="curriculumBody mt-unit-2xs font-body-sm text-body-sm text-on-surface-variant">불러오는 중...</div>
+        </details>`;
     card.innerHTML = `
       <div class="flex items-center justify-between gap-unit-xs">
         <span class="font-headline-sm text-headline-sm text-on-surface">${r.university}${campusStr}</span>
@@ -400,6 +439,8 @@ function renderProfileCards(list) {
       <div class="font-body-sm text-body-sm text-on-surface-variant">실기고사: ${(r.exam_dates || []).join(", ") || "-"} · 발표: ${fmtDate(r.result_date)}</div>
       ${reasonLine}
       ${warningLine}
+      ${profileSimilarBlock}
+      ${profileCurriculumBlock}
       ${hasCutoff ? `
         <details class="mt-unit-2xs">
           <summary class="font-label-sm text-label-sm text-outline cursor-pointer">비공식 참고 정보</summary>
@@ -433,6 +474,7 @@ function renderProfileCards(list) {
   document.querySelectorAll(".evidence-btn").forEach(btn => {
     btn.addEventListener("click", () => openEvidence(btn.dataset.university, btn.dataset.campus, btn.dataset.department, btn.dataset.trackName));
   });
+  bindCurriculumDetails(container);
 }
 
 renderProfileCards(results);

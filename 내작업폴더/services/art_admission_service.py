@@ -1997,10 +1997,20 @@ class ArtAdmissionService:
         uni_names = {university}
         anchor_labels = dept_names | uni_names
 
+        # 2026-09-18 실측 발견(사용자 지적): 홍익대 조회 시 "실용음악전공"(미술과
+        # 무관한 음악계열, 같은 통합 모집요강 책자에만 같이 있을 뿐)이 그대로
+        # 보였다. 이 엔티티는 이미 02_Entity_Linker.py의 오염방지 필터에서
+        # community=NULL로 제외돼 있었는데(검증된 Admission_Track이 없는
+        # university/department 타입), 이 연계뷰가 그 제외 표시를 확인 안 하고
+        # 그냥 보여준 게 원인 - 아래 조건으로 이미 계산된 제외 신호를 재사용한다.
+        # (한계: "피아노"처럼 type이 "department"가 아니라 "전공"으로 표기돼
+        # 애초에 원본 필터를 통과 못한 경우는 이 조건으로도 못 잡는다 - 190개
+        # 타입 정규화 작업이 끝나야 완전히 닫힌다.)
+        _excluded = "(e.community IS NULL AND e.type IN ['university', 'department'])"
         with self.driver.session(default_access_mode=READ_ACCESS) as s:
-            entity_rows = s.run("""
-                MATCH (c:Admission_TextChunk {university: $university})-[:MENTIONS]->(e:Admission_Entity)
-                WHERE e.name IN $anchor_names
+            entity_rows = s.run(f"""
+                MATCH (c:Admission_TextChunk {{university: $university}})-[:MENTIONS]->(e:Admission_Entity)
+                WHERE e.name IN $anchor_names AND NOT {_excluded}
                 RETURN DISTINCT e.name AS name, e.type AS type, e.pagerank AS pagerank,
                        e.community AS community, e.community_label AS community_label,
                        e.llm_discovered AS llm_discovered
@@ -2009,12 +2019,12 @@ class ArtAdmissionService:
             # 이웃 개체(co-occurs)도 "이 학교 원문에 실제로 등장하는 개체"로만
             # 좁힌다 - CO_OCCURS_WITH의 weight는 전체 학교 통틀어 집계된 것이라,
             # 이 제한이 없으면 다른 학교 원문에서만 나온 개체가 섞여 들어온다.
-            neighbor_rows = s.run("""
-                MATCH (c:Admission_TextChunk {university: $university})-[:MENTIONS]->(a:Admission_Entity)
+            neighbor_rows = s.run(f"""
+                MATCH (c:Admission_TextChunk {{university: $university}})-[:MENTIONS]->(a:Admission_Entity)
                 WHERE a.name IN $anchors
                 MATCH (a)-[r:CO_OCCURS_WITH]-(b:Admission_Entity)
-                WHERE r.weight >= $min_weight
-                  AND EXISTS { MATCH (:Admission_TextChunk {university: $university})-[:MENTIONS]->(b) }
+                WHERE r.weight >= $min_weight AND NOT (b.community IS NULL AND b.type IN ['university', 'department'])
+                  AND EXISTS {{ MATCH (:Admission_TextChunk {{university: $university}})-[:MENTIONS]->(b) }}
                 RETURN DISTINCT b.name AS name, b.type AS type, b.pagerank AS pagerank,
                        b.community AS community, b.community_label AS community_label,
                        b.llm_discovered AS llm_discovered
@@ -2048,7 +2058,10 @@ class ArtAdmissionService:
                           f"community={r.get('community')} [{r.get('community_label') or ''}]"),
             })
         for r in edge_rows:
-            edges.append({"from": f"e::{r['a']}", "to": f"e::{r['b']}", "weight": r["weight"], "kind": "co_occurs"})
+            # entity_rows/neighbor_rows에서 이미 걸러진(community=NULL 등) 엔티티를
+            # 가리키는 엣지는 존재하지 않는 노드를 참조하게 되므로 함께 제외한다.
+            if r["a"] in seen and r["b"] in seen:
+                edges.append({"from": f"e::{r['a']}", "to": f"e::{r['b']}", "weight": r["weight"], "kind": "co_occurs"})
 
         # 1층<->2층 연결: 이름이 일치하는 학과/대학 노드만 점선으로 잇는다(실제
         # 그래프 관계가 아니라 이름 일치 기반 - 위 docstring 참고).

@@ -403,11 +403,13 @@ function runAnalysis() {
 // 2026-09-16: e.persisted만 믿고 껐더니 일부 브라우저/상황에서 bfcache 복원인데도
 // persisted가 true로 안 잡혀서 버튼이 계속 얼어있는 재현 사례가 있었다 - 이유를
 // 안전하게 다 커버하기보다, "버튼이 실제로 로딩 상태로 멈춰 있는가"를 직접 보고
-// 판단하는 쪽이 더 확실하다. persisted가 true이거나, 버튼이 disabled인 채로
-// 남아있으면(=이전에 분석 중 상태로 나갔다가 돌아온 것) 똑같이 리셋한다.
-window.addEventListener("pageshow", (e) => {
-  const stuckBtn = document.getElementById("submitBtn");
-  if (!e.persisted && !(stuckBtn && stuckBtn.disabled)) return;
+// 판단하는 쪽이 더 확실하다.
+// 2026-09-18: 그마저도 실측으로 다시 뚫렸다(사용자 발견 - "전형 데이터 분석
+// 중..."이 계속 떠 있음) - persisted/disabled 조건에 기대는 방식 자체가
+// 브라우저별 bfcache 판정 차이에 취약하다는 게 두 번째로 확인된 것이므로,
+// 조건 없이 이 페이지가 보일 때마다(최초 진입 포함) 무조건 리셋한다 - 방금
+// 막 들어온 페이지를 "이미 깨끗한 상태로 리셋"하는 건 부작용이 없다.
+window.addEventListener("pageshow", () => {
   selectedExams.clear();
   document.querySelectorAll(".exam-btn").forEach(btn => {
     btn.classList.remove("!bg-primary", "!border-primary", "shadow-md");
