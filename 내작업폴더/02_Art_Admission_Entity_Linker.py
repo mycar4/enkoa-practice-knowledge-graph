@@ -65,6 +65,40 @@ MAX_WORKERS = 3  # 2026-09-16: gpt-5.6-luna는 신형/제한적 모델이라 8�
 # 동시 요청 자체를 줄이는 게 더 안전하다 - 배치 작업이라 느려져도 무관.
 ALLOWED_CANON_TYPES = {"university", "department", "exam_type", "material"}
 
+# 2026-09-19: [타입 정규화] LLM이 새 개체를 발견할 때마다 즉석에서 type 이름을
+# 지어내서(원래 4종 university/department/exam_type/material 외에) 201개까지
+# 늘어났다 - 그중 "전공"/"학부"처럼 department의 동의어인데 문자열이 달라서
+# 오염방지 필터(아래 excluded_names, 정확히 "department"라는 문자열만 검사)를
+# 그냥 통과하는 사고가 실측 확인됐다(홍익대 "피아노"=type:"전공", "베이스"/
+# "드럼"/"관악기"=type:"실기분야"가 미술과 무관한데도 안 걸러짐). 201개 타입을
+# LLM 1회 호출로 5개 버킷(university/department/exam_type/material/other)에
+# 분류해 검토한 결과, department/exam_type/material 동의어 50개만 이 맵으로
+# 정규화한다. university 버킷(대학/단과대학/캠퍼스/college 등)은 일부러 뺐다 -
+# "College of Fine Arts"/"조형대학"처럼 진짜 미술 관련 단과대학까지 실제
+# Admission_University.name 목록과 문자 그대로 안 맞아 잘못 제외될 위험이
+# 컸기 때문(실측 확인 - 단과대학 타입 안에 미술 관련과 "AI융합대학" 같은
+# 무관한 게 섞여 있음). "other"로 분류된 139개는 전형방식/평가기준/제출서류
+# 등 서로 다른 개념이라 억지로 합치지 않고 그대로 둔다(별도 후속 작업 대상).
+TYPE_ALIAS_MAP = {
+    "전공": "department", "전공분야": "department", "세부전공": "department",
+    "학부": "department", "모집단위": "department", "학과": "department",
+    "학과군": "department", "지원단위": "department", "모집분야": "department",
+    "학부·전공": "department", "학과유형": "department", "전공제도": "department",
+    "학과분류": "department", "학과·전공": "department", "전공과정": "department",
+    "전공구분": "department", "학과·대학원": "department",
+    "실기종목": "exam_type", "실기분야": "exam_type", "시험과제": "exam_type",
+    "조형요소": "exam_type", "표현기법": "exam_type", "시험과목": "exam_type",
+    "체력평가종목": "exam_type", "출제요소": "exam_type", "공연요소": "exam_type",
+    "평가과목": "exam_type", "기법": "exam_type", "시험유형": "exam_type",
+    "실기시험": "exam_type", "출제방식": "exam_type", "실기과제": "exam_type",
+    "평가과제": "exam_type", "출제조건": "exam_type", "시험": "exam_type",
+    "예술 실기 종목": "exam_type", "작품형식": "exam_type", "실기평가": "exam_type",
+    "전공·실기분야": "exam_type", "공연종목": "exam_type", "실기과목": "exam_type",
+    "도구": "material", "제작도구": "material", "악기": "material",
+    "재료": "material", "재료·도구 조건": "material", "시험용품": "material",
+    "소프트웨어": "material", "재료규격": "material", "준비물": "material",
+}
+
 # 2026-09-16: [재개(resume) 체크포인트] 4,016개 청크를 gpt-5.6-luna로 재추출하다가
 # 두 번 연속 중간에 끊긴 사고(1차: Neo4j 쓰기 단계 NotALeader, 2차: OpenAI 지출한도
 # 초과)가 있었다 - 둘 다 "이미 LLM 호출까지는 끝난 비싼 결과"를 통째로 날리고
@@ -370,6 +404,22 @@ def main():
             for key, found in chunk_mentions.items():
                 for item in found:
                     entity_chunk_map[item["name"]].add(key)
+
+        # 타입 정규화 적용 - entity_types와 chunk_mentions 안의 type을 둘 다 바꿔야
+        # 이후 오염방지 필터/Neo4j 적재/화면 표시가 전부 일관되게 정규화된 타입을 본다.
+        type_normalized = 0
+        for name, typ in list(entity_types.items()):
+            canon_type = TYPE_ALIAS_MAP.get(typ)
+            if canon_type and canon_type != typ:
+                entity_types[name] = canon_type
+                type_normalized += 1
+        for key, found in chunk_mentions.items():
+            for item in found:
+                canon_type = TYPE_ALIAS_MAP.get(item["type"])
+                if canon_type:
+                    item["type"] = canon_type
+        if type_normalized:
+            print(f"\n타입 정규화 적용: {type_normalized}개 개체의 type을 department/exam_type/material 중 하나로 통일")
 
         total_mentions = sum(len(v) for v in chunk_mentions.values())
         new_entities = {n for n, t in entity_types.items() if n not in known_entities}
