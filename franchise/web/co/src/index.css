@@ -1,307 +1,285 @@
 :root {
-  --bg-base: #0f172a;
-  --bg-sidebar: #1e293b;
-  --bg-panel: #1e293b;
-  --bg-card: #334155;
-  --border-color: #334155;
-  --text-primary: #f8fafc;
-  --text-muted: #94a3b8;
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --radius: 10px;
+  /* ── 폰트 토큰 (첨삭펜 디자인 시스템) ── */
+  --font-sans: 'IBM Plex Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+  /* ── 브랜드 악센트: 첨삭펜 크림슨 레드 ── */
+  --pen-crimson: #d92632;
+  --pen-crimson-hover: #b91c1c;
+  --pen-crimson-subtle: rgba(217, 38, 50, 0.08);
+  --pen-crimson-border: rgba(217, 38, 50, 0.28);
+
+  /* ── CO 라이트/웜톤 토큰 (Warm Canvas & Principal Desk) ── */
+  --bg-base: #fbf9f5;         /* 캔버스 도화지 미색 */
+  --bg-sidebar: #f3eee4;      /* 원장 데스크 웜베이지 */
+  --bg-panel: #ffffff;        /* 서류/시험지 화이트 */
+  --bg-card: #ffffff;
+  --bg-card-hover: #faf7f0;
+  --bg-input: #f4efe4;
+  --border-color: #e2dcce;    /* 연필 스케치선 느낌의 정돈된 테두리 */
+  --border-strong: #cfc6b4;
+
+  --text-primary: #1c2024;    /* 진한 흑연 챠콜 */
+  --text-muted: #646d78;      /* 연필심 그레이 */
+  --text-light: #8a939e;
+
+  --primary: var(--pen-crimson);
+  --primary-hover: var(--pen-crimson-hover);
+  --success: #15803d;
+  --warning: #b45309;
+  --danger: var(--pen-crimson);
+  --radius: 8px;
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans);
 }
 
 body {
   background: var(--bg-base);
   color: var(--text-primary);
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 숫자/수납액/출석률/점수 모노스페이스 */
+.font-mono, .kpi-value, .mono, code, .table-mono {
+  font-family: var(--font-mono) !important;
+  letter-spacing: -0.5px;
 }
 
 .admin-wrapper {
   display: flex;
   min-height: 100vh;
+  background: var(--bg-base);
 }
 
+/* 좌측 사이드바: 원장 데스크 웜톤 */
 .sidebar {
-  width: 260px;
+  width: 270px;
   background: var(--bg-sidebar);
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  padding: 24px 16px;
-  gap: 20px;
+  padding: 20px 14px;
+  gap: 16px;
 }
 
 .sidebar-brand {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0 8px;
 }
 
 .logo-badge {
-  background: linear-gradient(135deg, #10b981, #3b82f6);
+  background: var(--pen-crimson);
   color: white;
   font-weight: 800;
   padding: 4px 8px;
   border-radius: 6px;
   font-size: 13px;
+  box-shadow: 0 2px 6px rgba(217, 38, 50, 0.3);
 }
 
 .sidebar-brand h2 {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 700;
+  color: var(--text-primary);
 }
 
-.sidebar-brand h2 span {
-  font-weight: 400;
+.sidebar-brand span {
+  font-size: 12px;
   color: var(--text-muted);
 }
 
+/* 학원 뱃지 카드 */
 .academy-badge {
-  background: rgba(255, 255, 255, 0.04);
+  background: #ffffff;
   border: 1px solid var(--border-color);
-  padding: 12px;
+  padding: 12px 14px;
   border-radius: var(--radius);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-.academy-badge strong {
-  font-size: 14px;
-}
-
+/* 메뉴 항목 */
 .sidebar-menu {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   flex: 1;
+  overflow-y: auto;
 }
 
 .menu-item {
   display: flex;
   align-items: center;
-  padding: 10px 14px;
-  border-radius: 8px;
-  color: var(--text-muted);
-  background: transparent;
+  justify-content: space-between;
+  padding: 9px 12px;
+  border-radius: 6px;
   border: none;
-  font-size: 14px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13.5px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s;
   text-align: left;
-  width: 100%;
+  transition: all 0.15s ease;
 }
 
 .menu-item:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.04);
   color: var(--text-primary);
 }
 
 .menu-item.active {
-  background: var(--primary);
-  color: white;
-  font-weight: 600;
+  background: var(--pen-crimson-subtle);
+  color: var(--pen-crimson);
+  font-weight: 700;
+  border-left: 3px solid var(--pen-crimson);
 }
 
-.sidebar-footer {
-  border-top: 1px solid var(--border-color);
-  padding-top: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.user-info {
-  font-size: 12px;
-  color: var(--text-muted);
-}
-
+/* 우측 메인 콘텐츠 */
 .main-content {
   flex: 1;
-  padding: 32px 40px;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  overflow-y: auto;
+  background: var(--bg-base);
 }
 
 .content-header {
+  padding: 18px 30px;
+  border-bottom: 1px solid var(--border-color);
+  background: #ffffff;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
-.header-title h1 {
-  font-size: 22px;
+.content-header h1 {
+  font-size: 20px;
   font-weight: 700;
-  margin-bottom: 4px;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
 }
 
+/* KPI 카드 그리드 (원장 데스크 채점 요약표) */
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
 }
 
 .kpi-card {
-  background: var(--bg-panel);
+  background: #ffffff;
   border: 1px solid var(--border-color);
-  padding: 20px;
   border-radius: var(--radius);
+  padding: 16px 18px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: transform 0.15s ease;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
 }
 
 .kpi-title {
-  font-size: 13px;
+  font-size: 12.5px;
   color: var(--text-muted);
 }
 
 .kpi-value {
-  font-size: 28px;
-  font-weight: 800;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.kpi-value.crimson {
+  color: var(--pen-crimson);
 }
 
 .kpi-sub {
+  font-size: 11.5px;
+  color: var(--text-light);
+}
+
+/* 첨삭 채점 대기 강조 패널 */
+.panel-card {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+.panel-card.correction-alert {
+  border-left: 4px solid var(--pen-crimson);
+}
+
+/* 장부형 테이블 스타일 */
+.co-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  overflow: hidden;
+  font-size: 13px;
+}
+
+.co-table th {
+  background: #f8f5ee;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-align: left;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border-color);
   font-size: 12px;
 }
 
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-.panel-card {
-  background: var(--bg-panel);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 24px;
-}
-
-.panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.panel-header h2, .panel-header h3 {
-  font-size: 17px;
-  font-weight: 700;
-}
-
-.task-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.task-list li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--bg-card);
-  padding: 14px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-}
-
-.album-mini-preview {
-  background: var(--bg-card);
-  border: 1px dashed var(--border-color);
-  border-radius: 8px;
-  height: 120px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.instructor-select-bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-  background: rgba(255, 255, 255, 0.02);
-  padding: 12px 16px;
-  border-radius: 8px;
-}
-
-.form-control {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
-.data-table th, .data-table td {
-  padding: 14px 18px;
+.co-table td {
+  padding: 12px 14px;
   border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
 }
 
-.data-table th {
-  background: var(--bg-card);
-  color: var(--text-muted);
-  font-weight: 600;
+.co-table tr:hover td {
+  background: #faf8f2;
 }
 
-input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-  accent-color: var(--primary);
-}
-
-.badge {
-  display: inline-block;
-  padding: 3px 8px;
+/* 첨삭펜 배지 및 버튼 */
+.badge-pen {
+  background: var(--pen-crimson-subtle);
+  color: var(--pen-crimson);
+  border: 1px solid var(--pen-crimson-border);
+  padding: 2px 8px;
   border-radius: 4px;
   font-size: 11px;
   font-weight: 600;
 }
 
-.badge-success { background: rgba(16, 185, 129, 0.2); color: var(--success); }
-.badge-info { background: rgba(59, 130, 246, 0.2); color: var(--primary); }
-.badge-warning { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
-
-.btn {
-  padding: 8px 14px;
-  border-radius: 6px;
+.btn-pen {
+  background: var(--pen-crimson);
+  color: #ffffff;
   border: none;
-  cursor: pointer;
-  font-size: 13px;
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-size: 12.5px;
   font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(217, 38, 50, 0.25);
+  transition: background 0.15s ease;
 }
 
-.btn-primary { background: var(--primary); color: white; }
-.btn-success { background: var(--success); color: white; }
-.btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); }
-
-.text-primary { color: var(--primary); }
-.text-success { color: var(--success); }
-.text-muted { color: var(--text-muted); font-size: 12px; }
+.btn-pen:hover {
+  background: var(--pen-crimson-hover);
+}
