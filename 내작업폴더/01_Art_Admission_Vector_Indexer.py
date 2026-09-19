@@ -63,9 +63,9 @@ INDEX_TARGETS = [
     ("인천대학교", "2027_incheon_susi.pdf", 2027),
     ("국립공주대학교", "2027_kongju_susi.pdf", 2027),
     ("청주대학교", "2027_cheongju_susi.pdf", 2027),
-    # 인천가톨릭대학교는 공식 요강이 PDF가 아닌 HWP로만 제공되어(2027_incheon_catholic_susi.hwp)
-    # 현재 pypdf 기반 인덱서로는 텍스트 추출이 불가능하다 - HWP 파서(pyhwp 등) 도입 전까지는
-    # 구조화 사실(Neo4j Track)만 적재되고 "원문 발췌"/하이브리드 검색 대상에서는 빠진다.
+    # 2026-09-17: 인천가톨릭대학교 공식 요강은 PDF가 아닌 HWP로만 제공된다
+    # (2027_incheon_catholic_susi.hwp) - hwp5txt(pyhwp) CLI 우회 추출로 지원 추가.
+    ("인천가톨릭대학교", "2027_incheon_catholic_susi.hwp", 2027),
     ("숙명여자대학교", "숙명여자대학교_2027학년도_수시모집요강.pdf", 2027),
     ("성신여자대학교", "성신여자대학교_2027학년도_수시모집요강.pdf", 2027),
     ("이화여자대학교", "이화여자대학교_2027학년도_수시모집요강.pdf", 2027),
@@ -120,7 +120,96 @@ CHUNK_CHAR_SIZE = 1500  # 대략 400~500 토큰 - 임베딩 품질/개수 균형
 
 def extract_chunks(pdf_path: Path):
     """페이지 텍스트를 이어붙이다가 CHUNK_CHAR_SIZE를 넘으면 끊는다. 청크마다
-    실제로 포함된 페이지 범위를 기록해서, 나중에 '몇 페이지 근거'인지 보여줄 수 있게 한다."""
+    실제로 포함된 페이지 범위를 기록해서, 나중에 '몇 페이지 근거'인지 보여줄 수 있게 한다.
+    2026-09-17: .hwp 확장자는 pypdf로 못 읽으므로 hwp5txt CLI(pyhwp 패키지)로 우회
+    추출한다 - HWP는 페이지 경계 정보가 없어 page_start/page_end를 0으로 둔다.
+
+    2026-09-17: 경기대/영남대처럼 전체가 스캔 이미지인 PDF는 pypdf가 0글자를 반환한다.
+    Tesseract OCR을 실측해봤는데 한글 음절 사이에 공백이 끼는 등 품질이 원문 검증
+    (anti-hallucination) 게이트를 통과 못할 수준이라 폐기했고, 대신 gpt-5.6-luna 비전
+    호출로 페이지별 사전 OCR한 결과를 `prospectus/ocr_cache/<파일명>.json`에 캐싱해두고
+    (`scratchpad/ocr_scanned_pdfs.py`), 여기서는 그 캐시가 있으면 pypdf 대신 사용한다."""
+    ocr_cache_path = pdf_path.parent / "ocr_cache" / f"{pdf_path.name}.json"
+    if ocr_cache_path.exists():
+        import json
+        with open(ocr_cache_path, encoding="utf-8") as f:
+            cached = json.load(f)
+        chunks = []
+        buf = ""
+        start_page = 1
+        pages = cached["pages"]
+        for i, text in enumerate(pages, start=1):
+            text = (text or "").strip()
+            if not text:
+                continue
+            if buf and len(buf) + len(text) > CHUNK_CHAR_SIZE:
+                chunks.append({"text": buf, "page_start": start_page, "page_end": i - 1})
+                buf = text
+                start_page = i
+            else:
+                buf = f"{buf}\n{text}" if buf else text
+        if buf:
+            chunks.append({"text": buf, "page_start": start_page, "page_end": len(pages)})
+        return chunks
+
+    if pdf_path.suffix.lower() == ".hwp":
+        # 2026-09-19: hwp5txt는 표(<표>) 내용을 통째로 못 읽고 자리표시자만 남긴다 -
+        # 실측으로 확인(인천가톨릭대 전형일정/모집인원표가 전부 유실됨). 같은 pyhwp
+        # 패키지의 hwp5html은 표를 실제 <table>로 렌더링하므로, 이를 파싱해서 표 행도
+        # 텍스트로 살린다(hwp5txt 대비 글자수 약 8.5배 증가, 날짜/정원 실측 확인됨).
+        import subprocess
+        import tempfile
+        from bs4 import BeautifulSoup
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            result = subprocess.run(
+                ["hwp5html", "--output", tmpdir, str(pdf_path)],
+                capture_output=True, text=True, encoding="utf-8",
+            )
+            if result.returncode != 0:
+                raise RuntimeError(f"hwp5html 추출 실패: {result.stderr}")
+            html_path = Path(tmpdir) / "index.xhtml"
+            with open(html_path, encoding="utf-8") as f:
+                soup = BeautifulSoup(f.read(), "html.parser")
+
+        def table_to_lines(table):
+            lines = []
+            for tr in table.find_all("tr"):
+                cells = [td.get_text(" ", strip=True) for td in tr.find_all(["td", "th"])]
+                cells = [c for c in cells if c]
+                if cells:
+                    lines.append(" | ".join(cells))
+            return lines
+
+        out_lines = []
+        body = soup.find("body")
+        for el in body.find_all(["p", "table"]):
+            if el.name == "p":
+                if el.find_parent("table") is not None:
+                    continue  # 표 안 문단은 표 처리에서 이미 다룸
+                text = el.get_text(" ", strip=True)
+                if text:
+                    out_lines.append(text)
+            elif el.name == "table":
+                if el.find_parent("table") is not None:
+                    continue  # 중첩 표는 바깥 표에서 이미 포함됨
+                out_lines.extend(table_to_lines(el))
+
+        chunks = []
+        buf = ""
+        for line in out_lines:
+            line = line.strip()
+            if not line:
+                continue
+            if buf and len(buf) + len(line) > CHUNK_CHAR_SIZE:
+                chunks.append({"text": buf, "page_start": 0, "page_end": 0})
+                buf = line
+            else:
+                buf = f"{buf}\n{line}" if buf else line
+        if buf:
+            chunks.append({"text": buf, "page_start": 0, "page_end": 0})
+        return chunks
+
     reader = pypdf.PdfReader(str(pdf_path))
     chunks = []
     buf = ""
