@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 
 // ── 데이터 타입 정의 ──
 interface Student {
@@ -93,9 +93,68 @@ interface ToastItem {
 
 const API_BASE = (import.meta as any).env?.VITE_API_URL || '/api/v1';
 
+function getCoAccessToken(): string | null {
+  try { return localStorage.getItem('art_co_access_token'); } catch { return null; }
+}
+
 export default function App() {
   // 현재 선택된 메뉴 (10개 메뉴 전수 대응)
   const [activeMenu, setActiveMenu] = useState<string>('dashboard');
+
+  // 2026-09-21 신규: 이전엔 CO 사이트도 로그인 없이 바로 열렸다. 실제
+  // /auth/login으로 인증하고 role에 따라 원장/강사 모드를 자동 설정한다
+  // (기존 userRole 토글은 로그인 후에도 UI 데모용으로 남겨둔다).
+  const [session, setSession] = useState<any>(() => {
+    try { return JSON.parse(localStorage.getItem('art_co_session') || 'null'); } catch { return null; }
+  });
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [loginError, setLoginError] = useState('');
+
+  const handleStaffLogin = async (e: FormEvent) => {
+    e.preventDefault();
+    setLoginError('');
+    if (!loginEmail.trim() || !loginPassword.trim()) {
+      setLoginError('이메일과 비밀번호를 입력해주세요.');
+      return;
+    }
+    setLoginLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: loginEmail, password: loginPassword })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setLoginError(data?.error || '로그인에 실패했습니다.');
+        return;
+      }
+      if (!data.profile || !['TENANT_ADMIN', 'INSTRUCTOR'].includes(data.profile.role)) {
+        setLoginError('원장(TENANT_ADMIN)/강사(INSTRUCTOR) 계정만 로그인할 수 있습니다.');
+        return;
+      }
+      try {
+        localStorage.setItem('art_co_access_token', data.access_token);
+        localStorage.setItem('art_co_session', JSON.stringify(data.profile));
+      } catch {}
+      setSession(data.profile);
+      setUserRole(data.profile.role === 'TENANT_ADMIN' ? 'DIRECTOR' : 'INSTRUCTOR');
+    } catch {
+      setLoginError('로그인에 실패했습니다 - 네트워크 오류.');
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
+  const handleStaffLogout = () => {
+    try {
+      localStorage.removeItem('art_co_access_token');
+      localStorage.removeItem('art_co_session');
+    } catch {}
+    setSession(null);
+  };
 
   // 사용자 권한 모드 토글 (원장 vs 강사)
   const [userRole, setUserRole] = useState<'DIRECTOR' | 'INSTRUCTOR'>('DIRECTOR');
@@ -221,21 +280,37 @@ export default function App() {
     );
   };
 
+  // 2026-09-21: 이전엔 API 응답을 확인하지 않고 항상 "저장 완료" 토스트만
+  // 띄웠다 - menu_permissions 테이블이 실제로 생겼으니 각 메뉴별로 upsert
+  // 호출하고, 하나라도 실패하면 정직하게 알린다.
   const handleSavePermissions = async () => {
+    // 데모용 강사 목록(instructors)이 로컬 목업이라 실제 user_profiles.id가
+    // 아니다 - 실제 tenant_id를 가져오는 것부터 시작한다.
     try {
-      await fetch(`${API_BASE}/co/tenants/t-01/permissions/${selectedInstructorId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          permissions: permissions.map(p => ({
-            menu_key: p.menu_key,
-            can_read: p.can_read,
-            can_write: p.can_write
-          }))
-        })
-      });
-    } catch {}
-    showToast(`[저장 완료]\n강사(${selectedInstructorId})의 메뉴 권한 설정이 백엔드에 반영되었습니다.`);
+      const tRes = await fetch(`${API_BASE}/co/profile`);
+      const tenant = await tRes.json();
+      const tenantId = tenant?.id;
+      if (!tenantId) {
+        showToast('학원 정보를 불러오지 못해 권한을 저장할 수 없습니다.', 'error');
+        return;
+      }
+      let failCount = 0;
+      for (const p of permissions) {
+        const res = await fetch(`${API_BASE}/co/permissions`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: selectedInstructorId, tenant_id: tenantId, menu_key: p.menu_key, can_read: p.can_read, can_write: p.can_write })
+        });
+        if (!res.ok) failCount++;
+      }
+      if (failCount > 0) {
+        showToast(`${failCount}개 메뉴 권한 저장에 실패했습니다.`, 'error');
+        return;
+      }
+      showToast(`[저장 완료]\n강사(${selectedInstructorId})의 메뉴 권한 설정이 백엔드에 반영되었습니다.`);
+    } catch {
+      showToast('권한 저장에 실패했습니다 - 네트워크 오류.', 'error');
+    }
   };
 
   const handleAttendanceChange = (recordId: string, newStatus: 'PRESENT' | 'LATE' | 'ABSENT') => {
@@ -426,6 +501,29 @@ export default function App() {
     s.name.includes(studentSearch) || s.grade.includes(studentSearch) || s.targetMajor.includes(studentSearch)
   );
 
+  // 2026-09-21: 로그인 세션 없으면 대시보드 대신 로그인 화면만 렌더링한다.
+  if (!session) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#fbf9f5' }}>
+        <div style={{ background: '#ffffff', border: '1px solid #e2dcce', borderRadius: '12px', padding: '28px', maxWidth: '380px', width: '100%', boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
+          <div style={{ textAlign: 'center', marginBottom: '18px' }}>
+            <span style={{ background: '#d92632', color: '#ffffff', fontWeight: 800, padding: '4px 10px', borderRadius: '6px', fontSize: '14px' }}>CO</span>
+            <h3 style={{ margin: '10px 0 2px 0', fontSize: '18px', color: '#1c2024' }}>가맹학원 원장/강사 로그인</h3>
+          </div>
+          <form onSubmit={handleStaffLogin} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <input type="email" placeholder="이메일" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} style={{ padding: '10px', border: '1px solid #e2dcce', borderRadius: '6px', fontSize: '13px' }} />
+            <input type="password" placeholder="비밀번호" value={loginPassword} onChange={e => setLoginPassword(e.target.value)} style={{ padding: '10px', border: '1px solid #e2dcce', borderRadius: '6px', fontSize: '13px' }} />
+            {loginError && <span style={{ color: '#d92632', fontSize: '12px' }}>{loginError}</span>}
+            <button type="submit" disabled={loginLoading} style={{ background: '#d92632', color: '#fff', border: 'none', padding: '11px', borderRadius: '6px', fontSize: '14px', fontWeight: 700, cursor: loginLoading ? 'default' : 'pointer', opacity: loginLoading ? 0.6 : 1 }}>
+              {loginLoading ? '로그인 중...' : '로그인'}
+            </button>
+          </form>
+          <p style={{ fontSize: '11px', color: '#646d78', marginTop: '12px', textAlign: 'center' }}>원장(TENANT_ADMIN)/강사(INSTRUCTOR) 계정만 접근할 수 있습니다.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="admin-wrapper" style={{ display: 'flex', minHeight: '100vh', background: '#fbf9f5', color: '#1c2024' }}>
       {/* ── 좌측 사이드바: 원장 데스크 웜톤 ── */}
@@ -464,6 +562,11 @@ export default function App() {
           >
             🎨 강사 모드
           </button>
+        </div>
+
+        <div style={{ fontSize: '11px', color: '#646d78', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span>{session.name} ({session.role})</span>
+          <button onClick={handleStaffLogout} style={{ background: 'transparent', border: 'none', color: '#d92632', fontSize: '11px', cursor: 'pointer', textDecoration: 'underline' }}>로그아웃</button>
         </div>
 
         {/* 10개 메뉴 내비게이션 */}

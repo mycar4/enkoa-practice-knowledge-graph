@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 
 // ── 데이터 타입 정의 ──
 interface Tenant {
@@ -62,8 +62,67 @@ interface ToastItem {
 
 const API_BASE = (import.meta as any).env?.VITE_API_URL || '/api/v1';
 
+function getBoAccessToken(): string | null {
+  try { return localStorage.getItem('art_bo_access_token'); } catch { return null; }
+}
+
 export default function App() {
   const [activeMenu, setActiveMenu] = useState<string>('dashboard');
+
+  // 2026-09-21 신규: 이전엔 BO 사이트에 로그인 자체가 없어서 URL만 알면
+  // 누구나 본사관리자 화면을 그대로 볼 수 있었다. 실제 /auth/login으로
+  // 인증하고, 응답 프로필의 role이 BO_ADMIN/BO_MANAGER가 아니면(예: 학생
+  // 계정으로 잘못 로그인) 거부한다.
+  const [session, setSession] = useState<any>(() => {
+    try { return JSON.parse(localStorage.getItem('art_bo_session') || 'null'); } catch { return null; }
+  });
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [loginError, setLoginError] = useState('');
+
+  const handleAdminLogin = async (e: FormEvent) => {
+    e.preventDefault();
+    setLoginError('');
+    if (!loginEmail.trim() || !loginPassword.trim()) {
+      setLoginError('이메일과 비밀번호를 입력해주세요.');
+      return;
+    }
+    setLoginLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: loginEmail, password: loginPassword })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setLoginError(data?.error || '로그인에 실패했습니다.');
+        return;
+      }
+      if (!data.profile || !['BO_ADMIN', 'BO_MANAGER'].includes(data.profile.role)) {
+        setLoginError('본사 관리자(BO_ADMIN/BO_MANAGER) 계정만 로그인할 수 있습니다.');
+        return;
+      }
+      try {
+        localStorage.setItem('art_bo_access_token', data.access_token);
+        localStorage.setItem('art_bo_session', JSON.stringify(data.profile));
+      } catch {}
+      setSession(data.profile);
+    } catch {
+      setLoginError('로그인에 실패했습니다 - 네트워크 오류.');
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
+  const handleAdminLogout = () => {
+    try {
+      localStorage.removeItem('art_bo_access_token');
+      localStorage.removeItem('art_bo_session');
+    } catch {}
+    setSession(null);
+  };
 
   // 토스트 알림 상태
   const [toasts, setToasts] = useState<ToastItem[]>([]);
@@ -182,6 +241,7 @@ export default function App() {
   const [newAdminName, setNewAdminName] = useState('');
   const [newAdminEmail, setNewAdminEmail] = useState('');
   const [newAdminRole, setNewAdminRole] = useState('BO_MANAGER');
+  const [newAdminPassword, setNewAdminPassword] = useState('');
 
   // 수기결제 모달 열기
   const openAdjustmentModal = (record: BillingRecord) => {
@@ -339,33 +399,81 @@ export default function App() {
     showToast(`'${newN.title}' 공지사항이 전국 가맹점에 발송되었습니다.`);
   };
 
-  // 관리자 계정 생성
+  // 2026-09-21: 이전엔 응답을 확인하지 않고 항상 로컬 목록에만 추가했다 -
+  // 실제로는 admin_users(로그인 불가 테이블)에 저장 시도했을 뿐 계정이 생성된
+  // 적이 없었다. 이제 실제 Supabase Auth 계정을 만드는 /bo/admins를 호출하고
+  // 응답을 확인한다.
   const handleCreateAdmin = async () => {
-    if (!newAdminName.trim() || !newAdminEmail.trim()) {
-      showToast('관리자 이름과 이메일을 입력해주세요.', 'error');
+    if (!newAdminName.trim() || !newAdminEmail.trim() || !newAdminPassword.trim()) {
+      showToast('관리자 이름·이메일·초기 비밀번호를 모두 입력해주세요.', 'error');
       return;
     }
-    const newA: AdminUser = {
-      id: `admin-${Date.now().toString(36)}`,
-      name: newAdminName,
-      email: newAdminEmail,
-      role: newAdminRole,
-      department: '가맹운영지원팀',
-      status: 'ACTIVE'
-    };
+    if (newAdminPassword.length < 8) {
+      showToast('비밀번호는 8자 이상이어야 합니다.', 'error');
+      return;
+    }
     try {
-      await fetch(`${API_BASE}/bo/admins`, {
+      const token = getBoAccessToken();
+      const res = await fetch(`${API_BASE}/bo/admins`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newA)
+        headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+        body: JSON.stringify({ name: newAdminName, email: newAdminEmail, password: newAdminPassword, role: newAdminRole })
       });
-    } catch {}
-    setAdmins(prev => [...prev, newA]);
-    setAdminModalOpen(false);
-    setNewAdminName('');
-    setNewAdminEmail('');
-    showToast(`신규 관리자 [${newA.name}] 계정이 생성되었습니다.`);
+      const saved = await res.json();
+      if (!res.ok) {
+        showToast(saved?.error || '관리자 계정 생성에 실패했습니다.', 'error');
+        return;
+      }
+      const newA: AdminUser = {
+        id: saved.id,
+        name: saved.name,
+        email: saved.email,
+        role: saved.role,
+        department: '가맹운영지원팀',
+        status: 'ACTIVE'
+      };
+      setAdmins(prev => [...prev, newA]);
+      setAdminModalOpen(false);
+      setNewAdminName('');
+      setNewAdminEmail('');
+      setNewAdminPassword('');
+      showToast(`신규 관리자 [${newA.name}] 계정이 생성되었습니다. 발급한 초기 비밀번호를 안전하게 전달해주세요.`);
+    } catch {
+      showToast('관리자 계정 생성에 실패했습니다 - 네트워크 오류.', 'error');
+    }
   };
+
+  // 2026-09-21: 로그인 세션이 없으면 대시보드를 렌더링하지 않고 로그인
+  // 화면만 보여준다 - 기존 클래스(modal-card/form-group/btn)를 재사용해서
+  // 새 CSS 없이 디자인 일관성을 유지한다.
+  if (!session) {
+    return (
+      <div className="bo-layout" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+        <div className="modal-card" style={{ maxWidth: '380px', width: '100%' }}>
+          <h3>ART:READY 본사관리자(BO) 로그인</h3>
+          <form onSubmit={handleAdminLogin}>
+            <div className="form-group">
+              <label>이메일</label>
+              <input type="email" className="form-control" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} placeholder="admin@artready.kr" />
+            </div>
+            <div className="form-group">
+              <label>비밀번호</label>
+              <input type="password" className="form-control" value={loginPassword} onChange={e => setLoginPassword(e.target.value)} placeholder="••••••••" />
+            </div>
+            {loginError && <p style={{ color: '#d92632', fontSize: '13px', margin: '4px 0 8px 0' }}>{loginError}</p>}
+            <div className="modal-actions">
+              <button type="submit" className="btn btn-primary" disabled={loginLoading} style={{ width: '100%' }}>
+                {loginLoading ? '로그인 중...' : '로그인'}
+              </button>
+            </div>
+          </form>
+          <p style={{ fontSize: '12px', color: '#8a8f98', marginTop: '12px' }}>
+            본사 관리자(BO_ADMIN/BO_MANAGER) 계정만 접근할 수 있습니다.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bo-layout">
@@ -376,8 +484,8 @@ export default function App() {
           <h1>ART:READY <span>엔코아 본사 통합관리자 (`admin.artready.kr` v5.0)</span></h1>
         </div>
         <div className="header-meta">
-          <span className="badge badge-primary">최고운영자 (BO_ADMIN)</span>
-          <span className="text-muted">마스터 통제 모드</span>
+          <span className="badge badge-primary">{session.name} ({session.role})</span>
+          <button className="btn btn-secondary" onClick={handleAdminLogout} style={{ marginLeft: '8px' }}>로그아웃</button>
         </div>
       </header>
 
@@ -928,6 +1036,16 @@ export default function App() {
               />
             </div>
             <div className="form-group">
+              <label>초기 비밀번호 (8자 이상)</label>
+              <input
+                type="password"
+                className="form-control"
+                placeholder="••••••••"
+                value={newAdminPassword}
+                onChange={e => setNewAdminPassword(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
               <label>부여 역할</label>
               <select
                 className="form-control"
@@ -935,7 +1053,7 @@ export default function App() {
                 onChange={e => setNewAdminRole(e.target.value)}
               >
                 <option value="BO_MANAGER">BO_MANAGER (가맹운영 담당)</option>
-                <option value="BO_SUPER_ADMIN">BO_SUPER_ADMIN (최고운영자)</option>
+                <option value="BO_ADMIN">BO_ADMIN (최고운영자)</option>
               </select>
             </div>
             <div className="modal-actions">
