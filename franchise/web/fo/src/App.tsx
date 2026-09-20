@@ -106,6 +106,18 @@ interface ToastItem {
 
 const API_BASE = (import.meta as any).env?.VITE_API_URL || '/api/v1';
 
+// 2026-09-21: 실제 로그인 토큰을 localStorage에 저장해두고, 성적기록함/
+// 서류함처럼 "누구의 것인지" 알아야 하는 API 호출에 실어 보낸다. 로그인
+// 전이면 토큰이 없어 헤더 없이 요청되고, 서버가 이전 방식(첫 번째 데이터
+// 임시 대여)으로 폴백한다.
+function getAccessToken(): string | null {
+  try { return localStorage.getItem('art_access_token'); } catch { return null; }
+}
+function authHeaders(extra: Record<string, string> = {}): Record<string, string> {
+  const token = getAccessToken();
+  return token ? { ...extra, Authorization: `Bearer ${token}` } : extra;
+}
+
 export default function App() {
   // 역할 전환: 학생 vs 학부모
   const [role, setRole] = useState<'STUDENT' | 'PARENT'>('STUDENT');
@@ -269,6 +281,10 @@ export default function App() {
   const [tenantLoginOpen, setTenantLoginOpen] = useState(false);
   const [tenantLoginId, setTenantLoginId] = useState('');
   const [tenantLoginPw, setTenantLoginPw] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(() => {
+    try { return JSON.parse(localStorage.getItem('art_user_profile') || 'null'); } catch { return null; }
+  });
 
   // 정책 문서 (자체 백엔드 API 호출로 전면 교체 - Supabase direct anon key 차단)
   const [policies, setPolicies] = useState<PolicyDoc[]>([]);
@@ -283,11 +299,14 @@ export default function App() {
   // 회원가입 폼 상태
   const [regRole, setRegRole] = useState<'STUDENT' | 'PARENT'>('STUDENT');
   const [regName, setRegName] = useState('');
+  const [regEmail, setRegEmail] = useState('');
+  const [regPassword, setRegPassword] = useState('');
   const [regBirth, setRegBirth] = useState('2013-05-12');
   const [isUnder14, setIsUnder14] = useState(false);
+  const [regLoading, setRegLoading] = useState(false);
   const [guardianName, setGuardianName] = useState('');
   const [guardianPhone, setGuardianPhone] = useState('');
-  const [academyCode, setAcademyCode] = useState('GANGNAM-01');
+  const [academyCode, setAcademyCode] = useState('gangnam-main');
   const [regStatus, setRegStatus] = useState<string | null>(null);
 
   // 마이페이지 프로필
@@ -299,6 +318,12 @@ export default function App() {
   useEffect(() => {
     if (activeMenu === 'policies') {
       fetchPolicies();
+    }
+    if (activeMenu === 'grade_records') {
+      fetchGradeRecords();
+    }
+    if (activeMenu === 'documents') {
+      fetchDocuments();
     }
   }, [activeMenu]);
 
@@ -344,13 +369,32 @@ export default function App() {
   };
 
   // ── v5.0 성적 기록함 CRUD ──
+  // 2026-09-21: 이전 코드는 fetch 결과를 확인하지 않고("try{await fetch}catch{}")
+  // 항상 로컬 state에 클라이언트가 만든 가짜 id를 추가해 "성공"으로 보여줬다 -
+  // 실제로는 서버 저장이 실패해도(또는 애초에 로그인이 안 되어 있어도) 화면은
+  // 항상 성공 토스트를 띄웠고, 새로고침하면 사라지는 착시 데이터였다. 이제
+  // 응답을 실제로 확인하고, 실패하면 에러를 그대로 보여주며 실패한 항목은
+  // 목록에 추가하지 않는다.
+  const fetchGradeRecords = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/fo/grade-records`, { headers: authHeaders() });
+      const data = await res.json();
+      if (res.ok && Array.isArray(data)) setGradeRecords(data);
+    } catch {}
+  };
+
   const handleSetPrimaryGrade = async (id: string) => {
     try {
-      await fetch(`${API_BASE}/fo/grade-records/${id}/primary`, { method: 'PATCH' });
-    } catch {}
-    setGradeRecords(prev =>
-      prev.map(r => ({ ...r, is_primary: r.id === id }))
-    );
+      const res = await fetch(`${API_BASE}/fo/grade-records/${id}/primary`, { method: 'PATCH', headers: authHeaders() });
+      if (!res.ok) {
+        showToast('대표 성적 변경에 실패했습니다.', 'error');
+        return;
+      }
+    } catch {
+      showToast('대표 성적 변경에 실패했습니다 - 네트워크 오류.', 'error');
+      return;
+    }
+    setGradeRecords(prev => prev.map(r => ({ ...r, is_primary: r.id === id })));
     showToast('대표 성적이 변경되었습니다. 추천/진학 상담 시 이 성적이 기본 적용됩니다.');
   };
 
@@ -359,12 +403,10 @@ export default function App() {
       showToast('성적표 구분을 입력해주세요 (예: 2026 수시 실전모의).', 'error');
       return;
     }
-    const newRecord: GradeRecord = {
-      id: `gr-${Date.now().toString(36)}`,
+    const payload = {
       label: newGradeLabel,
       source_type: newGradeSource,
       is_primary: gradeRecords.length === 0,
-      created_at: new Date().toISOString(),
       parsed_json: {
         korean: Number(newGradeKorean),
         english: Number(newGradeEnglish),
@@ -372,37 +414,57 @@ export default function App() {
       }
     };
     try {
-      await fetch(`${API_BASE}/fo/grade-records`, {
+      const res = await fetch(`${API_BASE}/fo/grade-records`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newRecord)
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(payload)
       });
-    } catch {}
-    setGradeRecords(prev => [newRecord, ...prev]);
-    setGradeModalOpen(false);
-    setNewGradeLabel('');
-    showToast(`'${newRecord.label}' 성적 기록이 계정에 안전하게 보관되었습니다.`);
+      const saved = await res.json();
+      if (!res.ok) {
+        showToast(saved?.error || '성적 기록 저장에 실패했습니다.', 'error');
+        return;
+      }
+      setGradeRecords(prev => [saved, ...prev]);
+      setGradeModalOpen(false);
+      setNewGradeLabel('');
+      showToast(`'${payload.label}' 성적 기록이 계정에 안전하게 보관되었습니다.`);
+    } catch {
+      showToast('성적 기록 저장에 실패했습니다 - 네트워크 오류.', 'error');
+    }
   };
 
   const handleDeleteGradeRecord = async (id: string) => {
     try {
-      await fetch(`${API_BASE}/fo/grade-records/${id}`, { method: 'DELETE' });
-    } catch {}
+      const res = await fetch(`${API_BASE}/fo/grade-records/${id}`, { method: 'DELETE', headers: authHeaders() });
+      if (!res.ok) {
+        showToast('성적 기록 삭제에 실패했습니다.', 'error');
+        return;
+      }
+    } catch {
+      showToast('성적 기록 삭제에 실패했습니다 - 네트워크 오류.', 'error');
+      return;
+    }
     setGradeRecords(prev => prev.filter(r => r.id !== id));
     showToast('성적 기록이 삭제되었습니다.');
   };
 
   // ── v5.0 서류함 CRUD ──
+  const fetchDocuments = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/fo/documents`, { headers: authHeaders() });
+      const data = await res.json();
+      if (res.ok && Array.isArray(data)) setDocuments(data);
+    } catch {}
+  };
+
   const handleCreateDocument = async () => {
     if (!newDocLabel.trim()) {
       showToast('서류 제목을 입력해주세요.', 'error');
       return;
     }
-    const newDoc: DocumentRecord = {
-      id: `doc-${Date.now().toString(36)}`,
+    const payload = {
       label: newDocLabel,
       doc_type: newDocType,
-      created_at: new Date().toISOString(),
       feedback_json: {
         reviewer: '전임 평가팀',
         score: 88,
@@ -410,22 +472,36 @@ export default function App() {
       }
     };
     try {
-      await fetch(`${API_BASE}/fo/documents`, {
+      const res = await fetch(`${API_BASE}/fo/documents`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newDoc)
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(payload)
       });
-    } catch {}
-    setDocuments(prev => [newDoc, ...prev]);
-    setDocModalOpen(false);
-    setNewDocLabel('');
-    showToast(`'${newDoc.label}' 서류가 서류함에 등록되었습니다.`);
+      const saved = await res.json();
+      if (!res.ok) {
+        showToast(saved?.error || '서류 등록에 실패했습니다.', 'error');
+        return;
+      }
+      setDocuments(prev => [saved, ...prev]);
+      setDocModalOpen(false);
+      setNewDocLabel('');
+      showToast(`'${payload.label}' 서류가 서류함에 등록되었습니다.`);
+    } catch {
+      showToast('서류 등록에 실패했습니다 - 네트워크 오류.', 'error');
+    }
   };
 
   const handleDeleteDocument = async (id: string) => {
     try {
-      await fetch(`${API_BASE}/fo/documents/${id}`, { method: 'DELETE' });
-    } catch {}
+      const res = await fetch(`${API_BASE}/fo/documents/${id}`, { method: 'DELETE', headers: authHeaders() });
+      if (!res.ok) {
+        showToast('서류 삭제에 실패했습니다.', 'error');
+        return;
+      }
+    } catch {
+      showToast('서류 삭제에 실패했습니다 - 네트워크 오류.', 'error');
+      return;
+    }
     setDocuments(prev => prev.filter(d => d.id !== id));
     showToast('서류가 삭제되었습니다.');
   };
@@ -458,10 +534,21 @@ export default function App() {
     showToast(`자녀 연동 코드 [${childCodeInput}]가 인증되었습니다.\n김예원 원생의 실기 평가, 출결, 수강료 내역이 연동됩니다.`);
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  // 2026-09-21: 이전 코드는 API를 전혀 호출하지 않고 로컬 state만 바꾼 뒤
+  // "가입 완료" 토스트를 띄웠다 - 실제 계정이 생성된 적이 한 번도 없었다.
+  // 이제 실제 Supabase Auth 회원가입 API(/auth/signup)를 호출한다.
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!regName.trim()) {
       showToast('이름을 입력해주세요.', 'error');
+      return;
+    }
+    if (!regEmail.trim() || !regPassword.trim()) {
+      showToast('이메일과 비밀번호를 입력해주세요.', 'error');
+      return;
+    }
+    if (regPassword.length < 8) {
+      showToast('비밀번호는 8자 이상이어야 합니다.', 'error');
       return;
     }
     if (isUnder14) {
@@ -469,11 +556,77 @@ export default function App() {
         showToast('만 14세 미만 아동은 법정대리인(보호자)의 성명과 연락처가 필수입니다.', 'error');
         return;
       }
-      setRegStatus('PENDING_GUARDIAN_CONSENT');
-      showToast(`[가입 접수 — 보호자 동의 대기]\n회원 가입 상태가 [PENDING_GUARDIAN_CONSENT]로 등록되었습니다.\n보호자(${guardianName}님)께 동의 URL이 발송되었습니다.`);
-    } else {
-      setRegStatus('ACTIVE');
-      showToast(`[가입 완료] ${regName}님 환영합니다! 소속 학원(${academyCode}) 승인이 완료되었습니다.`);
+    }
+    setRegLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/auth/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: regEmail,
+          password: regPassword,
+          name: regName,
+          role: regRole,
+          birth_date: regBirth,
+          academy_code: academyCode,
+          guardian_name: guardianName,
+          guardian_phone: guardianPhone
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        showToast(data?.error || '회원가입에 실패했습니다.', 'error');
+        return;
+      }
+      setRegStatus(data.profile_status);
+      if (data.guardian_consent_required) {
+        showToast(`[가입 접수 — 보호자 동의 대기]\n회원 가입 상태가 [PENDING_GUARDIAN_CONSENT]로 등록되었습니다.\n보호자(${guardianName}님)께 동의 URL이 발송되었습니다.`);
+      } else {
+        showToast(`[가입 완료] ${regName}님 환영합니다! 소속 학원(${academyCode}) 승인이 완료되었습니다.\n이제 로그인해주세요.`);
+      }
+    } catch {
+      showToast('회원가입에 실패했습니다 - 네트워크 오류.', 'error');
+    } finally {
+      setRegLoading(false);
+    }
+  };
+
+  // 2026-09-21: 이전 코드는 아이디/비밀번호를 입력값 검증조차 없이 무조건
+  // "로그인 성공" 토스트만 띄웠다 - 실제 인증 호출이 없었다. 이제
+  // /auth/login을 실제로 호출해 Supabase Auth 세션을 발급받고, access_token을
+  // localStorage에 저장해 이후 성적기록함/서류함 API 호출에 실어 보낸다.
+  const handleTenantLogin = async () => {
+    if (!tenantLoginId.trim() || !tenantLoginPw.trim()) {
+      showToast('이메일과 비밀번호를 입력해주세요.', 'error');
+      return;
+    }
+    setLoginLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: tenantLoginId, password: tenantLoginPw })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        showToast(data?.error || '이메일 또는 비밀번호가 올바르지 않습니다.', 'error');
+        return;
+      }
+      try {
+        localStorage.setItem('art_access_token', data.access_token);
+        localStorage.setItem('art_user_profile', JSON.stringify(data.profile || null));
+      } catch {}
+      setCurrentUser(data.profile || null);
+      showToast(`[${data.profile?.name || tenantProfile.name}] 님으로 로그인되었습니다.`);
+      setTenantLoginOpen(false);
+      setTenantLoginPw('');
+      // 로그인 직후 방금 발급받은 세션으로 내 성적/서류함을 다시 불러온다.
+      fetchGradeRecords();
+      fetchDocuments();
+    } catch {
+      showToast('로그인에 실패했습니다 - 네트워크 오류.', 'error');
+    } finally {
+      setLoginLoading(false);
     }
   };
 
@@ -1202,6 +1355,16 @@ export default function App() {
               </div>
 
               <div>
+                <label style={{ fontSize: '12px', color: '#646d78', display: 'block', marginBottom: '4px' }}>이메일</label>
+                <input type="email" placeholder="예: student@example.com" value={regEmail} onChange={e => setRegEmail(e.target.value)} style={{ width: '100%', background: '#fbf9f5', border: '1px solid #e5dec9', color: '#1c2024', padding: '8px', borderRadius: '6px' }} />
+              </div>
+
+              <div>
+                <label style={{ fontSize: '12px', color: '#646d78', display: 'block', marginBottom: '4px' }}>비밀번호 (8자 이상)</label>
+                <input type="password" placeholder="••••••••" value={regPassword} onChange={e => setRegPassword(e.target.value)} style={{ width: '100%', background: '#fbf9f5', border: '1px solid #e5dec9', color: '#1c2024', padding: '8px', borderRadius: '6px' }} />
+              </div>
+
+              <div>
                 <label style={{ fontSize: '12px', color: '#646d78', display: 'block', marginBottom: '4px' }}>생년월일</label>
                 <input type="date" value={regBirth} onChange={e => setRegBirth(e.target.value)} style={{ width: '100%', background: '#fbf9f5', border: '1px solid #e5dec9', color: '#1c2024', padding: '8px', borderRadius: '6px', fontFamily: "'IBM Plex Mono', monospace" }} />
                 {isUnder14 && (
@@ -1230,8 +1393,8 @@ export default function App() {
                 <input type="text" value={academyCode} onChange={e => setAcademyCode(e.target.value)} style={{ width: '100%', background: '#fbf9f5', border: '1px solid #e5dec9', color: '#1c2024', padding: '8px', borderRadius: '6px', fontFamily: "'IBM Plex Mono', monospace" }} />
               </div>
 
-              <button type="submit" style={{ background: '#d92632', color: '#fff', border: 'none', padding: '10px', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: 'pointer', marginTop: '10px', boxShadow: '0 2px 6px rgba(217,38,50,0.3)' }}>
-                가입 신청하기
+              <button type="submit" disabled={regLoading} style={{ background: '#d92632', color: '#fff', border: 'none', padding: '10px', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: regLoading ? 'default' : 'pointer', marginTop: '10px', boxShadow: '0 2px 6px rgba(217,38,50,0.3)', opacity: regLoading ? 0.6 : 1 }}>
+                {regLoading ? '가입 처리 중...' : '가입 신청하기'}
               </button>
             </form>
 
@@ -1326,16 +1489,14 @@ export default function App() {
               <span style={{ fontSize: '12px', color: '#646d78' }}>app.artready.kr/t/{tenantProfile.slug}/login</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <input type="text" placeholder="원생/학부모 아이디" value={tenantLoginId} onChange={e => setTenantLoginId(e.target.value)} style={{ padding: '10px', border: '1px solid #e5dec9', borderRadius: '6px', fontSize: '13px' }} />
+              <input type="email" placeholder="이메일" value={tenantLoginId} onChange={e => setTenantLoginId(e.target.value)} style={{ padding: '10px', border: '1px solid #e5dec9', borderRadius: '6px', fontSize: '13px' }} />
               <input type="password" placeholder="비밀번호" value={tenantLoginPw} onChange={e => setTenantLoginPw(e.target.value)} style={{ padding: '10px', border: '1px solid #e5dec9', borderRadius: '6px', fontSize: '13px' }} />
               <button
-                onClick={() => {
-                  showToast(`[${tenantProfile.name}] 소속으로 안전하게 로그인되었습니다.`);
-                  setTenantLoginOpen(false);
-                }}
-                style={{ background: '#d92632', color: '#fff', border: 'none', padding: '11px', borderRadius: '6px', fontSize: '14px', fontWeight: 700, cursor: 'pointer', marginTop: '6px' }}
+                disabled={loginLoading}
+                onClick={handleTenantLogin}
+                style={{ background: '#d92632', color: '#fff', border: 'none', padding: '11px', borderRadius: '6px', fontSize: '14px', fontWeight: 700, cursor: loginLoading ? 'default' : 'pointer', marginTop: '6px', opacity: loginLoading ? 0.6 : 1 }}
               >
-                소속 학원 포털 로그인
+                {loginLoading ? '로그인 중...' : '소속 학원 포털 로그인'}
               </button>
             </div>
             <div style={{ textAlign: 'center', marginTop: '14px' }}>

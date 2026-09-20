@@ -2,9 +2,10 @@
 // Direct Supabase REST Integration with RLS & Persistence Guarantee
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://jqdtqawrkdidcdfzxzwb.supabase.co";
+const ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || "sb_publishable_m3si3M17RpGHrIXt8Au9tQ_w3CwtCpW";
 
 function getHeaders(prefer: string = "return=representation") {
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || "sb_publishable_m3si3M17RpGHrIXt8Au9tQ_w3CwtCpW";
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || ANON_KEY;
   return {
     "apikey": key,
     "Authorization": `Bearer ${key}`,
@@ -19,6 +20,34 @@ async function supabaseFetch(endpoint: string, options: any = {}) {
   return fetch(url, { ...options, headers });
 }
 
+// ── 2026-09-21 신규: 실제 Supabase Auth 이메일+비밀번호 회원가입/로그인 ──
+// GoTrue(Supabase Auth) REST API를 직접 호출한다 - 프론트엔드에 @supabase/
+// supabase-js를 새로 설치/빌드하지 않고, 기존 v1.ts와 동일한 raw fetch
+// 패턴을 유지하기 위함.
+async function authFetch(path: string, options: any = {}) {
+  const url = `${SUPABASE_URL.replace(/\/$/, "")}/auth/v1/${path}`;
+  const headers = { "apikey": ANON_KEY, "Content-Type": "application/json", ...(options.headers || {}) };
+  return fetch(url, { ...options, headers });
+}
+
+// Authorization: Bearer <access_token> 헤더를 Supabase Auth의 /auth/v1/user
+// 로 그대로 넘겨 서버 사이드에서 검증한다(JWT 서명을 직접 검증하지 않고
+// Supabase가 검증하게 위임 - 구현이 간단하고 틀릴 여지가 적음). 유효하면
+// 실제 로그인한 사용자의 auth.users.id를 반환하고, 없거나 무효하면 null을
+// 반환해 호출부가 이전의 placeholder 방식으로 안전하게 폴백할 수 있게 한다.
+async function getAuthedUserId(req: any): Promise<string | null> {
+  const authHeader = req.headers?.authorization || req.headers?.Authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) return null;
+  try {
+    const resp = await authFetch("user", { headers: { Authorization: authHeader } });
+    if (!resp.ok) return null;
+    const user = await resp.json();
+    return user?.id || null;
+  } catch {
+    return null;
+  }
+}
+
 // 2026-09-21 실측 발견: 이 플랫폼에는 실제 회원가입/계정생성 플로우가 아직
 // 없다 - student_profiles.user_id는 auth.users(id)를 참조하는 FK라
 // Supabase Auth로 실제 가입한 사용자가 없으면 만들어낼 수 없다. 그래서
@@ -27,7 +56,19 @@ async function supabaseFetch(endpoint: string, options: any = {}) {
 // 이건 회원가입 플로우가 생기기 전까지의 임시방편이다. 데이터가 하나도 없으면
 // (가입자가 0명이면) 억지로 가짜 UUID를 넣어 FK 위반을 내는 대신, 이유를
 // 명확히 밝히는 에러를 바로 반환한다.
-async function getPlaceholderContext(): Promise<{ tenantId: string | null; studentId: string | null }> {
+async function getPlaceholderContext(req?: any): Promise<{ tenantId: string | null; studentId: string | null }> {
+  // 2026-09-21: 실제 로그인 세션(Authorization 헤더)이 있으면 그 사용자의
+  // 진짜 student_profiles/tenant_id를 우선 사용한다 - 회원가입 플로우가
+  // 생긴 지금부터는 "첫 번째 행 임시 대여"가 기본이 아니라 로그인 정보가
+  // 없을 때만 쓰는 폴백이어야 한다.
+  const authedUserId = req ? await getAuthedUserId(req) : null;
+  if (authedUserId) {
+    const spResp = await supabaseFetch(`student_profiles?user_id=eq.${authedUserId}&select=user_id,tenant_id&limit=1`);
+    const spData = await spResp.json();
+    if (Array.isArray(spData) && spData[0]?.user_id) {
+      return { tenantId: spData[0].tenant_id || null, studentId: spData[0].user_id };
+    }
+  }
   const tResp = await supabaseFetch("tenants?select=id&limit=1");
   const tData = await tResp.json();
   const sResp = await supabaseFetch("student_profiles?select=user_id&limit=1");
@@ -87,6 +128,111 @@ export default async function handler(req: any, res: any) {
         authenticated_with: process.env.SUPABASE_SERVICE_ROLE_KEY ? "SERVICE_ROLE_SECRET" : "ANON_PUBLISHABLE",
         timestamp: new Date().toISOString()
       });
+    }
+
+    // ── 2026-09-21 신규: 실제 회원가입/로그인 (Supabase Auth 이메일+비밀번호) ──
+    // 이전까지는 이 플랫폼에 회원가입 자체가 없어서(프론트엔드가 로컬 상태만
+    // 바꾸고 성공한 척했음) student_profiles가 항상 0건이었고, 그 위에 얹힌
+    // 모든 기능(성적 기록함 등)이 실패했다. 이제부터는 실제 auth.users +
+    // user_profiles(+ STUDENT면 student_profiles)까지 만든다.
+    if (routePath === "auth/signup") {
+      if (method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+      const body = req.body || {};
+      const { email, password, name, birth_date } = body;
+      const role = body.role === "PARENT" ? "PARENT" : "STUDENT";
+      if (!email || !password || !name) {
+        return res.status(400).json({ error: "email, password, name은 필수입니다." });
+      }
+
+      // 가맹 코드(academy_code)는 tenants.slug와 매칭한다 - 존재하지 않는
+      // 코드로 조용히 아무 학원에나 배정하지 않고 명확히 실패시킨다.
+      let tenantId: string | null = null;
+      if (body.academy_code) {
+        const tResp = await supabaseFetch(`tenants?slug=eq.${encodeURIComponent(body.academy_code)}&select=id&limit=1`);
+        const tData = await tResp.json();
+        tenantId = Array.isArray(tData) && tData[0]?.id ? tData[0].id : null;
+        if (!tenantId) {
+          return res.status(404).json({ error: `가맹 코드 '${body.academy_code}'에 해당하는 학원을 찾을 수 없습니다.` });
+        }
+      }
+      if (role === "STUDENT" && !tenantId) {
+        return res.status(400).json({ error: "학생 회원가입에는 유효한 소속 학원 가맹 코드가 필요합니다." });
+      }
+
+      const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ANON_KEY;
+      const createResp = await fetch(`${SUPABASE_URL.replace(/\/$/, "")}/auth/v1/admin/users`, {
+        method: "POST",
+        headers: { "apikey": serviceKey, "Authorization": `Bearer ${serviceKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, email_confirm: true })
+      });
+      const authUser = await createResp.json();
+      if (!createResp.ok) {
+        return res.status(createResp.status).json({ error: authUser?.msg || authUser?.message || "회원가입에 실패했습니다.", detail: authUser });
+      }
+      const userId = authUser.id;
+
+      // 만 14세 미만이면 개인정보보호법 제22조의2에 따라 보호자 동의 대기 상태로 생성
+      let isUnder14 = false;
+      if (birth_date) {
+        const cutoff = new Date();
+        cutoff.setFullYear(cutoff.getFullYear() - 14);
+        isUnder14 = new Date(birth_date) > cutoff;
+      }
+      const profileStatus = isUnder14 ? "PENDING_GUARDIAN_CONSENT" : "ACTIVE";
+
+      const upResp = await supabaseFetch("user_profiles", {
+        method: "POST",
+        body: JSON.stringify({ id: userId, tenant_id: tenantId, email, name, role, status: profileStatus })
+      });
+      if (!upResp.ok) {
+        const upErr = await upResp.json();
+        return res.status(upResp.status).json({ error: "회원가입은 됐지만 프로필 생성에 실패했습니다.", detail: upErr });
+      }
+
+      if (role === "STUDENT") {
+        const spResp = await supabaseFetch("student_profiles", {
+          method: "POST",
+          body: JSON.stringify({
+            user_id: userId,
+            tenant_id: tenantId,
+            birth_date: birth_date || "2010-01-01",
+            status: isUnder14 ? "PROSPECTIVE" : "ACTIVE"
+          })
+        });
+        if (!spResp.ok) {
+          const spErr = await spResp.json();
+          return res.status(spResp.status).json({ error: "회원가입은 됐지만 학생 프로필 생성에 실패했습니다.", detail: spErr });
+        }
+      }
+
+      return res.status(201).json({ status: "success", user_id: userId, profile_status: profileStatus, guardian_consent_required: isUnder14 });
+    }
+
+    if (routePath === "auth/login") {
+      if (method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+      const body = req.body || {};
+      if (!body.email || !body.password) {
+        return res.status(400).json({ error: "email, password는 필수입니다." });
+      }
+      const resp = await authFetch("token?grant_type=password", {
+        method: "POST",
+        body: JSON.stringify({ email: body.email, password: body.password })
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        return res.status(resp.status).json({ error: data?.error_description || data?.msg || "이메일 또는 비밀번호가 올바르지 않습니다." });
+      }
+      const upResp = await supabaseFetch(`user_profiles?id=eq.${data.user.id}&select=*`);
+      const upData = await upResp.json();
+      return res.status(200).json({ access_token: data.access_token, user: data.user, profile: Array.isArray(upData) && upData[0] ? upData[0] : null });
+    }
+
+    if (routePath === "auth/me") {
+      const userId = await getAuthedUserId(req);
+      if (!userId) return res.status(401).json({ error: "로그인이 필요합니다." });
+      const upResp = await supabaseFetch(`user_profiles?id=eq.${userId}&select=*`);
+      const upData = await upResp.json();
+      return res.status(200).json({ profile: Array.isArray(upData) && upData[0] ? upData[0] : null });
     }
 
     // ── 공통 / 정책 문서 (BO 4 / CO 8 / FO 공통) ──
@@ -312,7 +458,7 @@ export default async function handler(req: any, res: any) {
       }
       if (method === "POST") {
         const body = req.body || {};
-        const { tenantId, studentId } = await getPlaceholderContext();
+        const { tenantId, studentId } = await getPlaceholderContext(req);
         if (!tenantId || !studentId) {
           return res.status(409).json({ error: "출결을 기록할 학원(tenant) 또는 학생(student) 데이터가 아직 없습니다 - 회원가입 플로우가 구현되기 전까지는 최소 1개의 학원/학생 데이터가 먼저 있어야 합니다." });
         }
@@ -340,7 +486,7 @@ export default async function handler(req: any, res: any) {
       }
       if (method === "POST") {
         const body = req.body || {};
-        const { tenantId, studentId } = await getPlaceholderContext();
+        const { tenantId, studentId } = await getPlaceholderContext(req);
         if (!tenantId || !studentId) {
           return res.status(409).json({ error: "평가를 기록할 학원(tenant) 또는 학생(student) 데이터가 아직 없습니다 - 회원가입 플로우가 구현되기 전까지는 최소 1개의 학원/학생 데이터가 먼저 있어야 합니다." });
         }
@@ -369,7 +515,7 @@ export default async function handler(req: any, res: any) {
       }
       if (method === "POST") {
         const body = req.body || {};
-        const { tenantId } = await getPlaceholderContext();
+        const { tenantId } = await getPlaceholderContext(req);
         if (!tenantId) {
           return res.status(409).json({ error: "앨범을 등록할 학원(tenant) 데이터가 아직 없습니다." });
         }
@@ -396,7 +542,7 @@ export default async function handler(req: any, res: any) {
       }
       if (method === "POST") {
         const body = req.body || {};
-        const { tenantId, studentId } = await getPlaceholderContext();
+        const { tenantId, studentId } = await getPlaceholderContext(req);
         if (!tenantId || !studentId) {
           return res.status(409).json({ error: "수납을 기록할 학원(tenant) 또는 학생(student) 데이터가 아직 없습니다 - 회원가입 플로우가 구현되기 전까지는 최소 1개의 학원/학생 데이터가 먼저 있어야 합니다." });
         }
@@ -473,7 +619,7 @@ export default async function handler(req: any, res: any) {
       }
       if (method === "POST") {
         const body = req.body || {};
-        const { studentId } = await getPlaceholderContext();
+        const { studentId } = await getPlaceholderContext(req);
         if (!studentId) {
           return res.status(409).json({ error: "성적을 등록할 학생(student) 데이터가 아직 없습니다 - 회원가입 플로우가 구현되기 전까지는 최소 1개의 학생 데이터가 먼저 있어야 합니다." });
         }
@@ -525,7 +671,7 @@ export default async function handler(req: any, res: any) {
       }
       if (method === "POST") {
         const body = req.body || {};
-        const { studentId } = await getPlaceholderContext();
+        const { studentId } = await getPlaceholderContext(req);
         if (!studentId) {
           return res.status(409).json({ error: "서류를 등록할 학생(student) 데이터가 아직 없습니다 - 회원가입 플로우가 구현되기 전까지는 최소 1개의 학생 데이터가 먼저 있어야 합니다." });
         }
