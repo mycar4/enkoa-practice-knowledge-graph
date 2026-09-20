@@ -74,7 +74,7 @@ async function savePermissions() {
 
     try {
         const tenantId = "gangnam-01"; // 시뮬레이션 테넌트 ID
-        const res = await fetch(`http://localhost:8000/api/v1/tenants/${tenantId}/permissions/${instructorId}`, {
+        const res = await fetch(`https://adminartreadykr.vercel.app/api/v1/tenants/${tenantId}/permissions/${instructorId}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

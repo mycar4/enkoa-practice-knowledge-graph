@@ -60,7 +60,7 @@ function copyCode() {
 // 4. 비공개 버킷 서명 URL 발급 요청 (보안 시뮬레이션)
 async function requestSignedUrl(filePath) {
     try {
-        const res = await fetch("http://localhost:8000/api/v1/storage/signed-url", {
+        const res = await fetch("https://adminartreadykr.vercel.app/api/v1/storage/signed-url", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -79,7 +79,7 @@ async function requestSignedUrl(filePath) {
             alert(`[안내] Supabase Storage 버킷 'art-franchise-private' 설정이 필요합니다.\n임시 보안 토큰이 적용된 상태입니다.`);
         }
     } catch (e) {
-        alert(`[보안 알림] 백엔드 API 서버(localhost:8000)가 기동 중일 때 실시간 Signed URL 발급이 연동됩니다.`);
+        alert(`[보안 알림] 백엔드 API 서버가 기동 중일 때 실시간 Signed URL 발급이 연동됩니다.`);
     }
 }
 

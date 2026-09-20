@@ -91,7 +91,7 @@ interface ToastItem {
   timestamp: string;
 }
 
-const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:8000/api/v1';
+const API_BASE = (import.meta as any).env?.VITE_API_URL || '/api/v1';
 
 export default function App() {
   // 현재 선택된 메뉴 (10개 메뉴 전수 대응)

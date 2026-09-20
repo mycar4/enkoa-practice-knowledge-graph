@@ -24,7 +24,7 @@ async function submitAdjustment() {
 
     try {
         const tenantId = "gangnam-01";
-        const res = await fetch(`http://localhost:8000/api/v1/bo/tenants/${tenantId}/billing/manual-adjustment`, {
+        const res = await fetch(`/api/v1/bo/tenants/${tenantId}/billing/manual-adjustment`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

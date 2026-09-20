@@ -104,7 +104,7 @@ interface ToastItem {
   timestamp: string;
 }
 
-const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:8000/api/v1';
+const API_BASE = (import.meta as any).env?.VITE_API_URL || '/api/v1';
 
 export default function App() {
   // 역할 전환: 학생 vs 학부모
