@@ -23,7 +23,7 @@ UPDATE tenants SET slug = 'hongdae-campus', is_public_published = true WHERE slu
 -- 2. 성적 기록함 테이블 (STUDENT_GRADE_RECORDS)
 CREATE TABLE IF NOT EXISTS student_grade_records (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    student_id UUID NOT NULL REFERENCES student_profiles(id) ON DELETE CASCADE,
+    student_id UUID NOT NULL REFERENCES student_profiles(user_id) ON DELETE CASCADE,
     label VARCHAR(64) NOT NULL, -- 예: "고2-2학기", "2026 수시모의 1차"
     source_type VARCHAR(32) NOT NULL DEFAULT 'nice_html', -- 'nice_html' | 'txt' | 'manual'
     raw_file_ref TEXT, -- Storage 경로(원본 파일)
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS student_grade_records (
 -- 3. 서류함 테이블 (STUDENT_DOCUMENTS)
 CREATE TABLE IF NOT EXISTS student_documents (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    student_id UUID NOT NULL REFERENCES student_profiles(id) ON DELETE CASCADE,
+    student_id UUID NOT NULL REFERENCES student_profiles(user_id) ON DELETE CASCADE,
     label VARCHAR(128) NOT NULL, -- 예: "국민대 시디과 자기소개서 초안"
     doc_type VARCHAR(32) NOT NULL DEFAULT 'STATEMENT', -- 'STATEMENT' | 'PORTFOLIO_DESC' | 'INTERVIEW_MEMO'
     raw_file_ref TEXT,
@@ -82,17 +82,11 @@ CREATE POLICY notice_read_all ON platform_notices
 CREATE POLICY tenant_public_read ON tenants
     FOR SELECT USING (is_public_published = true OR status = 'ACTIVE');
 
--- 성적 기록함/서류함: 본인 학생 및 연동된 학부모/학원 강사만 조회
+-- 성적 기록함/서류함: 본인 학생만 조회(student_profiles.user_id가 곧 auth.uid()이므로
+-- 서브쿼리 없이 직접 비교한다 - student_profiles에는 애초에 'id' 컬럼이 없다).
+-- TODO(2026-09-20): 연동된 학부모/강사 조회는 이 정책에 아직 반영 안 됨 - 후속 작업 필요.
 CREATE POLICY student_grade_records_owner ON student_grade_records
-    FOR ALL USING (
-        student_id IN (
-            SELECT id FROM student_profiles WHERE user_id = auth.uid()
-        )
-    );
+    FOR ALL USING (student_id = auth.uid());
 
 CREATE POLICY student_documents_owner ON student_documents
-    FOR ALL USING (
-        student_id IN (
-            SELECT id FROM student_profiles WHERE user_id = auth.uid()
-        )
-    );
+    FOR ALL USING (student_id = auth.uid());
