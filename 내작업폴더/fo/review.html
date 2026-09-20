@@ -232,9 +232,12 @@ document.getElementById("reviewBtn").addEventListener("click", () => {
 
     const rules = res.doc_rules || [];
     if (rules.length) {
-      docRulesList.innerHTML = rules.map(r =>
-        `<div class="flex items-start gap-unit-xs bg-surface-container-lowest p-unit-xs rounded"><span class="material-symbols-outlined text-[16px] text-primary shrink-0 mt-0.5">menu_book</span><span>p.${r.page_start}-${r.page_end}: ${(r.text || "").slice(0, 200).replace(/</g, "&lt;")}...</span></div>`
-      ).join("");
+      docRulesList.innerHTML = rules.map(r => {
+        // 2026-09-21: 일반 수시요강과 서류종류 전용 작성안내(예: 홍익대 미술활동보고서
+        // 작성안내)가 섞여서 나올 수 있어, 어느 문서에서 온 근거인지 라벨로 구분해준다.
+        const src = (r.source_file || "").replace(/\.pdf$/i, "");
+        return `<div class="flex items-start gap-unit-xs bg-surface-container-lowest p-unit-xs rounded"><span class="material-symbols-outlined text-[16px] text-primary shrink-0 mt-0.5">menu_book</span><span><span class="inline-block mb-0.5 px-1.5 py-0.5 rounded text-[11px] font-label-sm bg-primary-container text-on-primary-container">${src}</span><br>p.${r.page_start}-${r.page_end}: ${(r.text || "").slice(0, 200).replace(/</g, "&lt;")}...</span></div>`;
+      }).join("");
       docRulesBox.classList.remove("hidden");
     } else if (university) {
       docRulesList.innerHTML = `<span class="text-on-surface-variant">해당 학교의 서류 규정을 현재 데이터에서 확인하지 못했습니다. 일반적인 글쓰기 관점의 피드백입니다.</span>`;

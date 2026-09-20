@@ -2957,15 +2957,23 @@ class ArtAdmissionService:
         if not university:
             return []
         keywords = self._DOC_RULE_KEYWORDS.get(doc_type, self._DOC_RULE_KEYWORDS["기타 서류"])
+        # 2026-09-20 실측 발견: 이 학교의 일반 수시요강과 "서류종류 전용 작성안내"(예:
+        # 홍익대 미술활동보고서 작성안내)가 같은 university로 같이 색인돼 있으면, 정렬
+        # 기준 없는 LIMIT이 먼저 색인된/청크 수가 많은 일반 요강만 채워버려서 전용
+        # 안내 파일이 아예 결과에 안 들어오는 문제가 있었다. source_file명에 해당
+        # 문서종류 키워드가 들어간 청크를 우선 정렬해서 이 문제를 없앤다.
+        primary_kw = self._DOC_TYPE_PRIMARY_KEYWORD.get(doc_type, "")
         with self.driver.session(default_access_mode=READ_ACCESS) as s:
             rows = s.run("""
                 MATCH (c:Admission_TextChunk {university: $university})
                 WHERE any(kw IN $keywords WHERE c.text CONTAINS kw)
                 RETURN c.university AS university, c.chunk_index AS chunk_index, c.text AS text,
                        c.page_start AS page_start, c.page_end AS page_end,
-                       c.admission_year AS admission_year, c.source_file AS source_file
+                       c.admission_year AS admission_year, c.source_file AS source_file,
+                       CASE WHEN $primary_kw <> '' AND c.source_file CONTAINS $primary_kw THEN 0 ELSE 1 END AS priority
+                ORDER BY priority ASC
                 LIMIT $top_k
-            """, university=university, keywords=keywords, top_k=top_k * 3).data()
+            """, university=university, keywords=keywords, primary_kw=primary_kw, top_k=top_k * 3).data()
         # 목차 페이지(점선 leader "....." 같은 표기가 많은 페이지)는 실제 규정 문장이
         # 아니므로 걸러낸다 - 실측해보니 키워드 매칭에 이런 노이즈가 자주 걸림.
         real_rows = [r for r in rows if r["text"].count("..") < 10]
