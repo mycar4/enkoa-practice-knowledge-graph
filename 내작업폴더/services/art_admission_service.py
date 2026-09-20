@@ -3017,35 +3017,51 @@ class ArtAdmissionService:
         """서류 첨삭 화면의 'AI 의견'과는 완전히 분리된, 코드가 직접 계산해서 확정
         하는 사실 검증. LLM은 이 결과를 지어내거나 뒤집을 수 없고, 화면도 이 값을
         그대로 보여줘야지 LLM 답변 문구로 대체하면 안 된다.
-        - 글자 수 제한: doc_rules 발췌 안에서 "OOO자 이내" 패턴을 찾아 실제 text
-          길이(len())와 직접 비교한다 - LLM이 어림짐작으로 세지 않는다.
+        - 글자 수 제한: doc_rules 발췌 안에서 "OOO자 이내" 패턴을 전부 찾아 보여준다.
+          2026-09-21 실측 발견(사용자 지적): 홍익대 미술활동보고서의 "600자 이내"는
+          문서 전체가 아니라 "교과활동 항목 1개"에, "100자 이내"는 "비교과활동 항목
+          1개"에 각각 걸리는 항목별 제한이다. 우리 화면은 학생이 모든 활동을 이어
+          붙인 텍스트 하나를 받으므로, 전체 길이를 항목별 제한과 비교하면 항상 틀린
+          판정이 나온다(정상 제출도 거의 항상 "초과"로 잘못 뜸). 이런 잘못된 "확정
+          판정"은 아예 판정을 안 내는 것보다 나쁘다 - 그래서 통과/실패를 판정하지
+          않고 발견된 제한 값들을 참고 정보로만 보여준다(passed=None, any_fail
+          계산에서 제외됨).
         - 블라인드 평가 위반 의심: 전화번호/주민등록번호/이메일/학교명 패턴을
           정규식으로 스캔한다. "위반 확정"이 아니라 "사람이 최종 확인할 의심
           지점"이며, 이 학교 발췌에 블라인드 규정이 실제로 있을 때만 검사한다
           (모든 학교가 블라인드 평가를 하는 게 아니므로 근거 없이 검사 대상이라고
-          우기지 않는다)."""
+          우기지 않는다). 이 항목은 항목별이 아니라 문서 전체에 적용되는 규정이라
+          위 글자 수 제한과 달리 전체 텍스트를 그대로 스캔해도 안전하다."""
         text = text or ""
         doc_rules = doc_rules or []
         checks: List[Dict[str, Any]] = []
 
-        # 1) 글자 수 제한 - 여러 개(항목별 제한 등)가 발췌에 섞여 있으면 가장 큰
-        # 숫자를 문서 전체 상한으로 보수적으로 사용한다.
+        # 1) 글자 수 제한 - 판정(pass/fail)이 아니라 참고 정보로만 제공한다.
         limits_found = []
         for r in doc_rules:
             for m in self._CHAR_LIMIT_PATTERN.finditer(r.get("text", "") or ""):
-                limits_found.append((int(m.group(1)), r.get("source_file"), r.get("page_start")))
+                limits_found.append({
+                    "limit": int(m.group(1)),
+                    "source_file": r.get("source_file"),
+                    "page": r.get("page_start"),
+                })
         if limits_found:
-            limit_value, src, page = max(limits_found, key=lambda t: t[0])
-            actual_len = len(text)
+            # 같은 숫자가 여러 발췌에서 중복 검출될 수 있어 (limit, source_file)
+            # 기준으로 중복 제거한다.
+            seen = set()
+            unique_limits = []
+            for lf in limits_found:
+                key = (lf["limit"], lf["source_file"])
+                if key not in seen:
+                    seen.add(key)
+                    unique_limits.append(lf)
             checks.append({
-                "type": "char_limit",
-                "label": f"글자 수 제한 {limit_value}자 이내",
-                "limit": limit_value,
-                "actual": actual_len,
-                "passed": actual_len <= limit_value,
-                "source_file": src,
-                "page": page,
-                "note": "발췌에 여러 항목별 글자 수 제한이 섞여 있을 수 있어 검출된 값 중 가장 큰 숫자를 기준으로 판정했습니다. 항목별로 다르게 적용돼야 한다면 규정 원문을 직접 확인하세요.",
+                "type": "char_limit_info",
+                "label": "문서에서 발견된 글자 수 제한(항목별일 수 있음)",
+                "limits_found": unique_limits,
+                "actual_total_length": len(text),
+                "passed": None,
+                "note": "자기소개서/활동보고서는 보통 항목(활동)마다 글자 수 제한이 다릅니다(예: 교과활동 600자, 비교과활동 100자 등 - 실제로 실측 확인됨). 지금 붙여넣은 전체 글 길이를 이 숫자들과 단순 비교하는 건 부정확하므로 통과/실패를 판정하지 않습니다. 항목별로 나눠서 직접 확인하거나 규정 원문을 참고하세요.",
             })
 
         # 2) 블라인드 평가 위반 의심 - 이 학교 발췌에 실제로 "블라인드" 규정이

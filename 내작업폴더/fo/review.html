@@ -260,12 +260,16 @@ document.getElementById("reviewBtn").addEventListener("click", () => {
     const factChecks = (res.fact_checks && res.fact_checks.checks) || [];
     if (factChecks.length) {
       factCheckList.innerHTML = factChecks.map(c => {
+        // 2026-09-21: char_limit_info는 판정(pass/fail)이 아니라 참고 정보다
+        // (항목별 제한을 전체 글 길이와 비교하면 항상 틀린 판정이 나온다는 게
+        // 실측 확인됨 - 통과/실패 색을 아예 안 쓰고 중립 색으로 구분한다).
+        const isInfo = c.passed === null || c.passed === undefined;
         const ok = c.passed !== false;
-        const pillClass = ok ? "bg-green-100 text-green-800" : "bg-error-container text-error";
-        const pillText = ok ? "통과" : "확인 필요";
+        const pillClass = isInfo ? "bg-surface-container-high text-on-surface-variant" : (ok ? "bg-green-100 text-green-800" : "bg-error-container text-error");
+        const pillText = isInfo ? "참고" : (ok ? "통과" : "확인 필요");
         let detail = "";
-        if (c.type === "char_limit") {
-          detail = `실제 ${c.actual}자 / 제한 ${c.limit}자 이내 (근거: ${(c.source_file || "").replace(/\.pdf$/i, "")} p.${c.page})`;
+        if (c.type === "char_limit_info") {
+          detail = (c.limits_found || []).map(l => `${l.limit}자 이내 (근거: ${(l.source_file || "").replace(/\.pdf$/i, "")} p.${l.page})`).join(" · ") + ` — 지금 붙여넣은 전체 글 길이: ${c.actual_total_length}자`;
         } else if (c.type === "blind_review") {
           detail = ok
             ? "전화번호/주민등록번호/이메일/학교명으로 추정되는 표현이 발견되지 않았습니다."
