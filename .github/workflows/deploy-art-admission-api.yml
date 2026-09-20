@@ -14,6 +14,17 @@ on:
       - "내작업폴더/fo/**"
   workflow_dispatch: {}
 
+# 2026-09-21 실측 발견: 커밋을 연달아 푸시하면 워크플로우 런이 여러 개 동시에
+# 트리거되는데, 이 잡이 실제로 SSH로 붙는 서버는 하나뿐이라 두 런이 같은
+# ~/art-admission-api 디렉터리에서 동시에 git pull + systemctl restart를 실행하며
+# 충돌했다(한쪽이 10분 넘게 멈춘 원인으로 의심됨 - git 인덱스 락 경합 등).
+# cancel-in-progress를 안 쓰는 이유: 뒤 커밋이 앞 커밋 배포를 취소해버리면 앞
+# 커밋의 코드가 아예 배포 검증 없이 스킵될 수 있다 - 취소 대신 순서대로 줄을
+# 세워서(큐잉) 모든 커밋이 빠짐없이, 겹치지 않게 배포되게 한다.
+concurrency:
+  group: deploy-art-admission-api
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
