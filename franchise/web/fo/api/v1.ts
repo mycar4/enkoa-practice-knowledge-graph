@@ -68,7 +68,24 @@ async function getPlaceholderContext(req?: any): Promise<{ tenantId: string | nu
     if (Array.isArray(spData) && spData[0]?.user_id) {
       return { tenantId: spData[0].tenant_id || null, studentId: spData[0].user_id };
     }
+    // 2026-09-21 실측 발견: 로그인한 사람이 학생이 아니라 CO 스태프(원장/
+    // 강사)면 위에서 못 찾고 아래 "전역 첫 번째 학원/학생" 폴백으로
+    // 떨어졌었다 - 그러면 A학원 원장이 출결/평가/수강료를 등록할 때 전혀
+    // 상관없는 B학원(글로벌 첫 번째) 학생 데이터가 오염될 수 있었다.
+    // 반드시 본인 소속 tenant_id 안에서만 대체 학생을 찾는다.
+    const upResp = await supabaseFetch(`user_profiles?id=eq.${authedUserId}&select=tenant_id&limit=1`);
+    const upData = await upResp.json();
+    const myTenantId = Array.isArray(upData) && upData[0]?.tenant_id ? upData[0].tenant_id : null;
+    if (myTenantId) {
+      const tsResp = await supabaseFetch(`student_profiles?tenant_id=eq.${myTenantId}&select=user_id&limit=1`);
+      const tsData = await tsResp.json();
+      return {
+        tenantId: myTenantId,
+        studentId: Array.isArray(tsData) && tsData[0]?.user_id ? tsData[0].user_id : null,
+      };
+    }
   }
+  // 로그인 세션이 전혀 없을 때만(하위호환) 전역 첫 번째 학원/학생으로 폴백한다.
   const tResp = await supabaseFetch("tenants?select=id&limit=1");
   const tData = await tResp.json();
   const sResp = await supabaseFetch("student_profiles?select=user_id&limit=1");
@@ -94,6 +111,22 @@ async function getCurrentTenantId(req: any): Promise<string | null> {
   const tResp = await supabaseFetch("tenants?select=id&limit=1");
   const tData = await tResp.json();
   return Array.isArray(tData) && tData[0]?.id ? tData[0].id : null;
+}
+
+// 2026-09-21 신규: 출결/평가/수강료처럼 "이 학원의 특정 학생 1명"을 대상으로
+// 기록을 남기는 CO 쓰기 API 공용 헬퍼. 이전엔 요청 body의 student_id를 아예
+// 무시하고 getPlaceholderContext가 고른 "학원의 첫 번째 학생"에게만 항상
+// 기록해서, 원장이 여러 학생 중 누굴 골라도 전부 같은 한 명에게 기록되는
+// 문제가 있었다. body.student_id가 오면 그 학생이 실제 이 tenant 소속인지
+// 검증한 뒤 사용하고(다른 학원 학생 지정 공격 방지), 없으면 기존 폴백을 쓴다.
+async function resolveTargetStudent(req: any, tenantId: string | null, bodyStudentId?: string): Promise<string | null> {
+  if (bodyStudentId && tenantId) {
+    const chkResp = await supabaseFetch(`student_profiles?user_id=eq.${bodyStudentId}&tenant_id=eq.${tenantId}&select=user_id&limit=1`);
+    const chkData = await chkResp.json();
+    return Array.isArray(chkData) && chkData[0]?.user_id ? chkData[0].user_id : null;
+  }
+  const ctx = await getPlaceholderContext(req);
+  return ctx.studentId;
 }
 
 // 2026-09-21 신규: audit_logs(03_v7_audit_logs.sql)에 실제로 기록한다 - 마이그
@@ -547,7 +580,12 @@ export default async function handler(req: any, res: any) {
     // CO 1: 원생 명부
     if (routePath === "co/students") {
       if (method === "GET") {
-        const resp = await supabaseFetch("student_profiles?select=*&order=created_at.desc");
+        // 2026-09-21 실측 발견: tenant_id 필터가 없어서 이 학원 저 학원 원생이
+        // 다 섞여 나오고 있었다(테넌트 격리 실패). 또한 이름/연락처는
+        // student_profiles가 아니라 user_profiles에 있어서 PostgREST FK
+        // embed로 같이 가져온다.
+        const tenantId = await getCurrentTenantId(req);
+        const resp = await supabaseFetch(`student_profiles?tenant_id=eq.${tenantId}&select=*,user_profiles(name,email,phone)&order=created_at.desc`);
         const data = await resp.json();
         return res.status(resp.status).json(data);
       }
@@ -610,15 +648,17 @@ export default async function handler(req: any, res: any) {
     // CO 3: 출결 관리
     if (routePath === "co/attendance") {
       if (method === "GET") {
-        const resp = await supabaseFetch("attendance?select=*&order=class_date.desc");
+        const tenantId = await getCurrentTenantId(req);
+        const resp = await supabaseFetch(`attendance?tenant_id=eq.${tenantId}&select=*,user_profiles(name)&order=class_date.desc`);
         const data = await resp.json();
         return res.status(resp.status).json(data);
       }
       if (method === "POST") {
         const body = req.body || {};
-        const { tenantId, studentId } = await getPlaceholderContext(req);
+        const tenantId = await getCurrentTenantId(req);
+        const studentId = await resolveTargetStudent(req, tenantId, body.student_id);
         if (!tenantId || !studentId) {
-          return res.status(409).json({ error: "출결을 기록할 학원(tenant) 또는 학생(student) 데이터가 아직 없습니다 - 회원가입 플로우가 구현되기 전까지는 최소 1개의 학원/학생 데이터가 먼저 있어야 합니다." });
+          return res.status(409).json({ error: "출결을 기록할 학원(tenant) 또는 학생(student) 데이터가 없습니다 - 지정한 학생이 이 학원 소속이 아니거나, 회원가입한 학생이 아직 없습니다." });
         }
         const resp = await supabaseFetch("attendance", {
           method: "POST",
@@ -635,18 +675,38 @@ export default async function handler(req: any, res: any) {
       }
     }
 
+    // 2026-09-21 신규: 기존 출결 행의 상태/사유를 수정(원장이 화면에서
+    // 출석→지각으로 버튼을 다시 누르는 것 같은 실사용 패턴). tenant_id로
+    // 한 번 더 좁혀서 다른 학원 출결 행을 수정 못하게 막는다.
+    if (routePath.startsWith("co/attendance/") && method === "PATCH") {
+      const attId = routePath.replace("co/attendance/", "");
+      const tenantId = await getCurrentTenantId(req);
+      const body = req.body || {};
+      const patch: Record<string, any> = {};
+      if (body.status) patch.status = body.status;
+      if (body.remark !== undefined) patch.remark = body.remark;
+      const resp = await supabaseFetch(`attendance?id=eq.${attId}&tenant_id=eq.${tenantId}`, {
+        method: "PATCH",
+        body: JSON.stringify(patch)
+      });
+      const data = await resp.json();
+      return res.status(resp.status).json(Array.isArray(data) ? data[0] : data);
+    }
+
     // CO 4: 실기 평가 및 피드백
     if (routePath === "co/evaluations") {
       if (method === "GET") {
-        const resp = await supabaseFetch("student_evaluations?select=*&order=evaluation_date.desc");
+        const tenantId = await getCurrentTenantId(req);
+        const resp = await supabaseFetch(`student_evaluations?tenant_id=eq.${tenantId}&select=*,user_profiles(name)&order=evaluation_date.desc`);
         const data = await resp.json();
         return res.status(resp.status).json(data);
       }
       if (method === "POST") {
         const body = req.body || {};
-        const { tenantId, studentId } = await getPlaceholderContext(req);
+        const tenantId = await getCurrentTenantId(req);
+        const studentId = await resolveTargetStudent(req, tenantId, body.student_id);
         if (!tenantId || !studentId) {
-          return res.status(409).json({ error: "평가를 기록할 학원(tenant) 또는 학생(student) 데이터가 아직 없습니다 - 회원가입 플로우가 구현되기 전까지는 최소 1개의 학원/학생 데이터가 먼저 있어야 합니다." });
+          return res.status(409).json({ error: "평가를 기록할 학원(tenant) 또는 학생(student) 데이터가 없습니다 - 지정한 학생이 이 학원 소속이 아니거나, 회원가입한 학생이 아직 없습니다." });
         }
         const resp = await supabaseFetch("student_evaluations", {
           method: "POST",
@@ -667,13 +727,15 @@ export default async function handler(req: any, res: any) {
     // CO 5: 수업 앨범 (albums / album 모두 대응)
     if (routePath === "co/album" || routePath === "co/albums") {
       if (method === "GET") {
-        const resp = await supabaseFetch("class_album?select=*&order=class_date.desc");
+        const tenantId = await getCurrentTenantId(req);
+        const resp = await supabaseFetch(`class_album?tenant_id=eq.${tenantId}&select=*,instructor:instructor_id(name)&order=class_date.desc`);
         const data = await resp.json();
         return res.status(resp.status).json(data);
       }
       if (method === "POST") {
         const body = req.body || {};
-        const { tenantId } = await getPlaceholderContext(req);
+        const tenantId = await getCurrentTenantId(req);
+        const instructorId = await getAuthedUserId(req);
         if (!tenantId) {
           return res.status(409).json({ error: "앨범을 등록할 학원(tenant) 데이터가 아직 없습니다." });
         }
@@ -681,6 +743,7 @@ export default async function handler(req: any, res: any) {
           method: "POST",
           body: JSON.stringify({
             tenant_id: tenantId,
+            instructor_id: instructorId,
             content_text: body.title || body.caption || body.description || body.content_text || "수업 사진",
             class_date: body.date || body.class_date || new Date().toISOString().split("T")[0],
             image_urls: body.image_urls || []
@@ -694,15 +757,17 @@ export default async function handler(req: any, res: any) {
     // CO 6: 수강료 수납 장부 (tuition / tuitions 모두 대응)
     if (routePath === "co/tuition" || routePath === "co/tuitions") {
       if (method === "GET") {
-        const resp = await supabaseFetch("tuition_ledger?select=*&order=created_at.desc");
+        const tenantId = await getCurrentTenantId(req);
+        const resp = await supabaseFetch(`tuition_ledger?tenant_id=eq.${tenantId}&select=*,user_profiles(name)&order=created_at.desc`);
         const data = await resp.json();
         return res.status(resp.status).json(data);
       }
       if (method === "POST") {
         const body = req.body || {};
-        const { tenantId, studentId } = await getPlaceholderContext(req);
+        const tenantId = await getCurrentTenantId(req);
+        const studentId = await resolveTargetStudent(req, tenantId, body.student_id);
         if (!tenantId || !studentId) {
-          return res.status(409).json({ error: "수납을 기록할 학원(tenant) 또는 학생(student) 데이터가 아직 없습니다 - 회원가입 플로우가 구현되기 전까지는 최소 1개의 학원/학생 데이터가 먼저 있어야 합니다." });
+          return res.status(409).json({ error: "수납을 기록할 학원(tenant) 또는 학생(student) 데이터가 없습니다 - 지정한 학생이 이 학원 소속이 아니거나, 회원가입한 학생이 아직 없습니다." });
         }
         const resp = await supabaseFetch("tuition_ledger", {
           method: "POST",
@@ -718,6 +783,20 @@ export default async function handler(req: any, res: any) {
         const data = await resp.json();
         return res.status(resp.ok ? 200 : resp.status).json(data);
       }
+    }
+
+    // 2026-09-21 신규: 기존 미납 건을 완납 처리(원장이 "수납 처리" 버튼을
+    // 누르는 실사용 패턴) - 새 행을 또 만드는 게 아니라 그 미납 행 자체를
+    // PAID로 갱신한다.
+    if (routePath.startsWith("co/tuition/") && method === "PATCH") {
+      const tuitionId = routePath.replace("co/tuition/", "");
+      const tenantId = await getCurrentTenantId(req);
+      const resp = await supabaseFetch(`tuition_ledger?id=eq.${tuitionId}&tenant_id=eq.${tenantId}`, {
+        method: "PATCH",
+        body: JSON.stringify({ status: "PAID", paid_at: new Date().toISOString() })
+      });
+      const data = await resp.json();
+      return res.status(resp.status).json(Array.isArray(data) ? data[0] : data);
     }
 
     // CO 7: 학부모 연동 현황 - parent_student_maps 테이블(01_initial_schema.sql
@@ -947,26 +1026,35 @@ export default async function handler(req: any, res: any) {
     }
 
     // FO 2, 3, 4, 5, 6
+    // 2026-09-21 실측 발견: student_id 필터가 없어서 로그인한 학생이 다른
+    // 학생 전원의 평가/출결/수강료 내역을 다 볼 수 있는 심각한 개인정보
+    // 노출 문제였다. 반드시 본인 student_id로만 좁힌다.
     if (routePath === "fo/evaluations") {
-      const resp = await supabaseFetch("student_evaluations?select=*&order=evaluation_date.desc");
+      const { studentId } = await getPlaceholderContext(req);
+      const resp = await supabaseFetch(`student_evaluations?student_id=eq.${studentId}&select=*&order=evaluation_date.desc`);
       const data = await resp.json();
       return res.status(resp.status).json(data);
     }
 
     if (routePath === "fo/attendance") {
-      const resp = await supabaseFetch("attendance?select=*&order=class_date.desc");
+      const { studentId } = await getPlaceholderContext(req);
+      const resp = await supabaseFetch(`attendance?student_id=eq.${studentId}&select=*&order=class_date.desc`);
       const data = await resp.json();
       return res.status(resp.status).json(data);
     }
 
+    // class_album은 학생 개인 소유가 아니라 학원 전체 공유 앨범이므로
+    // student_id가 아니라 tenant_id로 스코프한다.
     if (routePath === "fo/album" || routePath === "fo/albums") {
-      const resp = await supabaseFetch("class_album?select=*&order=class_date.desc");
+      const { tenantId } = await getPlaceholderContext(req);
+      const resp = await supabaseFetch(`class_album?tenant_id=eq.${tenantId}&select=*&order=class_date.desc`);
       const data = await resp.json();
       return res.status(resp.status).json(data);
     }
 
     if (routePath === "fo/tuition" || routePath === "fo/tuitions") {
-      const resp = await supabaseFetch("tuition_ledger?select=*&order=created_at.desc");
+      const { studentId } = await getPlaceholderContext(req);
+      const resp = await supabaseFetch(`tuition_ledger?student_id=eq.${studentId}&select=*&order=created_at.desc`);
       const data = await resp.json();
       return res.status(resp.status).json(data);
     }

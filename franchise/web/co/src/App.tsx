@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 
 // ── 데이터 타입 정의 ──
 interface Student {
@@ -66,6 +66,7 @@ interface AlbumItem {
 
 interface TuitionRecord {
   id: string;
+  studentId: string;
   studentName: string;
   className: string;
   amount: number;
@@ -176,13 +177,11 @@ export default function App() {
   };
 
   // 1. 원생 데이터
-  const [students, setStudents] = useState<Student[]>([
-    { id: 's-01', name: '김예원', grade: '고3 수험생', targetMajor: '국민대 디자인학부', status: 'ACTIVE', parentLinked: true, parentName: '박현숙', parentRelation: '모', phone: '010-3344-5566', attendanceRate: 100 },
-    { id: 's-02', name: '이준우', grade: '고3 수험생', targetMajor: '서울과기대 시각디자인', status: 'ACTIVE', parentLinked: true, parentName: '이상철', parentRelation: '부', phone: '010-4455-6677', attendanceRate: 95 },
-    { id: 's-03', name: '박서연', grade: '고2 예비반', targetMajor: '건국대 산업디자인', status: 'ACTIVE', parentLinked: false, phone: '010-5566-7788', attendanceRate: 98 },
-    { id: 's-04', name: '최민서', grade: '고2 예비반', targetMajor: '홍익대 자율전공', status: 'LEAVE', parentLinked: true, parentName: '정미영', parentRelation: '모', phone: '010-6677-8899', attendanceRate: 85 },
-    { id: 's-05', name: '정태양', grade: '고1 기초반', targetMajor: '미정 (기초조형)', status: 'ACTIVE', parentLinked: false, phone: '010-7788-9900', attendanceRate: 92 }
-  ]);
+  // 2026-09-21: 이전엔 s-01~s-05 목업이 항상 고정 표시되고 실제 DB를 전혀
+  // 조회하지 않았다 - 이제 로그인 직후 실제 student_profiles를 가져온다
+  // (아래 useEffect). 빈 배열로 시작해서, 신규 학원처럼 원생이 0명이면
+  // 정직하게 빈 목록을 보여준다.
+  const [students, setStudents] = useState<Student[]>([]);
   const [studentSearch, setStudentSearch] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [studentModalOpen, setStudentModalOpen] = useState(false);
@@ -205,45 +204,28 @@ export default function App() {
     { menu_key: 'billing.view', label: '수강료 수납 관리', description: '학원 수강료 수납 장부 (원장 전용 잠금 기능)', can_read: false, can_write: false, isLocked: true }
   ]);
 
-  // 3. 출결 데이터
-  const [attendanceList, setAttendanceList] = useState<AttendanceRecord[]>([
-    { id: 'att-1', studentId: 's-01', studentName: '김예원', date: '2026-09-19', status: 'PRESENT', reason: '', className: '고3 입시정규A반' },
-    { id: 'att-2', studentId: 's-02', studentName: '이준우', date: '2026-09-19', status: 'LATE', reason: '학교 보충수업으로 20분 지각', className: '고3 입시정규A반' },
-    { id: 'att-3', studentId: 's-03', studentName: '박서연', date: '2026-09-19', status: 'PRESENT', reason: '', className: '고2 디자인예비반' },
-    { id: 'att-4', studentId: 's-04', studentName: '최민서', date: '2026-09-19', status: 'ABSENT', reason: '병원 진료 (휴원 상태)', className: '고2 디자인예비반' },
-    { id: 'att-5', studentId: 's-05', studentName: '정태양', date: '2026-09-19', status: 'PRESENT', reason: '', className: '고1 기초소묘반' }
-  ]);
+  // 3. 출결 데이터 - 2026-09-21: 이전엔 목업 5건 고정, "출결 저장" 버튼도
+  // API 호출 없이 토스트만 띄웠다. 이제 실제 attendance 테이블에서 불러온다.
+  const [attendanceList, setAttendanceList] = useState<AttendanceRecord[]>([]);
 
   // 4. 실기 평가 데이터
-  const [evaluations, setEvaluations] = useState<Evaluation[]>([
-    { id: 'eval-1', studentName: '김예원', category: '기초디자인', title: '유리 질감과 금속 구의 공간 구성', date: '2026-09-18', instructorName: '이민혁 수석강사', score: 92, feedback: '주제부 물체의 선명도와 반사 표현이 매우 우수함. 배경 원경 물체의 채도를 조금 더 낮추어 원근 대비를 극대화할 필요가 있습니다.' },
-    { id: 'eval-2', studentName: '이준우', category: '사고의전환', title: '전구와 자연물의 융합 조형', date: '2026-09-15', instructorName: '이민혁 수석강사', score: 86, feedback: '아이디어 발상은 참신하나, 주제부 전구의 투시 비례가 살짝 왜곡되었습니다. 타원 투시 보강 연습 요망.' }
-  ]);
+  const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
   const [evalModalOpen, setEvalModalOpen] = useState(false);
-  const [newEvalStudent, setNewEvalStudent] = useState('김예원');
+  const [newEvalStudentId, setNewEvalStudentId] = useState('');
   const [newEvalCategory, setNewEvalCategory] = useState('기초디자인');
   const [newEvalTitle, setNewEvalTitle] = useState('');
   const [newEvalScore, setNewEvalScore] = useState(90);
   const [newEvalFeedback, setNewEvalFeedback] = useState('');
 
   // 5. 수업 앨범 데이터
-  const [albumList, setAlbumList] = useState<AlbumItem[]>([
-    { id: 'alb-1', className: '고3 입시정규A반', title: '수시 대비 실전 모의고사 현장 (4시간 타임어택)', date: '2026-09-18', author: '이민혁 강사', imageUrl: '🎨', description: '실전 시험장과 동일한 긴장감 속에서 진행된 모의고사 및 강사 실시간 첨삭' },
-    { id: 'alb-2', className: '고2 디자인예비반', title: '질감 마스터 특강 (금속/나무/물)', date: '2026-09-14', author: '장수진 강사', imageUrl: '🖌️', description: '빛 방향에 따른 음영 처리 및 재질감별 붓 터치 기법 실습' }
-  ]);
+  const [albumList, setAlbumList] = useState<AlbumItem[]>([]);
   const [albumModalOpen, setAlbumModalOpen] = useState(false);
   const [newAlbumClass, setNewAlbumClass] = useState('고3 입시정규A반');
   const [newAlbumTitle, setNewAlbumTitle] = useState('');
   const [newAlbumDesc, setNewAlbumDesc] = useState('');
 
   // 6. 수강료 데이터
-  const [tuitionList, setTuitionList] = useState<TuitionRecord[]>([
-    { id: 't-01', studentName: '김예원', className: '고3 입시정규반', amount: 850000, dueDate: '2026-09-10', paidDate: '2026-09-08', status: 'PAID' },
-    { id: 't-02', studentName: '이준우', className: '고3 입시정규반', amount: 850000, dueDate: '2026-09-10', paidDate: '2026-09-10', status: 'PAID' },
-    { id: 't-03', studentName: '박서연', className: '고2 디자인반', amount: 650000, dueDate: '2026-09-10', paidDate: '2026-09-09', status: 'PAID' },
-    { id: 't-04', studentName: '최민서', className: '고2 디자인반', amount: 650000, dueDate: '2026-09-10', status: 'UNPAID' },
-    { id: 't-05', studentName: '정태양', className: '고1 조형기초반', amount: 550000, dueDate: '2026-09-10', status: 'UNPAID' }
-  ]);
+  const [tuitionList, setTuitionList] = useState<TuitionRecord[]>([]);
 
   // 7. 학부모 연동 데이터
   const [parentLinks, setParentLinks] = useState<ParentLink[]>([
@@ -317,94 +299,231 @@ export default function App() {
     }
   };
 
-  const handleAttendanceChange = (recordId: string, newStatus: 'PRESENT' | 'LATE' | 'ABSENT') => {
-    setAttendanceList(prev =>
-      prev.map(item => item.id === recordId ? { ...item, status: newStatus } : item)
-    );
+  // ── 2026-09-21: 실 데이터 fetch 함수들 ──
+  // 백엔드 원본 필드(student_id, class_date, user_profiles.name 등)를 화면
+  // 인터페이스(studentName, date, className 등)로 매핑한다. class/반 개념은
+  // 아직 전용 테이블이 없어 className은 빈 값으로 둔다(지어내지 않음).
+  const fetchStudents = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/co/students`, { headers: coAuthHeaders() });
+      const data = await res.json();
+      if (!res.ok || !Array.isArray(data)) return;
+      setStudents(data.map((r: any) => ({
+        id: r.user_id,
+        name: r.user_profiles?.name || '(이름 없음)',
+        grade: r.target_major || '-',
+        targetMajor: Array.isArray(r.target_schools) && r.target_schools.length ? r.target_schools[0] : '-',
+        status: r.status === 'ACTIVE' ? 'ACTIVE' : r.status === 'ON_LEAVE' ? 'LEAVE' : r.status === 'WITHDRAWN' ? 'DROPOUT' : 'ACTIVE',
+        parentLinked: false,
+        phone: r.user_profiles?.phone || '-',
+        attendanceRate: 0
+      })));
+    } catch {}
+  };
+
+  const fetchAttendance = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/co/attendance`, { headers: coAuthHeaders() });
+      const data = await res.json();
+      if (!res.ok || !Array.isArray(data)) return;
+      setAttendanceList(data.map((r: any) => ({
+        id: r.id,
+        studentId: r.student_id,
+        studentName: r.user_profiles?.name || '(이름 없음)',
+        date: r.class_date,
+        status: r.status,
+        reason: r.remark || '',
+        className: ''
+      })));
+    } catch {}
+  };
+
+  const fetchEvaluations = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/co/evaluations`, { headers: coAuthHeaders() });
+      const data = await res.json();
+      if (!res.ok || !Array.isArray(data)) return;
+      setEvaluations(data.map((r: any) => ({
+        id: r.id,
+        studentName: r.user_profiles?.name || '(이름 없음)',
+        category: r.subject,
+        title: r.subject,
+        date: r.evaluation_date,
+        instructorName: '',
+        score: r.score,
+        feedback: r.feedback
+      })));
+    } catch {}
+  };
+
+  const fetchAlbum = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/co/album`, { headers: coAuthHeaders() });
+      const data = await res.json();
+      if (!res.ok || !Array.isArray(data)) return;
+      setAlbumList(data.map((r: any) => ({
+        id: r.id,
+        className: '',
+        title: r.content_text,
+        date: r.class_date,
+        author: r.instructor?.name || '',
+        imageUrl: Array.isArray(r.image_urls) && r.image_urls[0] ? r.image_urls[0] : '📸',
+        description: r.content_text
+      })));
+    } catch {}
+  };
+
+  const fetchTuition = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/co/tuition`, { headers: coAuthHeaders() });
+      const data = await res.json();
+      if (!res.ok || !Array.isArray(data)) return;
+      setTuitionList(data.map((r: any) => ({
+        id: r.id,
+        studentId: r.student_id,
+        studentName: r.user_profiles?.name || '(이름 없음)',
+        className: '',
+        amount: r.amount,
+        dueDate: r.due_day ? `매월 ${r.due_day}일` : '-',
+        paidDate: r.paid_at || undefined,
+        status: r.status === 'PAID' ? 'PAID' : 'UNPAID'
+      })));
+    } catch {}
+  };
+
+  // 2026-09-21: 이전엔 이 화면의 모든 목록이 로그인/세션과 무관하게 항상
+  // 고정 목업이었다 - 로그인 세션이 잡히면 실제 데이터를 한 번에 불러온다.
+  useEffect(() => {
+    if (session) {
+      fetchStudents();
+      fetchAttendance();
+      fetchEvaluations();
+      fetchAlbum();
+      fetchTuition();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
+
+  // 2026-09-21: 이전엔 로컬 state만 바꿨다 - 실제 attendance 행을 PATCH한다.
+  const handleAttendanceChange = async (recordId: string, newStatus: 'PRESENT' | 'LATE' | 'ABSENT') => {
+    setAttendanceList(prev => prev.map(item => item.id === recordId ? { ...item, status: newStatus } : item));
+    try {
+      const res = await fetch(`${API_BASE}/co/attendance/${recordId}`, {
+        method: 'PATCH',
+        headers: coAuthHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (!res.ok) showToast('출결 상태 저장에 실패했습니다.', 'error');
+    } catch {
+      showToast('출결 상태 저장에 실패했습니다 - 네트워크 오류.', 'error');
+    }
   };
 
   const handleReasonChange = (recordId: string, reason: string) => {
-    setAttendanceList(prev =>
-      prev.map(item => item.id === recordId ? { ...item, reason } : item)
-    );
+    setAttendanceList(prev => prev.map(item => item.id === recordId ? { ...item, reason } : item));
+  };
+
+  // 사유는 매 타이핑마다 저장하면 낭비이므로 입력을 마치고 포커스를 벗어날
+  // 때(onBlur) 실제로 PATCH한다.
+  const handleReasonBlur = async (recordId: string, reason: string) => {
+    try {
+      const res = await fetch(`${API_BASE}/co/attendance/${recordId}`, {
+        method: 'PATCH',
+        headers: coAuthHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ remark: reason })
+      });
+      if (!res.ok) showToast('사유 저장에 실패했습니다.', 'error');
+    } catch {
+      showToast('사유 저장에 실패했습니다 - 네트워크 오류.', 'error');
+    }
+  };
+
+  // 오늘자 출결을 새로 등록한다(백엔드가 기존 행 자동 생성을 안 해주므로,
+  // 아직 오늘 기록이 없는 학생은 이 버튼으로 새로 만든다).
+  const [attendanceStudentId, setAttendanceStudentId] = useState('');
+  const handleCreateTodayAttendance = async (status: 'PRESENT' | 'LATE' | 'ABSENT') => {
+    if (!attendanceStudentId) {
+      showToast('출결을 등록할 원생을 선택해주세요.', 'error');
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE}/co/attendance`, {
+        method: 'POST',
+        headers: coAuthHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ student_id: attendanceStudentId, status })
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        showToast(err?.error || '출결 등록에 실패했습니다.', 'error');
+        return;
+      }
+      showToast('출결이 등록되었습니다.');
+      fetchAttendance();
+    } catch {
+      showToast('출결 등록에 실패했습니다 - 네트워크 오류.', 'error');
+    }
   };
 
   const handleStudentStatusChange = (studentId: string, newStatus: 'ACTIVE' | 'LEAVE' | 'DROPOUT') => {
     setStudents(prev =>
       prev.map(s => s.id === studentId ? { ...s, status: newStatus } : s)
     );
-    showToast('원생 상태가 변경되었습니다.');
+    showToast('원생 상태 변경은 아직 저장 API가 없어 화면에만 반영됩니다.', 'info');
   };
 
+  // 2026-09-21: 신규 원생 "등록"은 실제 회원가입(Supabase Auth) 없이는
+  // 불가능하다는 게 백엔드에서 확인됨(501). 로컬에 가짜로 추가하는 대신
+  // 정직하게 실패를 알린다.
   const handleAddStudent = async () => {
     if (!newStudentName.trim()) {
       showToast('원생 이름을 입력해주세요.', 'error');
       return;
     }
-    const newS: Student = {
-      id: `s-${Date.now().toString(36)}`,
-      name: newStudentName,
-      grade: newStudentGrade,
-      targetMajor: newStudentTarget || '기초디자인',
-      status: 'ACTIVE',
-      parentLinked: false,
-      phone: '010-0000-0000',
-      attendanceRate: 100
-    };
     try {
-      await fetch(`${API_BASE}/co/students`, {
+      const res = await fetch(`${API_BASE}/co/students`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: newS.name,
-          grade: newS.grade,
-          target_major: newS.targetMajor,
-          target_univ: '국민대/서울대',
-          parent_phone: newS.phone,
-          status: 'ENROLLED'
-        })
+        headers: coAuthHeaders({ 'Content-Type': 'application/json' })
       });
-    } catch {}
-    setStudents(prev => [newS, ...prev]);
-    setStudentModalOpen(false);
-    setNewStudentName('');
-    showToast(`[등록 완료] ${newStudentName} 원생이 신규 등록되었습니다.`);
+      const data = await res.json();
+      showToast(data?.error || '원생 등록 기능은 아직 사용할 수 없습니다.', 'error');
+    } catch {
+      showToast('원생 등록에 실패했습니다 - 네트워크 오류.', 'error');
+    }
   };
 
   const handleAddEvaluation = async () => {
+    if (!newEvalStudentId) {
+      showToast('대상 원생을 선택해주세요.', 'error');
+      return;
+    }
     if (!newEvalTitle.trim() || !newEvalFeedback.trim()) {
       showToast('평가 제목과 피드백을 모두 입력해주세요.', 'error');
       return;
     }
-    const newEval: Evaluation = {
-      id: `eval-${Date.now().toString(36)}`,
-      studentName: newEvalStudent,
-      category: newEvalCategory,
-      title: newEvalTitle,
-      date: new Date().toISOString().split('T')[0],
-      instructorName: '이민혁 수석강사',
-      score: newEvalScore,
-      feedback: newEvalFeedback
-    };
     try {
-      await fetch(`${API_BASE}/co/evaluations`, {
+      const res = await fetch(`${API_BASE}/co/evaluations`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: coAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
-          student_id: 's-01',
-          student_name: newEval.studentName,
-          title: newEval.title,
-          score: newEval.score,
-          category: newEval.category,
-          feedback: newEval.feedback
+          student_id: newEvalStudentId,
+          subject: newEvalTitle,
+          score: newEvalScore,
+          feedback: newEvalFeedback
         })
       });
-    } catch {}
-    setEvaluations(prev => [newEval, ...prev]);
-    setEvalModalOpen(false);
-    setNewEvalTitle('');
-    setNewEvalFeedback('');
-    showToast(`[첨삭 완료] ${newEvalStudent} 학생의 실기 평가 및 첨삭 피드백이 등록되었습니다.`);
+      if (!res.ok) {
+        const err = await res.json();
+        showToast(err?.error || '평가 등록에 실패했습니다.', 'error');
+        return;
+      }
+      await fetchEvaluations();
+      setEvalModalOpen(false);
+      setNewEvalTitle('');
+      setNewEvalFeedback('');
+      showToast('실기 평가 및 첨삭 피드백이 등록되었습니다.');
+    } catch {
+      showToast('평가 등록에 실패했습니다 - 네트워크 오류.', 'error');
+    }
   };
 
   const handleAddAlbum = async () => {
@@ -412,33 +531,25 @@ export default function App() {
       showToast('앨범 제목을 입력해주세요.', 'error');
       return;
     }
-    const newAlb: AlbumItem = {
-      id: `alb-${Date.now().toString(36)}`,
-      className: newAlbumClass,
-      title: newAlbumTitle,
-      date: new Date().toISOString().split('T')[0],
-      author: '이민혁 강사',
-      imageUrl: '📸',
-      description: newAlbumDesc
-    };
     try {
-      await fetch(`${API_BASE}/co/albums`, {
+      const res = await fetch(`${API_BASE}/co/album`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          student_id: 's-01',
-          student_name: '고3 정규반',
-          title: newAlb.title,
-          image_url: 'https://placehold.co/600x400',
-          description: newAlb.description
-        })
+        headers: coAuthHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ content_text: `${newAlbumTitle} - ${newAlbumDesc}` })
       });
-    } catch {}
-    setAlbumList(prev => [newAlb, ...prev]);
-    setAlbumModalOpen(false);
-    setNewAlbumTitle('');
-    setNewAlbumDesc('');
-    showToast('새 수업 앨범이 등록되었습니다.');
+      if (!res.ok) {
+        const err = await res.json();
+        showToast(err?.error || '앨범 등록에 실패했습니다.', 'error');
+        return;
+      }
+      await fetchAlbum();
+      setAlbumModalOpen(false);
+      setNewAlbumTitle('');
+      setNewAlbumDesc('');
+      showToast('새 수업 앨범이 등록되었습니다.');
+    } catch {
+      showToast('앨범 등록에 실패했습니다 - 네트워크 오류.', 'error');
+    }
   };
 
   const handleRegenCode = (linkId: string) => {
@@ -455,22 +566,19 @@ export default function App() {
 
   const handleTuitionPay = async (id: string) => {
     try {
-      await fetch(`${API_BASE}/co/tuition`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          student_id: id,
-          student_name: '원생',
-          month: '2026년 9월분',
-          amount: 850000,
-          status: 'PAID'
-        })
+      const res = await fetch(`${API_BASE}/co/tuition/${id}`, {
+        method: 'PATCH',
+        headers: coAuthHeaders({ 'Content-Type': 'application/json' })
       });
-    } catch {}
-    setTuitionList(prev =>
-      prev.map(t => t.id === id ? { ...t, status: 'PAID', paidDate: new Date().toISOString().split('T')[0] } : t)
-    );
-    showToast('수강료 수납이 정상 등록되었습니다.');
+      if (!res.ok) {
+        showToast('수강료 수납 등록에 실패했습니다.', 'error');
+        return;
+      }
+      await fetchTuition();
+      showToast('수강료 수납이 정상 등록되었습니다.');
+    } catch {
+      showToast('수강료 수납 등록에 실패했습니다 - 네트워크 오류.', 'error');
+    }
   };
 
   // v5.0 학원 소개 페이지 수정 및 본사 승인 신청
@@ -873,12 +981,15 @@ export default function App() {
           <div style={{ background: '#ffffff', borderRadius: '8px', padding: '20px', border: '1px solid #e2dcce', boxShadow: '0 1px 4px rgba(0,0,0,0.03)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <div>
-                <h3 style={{ fontSize: '16px', margin: 0, color: '#1c2024' }}>2026년 9월 19일 일별 출결 체크 (수업별)</h3>
-                <span style={{ fontSize: '12px', color: '#646d78' }}>결석 처리 시 사유를 반드시 입력하여 학부모 알림 연동</span>
+                <h3 style={{ fontSize: '16px', margin: 0, color: '#1c2024' }}>일별 출결 이력</h3>
+                <span style={{ fontSize: '12px', color: '#646d78' }}>아래 표의 상태 버튼은 클릭 즉시 저장됩니다. 오늘자 출결이 아직 없는 원생은 오른쪽에서 새로 등록하세요.</span>
               </div>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <button onClick={() => showToast('전체 출석 처리되었습니다.')} style={{ background: '#f3eee4', color: '#1c2024', border: '1px solid #e2dcce', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer' }}>전체 출석</button>
-                <button onClick={() => showToast('출결 데이터가 Supabase DB에 저장되었습니다.')} style={{ background: '#15803d', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>출결 저장</button>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <select value={attendanceStudentId} onChange={e => setAttendanceStudentId(e.target.value)} style={{ padding: '6px', border: '1px solid #e2dcce', borderRadius: '6px', fontSize: '12px' }}>
+                  <option value="">원생 선택</option>
+                  {students.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                </select>
+                <button onClick={() => handleCreateTodayAttendance('PRESENT')} style={{ background: '#15803d', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>오늘 출석 등록</button>
               </div>
             </div>
 
@@ -920,6 +1031,7 @@ export default function App() {
                         type="text"
                         value={item.reason}
                         onChange={e => handleReasonChange(item.id, e.target.value)}
+                        onBlur={e => handleReasonBlur(item.id, e.target.value)}
                         placeholder="사유 입력 (예: 학교 보충수업 20분 지각)..."
                         style={{ width: '100%', padding: '6px 8px', borderRadius: '4px', border: '1px solid #e2dcce', background: '#fbf9f5', fontSize: '12px' }}
                       />
@@ -1292,8 +1404,9 @@ export default function App() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div>
                 <label style={{ fontSize: '12px', color: '#646d78', display: 'block', marginBottom: '4px' }}>대상 원생</label>
-                <select value={newEvalStudent} onChange={e => setNewEvalStudent(e.target.value)} style={{ width: '100%', background: '#fbf9f5', border: '1px solid #e2dcce', color: '#1c2024', padding: '8px', borderRadius: '6px' }}>
-                  {students.map(s => <option key={s.id} value={s.name}>{s.name} ({s.grade})</option>)}
+                <select value={newEvalStudentId} onChange={e => setNewEvalStudentId(e.target.value)} style={{ width: '100%', background: '#fbf9f5', border: '1px solid #e2dcce', color: '#1c2024', padding: '8px', borderRadius: '6px' }}>
+                  <option value="">원생을 선택하세요</option>
+                  {students.map(s => <option key={s.id} value={s.id}>{s.name} ({s.grade})</option>)}
                 </select>
               </div>
               <div>
