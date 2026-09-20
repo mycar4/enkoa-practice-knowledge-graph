@@ -96,6 +96,10 @@ const API_BASE = (import.meta as any).env?.VITE_API_URL || '/api/v1';
 function getCoAccessToken(): string | null {
   try { return localStorage.getItem('art_co_access_token'); } catch { return null; }
 }
+function coAuthHeaders(extra: Record<string, string> = {}): Record<string, string> {
+  const token = getCoAccessToken();
+  return token ? { ...extra, Authorization: `Bearer ${token}` } : extra;
+}
 
 export default function App() {
   // 현재 선택된 메뉴 (10개 메뉴 전수 대응)
@@ -287,7 +291,7 @@ export default function App() {
     // 데모용 강사 목록(instructors)이 로컬 목업이라 실제 user_profiles.id가
     // 아니다 - 실제 tenant_id를 가져오는 것부터 시작한다.
     try {
-      const tRes = await fetch(`${API_BASE}/co/profile`);
+      const tRes = await fetch(`${API_BASE}/co/profile`, { headers: coAuthHeaders() });
       const tenant = await tRes.json();
       const tenantId = tenant?.id;
       if (!tenantId) {
@@ -298,7 +302,7 @@ export default function App() {
       for (const p of permissions) {
         const res = await fetch(`${API_BASE}/co/permissions`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: coAuthHeaders({ 'Content-Type': 'application/json' }),
           body: JSON.stringify({ user_id: selectedInstructorId, tenant_id: tenantId, menu_key: p.menu_key, can_read: p.can_read, can_write: p.can_write })
         });
         if (!res.ok) failCount++;
@@ -472,9 +476,9 @@ export default function App() {
   // v5.0 학원 소개 페이지 수정 및 본사 승인 신청
   const handleApplyAcademyIntro = async () => {
     try {
-      await fetch(`${API_BASE}/co/profile`, {
+      const res = await fetch(`${API_BASE}/co/profile`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: coAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           name: introName,
           slug: introSlug,
@@ -492,7 +496,14 @@ export default function App() {
           request_publish_approval: true
         })
       });
-    } catch {}
+      if (!res.ok) {
+        showToast('학원 소개 페이지 수정 신청에 실패했습니다.', 'error');
+        return;
+      }
+    } catch {
+      showToast('학원 소개 페이지 수정 신청에 실패했습니다 - 네트워크 오류.', 'error');
+      return;
+    }
     setApprovalStatus('PENDING_APPROVAL');
     showToast(`[본사 승인 신청 완료]\n학원 소개 페이지 수정안이 본사(BO)에 제출되었습니다.\n심사 통과 시 app.artready.kr/t/${introSlug}에 자동 반영됩니다.`);
   };

@@ -735,15 +735,19 @@ export default async function handler(req: any, res: any) {
     }
 
     // CO 9: 학원 기본정보 & 소개 페이지
+    // 2026-09-21: 이전엔 로그인 세션과 무관하게 항상 "첫 번째 학원"을
+    // 반환/수정했다 - 로그인이 생긴 지금은 실제 소속 학원으로 스코프한다.
     if (routePath === "co/profile") {
+      const tenantId = await getCurrentTenantId(req);
       if (method === "GET") {
-        const resp = await supabaseFetch("tenants?select=*&limit=1");
+        const resp = await supabaseFetch(`tenants?id=eq.${tenantId}&select=*&limit=1`);
         const data = await resp.json();
-        return res.status(resp.status).json(data[0] || { slug: "gangnam-main", name: "강남 미술학원 본원" });
+        return res.status(resp.status).json(Array.isArray(data) && data[0] ? data[0] : { slug: "gangnam-main", name: "강남 미술학원 본원" });
       }
       if (method === "PUT") {
         const body = req.body || {};
-        const resp = await supabaseFetch("tenants?limit=1", {
+        if (!tenantId) return res.status(409).json({ error: "소속 학원 정보를 찾을 수 없습니다." });
+        const resp = await supabaseFetch(`tenants?id=eq.${tenantId}`, {
           method: "PATCH",
           body: JSON.stringify({
             name: body.name,
@@ -754,6 +758,7 @@ export default async function handler(req: any, res: any) {
           })
         });
         const data = await resp.json();
+        await logAudit(req, "TENANT_PROFILE_UPDATE_REQUEST", tenantId, { name: body.name });
         return res.status(200).json({ status: "success", approval_status: "PENDING_APPROVAL", data });
       }
     }
