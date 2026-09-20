@@ -526,10 +526,19 @@ def review_document_endpoint(req: ReviewRequest):
     )
     if gate_note:
         result["gate_note"] = gate_note
+    # 2026-09-21: [팩트 기반 검증] fact_checks는 LLM 의견이 아니라 코드가 직접
+    # 계산/스캔한 결과다(글자 수 len() 비교, 개인식별정보 정규식 스캔) - LLM이
+    # 이 값을 지어내거나 뒤집을 수 없고, 화면도 이 값을 AI 답변 문구로 대체하면
+    # 안 된다. doc_rules가 비어 있으면 애초에 검사 근거가 없으므로 checks도 비게
+    # 된다(거짓으로 통과 처리하지 않음).
+    fact_checks = svc.run_document_fact_checks(req.text, doc_rules)
     # rules_found는 LLM 판단이 아니라 실제로 발췌를 찾았는지(doc_rules 존재 여부) 그대로
     # 반영한 결정론적 값 - 화면이 이 값만 보고 안내 배너를 그리게 해서, LLM이 자체적으로
     # "규정을 확인/확인못함" 문구를 잘못 말해도 화면 표시와 어긋나지 않게 한다.
-    return {**result, "doc_rules": doc_rules, "graph_hint": graph_hint, "rules_found": bool(doc_rules)}
+    return {
+        **result, "doc_rules": doc_rules, "graph_hint": graph_hint,
+        "rules_found": bool(doc_rules), "fact_checks": fact_checks,
+    }
 
 
 class ReviewChatRequest(BaseModel):

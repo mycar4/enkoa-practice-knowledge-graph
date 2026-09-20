@@ -2934,6 +2934,18 @@ class ArtAdmissionService:
         "비밀번호", "Q. ", "Q.\n", "홈페이지에 접속하여",
     ]
 
+    # 2026-09-21: [팩트 기반 검증] 아래 정규식은 run_document_fact_checks에서만
+    # 쓴다 - LLM이 "규정을 읽고 판단"하다 보면 글자 수를 실제로 세거나 개인식별
+    # 정보를 빠짐없이 찾아내는 데 신뢰할 수 없으므로(어림짐작·누락 위험), 코드가
+    # 직접 계산/스캔해서 확정할 수 있는 항목은 LLM에 맡기지 않는다.
+    _CHAR_LIMIT_PATTERN = re.compile(r"(\d{2,5})\s*자\s*(?:이내|이하|내외)")
+    _PHONE_PATTERN = re.compile(r"01[016789]-?\d{3,4}-?\d{4}")
+    _RRN_PATTERN = re.compile(r"\d{6}-[1-4]\d{6}")
+    _EMAIL_PATTERN = re.compile(r"[\w.\-]+@[\w.\-]+\.\w+")
+    # 고유명사(2글자 이상)+학교급 - "우리/저희 학교" 같은 지시어는 1글자라 매칭 안
+    # 되어 대부분 걸러진다.
+    _SCHOOL_NAME_PATTERN = re.compile(r"[가-힣]{2,10}(?:고등학교|중학교|초등학교)")
+
     # 2026-09-18: [서류첨삭 학교 선택 필터] "이 학교가 자기소개서를 받는지"는
     # 구조화 JSON에는 없는 정보다(표에 없는 서류 안내 문구라서) - 실제 PDF 원문
     # (TextChunk)에 그 서류명이 등장하는 학교만 필터링 근거로 삼는다. "기타 서류"는
@@ -3000,6 +3012,69 @@ class ArtAdmissionService:
             if not any(noise in r["text"] for noise in self._DOC_RULE_NOISE_PATTERNS)
         ]
         return (content_rows or real_rows)[:top_k]
+
+    def run_document_fact_checks(self, text: str, doc_rules: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """서류 첨삭 화면의 'AI 의견'과는 완전히 분리된, 코드가 직접 계산해서 확정
+        하는 사실 검증. LLM은 이 결과를 지어내거나 뒤집을 수 없고, 화면도 이 값을
+        그대로 보여줘야지 LLM 답변 문구로 대체하면 안 된다.
+        - 글자 수 제한: doc_rules 발췌 안에서 "OOO자 이내" 패턴을 찾아 실제 text
+          길이(len())와 직접 비교한다 - LLM이 어림짐작으로 세지 않는다.
+        - 블라인드 평가 위반 의심: 전화번호/주민등록번호/이메일/학교명 패턴을
+          정규식으로 스캔한다. "위반 확정"이 아니라 "사람이 최종 확인할 의심
+          지점"이며, 이 학교 발췌에 블라인드 규정이 실제로 있을 때만 검사한다
+          (모든 학교가 블라인드 평가를 하는 게 아니므로 근거 없이 검사 대상이라고
+          우기지 않는다)."""
+        text = text or ""
+        doc_rules = doc_rules or []
+        checks: List[Dict[str, Any]] = []
+
+        # 1) 글자 수 제한 - 여러 개(항목별 제한 등)가 발췌에 섞여 있으면 가장 큰
+        # 숫자를 문서 전체 상한으로 보수적으로 사용한다.
+        limits_found = []
+        for r in doc_rules:
+            for m in self._CHAR_LIMIT_PATTERN.finditer(r.get("text", "") or ""):
+                limits_found.append((int(m.group(1)), r.get("source_file"), r.get("page_start")))
+        if limits_found:
+            limit_value, src, page = max(limits_found, key=lambda t: t[0])
+            actual_len = len(text)
+            checks.append({
+                "type": "char_limit",
+                "label": f"글자 수 제한 {limit_value}자 이내",
+                "limit": limit_value,
+                "actual": actual_len,
+                "passed": actual_len <= limit_value,
+                "source_file": src,
+                "page": page,
+                "note": "발췌에 여러 항목별 글자 수 제한이 섞여 있을 수 있어 검출된 값 중 가장 큰 숫자를 기준으로 판정했습니다. 항목별로 다르게 적용돼야 한다면 규정 원문을 직접 확인하세요.",
+            })
+
+        # 2) 블라인드 평가 위반 의심 - 이 학교 발췌에 실제로 "블라인드" 규정이
+        # 있을 때만 검사한다.
+        blind_rule_present = any("블라인드" in (r.get("text") or "") for r in doc_rules)
+        if blind_rule_present:
+            suspects = []
+            for label, pattern in (
+                ("전화번호로 추정되는 문자열", self._PHONE_PATTERN),
+                ("주민등록번호로 추정되는 문자열", self._RRN_PATTERN),
+                ("이메일 주소", self._EMAIL_PATTERN),
+                ("특정 학교명으로 추정되는 표현", self._SCHOOL_NAME_PATTERN),
+            ):
+                found = sorted(set(pattern.findall(text)))
+                if found:
+                    suspects.append({"label": label, "matches": found[:5]})
+            checks.append({
+                "type": "blind_review",
+                "label": "블라인드 평가 위반 의심 개인식별정보",
+                "passed": not suspects,
+                "suspects": suspects,
+                "note": "정규식 패턴 매칭 결과이며 확정 판정이 아닙니다. 실제로 개인을 식별할 수 있는 내용인지는 최종적으로 직접 확인하세요.",
+            })
+
+        return {
+            "checks": checks,
+            "any_fail": any(c.get("passed") is False for c in checks),
+            "note": "이 항목은 AI 의견이 아니라 코드가 직접 계산/스캔한 결과입니다.",
+        }
 
     def calculate_school_record_score(self, university: str, department: str, grades: List[Dict[str, Any]],
                                        campus: Optional[str] = None, track_name: Optional[str] = None) -> Dict[str, Any]:
