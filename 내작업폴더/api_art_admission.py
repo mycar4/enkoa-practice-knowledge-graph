@@ -535,6 +535,7 @@ def review_document_endpoint(req: ReviewRequest):
 class ReviewChatRequest(BaseModel):
     doc_text: str
     doc_type: str = "자기소개서"
+    university: Optional[str] = None
     history: List[dict]
     model_id: str = DEFAULT_MODEL
     model_password: Optional[str] = None
@@ -543,9 +544,22 @@ class ReviewChatRequest(BaseModel):
 @app.post("/review-chat")
 def review_chat_endpoint(req: ReviewChatRequest):
     """첨삭 후 이어지는 대화. history는 최초 첨삭(assistant)부터 이후 주고받은
-    턴을 [{'role': 'user'|'assistant', 'content': ...}] 그대로 담아 보낸다."""
+    턴을 [{'role': 'user'|'assistant', 'content': ...}] 그대로 담아 보낸다.
+    university가 있으면 최초 첨삭(review-document)과 동일한 학교 규정 발췌를
+    다시 조회해서 넣어준다 - 안 그러면 이어지는 대화에서 모델이 "규정을 확인할
+    수 없다"고 답해 최초 첨삭과 모순된다(2026-09-21 발견)."""
+    svc = get_service()
+    doc_rules = []
+    if req.university:
+        try:
+            doc_rules = svc.get_document_rule_excerpts(req.university, req.doc_type)
+        except Exception:
+            pass
     resolved_model, gate_note = _resolve_review_model(req.model_id, req.model_password)
-    result = chat_about_review(req.doc_text, req.doc_type, req.history, model_id=resolved_model)
+    result = chat_about_review(
+        req.doc_text, req.doc_type, req.history, model_id=resolved_model,
+        university=req.university, context_doc_rules=doc_rules,
+    )
     if gate_note:
         result["gate_note"] = gate_note
     return result

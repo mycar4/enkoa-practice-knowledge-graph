@@ -644,12 +644,27 @@ _REVIEW_CHAT_SYSTEM_PROMPT = _REVIEW_SYSTEM_PROMPT + """
 
 
 def chat_about_review(doc_text: str, doc_type: str, history: List[Dict[str, str]],
-                       model_id: str = "gpt-4o-mini") -> Dict[str, Any]:
+                       model_id: str = "gpt-4o-mini", university: Optional[str] = None,
+                       context_doc_rules: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
     """서류 첨삭 후 이어지는 대화. history는 [{'role': 'assistant'|'user', 'content': ...}, ...]
-    형태로, 최초 첨삭(assistant) 이후 사용자와 주고받은 턴을 그대로 담아 전달한다."""
+    형태로, 최초 첨삭(assistant) 이후 사용자와 주고받은 턴을 그대로 담아 전달한다.
+    university/context_doc_rules는 최초 첨삭(review_document)에 준 것과 동일한 학교
+    규정 발췌를 그대로 다시 넣어준다 - 이게 없으면 이어지는 대화에서 모델이 "규정을
+    확인할 수 없다"고 답해 최초 첨삭 결과와 모순되는 답을 하게 된다(2026-09-21 발견)."""
+    context_doc_rules = context_doc_rules or []
+    rules_block = ""
+    if university:
+        if context_doc_rules:
+            excerpts = "\n\n".join(
+                f"[p.{r.get('page_start')}-{r.get('page_end')}] {r['text'][:600]}" for r in context_doc_rules
+            )
+            rules_block = f"\n\n해당 학교({university}) 서류 규정 원문 발췌:\n{excerpts}"
+        else:
+            rules_block = f"\n\n해당 학교({university}) 서류 규정 원문 발췌: (찾지 못함 - 빈 목록)"
+
     messages = [
         {"role": "system", "content": _REVIEW_CHAT_SYSTEM_PROMPT},
-        {"role": "user", "content": f"문서 종류: {doc_type}\n\n--- 원본 텍스트 ---\n{text_or_empty(doc_text)}"},
+        {"role": "user", "content": f"문서 종류: {doc_type}\n\n--- 원본 텍스트 ---\n{text_or_empty(doc_text)}{rules_block}"},
     ]
     messages.extend(history)
 

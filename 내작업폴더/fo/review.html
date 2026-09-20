@@ -177,6 +177,7 @@ document.getElementById("docFile").addEventListener("change", (e) => {
 let chatHistory = [];
 let currentDocText = "";
 let currentDocType = "자기소개서";
+let currentUniversity = "";
 
 function formatFeedback(text) {
   return (text || "")
@@ -248,6 +249,7 @@ document.getElementById("reviewBtn").addEventListener("click", () => {
 
     currentDocText = text;
     currentDocType = docType;
+    currentUniversity = university || "";
     chatHistory = [{ role: "assistant", content: res.feedback || "" }];
     document.getElementById("chatInputBox").classList.remove("hidden");
   }).catch(err => {
@@ -273,7 +275,7 @@ function sendChatMessage() {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      doc_text: currentDocText, doc_type: currentDocType, history: chatHistory,
+      doc_text: currentDocText, doc_type: currentDocType, university: currentUniversity || null, history: chatHistory,
       model_id: document.getElementById("modelSelect").value,
       model_password: document.getElementById("modelPasswordInput").value,
     }),
