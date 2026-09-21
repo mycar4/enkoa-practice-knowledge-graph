@@ -950,7 +950,11 @@ export default async function handler(req: any, res: any) {
     // FO 7: 성적 기록함 CRUD (v5.0 신규)
     if (routePath === "fo/grade-records") {
       if (method === "GET") {
-        const resp = await supabaseFetch("student_grade_records?select=*&order=created_at.desc");
+        // 2026-09-21 CRITICAL: student_id 필터가 없어서 로그인한 학생에게 다른
+        // 학생의 성적 레코드까지 전부 반환되던 결함(GPT 회귀 테스트로 발견) -
+        // fo/evaluations 등 다른 엔드포인트와 동일하게 본인 학생 ID로만 좁힌다.
+        const { studentId } = await getPlaceholderContext(req);
+        const resp = await supabaseFetch(`student_grade_records?student_id=eq.${studentId}&select=*&order=created_at.desc`);
         const data = await resp.json();
         return res.status(resp.status).json(data);
       }
@@ -979,12 +983,20 @@ export default async function handler(req: any, res: any) {
     if (routePath.startsWith("fo/grade-records/")) {
       const parts = routePath.split("/");
       const recordId = parts[2];
+      // 2026-09-21 CRITICAL: 아래 두 결함을 함께 고친다(GPT 회귀 테스트로 발견) -
+      // (1) PATCH primary가 student_id 필터 없이 "전체 학생"의 is_primary를
+      //     초기화해서, 한 학생이 대표 성적을 바꾸면 플랫폼의 모든 학생 레코드가
+      //     영향받았다. (2) DELETE가 소유권 확인 없이 id만 맞으면 지워져서,
+      //     레코드 id만 알면(추측/유출) 다른 학생 데이터를 지울 수 있었다(IDOR).
+      // 본인 student_id로 스코프를 좁혀서, 남의 레코드 id를 넣어도 0건 매칭돼
+      // 아무 일도 안 일어나게 한다.
+      const { studentId } = await getPlaceholderContext(req);
       if (parts[3] === "primary") {
-        await supabaseFetch("student_grade_records", {
+        await supabaseFetch(`student_grade_records?student_id=eq.${studentId}`, {
           method: "PATCH",
           body: JSON.stringify({ is_primary: false })
         });
-        const resp = await supabaseFetch(`student_grade_records?id=eq.${recordId}`, {
+        const resp = await supabaseFetch(`student_grade_records?id=eq.${recordId}&student_id=eq.${studentId}`, {
           method: "PATCH",
           body: JSON.stringify({ is_primary: true })
         });
@@ -992,7 +1004,7 @@ export default async function handler(req: any, res: any) {
         return res.status(200).json({ status: "success", primary_id: recordId, data });
       }
       if (method === "DELETE") {
-        const resp = await supabaseFetch(`student_grade_records?id=eq.${recordId}`, {
+        const resp = await supabaseFetch(`student_grade_records?id=eq.${recordId}&student_id=eq.${studentId}`, {
           method: "DELETE"
         });
         return res.status(200).json({ status: "success", deleted_id: recordId });
@@ -1002,7 +1014,10 @@ export default async function handler(req: any, res: any) {
     // FO 8: 서류함 CRUD (v5.0 신규)
     if (routePath === "fo/documents") {
       if (method === "GET") {
-        const resp = await supabaseFetch("student_documents?select=*&order=created_at.desc");
+        // 2026-09-21 CRITICAL: grade-records와 동일한 결함 - student_id 필터 없이
+        // 전체 학생 서류가 반환됐다.
+        const { studentId } = await getPlaceholderContext(req);
+        const resp = await supabaseFetch(`student_documents?student_id=eq.${studentId}&select=*&order=created_at.desc`);
         const data = await resp.json();
         return res.status(resp.status).json(data);
       }
@@ -1030,7 +1045,10 @@ export default async function handler(req: any, res: any) {
     if (routePath.startsWith("fo/documents/")) {
       const recordId = routePath.replace("fo/documents/", "");
       if (method === "DELETE") {
-        await supabaseFetch(`student_documents?id=eq.${recordId}`, { method: "DELETE" });
+        // 2026-09-21 CRITICAL: grade-records DELETE와 동일한 IDOR 결함 - 소유권
+        // 확인 없이 id만 맞으면 삭제됐다. student_id로 스코프를 좁힌다.
+        const { studentId } = await getPlaceholderContext(req);
+        await supabaseFetch(`student_documents?id=eq.${recordId}&student_id=eq.${studentId}`, { method: "DELETE" });
         return res.status(200).json({ status: "success", deleted_id: recordId });
       }
     }
