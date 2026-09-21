@@ -59,6 +59,11 @@ _COMPOUND_SIGNAL_WORDS = [
     # "비교할 다른 학교 데이터"가 컨텍스트에 없어서 "찾지 못했습니다"만 나온다.
     # 유사/비슷/닮은 학과·대학을 찾는 질문은 반드시 도구 경로로 보낸다.
     "유사", "비슷", "닮은", "같은 학과", "같은 계열",
+    # 2026-09-21 day46 RAPTOR 도입: "전체 절차 요약해줘"/"총정리"/"한눈에" 같은
+    # 개요성 질문은 summarize_admission_flow 도구가 있어야 답할 수 있는데,
+    # 신호어가 없으면 도구 없는 run_qa_pipeline으로 새서 낱개 청크 몇 개만 붙여준
+    # 파편적인 답이 나온다.
+    "총정리", "한눈에", "전체 흐름", "전체 절차", "전체 개요", "요약해",
 ]
 
 
@@ -387,7 +392,32 @@ def text2cypher_query(question: str) -> str:
     return json.dumps({"count": len(rows), "rows": rows[:50], "generated_cypher": cypher}, ensure_ascii=False, default=str)
 
 
-TOOLS = [get_university_info, find_similar_departments, search_tracks, compare_tracks, check_schedule_conflicts, get_calendar, recommend_by_grades, get_competition_rate_ranking, text2cypher_query]
+@tool
+def summarize_admission_flow(university: str, topic: str = "") -> str:
+    """"OO대 수시 절차/전체 흐름을 요약해줘", "미술활동보고서 절차 총정리해줘"처럼
+    개별 사실 하나가 아니라 여러 절차를 관통하는 "전체 흐름/개요"를 물을 때 쓴다.
+    특정 숫자·날짜 하나만 묻는 질문(예: "논술고사 시험시간 몇 분이야?")에는 절대
+    쓰지 말고 get_university_info나 text2cypher_query를 쓰십시오 - 이 도구가 주는
+    요약은 LLM이 원문 여러 개를 압축한 것이라 개별 숫자가 다 안 담겨 있을 수
+    있습니다. topic을 비워두면 대학 전체 개요, topic을 주면(예: "미술활동보고서")
+    그 주제에 가장 가까운 요약을 찾습니다. day46 RAPTOR 트리가 없는 학교(현재
+    파일럿 1개교만 적용)를 물으면 빈 결과가 오므로, 그때는 이 도구 대신 다른
+    도구로 답하십시오."""
+    svc = _get_service()
+    rows = svc.get_raptor_summary(university, query=topic, top_k=3)
+    if not rows:
+        return json.dumps({
+            "error": f"{university}는 아직 전체 흐름 요약(RAPTOR)이 준비되지 않았습니다. "
+                     "get_university_info 등 다른 도구로 개별 사실을 확인하십시오.",
+        }, ensure_ascii=False)
+    return json.dumps({
+        "university": university,
+        "note": "이 요약은 LLM이 원문 여러 건을 압축한 것입니다 - 정확한 숫자/날짜가 필요하면 다른 도구로 원문을 재확인하십시오.",
+        "summaries": [{"level": r["level"], "text": r["text"]} for r in rows],
+    }, ensure_ascii=False)
+
+
+TOOLS = [get_university_info, find_similar_departments, search_tracks, compare_tracks, check_schedule_conflicts, get_calendar, recommend_by_grades, get_competition_rate_ranking, text2cypher_query, summarize_admission_flow]
 
 
 def run_qa_pipeline(svc, query: str, model_id: str = AGENT_MODEL) -> Dict[str, Any]:

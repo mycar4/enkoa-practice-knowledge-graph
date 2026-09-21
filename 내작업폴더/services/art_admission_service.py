@@ -2915,6 +2915,32 @@ class ArtAdmissionService:
         except Exception:
             return candidates[:top_k]
 
+    def get_raptor_summary(self, university: str, query: str = "", top_k: int = 3) -> List[Dict[str, Any]]:
+        """day46 RAPTOR 요약 트리(04_Art_Admission_RAPTOR_Builder.py)에서 요약 노드를
+        가져온다. query가 없으면 그 대학의 최상위(level=2, 전체 개요) 노드를 전부
+        반환한다 - "전체 절차 요약해줘" 같은 질문용. query가 있으면 L1(세부 주제
+        단위)+L2 전체를 대상으로 벡터 검색해서 그 주제에 가장 가까운 요약만 좁힌다.
+        아직 RAPTOR 트리가 없는 학교(파일럿 미적용)를 조회하면 빈 리스트를 반환한다 -
+        호출부가 반드시 그 경우를 감지해서 "요약 대신 개별 사실 검색을 쓰라"고
+        안내해야 한다(빈 값을 근거로 없는 요약을 지어내면 안 됨)."""
+        if not query:
+            with self.driver.session(default_access_mode=READ_ACCESS) as s:
+                return s.run("""
+                    MATCH (n:Admission_RaptorNode {university: $university, level: 2})
+                    RETURN n.text AS text, n.level AS level
+                """, university=university).data()
+        from services.art_admission_llm import embed_text
+        qvec = embed_text(query)
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            return s.run("""
+                CALL db.index.vector.queryNodes('admission_raptor_embedding', $pool, $vec)
+                YIELD node, score
+                WHERE node.university = $university
+                RETURN node.text AS text, node.level AS level, score
+                ORDER BY score DESC
+                LIMIT $top_k
+            """, pool=max(top_k * 5, 20), vec=qvec, university=university, top_k=top_k).data()
+
     def hybrid_search_auto_merge(self, query: str, top_k: int = 5, candidate_pool: int = 15,
                                   rerank_model_id: str = "gpt-4o-mini",
                                   universities: Optional[List[str]] = None,
