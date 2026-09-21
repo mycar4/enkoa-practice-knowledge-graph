@@ -433,13 +433,14 @@ def run_qa_pipeline(svc, query: str, model_id: str = AGENT_MODEL) -> Dict[str, A
         context_raw = svc.search_document_excerpts(query, top_k=5, universities=sorted(set(anchor_names)) or None)
     except Exception:
         context_raw = []
-    exclude_names = anchor_names + [t["department"] for t in context_tracks]
-    try:
-        context_graph_related = svc.get_graph_related_context(
-            query, anchor_names=anchor_names, exclude_names=exclude_names, top_n=5,
-        )
-    except Exception:
-        context_graph_related = []
+    # 2026-09-21 사용자 지시로 끔: get_graph_related_context()가 만드는 "관련 학교"
+    # 힌트는 원문 인용/출처 없이 동시출현 커뮤니티만으로 만드는데, 2026-09-17 감사에서
+    # 라벨 붙은 24개 커뮤니티 중 20개가 내부 동시출현의 65~100%가 "1회성"(우연한
+    # 동시 언급)으로 확인된 노이즈 위주 데이터다. 답변에 실제로 주입되는 컨텍스트라
+    # 방치하면 사용자에게 근거 없는 "관련 학교" 힌트가 섞여 나갈 수 있어 원천 차단한다.
+    # 이 기능이 하려던 "비슷한 학과 찾기"는 find_similar_departments(교육과정 임베딩 +
+    # 관리자 승인 표준계열 태그, 94~98% 커버리지)가 이미 더 정확하게 대신하고 있다.
+    context_graph_related: List[Dict[str, Any]] = []
     try:
         context_compatible = svc.get_compatible_tracks_for_query(query)
     except Exception:
