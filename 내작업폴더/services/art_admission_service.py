@@ -2530,6 +2530,59 @@ class ArtAdmissionService:
             kws |= self._material_keywords(r.get("allowed_materials"))
         return sorted(kws)
 
+    # 2026-09-21 [재료 매칭 재현율 개선]: 기존엔 "material_query in m" 단순
+    # 부분일치만 써서, DB 표기가 조금만 달라도(예: 질의 "수채화" vs 데이터
+    # "수채물감" - "수채화"라는 글자가 "수채물감"에 그대로 없음) 실측 63.1%
+    # 재현율로 37%를 놓쳤다. $12 엔티티 추출이 우연히 만들어둔 material 타입
+    # 545건(원문 검증된 실제 표기)을 정규화·그룹핑해서, 사람이 노이즈(신분증/
+    # 수험표 등 재료 아닌 것)를 제거하고 확정한 동의어 사전이다 - 새 LLM 호출
+    # 없이 기존 데이터를 재사용했다. 그룹 안 어느 표기로 질의해도, 그룹 안
+    # 어느 표기가 데이터에 있으면 매칭되게 한다.
+    _MATERIAL_SYNONYM_GROUPS: List[List[str]] = [
+        ["수채화", "수채화물감", "수채화 물감", "수채물감", "수채도구", "수채화도구", "수채"],
+        ["아크릴", "아크릴물감", "아크릴칼라", "아크릴컬러"],
+        ["포스터칼라", "포스터물감", "포스터컬러"],
+        ["연필", "2B연필", "4B연필", "4B/2B연필", "소묘용연필", "연필가루", "전동연필깎이", "흑백연필"],
+        ["켄트지", "3절켄트지", "4절켄트지", "켄트지2절", "켄트지3절", "켄트지4절"],
+        ["칼", "줄칼", "커터칼", "흙칼"],
+        ["지우개", "전동지우개"],
+        ["마카", "마카류", "유성마카"],
+        ["화판", "개인화판", "동양화화판"],
+        ["물통", "개인물통"],
+        ["팔레트", "팔레트나이프"],
+        ["채색도구"],
+        ["싸인펜", "사인펜", "유성·수성싸인펜"],
+        ["콘테", "콩테"],
+        ["파스텔", "오일파스텔"],
+        ["크레파스", "크레용"],
+        ["먹", "먹물"],
+        ["동양화물감", "동양화 물감"],
+    ]
+
+    @classmethod
+    def _material_synonym_key(cls, term: str) -> Optional[str]:
+        norm = re.sub(r"\s+", "", term)
+        for group in cls._MATERIAL_SYNONYM_GROUPS:
+            if norm in group:
+                return group[0]
+        return None
+
+    @classmethod
+    def _material_query_matches(cls, query: str, candidate: str) -> bool:
+        """기존 부분일치를 그대로 유지하되(회귀 없음), 동의어 그룹으로도
+        매칭을 넓힌다. 질의와 후보 둘 다 정규화(공백 제거) 후 비교하고,
+        그룹이 같으면(둘 다 같은 대표 표기로 묶이면) 문자 그대로 겹치지
+        않아도 매칭시킨다."""
+        norm_q = re.sub(r"\s+", "", query)
+        norm_c = re.sub(r"\s+", "", candidate)
+        if norm_q in norm_c:
+            return True
+        q_key = cls._material_synonym_key(norm_q)
+        if q_key is None:
+            return False
+        group = next((g for g in cls._MATERIAL_SYNONYM_GROUPS if g[0] == q_key), None)
+        return bool(group) and any(variant in norm_c for variant in group)
+
     def search_tracks_by_prep(self, topic_keywords: Optional[List[str]] = None,
                                material_query: str = "", document_only: bool = False,
                                holistic_only: bool = False, academic_record_only: bool = False) -> List[Dict[str, Any]]:
@@ -2600,7 +2653,7 @@ class ArtAdmissionService:
             matched_materials = set()
             if material_query:
                 for m in (r.get("allowed_materials") or []):
-                    if material_query in m:
+                    if self._material_query_matches(material_query, m):
                         matched_materials.add(m)
 
             matched = matched_topics | matched_materials
