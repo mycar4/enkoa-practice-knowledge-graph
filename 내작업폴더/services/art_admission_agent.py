@@ -19,12 +19,14 @@ Self-RAG 자기검증(그라운딩 체크)·코드 레벨 가드레일을 최종
 from __future__ import annotations
 
 import json
+import re
 from typing import Any, Dict, List, Optional
 
 from langchain_core.messages import AIMessage, ToolMessage
 from langchain_core.tools import tool
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
+from neo4j import READ_ACCESS
 
 from services.art_admission_llm import _strip_banned_phrases, _self_check_grounding, answer_with_llm
 
@@ -111,7 +113,12 @@ match_status가 "exact"인 것만 그렇게 부르고, "partial"인 것은 "재�
 직접 확인해야 아는 것입니다.
 
 간결하고 친절한 한국어로 답하고, "RAG 검증됨"/"실측 검증" 같은 확정적 신뢰 문구는
-쓰지 마십시오."""
+쓰지 마십시오.
+
+위 8개 도구 중 어느 것도 질문과 안 맞으면(예: "실기고사일이 겹치는 전형 조합이 있는
+대학이 몇 곳이야?" 같은 임의의 집계·필터·랭킹 질문) "확인할 수 없습니다"로 포기하지
+말고 text2cypher_query를 최후 수단으로 쓰십시오. 단, 다른 도구로 답이 되는 질문에는
+절대 쓰지 마십시오(느리고 비쌈)."""
 
 
 def _get_service():
@@ -298,7 +305,89 @@ def recommend_by_grades(grades: List[Dict[str, Any]], topic_keywords: List[str] 
     }, ensure_ascii=False, default=str)
 
 
-TOOLS = [get_university_info, find_similar_departments, search_tracks, compare_tracks, check_schedule_conflicts, get_calendar, recommend_by_grades, get_competition_rate_ranking]
+# 2026-09-21 day42 Text2Cypher 도입: 위 8개 고정 도구는 "미리 예상한 질문 유형"만
+# 답할 수 있다 - 실측으로 확인된 실패 사례("실기고사일이 2개 이상 겹치는 전형 조합이
+# 있는 대학이 몇 곳이야?" 같은 임의 집계/필터 질문)는 어떤 고정 도구 설명과도 안 맞아서
+# 에이전트가 도구를 아예 안 부르고 "확인할 수 없습니다"로 새버렸다(그래프에 필요한
+# 데이터가 다 있는데도). 고정 도구를 무한정 추가하는 대신, 스키마를 아는 LLM이 그때그때
+# 필요한 Cypher를 직접 짜게 하는 이 도구로 롱테일 질문을 받는다 - 단, 절대 원칙(§1)을
+# 지키기 위해 읽기 전용만 허용하고, 생성된 쿼리를 실행 전에 코드로 검증한다.
+_GRAPH_SCHEMA_DESC = """
+(:Admission_University {name, campus})
+(:Admission_Department {name, university, standard_tag, department_intro, curriculum_subjects})
+(:Admission_Track {name, university, department, quota, ratio, is_staged, source_url, admission_year,
+                    competition_applicant_count, competition_rate})
+(:Admission_ExamType {name, university, department, track_name, allowed_materials, paper_size, time_limit_minutes})
+(:Admission_Schedule {university, department, track_name, application_start, application_end,
+                       exam_date, result_date, registration_start, registration_end})
+(:Admission_SelectionStage {university, department, track_name, stage_number, description, ratio_desc, multiplier})
+(:Admission_CutoffEstimate {university, department, track_name, cutoff_grade_estimate, data_tier, source_url})
+(:Admission_YearlyResult {university, department, track_name, admission_year, competition_rate, grade_typical})
+
+관계: (Univ)-[:HAS_DEPARTMENT]->(Dept)-[:HAS_TRACK]->(Track)-[:REQUIRES_EXAM]->(ExamType),
+     (Track)-[:HAS_SCHEDULE]->(Schedule), (Track)-[:HAS_STAGE]->(SelectionStage),
+     (Track)-[:ESTIMATED_CUTOFF]->(CutoffEstimate), (Track)-[:HAS_YEARLY_RESULT]->(YearlyResult)
+"""
+
+_CYPHER_GEN_PROMPT = f"""당신은 Neo4j Cypher 전문가입니다. 아래 그래프 스키마만 보고,
+사용자 질문에 답하는 Cypher 쿼리를 정확히 하나만 작성하십시오.
+
+스키마:
+{_GRAPH_SCHEMA_DESC}
+
+규칙(반드시 지킬 것):
+1. MATCH/WHERE/WITH/RETURN/ORDER BY/LIMIT/집계함수(count, collect, avg 등)만 사용 - 절대
+   CREATE/MERGE/DELETE/DETACH/SET/REMOVE/DROP/LOAD CSV/CALL apoc 같은 쓰기·관리 구문을 쓰지 마십시오.
+2. 스키마에 없는 라벨/속성을 지어내지 마십시오.
+3. LIMIT이 없으면 결과 끝에 반드시 LIMIT 50을 붙이십시오.
+4. 설명 없이 Cypher 쿼리 코드만 출력하십시오(마크다운 코드블록도 쓰지 말 것).
+5. "같은 대학/학교 안에서 서로 다른 두 전형(트랙)을 비교"해야 하는 질문(예: 일정 겹침,
+   같은 날짜)은 반드시 같은 대학을 두 번 매치하는 자기 자신과의 JOIN이 필요합니다.
+   한쪽 트랙만 보고 답하면 항상 틀립니다. 예시:
+   MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->()-[:HAS_TRACK]->(t1:Admission_Track)-[:HAS_SCHEDULE]->(s1:Admission_Schedule),
+         (u)-[:HAS_DEPARTMENT]->()-[:HAS_TRACK]->(t2:Admission_Track)-[:HAS_SCHEDULE]->(s2:Admission_Schedule)
+   WHERE t1.name < t2.name AND s1.exam_date IS NOT NULL AND s1.exam_date = s2.exam_date
+   RETURN count(DISTINCT u.name) AS overlap_university_count LIMIT 50
+
+질문: __QUESTION__"""
+
+_FORBIDDEN_CYPHER_PATTERN = re.compile(
+    r"\b(CREATE|MERGE|DELETE|DETACH|SET|REMOVE|DROP|LOAD\s+CSV|CALL\s+apoc\.(?!text|meta))\b",
+    re.IGNORECASE,
+)
+
+
+def _generate_cypher(question: str) -> str:
+    llm = ChatOpenAI(model=AGENT_MODEL, temperature=0)
+    resp = llm.invoke(_CYPHER_GEN_PROMPT.replace("__QUESTION__", question))
+    cypher = resp.content.strip()
+    # 혹시 마크다운 코드블록으로 감싸 나오면 벗겨낸다.
+    cypher = re.sub(r"^```(?:cypher)?\s*|\s*```$", "", cypher, flags=re.IGNORECASE).strip()
+    return cypher
+
+
+@tool
+def text2cypher_query(question: str) -> str:
+    """다른 도구 어디에도 안 맞는 구조화 데이터 질문(임의의 집계/필터/랭킹, 예: "실기고사일이
+    2개 이상 겹치는 전형 조합이 있는 대학이 몇 곳이야?")에만 최후 수단으로 쓰십시오. 먼저
+    다른 도구(get_university_info, search_tracks, compare_tracks, check_schedule_conflicts,
+    get_calendar, recommend_by_grades, get_competition_rate_ranking, find_similar_departments)로
+    답할 수 있는지 반드시 먼저 확인하고, 그중 하나로 답이 되면 절대 이 도구를 쓰지 마십시오
+    (이 도구는 매번 별도 LLM 호출로 Cypher를 새로 생성하므로 더 느리고 비쌉니다).
+    이 도구가 반환한 JSON 행(rows) 안의 값만 사실로 쓰고, 없는 값은 절대 지어내지 마십시오."""
+    cypher = _generate_cypher(question)
+    if _FORBIDDEN_CYPHER_PATTERN.search(cypher):
+        return json.dumps({"error": "안전상 읽기 전용 쿼리만 허용됩니다. 이 질문은 처리할 수 없습니다."}, ensure_ascii=False)
+    svc = _get_service()
+    try:
+        with svc.driver.session(default_access_mode=READ_ACCESS) as s:
+            rows = s.run(cypher).data()
+    except Exception as e:
+        return json.dumps({"error": f"쿼리 실행 실패: {e}", "generated_cypher": cypher}, ensure_ascii=False)
+    return json.dumps({"count": len(rows), "rows": rows[:50], "generated_cypher": cypher}, ensure_ascii=False, default=str)
+
+
+TOOLS = [get_university_info, find_similar_departments, search_tracks, compare_tracks, check_schedule_conflicts, get_calendar, recommend_by_grades, get_competition_rate_ranking, text2cypher_query]
 
 
 def run_qa_pipeline(svc, query: str, model_id: str = AGENT_MODEL) -> Dict[str, Any]:
