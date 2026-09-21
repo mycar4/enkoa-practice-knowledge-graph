@@ -1001,12 +1001,24 @@ export default async function handler(req: any, res: any) {
           body: JSON.stringify({ is_primary: true })
         });
         const data = await resp.json();
+        // 2026-09-21 발견(GPT 재검증): 위 필터가 남의 레코드 id에는 0건
+        // 매칭돼 아무것도 안 바뀌는데도 무조건 "success"를 반환해서, 실제로는
+        // 아무 효과가 없었던 요청이 성공한 것처럼 보였다 - Supabase는 기본
+        // Prefer: return=representation이라 실제로 바뀐 행 배열을 그대로
+        // 돌려주므로, 그게 비어있으면 소유권 없음으로 명확히 실패 응답한다.
+        if (!Array.isArray(data) || data.length === 0) {
+          return res.status(404).json({ error: "대표로 지정할 권한이 없거나 존재하지 않는 레코드입니다." });
+        }
         return res.status(200).json({ status: "success", primary_id: recordId, data });
       }
       if (method === "DELETE") {
         const resp = await supabaseFetch(`student_grade_records?id=eq.${recordId}&student_id=eq.${studentId}`, {
           method: "DELETE"
         });
+        const data = await resp.json();
+        if (!Array.isArray(data) || data.length === 0) {
+          return res.status(404).json({ error: "삭제할 권한이 없거나 존재하지 않는 레코드입니다." });
+        }
         return res.status(200).json({ status: "success", deleted_id: recordId });
       }
     }
@@ -1048,7 +1060,11 @@ export default async function handler(req: any, res: any) {
         // 2026-09-21 CRITICAL: grade-records DELETE와 동일한 IDOR 결함 - 소유권
         // 확인 없이 id만 맞으면 삭제됐다. student_id로 스코프를 좁힌다.
         const { studentId } = await getPlaceholderContext(req);
-        await supabaseFetch(`student_documents?id=eq.${recordId}&student_id=eq.${studentId}`, { method: "DELETE" });
+        const resp = await supabaseFetch(`student_documents?id=eq.${recordId}&student_id=eq.${studentId}`, { method: "DELETE" });
+        const data = await resp.json();
+        if (!Array.isArray(data) || data.length === 0) {
+          return res.status(404).json({ error: "삭제할 권한이 없거나 존재하지 않는 레코드입니다." });
+        }
         return res.status(200).json({ status: "success", deleted_id: recordId });
       }
     }
