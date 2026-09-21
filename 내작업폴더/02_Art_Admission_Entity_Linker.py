@@ -201,9 +201,19 @@ def _filter_cross_university_noise(found: list, own_university: str) -> list:
 
 def extract_entities_llm(chunk_text: str, known_entities: dict) -> list:
     """청크 1건에 대해 LLM 구조화 추출 + 원문검증 + 신뢰도필터를 수행한다.
-    반환: [{"name": canonical, "type": type, "is_new": bool}, ...] (신뢰도/검증 통과분만)"""
-    listing = ", ".join(sorted(known_entities.keys()))
-    user_prompt = f"알려진 개체 목록: {listing}\n\n본문 발췌:\n{chunk_text[:2000]}"
+    반환: [{"name": canonical, "type": type, "is_new": bool}, ...] (신뢰도/검증 통과분만)
+
+    2026-09-21 실측 발견(사용자 지적): 이 함수는 알려진 개체 566개(60개교
+    누적분)를 매 청크마다 통째로 프롬프트에 넣고 있었다 - 학교별 학과명처럼
+    이 청크와 전혀 무관한 다른 학교 이름까지 매번 재전송해서 토큰을
+    낭비했다. 아래 result 조립부에 이미 "본문에 실제로 등장하지 않으면
+    버림"(surface not in chunk_text) 검증이 있다는 건, 애초에 본문에 없는
+    개체는 절대 뽑힐 수 없다는 뜻이다 - 즉 프롬프트에 넣어봐야 100% 못 쓰는
+    이름들을 매번 돈 주고 보내고 있었던 것. 본문에 실제로 등장하는 것만
+    골라서 보내면 결과는 동일하면서 토큰이 극적으로 줄어든다."""
+    relevant_entities = {name: etype for name, etype in known_entities.items() if name in chunk_text}
+    listing = ", ".join(sorted(relevant_entities.keys()))
+    user_prompt = f"알려진 개체 목록(이 본문에 실제로 등장하는 것만): {listing}\n\n본문 발췌:\n{chunk_text[:2000]}"
     try:
         raw = _call_llm(_EXTRACTION_SYSTEM_PROMPT, user_prompt, EXTRACTION_MODEL, temperature=0.0)
         cleaned = raw.strip()
