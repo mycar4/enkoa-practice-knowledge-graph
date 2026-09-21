@@ -17,7 +17,9 @@ import sys
 import argparse
 from pathlib import Path
 
-import pypdf
+import re
+import pdfplumber
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from neo4j import GraphDatabase, WRITE_ACCESS
 from dotenv import load_dotenv
 
@@ -121,6 +123,79 @@ INDEX_TARGETS = [
 ]
 
 CHUNK_CHAR_SIZE = 1500  # 대략 400~500 토큰 - 임베딩 품질/개수 균형
+CHUNK_OVERLAP = 200  # 2026-09-21: 경계에 걸친 규정(조항)이 양쪽 청크에 다 남도록 겹침을 둔다.
+
+# 2026-09-21 [청킹 개선 파일럿 - 홍익대학교]: 실측 발견 두 가지를 해결한다.
+# (1) 기존엔 pypdf.extract_text()가 다단 표를 "지원자 열 전체 → 평가자 열 전체"
+#     순으로 뒤섞어서 반환했다(국립한밭대 시험시간/4 분리 문제와 동일 원인).
+#     pdfplumber의 extract_text()는 단어 좌표 기반으로 읽기 순서를 재구성해서
+#     행 단위로 훨씬 정확하게 나온다(실측 비교 확인, extract_tables()는 이
+#     문서의 표 하나를 3개로 잘못 쪼개서 신뢰 못 함 - 안 씀).
+# (2) 목차(TOC) 페이지가 그대로 청크 하나를 통째로 차지해서 임베딩을 낭비하고
+#     검색 정확도를 떨어뜨렸다("Ⅰ. 원서접수 .......7" 같은 점선 리더 페이지,
+#     실측 확인 - 리더 문자가 점(".")일 때도 대시("-")일 때도 있음).
+#     색인 시점에 아예 제외한다(기존엔 검색 시점 필터만 있었음).
+_TOC_LEADER_LINE = re.compile(r"[.\-]{3,}\s*\d{1,4}\s*$", re.MULTILINE)
+
+
+def _is_toc_page(text: str) -> bool:
+    """목차 페이지 판별 - "제목 ......... 12" 같은 리더+페이지번호 줄이
+    한 페이지에 3번 이상 나오면 본문이 아니라 목차로 본다."""
+    return len(_TOC_LEADER_LINE.findall(text)) >= 3
+
+
+# 2026-09-21: 기존엔 "페이지 이어붙이다 글자수 넘으면 그 자리에서 바로 자르기"
+# 였다(overlap 없음, 문장/조항 경계 무시) - 경계에 걸친 규정이 양쪽 청크 어디에도
+# 온전히 안 남는 문제가 있었다. 한국어 규정 문서의 절 구분자(로마숫자/아라비아
+# 숫자 조항, ❑/Ÿ 불릿)를 우선순위로 하는 RecursiveCharacterTextSplitter로
+# 교체하고 겹침을 둔다 - day46 청킹전략 교안의 Recursive 전략을 우리 문서
+# 형식에 맞게 적용한 것.
+_SPLITTER = RecursiveCharacterTextSplitter(
+    chunk_size=CHUNK_CHAR_SIZE,
+    chunk_overlap=CHUNK_OVERLAP,
+    separators=[
+        "\nⅠ.", "\nⅡ.", "\nⅢ.", "\nⅣ.", "\nⅤ.",
+        "\n❑", "\nŸ",
+        "\n\n", "\n",
+        "다. ", "함. ", "습니다. ", ". ",
+        " ", "",
+    ],
+)
+
+
+def _pages_to_chunks(pages: list) -> list:
+    """(page_num, text) 리스트를 받아 목차 페이지를 제외하고, 남은 페이지를
+    이어붙인 뒤 구조 인식 분할기로 자른다. 각 청크가 원문의 어느 문자 범위에서
+    왔는지로 겹치는 페이지 범위를 계산해 page_start/page_end를 매긴다(day46
+    실습의 page_spans 방식과 동일한 원리)."""
+    full_text = ""
+    page_spans = []  # (start_offset, end_offset, page_num) - end는 미포함
+    for page_num, text in pages:
+        text = (text or "").strip()
+        if not text or _is_toc_page(text):
+            continue
+        start = len(full_text) + (1 if full_text else 0)  # 페이지 사이 \n 고려
+        full_text = f"{full_text}\n{text}" if full_text else text
+        page_spans.append((start, len(full_text), page_num))
+
+    if not full_text:
+        return []
+
+    chunks = []
+    search_from = 0
+    for piece in _SPLITTER.split_text(full_text):
+        # split_text는 겹침 때문에 같은 부분 문자열이 여러 번 나올 수 있어,
+        # 직전 위치 이후부터 찾아야 매번 올바른 다음 등장 위치를 잡는다.
+        idx = full_text.find(piece, max(0, search_from - CHUNK_OVERLAP))
+        if idx == -1:
+            idx = full_text.find(piece)
+        end = idx + len(piece) if idx != -1 else search_from + len(piece)
+        search_from = end
+        overlapping_pages = [p for (s, e, p) in page_spans if s < end and e > idx] if idx != -1 else []
+        page_start = min(overlapping_pages) if overlapping_pages else 0
+        page_end = max(overlapping_pages) if overlapping_pages else 0
+        chunks.append({"text": piece, "page_start": page_start, "page_end": page_end})
+    return chunks
 
 
 def extract_chunks(pdf_path: Path):
@@ -215,23 +290,14 @@ def extract_chunks(pdf_path: Path):
             chunks.append({"text": buf, "page_start": 0, "page_end": 0})
         return chunks
 
-    reader = pypdf.PdfReader(str(pdf_path))
-    chunks = []
-    buf = ""
-    start_page = 1
-    for i, page in enumerate(reader.pages, start=1):
-        text = (page.extract_text() or "").strip()
-        if not text:
-            continue
-        if buf and len(buf) + len(text) > CHUNK_CHAR_SIZE:
-            chunks.append({"text": buf, "page_start": start_page, "page_end": i - 1})
-            buf = text
-            start_page = i
-        else:
-            buf = f"{buf}\n{text}" if buf else text
-    if buf:
-        chunks.append({"text": buf, "page_start": start_page, "page_end": len(reader.pages)})
-    return chunks
+    # 2026-09-21 [청킹 개선 파일럿]: pypdf.extract_text() 대신 pdfplumber를
+    # 쓴다 - 실측 비교 결과 다단 표에서 pypdf는 "지원자 열 전체 → 평가자 열
+    # 전체"로 뒤섞는 반면 pdfplumber는 단어 좌표 기반이라 행 단위로 훨씬
+    # 정확하게 재구성한다. 그 뒤 목차 페이지 제외 + 구조 인식 분할(overlap
+    # 포함)은 _pages_to_chunks 공용 헬퍼가 담당한다.
+    with pdfplumber.open(str(pdf_path)) as pdf:
+        pages = [(i, page.extract_text() or "") for i, page in enumerate(pdf.pages, start=1)]
+    return _pages_to_chunks(pages)
 
 
 def ensure_vector_index(driver):

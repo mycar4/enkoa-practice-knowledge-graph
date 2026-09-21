@@ -311,25 +311,35 @@ def main():
         known_entities = build_entity_dictionary(driver)
         print(f"알려진(사전) 개체명: {len(known_entities)}개 (university/department/exam_type/material)")
 
+        # 2026-09-21 실측 발견(청킹 파일럿 중): 체크포인트/청크 식별 키가
+        # university+chunk_index뿐이라, 한 대학이 서로 다른 소스파일 2개를
+        # 갖는 경우(홍익대: 수시요강+미술활동보고서, 한양대: 서울+ERICA)
+        # chunk_index가 겹치면 한쪽 파일의 엔티티 추출 결과가 다른 파일 걸로
+        # 덮어써지거나, 최종 MENTIONS 저장 시 두 청크 모두에 잘못 연결될 수
+        # 있었다(source_file 필터가 없었음). source_file을 키에 포함시켜 수정.
         with driver.session(default_access_mode=READ_ACCESS) as s:
             chunks = s.run("""
                 MATCH (c:Admission_TextChunk)
-                RETURN c.university AS university, c.chunk_index AS chunk_index, c.text AS text
+                RETURN c.university AS university, c.chunk_index AS chunk_index,
+                       c.source_file AS source_file, c.text AS text
             """).data()
         if args.limit:
             chunks = chunks[: args.limit]
 
+        def _cp_key(ch):
+            return f"{ch['university']}||{ch.get('source_file', '')}||{ch['chunk_index']}"
+
         checkpoint = {} if args.fresh else _load_checkpoint()
         if args.fresh and CHECKPOINT_PATH.exists():
             CHECKPOINT_PATH.unlink()
-        already_done = [ch for ch in chunks if f"{ch['university']}||{ch['chunk_index']}" in checkpoint]
-        todo = [ch for ch in chunks if f"{ch['university']}||{ch['chunk_index']}" not in checkpoint]
+        already_done = [ch for ch in chunks if _cp_key(ch) in checkpoint]
+        todo = [ch for ch in chunks if _cp_key(ch) not in checkpoint]
         if already_done:
             print(f"체크포인트에서 {len(already_done)}건 재사용(LLM 재호출 없음), 신규 {len(todo)}건만 호출")
         print(f"청크 {len(chunks)}건에 대해 LLM 구조화 추출 수행 중 (model={EXTRACTION_MODEL}, "
               f"동시 {MAX_WORKERS}개, confidence>={CONFIDENCE_THRESHOLD})...")
 
-        chunk_mentions = {}  # (university, chunk_index) -> [{"name","type","is_new"}]
+        chunk_mentions = {}  # (university, source_file, chunk_index) -> [{"name","type","is_new"}]
         entity_types = dict(known_entities)  # name -> type (LLM이 새로 찾은 것도 여기 누적)
         entity_chunk_map = defaultdict(set)
         failed = 0
@@ -337,8 +347,8 @@ def main():
 
         # 체크포인트에 이미 있는 결과부터 채워 넣는다(LLM 호출 없음, 비용 0).
         for ch in already_done:
-            key = (ch["university"], ch["chunk_index"])
-            found = _filter_cross_university_noise(checkpoint[f"{ch['university']}||{ch['chunk_index']}"], ch["university"])
+            key = (ch["university"], ch.get("source_file", ""), ch["chunk_index"])
+            found = _filter_cross_university_noise(checkpoint[_cp_key(ch)], ch["university"])
             chunk_mentions[key] = found
             for item in found:
                 entity_types.setdefault(item["name"], item["type"])
@@ -349,7 +359,7 @@ def main():
             futures = {pool.submit(extract_entities_llm, ch["text"], known_entities): ch for ch in todo}
             for fut in as_completed(futures):
                 ch = futures[fut]
-                key = (ch["university"], ch["chunk_index"])
+                key = (ch["university"], ch.get("source_file", ""), ch["chunk_index"])
                 try:
                     found = fut.result()
                 except Exception as e:
@@ -371,7 +381,7 @@ def main():
                     entity_chunk_map[item["name"]].add(key)
                 # 청크 하나 끝날 때마다 바로 체크포인트에 반영 - 중간에 끊겨도
                 # 지금까지 성공한 만큼은 다음 실행에서 그대로 재사용된다.
-                checkpoint[f"{ch['university']}||{ch['chunk_index']}"] = found
+                checkpoint[_cp_key(ch)] = found
                 _save_checkpoint(checkpoint)
                 done += 1
                 if done % 100 == 0:
@@ -486,12 +496,15 @@ def main():
                     SET e.type = row.etype, e.llm_discovered = row.is_new
                 """, rows=batch)
 
-            mention_rows = [{"univ": univ, "idx": idx, "name": item["name"]}
-                            for (univ, idx), found in chunk_mentions.items() for item in found]
+            # source_file도 매칭 조건에 넣는다 - 안 넣으면 한 대학이 소스파일
+            # 2개(홍익대·한양대처럼)를 갖고 chunk_index가 겹칠 때 엔티티가
+            # 엉뚱한 파일의 청크에도 같이 연결된다(2026-09-21 실측 발견).
+            mention_rows = [{"univ": univ, "sf": sf, "idx": idx, "name": item["name"]}
+                            for (univ, sf, idx), found in chunk_mentions.items() for item in found]
             for batch in _batched(mention_rows, 300):
                 _run_with_retry("""
                     UNWIND $rows AS row
-                    MATCH (c:Admission_TextChunk {university: row.univ, chunk_index: row.idx})
+                    MATCH (c:Admission_TextChunk {university: row.univ, source_file: row.sf, chunk_index: row.idx})
                     MATCH (e:Admission_Entity {name: row.name})
                     MERGE (c)-[:MENTIONS]->(e)
                 """, rows=batch)

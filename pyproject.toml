@@ -70,4 +70,6 @@ dependencies = [
     "pyhwp>=0.1b15",
     "olefile>=0.47",
     "pymupdf>=1.28.2",
+    "pdfplumber>=0.11.10",
+    "llama-index-vector-stores-chroma>=0.6.0",
 ]
