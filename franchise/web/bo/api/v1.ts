@@ -190,6 +190,27 @@ export default async function handler(req: any, res: any) {
 
   const method = req.method;
 
+  // 2026-09-21 CRITICAL 보안 수정 (전수테스트 실측 발견): getAuthedUserId는
+  // "Authorization 헤더 없음"과 "위조/만료된 토큰"을 똑같이 null로 반환했고,
+  // getPlaceholderContext/getCurrentTenantId는 그 null을 "로그인 세션 자체가
+  // 없던 초기 상태"로 착각해 "전역 첫 번째 학생/학원" 데이터로 조용히
+  // 폴백했다. 그 결과 아무렇게나 조작한 가짜 Bearer 토큰만으로 실제 다른
+  // 학생의 성적 데이터가 그대로 노출됐다(전수테스트 CRITICAL FAIL). 이제
+  // 개인/학원 데이터를 다루는 모든 fo/*, co/*, bo/* 엔드포인트는 유효한
+  // 로그인 세션을 반드시 요구한다 - 폴백 없이 401을 반환한다. 공개 조회용
+  // 라우트(health/회원가입·로그인/공통 정책 문서/학원 공개소개페이지)만 예외.
+  const isPublicRoute =
+    routePath === "health" || routePath === "" ||
+    routePath === "auth/signup" || routePath === "auth/login" || routePath === "auth/me" ||
+    routePath === "policies" ||
+    routePath.startsWith("fo/tenants/");
+  if (!isPublicRoute && (routePath.startsWith("fo/") || routePath.startsWith("co/") || routePath.startsWith("bo/"))) {
+    const gateUserId = await getAuthedUserId(req);
+    if (!gateUserId) {
+      return res.status(401).json({ error: "로그인이 필요합니다 - 유효한 로그인 세션(Authorization 토큰)이 없습니다." });
+    }
+  }
+
   try {
     // 0. 헬스체크
     if (routePath === "health" || routePath === "") {
@@ -697,7 +718,11 @@ export default async function handler(req: any, res: any) {
     if (routePath === "co/evaluations") {
       if (method === "GET") {
         const tenantId = await getCurrentTenantId(req);
-        const resp = await supabaseFetch(`student_evaluations?tenant_id=eq.${tenantId}&select=*,user_profiles(name)&order=evaluation_date.desc`);
+        // 2026-09-21 실측 발견(PGRST201): student_evaluations는 student_id와
+        // instructor_id 둘 다 user_profiles를 참조해서, 어느 쪽을 조인할지
+        // PostgREST가 판단 못 하고 300 에러를 냈다. FK 컬럼명을 명시해서
+        // 학생 이름 쪽으로 고정한다.
+        const resp = await supabaseFetch(`student_evaluations?tenant_id=eq.${tenantId}&select=*,user_profiles!student_id(name)&order=evaluation_date.desc`);
         const data = await resp.json();
         return res.status(resp.status).json(data);
       }
