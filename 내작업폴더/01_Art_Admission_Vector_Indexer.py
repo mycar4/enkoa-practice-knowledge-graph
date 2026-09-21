@@ -150,11 +150,23 @@ def _is_toc_page(text: str) -> bool:
 # 숫자 조항, ❑/Ÿ 불릿)를 우선순위로 하는 RecursiveCharacterTextSplitter로
 # 교체하고 겹침을 둔다 - day46 청킹전략 교안의 Recursive 전략을 우리 문서
 # 형식에 맞게 적용한 것.
+# 2026-09-21 실측 발견: "❑"가 "①②③"/"(2)(3)" 같은 절차 번호보다 목록에서 먼저
+# 있어서, RecursiveCharacterTextSplitter가 전체 텍스트를 "❑" 기준으로만 쪼개고
+# 그 결과가 이미 chunk_size 이내면 절대 아래쪽(①②③) 구분자까지 안 내려간다 -
+# 그래서 "①회원가입 ②재직사실확인 ③로그인 (2)평가대상선택" 같이 서로 다른 절차
+# 4~5개가 한 청크에 그대로 섞였다(실측: 홍익대 미술활동보고서 11번 청크).
+# "①②③"/"(숫자)"는 "❑"보다 상위 구조(각각이 독립된 절차 단계)이므로 반드시
+# 먼저 쪼개야 한다 - 순서 교정만으로 임베딩 비용 추가 없이 해결됨(day46의
+# Semantic Chunking처럼 문장마다 임베딩을 도는 방식은 검토했으나, 이 도메인
+# 문서는 이미 원문자/괄호숫자 같은 명시적 구조 마커가 있어 그걸 활용하는 게
+# 임베딩 기반 의미 분할보다 공짜면서 더 정확하다).
 _SPLITTER = RecursiveCharacterTextSplitter(
     chunk_size=CHUNK_CHAR_SIZE,
     chunk_overlap=CHUNK_OVERLAP,
     separators=[
         "\nⅠ.", "\nⅡ.", "\nⅢ.", "\nⅣ.", "\nⅤ.",
+        *[f"\n{c}" for c in "①②③④⑤⑥⑦⑧⑨"],
+        *[f"\n({i}) " for i in range(1, 10)],
         "\n❑", "\nŸ",
         "\n\n", "\n",
         "다. ", "함. ", "습니다. ", ". ",
@@ -341,7 +353,12 @@ CHILD_OVERLAP = 50
 _CHILD_SPLITTER = RecursiveCharacterTextSplitter(
     chunk_size=CHILD_CHUNK_SIZE,
     chunk_overlap=CHILD_OVERLAP,
-    separators=["\n\n", "\n", "다. ", "함. ", "습니다. ", ". ", " ", ""],
+    separators=[
+        *[f"\n{c}" for c in "①②③④⑤⑥⑦⑧⑨"],
+        *[f"\n({i}) " for i in range(1, 10)],
+        "\n❑", "\nŸ",
+        "\n\n", "\n", "다. ", "함. ", "습니다. ", ". ", " ", "",
+    ],
 )
 
 
