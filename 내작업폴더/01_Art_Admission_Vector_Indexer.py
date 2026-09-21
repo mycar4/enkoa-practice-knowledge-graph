@@ -316,6 +316,39 @@ def ensure_vector_index(driver):
             CREATE FULLTEXT INDEX admission_chunk_fulltext IF NOT EXISTS
             FOR (c:Admission_TextChunk) ON EACH [c.text]
         """)
+        # 2026-09-21 [day46 Parent-Child/Auto-merging 파일럿]: 기존
+        # Admission_TextChunk(1500자, "부모")는 그대로 두고, 검색은 더 작은
+        # "자식" 단위(Admission_ChildChunk)로 정밀하게 하되, 자식이 여러 개
+        # 같이 검색되면 부모 전체를 반환하는 구조를 위한 별도 인덱스.
+        # LLM 호출 없음(순수 구조 재배치) - 임베딩만 추가로 필요.
+        s.run(f"""
+            CREATE VECTOR INDEX admission_child_chunk_embedding IF NOT EXISTS
+            FOR (c:Admission_ChildChunk) ON (c.embedding)
+            OPTIONS {{indexConfig: {{
+                `vector.dimensions`: {EMBEDDING_DIM},
+                `vector.similarity_function`: 'cosine'
+            }}}}
+        """)
+        s.run("""
+            CREATE FULLTEXT INDEX admission_child_chunk_fulltext IF NOT EXISTS
+            FOR (c:Admission_ChildChunk) ON EACH [c.text]
+        """)
+
+
+CHILD_CHUNK_SIZE = 400  # day46 교안 01의 Parent-Child 실습 감각(부모보다 훨씬 작은 자식)
+CHILD_OVERLAP = 50
+
+_CHILD_SPLITTER = RecursiveCharacterTextSplitter(
+    chunk_size=CHILD_CHUNK_SIZE,
+    chunk_overlap=CHILD_OVERLAP,
+    separators=["\n\n", "\n", "다. ", "함. ", "습니다. ", ". ", " ", ""],
+)
+
+
+def split_into_children(parent_text: str) -> list:
+    """부모 청크(1500자) 하나를 검색용 자식 청크(400자)로 더 잘게 나눈다.
+    LLM 호출 없음 - 순수 텍스트 분할이라 비용은 임베딩(자식 개수만큼)뿐이다."""
+    return _CHILD_SPLITTER.split_text(parent_text)
 
 
 def main():
@@ -360,6 +393,14 @@ def main():
                     "MATCH (c:Admission_TextChunk {university: $univ, source_file: $source_file}) DETACH DELETE c",
                     univ=univ, source_file=path.name,
                 )
+                # 2026-09-21 [Parent-Child 파일럿]: 이 파일의 기존 자식 청크도
+                # 같이 지운다 - 안 지우면 부모를 재색인해도 예전 자식이 고아로
+                # 남아 검색 결과에 계속 섞인다.
+                s.run(
+                    "MATCH (c:Admission_ChildChunk {university: $univ, source_file: $source_file}) DETACH DELETE c",
+                    univ=univ, source_file=path.name,
+                )
+            child_total = 0
             for idx, ch in enumerate(chunks):
                 vec = embed_text(ch["text"])
                 with driver.session(default_access_mode=WRITE_ACCESS) as s:
@@ -372,7 +413,25 @@ def main():
                     """, univ=univ, year=admission_year, idx=idx,
                          ps=ch["page_start"], pe=ch["page_end"], text=ch["text"],
                          source_file=path.name, embedding=vec)
-            print(f"[커밋 완료] {univ}: {len(chunks)}개 청크 색인")
+
+                # 2026-09-21 [Parent-Child 파일럿]: 부모 청크를 자식(400자)으로
+                # 더 잘게 나눠서 각각 임베딩 + CHILD_OF 관계로 연결한다.
+                # LLM 호출 없음 - 순수 분할 + 임베딩만.
+                child_texts = split_into_children(ch["text"])
+                for c_idx, c_text in enumerate(child_texts):
+                    c_vec = embed_text(c_text)
+                    with driver.session(default_access_mode=WRITE_ACCESS) as s:
+                        s.run("""
+                            MATCH (p:Admission_TextChunk {university: $univ, source_file: $source_file, chunk_index: $pidx})
+                            CREATE (c:Admission_ChildChunk {
+                                university: $univ, source_file: $source_file,
+                                parent_chunk_index: $pidx, child_index: $cidx,
+                                text: $text, embedding: $embedding
+                            })-[:CHILD_OF]->(p)
+                        """, univ=univ, source_file=path.name, pidx=idx,
+                             cidx=c_idx, text=c_text, embedding=c_vec)
+                child_total += len(child_texts)
+            print(f"[커밋 완료] {univ}: {len(chunks)}개 부모 청크 + {child_total}개 자식 청크 색인")
     finally:
         driver.close()
 

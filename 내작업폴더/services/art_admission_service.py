@@ -2915,6 +2915,116 @@ class ArtAdmissionService:
         except Exception:
             return candidates[:top_k]
 
+    def hybrid_search_auto_merge(self, query: str, top_k: int = 5, candidate_pool: int = 15,
+                                  rerank_model_id: str = "gpt-4o-mini",
+                                  universities: Optional[List[str]] = None,
+                                  merge_threshold: float = 0.5) -> List[Dict[str, Any]]:
+        """day46 Auto-merging Retrieval: 자식 청크(400자, 세밀함)로 먼저 검색해서
+        정밀도를 높이되, 한 부모의 자식이 merge_threshold 이상 비율로 함께 뽑히면
+        그 영역이 문맥상 밀집돼 있다는 뜻이므로 조각난 자식들 대신 부모 전체
+        텍스트(1500자, 넓은 문맥)로 병합해서 반환한다. 부모/자식 청크가 없는
+        학교(아직 파일럿 미적용)를 지정하면 자연스럽게 빈 결과를 낸다 - 호출부가
+        빈 리스트를 hybrid_search()로 폴백시켜야 한다."""
+        from services.art_admission_llm import embed_text, rerank_chunks, cross_encoder_rerank
+        from collections import defaultdict
+        query_vec = embed_text(query)
+        pool = max(candidate_pool, 300) if universities else candidate_pool
+
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            vec_rows = s.run("""
+                CALL db.index.vector.queryNodes('admission_child_chunk_embedding', $pool, $vec)
+                YIELD node, score
+                WHERE $universities IS NULL OR node.university IN $universities
+                RETURN node.university AS university, node.source_file AS source_file,
+                       node.parent_chunk_index AS parent_chunk_index, node.child_index AS child_index,
+                       node.text AS text, score AS vec_score
+                LIMIT $candidate_pool
+            """, pool=pool, candidate_pool=candidate_pool, vec=query_vec, universities=universities).data()
+
+            kw_rows = s.run("""
+                CALL db.index.fulltext.queryNodes('admission_child_chunk_fulltext', $q) YIELD node, score
+                WHERE $universities IS NULL OR node.university IN $universities
+                RETURN node.university AS university, node.source_file AS source_file,
+                       node.parent_chunk_index AS parent_chunk_index, node.child_index AS child_index,
+                       node.text AS text, score AS kw_score
+                LIMIT $pool
+            """, q=query, pool=candidate_pool, universities=universities).data()
+
+        if not vec_rows and not kw_rows:
+            return []
+
+        max_vec = max((r["vec_score"] for r in vec_rows), default=1.0) or 1.0
+        max_kw = max((r["kw_score"] for r in kw_rows), default=1.0) or 1.0
+
+        merged: Dict[tuple, Dict[str, Any]] = {}
+        for r in vec_rows:
+            key = (r["university"], r["source_file"], r["parent_chunk_index"], r["child_index"])
+            merged[key] = {**r, "vec_score_norm": r["vec_score"] / max_vec, "kw_score_norm": 0.0}
+        for r in kw_rows:
+            key = (r["university"], r["source_file"], r["parent_chunk_index"], r["child_index"])
+            if key in merged:
+                merged[key]["kw_score_norm"] = r["kw_score"] / max_kw
+            else:
+                merged[key] = {**r, "vec_score_norm": 0.0, "kw_score_norm": r["kw_score"] / max_kw}
+
+        child_candidates = list(merged.values())
+        for c in child_candidates:
+            c["fusion_score"] = 0.7 * c["vec_score_norm"] + 0.3 * c["kw_score_norm"]
+        child_candidates.sort(key=lambda c: c["fusion_score"], reverse=True)
+        child_candidates = child_candidates[:candidate_pool]
+
+        parent_keys = {(c["university"], c["source_file"], c["parent_chunk_index"]) for c in child_candidates}
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            parent_rows = s.run("""
+                UNWIND $keys AS k
+                MATCH (p:Admission_TextChunk {university: k[0], source_file: k[1], chunk_index: k[2]})
+                OPTIONAL MATCH (child:Admission_ChildChunk)-[:CHILD_OF]->(p)
+                WITH p, k, count(child) AS total_children
+                RETURN k[0] AS university, k[1] AS source_file, k[2] AS parent_chunk_index,
+                       p.text AS parent_text, p.page_start AS page_start, p.page_end AS page_end,
+                       p.admission_year AS admission_year, total_children
+            """, keys=[list(k) for k in parent_keys]).data()
+        parent_info = {(r["university"], r["source_file"], r["parent_chunk_index"]): r for r in parent_rows}
+
+        by_parent: Dict[tuple, List[Dict[str, Any]]] = defaultdict(list)
+        for c in child_candidates:
+            by_parent[(c["university"], c["source_file"], c["parent_chunk_index"])].append(c)
+
+        candidates: List[Dict[str, Any]] = []
+        for pkey, children in by_parent.items():
+            info = parent_info.get(pkey)
+            total_children = info["total_children"] if info else 0
+            if info and total_children > 0 and (len(children) / total_children) >= merge_threshold:
+                # 병합: 조각난 자식들 대신 부모 전체 텍스트로 한 번만 반환한다.
+                best_score = max(c["fusion_score"] for c in children)
+                candidates.append({
+                    "university": info["university"], "source_file": info["source_file"],
+                    "chunk_index": info["parent_chunk_index"], "text": info["parent_text"],
+                    "page_start": info["page_start"], "page_end": info["page_end"],
+                    "admission_year": info["admission_year"],
+                    "fusion_score": best_score, "merged_from_children": len(children),
+                    "total_children": total_children,
+                })
+            else:
+                for c in children:
+                    candidates.append({
+                        "university": c["university"], "source_file": c["source_file"],
+                        "chunk_index": c["parent_chunk_index"], "child_index": c["child_index"],
+                        "text": c["text"], "fusion_score": c["fusion_score"],
+                        "admission_year": info["admission_year"] if info else None,
+                    })
+
+        candidates.sort(key=lambda c: c["fusion_score"], reverse=True)
+        candidates = candidates[:candidate_pool]
+
+        ce_result = cross_encoder_rerank(query, candidates, top_k=top_k)
+        if ce_result is not None:
+            return ce_result
+        try:
+            return rerank_chunks(query, candidates, model_id=rerank_model_id, top_k=top_k)
+        except Exception:
+            return candidates[:top_k]
+
     # 2026-09-21: 기존엔 "미술활동보고서"/"유의사항" 같은 넓은 키워드 때문에 평가자
     # 회원가입/확인서 제출/로그인 방법 같은 절차 안내(FAQ)까지 다 걸려서, 실제로는
     # "지원자가 이 글을 어떻게 써야 하는가"와 무관한 청크가 상위를 채우고 토큰만
