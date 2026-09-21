@@ -532,7 +532,7 @@ def render_art_admission_app():
                     with st.spinner("AI가 그래프 사실 + 원문 검색(하이브리드+재순위화) + 개체 그래프 연관 정보를 보고 답변을 작성 중입니다..."):
                         context_tracks, context_estimates = svc.build_llm_context(query)
                         try:
-                            context_raw = svc.hybrid_search(query, top_k=5)
+                            context_raw = svc.search_document_excerpts(query, top_k=5, universities=[t["university"] for t in context_tracks] or None)
                         except Exception:
                             context_raw = []  # 벡터/풀텍스트 인덱스가 아직 없거나 임베딩 실패 시 구조화 사실만으로 답변
                         anchor_names = [t["university"] for t in context_tracks]

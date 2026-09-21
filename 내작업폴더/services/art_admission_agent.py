@@ -311,7 +311,7 @@ def run_qa_pipeline(svc, query: str, model_id: str = AGENT_MODEL) -> Dict[str, A
     try:
         # 질의에서 학교가 인식됐으면(anchor_names) 그 학교 청크로만 검색을 좁힌다 -
         # 그렇지 않으면 52개교 전체를 놓고 순위를 매겨서 다른 학교 내용에 밀려날 수 있다.
-        context_raw = svc.hybrid_search(query, top_k=5, universities=sorted(set(anchor_names)) or None)
+        context_raw = svc.search_document_excerpts(query, top_k=5, universities=sorted(set(anchor_names)) or None)
     except Exception:
         context_raw = []
     exclude_names = anchor_names + [t["department"] for t in context_tracks]

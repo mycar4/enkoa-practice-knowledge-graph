@@ -3025,6 +3025,43 @@ class ArtAdmissionService:
         except Exception:
             return candidates[:top_k]
 
+    def search_document_excerpts(self, query: str, top_k: int = 5, candidate_pool: int = 15,
+                                  rerank_model_id: str = "gpt-4o-mini",
+                                  universities: Optional[List[str]] = None) -> List[Dict[str, Any]]:
+        """실제 /qa 파이프라인이 쓰는 진입점. day46 Auto-merging Retrieval
+        (hybrid_search_auto_merge)을 우선 시도하고, 부모/자식 청크가 아직 없는
+        학교(파일럿 미적용 - 2026-09-21 기준 홍익대만 적용됨)를 조회하면 결과가
+        비므로 그때만 기존 hybrid_search()(부모 청크 단독)로 자동 폴백한다.
+        호출부는 롤아웃 진행 상황을 몰라도 이 함수 하나만 쓰면 된다.
+
+        한계: universities에 파일럿 학교와 미적용 학교가 섞여 있으면(예: "홍익대,
+        서울대 비교") auto_merge가 홍익대 것만 채워서 반환하고 서울대는 통째로
+        빠질 수 있다 - 지금은 파일럿이 1개교뿐이라 실무 영향이 없어 단순 폴백으로
+        두고, 여러 학교에 롤아웃되면 학교별로 나눠 각각 검색 후 합치는 방식으로
+        바꿔야 한다.
+
+        universities가 없으면(즉 60개교 전체를 놓고 검색) auto_merge를 아예 시도
+        하지 않는다 - 자식 청크가 홍익대에만 있어서, 전체 검색에서 자식 결과가
+        하나라도 나오면 나머지 59개교가 통째로 결과에서 빠지는 훨씬 심각한 회귀가
+        생기기 때문이다(위 한계와 같은 문제가 스코프 없이 전역으로 발생)."""
+        if not universities:
+            return self.hybrid_search(
+                query, top_k=top_k, candidate_pool=candidate_pool, rerank_model_id=rerank_model_id,
+            )
+        try:
+            merged = self.hybrid_search_auto_merge(
+                query, top_k=top_k, candidate_pool=candidate_pool,
+                rerank_model_id=rerank_model_id, universities=universities,
+            )
+        except Exception:
+            merged = []
+        if merged:
+            return merged
+        return self.hybrid_search(
+            query, top_k=top_k, candidate_pool=candidate_pool,
+            rerank_model_id=rerank_model_id, universities=universities,
+        )
+
     # 2026-09-21: 기존엔 "미술활동보고서"/"유의사항" 같은 넓은 키워드 때문에 평가자
     # 회원가입/확인서 제출/로그인 방법 같은 절차 안내(FAQ)까지 다 걸려서, 실제로는
     # "지원자가 이 글을 어떻게 써야 하는가"와 무관한 청크가 상위를 채우고 토큰만
