@@ -19,6 +19,7 @@ Self-RAG 자기검증(그라운딩 체크)·코드 레벨 가드레일을 최종
 from __future__ import annotations
 
 import json
+import os
 import re
 from typing import Any, Dict, List, Optional
 
@@ -462,10 +463,54 @@ def run_qa_pipeline(svc, query: str, model_id: str = AGENT_MODEL) -> Dict[str, A
     return result
 
 
+# 2026-09-22 실사용 발견: "미술활동보고서 어떻게 써야 하지?" 같이 학교명
+# 없이 문서 작성법을 묻는 질문이 일반 QA 파이프라인으로 가면, 학교를 특정 못 해
+# build_llm_context가 전체 대학 트랙(299건)을 통째로 컨텍스트에 넣고 결국
+# "확인하지 못했습니다"로 끝난다 - 할루시네이션은 없었지만 "근거 299건"이라는
+# 표시가 사용자에게 오히려 신뢰를 깎아먹었다. 이 질문 유형은 애초에 학교별
+# 서류 규정을 원문에서 찾아 첨삭해주는 review.html(get_document_rule_excerpts
+# 기반)이 훨씬 적합하므로, LLM 호출 자체를 생략하고 바로 안내한다.
+_DOC_WRITING_HELP_SIGNALS = [
+    "어떻게 써야", "작성 방법", "작성법", "쓰는 법", "어떻게 작성",
+    "써야 하", "쓰는지", "작성할 때", "써야하나", "작성 시",
+]
+_DOC_TYPE_TRIGGER_WORDS = ["자기소개서", "미술활동보고서", "포트폴리오", "활동보고서"]
+
+# 2026-09-22: 도메인마다 다른 프런트가 이 함수를 호출할 수 있어(BO/CO/FO 각각
+# 별도 배포) 하드코딩 대신 환경변수로 오버라이드 가능하게 하되, 기본값은 실제
+# 운영 중인 FO 도메인으로 둔다(franchise 회귀 테스트 문서에서 쓰는 것과 동일).
+_FO_BASE_URL = os.getenv("FO_PUBLIC_BASE_URL", "https://appartreadykr.vercel.app")
+
+
+def _is_document_writing_help_query(query: str) -> bool:
+    return (
+        any(w in query for w in _DOC_TYPE_TRIGGER_WORDS)
+        and any(s in query for s in _DOC_WRITING_HELP_SIGNALS)
+    )
+
+
 def route_and_answer(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dict[str, Any]:
     """day54 질의 라우팅 진입점. /agent-chat이 이 함수를 호출한다 - 단순 질의는
     기존 /qa 파이프라인으로, 복합 질의(비교·일정충돌·여러 학교 동시 언급)만
     LangGraph 에이전트로 보낸다."""
+    if _is_document_writing_help_query(query):
+        review_url = f"{_FO_BASE_URL}/review.html"
+        return {
+            "answer": (
+                "서류 작성 방법은 학교별로 글자 수·블라인드 처리·표절 금지 규정이 달라서, "
+                "이 채팅창보다 서류별 규정을 직접 원문에서 찾아 첨삭해주는 전용 화면이 "
+                f"더 정확합니다.\n\n[서류 첨삭 화면으로 이동하기]({review_url})"
+            ),
+            "context_tracks": [], "context_compatible_tracks": [],
+            "context_graph_related": [], "context_raw_excerpts": [],
+            "grounded_tracks": [], "grounded_tracks_total": 0,
+            "tool_trace": [{
+                "tool": "redirect_to_document_review",
+                "args": {"query": query},
+                "result_preview": "서류 작성법 질문 감지 - LLM 호출 없이 서류첨삭 화면(review.html)으로 안내",
+            }],
+        }
+
     svc = _get_service()
     try:
         all_universities = sorted({u["university"] for u in svc.list_universities()})
