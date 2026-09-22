@@ -198,6 +198,14 @@ function buildToolTrace(res) {
 
 const chatHistory = [];  // day50~56 에이전트 멀티턴 - [{role, content}, ...]
 
+// [항목⑤ 대화 로깅] 이 세션(탭)의 모든 턴을 하나로 묶어보기 위한 id - 새로고침하면
+// 새로 생성된다(서버에 영구 저장하는 사용자 식별자가 아니라 "이 대화 하나"를 묶는
+// 용도일 뿐). crypto.randomUUID가 없는 구형 환경(비HTTPS 등)에서는 타임스탬프+난수로
+// 대체한다.
+const qaSessionId = (window.crypto && crypto.randomUUID)
+  ? crypto.randomUUID()
+  : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
 // grades.html 성적 추천 결과 화면의 "이 결과로 질문하기" 버튼에서 넘어온 컨텍스트.
 // 원본 JSON이 아니라 사람이 읽을 수 있는 요약 문장 하나로 저장돼 있으므로, 실제
 // 질문을 보낼 때 그대로 앞에 붙여서 에이전트가 "어떤 학교들 얘기인지" 알게 한다
@@ -259,7 +267,7 @@ function askQuestion() {
   fetch(window.API_BASE_URL + "/agent-chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query: queryToSend, history: chatHistory }),
+    body: JSON.stringify({ query: queryToSend, history: chatHistory, session_id: qaSessionId }),
   }).then(r => r.json()).then(res => {
     const warnings = res.self_check_warnings || [];
     const warningBlock = warnings.length

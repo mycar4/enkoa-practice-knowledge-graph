@@ -51,12 +51,16 @@ jobs:
             # 호출 실패(키 없음/네트워크 오류/서비스 장애) 시 코드가 자동으로 기존
             # 키워드 방식으로 폴백하므로, 이 패키지 설치가 실패해도 서비스 자체는
             # 안 죽는다(다만 그러면 Jev 개선 효과 없이 예전 정확도로 동작함).
-            DEPS="fastapi uvicorn[standard] neo4j python-dotenv langgraph langchain-core langchain-openai sentence-transformers typesafe-sdk==0.7.1"
+            # 2026-09-23: requests 추가 - 대화 로깅(art_admission_gap_log.py)이
+            # Supabase REST API를 호출하는 데 씀. fastapi 등에 이미 transitive
+            # 의존성으로 딸려오지만, 예전에 "새 패키지를 DEPS에 안 넣어서 배포마다
+            # 조용히 누락"됐던 실수가 있었으므로 명시적으로 적는다.
+            DEPS="fastapi uvicorn[standard] neo4j python-dotenv langgraph langchain-core langchain-openai sentence-transformers typesafe-sdk==0.7.1 requests"
             DEPS_HASH=$(echo "$DEPS" | sha256sum | cut -d' ' -f1)
             HASH_FILE=~/art-admission-api/.deploy_deps_hash
             if [ ! -f "$HASH_FILE" ] || [ "$(cat "$HASH_FILE")" != "$DEPS_HASH" ]; then
               echo "의존성 목록 변경 감지 - pip install 실행"
-              pip install -q fastapi "uvicorn[standard]" neo4j python-dotenv langgraph langchain-core langchain-openai sentence-transformers "typesafe-sdk==0.7.1"
+              pip install -q fastapi "uvicorn[standard]" neo4j python-dotenv langgraph langchain-core langchain-openai sentence-transformers "typesafe-sdk==0.7.1" requests
               echo "$DEPS_HASH" > "$HASH_FILE"
             else
               echo "의존성 목록 변경 없음 - pip install 생략"

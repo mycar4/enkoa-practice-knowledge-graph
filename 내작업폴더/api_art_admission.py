@@ -422,6 +422,7 @@ def simulate_reversal_endpoint(req: SchoolRecordRequest):
 
 class QARequest(BaseModel):
     query: str
+    session_id: Optional[str] = None
 
 
 # 2026-09-16: LLM 호출 예외(레이트리밋/지출한도/네트워크 오류 등)의 원문 메시지를
@@ -437,11 +438,11 @@ def qa(req: QARequest):
     """04 EVIDENCE 화면 - 기존 질의응답 탭의 AI 답변 파이프라인 그대로.
     항상 gpt-4o-mini만 쓴다(공개 API에서 프리미엄 모델 비용 노출 방지)."""
     from services.art_admission_agent import run_qa_pipeline
-    from services.art_admission_gap_log import log_if_gap
+    from services.art_admission_gap_log import log_turn
     svc = get_service()
     try:
         result = run_qa_pipeline(svc, req.query, model_id=DEFAULT_MODEL)
-        log_if_gap(req.query, "/qa", result)
+        log_turn(req.query, "/qa", result, session_id=req.session_id)
         return result
     except Exception as e:
         print(f"[/qa] LLM 호출 실패: {e}")  # 원인은 서버 로그에만 남김
@@ -457,6 +458,7 @@ def qa(req: QARequest):
 class AgentChatRequest(BaseModel):
     query: str
     history: List[dict] = []
+    session_id: Optional[str] = None
 
 
 @app.post("/agent-chat")
@@ -466,10 +468,10 @@ def agent_chat_endpoint(req: AgentChatRequest):
     비교·일정충돌처럼 도구 여러 개를 순서대로 조합해야 하는 복합 질의만 에이전트로
     넘긴다 - 모든 질문을 에이전트 도구선택에 맡기지 않는다(day54 Adaptive RAG)."""
     from services.art_admission_agent import route_and_answer
-    from services.art_admission_gap_log import log_if_gap
+    from services.art_admission_gap_log import log_turn
     try:
         result = route_and_answer(req.query, req.history)
-        log_if_gap(req.query, "/agent-chat", result)
+        log_turn(req.query, "/agent-chat", result, session_id=req.session_id)
         return result
     except Exception as e:
         print(f"[/agent-chat] LLM 호출 실패: {e}")  # 원인은 서버 로그에만 남김
