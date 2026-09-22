@@ -29,7 +29,9 @@ from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
 from neo4j import READ_ACCESS
 
-from services.art_admission_llm import _strip_banned_phrases, _self_check_grounding, answer_with_llm
+from services.art_admission_llm import (
+    _strip_banned_phrases, _self_check_grounding, _self_check_compat_claim, answer_with_llm,
+)
 
 AGENT_MODEL = "gpt-4o-mini"  # 공개 API 원칙과 동일하게 항상 이 모델만 쓴다.
 
@@ -60,6 +62,12 @@ _COMPOUND_SIGNAL_WORDS = [
     # "비교할 다른 학교 데이터"가 컨텍스트에 없어서 "찾지 못했습니다"만 나온다.
     # 유사/비슷/닮은 학과·대학을 찾는 질문은 반드시 도구 경로로 보낸다.
     "유사", "비슷", "닮은", "같은 학과", "같은 계열",
+    # 2026-09-22: "같은 실기로 지원 가능한 학교"류 질문은 find_compatible_exam_tracks
+    # 도구가 있어야 정확히 답할 수 있는데, 이 신호어가 빠져 있으면(Jev 실패 시
+    # 폴백되는 이 키워드 목록에) qa_pipeline으로 새서 get_compatible_tracks_for_query
+    # 결과에 의존하게 된다 - 그 자체는 틀리지 않지만, 명시적으로 도구 경로를 태우는
+    # 게 더 일관된 동작이라 방어적으로 추가한다.
+    "실기", "호환",
     # 2026-09-21 day46 RAPTOR 도입: "전체 절차 요약해줘"/"총정리"/"한눈에" 같은
     # 개요성 질문은 summarize_admission_flow 도구가 있어야 답할 수 있는데,
     # 신호어가 없으면 도구 없는 run_qa_pipeline으로 새서 낱개 청크 몇 개만 붙여준
@@ -126,6 +134,15 @@ find_similar_departments의 department 인자를 절대 추측해서 만들어�
 대학의 실제 학과명 목록을 확인한 뒤, 학과가 하나뿐이면 그 이름 그대로 find_similar_departments에
 넣고, 여러 개면 "어느 학과 기준으로 비교할까요?"라고 되물으십시오.
 
+"OO학과와 같은/호환되는 실기로 지원 가능한 학교"처럼 질문에 "실기"/"호환"이라는 말이
+있으면 find_compatible_exam_tracks를 쓰십시오 - find_similar_departments는 커리큘럼
+(수업 내용) 유사도만 비교할 뿐 실기 종목이 같다는 보장이 전혀 없습니다. 반대로 "성격이
+비슷한 학과"/"계열이 비슷"처럼 학과 자체의 성격을 묻는 질문엔 find_similar_departments를
+쓰십시오. 두 도구를 헷갈려서 엉뚱한 기준으로 답하면 안 됩니다.
+
+반입금지 물품, 입실/고사 시작 시각, 특별 유의사항처럼 구조화 도구 어디에도 없는 세세한
+원문 디테일을 물으면 search_document_details를 쓰십시오(university를 알면 반드시 채울 것).
+
 도구가 반환한 JSON 안에 있는 사실(학교/학과/실기유형/재료/일정/충돌여부)만 사용하고,
 그 안에 없는 학교·숫자·날짜는 절대 새로 만들어내지 마십시오. 도구 호출로 확인이 안 되면
 "현재 적재된 공식 모집요강 데이터에서 확인하지 못했습니다. 최종 지원 전 해당 대학 입학처
@@ -157,7 +174,7 @@ match_status가 "exact"인 것만 그렇게 부르고, "partial"인 것은 "재�
 간결하고 친절한 한국어로 답하고, "RAG 검증됨"/"실측 검증" 같은 확정적 신뢰 문구는
 쓰지 마십시오.
 
-위 8개 도구 중 어느 것도 질문과 안 맞으면(예: "실기고사일이 겹치는 전형 조합이 있는
+위 도구들 중 어느 것도 질문과 안 맞으면(예: "실기고사일이 겹치는 전형 조합이 있는
 대학이 몇 곳이야?" 같은 임의의 집계·필터·랭킹 질문) "확인할 수 없습니다"로 포기하지
 말고 text2cypher_query를 최후 수단으로 쓰십시오. 단, 다른 도구로 답이 되는 질문에는
 절대 쓰지 마십시오(느리고 비쌈)."""
@@ -220,7 +237,12 @@ def find_similar_departments(university: str, department: str, campus: str = "",
     이건 사람이 검증한 사실이 아니라 통계적 유사도이므로, 답변에서 "N% 유사"처럼
     수치 그대로 전달하되 "확실히 같다/증명됐다"처럼 단정하지 말 것. standard_tag가
     없어서 결과가 비어 있으면 "아직 이 학과는 계열 분류/커리큘럼 데이터가 없어
-    비교할 수 없다"고 정직하게 답할 것(추측으로 채우지 말 것)."""
+    비교할 수 없다"고 정직하게 답할 것(추측으로 채우지 말 것).
+
+    2026-09-22 중요: 이 도구는 "커리큘럼(수업 내용)이 비슷한가"만 비교하고 실기
+    종목·재료가 같다는 뜻이 절대 아니다. "같은/호환되는 실기로 지원 가능한 학교"처럼
+    질문에 "실기"/"호환"이 있으면 이 도구 대신 반드시 find_compatible_exam_tracks를
+    쓰십시오(실측 발견: 이 도구로 답했다가 실기유형이 전혀 다른 학교만 나온 경우 있음)."""
     svc = _get_service()
     rows = svc.find_similar_departments(university, department, campus=campus or None, top_k=top_k)
     trimmed = [{
@@ -228,6 +250,46 @@ def find_similar_departments(university: str, department: str, campus: str = "",
         "standard_tag": r.get("standard_tag"), "similarity_pct": round((r.get("score") or 0) * 100, 1),
     } for r in rows]
     return json.dumps({"count": len(trimmed), "similar": trimmed}, ensure_ascii=False)
+
+
+@tool
+def find_compatible_exam_tracks(university: str, department: str, campus: str = "") -> str:
+    """"OO대 OO학과와 같은/호환되는 실기로 지원 가능한 학교는?"처럼 실기 종목·재료가
+    실제로 일치하는(또는 겹치는) 학교를 찾을 때 쓴다. find_similar_departments
+    (커리큘럼/수업 내용 유사도)와는 완전히 다른 기준이다 - 질문에 "실기"/"호환"이
+    있으면 이 도구를, "성격이 비슷한 학과"/"계열이 비슷"처럼 학과 자체의 성격을
+    묻는 질문엔 find_similar_departments를 쓰십시오.
+
+    결과의 shared_keywords가 있으면 실기유형(과제) 자체가 일치하는 것이고,
+    shared_keywords는 비어있고 shared_materials만 있으면 재료·규격만 겹치는
+    것(실기유형은 다름)이다 - 답변에서 이 둘을 절대 같은 말("호환"/"같은 실기")로
+    섞어 쓰지 말고 명확히 구분해서 전달하십시오. 결과가 비어 있으면 "실기유형이
+    실제로 일치하는 다른 학교를 찾지 못했습니다"라고 정직하게 답하십시오."""
+    svc = _get_service()
+    rows = svc.find_compatible_tracks(university, department)
+    trimmed = [{
+        "university": r["university"], "department": r.get("department"), "track_name": r.get("track_name"),
+        "exam_type_name": r.get("exam_type_name"), "shared_keywords": r.get("shared_keywords"),
+        "shared_materials": r.get("shared_materials"), "source_url": r.get("source_url"),
+    } for r in rows[:15]]
+    return json.dumps({"count": len(trimmed), "compatible": trimmed}, ensure_ascii=False)
+
+
+@tool
+def search_document_details(query: str, university: str = "") -> str:
+    """구조화 필드(get_university_info 등)로는 안 잡히는 세세한 원문 디테일(반입금지
+    물품, 입실/고사 시작 시각, 특별 유의사항, 지원자격 우대사항 등)을 학교 공식
+    모집요강·안내문 원문에서 직접 검색한다. 다른 도구로 답이 안 나오는 세부질문에
+    쓰고, university를 알면 반드시 채워서 검색을 그 학교로 좁히십시오(안 채우면
+    관련 없는 다른 학교 내용이 섞여 나올 수 있음). 결과 text는 원문 발췌이며,
+    거기 없는 내용은 지어내지 말고 "원문에서 확인하지 못했습니다"라고 답하십시오."""
+    svc = _get_service()
+    rows = svc.search_document_excerpts(query, top_k=5, universities=[university] if university else None)
+    trimmed = [{
+        "university": r.get("university"), "source_file": r.get("source_file"),
+        "text": (r.get("text") or "")[:600], "page_start": r.get("page_start"), "page_end": r.get("page_end"),
+    } for r in rows]
+    return json.dumps({"count": len(trimmed), "excerpts": trimmed}, ensure_ascii=False)
 
 
 @tool
@@ -413,7 +475,8 @@ def text2cypher_query(question: str) -> str:
     """다른 도구 어디에도 안 맞는 구조화 데이터 질문(임의의 집계/필터/랭킹, 예: "실기고사일이
     2개 이상 겹치는 전형 조합이 있는 대학이 몇 곳이야?")에만 최후 수단으로 쓰십시오. 먼저
     다른 도구(get_university_info, search_tracks, compare_tracks, check_schedule_conflicts,
-    get_calendar, recommend_by_grades, get_competition_rate_ranking, find_similar_departments)로
+    get_calendar, recommend_by_grades, get_competition_rate_ranking, find_similar_departments,
+    find_compatible_exam_tracks, search_document_details)로
     답할 수 있는지 반드시 먼저 확인하고, 그중 하나로 답이 되면 절대 이 도구를 쓰지 마십시오
     (이 도구는 매번 별도 LLM 호출로 Cypher를 새로 생성하므로 더 느리고 비쌉니다).
     이 도구가 반환한 JSON 행(rows) 안의 값만 사실로 쓰고, 없는 값은 절대 지어내지 마십시오."""
@@ -454,7 +517,7 @@ def summarize_admission_flow(university: str, topic: str = "") -> str:
     }, ensure_ascii=False)
 
 
-TOOLS = [get_university_info, find_similar_departments, search_tracks, compare_tracks, check_schedule_conflicts, get_calendar, recommend_by_grades, get_competition_rate_ranking, text2cypher_query, summarize_admission_flow]
+TOOLS = [get_university_info, find_similar_departments, find_compatible_exam_tracks, search_document_details, search_tracks, compare_tracks, check_schedule_conflicts, get_calendar, recommend_by_grades, get_competition_rate_ranking, text2cypher_query, summarize_admission_flow]
 
 
 def run_qa_pipeline(svc, query: str, model_id: str = AGENT_MODEL) -> Dict[str, Any]:
@@ -619,12 +682,6 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
     llm = ChatOpenAI(model=AGENT_MODEL, temperature=0)
     agent = create_react_agent(llm, TOOLS, prompt=_SYSTEM_PROMPT)
 
-    messages = list(history or [])
-    messages.append({"role": "user", "content": query})
-
-    result = agent.invoke({"messages": messages})
-    out_messages = result["messages"]
-
     tool_trace = []
     grounded_universities = set()
     # 2026-09-09: "입시 질문 답변이 정말 우리 지식그래프 근거인가"를 화면에서
@@ -634,6 +691,11 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
     # 요약이 아니라 실제 반환 레코드라 설득력이 있다).
     grounded_tracks = []
     grounded_track_keys = set()
+    # 2026-09-22: /qa 파이프라인의 _self_check_compat_claim(호환/유사 과잉주장·포기
+    # 검사)을 에이전트 경로에도 동일하게 적용하려면 find_compatible_exam_tracks가
+    # 반환한 shared_keywords/shared_materials 원본이 필요하다 - grounded_tracks는
+    # 화면 표시용으로 필드를 잘라내므로 별도로 원본 그대로 모아둔다.
+    context_compatible_tracks: List[Dict[str, Any]] = []
 
     def _add_grounded_track(row: dict):
         key = (row.get("university"), row.get("department"), row.get("track_name"))
@@ -645,50 +707,70 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
             "track_name": row.get("track_name"), "source_url": row.get("source_url"),
         })
 
-    for m in out_messages:
-        if isinstance(m, AIMessage) and getattr(m, "tool_calls", None):
-            for tc in m.tool_calls:
-                tool_trace.append({"tool": tc["name"], "args": tc["args"]})
-        if isinstance(m, ToolMessage):
-            content = m.content if isinstance(m.content, str) else json.dumps(m.content, ensure_ascii=False)
-            # Self-RAG 그라운딩용: 이 도구 호출이 실제로 반환한 학교명을 전부 모아둔다
-            # (트레이스 패널에 보여줄 미리보기는 300자로 자르지만, 그라운딩 판정은
-            # 잘리지 않은 전체 내용으로 해야 한다 - 안 그러면 뒷부분에 있는 학교가
-            # 누락돼서 정상 답변까지 "환각 의심"으로 오탐할 수 있다).
-            try:
-                parsed = json.loads(content)
-                # recommend_by_grades는 "combo"(선택된 조합), get_competition_rate_ranking은
-                # "ranking" 키를 쓴다 - "results"/"tracks"만 보던 원래 코드는 이 두 도구가
-                # 반환한 학교를 전부 놓쳐서, 정상 답변까지 "환각 의심"으로 오탐했다
-                # (2026-09-14 사용자 실측 제보로 발견 - 스크린샷에서 recommend_by_grades가
-                # 호출됐고 답변의 학교들이 실제로 그 결과 안에 있었는데도 경고가 떴었음).
-                # find_similar_departments는 "similar" 키를 쓴다(2026-09-15 추가) - 같은
-                # 이유로 여기 안 넣으면 유사 학과 답변마다 오탐이 재발한다.
-                for row in (parsed.get("results", []) or parsed.get("tracks", [])
-                            or parsed.get("combo", []) or parsed.get("ranking", [])
-                            or parsed.get("similar", []) or []):
-                    if isinstance(row, dict) and row.get("university"):
-                        grounded_universities.add(row["university"])
-                        _add_grounded_track(row)
-                if parsed.get("university"):
-                    grounded_universities.add(parsed["university"])
-                    if parsed.get("official_tracks"):
-                        for row in parsed["official_tracks"]:
-                            if isinstance(row, dict):
-                                _add_grounded_track({**row, "university": parsed["university"]})
-                for c in parsed.get("conflicts", []) or []:
-                    pass  # 충돌 항목은 "대학 학과" 합쳐진 문자열이라 이름 추출은 생략
-            except Exception:
-                pass
-            if tool_trace and "result_preview" not in tool_trace[-1]:
-                tool_trace[-1]["result_preview"] = content[:300]
+    def _invoke(messages) -> str:
+        """도구 호출 루프 한 번(초기 또는 재시도)을 실행하고, 그 결과로 tool_trace/
+        grounded_tracks/context_compatible_tracks(위 outer 변수들)를 누적한 뒤 최종
+        답변 텍스트만 반환한다. 재시도 시에도 이전 호출의 근거가 사라지지 않도록
+        outer 변수에 계속 append하는 구조다."""
+        result = agent.invoke({"messages": messages})
+        out_messages = result["messages"]
+        for m in out_messages:
+            if isinstance(m, AIMessage) and getattr(m, "tool_calls", None):
+                for tc in m.tool_calls:
+                    tool_trace.append({"tool": tc["name"], "args": tc["args"]})
+            if isinstance(m, ToolMessage):
+                content = m.content if isinstance(m.content, str) else json.dumps(m.content, ensure_ascii=False)
+                # Self-RAG 그라운딩용: 이 도구 호출이 실제로 반환한 학교명을 전부 모아둔다
+                # (트레이스 패널에 보여줄 미리보기는 300자로 자르지만, 그라운딩 판정은
+                # 잘리지 않은 전체 내용으로 해야 한다 - 안 그러면 뒷부분에 있는 학교가
+                # 누락돼서 정상 답변까지 "환각 의심"으로 오탐할 수 있다).
+                try:
+                    parsed = json.loads(content)
+                    # recommend_by_grades는 "combo"(선택된 조합), get_competition_rate_ranking은
+                    # "ranking" 키를 쓴다 - "results"/"tracks"만 보던 원래 코드는 이 두 도구가
+                    # 반환한 학교를 전부 놓쳐서, 정상 답변까지 "환각 의심"으로 오탐했다
+                    # (2026-09-14 사용자 실측 제보로 발견 - 스크린샷에서 recommend_by_grades가
+                    # 호출됐고 답변의 학교들이 실제로 그 결과 안에 있었는데도 경고가 떴었음).
+                    # find_similar_departments는 "similar" 키, find_compatible_exam_tracks는
+                    # "compatible" 키, search_document_details는 "excerpts" 키를 쓴다 -
+                    # 이 키들을 안 넣으면 해당 도구를 쓴 정상 답변마다 오탐이 재발한다.
+                    for row in (parsed.get("results", []) or parsed.get("tracks", [])
+                                or parsed.get("combo", []) or parsed.get("ranking", [])
+                                or parsed.get("similar", []) or []):
+                        if isinstance(row, dict) and row.get("university"):
+                            grounded_universities.add(row["university"])
+                            _add_grounded_track(row)
+                    for row in parsed.get("compatible", []) or []:
+                        if isinstance(row, dict) and row.get("university"):
+                            grounded_universities.add(row["university"])
+                            _add_grounded_track(row)
+                            context_compatible_tracks.append(row)
+                    for row in parsed.get("excerpts", []) or []:
+                        if isinstance(row, dict) and row.get("university"):
+                            grounded_universities.add(row["university"])
+                    if parsed.get("university"):
+                        grounded_universities.add(parsed["university"])
+                        if parsed.get("official_tracks"):
+                            for row in parsed["official_tracks"]:
+                                if isinstance(row, dict):
+                                    _add_grounded_track({**row, "university": parsed["university"]})
+                except Exception:
+                    pass
+                if tool_trace and "result_preview" not in tool_trace[-1]:
+                    tool_trace[-1]["result_preview"] = content[:300]
 
-    final_answer = out_messages[-1].content if out_messages else ""
-    if not isinstance(final_answer, str):
-        final_answer = json.dumps(final_answer, ensure_ascii=False)
+        final_answer = out_messages[-1].content if out_messages else ""
+        if not isinstance(final_answer, str):
+            final_answer = json.dumps(final_answer, ensure_ascii=False)
+        return final_answer
 
-    # Self-RAG류 자기검증(day53~54): /qa와 동일한 원칙 - 답변에 등장하는 학교명이
-    # 실제로 이번 도구 호출 결과 안에 있었는지 코드로 재검사한다.
+    messages = list(history or [])
+    messages.append({"role": "user", "content": query})
+    final_answer = _invoke(messages)
+
+    # Self-RAG류 자기검증(day53~54, 2026-09-22 compat_claim 추가): /qa와 동일한
+    # 원칙 - 답변에 등장하는 학교명이 실제로 이번 도구 호출 결과 안에 있었는지,
+    # "호환"/"유사" 주장이 실제 근거(shared_keywords)로 뒷받침되는지 코드로 재검사한다.
     # 2026-09-09 오탐 수정: 사용자의 질문 원문(query)이나 이전 대화(history)에 이미
     # 등장한 학교명은 grounded로 취급한다 - "이 결과로 질문하기" 기능이 성적 추천의
     # 실제 계산 결과(허구가 아님)를 질문 앞에 붙여 보내는데, 에이전트가 그 학교명을
@@ -698,10 +780,33 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
     for name in all_universities:
         if name in query_text:
             grounded_universities.add(name)
-    grounding_issues = [
-        f"'{name}'가 답변에 등장하지만 이번 도구 호출 결과에는 없었습니다(환각 의심)"
-        for name in all_universities if name in final_answer and name not in grounded_universities
-    ]
+
+    def _self_check(answer: str) -> List[str]:
+        grounding_issues = [
+            f"'{name}'가 답변에 등장하지만 이번 도구 호출 결과에는 없었습니다(환각 의심)"
+            for name in all_universities if name in answer and name not in grounded_universities
+        ]
+        return grounding_issues + _self_check_compat_claim(answer, context_compatible_tracks)
+
+    self_check_warnings = _self_check(final_answer)
+    # qa_pipeline과 동일하게 문제 발견 시 딱 한 번만 재시도한다(무한루프 방지 - 비용은
+    # 최대 2배로만 늘어남). 도구 재호출이 필요할 수도 있으므로 agent.invoke를 처음부터
+    # 다시 돈다(단일 LLM 재호출이 아니라 도구 루프 전체 재시도).
+    if self_check_warnings:
+        retry_messages = messages + [
+            {"role": "assistant", "content": final_answer},
+            {"role": "user", "content": (
+                "[자기검증 실패 - 재작성 필요]\n이전 답변에서 다음 문제가 발견되었습니다:\n- "
+                + "\n- ".join(self_check_warnings)
+                + "\n위 문제를 고쳐서 규칙을 지키는 답변으로 다시 작성하십시오. 필요하면 도구를 다시 호출해도 됩니다."
+            )},
+        ]
+        try:
+            retried = _invoke(retry_messages)
+            self_check_warnings = _self_check(retried)
+            final_answer = retried
+        except Exception:
+            pass  # 재시도 실패하면 원래 답변 유지, 아래에서 경고만 표시
 
     # 에이전트 답변에도 동일한 코드 레벨 가드레일을 적용한다(§ 절대원칙 - 화면마다
     # 따로 지키는 게 아니라 답변 생성 공통 경로 전체에 걸쳐야 한다).
@@ -714,6 +819,6 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
         "grounded_tracks": grounded_tracks,
         "grounded_tracks_total": len(grounded_tracks),
     }
-    if grounding_issues or banned_hit:
-        result_payload["self_check_warnings"] = grounding_issues + [f"금지 문구 제거됨: {p}" for p in banned_hit]
+    if self_check_warnings or banned_hit:
+        result_payload["self_check_warnings"] = self_check_warnings + [f"금지 문구 제거됨: {p}" for p in banned_hit]
     return result_payload
