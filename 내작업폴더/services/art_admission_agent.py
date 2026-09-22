@@ -461,6 +461,46 @@ _FORBIDDEN_CYPHER_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+# 2026-09-23 [항목② 구글문서 검토 후속]: "생성된 자유 Cypher를 검증 없이 그대로
+# 실행한다"는 지적에 대해 - Neo4j READ_ACCESS 세션 자체가 서버 레벨에서 쓰기를
+# 거부하므로(클라이언트 정규식과 무관하게 실제로 강제됨) 데이터 변조 위험은 원래도
+# 없었지만, 진짜 AST 컴파일러를 만드는 대신 실질적 위험(스키마에 없는 라벨/관계로
+# 헤매며 비싼 쿼리를 짜는 것, 여러 문장을 이어붙이는 것, 결과 폭주, 무한정 실행)을
+# 코드로 막는 allowlist+제한을 추가한다.
+_ALLOWED_LABELS = {
+    "Admission_University", "Admission_Department", "Admission_Track", "Admission_ExamType",
+    "Admission_Schedule", "Admission_SelectionStage", "Admission_CutoffEstimate", "Admission_YearlyResult",
+}
+_ALLOWED_REL_TYPES = {
+    "HAS_DEPARTMENT", "HAS_TRACK", "REQUIRES_EXAM", "HAS_SCHEDULE", "HAS_STAGE",
+    "ESTIMATED_CUTOFF", "HAS_YEARLY_RESULT",
+}
+_ALLOWED_SCHEMA_TOKENS = _ALLOWED_LABELS | _ALLOWED_REL_TYPES
+# 스키마의 라벨/관계타입은 전부 대문자로 시작하는 명명 규칙이라(Admission_Xxx,
+# HAS_XXX), ":Xxx" 형태의 라벨/관계 토큰만 골라내고 소문자로 시작하는 속성 맵 키
+# ({name: $x} 등)는 자연히 걸러진다.
+_LABEL_TOKEN_PATTERN = re.compile(r":([A-Z][A-Za-z0-9_]*)")
+_MULTI_STATEMENT_PATTERN = re.compile(r";\s*\S")  # 세미콜론 뒤에 내용이 더 있으면 여러 문장
+_LIMIT_PATTERN = re.compile(r"\bLIMIT\s+(\d+)\b", re.IGNORECASE)
+_MAX_ROW_LIMIT = 50
+_CYPHER_TIMEOUT_SECONDS = 10.0
+
+
+def _validate_cypher(cypher: str) -> Optional[str]:
+    """생성된 Cypher가 실행해도 안전한지 검증한다. 문제가 있으면 사용자에게 보여줄
+    에러 메시지를, 안전하면 None을 반환한다."""
+    if _FORBIDDEN_CYPHER_PATTERN.search(cypher):
+        return "안전상 읽기 전용 쿼리만 허용됩니다."
+    if _MULTI_STATEMENT_PATTERN.search(cypher):
+        return "한 번에 하나의 쿼리 문장만 허용됩니다."
+    unknown = sorted({m for m in _LABEL_TOKEN_PATTERN.findall(cypher) if m not in _ALLOWED_SCHEMA_TOKENS})
+    if unknown:
+        return f"스키마에 없는 라벨/관계를 사용했습니다: {unknown}"
+    limits = [int(n) for n in _LIMIT_PATTERN.findall(cypher)]
+    if limits and max(limits) > _MAX_ROW_LIMIT:
+        return f"LIMIT은 최대 {_MAX_ROW_LIMIT}까지만 허용됩니다."
+    return None
+
 
 def _generate_cypher(question: str) -> str:
     llm = ChatOpenAI(model=AGENT_MODEL, temperature=0)
@@ -468,6 +508,8 @@ def _generate_cypher(question: str) -> str:
     cypher = resp.content.strip()
     # 혹시 마크다운 코드블록으로 감싸 나오면 벗겨낸다.
     cypher = re.sub(r"^```(?:cypher)?\s*|\s*```$", "", cypher, flags=re.IGNORECASE).strip()
+    if not _LIMIT_PATTERN.search(cypher):
+        cypher = cypher.rstrip().rstrip(";") + f" LIMIT {_MAX_ROW_LIMIT}"
     return cypher
 
 
@@ -482,15 +524,17 @@ def text2cypher_query(question: str) -> str:
     (이 도구는 매번 별도 LLM 호출로 Cypher를 새로 생성하므로 더 느리고 비쌉니다).
     이 도구가 반환한 JSON 행(rows) 안의 값만 사실로 쓰고, 없는 값은 절대 지어내지 마십시오."""
     cypher = _generate_cypher(question)
-    if _FORBIDDEN_CYPHER_PATTERN.search(cypher):
-        return json.dumps({"error": "안전상 읽기 전용 쿼리만 허용됩니다. 이 질문은 처리할 수 없습니다."}, ensure_ascii=False)
+    error = _validate_cypher(cypher)
+    if error:
+        return json.dumps({"error": error, "generated_cypher": cypher}, ensure_ascii=False)
     svc = _get_service()
     try:
+        from neo4j import Query
         with svc.driver.session(default_access_mode=READ_ACCESS) as s:
-            rows = s.run(cypher).data()
+            rows = s.run(Query(cypher, timeout=_CYPHER_TIMEOUT_SECONDS)).data()
     except Exception as e:
         return json.dumps({"error": f"쿼리 실행 실패: {e}", "generated_cypher": cypher}, ensure_ascii=False)
-    return json.dumps({"count": len(rows), "rows": rows[:50], "generated_cypher": cypher}, ensure_ascii=False, default=str)
+    return json.dumps({"count": len(rows), "rows": rows[:_MAX_ROW_LIMIT], "generated_cypher": cypher}, ensure_ascii=False, default=str)
 
 
 @tool
@@ -651,11 +695,89 @@ def _is_document_writing_help_query(query: str) -> bool:
         return _is_document_writing_help_query_keyword(query)
 
 
+# 2026-09-23 [항목 ① Jev 라우터 통합]: 예전엔 route_and_answer가 Jev(Noul)를 최대
+# 2번 순차 호출했다(서류작성법 판정 -> 아니면 복합질의 판정). 매번 최대 두 번의
+# 왕복(각 최대 5초 타임아웃)이 누적될 수 있었고, 다이어그램(ART:READY 챗봇 아키텍처
+# 검토 문서)이 제안한 "JEV ROUTER(3지선다)" 모양과도 안 맞았다(이진판단 2회로 3지선다를
+# 흉내내고 있었음). Jev Choice(다지선다, 확률·신뢰도 함께 반환)로 한 번에 판정하도록
+# 통합한다 - 왕복 1회로 줄어 지연시간이 줄고, 결과도 재사용 가능한 하나의 판정으로
+# 남는다(§Evidence Package). 대학 2곳 이상 언급은 판단이 아니라 사실이므로 Jev를
+# 거치지 않고 호출부에서 먼저 결정론적으로 처리한다(기존과 동일).
+_ROUTE_CRITERIA = {
+    "DOCUMENT_WRITING_HELP": (
+        "서류(자기소개서/미술활동보고서/포트폴리오 등) 작성 방법이나 작성 규정"
+        "(표절, 대필, 분량, 인적사항 노출, 실명 기재 등)을 묻는 질문"
+    ),
+    "COMPLEX_TOOL": (
+        "계산/비교/추천/랭킹/요약 도구가 필요한 질문: 성적 기반 지원 추천, 여러 전형 "
+        "비교나 일정 충돌 확인, 경쟁률/순위 집계, 비슷한 학과나 호환되는 실기 찾기, "
+        "전체 절차 요약"
+    ),
+    "SIMPLE_GRAPH": (
+        "위 두 경우가 아닌 단순 사실 조회 - 특정 대학/학과/전형의 실기유형·재료·일정·"
+        "정원 등을 하나만 직접 묻는 질문"
+    ),
+}
+
+
+def _classify_route_keyword(query: str, all_universities: List[str]) -> str:
+    """Jev Choice 실패 시 폴백 - 기존 순차 키워드 판정을 그대로 재사용한다."""
+    if _is_document_writing_help_query_keyword(query):
+        return "DOCUMENT_WRITING_HELP"
+    if _is_compound_query_keyword(query, all_universities):
+        return "COMPLEX_TOOL"
+    return "SIMPLE_GRAPH"
+
+
+def _classify_route(query: str, all_universities: List[str]) -> Dict[str, Any]:
+    """반환값: {"route": "DOCUMENT_WRITING_HELP"|"COMPLEX_TOOL"|"SIMPLE_GRAPH",
+    "method": "jev_choice"|"keyword_fallback", "model": str|None,
+    "confidence": float|None, "probabilities": dict|None} - Evidence Package에
+    그대로 기록할 수 있는 형태로 만든다."""
+    try:
+        from typesafe_sdk import Choice, TypeSafeClient
+        client = TypeSafeClient(timeout=_JEV_TIMEOUT_SECONDS)
+        model = os.getenv("TYPESAFE_MODEL", "jev-1.13.0")
+        resp = client.system_one(
+            model=model, state=query,
+            questions={"route": Choice(
+                instructions="이 질문을 아래 세 경로 중 가장 알맞은 곳으로 분류하십시오.",
+                criteria=_ROUTE_CRITERIA,
+            )},
+        )
+        answer = resp.answers["route"]
+        return {
+            "route": answer.choice, "method": "jev_choice", "model": model,
+            "confidence": answer.confidence, "probabilities": answer.probabilities,
+        }
+    except Exception:
+        return {
+            "route": _classify_route_keyword(query, all_universities),
+            "method": "keyword_fallback", "model": None, "confidence": None, "probabilities": None,
+        }
+
+
 def route_and_answer(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dict[str, Any]:
-    """day54 질의 라우팅 진입점. /agent-chat이 이 함수를 호출한다 - 단순 질의는
-    기존 /qa 파이프라인으로, 복합 질의(비교·일정충돌·여러 학교 동시 언급)만
-    LangGraph 에이전트로 보낸다."""
-    if _is_document_writing_help_query(query):
+    """day54 질의 라우팅 진입점, 2026-09-23 Jev Choice 라우터 통합. /agent-chat이 이
+    함수를 호출한다 - 단순 질의는 기존 /qa 파이프라인으로, 복합 질의(비교·일정충돌·
+    여러 학교 동시 언급)만 LangGraph 에이전트로, 서류작성법 질의는 review.html로 보낸다."""
+    svc = _get_service()
+    try:
+        all_universities = sorted({u["university"] for u in svc.list_universities()})
+    except Exception:
+        all_universities = []
+
+    # 결정론적 규칙(Jev보다 먼저, 판단이 아니라 사실): 대학 2곳 이상이 질문에 실제로
+    # 언급되면 항상 도구 조합(run_agent)이 필요하다.
+    from services.art_admission_service import resolve_university_mentions_detailed
+    detail = resolve_university_mentions_detailed(query, all_universities)
+    if len(detail["universities"]) >= 2:
+        routing = {"route": "COMPLEX_TOOL", "method": "deterministic_multi_university",
+                   "model": None, "confidence": None, "probabilities": None}
+    else:
+        routing = _classify_route(query, all_universities)
+
+    if routing["route"] == "DOCUMENT_WRITING_HELP":
         review_url = f"{_FO_BASE_URL}/review.html"
         return {
             "answer": (
@@ -666,6 +788,7 @@ def route_and_answer(query: str, history: Optional[List[Dict[str, str]]] = None)
             "context_tracks": [], "context_compatible_tracks": [],
             "context_graph_related": [], "context_raw_excerpts": [],
             "grounded_tracks": [], "grounded_tracks_total": 0,
+            "routing": routing,
             "tool_trace": [{
                 "tool": "redirect_to_document_review",
                 "args": {"query": query},
@@ -673,16 +796,12 @@ def route_and_answer(query: str, history: Optional[List[Dict[str, str]]] = None)
             }],
         }
 
-    svc = _get_service()
-    try:
-        all_universities = sorted({u["university"] for u in svc.list_universities()})
-    except Exception:
-        all_universities = []
+    if routing["route"] == "COMPLEX_TOOL":
+        result = run_agent(query, history)
+        result["routing"] = routing
+        return result
 
-    if _is_compound_query(query, all_universities):
-        return run_agent(query, history)
-
-    svc = _get_service()
+    # SIMPLE_GRAPH
     result = run_qa_pipeline(svc, query)
 
     # 프론트(qa.html)의 트레이스 패널과 형식을 맞추되, "도구 선택 없이 즉시 처리했다"는
@@ -701,6 +820,7 @@ def route_and_answer(query: str, history: Optional[List[Dict[str, str]]] = None)
         for t in context_tracks[:20]
     ]
     result["grounded_tracks_total"] = len(context_tracks)
+    result["routing"] = routing
     return result
 
 

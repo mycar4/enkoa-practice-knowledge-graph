@@ -126,7 +126,12 @@ def load_one_record_tx(tx, rec: dict, batch_id: str):
             t.competition_rate_announced_at = $competition_rate_announced_at,
             t.competition_rate_source_url = $competition_rate_source_url,
             t.last_loaded_batch_id = $batch_id,
-            t.is_superseded = false
+            t.is_superseded = false,
+            t.retrieved_at = $retrieved_at,
+            t.published_at = $published_at,
+            t.valid_from = $valid_from,
+            t.valid_to = $valid_to,
+            t.verification_status = coalesce($verification_status, t.verification_status, 'unverified')
 
         MERGE (e:Admission_ExamType {name: $exam_type_name, track_name: $track_name, university: $university, department: $department})
         MERGE (t)-[:REQUIRES_EXAM]->(e)
@@ -167,6 +172,17 @@ def load_one_record_tx(tx, rec: dict, batch_id: str):
          competition_rate_announced_at=of.get("competition_rate_announced_at"),
          competition_rate_source_url=of.get("competition_rate_source_url"),
          batch_id=batch_id,
+         # 2026-09-23 [항목③ 소스 시간·버전 필드]: retrieved_at은 이 레코드가 실제로
+         # Neo4j에 적재된 시각을 매 실행마다 갱신해서 자동으로 채운다(항상 신뢰 가능 -
+         # 입력 JSON에 의존하지 않음). published_at/valid_from/valid_to/verification_status는
+         # 아직 수집 브리프(ART_ADMISSION_CRAWL_BRIEF.md)가 요구하지 않는 선택 필드라
+         # 과거 57개교 데이터엔 대부분 없다(null로 적재됨) - 앞으로 수집분부터 채워
+         # 넣을 수 있게 배관만 먼저 깔아둔다. 전체 소급 채움은 별도 작업.
+         retrieved_at=datetime.now(timezone.utc).isoformat(),
+         published_at=of.get("published_at"),
+         valid_from=of.get("valid_from"),
+         valid_to=of.get("valid_to"),
+         verification_status=of.get("verification_status"),
          exam_type_name=of.get("exam_type_name", "미지정"),
          allowed_materials=of.get("allowed_materials", []),
          paper_size=of.get("paper_size"), time_limit_minutes=of.get("time_limit_minutes"),
