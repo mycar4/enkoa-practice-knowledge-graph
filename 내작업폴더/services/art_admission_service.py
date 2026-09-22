@@ -3123,9 +3123,46 @@ class ArtAdmissionService:
         except Exception:
             return candidates[:top_k]
 
+    # 2026-09-22 [day47 질의변환 - Decomposition 실측 도입]: "A는 몇 자 이내로
+    # 써야 하고, B는 어떻게 제출해?" 같은 원문검색형 복합질문은 통째로 한 번
+    # 검색하면 두 사실 중 하나(대개 뒤쪽)를 거의 항상 놓친다 - 임베딩이 "복합
+    # 질문 전체"의 평균적인 의미로 뭉뚱그려지기 때문. 실측(홍익대 복합질문 4개):
+    # 통째로 검색 시 "두 사실 모두 상위권 포함" 0/4 -> 질문을 LLM으로 독립된
+    # 하위질문 2개로 쪼갠 뒤 각각 검색해서 합치니 3/4로 개선. 같은 실측에서
+    # Multi-Query(같은 뜻 다른 표현 3개 생성)와 HyDE(가상 답변 생성)는 오히려
+    # 평균 순위가 나빠져서(2.89->4.00, 2.89->4.67) 기각 - 이 세 기법이 전부
+    # "질문을 LLM으로 바꿔서 검색"이라는 공통점이 있지만 효과는 정반대였다.
+    _QUESTION_WORDS = ["뭐", "어떻게", "언제", "몇", "누구", "왜", "어디", "무엇"]
+
+    @classmethod
+    def _looks_compound_for_rag(cls, query: str) -> bool:
+        """질문 안에 의문사가 2개 이상 있으면 "서로 다른 것 두 가지"를 묻는
+        복합질문으로 본다 - 실측 벤치마크(9개 단일질문)에서 전부 의문사 1개
+        이하였고, 복합질문 4개는 전부 2개 이상이었다(오탐 없음, n은 작음)."""
+        return sum(query.count(w) for w in cls._QUESTION_WORDS) >= 2
+
+    def _decompose_query(self, query: str) -> List[str]:
+        """복합 질문을 완전히 독립된 하위질문들로 LLM이 쪼갠다. 실패하거나
+        1개 이하로 나오면(쪼갤 필요 없는 질문이었단 뜻) 원본을 그대로 둔다."""
+        import json
+        from services.art_admission_llm import _call_llm
+        prompt = (
+            "아래는 두 가지 이상을 동시에 묻는 복합 질문일 수 있습니다. 완전히 "
+            "독립된 질문들로 나누세요(쪼갤 필요 없으면 원본 그대로 1개만). "
+            "JSON 배열로만 답하세요.\n\n질문: " + query
+        )
+        try:
+            raw = _call_llm("복합 질문을 독립 질문으로 분해하는 보조자입니다.", prompt, model_id="gpt-4o-mini")
+            sub_qs = json.loads(raw[raw.find("["):raw.rfind("]") + 1])
+            sub_qs = [q for q in sub_qs if isinstance(q, str) and q.strip()]
+            return sub_qs if len(sub_qs) >= 2 else [query]
+        except Exception:
+            return [query]
+
     def search_document_excerpts(self, query: str, top_k: int = 5, candidate_pool: int = 15,
                                   rerank_model_id: str = "gpt-4o-mini",
-                                  universities: Optional[List[str]] = None) -> List[Dict[str, Any]]:
+                                  universities: Optional[List[str]] = None,
+                                  _allow_decompose: bool = True) -> List[Dict[str, Any]]:
         """실제 /qa 파이프라인이 쓰는 진입점. day46 Auto-merging Retrieval
         (hybrid_search_auto_merge)을 우선 시도하고, 부모/자식 청크가 아직 없는
         학교(파일럿 미적용 - 2026-09-21 기준 홍익대만 적용됨)를 조회하면 결과가
@@ -3142,6 +3179,21 @@ class ArtAdmissionService:
         하지 않는다 - 자식 청크가 홍익대에만 있어서, 전체 검색에서 자식 결과가
         하나라도 나오면 나머지 59개교가 통째로 결과에서 빠지는 훨씬 심각한 회귀가
         생기기 때문이다(위 한계와 같은 문제가 스코프 없이 전역으로 발생)."""
+        if _allow_decompose and universities and self._looks_compound_for_rag(query):
+            sub_queries = self._decompose_query(query)
+            if len(sub_queries) >= 2:
+                merged: Dict[tuple, Dict[str, Any]] = {}
+                for sq in sub_queries[:3]:
+                    for r in self.search_document_excerpts(
+                        sq, top_k=top_k, candidate_pool=candidate_pool, rerank_model_id=rerank_model_id,
+                        universities=universities, _allow_decompose=False,
+                    ):
+                        key = (r.get("university"), r.get("source_file"), r.get("chunk_index"), r.get("child_index"))
+                        if key not in merged:
+                            merged[key] = r
+                if merged:
+                    return list(merged.values())
+
         if not universities:
             return self.hybrid_search(
                 query, top_k=top_k, candidate_pool=candidate_pool, rerank_model_id=rerank_model_id,
