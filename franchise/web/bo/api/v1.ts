@@ -553,6 +553,40 @@ export default async function handler(req: any, res: any) {
       return res.status(200).json(Array.isArray(data) ? data : []);
     }
 
+    // 2026-09-23 신규: 미대입시 챗봇 "1:1 상담신청 게시판" - FO는 회원가입 없이
+    // 작성 시 정한 비밀번호로만 본인 글을 열람하지만(art_admission_inquiry.py의
+    // view_inquiry), BO는 이미 별도 로그인 세션으로 보호되므로 비밀번호 체크 없이
+    // 전체 행(질문/답변 본문 포함)을 그대로 보여주고, 답변도 여기서 바로 작성한다.
+    if (routePath === "bo/art-admission-inquiries") {
+      if (method === "GET") {
+        const resp = await supabaseFetch("art_admission_inquiries?select=*&order=created_at.desc&limit=500");
+        if (!resp.ok) return res.status(200).json([]);
+        const data = await resp.json();
+        return res.status(200).json(Array.isArray(data) ? data : []);
+      }
+    }
+    if (routePath === "bo/art-admission-inquiries/answer") {
+      if (method === "POST") {
+        const body = req.body || {};
+        if (!body.id || !body.answer_content) {
+          return res.status(400).json({ error: "id, answer_content는 필수입니다." });
+        }
+        const resp = await supabaseFetch(`art_admission_inquiries?id=eq.${encodeURIComponent(body.id)}`, {
+          method: "PATCH",
+          prefer: "return=minimal",
+          body: JSON.stringify({
+            answer_content: body.answer_content, status: "답변완료",
+            answered_at: new Date().toISOString(),
+          }),
+        });
+        if (!resp.ok) {
+          const text = await resp.text().catch(() => "");
+          return res.status(resp.status).json({ error: text || "답변 저장에 실패했습니다." });
+        }
+        return res.status(200).json({ ok: true });
+      }
+    }
+
     // BO 7: 긴급 공지 배포
     if (routePath === "bo/notices") {
       if (method === "GET") {

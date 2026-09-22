@@ -580,3 +580,62 @@ def review_chat_endpoint(req: ReviewChatRequest):
     if gate_note:
         result["gate_note"] = gate_note
     return result
+
+
+# 2026-09-23 [1:1 상담신청 게시판] 회원가입 없이 운영 - 글 작성 시 비밀번호를
+# 직접 정하고, 열람 시 그 비밀번호를 입력하는 국내 표준 "1:1 문의" 게시판 패턴.
+# 목록(/inquiries)은 본문 없이 제목/마스킹된 이름/날짜/답변상태만 준다.
+class InquiryCreateRequest(BaseModel):
+    name: str
+    contact: str
+    title: str
+    question_content: str
+    password: str
+    session_id: Optional[str] = None
+
+
+class InquiryViewRequest(BaseModel):
+    password: str
+
+
+@app.post("/inquiries")
+def create_inquiry_endpoint(req: InquiryCreateRequest):
+    from services.art_admission_inquiry import create_inquiry, InquiryConfigError
+    if not req.name.strip() or not req.contact.strip() or not req.title.strip() or not req.question_content.strip():
+        raise HTTPException(status_code=400, detail="이름/연락처/제목/문의내용은 비워둘 수 없습니다.")
+    if not req.password or len(req.password) < 4:
+        raise HTTPException(status_code=400, detail="비밀번호는 4자 이상이어야 합니다.")
+    try:
+        return create_inquiry(
+            req.name, req.contact, req.title, req.question_content,
+            req.password, session_id=req.session_id,
+        )
+    except InquiryConfigError:
+        raise HTTPException(status_code=503, detail="상담신청 기능이 아직 설정되지 않았습니다.")
+    except Exception:
+        raise HTTPException(status_code=502, detail="문의 접수에 실패했습니다. 잠시 후 다시 시도하세요.")
+
+
+@app.get("/inquiries")
+def list_inquiries_endpoint():
+    from services.art_admission_inquiry import list_inquiries_public, InquiryConfigError
+    try:
+        return list_inquiries_public()
+    except InquiryConfigError:
+        raise HTTPException(status_code=503, detail="상담신청 기능이 아직 설정되지 않았습니다.")
+    except Exception:
+        raise HTTPException(status_code=502, detail="목록을 불러오지 못했습니다. 잠시 후 다시 시도하세요.")
+
+
+@app.post("/inquiries/{inquiry_id}/view")
+def view_inquiry_endpoint(inquiry_id: int, req: InquiryViewRequest):
+    from services.art_admission_inquiry import view_inquiry, InquiryConfigError
+    try:
+        result = view_inquiry(inquiry_id, req.password)
+    except InquiryConfigError:
+        raise HTTPException(status_code=503, detail="상담신청 기능이 아직 설정되지 않았습니다.")
+    except Exception:
+        raise HTTPException(status_code=502, detail="조회에 실패했습니다. 잠시 후 다시 시도하세요.")
+    if result is None:
+        raise HTTPException(status_code=403, detail="비밀번호가 일치하지 않습니다.")
+    return result

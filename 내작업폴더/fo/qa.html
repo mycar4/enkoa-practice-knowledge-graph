@@ -207,6 +207,20 @@ function buildGroundedPanel(res) {
     </div>`;
 }
 
+// 2026-09-23 [상담 연결 유도] 무제한 대화가 꼭 좋은 게 아니다 - 대화가 길어질수록
+// (1) GPT 비용이 세션당 무한정 늘고 (2) 오늘 하루 종일 고친 버그 대부분이 "대화가
+// 길어질 때"(히스토리 오염, 후속질문 불안정) 터졌다. 강제 차단 대신, 10턴을 넘으면
+// 전문 컨설턴트 상담(1:1 상담신청 게시판)을 담담하게 제안하고, 그 이후엔 5턴마다
+// 한 번씩만 반복한다(매턴 반복하면 거슬림).
+function buildConsultNudge() {
+  return `
+    <div class="flex items-start gap-unit-xs bg-surface-container-low border border-outline-variant/30 rounded-lg p-unit-sm">
+      <span class="material-symbols-outlined text-on-surface-variant text-[18px] shrink-0">support_agent</span>
+      <p class="font-body-sm text-body-sm text-on-surface-variant flex-1">지금까지 여러 질문 함께 나눠주셨네요. 더 깊이 있는 상담은 전문 컨설턴트와 직접 이야기해보시면 정확도 면에서 도움이 됩니다.
+        <a class="text-primary underline" href="inquiry.html">1:1 상담 신청하기</a></p>
+    </div>`;
+}
+
 function buildToolTrace(res) {
   const trace = res.tool_trace || [];
   if (!trace.length) return "";
@@ -316,6 +330,9 @@ function askQuestion() {
     const warningBlock = warnings.length
       ? `<div class="font-body-sm text-body-sm text-error bg-error-container/30 p-unit-xs rounded">⚠️ 자기검증 경고: ${warnings.join(" / ")}</div>`
       : "";
+    const turnNumber = (chatHistory.length / 2) + (res.error ? 0 : 1);
+    const nudgeBlock = (!res.error && (turnNumber === 10 || (turnNumber > 10 && (turnNumber - 10) % 5 === 0)))
+      ? buildConsultNudge() : "";
     aiBox.innerHTML = `
       <div class="flex items-center justify-between pb-unit-xs">
         <div class="flex items-center gap-unit-xs"><div class="w-7 h-7 rounded-lg bg-primary-container flex items-center justify-center text-on-primary"><span class="material-symbols-outlined text-[18px]">auto_awesome</span></div><span class="font-label-md text-label-md text-on-surface font-bold">ART:READY AI</span></div>
@@ -325,6 +342,7 @@ function askQuestion() {
       <div class="bg-surface-container-low p-unit-md rounded-lg font-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-line break-words [overflow-wrap:anywhere]">${formatAnswer(res.answer || "응답 없음")}</div>
       ${warningBlock}
       ${buildToolTrace(res)}
+      ${nudgeBlock}
       <p class="font-body-sm text-body-sm text-error bg-error-container/30 p-unit-xs rounded">※ 주의: 최종 세부 요강은 해당 대학 입학처의 공식 공지를 반드시 재확인하십시오.</p>
     `;
     const traceToggle = aiBox.querySelector(".graph-trace-toggle");

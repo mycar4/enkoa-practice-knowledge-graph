@@ -246,6 +246,58 @@ export default function App() {
     }
   };
 
+  // 2026-09-23 신규: 미대입시 챗봇 "1:1 상담신청 게시판" BO 화면 - FO는 회원가입
+  // 없이 비밀번호로만 본인 글을 보지만, BO는 이미 로그인 세션으로 보호되므로
+  // 비밀번호 없이 전체 목록(질문/답변 본문 포함)을 보고 바로 답변을 작성한다.
+  const [inquiries, setInquiries] = useState<any[]>([]);
+  const [inquiriesLoading, setInquiriesLoading] = useState(false);
+  const [inquiriesExpanded, setInquiriesExpanded] = useState<string | null>(null);
+  const [inquiryAnswerDraft, setInquiryAnswerDraft] = useState<Record<string, string>>({});
+  const [inquiryAnswerSaving, setInquiryAnswerSaving] = useState<string | null>(null);
+
+  const fetchInquiries = async () => {
+    setInquiriesLoading(true);
+    try {
+      const token = getBoAccessToken();
+      const res = await fetch(`${API_BASE}/bo/art-admission-inquiries`, {
+        headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) }
+      });
+      const data = await res.json();
+      setInquiries(Array.isArray(data) ? data : []);
+    } catch {
+      showToast('상담신청 목록 조회에 실패했습니다.', 'error');
+    } finally {
+      setInquiriesLoading(false);
+    }
+  };
+
+  const submitInquiryAnswer = async (id: string) => {
+    const answer = (inquiryAnswerDraft[id] || '').trim();
+    if (!answer) {
+      showToast('답변 내용을 입력해주세요.', 'error');
+      return;
+    }
+    setInquiryAnswerSaving(id);
+    try {
+      const token = getBoAccessToken();
+      const res = await fetch(`${API_BASE}/bo/art-admission-inquiries/answer`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ id, answer_content: answer })
+      });
+      if (!res.ok) throw new Error();
+      showToast('답변을 등록했습니다.', 'success');
+      fetchInquiries();
+    } catch {
+      showToast('답변 등록에 실패했습니다.', 'error');
+    } finally {
+      setInquiryAnswerSaving(null);
+    }
+  };
+
   // 수기결제 모달 상태
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedBilling, setSelectedBilling] = useState<BillingRecord | null>(null);
@@ -531,7 +583,8 @@ export default function App() {
               { key: 'analytics', label: '📈 플랫폼 매출/순위 통계' },
               { key: 'notices', label: '📢 가맹점 공지사항 관리' },
               { key: 'accounts', label: '👤 본사 관리자 계정 관리' },
-              { key: 'art_admission_logs', label: '🎨 미대입시 챗봇 로그' }
+              { key: 'art_admission_logs', label: '🎨 미대입시 챗봇 로그' },
+              { key: 'art_admission_inquiries', label: '💬 미대입시 1:1 상담신청' }
             ].map(m => (
               <button
                 key={m.key}
@@ -540,6 +593,7 @@ export default function App() {
                   setActiveMenu(m.key);
                   // 이 탭만 실제 라이브 데이터를 불러온다 - 처음 열 때 자동 조회.
                   if (m.key === 'art_admission_logs') fetchQaLogs();
+                  if (m.key === 'art_admission_inquiries') fetchInquiries();
                 }}
               >
                 {m.label}
@@ -976,6 +1030,87 @@ export default function App() {
                                 <strong>자기검증 경고:</strong> {log.self_check_warnings.join(' / ')}
                               </div>
                             )}
+                          </td>
+                        </tr>
+                      )}
+                    </Fragment>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* 10. 미대입시 챗봇 1:1 상담신청 게시판 */}
+          {activeMenu === 'art_admission_inquiries' && (
+            <div className="tab-view">
+              <div className="view-header">
+                <h2>미대입시 챗봇 1:1 상담신청</h2>
+                <button className="btn btn-primary" onClick={fetchInquiries} disabled={inquiriesLoading}>
+                  {inquiriesLoading ? '불러오는 중…' : '🔄 새로고침'}
+                </button>
+              </div>
+              <p className="text-muted" style={{ marginBottom: '12px' }}>
+                FO는 회원가입 없이 비밀번호로만 본인 글을 열람하지만, 여기서는 전체
+                질문/답변 본문을 바로 확인하고 답변을 작성할 수 있습니다.
+              </p>
+              <table className="bo-table">
+                <thead>
+                  <tr>
+                    <th>접수일</th>
+                    <th>이름</th>
+                    <th>연락처</th>
+                    <th>제목</th>
+                    <th>상태</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {inquiries.length === 0 && !inquiriesLoading && (
+                    <tr><td colSpan={5} className="text-muted" style={{ textAlign: 'center', padding: '20px' }}>표시할 상담신청이 없습니다.</td></tr>
+                  )}
+                  {inquiries.map((inq: any) => (
+                    <Fragment key={inq.id}>
+                      <tr
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setInquiriesExpanded(inquiriesExpanded === String(inq.id) ? null : String(inq.id))}
+                      >
+                        <td style={{ whiteSpace: 'nowrap', fontSize: '12px' }}>{new Date(inq.created_at).toLocaleString('ko-KR')}</td>
+                        <td>{inq.name}</td>
+                        <td>{inq.contact}</td>
+                        <td>{inq.title}</td>
+                        <td>
+                          {inq.status === '답변완료'
+                            ? <span className="badge badge-success">답변완료</span>
+                            : <span className="badge badge-danger">답변대기</span>}
+                        </td>
+                      </tr>
+                      {inquiriesExpanded === String(inq.id) && (
+                        <tr>
+                          <td colSpan={5} style={{ background: '#fafafa', fontSize: '13px' }}>
+                            <strong>문의 내용:</strong>
+                            <p style={{ whiteSpace: 'pre-wrap' }}>{inq.question_content}</p>
+                            {inq.answer_content && (
+                              <>
+                                <strong>기존 답변:</strong>
+                                <p style={{ whiteSpace: 'pre-wrap' }}>{inq.answer_content}</p>
+                              </>
+                            )}
+                            <div className="form-group" style={{ marginTop: '8px' }}>
+                              <label>{inq.answer_content ? '답변 수정' : '답변 작성'}</label>
+                              <textarea
+                                className="form-control"
+                                rows={4}
+                                value={inquiryAnswerDraft[String(inq.id)] ?? inq.answer_content ?? ''}
+                                onChange={e => setInquiryAnswerDraft(prev => ({ ...prev, [String(inq.id)]: e.target.value }))}
+                              />
+                              <button
+                                className="btn btn-primary"
+                                style={{ marginTop: '8px' }}
+                                onClick={() => submitInquiryAnswer(String(inq.id))}
+                                disabled={inquiryAnswerSaving === String(inq.id)}
+                              >
+                                {inquiryAnswerSaving === String(inq.id) ? '저장 중…' : '답변 등록'}
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       )}
