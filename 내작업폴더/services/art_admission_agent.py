@@ -214,6 +214,7 @@ def get_university_info(university: str, campus: str = "") -> str:
         "exam_type_name": t.get("exam_type_name"), "allowed_materials": t.get("allowed_materials"),
         "quota": t.get("quota"), "exam_dates": t.get("exam_dates"), "source_url": t.get("source_url"),
         "competition_rate": t.get("competition_rate"), "competition_applicant_count": t.get("competition_applicant_count"),
+        "past_topics": [p for p in (t.get("past_topics") or []) if p.get("topic_text")] or None,
     } for t in detail.get("official_tracks", [])]
     return json.dumps({"university": university, "count": len(tracks), "tracks": tracks}, ensure_ascii=False)
 
@@ -539,14 +540,15 @@ def text2cypher_query(question: str) -> str:
 
 @tool
 def summarize_admission_flow(university: str, topic: str = "") -> str:
-    """"OO대 수시 절차/전체 흐름을 요약해줘", "미술활동보고서 절차 총정리해줘"처럼
-    개별 사실 하나가 아니라 여러 절차를 관통하는 "전체 흐름/개요"를 물을 때 쓴다.
-    특정 숫자·날짜 하나만 묻는 질문(예: "논술고사 시험시간 몇 분이야?")에는 절대
-    쓰지 말고 get_university_info나 text2cypher_query를 쓰십시오 - 이 도구가 주는
-    요약은 LLM이 원문 여러 개를 압축한 것이라 개별 숫자가 다 안 담겨 있을 수
-    있습니다. topic을 비워두면 대학 전체 개요, topic을 주면(예: "미술활동보고서")
-    그 주제에 가장 가까운 요약을 찾습니다. day46 RAPTOR 트리가 없는 학교(현재
-    파일럿 1개교만 적용)를 물으면 빈 결과가 오므로, 그때는 이 도구 대신 다른
+    """"OO대 수시 절차/전체 흐름을 요약해줘", "미술활동보고서 절차 총정리해줘",
+    "이 학과 전반적으로 어떤 분위기야/특징이야"처럼 개별 사실 하나가 아니라 여러
+    절차·내용을 관통하는 "전체 흐름/개요/분위기"를 물을 때 쓴다. 특정 숫자·날짜
+    하나만 묻는 질문(예: "논술고사 시험시간 몇 분이야?")에는 절대 쓰지 말고
+    get_university_info나 text2cypher_query를 쓰십시오 - 이 도구가 주는 요약은
+    LLM이 원문 여러 개를 압축한 것이라 개별 숫자가 다 안 담겨 있을 수 있습니다.
+    topic을 비워두면 대학 전체 개요, topic을 주면(예: "미술활동보고서") 그 주제에
+    가장 가까운 요약을 찾습니다. day46 RAPTOR 트리가 아직 없는 신규 학교(색인
+    파이프라인 미실행분)를 물으면 빈 결과가 오므로, 그때는 이 도구 대신 다른
     도구로 답하십시오."""
     svc = _get_service()
     rows = svc.get_raptor_summary(university, query=topic, top_k=3)
@@ -711,7 +713,8 @@ _ROUTE_CRITERIA = {
     "COMPLEX_TOOL": (
         "계산/비교/추천/랭킹/요약 도구가 필요한 질문: 성적 기반 지원 추천, 여러 전형 "
         "비교나 일정 충돌 확인, 경쟁률/순위 집계, 비슷한 학과나 호환되는 실기 찾기, "
-        "전체 절차 요약"
+        "전체 절차 요약, 또는 특정 학과·전형의 전반적인 분위기·특징·컨셉을 묻는 질문"
+        "(예: '이 학과 전반적으로 어떤 느낌이야', '전형이 어떻게 굴러가')"
     ),
     "SIMPLE_GRAPH": (
         "위 두 경우가 아닌 단순 사실 조회 - 특정 대학/학과/전형의 실기유형·재료·일정·"

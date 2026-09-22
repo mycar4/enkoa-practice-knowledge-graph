@@ -2876,6 +2876,7 @@ class ArtAdmissionService:
         # 학교가 전혀 안 잡히는 질문에서 100% 재현). UNWIND로 한 번의 왕복에 합친다.
         keys = [[t["university"], t["department"], t["track_name"]] for t in subset]
         context_estimates = []
+        past_topics_rows = []
         if keys:
             with self.driver.session(default_access_mode=READ_ACCESS) as s:
                 context_estimates = s.run("""
@@ -2884,6 +2885,30 @@ class ArtAdmissionService:
                     RETURN k[0] AS university, k[1] AS department,
                            c.cutoff_grade_estimate AS cutoff_grade_estimate, c.source_url AS source_url
                 """, keys=keys).data()
+
+                # 2026-09-23 [항목⑥ 기출문제 연동]: 기출문제(Admission_PastTopic)가
+                # get_university_detail(에이전트 도구)에는 이미 연결돼 있었지만, qa_pipeline이
+                # 쓰는 이 함수(build_llm_context)에는 아예 안 붙어 있어서 "작년 기출문제
+                # 뭐였어?" 같은 학교명 있는 질문도 구조화 데이터로는 항상 "확인하지
+                # 못했습니다"만 나왔다(원문 벡터검색이 우연히 찾아줘야만 답이 됨). 같은
+                # UNWIND 배치 패턴으로 한 번에 가져와서 context_tracks에 붙인다.
+                past_topics_rows = s.run("""
+                    UNWIND $keys AS k
+                    MATCH (tr:Admission_Track {name: k[2], university: k[0], department: k[1]})-[:REQUIRES_EXAM]->(e:Admission_ExamType)-[:HAD_PAST_TOPIC]->(p:Admission_PastTopic)
+                    RETURN k[0] AS university, k[1] AS department, k[2] AS track_name,
+                           p.year AS year, p.topic_text AS topic_text, p.source AS source, p.source_url AS source_url
+                """, keys=keys).data()
+        past_topics_by_key: Dict[tuple, List[Dict[str, Any]]] = {}
+        for r in past_topics_rows:
+            key = (r["university"], r["department"], r["track_name"])
+            past_topics_by_key.setdefault(key, []).append({
+                "year": r["year"], "topic_text": r["topic_text"],
+                "source": r["source"], "source_url": r["source_url"],
+            })
+        for t in context_tracks:
+            key = (t["university"], t["department"], t["track_name"])
+            if key in past_topics_by_key:
+                t["past_topics"] = past_topics_by_key[key]
 
         return context_tracks, context_estimates
 

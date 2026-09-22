@@ -23,6 +23,9 @@ output/
 # 사용자 개인 포트폴리오(보유종목·수량·매수단가) - 절대 공유 저장소에 커밋 금지
 내작업폴더/data/user_portfolio.db
 *.sqlite3
+
+# [항목⑧ 실패 로깅] 서버 로컬 로그 - 실제 사용자 질문 원문이 담기므로 저장소에 커밋 금지
+/logs/
 *.xml.zip
 scratch/
 .playwright-mcp/
