@@ -895,17 +895,34 @@ def _classify_route_keyword(query: str, all_universities: List[str]) -> str:
     return "SIMPLE_GRAPH"
 
 
-def _classify_route(query: str, all_universities: List[str]) -> Dict[str, Any]:
+def _classify_route(
+    query: str, all_universities: List[str],
+    history: Optional[List[Dict[str, str]]] = None,
+) -> Dict[str, Any]:
     """반환값: {"route": "DOCUMENT_WRITING_HELP"|"COMPLEX_TOOL"|"SIMPLE_GRAPH",
     "method": "jev_choice"|"keyword_fallback", "model": str|None,
     "confidence": float|None, "probabilities": dict|None} - Evidence Package에
     그대로 기록할 수 있는 형태로 만든다."""
+    # 2026-09-23 Antigravity 코드감사로 발견: 이 함수가 여태 state=query만 Jev에
+    # 넘겨서, "그거 말고 더 없어?" 같은 후속질문은 라우터가 대화 맥락을 전혀 못 본
+    # 채 문장 패턴만으로 추측해야 했다 - COMPLEX_TOOL 기준 문구("직전 답변에 대한
+    # 되물음")를 아무리 정교하게 적어도, Jev 입장에선 "정말 직전에 대화가 있었는지"
+    # 확인할 방법이 없어 신뢰도가 턴마다 0.5 안팎으로 요동쳤다(실측: 같은 3턴
+    # 시나리오를 반복 실행해도 2턴째 라우팅이 COMPLEX_TOOL/SIMPLE_GRAPH를 오갔음).
+    # 직전 사용자 메시지 1개를 최소한의 맥락으로 같이 넘긴다(전체 이력을 다 넣으면
+    # 오래된 턴이 새 질문을 오염시키는 문제가 run_agent에서 이미 발견된 바 있어,
+    # 라우팅 판단용으로는 "바로 직전 질문"만 필요하고 그걸로 충분하다).
+    state = query
+    if history:
+        prev_user = next((m.get("content", "") for m in reversed(history) if m.get("role") == "user"), None)
+        if prev_user:
+            state = f"[직전 질문] {prev_user}\n[이번 질문] {query}"
     try:
         from typesafe_sdk import Choice, TypeSafeClient
         client = TypeSafeClient(timeout=_JEV_TIMEOUT_SECONDS)
         model = os.getenv("TYPESAFE_MODEL", "jev-1.13.0")
         resp = client.system_one(
-            model=model, state=query,
+            model=model, state=state,
             questions={"route": Choice(
                 instructions="이 질문을 아래 세 경로 중 가장 알맞은 곳으로 분류하십시오.",
                 criteria=_ROUTE_CRITERIA,
@@ -932,6 +949,31 @@ def route_and_answer(query: str, history: Optional[List[Dict[str, str]]] = None)
         all_universities = sorted({u["university"] for u in svc.list_universities()})
     except Exception:
         all_universities = []
+
+    # 2026-09-23 GPT/Antigravity 고객경험 QC 양쪽에서 독립적으로 발견: "고맙다 도움
+    # 많이 됐어" 같은 순수 감사·마무리 인사가 SIMPLE_GRAPH로 흘러들어가는데, 질문
+    # 자체에 실기유형/대학명 키워드가 없으니 qa_pipeline이 아무 관련 없는 기본
+    # 컨텍스트(예: 경기대학교 트랙들)를 붙잡고 "출처:"로 인용해버리는 노이즈가
+    # 있었다. 정보 요청이 전혀 없는 순수 인사는 도구/LLM을 거치지 않고 짧게
+    # 답한다 - 실제 질문과 섞여 있을 수 있으니 아주 짧은 문장에서만 적용한다.
+    _GRATITUDE_ONLY_PATTERN = re.compile(
+        r"^(아\s*)?(정말\s*|너무\s*|진짜\s*)?(고맙|감사|고마워|고마웠|thanks|thank you)"
+        r"[\w\s!.,~ㅋㅎㅠㅜ]{0,20}$", re.IGNORECASE,
+    )
+    if len(query.strip()) <= 30 and _GRATITUDE_ONLY_PATTERN.match(query.strip()):
+        return {
+            "answer": "도움이 되었다니 다행입니다! 더 궁금한 점이 있으면 언제든 다시 물어봐주세요.",
+            "context_tracks": [], "context_compatible_tracks": [],
+            "context_graph_related": [], "context_raw_excerpts": [],
+            "grounded_tracks": [], "grounded_tracks_total": 0,
+            "routing": {"route": "SIMPLE_GRAPH", "method": "deterministic_gratitude",
+                        "model": None, "confidence": None, "probabilities": None},
+            "tool_trace": [{
+                "tool": "deterministic_gratitude",
+                "args": {"query": query},
+                "result_preview": "순수 감사 인사 감지 - LLM/도구 호출 없이 즉시 답변",
+            }],
+        }
 
     # 2026-09-23 실사용 발견: "지금 색인된 대학이 총 몇 곳이야?" 같은 질문이 LLM/Jev
     # 경로(SIMPLE_GRAPH 또는 COMPLEX_TOOL, 라우팅 신뢰도가 0.5 안팎으로 갈릴 만큼
@@ -967,7 +1009,7 @@ def route_and_answer(query: str, history: Optional[List[Dict[str, str]]] = None)
         routing = {"route": "COMPLEX_TOOL", "method": "deterministic_multi_university",
                    "model": None, "confidence": None, "probabilities": None}
     else:
-        routing = _classify_route(query, all_universities)
+        routing = _classify_route(query, all_universities, history=history)
 
     if routing["route"] == "DOCUMENT_WRITING_HELP" and _is_procedural_not_writing_help(query):
         routing = {"route": "SIMPLE_GRAPH", "method": "deterministic_procedural_override",
@@ -1133,10 +1175,14 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
                                 grounded_universities.add(matched)
                     if parsed.get("university"):
                         grounded_universities.add(parsed["university"])
-                        if parsed.get("official_tracks"):
-                            for row in parsed["official_tracks"]:
-                                if isinstance(row, dict):
-                                    _add_grounded_track({**row, "university": parsed["university"]})
+                        # 2026-09-23 실사용 발견(Antigravity QC): get_university_info는
+                        # {"university":..., "tracks":[...]} 모양을 쓰는데(각 track 행에는
+                        # university 키가 없음 - 상위에만 있음), 여기서는 "official_tracks"
+                        # 키만 찾아서 이 도구가 가장 자주 쓰이는 도구인데도 grounded_tracks
+                        # 패널이 항상 비어 "근거를 못 찾았다"는 오해를 줬다. 두 키 모두 처리.
+                        for row in parsed.get("official_tracks") or parsed.get("tracks") or []:
+                            if isinstance(row, dict):
+                                _add_grounded_track({**row, "university": parsed["university"]})
                     if "generated_cypher" in parsed and "error" not in parsed:
                         # 2026-09-23 실사용 발견: text2cypher_query 행은 매번 다른 RETURN
                         # 별칭을 쓰므로(university/u.name/school 등 무엇이든 가능) 고정 키로
