@@ -2808,7 +2808,7 @@ class ArtAdmissionService:
 
         return {"intent": "UNKNOWN", "answer": "질문을 이해하지 못했습니다. 학교명을 포함하거나 '일정 충돌', '호환' 같은 키워드를 사용해보세요.", "source_url": None}
 
-    def build_llm_context(self, query: str):
+    def build_llm_context(self, query: str, history: Optional[List[Dict[str, str]]] = None):
         """LLM 그라운딩용 컨텍스트를 만든다. 질의에서 학교명이 인식되면 그 학교의
         모든 학과/트랙만, 인식되지 않으면 적재된 전체 트랙(현재 규모상 소량)을 넘긴다.
         LLM에게는 이 반환값만 사실로 주어지며, 그 밖의 어떤 것도 지어내지 못하게 한다."""
@@ -2837,19 +2837,38 @@ class ArtAdmissionService:
         # 최장일치 방식으로 질의에서 실기종목 키워드를 뽑는다. 조사가 붙은 경우
         # ("소묘로")도 "소묘"가 그 안의 substring이므로 여전히 잡힌다.
         canonical_topics = sorted(set(self.list_exam_topic_keywords(min_schools=1)), key=len, reverse=True)
-        consumed = [False] * len(query)
-        query_topic_kw: set = set()
-        for kw in canonical_topics:
-            start = 0
-            while True:
-                idx = query.find(kw, start)
-                if idx == -1:
+
+        def _extract_topic_kw(text: str) -> set:
+            consumed = [False] * len(text)
+            found: set = set()
+            for kw in canonical_topics:
+                start = 0
+                while True:
+                    idx = text.find(kw, start)
+                    if idx == -1:
+                        break
+                    if not any(consumed[idx:idx + len(kw)]):
+                        found.add(kw)
+                        for i in range(idx, idx + len(kw)):
+                            consumed[i] = True
+                    start = idx + 1
+            return found
+
+        query_topic_kw = _extract_topic_kw(query)
+        # 2026-09-23 실측 발견("소묘 학교 왔다갔다" 사고): 사람이 자연스럽게 되묻는
+        # 후속질문("2군데 빼고 없다고 했다가 지금은 또 뭔소리야?")은 실기유형 키워드를
+        # 다시 말하지 않는 경우가 많다 - 이번 질의에서 키워드가 안 잡히면 매번 백지에서
+        # 다시 계산해 완전히 다른(더 좁거나 넓은) 학교 집합이 나와 같은 질문에 답이
+        # 요동치는 것처럼 보였다. 이번 질의에 키워드가 없으면 직전 대화이력(사용자
+        # 메시지, 최신순)에서 마지막으로 확정된 실기유형 키워드를 이어받는다.
+        if not query_topic_kw and history:
+            for msg in reversed(history):
+                if msg.get("role") != "user":
+                    continue
+                inherited = _extract_topic_kw(str(msg.get("content", "")))
+                if inherited:
+                    query_topic_kw = inherited
                     break
-                if not any(consumed[idx:idx + len(kw)]):
-                    query_topic_kw.add(kw)
-                    for i in range(idx, idx + len(kw)):
-                        consumed[i] = True
-                start = idx + 1
 
         context_tracks = [{
             "university": t["university"], "department": t["department"], "track_name": t["track_name"],

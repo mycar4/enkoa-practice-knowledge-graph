@@ -580,12 +580,15 @@ def summarize_admission_flow(university: str, topic: str = "") -> str:
 TOOLS = [get_university_info, find_similar_departments, find_compatible_exam_tracks, search_document_details, search_tracks, compare_tracks, check_schedule_conflicts, get_calendar, recommend_by_grades, get_competition_rate_ranking, text2cypher_query, summarize_admission_flow]
 
 
-def run_qa_pipeline(svc, query: str, model_id: str = AGENT_MODEL) -> Dict[str, Any]:
+def run_qa_pipeline(
+    svc, query: str, model_id: str = AGENT_MODEL,
+    history: Optional[List[Dict[str, str]]] = None,
+) -> Dict[str, Any]:
     """기존 /qa 엔드포인트와 완전히 같은 파이프라인(그래프 조회 + LLM 답변 생성 1회).
     도구를 여러 개 조합할 필요 없는 단순 질의(대학 하나 전체 조회, 실기종목 검색)에
     쓴다 - LLM이 "어떤 도구를 쓸지" 고민할 필요 자체가 없어서 더 빠르고 저렴하고,
     도구 선택 실수(이번 세션의 get_university_info 누락 버그류)가 원천적으로 안 생긴다."""
-    context_tracks, context_estimates = svc.build_llm_context(query)
+    context_tracks, context_estimates = svc.build_llm_context(query, history=history)
 
     # 2026-09-22 실측으로 발견한 버그 수정: 예전엔 anchor_names를 context_tracks에서
     # 등장하는 대학명으로 뽑았는데, build_llm_context가 질의에서 학교를 못 찾으면
@@ -621,7 +624,29 @@ def run_qa_pipeline(svc, query: str, model_id: str = AGENT_MODEL) -> Dict[str, A
     # 남아 있었다 - 원문검색이 특정 학교를 찾아왔으면 그 학교로 context_tracks도 다시
     # 좁혀서, 원문검색이 실제로 찾아낸 학교와 무관한 나머지 학교 데이터가 신호를
     # 희석시키지 않게 한다.
-    if not mentioned and context_raw:
+    # 2026-09-23 실측 발견("소묘 학교 왔다갔다" 사고 재조사): 학교명 없이 실기유형
+    # 키워드만으로 "그 실기로 볼 수 있는 학교 목록"을 묻는 질문(또는 그 후속질문)에서,
+    # 바로 아래의 원문검색 기반 재좁히기가 질문 텍스트와 의미상 우연히 비슷한 엉뚱한
+    # 4~5개 학교로 context_tracks를 잘못 좁혀버려 실기유형이 실제로 일치하는 나머지
+    # 학교들이 통째로 사라지는 걸 확인했다(예: "소묘"에 대해 가천대/숙명여대/전남대만
+    # 남고 정작 소묘 전형이 있는 중앙대/한예종 등은 빠짐). 이 재좁히기는 "원문 산문
+    # 인용이 필요한 질문"을 위한 것이지, "구조화된 exam_type_keyword_match로 이미
+    # 걸러지는 실기유형 목록형 질문"에는 오히려 해롭다 - 실기유형 키워드가(이번 질의든
+    # 직전 대화 이력에서 이어받은 것이든) 있으면 재좁히기를 건너뛴다.
+    try:
+        canonical_topics = sorted(set(svc.list_exam_topic_keywords(min_schools=1)), key=len, reverse=True)
+    except Exception:
+        canonical_topics = []
+
+    def _has_topic_kw(text: str) -> bool:
+        return any(kw in text for kw in canonical_topics)
+
+    has_topic_kw = _has_topic_kw(query) or any(
+        _has_topic_kw(str(m.get("content", "")))
+        for m in (history or []) if m.get("role") == "user"
+    )
+
+    if not mentioned and context_raw and not has_topic_kw:
         raw_universities = sorted({r["university"] for r in context_raw if r.get("university")})
         if raw_universities:
             context_tracks = [t for t in context_tracks if t["university"] in raw_universities]
@@ -730,7 +755,13 @@ _ROUTE_CRITERIA = {
         "계산/비교/추천/랭킹/요약 도구가 필요한 질문: 성적 기반 지원 추천, 여러 전형 "
         "비교나 일정 충돌 확인, 경쟁률/순위 집계, 비슷한 학과나 호환되는 실기 찾기, "
         "전체 절차 요약, 또는 특정 학과·전형의 전반적인 분위기·특징·컨셉을 묻는 질문"
-        "(예: '이 학과 전반적으로 어떤 느낌이야', '전형이 어떻게 굴러가')"
+        "(예: '이 학과 전반적으로 어떤 느낌이야', '전형이 어떻게 굴러가'). 여기에는 "
+        "직전 답변에 대한 되물음/항의성 후속질문도 포함된다 - 새 키워드 없이 "
+        "'왜 그렇게 답했지', '아까랑 다르잖아', '뭔소리야', '또 빠졌네' 처럼 이전 "
+        "답변 내용을 전제로 따지는 질문은 이번 문장만으로는 무엇을 찾아야 하는지 "
+        "알 수 없어 대화 맥락을 실제로 참고해야 하므로 COMPLEX_TOOL로 분류한다"
+        "(실측 발견: 이런 질문이 단순 키워드 재검색으로 처리되면서 같은 질문에 매번 "
+        "다른 학교 목록이 나오는 사고가 있었다)"
     ),
     "SIMPLE_GRAPH": (
         "위 두 경우가 아닌 단순 사실 조회 - 특정 대학/학과/전형의 실기유형·재료·일정·"
@@ -821,7 +852,7 @@ def route_and_answer(query: str, history: Optional[List[Dict[str, str]]] = None)
         return result
 
     # SIMPLE_GRAPH
-    result = run_qa_pipeline(svc, query)
+    result = run_qa_pipeline(svc, query, history=history)
 
     # 프론트(qa.html)의 트레이스 패널과 형식을 맞추되, "도구 선택 없이 즉시 처리했다"는
     # 걸 투명하게 보여준다 - 라우팅 자체도 숨기지 않는다.
