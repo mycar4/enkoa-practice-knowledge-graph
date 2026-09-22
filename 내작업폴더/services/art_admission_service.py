@@ -2869,6 +2869,26 @@ class ArtAdmissionService:
             ),
         } for t in subset]
 
+        # 2026-09-23 실측 발견: 같은 대학 안에 같은 track_name이 서로 다른 department로
+        # 여러 건 존재할 수 있다(홍익대학교 "미술우수자전형"이 미술대학/조형대학에 각각
+        # 따로 있고 exam_dates가 다름). 프롬프트 규칙만으로는 gpt-4o-mini가 이 구분을
+        # 안정적으로 지키지 않는 걸 실측으로 확인(한쪽 department 날짜만 골라 답하고
+        # 나머지는 누락) - 항목 단위로 명시적 경고 필드를 박아 모델이 텍스트를 읽고
+        # "판단"하지 않아도 되게 만든다(구조적 강제).
+        _track_name_dept_count: Dict[tuple, set] = {}
+        for t in context_tracks:
+            _track_name_dept_count.setdefault((t["university"], t["track_name"]), set()).add(t["department"])
+        for t in context_tracks:
+            depts = _track_name_dept_count[(t["university"], t["track_name"])]
+            if len(depts) > 1:
+                t["duplicate_track_name_warning"] = (
+                    f"주의: '{t['track_name']}'이라는 전형명은 {t['university']}에 "
+                    f"{len(depts)}개 학과/단과대학({', '.join(sorted(depts))})에 각각 별도로 "
+                    "존재하며 시험일/모집인원이 서로 다를 수 있습니다. 이 전형명으로 답할 때는 "
+                    "반드시 이 항목의 department를 함께 명시하고, 다른 department의 같은 "
+                    "전형명 항목도 빠짐없이 함께 제시하십시오."
+                )
+
         # 2026-09-22 실측 발견(504 타임아웃 실제 사고): 학교가 인식 안 되면 subset이
         # 299건 전체가 되는데, 예전 코드는 트랙마다 Neo4j를 따로따로 호출(N+1 쿼리)해서
         # 299번 왕복 - Aura(클라우드) 왕복지연이 트랙당 ~100ms만 걸려도 합계 30초+가
