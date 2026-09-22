@@ -248,6 +248,7 @@ def find_similar_departments(university: str, department: str, campus: str = "",
     trimmed = [{
         "university": r["university"], "campus": r.get("campus"), "department": r["department"],
         "standard_tag": r.get("standard_tag"), "similarity_pct": round((r.get("score") or 0) * 100, 1),
+        "source_url": r.get("source_url"),
     } for r in rows]
     return json.dumps({"count": len(trimmed), "similar": trimmed}, ensure_ascii=False)
 
@@ -526,13 +527,46 @@ def run_qa_pipeline(svc, query: str, model_id: str = AGENT_MODEL) -> Dict[str, A
     쓴다 - LLM이 "어떤 도구를 쓸지" 고민할 필요 자체가 없어서 더 빠르고 저렴하고,
     도구 선택 실수(이번 세션의 get_university_info 누락 버그류)가 원천적으로 안 생긴다."""
     context_tracks, context_estimates = svc.build_llm_context(query)
-    anchor_names = [t["university"] for t in context_tracks]
+
+    # 2026-09-22 실측으로 발견한 버그 수정: 예전엔 anchor_names를 context_tracks에서
+    # 등장하는 대학명으로 뽑았는데, build_llm_context가 질의에서 학교를 못 찾으면
+    # subset을 "전체 55개교"로 채우므로(art_admission_service.py build_llm_context
+    # 참고) anchor_names도 늘 55개교 전부가 돼버려 "질의에서 학교가 실제로 인식됐는지"
+    # 를 전혀 구분하지 못했다(결과: 아래 두 로직이 사실상 죽어있었음 - "학교 인식 시
+    # 그 학교로만 검색 좁히기"도, 뒤이은 "무관 컨텍스트 정리"도 이 조건이 항상
+    # False(=전체 55개교가 anchor로 잡힘)라 실행되지 않았다). build_llm_context와
+    # 완전히 같은 로직(resolve_university_mentions_with_negation)을 직접 써서
+    # "질의 문장에 실제로 이름이 등장한 학교"만 anchor로 삼는다.
+    from services.art_admission_service import resolve_university_mentions_with_negation
     try:
-        # 질의에서 학교가 인식됐으면(anchor_names) 그 학교 청크로만 검색을 좁힌다 -
-        # 그렇지 않으면 52개교 전체를 놓고 순위를 매겨서 다른 학교 내용에 밀려날 수 있다.
-        context_raw = svc.search_document_excerpts(query, top_k=5, universities=sorted(set(anchor_names)) or None)
+        all_universities = sorted({u["university"] for u in svc.list_universities()})
+    except Exception:
+        all_universities = []
+    mentioned = resolve_university_mentions_with_negation(query, all_universities)["included"]
+
+    try:
+        # 질의에서 학교가 실제로 인식됐으면 그 학교 청크로만 검색을 좁힌다 -
+        # 그렇지 않으면 55개교 전체를 놓고 순위를 매겨서 다른 학교 내용에 밀려날 수 있다.
+        context_raw = svc.search_document_excerpts(query, top_k=5, universities=sorted(set(mentioned)) or None)
     except Exception:
         context_raw = []
+
+    # 2026-09-22 실측 발견: 질의에서 학교가 안 잡히면 context_tracks가 전체 55개교
+    # 299건을 통째로 담는다 - 원문검색(context_raw)이 실제로 정답을 찾아와도
+    # ("미술활동보고서 표절 기준이 뭐야?" - 검색은 홍익대 표절 기준표를 1위로 정확히
+    # 찾음), gpt-4o-mini가 299건짜리 무관한 구조화 데이터에 묻혀 정작 그 5건짜리 원문
+    # 발췌를 무시하고 "확인하지 못했습니다"로 답하는 현상을 재현 확인(self_check 재시도
+    # 문제가 아니라 1차 생성 자체가 이렇게 나옴). 아래 주석(2026-09-22 이전)에 적힌
+    # "학교명 없이 작성법을 묻는 질문"만 review.html로 우회시킨 이전 패치는 이 버그의
+    # 한 증상만 피해갔을 뿐 근본 원인(무관한 대량 컨텍스트가 신호를 희석시킴)은 그대로
+    # 남아 있었다 - 원문검색이 특정 학교를 찾아왔으면 그 학교로 context_tracks도 다시
+    # 좁혀서, 원문검색이 실제로 찾아낸 학교와 무관한 나머지 학교 데이터가 신호를
+    # 희석시키지 않게 한다.
+    if not mentioned and context_raw:
+        raw_universities = sorted({r["university"] for r in context_raw if r.get("university")})
+        if raw_universities:
+            context_tracks = [t for t in context_tracks if t["university"] in raw_universities]
+            context_estimates = [e for e in context_estimates if e.get("university") in raw_universities]
     # 2026-09-21 사용자 지시로 끔: get_graph_related_context()가 만드는 "관련 학교"
     # 힌트는 원문 인용/출처 없이 동시출현 커뮤니티만으로 만드는데, 2026-09-17 감사에서
     # 라벨 붙은 24개 커뮤니티 중 20개가 내부 동시출현의 65~100%가 "1회성"(우연한
@@ -545,10 +579,6 @@ def run_qa_pipeline(svc, query: str, model_id: str = AGENT_MODEL) -> Dict[str, A
         context_compatible = svc.get_compatible_tracks_for_query(query)
     except Exception:
         context_compatible = []
-    try:
-        all_universities = sorted({u["university"] for u in svc.list_universities()})
-    except Exception:
-        all_universities = []
 
     result = answer_with_llm(
         context_tracks, context_estimates, query, model_id=model_id,
@@ -764,7 +794,17 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
             final_answer = json.dumps(final_answer, ensure_ascii=False)
         return final_answer
 
-    messages = list(history or [])
+    # 2026-09-23 실사용 발견: 채팅창(qa.html)이 같은 브라우저 세션 안에서 쌓인
+    # history 전체를 매 요청마다 그대로 보낸다(서버엔 대화기록이 안 남고 브라우저
+    # 메모리에만 있음) - 완전히 다른 새 질문("소묘 준비중, 내신 4등급인데 어디 지원
+    # 가능해?")을 했는데도 훨씬 이전 턴의 도구 호출 인자(예: 중앙대학교 공간연출전공
+    # 실기호환 검색)를 그대로 반복해서 답하는 현상이 실측 확인됨 - 에이전트가 긴
+    # history를 few-shot 예시처럼 취급해 이전 턴의 구체적 값에 붙잡힌 것으로 추정.
+    # 근본적으로는 "주제 전환 감지"가 맞는 해법이지만, 우선 안전하게 최근 2턴(4개
+    # 메시지)으로만 잘라서 무관한 오래된 턴이 새 질문을 오염시킬 여지 자체를 줄인다.
+    _MAX_HISTORY_MESSAGES = 4
+    trimmed_history = (history or [])[-_MAX_HISTORY_MESSAGES:]
+    messages = list(trimmed_history)
     messages.append({"role": "user", "content": query})
     final_answer = _invoke(messages)
 

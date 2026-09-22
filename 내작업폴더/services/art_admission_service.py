@@ -1096,9 +1096,11 @@ class ArtAdmissionService:
                 WHERE $campus IS NULL OR u.campus = $campus
                 MATCH (d)-[r:SIMILAR_TO]-(d2:Admission_Department)<-[:HAS_DEPARTMENT]-(u2:Admission_University)
                 OPTIONAL MATCH (d)-[:HAS_TRACK]->(:Admission_Track)-[cw:COMPATIBLE_WITH]-(:Admission_Track)<-[:HAS_TRACK]-(d2)
-                WITH u2, d2, r, collect(DISTINCT cw.match_type) AS match_types
+                OPTIONAL MATCH (d2)-[:HAS_TRACK]->(t2:Admission_Track)
+                WITH u2, d2, r, collect(DISTINCT cw.match_type) AS match_types,
+                     collect(DISTINCT t2.source_url)[0] AS source_url
                 RETURN u2.name AS university, u2.campus AS campus, d2.name AS department,
-                       d2.standard_tag AS standard_tag, r.similarity_pct AS similarity_pct,
+                       d2.standard_tag AS standard_tag, r.similarity_pct AS similarity_pct, source_url,
                        CASE WHEN 'exact' IN match_types THEN 'exact'
                             WHEN 'partial' IN match_types THEN 'partial'
                             ELSE null END AS compatible_match
@@ -1131,9 +1133,11 @@ class ArtAdmissionService:
             WHERE node.standard_tag = $tag AND NOT (u.name = $university AND node.name = $department)
             OPTIONAL MATCH (:Admission_Department {university: $university, name: $department})-[:HAS_TRACK]->
                            (:Admission_Track)-[cw:COMPATIBLE_WITH]-(:Admission_Track)<-[:HAS_TRACK]-(node)
-            WITH u, node, score, collect(DISTINCT cw.match_type) AS match_types
+            OPTIONAL MATCH (node)-[:HAS_TRACK]->(t2:Admission_Track)
+            WITH u, node, score, collect(DISTINCT cw.match_type) AS match_types,
+                 collect(DISTINCT t2.source_url)[0] AS source_url
             RETURN u.name AS university, u.campus AS campus, node.name AS department,
-                   node.standard_tag AS standard_tag, score,
+                   node.standard_tag AS standard_tag, score, source_url,
                    CASE WHEN 'exact' IN match_types THEN 'exact'
                         WHEN 'partial' IN match_types THEN 'partial'
                         ELSE null END AS compatible_match
@@ -2865,15 +2869,21 @@ class ArtAdmissionService:
             ),
         } for t in subset]
 
+        # 2026-09-22 실측 발견(504 타임아웃 실제 사고): 학교가 인식 안 되면 subset이
+        # 299건 전체가 되는데, 예전 코드는 트랙마다 Neo4j를 따로따로 호출(N+1 쿼리)해서
+        # 299번 왕복 - Aura(클라우드) 왕복지연이 트랙당 ~100ms만 걸려도 합계 30초+가
+        # 걸려 nginx 60초 타임아웃(504)을 실제로 터뜨렸다("이 서비스는 뭐야?" 같이
+        # 학교가 전혀 안 잡히는 질문에서 100% 재현). UNWIND로 한 번의 왕복에 합친다.
+        keys = [[t["university"], t["department"], t["track_name"]] for t in subset]
         context_estimates = []
-        with self.driver.session(default_access_mode=READ_ACCESS) as s:
-            for t in subset:
-                rows = s.run("""
-                    MATCH (tr:Admission_Track {name: $tn, university: $u, department: $d})-[:ESTIMATED_CUTOFF]->(c:Admission_CutoffEstimate)
-                    RETURN c.cutoff_grade_estimate AS cutoff_grade_estimate, c.source_url AS source_url
-                """, tn=t["track_name"], u=t["university"], d=t["department"]).data()
-                for r in rows:
-                    context_estimates.append({"university": t["university"], "department": t["department"], **r})
+        if keys:
+            with self.driver.session(default_access_mode=READ_ACCESS) as s:
+                context_estimates = s.run("""
+                    UNWIND $keys AS k
+                    MATCH (tr:Admission_Track {name: k[2], university: k[0], department: k[1]})-[:ESTIMATED_CUTOFF]->(c:Admission_CutoffEstimate)
+                    RETURN k[0] AS university, k[1] AS department,
+                           c.cutoff_grade_estimate AS cutoff_grade_estimate, c.source_url AS source_url
+                """, keys=keys).data()
 
         return context_tracks, context_estimates
 

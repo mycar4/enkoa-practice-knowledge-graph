@@ -495,7 +495,19 @@ def _self_check_compat_claim(answer: str, context_compatible_tracks: List[Dict[s
     정확한 단어나 3개의 고정 포기 문구만 잡아서, "성격이 비슷한 학교"나 "안내드리기
     어렵습니다"처럼 같은 의미를 다른 표현으로 썼을 때 놓친다(2026-09-22 A/B 실측:
     8개 케이스 중 키워드 5/8, Jev(의미 판정) 8/8 - 놓친 3개가 전부 이런 패러프레이즈).
-    Jev 호출 실패(키 없음/네트워크 오류) 시 기존 키워드 방식으로 자동 폴백한다."""
+    Jev 호출 실패(키 없음/네트워크 오류) 시 기존 키워드 방식으로 자동 폴백한다.
+
+    2026-09-22 실측 발견(15문항 전체 파이프라인 스윕): context_compatible_tracks가
+    애초에 빈 리스트(= 이번 질문이 호환학교 검색 자체를 시도하지 않은 경우 - 예:
+    "소묘로 지원 가능한 학교", 성적 추천 질문)일 때도 Jev가 답변 속 '~로 일치합니다'
+    같은 무관한 표현을 호환 과잉주장으로 오판해서 정상 답변에 경고+불필요한 재시도를
+    유발했다(get_compatible_tracks_for_query가 실제로 0건을 반환하는 쿼리로 확인됨).
+    이 체크는 '호환학교 검색이 실제로 시도된 질문'에만 의미가 있으므로,
+    context_compatible_tracks가 처음부터 비어 있으면(후보가 전혀 없어서 shared_keywords/
+    shared_materials 어느 쪽도 없는 게 아니라, 애초에 비교 기준 자체를 못 찾은 경우)
+    Jev를 호출하지 않고 바로 통과시킨다."""
+    if not context_compatible_tracks:
+        return []
     has_exact_match = any((c.get("shared_keywords") or []) for c in context_compatible_tracks)
     try:
         from typesafe_sdk import Noul, TypeSafeClient
