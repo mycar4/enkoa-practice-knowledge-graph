@@ -3135,11 +3135,39 @@ class ArtAdmissionService:
     _QUESTION_WORDS = ["뭐", "어떻게", "언제", "몇", "누구", "왜", "어디", "무엇"]
 
     @classmethod
-    def _looks_compound_for_rag(cls, query: str) -> bool:
-        """질문 안에 의문사가 2개 이상 있으면 "서로 다른 것 두 가지"를 묻는
-        복합질문으로 본다 - 실측 벤치마크(9개 단일질문)에서 전부 의문사 1개
-        이하였고, 복합질문 4개는 전부 2개 이상이었다(오탐 없음, n은 작음)."""
+    def _looks_compound_for_rag_keyword(cls, query: str) -> bool:
+        """원래 방식(의문사 개수 세기) - Jev 호출 실패 시 이 폴백으로 전환된다.
+        실측: "정정요청은 언제까지 어떻게 하나요"(단일 주제, 의문사 2개)를 오탐,
+        "정정요청 방법과 평가거부 절차 알려주세요"(복합 주제, 의문사 0개)를
+        놓침 - 5문항 중 2개만 정답(2/5)."""
         return sum(query.count(w) for w in cls._QUESTION_WORDS) >= 2
+
+    @classmethod
+    def _looks_compound_for_rag(cls, query: str) -> bool:
+        """day47 Jev 도입(2026-09-22): 의문사 개수만 세는 방식은 "한 주제를 여러
+        각도로 묻는 것"과 "서로 다른 두 주제를 묻는 것"을 구분 못했다. Jev(Noul)로
+        교체해서 실측 5/5 정확도로 개선(키워드 방식 2/5). Jev가 신생 서비스라
+        실패할 수 있으니 예외 시 조용히 키워드 방식으로 폴백한다."""
+        try:
+            from typesafe_sdk import Noul, TypeSafeClient
+            import os
+            client = TypeSafeClient(timeout=5.0)
+            model = os.getenv("TYPESAFE_MODEL", "jev-1.13.0")
+            resp = client.system_one(
+                model=model, state=query,
+                questions={
+                    "is_compound": Noul(
+                        instructions=(
+                            "이 질문이 서로 다른 두 가지 이상의 별개 정보(예: 서로 다른 "
+                            "서류/절차/항목 각각)를 동시에 묻고 있나요? 한 가지 주제를 여러 "
+                            "각도(언제+어떻게 등)로 묻는 것은 '아니오'입니다."
+                        ),
+                    ),
+                },
+            )
+            return resp.answers["is_compound"].noul >= 0.5
+        except Exception:
+            return cls._looks_compound_for_rag_keyword(query)
 
     # 2026-09-22 [day47 재검토]: 강의 원본(교안_02)의 SubQuestions Pydantic
     # 스키마를 참고해 우리도 자유 텍스트 JSON 파싱(정규식으로 대괄호 잘라내기 +
