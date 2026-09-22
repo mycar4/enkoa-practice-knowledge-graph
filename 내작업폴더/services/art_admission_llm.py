@@ -468,7 +468,7 @@ def _self_check_grounding(answer: str, context_tracks: List[Dict[str, Any]],
 _GIVE_UP_PHRASES = ("확인하지 못했습니다", "찾지 못했습니다", "찾을 수 없습니다")
 
 
-def _self_check_compat_claim(answer: str, context_compatible_tracks: List[Dict[str, Any]]) -> List[str]:
+def _self_check_compat_claim_keyword(answer: str, context_compatible_tracks: List[Dict[str, Any]]) -> List[str]:
     """재료만 겹치는 걸 '같은 실기'/'호환'이라고 부르면 안 된다는 규칙(§4)을 코드로 재검증.
     두 방향의 실수를 모두 잡는다:
     1. (과잉 주장) 답변에 '호환'/'같은 실기' 표현이 있는데 shared_keywords(실기유형
@@ -488,6 +488,51 @@ def _self_check_compat_claim(answer: str, context_compatible_tracks: List[Dict[s
             "구체적인 학교 이름과 실기유형을 나열해 답하십시오"
         )
     return warnings
+
+
+def _self_check_compat_claim(answer: str, context_compatible_tracks: List[Dict[str, Any]]) -> List[str]:
+    """_self_check_compat_claim_keyword()의 문자열 매칭은 '호환'/'같은 실기'라는
+    정확한 단어나 3개의 고정 포기 문구만 잡아서, "성격이 비슷한 학교"나 "안내드리기
+    어렵습니다"처럼 같은 의미를 다른 표현으로 썼을 때 놓친다(2026-09-22 A/B 실측:
+    8개 케이스 중 키워드 5/8, Jev(의미 판정) 8/8 - 놓친 3개가 전부 이런 패러프레이즈).
+    Jev 호출 실패(키 없음/네트워크 오류) 시 기존 키워드 방식으로 자동 폴백한다."""
+    has_exact_match = any((c.get("shared_keywords") or []) for c in context_compatible_tracks)
+    try:
+        from typesafe_sdk import Noul, TypeSafeClient
+        client = TypeSafeClient(timeout=8.0)
+        model = os.getenv("TYPESAFE_MODEL", "jev-1.13.0")
+        warnings = []
+        if not has_exact_match:
+            resp = client.system_one(
+                model=model, state=answer,
+                questions={"overclaim": Noul(instructions=(
+                    "실제로는 이 질문에 대해 실기유형(과제/재료)이 정확히 일치하는 진짜 "
+                    "호환 학교 후보가 하나도 없는 상태입니다. 그런데 아래 답변이 특정 "
+                    "학교를 '호환된다'/'유사하다'/'성격이 비슷하다'/'같은 계열이다' 등의 "
+                    "취지로 실제로 존재한다고 주장하고 있나요? 단순히 '찾지 못했다'는 "
+                    "정직한 답변이면 '아니오'입니다."
+                ))},
+            )
+            if resp.answers["overclaim"].noul >= 0.5:
+                warnings.append("'호환'/'유사' 취지의 주장이 있지만 실기유형 자체가 일치하는 근거가 없습니다(Jev 판정)")
+        if has_exact_match:
+            resp = client.system_one(
+                model=model, state=answer,
+                questions={"giveup": Noul(instructions=(
+                    "실제로는 실기유형(과제/재료)이 정확히 일치하는 진짜 호환 학교 후보가 "
+                    "존재하는 상태입니다. 그런데 아래 답변이 그런 학교를 찾지 못했다/확인할 "
+                    "수 없다/안내하기 어렵다는 취지로 실질적으로 포기하고 있나요? 실제로 "
+                    "구체적인 학교명을 제시하며 답했다면 '아니오'입니다."
+                ))},
+            )
+            if resp.answers["giveup"].noul >= 0.5:
+                warnings.append(
+                    "실기유형이 실제로 일치하는 호환 학교 후보가 있는데도 답변이 사실상 "
+                    "포기했습니다(Jev 판정) - 구체적인 학교 이름과 실기유형을 나열해 답하십시오"
+                )
+        return warnings
+    except Exception:
+        return _self_check_compat_claim_keyword(answer, context_compatible_tracks)
 
 
 def answer_with_llm(context_tracks: List[Dict[str, Any]], context_estimates: List[Dict[str, Any]],

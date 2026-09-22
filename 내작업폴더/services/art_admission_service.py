@@ -3291,6 +3291,35 @@ class ArtAdmissionService:
     # 되어 대부분 걸러진다.
     _SCHOOL_NAME_PATTERN = re.compile(r"[가-힣]{2,10}(?:고등학교|중학교|초등학교)")
 
+    @staticmethod
+    def _jev_detects_identifying_info(text: str) -> bool:
+        """블라인드평가 개인식별정보 검사(§run_document_fact_checks)의 정규식은
+        '고등학교/중학교/초등학교' 리터럴 접미사, 전화번호/이메일 형식만 잡아서
+        영문 혼용 학교명, '외고' 같은 약칭, 지도교사 실명, 구체적 수상경력(대회명+
+        등급)처럼 산문으로 풀어쓴 식별정보는 못 잡는다(2026-09-22 A/B 실측: 정규식
+        단독 5/9, 정규식+Jev 보완 9/9 - 반 고흐 같은 유명 예술가 언급을 오탐하지
+        않는 것도 확인됨). 정규식을 대체하지 않고 위에 얹는 합집합 구조이므로,
+        Jev 실패 시 False를 반환해 원래(정규식만) 동작으로 조용히 되돌아간다."""
+        try:
+            from typesafe_sdk import Noul, TypeSafeClient
+            import os
+            client = TypeSafeClient(timeout=8.0)
+            model = os.getenv("TYPESAFE_MODEL", "jev-1.13.0")
+            resp = client.system_one(
+                model=model, state=text,
+                questions={"has_pii": Noul(instructions=(
+                    "이 글(자기소개서/활동보고서 일부)에 작성자 본인의 실명, 특정 학교명"
+                    "(정식명·별칭·약칭 포함, 예: '대원외고'), 지도교사 등 실존 인물의 이름과 "
+                    "구체적 정황, 또는 매우 구체적인 수상 경력(대회명+수상등급 등)처럼 이 "
+                    "학생이 누구인지 특정하거나 강하게 유추할 수 있는 정보가 담겨 있나요? "
+                    "빈센트 반 고흐 같은 유명 예술가/역사적 인물 언급이나 '고등학교 시절' "
+                    "같은 일반적·비식별적 표현은 '아니오'입니다."
+                ))},
+            )
+            return resp.answers["has_pii"].noul >= 0.5
+        except Exception:
+            return False
+
     # 2026-09-18: [서류첨삭 학교 선택 필터] "이 학교가 자기소개서를 받는지"는
     # 구조화 JSON에는 없는 정보다(표에 없는 서류 안내 문구라서) - 실제 PDF 원문
     # (TextChunk)에 그 서류명이 등장하는 학교만 필터링 근거로 삼는다. "기타 서류"는
@@ -3423,6 +3452,15 @@ class ArtAdmissionService:
                 found = sorted(set(pattern.findall(text)))
                 if found:
                     suspects.append({"label": label, "matches": found[:5]})
+            # 정규식이 못 잡는 산문형 식별정보(영문혼용/약칭 학교명, 지도교사 실명,
+            # 구체적 수상경력)를 Jev로 보완 검사 - 정규식 결과를 대체하지 않고
+            # 합집합으로만 추가한다(2026-09-22 A/B: 정규식 단독 5/9 -> 보완 9/9).
+            jev_flagged = self._jev_detects_identifying_info(text)
+            if jev_flagged and not suspects:
+                suspects.append({
+                    "label": "산문형 식별정보로 의심됨(Jev 판정 - 실명/학교명/지도교사/구체적 수상경력 등)",
+                    "matches": [],
+                })
             checks.append({
                 "type": "blind_review",
                 "label": "블라인드 평가 위반 의심 개인식별정보",
