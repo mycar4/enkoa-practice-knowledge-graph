@@ -179,6 +179,14 @@ topic_keywords/material_query에 채워 넣고, **실기 종목을 아직 안 �
 간결하고 친절한 한국어로 답하고, "RAG 검증됨"/"실측 검증" 같은 확정적 신뢰 문구는
 쓰지 마십시오.
 
+같은 대학 안에 같은 전형명(예: "미술우수자전형")이 서로 다른 단과대학/학부에 각각
+따로 존재해서 모집인원·실기고사일이 다를 수 있습니다(실측 발견: 홍익대학교에
+"미술대학"의 미술우수자전형과 "조형대학"의 미술우수자전형이 따로 있고 날짜가
+다름 - 같은 대학에 대해 연속으로 물었는데 답변마다 다른 날짜가 나왔던 사고의
+원인). 전형명만으로 날짜/인원을 답하지 말고, 반드시 어느 단과대학·학과의 전형인지
+함께 명시하십시오. 여러 단과대학에 같은 이름의 전형이 있으면 전부 나열하고,
+사용자가 특정하지 않았으면 "어느 학과 기준으로 답변드릴까요?"라고 되물으십시오.
+
 위 도구들 중 어느 것도 질문과 안 맞으면(예: "실기고사일이 겹치는 전형 조합이 있는
 대학이 몇 곳이야?" 같은 임의의 집계·필터·랭킹 질문) "확인할 수 없습니다"로 포기하지
 말고 text2cypher_query를 최후 수단으로 쓰십시오. 단, 다른 도구로 답이 되는 질문에는
@@ -857,6 +865,13 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
     # 반환한 shared_keywords/shared_materials 원본이 필요하다 - grounded_tracks는
     # 화면 표시용으로 필드를 잘라내므로 별도로 원본 그대로 모아둔다.
     context_compatible_tracks: List[Dict[str, Any]] = []
+    # 2026-09-23 실사용 발견: get_calendar가 반환하는 "events"는 university 키가
+    # 아니라 "school"(대학명+학과명을 합친 라벨) 키를 쓴다 - 아래 추출 루프가 이
+    # 모양을 몰라서 캘린더 도구로 답한 경우 grounded_tracks/grounded_universities가
+    # 전부 비어, "지식그래프 근거" 패널이 텅 비고(신뢰도 문제) 자기검증도 그 답변의
+    # 학교명을 놓쳤다. all_universities를 _invoke 정의보다 먼저 계산해서 이벤트의
+    # school 라벨과 대조할 수 있게 한다.
+    all_universities = _all_universities()
 
     def _add_grounded_track(row: dict):
         key = (row.get("university"), row.get("department"), row.get("track_name"))
@@ -909,6 +924,12 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
                     for row in parsed.get("excerpts", []) or []:
                         if isinstance(row, dict) and row.get("university"):
                             grounded_universities.add(row["university"])
+                    for row in parsed.get("events", []) or []:
+                        school = row.get("school") if isinstance(row, dict) else None
+                        if school:
+                            matched = next((name for name in all_universities if name in school), None)
+                            if matched:
+                                grounded_universities.add(matched)
                     if parsed.get("university"):
                         grounded_universities.add(parsed["university"])
                         if parsed.get("official_tracks"):
@@ -946,7 +967,7 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
     # 등장한 학교명은 grounded로 취급한다 - "이 결과로 질문하기" 기능이 성적 추천의
     # 실제 계산 결과(허구가 아님)를 질문 앞에 붙여 보내는데, 에이전트가 그 학교명을
     # 그대로 답변에서 언급하면 "이번 도구 호출 결과에는 없다"는 이유로 오탐이 났다.
-    all_universities = _all_universities()
+    # (all_universities는 위에서 _invoke 정의 전에 이미 계산해둔 것을 재사용한다.)
     query_text = query + " " + " ".join(str(m.get("content", "")) for m in (history or []))
     for name in all_universities:
         if name in query_text:
