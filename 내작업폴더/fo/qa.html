@@ -272,6 +272,12 @@ if (qaPrefill) {
 }
 
 function askQuestion() {
+  // 2026-09-23 실사용 발견: askBtn.disabled만 걸어두면 버튼 클릭만 막힐 뿐, 엔터키
+  // 입력(queryInput의 keydown)이나 예시질문 칩 클릭은 이 함수를 직접 호출해서 그
+  // 체크를 그냥 건너뛴다 - 답변이 오기 전에 새 질문을 또 보내면 같은 질문이 로딩
+  // 상태로 화면에 중복으로 쌓이는 혼란스러운 사고가 실측으로 확인됐다. 진행 중인
+  // 요청이 있으면(버튼이 이미 비활성 상태) 이 함수 진입 자체를 막는다.
+  if (askBtn.disabled) return;
   const val = queryInput.value.trim();
   if (!val) return;
 
