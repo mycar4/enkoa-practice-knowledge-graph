@@ -462,11 +462,17 @@ _CYPHER_GEN_PROMPT = f"""당신은 Neo4j Cypher 전문가입니다. 아래 그�
 4. 설명 없이 Cypher 쿼리 코드만 출력하십시오(마크다운 코드블록도 쓰지 말 것).
 5. "같은 대학/학교 안에서 서로 다른 두 전형(트랙)을 비교"해야 하는 질문(예: 일정 겹침,
    같은 날짜)은 반드시 같은 대학을 두 번 매치하는 자기 자신과의 JOIN이 필요합니다.
-   한쪽 트랙만 보고 답하면 항상 틀립니다. 예시:
+   한쪽 트랙만 보고 답하면 항상 틀립니다.
+6. 질문이 "몇 곳/몇 개"처럼 개수를 묻더라도, count(...) 숫자 하나만 RETURN하지 말고
+   실제로 해당하는 대학/학과/전형명과 근거가 되는 구체적 값(예: 겹치는 날짜)도 함께
+   collect()로 RETURN해서, 사용자가 그 숫자를 직접 검증할 수 있게 하십시오(실측 발견:
+   숫자만 반환하면 "그 N곳이 어디인지, 정말 맞는지" 사용자가 확인할 방법이 없어
+   불신으로 이어졌습니다). 예시:
    MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->()-[:HAS_TRACK]->(t1:Admission_Track)-[:HAS_SCHEDULE]->(s1:Admission_Schedule),
          (u)-[:HAS_DEPARTMENT]->()-[:HAS_TRACK]->(t2:Admission_Track)-[:HAS_SCHEDULE]->(s2:Admission_Schedule)
    WHERE t1.name < t2.name AND s1.exam_date IS NOT NULL AND s1.exam_date = s2.exam_date
-   RETURN count(DISTINCT u.name) AS overlap_university_count LIMIT 50
+   RETURN u.name AS university, collect(DISTINCT {{track1: t1.name, track2: t2.name, exam_date: s1.exam_date}}) AS overlapping_tracks
+   ORDER BY university LIMIT 50
 
 질문: __QUESTION__"""
 
@@ -1000,6 +1006,19 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
             if isinstance(m, AIMessage) and getattr(m, "tool_calls", None):
                 for tc in m.tool_calls:
                     tool_trace.append({"tool": tc["name"], "args": tc["args"]})
+                    # 2026-09-23 실사용 발견: check_schedule_conflicts/get_calendar/
+                    # compare_tracks처럼 "selections" 인자로 학교를 지정해서 호출하는
+                    # 도구는, 반환 결과(conflicts 등)가 university 키 없이 "a"/"b"처럼
+                    # 합쳐진 문자열만 쓰는 경우가 있어 결과만 봐서는 그 학교가 답변에
+                    # 나와도 "환각 의심"으로 오탐됐다(실측: "7곳 어디지?" 되물음에서
+                    # check_schedule_conflicts(중앙대,동국대)를 실제로 호출했는데도
+                    # 동국대학교가 환각 의심 경고로 뜸). 도구를 실제로 호출할 때 준 인자
+                    # 자체가 이미 "이 학교를 진짜로 조회했다"는 증거이므로, 인자에 등장한
+                    # 학교명도 바로 근거로 인정한다.
+                    args_text = json.dumps(tc.get("args", {}), ensure_ascii=False)
+                    for name in all_universities:
+                        if name in args_text:
+                            grounded_universities.add(name)
             if isinstance(m, ToolMessage):
                 content = m.content if isinstance(m.content, str) else json.dumps(m.content, ensure_ascii=False)
                 # Self-RAG 그라운딩용: 이 도구 호출이 실제로 반환한 학교명을 전부 모아둔다
@@ -1042,6 +1061,23 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
                             for row in parsed["official_tracks"]:
                                 if isinstance(row, dict):
                                     _add_grounded_track({**row, "university": parsed["university"]})
+                    if "generated_cypher" in parsed and "error" not in parsed:
+                        # 2026-09-23 실사용 발견: text2cypher_query 행은 매번 다른 RETURN
+                        # 별칭을 쓰므로(university/u.name/school 등 무엇이든 가능) 고정 키로
+                        # 못 찾는다. 대신 행 전체를 평문으로 펼쳐서 그 안에 실제 대학명
+                        # 문자열이 등장하는지 대조한다 - 자기검증(_self_check)이 이 도구가
+                        # 진짜로 찾아온 학교까지 "환각 의심"으로 오탐하는 걸 막는다(실측
+                        # 제보: "7곳 어디지?" 되물음에 text2cypher가 정확히 답했는데도
+                        # 답변에 나온 7개 대학 중 5개가 전부 환각 의심 경고로 뜸).
+                        flat_text = json.dumps(parsed.get("rows", []), ensure_ascii=False)
+                        for name in all_universities:
+                            if name in flat_text:
+                                grounded_universities.add(name)
+                        text2cypher_evidence.append({
+                            "generated_cypher": parsed.get("generated_cypher"),
+                            "rows": parsed.get("rows", [])[:20],
+                            "count": parsed.get("count"),
+                        })
                 except Exception:
                     pass
                 if tool_trace and "result_preview" not in tool_trace[-1]:
@@ -1116,6 +1152,7 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
         "tool_trace": tool_trace,
         "grounded_tracks": grounded_tracks,
         "grounded_tracks_total": len(grounded_tracks),
+        "text2cypher_evidence": text2cypher_evidence,
     }
     if self_check_warnings or banned_hit:
         result_payload["self_check_warnings"] = self_check_warnings + [f"금지 문구 제거됨: {p}" for p in banned_hit]

@@ -35,7 +35,21 @@ from tests.test_art_admission_school_record_calc import (  # noqa: E402
     test_recommend_universities_ranks_exact_before_approximate,
 )
 
+def test_art_admission_agent_module_imports_cleanly():
+    """2026-09-23 실측 발견: 이 게이트는 art_admission_agent.py를 어디서도 import하지
+    않았다 - 그날 고친 거의 모든 코드가 이 파일에 있었는데도, 모듈 최상단 f-string
+    안에 이스케이프 안 된 중괄호({track1: ...})가 들어가 NameError로 즉시 임포트가
+    깨지는 문법 수준 버그를 로컬 재현 테스트에서야 겨우 잡았다(게이트는 "통과"라고
+    나왔었음) - 하마터면 API 전체가 못 뜨는 채로 배포될 뻔했다. 최소한의 임포트
+    스모크 테스트를 게이트에 영구히 추가해 이 사각지대를 없앤다."""
+    import importlib
+    import services.art_admission_agent as agent_module
+    importlib.reload(agent_module)
+    assert callable(agent_module.route_and_answer)
+
+
 if __name__ == "__main__":
+    test_art_admission_agent_module_imports_cleanly()
     test_exact_match_never_includes_material_only_overlaps()
     test_qa_search_and_agent_search_agree()
     test_self_check_grounding_does_not_flag_names_from_query_context()
@@ -57,4 +71,4 @@ if __name__ == "__main__":
     test_prior_year_result_batch2_image_based_schools()
     test_non_priority_school_returns_unavailable_not_fake_number()
     test_recommend_universities_ranks_exact_before_approximate()
-    print("🎉 CI QUALITY GATE PASSED (무료 회귀 테스트 21건)")
+    print("🎉 CI QUALITY GATE PASSED (무료 회귀 테스트 22건)")
