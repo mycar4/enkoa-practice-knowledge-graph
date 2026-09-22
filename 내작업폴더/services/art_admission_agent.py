@@ -699,6 +699,23 @@ _DOC_WRITING_HELP_SIGNALS = [
 ]
 _DOC_TYPE_TRIGGER_WORDS = ["자기소개서", "미술활동보고서", "포트폴리오", "활동보고서"]
 
+# 2026-09-23 실사용 발견: "재직사실확인서 제출 방법", "확인서 다운로드 경로", "팩스로
+# 어떻게 보내" 같은 절차/행정 질문이 Jev에서 DOCUMENT_WRITING_HELP와 SIMPLE_GRAPH
+# 사이 확률이 0.48:0.48로 사실상 동점이 나며 불안정하게 review.html로 새는 걸
+# 확인했다 - 재현해보니 review.html의 좁은 키워드 검색(get_document_rule_excerpts,
+# "블라인드/분량/글자/표절/대필" 등으로 한정)은 이런 절차 질문을 전혀 못 찾는 반면,
+# 일반 원문검색은 정확한 답(팩스번호·다운로드 경로 포함)을 이미 찾아낼 수 있었다
+# - 즉 review.html로 보내는 게 막다른 길이었다. 이런 절차성 신호어가 있으면
+# DOCUMENT_WRITING_HELP를 아예 후보에서 제외해 Jev의 동점 판정에 흔들리지 않게 한다.
+_DOC_PROCEDURAL_SIGNALS = [
+    "제출 방법", "제출 경로", "제출처", "접수 방법", "접수처", "다운로드", "팩스", "FAX",
+    "전송 방법", "전송처", "발급 방법",
+]
+
+
+def _is_procedural_not_writing_help(query: str) -> bool:
+    return any(w in query for w in _DOC_PROCEDURAL_SIGNALS)
+
 # 2026-09-22: 도메인마다 다른 프런트가 이 함수를 호출할 수 있어(BO/CO/FO 각각
 # 별도 배포) 하드코딩 대신 환경변수로 오버라이드 가능하게 하되, 기본값은 실제
 # 운영 중인 FO 도메인으로 둔다.
@@ -758,8 +775,15 @@ def _is_document_writing_help_query(query: str) -> bool:
 # 거치지 않고 호출부에서 먼저 결정론적으로 처리한다(기존과 동일).
 _ROUTE_CRITERIA = {
     "DOCUMENT_WRITING_HELP": (
-        "서류(자기소개서/미술활동보고서/포트폴리오 등) 작성 방법이나 작성 규정"
-        "(표절, 대필, 분량, 인적사항 노출, 실명 기재 등)을 묻는 질문"
+        "서류(자기소개서/미술활동보고서/포트폴리오 등)를 지원자가 직접 '무슨 내용을 "
+        "어떻게 써야 하는지' 묻는 질문이나, 그 내용에 대한 작성 규정(표절, 대필, 분량, "
+        "인적사항 노출, 실명 기재 등)을 묻는 질문. 주의: '평가자 재직사실확인서 제출 "
+        "방법', '서류 접수 경로/마감일', 'FAX 번호', '다운로드 경로'처럼 서류 자체의 "
+        "글쓰기 내용이 아니라 제출·접수 절차/행정을 묻는 질문은 여기 해당하지 않는다 "
+        "- 이런 질문은 SIMPLE_GRAPH나 COMPLEX_TOOL로 분류한다(실측 발견: 이런 절차성 "
+        "질문이 여기로 잘못 분류돼 review.html로 보내졌는데, 정작 review.html의 좁은 "
+        "키워드 검색은 이 내용을 못 찾아 안내가 막다른 길이 됐다 - 반면 일반 원문검색은 "
+        "정확한 답을 이미 찾아낼 수 있었다)"
     ),
     "COMPLEX_TOOL": (
         "계산/비교/추천/랭킹/요약 도구가 필요한 질문: 성적 기반 지원 추천, 여러 전형 "
@@ -827,15 +851,46 @@ def route_and_answer(query: str, history: Optional[List[Dict[str, str]]] = None)
     except Exception:
         all_universities = []
 
-    # 결정론적 규칙(Jev보다 먼저, 판단이 아니라 사실): 대학 2곳 이상이 질문에 실제로
-    # 언급되면 항상 도구 조합(run_agent)이 필요하다.
+    # 2026-09-23 실사용 발견: "지금 색인된 대학이 총 몇 곳이야?" 같은 질문이 LLM/Jev
+    # 경로(SIMPLE_GRAPH 또는 COMPLEX_TOOL, 라우팅 신뢰도가 0.5 안팎으로 갈릴 만큼
+    # 애매함)를 타면서, 가끔 도구를 잘못 고르거나 컨텍스트가 흔들려 "정보 없음"으로
+    # 답하는 걸 실측으로 확인(직전까지 "총 55곳"으로 정확히 답하던 것과 같은 질문).
+    # 이건 판단이 필요 없는 정확한 숫자이므로 애초에 LLM을 거치지 않고 결정론적으로
+    # 답한다 - 한 번 흔들리면 매번 흔들릴 수 있는 질문 유형이라 LLM 신뢰도 개선보다
+    # 이쪽이 100% 안정적이고 무료다.
+    # 오탐 방지: "정원 수"/"경쟁률" 등 대학 하나를 특정해 묻는 질문까지 이 결정론적
+    # 답변으로 새지 않도록, (a) 색인/등록/적재 같은 "데이터베이스 규모"를 뜻하는
+    # 단어가 있고 (b) 질문에 특정 대학명이 등장하지 않을 때만 적용한다.
+    _UNIV_COUNT_PATTERN = re.compile(r"(색인|등록|적재)\s*된?\s*대학.{0,8}(몇\s*(곳|개)|개수|수(는|가|\?|$))")
     from services.art_admission_service import resolve_university_mentions_detailed
     detail = resolve_university_mentions_detailed(query, all_universities)
+    if _UNIV_COUNT_PATTERN.search(query) and not detail["universities"]:
+        return {
+            "answer": f"현재 적재된 공식 모집요강 데이터에서 확인된 대학은 총 {len(all_universities)}곳입니다.",
+            "context_tracks": [], "context_compatible_tracks": [],
+            "context_graph_related": [], "context_raw_excerpts": [],
+            "grounded_tracks": [], "grounded_tracks_total": 0,
+            "routing": {"route": "SIMPLE_GRAPH", "method": "deterministic_university_count",
+                        "model": None, "confidence": None, "probabilities": None},
+            "tool_trace": [{
+                "tool": "deterministic_university_count",
+                "args": {"query": query},
+                "result_preview": f"등록 대학 수 질문 감지 - LLM 호출 없이 실제 목록 길이({len(all_universities)})로 즉시 답변",
+            }],
+        }
+
+    # 결정론적 규칙(Jev보다 먼저, 판단이 아니라 사실): 대학 2곳 이상이 질문에 실제로
+    # 언급되면 항상 도구 조합(run_agent)이 필요하다(detail은 위에서 이미 계산됨).
     if len(detail["universities"]) >= 2:
         routing = {"route": "COMPLEX_TOOL", "method": "deterministic_multi_university",
                    "model": None, "confidence": None, "probabilities": None}
     else:
         routing = _classify_route(query, all_universities)
+
+    if routing["route"] == "DOCUMENT_WRITING_HELP" and _is_procedural_not_writing_help(query):
+        routing = {"route": "SIMPLE_GRAPH", "method": "deterministic_procedural_override",
+                   "model": routing.get("model"), "confidence": routing.get("confidence"),
+                   "probabilities": routing.get("probabilities")}
 
     if routing["route"] == "DOCUMENT_WRITING_HELP":
         review_url = f"{_FO_BASE_URL}/review.html"
@@ -906,6 +961,16 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
     # 반환한 shared_keywords/shared_materials 원본이 필요하다 - grounded_tracks는
     # 화면 표시용으로 필드를 잘라내므로 별도로 원본 그대로 모아둔다.
     context_compatible_tracks: List[Dict[str, Any]] = []
+    # 2026-09-23 실사용 발견: text2cypher_query는 매번 질문에 맞춰 즉석에서 다른
+    # Cypher를 생성하므로 행(row)의 키 구성이 매번 달라(university/department/
+    # track_name 고정 모양이 아님) - 위 grounded_tracks 추출 로직이 이 모양을 인식할
+    # 수 없어 "실기고사일이 2개 이상 겹치는 대학이 몇 곳이야?" 같은 질문이 실제로는
+    # 그래프에 실시간 쿼리해서 정확히 답했는데도 "근거를 못 찾았다"는 오해를 주는
+    # 패널이 뜨고, 답변도 숫자 하나("7곳입니다")뿐이라 사용자가 검증할 길이 없었다
+    # (실측 제보: "7곳이 언제 겹치는건데? 정말 7곳이 전부야?"). grounded_tracks로
+    # 억지로 맞추는 대신, 실행된 Cypher와 원본 결과 행을 그대로 별도 필드에 남겨서
+    # 프론트가 "근거 없음" 대신 "이 쿼리로 직접 조회했다"는 진짜 근거를 보여주게 한다.
+    text2cypher_evidence: List[Dict[str, Any]] = []
     # 2026-09-23 실사용 발견: get_calendar가 반환하는 "events"는 university 키가
     # 아니라 "school"(대학명+학과명을 합친 라벨) 키를 쓴다 - 아래 추출 루프가 이
     # 모양을 몰라서 캘린더 도구로 답한 경우 grounded_tracks/grounded_universities가
