@@ -158,6 +158,19 @@ match_status가 "exact"인 것만 그렇게 부르고, "partial"인 것은 "재�
 확인한 뒤 답하십시오. 일정 정보가 없으면 "일정 정보가 적재되지 않았습니다. 공식
 모집요강을 재확인하세요."라고 명시하십시오.
 
+check_schedule_conflicts는 "내가 실제 지원하려는 조합(최대 6장)이 서로 안 겹치는지"를
+검증하는 도구입니다 - selections를 대학별로 나눠서 여러 번 호출하면 같은 대학 안의
+충돌만 보이고 대학 사이의 충돌은 절대 확인되지 않습니다. "OO대학교와 OO대학교 사이에
+날짜가 겹치는지"처럼 사용자가 지원하려는 특정 조합이 아니라 여러 학교를 그냥 통째로
+비교하는 질문이면, check_schedule_conflicts는 아예 시도하지 말고 처음부터
+text2cypher_query로 두 대학의 모든 실기고사일을 한 번에 대조하는 쿼리를 쓰십시오
+(실측 발견: "중앙대랑 홍익대 실기고사일이 겹치는지"를 물었을 때 check_schedule_conflicts를
+먼저 시도했다가 - 대학당 전형이 6개를 넘어 "over_limit" 오류가 나거나 대학별로
+나눠 호출해서 두 대학 사이의 겹침을 놓치는 등 - 여러 번 실패하고 나서야 text2cypher로
+돌아섰고, 그 과정에서 self-check 재시도가 소진돼 결국 "확인할 수 없습니다"로
+포기하는 사고가 있었습니다. 이런 "여러 학교 비교" 질문에는 처음부터 text2cypher만
+쓰면 이 시행착오 자체가 생기지 않습니다).
+
 학생이 자기 내신 등급(또는 성취도)을 말하며 "어디 찔러야 해", "무슨 전형이 유리해",
 "합격 가능성", "추천해줘"처럼 실제 지원 대상을 물으면 반드시 recommend_by_grades를
 쓰십시오. 이건 이 서비스의 "성적 추천" 화면과 완전히 같은 계산 엔진이라, 실제 계산
@@ -186,6 +199,15 @@ topic_keywords/material_query에 채워 넣고, **실기 종목을 아직 안 �
 원인). 전형명만으로 날짜/인원을 답하지 말고, 반드시 어느 단과대학·학과의 전형인지
 함께 명시하십시오. 여러 단과대학에 같은 이름의 전형이 있으면 전부 나열하고,
 사용자가 특정하지 않았으면 "어느 학과 기준으로 답변드릴까요?"라고 되물으십시오.
+
+"실기 날짜/실기고사일"을 물으면 도구가 반환한 exam_dates를 곧바로 실기 날짜로
+단정하지 마십시오 - exam_type_name을 확인해서 "실기"/"소묘"/"수채화"/"기초디자인"/
+"조소" 같은 실제 제작형 실기 종목이 없고 "서류평가"/"면접"/"구술"만 있다면 그
+전형은 실기시험 자체가 없는 것이고, exam_dates는 면접일입니다(실측 발견: 홍익대
+미술우수자전형은 미술활동보고서 서류평가+면접뿐인데 그 날짜를 "실기 날짜"라고
+답해 학생에게 위험한 오해를 줄 뻔했습니다). 실기시험이 있는 전형만 "실기 날짜"라고
+부르고, 없으면 "이 조건에서 실기시험이 있는 전형을 찾지 못했습니다 - 아래는 면접/
+서류 전형 일정입니다"처럼 구분해서 답하십시오.
 
 "전체 흐름/절차/일정을 요약해줘"류 질문에 summarize_admission_flow를 쓸 때, 질문에
 "일정"이라는 말이 있거나 원서접수·실기고사·합격발표 같은 구체적 날짜가 필요해
@@ -497,6 +519,20 @@ _CYPHER_GEN_PROMPT = f"""당신은 Neo4j Cypher 전문가입니다. 아래 그�
    WHERE t1.name < t2.name AND s1.exam_date IS NOT NULL AND s1.exam_date = s2.exam_date
    RETURN u.name AS university, collect(DISTINCT {{track1: t1.name, track2: t2.name, exam_date: s1.exam_date}}) AS overlapping_tracks
    ORDER BY university LIMIT 50
+7. 질문에 "실기전형"/"실기 전형"이라는 말이 있으면, 학생부교과·학생부종합처럼 실기
+   자체가 없는 전형(서류·내신만으로 선발)을 결과에 절대 섞지 마십시오(실측 발견:
+   "정원이 제일 적은 실기전형은?" 질문에 실기가 아예 없는 "학생부종합(농어촌학생)"
+   전형을 실기전형이라며 잘못 답한 사고가 있었습니다). Admission_Track을
+   REQUIRES_EXAM으로 Admission_ExamType과 반드시 JOIN하고, ExamType.name이
+   "실기 없음"이나 "해당 없음"을 포함하거나 "학생부"로 시작하는 행은 WHERE 절에서
+   제외하십시오. 예:
+   MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(d)-[:HAS_TRACK]->(t:Admission_Track)
+         -[:REQUIRES_EXAM]->(e:Admission_ExamType)
+   WHERE t.quota IS NOT NULL AND NOT e.name CONTAINS "실기 없음"
+         AND NOT e.name CONTAINS "해당 없음" AND NOT e.name STARTS WITH "학생부"
+         AND e.name <> "미지정" AND NOT e.name CONTAINS "미지정"
+   RETURN u.name AS university, t.name AS track_name, t.quota AS quota, e.name AS exam_type_name
+   ORDER BY quota ASC LIMIT 50
 
 질문: __QUESTION__"""
 
@@ -740,6 +776,12 @@ _DOC_TYPE_TRIGGER_WORDS = ["자기소개서", "미술활동보고서", "포트�
 _DOC_PROCEDURAL_SIGNALS = [
     "제출 방법", "제출 경로", "제출처", "접수 방법", "접수처", "다운로드", "팩스", "FAX",
     "전송 방법", "전송처", "발급 방법",
+    # 2026-09-23 GPT 고객경험 QC로 실측 발견: "미술활동보고서 몇 개까지 쓸 수 있어?"
+    # (실제로는 교과활동 최대 7개/비교과 최대 8개/총 12개 이내라는 원문 수치가 이미
+    # 색인돼 있어 SIMPLE_GRAPH로 바로 답할 수 있는데도) DOCUMENT_WRITING_HELP로
+    # 오라우팅돼 review.html로 떠넘겨짐 - "개수/글자수 제한이 몇인지" 같은 정량적
+    # 사실 질문도 "작성 규정"이 아니라 절차성 신호어로 취급한다.
+    "몇 개까지", "몇 개 까지", "최대 몇", "몇 자까지", "몇 자 까지", "몇 건까지",
 ]
 
 
