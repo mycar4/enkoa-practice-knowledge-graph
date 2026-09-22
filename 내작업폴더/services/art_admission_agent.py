@@ -646,7 +646,17 @@ def run_qa_pipeline(
         for m in (history or []) if m.get("role") == "user"
     )
 
-    if not mentioned and context_raw and not has_topic_kw:
+    if not mentioned and has_topic_kw:
+        # 원문검색 재좁히기 대신, 이미 정확한 exam_type_keyword_match 플래그로 직접
+        # 좁힌다 - "건너뛰기"만 하면 299건 전체가 그대로 LLM에 실려 페이로드가
+        # 커지면서 실제로 타임아웃/호출 실패가 나는 걸 실측으로 확인했다(수정 직후
+        # 프로덕션 재검증에서 "소묘로 시험 보는 학교 알려줘"가 반복적으로 LLM 호출
+        # 실패 처리됨). 일치하는 항목만 추리면 정확도와 페이로드 크기를 동시에
+        # 잡을 수 있다.
+        matched = [t for t in context_tracks if t.get("exam_type_keyword_match")]
+        if matched:
+            context_tracks = matched
+    elif not mentioned and context_raw:
         raw_universities = sorted({r["university"] for r in context_raw if r.get("university")})
         if raw_universities:
             context_tracks = [t for t in context_tracks if t["university"] in raw_universities]
