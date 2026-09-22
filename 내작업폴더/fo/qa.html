@@ -117,10 +117,21 @@ askBtn.addEventListener("click", askQuestion);
 queryInput.addEventListener("keydown", e => { if (e.key === "Enter") askQuestion(); });
 
 function formatAnswer(text) {
-  return text
+  // 모델 답변이 "[텍스트](URL)" 마크다운 링크가 아니라 "출처: OO대학교, https://..."처럼
+  // 맨 URL을 그대로 내보내는 경우가 많다 - 이걸 링크로 안 바꾸면 div에 통짜 텍스트로
+  // 남아 긴 URL 하나가 박스 폭을 뚫고 넘쳐버린다(실측 제보로 확인된 버그).
+  // 마크다운 링크를 먼저 치환해 플레이스홀더로 빼두고, 남은 맨 URL만 따로 링크화한 뒤
+  // 플레이스홀더를 복원해서 이중 치환(마크다운 URL이 또 autolink되는 것)을 막는다.
+  const mdLinks = [];
+  let out = text
     .replace(/</g, "&lt;")
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a class="underline text-primary" href="$2" target="_blank" rel="noopener">$1</a>');
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (m, label, url) => {
+      mdLinks.push(`<a class="underline text-primary" href="${url}" target="_blank" rel="noopener">${label}</a>`);
+      return `\u0000${mdLinks.length - 1}\u0000`;
+    })
+    .replace(/(https?:\/\/[^\s<]+)/g, '<a class="underline text-primary break-all" href="$1" target="_blank" rel="noopener">$1</a>');
+  return out.replace(/\u0000(\d+)\u0000/g, (m, i) => mdLinks[Number(i)]);
 }
 
 // day50~56 에이전트 도구 호출 트레이스 - 예전 "그래프 추적 패널"을 대체한다.
@@ -260,7 +271,7 @@ function askQuestion() {
         <span class="font-label-sm text-label-sm text-outline">${res.model || ""}</span>
       </div>
       ${buildGroundedPanel(res)}
-      <div class="bg-surface-container-low p-unit-md rounded-lg font-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-line">${formatAnswer(res.answer || "응답 없음")}</div>
+      <div class="bg-surface-container-low p-unit-md rounded-lg font-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-line break-words [overflow-wrap:anywhere]">${formatAnswer(res.answer || "응답 없음")}</div>
       ${warningBlock}
       ${buildToolTrace(res)}
       <p class="font-body-sm text-body-sm text-error bg-error-container/30 p-unit-xs rounded">※ 주의: 최종 세부 요강은 해당 대학 입학처의 공식 공지를 반드시 재확인하십시오.</p>
