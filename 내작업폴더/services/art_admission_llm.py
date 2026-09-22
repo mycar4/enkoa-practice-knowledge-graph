@@ -151,6 +151,41 @@ def _call_openai_messages(messages: List[Dict[str, str]], model: str, temperatur
     raise last_err
 
 
+# 2026-09-22 [day47 재검토]: 강의 원본(교안_02)은 하위질문 분해를 Pydantic
+# 스키마로 강제하는데, 우리는 자유 텍스트로 JSON을 받아 정규식으로 잘라
+# 파싱하고 실패하면 원본 질문으로 조용히 폴백하는 방어 코드만 있었다 -
+# LLM이 형식을 안 지킬 위험을 "감지 후 폴백"으로만 막았지 "애초에 못
+# 어기게" 막진 않았다. OpenAI structured outputs(response_format=
+# json_schema, strict=true)는 API 차원에서 스키마를 강제해서 이 실패
+# 유형 자체를 없앤다 - Decomposition 전용으로 좁게 추가한다(전체 provider
+# 추상화를 다 구조화 출력으로 바꾸는 건 지금 필요한 범위를 넘어선다).
+def call_openai_json_schema(system_prompt: str, user_prompt: str, model: str,
+                             schema_name: str, schema: Dict[str, Any]) -> Dict[str, Any]:
+    if not _OPENAI_KEY:
+        raise RuntimeError("OPENAI_API_KEY가 설정되어 있지 않습니다.")
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {_OPENAI_KEY}"}
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
+        "temperature": 0.0,
+        "response_format": {
+            "type": "json_schema",
+            "json_schema": {"name": schema_name, "schema": schema, "strict": True},
+        },
+    }
+    req = urllib.request.Request(
+        "https://api.openai.com/v1/chat/completions",
+        data=json.dumps(payload).encode("utf-8"),
+        headers=headers,
+    )
+    with urllib.request.urlopen(req, timeout=_llm_timeout_seconds(model)) as resp:
+        body = json.loads(resp.read().decode("utf-8"))
+    return json.loads(body["choices"][0]["message"]["content"])
+
+
 def _call_anthropic_messages(messages: List[Dict[str, str]], model: str, temperature: float = 0.0) -> str:
     if not _ANTHROPIC_KEY:
         raise RuntimeError("ANTHROPIC_API_KEY가 설정되어 있지 않습니다.")

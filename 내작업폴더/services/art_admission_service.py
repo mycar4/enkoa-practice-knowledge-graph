@@ -3141,21 +3141,41 @@ class ArtAdmissionService:
         이하였고, 복합질문 4개는 전부 2개 이상이었다(오탐 없음, n은 작음)."""
         return sum(query.count(w) for w in cls._QUESTION_WORDS) >= 2
 
+    # 2026-09-22 [day47 재검토]: 강의 원본(교안_02)의 SubQuestions Pydantic
+    # 스키마를 참고해 우리도 자유 텍스트 JSON 파싱(정규식으로 대괄호 잘라내기 +
+    # try/except 폴백) 대신 OpenAI structured outputs로 형식을 API 차원에서
+    # 강제한다 - "LLM이 형식을 안 지킬 위험"을 감지 후 폴백이 아니라 애초에
+    # 못 어기게 막는다.
+    _SUB_QUESTIONS_SCHEMA = {
+        "type": "object",
+        "properties": {
+            "questions": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "원질문의 서로 다른 정보 요구를 하나씩 묻는 독립된 질문 2~3개",
+            },
+        },
+        "required": ["questions"],
+        "additionalProperties": False,
+    }
+
     def _decompose_query(self, query: str) -> List[str]:
         """복합 질문을 완전히 독립된 하위질문들로 LLM이 쪼갠다. 실패하거나
         1개 이하로 나오면(쪼갤 필요 없는 질문이었단 뜻) 원본을 그대로 둔다."""
-        import json
-        from services.art_admission_llm import _call_llm
+        from services.art_admission_llm import call_openai_json_schema
         prompt = (
             "아래는 두 가지 이상을 동시에 묻는 복합 질문일 수 있습니다. 완전히 "
-            "독립된 질문들로 나누세요(쪼갤 필요 없으면 원본 그대로 1개만). "
-            "JSON 배열로만 답하세요.\n\n질문: " + query
+            "독립된 질문 2~3개로 나누세요 - 각 질문만으로 검색할 수 있게 대상과 "
+            "조건을 포함하고, 원질문에 없는 요구를 추가하지 마세요. 쪼갤 필요 없으면 "
+            "원본 질문 하나만 담으세요.\n\n질문: " + query
         )
         try:
-            raw = _call_llm("복합 질문을 독립 질문으로 분해하는 보조자입니다.", prompt, model_id="gpt-4o-mini")
-            sub_qs = json.loads(raw[raw.find("["):raw.rfind("]") + 1])
-            sub_qs = [q for q in sub_qs if isinstance(q, str) and q.strip()]
-            return sub_qs if len(sub_qs) >= 2 else [query]
+            result = call_openai_json_schema(
+                "복합 질문을 독립 질문으로 분해하는 보조자입니다.", prompt,
+                model="gpt-4o-mini", schema_name="sub_questions", schema=self._SUB_QUESTIONS_SCHEMA,
+            )
+            sub_qs = [q for q in result.get("questions", []) if isinstance(q, str) and q.strip()]
+            return sub_qs[:3] if len(sub_qs) >= 2 else [query]
         except Exception:
             return [query]
 
