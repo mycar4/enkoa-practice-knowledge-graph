@@ -658,8 +658,11 @@ _DOC_TYPE_TRIGGER_WORDS = ["자기소개서", "미술활동보고서", "포트�
 
 # 2026-09-22: 도메인마다 다른 프런트가 이 함수를 호출할 수 있어(BO/CO/FO 각각
 # 별도 배포) 하드코딩 대신 환경변수로 오버라이드 가능하게 하되, 기본값은 실제
-# 운영 중인 FO 도메인으로 둔다(franchise 회귀 테스트 문서에서 쓰는 것과 동일).
-_FO_BASE_URL = os.getenv("FO_PUBLIC_BASE_URL", "https://appartreadykr.vercel.app")
+# 운영 중인 FO 도메인으로 둔다.
+# 2026-09-23 실사용 발견: 기본값이 Vercel 자동생성 URL(appartreadykr.vercel.app)로
+# 박혀 있었다 - 실제 브랜드 도메인 www.artready.kr도 같은 배포를 정상 서빙하는 것을
+# 확인(둘 다 HTTP 200)했으므로, 사용자에게 노출되는 링크는 브랜드 도메인으로 바꾼다.
+_FO_BASE_URL = os.getenv("FO_PUBLIC_BASE_URL", "https://www.artready.kr")
 
 
 def _is_document_writing_help_query_keyword(query: str) -> bool:

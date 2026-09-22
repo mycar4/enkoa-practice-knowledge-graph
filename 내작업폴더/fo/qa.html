@@ -153,6 +153,14 @@ const TOOL_LABELS = {
 // 아니라 우리가 만든 지식그래프로 답한다"는 걸 매 답변마다 실제 데이터로
 // 증명해야 설득력이 있다는 피드백 반영.
 function buildGroundedPanel(res) {
+  // 서류작성법 질문(redirect_to_document_review)은 애초에 그래프 검색 자체를
+  // 시도하지 않고 review.html로 바로 안내하므로, "근거를 못 찾았다"는 패널을
+  // 보여주면 "검색했는데 실패했다"는 오해를 준다(실사용 제보로 발견) - 이 경우
+  // 패널 자체를 아예 표시하지 않는다.
+  const trace = res.tool_trace || [];
+  if (trace.some(t => t.tool === "redirect_to_document_review")) {
+    return "";
+  }
   const tracks = res.grounded_tracks || [];
   if (!tracks.length) {
     return `<div class="font-body-sm text-body-sm text-on-surface-variant bg-surface-container-low p-unit-sm rounded-lg">이번 답변이 근거로 삼은 특정 전형 레코드를 찾지 못했습니다 - 위 "정보 없음" 안내를 참고하세요.</div>`;

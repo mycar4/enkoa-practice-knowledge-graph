@@ -355,6 +355,13 @@ _QA_SYSTEM_PROMPT = """당신은 "미술 실기 입시 도우미"의 답변 생�
    "context_estimates"(비공식 추정치), "context_raw_excerpts"(PDF 원문 발췌, 의미기반
    검색 결과) 안에 있는 값만 사용하십시오. 그 안에 없는 학교/학과/숫자/날짜/조건은
    절대 새로 만들어내지 마십시오. 모르면 반드시 "정보 없음"이라고 답하십시오.
+1-2. "registered_university_count"는 이 서비스에 등록된 전체 대학 수(정확한 값)입니다.
+   "지금 색인된/등록된 대학이 총 몇 곳이야?" 같은 질문에는 반드시 이 값을 그대로
+   답하십시오 - context_tracks/context_raw_excerpts에 등장하는 대학 개수를 세어서
+   "총 대학 수"인 것처럼 답하면 절대 안 됩니다. 학교명이 특정되지 않은 질문에서는
+   그 컨텍스트가 이번 질문과 관련성이 높다고 판단된 일부 표본일 뿐, 전체 데이터베이스가
+   아닙니다(실측 발견: "색인된 대학 총 몇 곳" 질문에 컨텍스트에 우연히 등장한 5~6개
+   대학만 보고 "총 6곳"이라고 잘못 답한 사고가 있었습니다).
 1-1. 아래 두 질문 유형은 겉보기에 비슷해 보이지만("실기로 지원 가능한 학교") 서로
    다른 규칙을 따라야 합니다 - 절대 섞지 마십시오:
    (a) 사용자가 "소묘"/"기초디자인" 같은 실기유형 키워드를 질문 문장에 직접 이름으로
@@ -581,6 +588,7 @@ def answer_with_llm(context_tracks: List[Dict[str, Any]], context_estimates: Lis
         "context_raw_excerpts": context_raw_excerpts,
         "context_graph_related": context_graph_related,
         "context_compatible_tracks": context_compatible_tracks,
+        "registered_university_count": len(all_universities) if all_universities else None,
     }
     user_prompt = json.dumps(user_payload, ensure_ascii=False, indent=2)
 
