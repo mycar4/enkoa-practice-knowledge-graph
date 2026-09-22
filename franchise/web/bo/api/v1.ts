@@ -533,6 +533,26 @@ export default async function handler(req: any, res: any) {
       return res.status(200).json(Array.isArray(data) ? data : []);
     }
 
+    // 2026-09-23 신규: 미대입시 챗봇(art_admission) 대화 로그 조회 - 별도
+    // 프로젝트(art-admission-api)가 같은 Supabase 프로젝트의 art_admission_qa_logs
+    // 테이블에 매 턴을 기록해두는데, 지금까지 이걸 볼 BO 화면이 없어서 Supabase
+    // 대시보드를 직접 열어야만 확인 가능했다. audit-logs와 동일한 패턴으로
+    // 조회 전용 엔드포인트만 추가한다(franchise 자체 데이터가 아니라 읽기만
+    // 하므로 이 파일의 다른 리소스처럼 POST/PATCH는 만들지 않음).
+    // 필터: q(질문/답변 부분 검색), gave_up_only(포기 답변만), limit(기본 50, 최대 200).
+    if (routePath === "bo/art-admission-logs") {
+      const limit = Math.min(parseInt(String(req.query?.limit || "50"), 10) || 50, 200);
+      const q = req.query?.q ? String(req.query.q).trim() : "";
+      const gaveUpOnly = req.query?.gave_up_only === "true";
+      let filter = `select=*&order=created_at.desc&limit=${limit}`;
+      if (gaveUpOnly) filter += `&gave_up=eq.true`;
+      if (q) filter += `&query=ilike.*${encodeURIComponent(q)}*`;
+      const resp = await supabaseFetch(`art_admission_qa_logs?${filter}`);
+      if (!resp.ok) return res.status(200).json([]);
+      const data = await resp.json();
+      return res.status(200).json(Array.isArray(data) ? data : []);
+    }
+
     // BO 7: 긴급 공지 배포
     if (routePath === "bo/notices") {
       if (method === "GET") {

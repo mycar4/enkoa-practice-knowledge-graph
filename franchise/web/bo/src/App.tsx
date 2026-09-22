@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState, Fragment, type FormEvent } from 'react';
 
 // ── 데이터 타입 정의 ──
 interface Tenant {
@@ -216,6 +216,35 @@ export default function App() {
     { id: 'admin-01', name: '김본사 총괄이사', email: 'head@artready.kr', role: 'BO_SUPER_ADMIN', department: '경영전략총괄', status: 'ACTIVE' },
     { id: 'admin-02', name: '이운영 과장', email: 'ops@artready.kr', role: 'BO_MANAGER', department: '가맹운영지원팀', status: 'ACTIVE' }
   ]);
+
+  // 2026-09-23 신규: 미대입시 챗봇(art_admission) 대화 로그 - 다른 탭들과 달리
+  // 하드코딩된 데모 값이 아니라 실제 Supabase(art_admission_qa_logs)에서
+  // 매번 불러온다(다른 탭에 데모 데이터가 있는 것과는 성격이 다름 - 이건 실제
+  // 운영 로그를 봐야 하는 화면이라 처음부터 라이브 데이터로 만든다).
+  const [qaLogs, setQaLogs] = useState<any[]>([]);
+  const [qaLogsLoading, setQaLogsLoading] = useState(false);
+  const [qaLogsQuery, setQaLogsQuery] = useState('');
+  const [qaLogsGaveUpOnly, setQaLogsGaveUpOnly] = useState(false);
+  const [qaLogsExpanded, setQaLogsExpanded] = useState<string | null>(null);
+
+  const fetchQaLogs = async () => {
+    setQaLogsLoading(true);
+    try {
+      const token = getBoAccessToken();
+      const params = new URLSearchParams({ limit: '50' });
+      if (qaLogsQuery.trim()) params.set('q', qaLogsQuery.trim());
+      if (qaLogsGaveUpOnly) params.set('gave_up_only', 'true');
+      const res = await fetch(`${API_BASE}/bo/art-admission-logs?${params.toString()}`, {
+        headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) }
+      });
+      const data = await res.json();
+      setQaLogs(Array.isArray(data) ? data : []);
+    } catch {
+      showToast('대화 로그 조회에 실패했습니다.', 'error');
+    } finally {
+      setQaLogsLoading(false);
+    }
+  };
 
   // 수기결제 모달 상태
   const [modalOpen, setModalOpen] = useState(false);
@@ -501,12 +530,17 @@ export default function App() {
               { key: 'templates', label: '🔒 메뉴 권한 템플릿' },
               { key: 'analytics', label: '📈 플랫폼 매출/순위 통계' },
               { key: 'notices', label: '📢 가맹점 공지사항 관리' },
-              { key: 'accounts', label: '👤 본사 관리자 계정 관리' }
+              { key: 'accounts', label: '👤 본사 관리자 계정 관리' },
+              { key: 'art_admission_logs', label: '🎨 미대입시 챗봇 로그' }
             ].map(m => (
               <button
                 key={m.key}
                 className={`nav-btn ${activeMenu === m.key ? 'active' : ''}`}
-                onClick={() => setActiveMenu(m.key)}
+                onClick={() => {
+                  setActiveMenu(m.key);
+                  // 이 탭만 실제 라이브 데이터를 불러온다 - 처음 열 때 자동 조회.
+                  if (m.key === 'art_admission_logs') fetchQaLogs();
+                }}
               >
                 {m.label}
               </button>
@@ -863,6 +897,89 @@ export default function App() {
                       <td><span className="badge badge-primary">{a.role}</span></td>
                       <td><span className="badge badge-success">{a.status}</span></td>
                     </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* 9. 미대입시 챗봇(art_admission) 대화 로그 */}
+          {activeMenu === 'art_admission_logs' && (
+            <div className="tab-view">
+              <div className="view-header">
+                <h2>미대입시 챗봇(ART:READY AI) 대화 로그</h2>
+                <button className="btn btn-primary" onClick={fetchQaLogs} disabled={qaLogsLoading}>
+                  {qaLogsLoading ? '불러오는 중…' : '🔄 새로고침'}
+                </button>
+              </div>
+              <p className="text-muted" style={{ marginBottom: '12px' }}>
+                별도 서비스(art-admission-api)가 같은 Supabase 프로젝트에 기록한 실제 질문/답변 로그입니다.
+                최근 50건까지 표시하며, 원문 발췌 등 근거 데이터는 여기 없습니다(Neo4j가 원본).
+              </p>
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+                <input
+                  type="text"
+                  className="form-control"
+                  style={{ maxWidth: '280px' }}
+                  placeholder="질문/답변 내용 검색"
+                  value={qaLogsQuery}
+                  onChange={e => setQaLogsQuery(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') fetchQaLogs(); }}
+                />
+                <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px' }}>
+                  <input type="checkbox" checked={qaLogsGaveUpOnly} onChange={e => setQaLogsGaveUpOnly(e.target.checked)} />
+                  "확인하지 못했습니다"류 답변만
+                </label>
+                <button className="btn btn-secondary" onClick={fetchQaLogs} disabled={qaLogsLoading}>검색</button>
+              </div>
+              <table className="bo-table">
+                <thead>
+                  <tr>
+                    <th>시각</th>
+                    <th>경로</th>
+                    <th>질문</th>
+                    <th>라우팅</th>
+                    <th>상태</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {qaLogs.length === 0 && !qaLogsLoading && (
+                    <tr><td colSpan={5} className="text-muted" style={{ textAlign: 'center', padding: '20px' }}>표시할 로그가 없습니다.</td></tr>
+                  )}
+                  {qaLogs.map((log: any) => (
+                    <Fragment key={log.id}>
+                      <tr
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setQaLogsExpanded(qaLogsExpanded === String(log.id) ? null : String(log.id))}
+                      >
+                        <td style={{ whiteSpace: 'nowrap', fontSize: '12px' }}>{new Date(log.created_at).toLocaleString('ko-KR')}</td>
+                        <td><span className="badge badge-info">{log.endpoint}</span></td>
+                        <td>{log.query}</td>
+                        <td>{log.route || '-'}</td>
+                        <td>
+                          {log.gave_up && <span className="badge badge-danger">포기응답</span>}
+                          {log.error && <span className="badge badge-danger">에러</span>}
+                          {Array.isArray(log.self_check_warnings) && log.self_check_warnings.length > 0 && (
+                            <span className="badge badge-danger">자기검증경고</span>
+                          )}
+                          {!log.gave_up && !log.error && (!log.self_check_warnings || log.self_check_warnings.length === 0) && (
+                            <span className="badge badge-success">정상</span>
+                          )}
+                        </td>
+                      </tr>
+                      {qaLogsExpanded === String(log.id) && (
+                        <tr>
+                          <td colSpan={5} style={{ background: '#fafafa', fontSize: '13px' }}>
+                            <strong>답변:</strong> {log.answer || '(없음)'}
+                            {Array.isArray(log.self_check_warnings) && log.self_check_warnings.length > 0 && (
+                              <div style={{ marginTop: '6px', color: '#d92632' }}>
+                                <strong>자기검증 경고:</strong> {log.self_check_warnings.join(' / ')}
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      )}
+                    </Fragment>
                   ))}
                 </tbody>
               </table>
