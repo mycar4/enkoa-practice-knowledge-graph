@@ -2477,6 +2477,7 @@ class ArtAdmissionService:
                        sch.application_start AS application_start, sch.application_end AS application_end,
                        sch.exam_date AS exam_date_raw, sch.result_date AS result_date,
                        c.cutoff_grade_estimate AS cutoff_grade_estimate, c.source_url AS cutoff_source_url
+                ORDER BY university, department, track_name
             """).data()
         for r in rows:
             r["exam_dates"] = _extract_dates(r.get("exam_date_raw"))
