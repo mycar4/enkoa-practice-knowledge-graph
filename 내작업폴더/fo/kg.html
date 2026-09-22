@@ -72,19 +72,6 @@
 <option value="">불러오는 중...</option>
 </select>
 </div>
-<!-- 2026-09-18: "1층(공식 팩트)만 나오고 2층(AI가 원문에서 뽑은 개체)은 왜 안
-     보이냐"는 지적 반영 - 대학 하나를 특정했을 때만 켤 수 있게 한다(전체 보기에서
-     켜면 개체가 5천개+라 감당 안 됨). 점선으로 표시되는 게 "실제 그래프 관계가
-     아니라 이름이 같아서 이어준 것"이라는 걸 라벨에서부터 명시한다. -->
-<label class="inline-flex items-center gap-unit-2xs font-body-sm text-body-sm text-on-surface-variant">
-<input type="checkbox" id="kgShowEntityLayer"/>AI 의미망(원문에서 뽑은 개체) 함께 보기 - 대학을 하나 선택했을 때만 가능, 점선은 이름 일치 기반 연결
-</label>
-<!-- 2026-09-18: "이 보라색 레이어를 학생/학부모가 보고 뭘 판단하라는 거냐"는
-     지적 반영 - 아직은 원문에 뭐가 같이 언급되는지 훑어보는 참고 자료 + 내부
-     QC(오염 점검)용이지, 검증된 추천 기준이 아니라는 걸 명시한다. -->
-<p class="font-body-sm text-body-sm text-tertiary mt-unit-2xs flex items-center gap-unit-2xs">
-<span class="material-symbols-outlined text-[16px]">build</span>이 레이어는 아직 QC(품질검수)·참고용입니다. 검증된 실기전형 정보는 학과 카드의 "실기종목"을 기준으로 판단하세요.
-</p>
 <!-- 대학명은 몰라도 학과명(예: "시각디자인학과")은 알고 있는 경우를 위한 검색 -
      "대학지도에도 학과로 검색하는 게 있어야 한다"는 피드백 반영. 결과를 클릭하면
      해당 대학으로 바로 이동한다. -->
@@ -196,12 +183,8 @@ function currentDepth() {
 // 보여줄지만 필터링한다.
 function filterByDepth(graphData, depth) {
   const maxLevel = DEPTH_ORDER[depth];
-  // 2026-09-18: entity_* 그룹(2층 비정형 의미망, /kg-graph/combined 전용)은
-  // "대학만/학과까지/전형까지" 깊이 개념과 무관하다 - DEPTH_ORDER에 없어서
-  // undefined <= maxLevel이 항상 false가 돼 무조건 걸러지던 버그. 이 필터는
-  // 1층(university/department/track) 깊이만 판단하고, entity 노드는 항상 통과시킨다.
   const keptIds = new Set(graphData.nodes
-    .filter(n => n.group.startsWith("entity") || DEPTH_ORDER[n.group] <= maxLevel)
+    .filter(n => DEPTH_ORDER[n.group] <= maxLevel)
     .map(n => n.id));
   return {
     nodes: graphData.nodes.filter(n => keptIds.has(n.id)),
@@ -257,19 +240,12 @@ const TAG_COLORS = {
 
 function renderGraph(graphData) {
   const container = document.getElementById("kgNetwork");
-  // 2026-09-18: entity_* 그룹(2층 비정형 의미망) 색상 추가 - 1층(파랑/빨강/검정)과
-  // 확실히 구분되는 보라색 계열로 통일하고, llm_discovered(사전에 없던 신규 발견
-  // 개체)만 더 밝은 보라로 살짝 구분한다.
   const colorByGroup = {
     topic: "#0a7d3c", tracktype: "#0a7d3c", admissiontype: "#0a7d3c",
     university: "#0031ab", department: "#b72119", track: "#1c1b1b",
-    entity_university: "#6b3fa0", entity_department: "#6b3fa0", entity_exam_type: "#6b3fa0",
-    entity_material: "#6b3fa0", entity_other: "#6b3fa0", entity_llm_new: "#a05fd6",
   };
   const sizeByGroup = {
     topic: 30, tracktype: 30, admissiontype: 30, university: 26, department: 18, track: 12,
-    entity_university: 14, entity_department: 14, entity_exam_type: 10, entity_material: 10,
-    entity_other: 10, entity_llm_new: 10,
   };
   // 2026-09-15: "노드 크기가 전부 똑같다"는 피드백 - 학과가 1개인 대학이나
   // 학과가 20개인 대학이나 똑같은 크기로 나오는 게 이상하다는 지적을 받았다.
@@ -329,10 +305,8 @@ function renderGraph(graphData) {
   // 이 카운트는 캠퍼스가 다르면(중앙대 서울/다빈치 등) 별개 노드로 세므로,
   // 홈 화면의 "고유 대학명" 기준 개수(예: 54개)와 다를 수 있다 - 버그가 아니라
   // 셀 기준 차이라는 걸 문구로 명시한다(사용자 문의로 확인된 혼동 포인트).
-  const entityCount = graphData.nodes.filter(n => n.group.startsWith("entity")).length;
   document.getElementById("kgTrackCount").textContent =
-    `대학 ${graphData.nodes.filter(n => n.group === "university").length}개(캠퍼스구분) · 학과 ${graphData.nodes.filter(n => n.group === "department").length}개 · 전형 ${graphData.nodes.filter(n => n.group === "track").length}개`
-    + (entityCount ? ` · AI 개체 ${entityCount}개` : "");
+    `대학 ${graphData.nodes.filter(n => n.group === "university").length}개(캠퍼스구분) · 학과 ${graphData.nodes.filter(n => n.group === "department").length}개 · 전형 ${graphData.nodes.filter(n => n.group === "track").length}개`;
 
   if (kgNetworkInstance) kgNetworkInstance.destroy();
   kgNetworkInstance = new vis.Network(container, { nodes, edges }, {
@@ -350,9 +324,6 @@ function renderGraph(graphData) {
     const groupLabel = {
       topic: "실기종목", tracktype: "전형종류", admissiontype: "전형 유형", university: "대학",
       department: "학과", track: "전형",
-      entity_university: "AI 개체(대학)", entity_department: "AI 개체(학과)",
-      entity_exam_type: "AI 개체(실기종목)", entity_material: "AI 개체(재료)",
-      entity_other: "AI 개체(기타)", entity_llm_new: "AI 개체(신규 발견)",
     }[node.group] || "";
     document.getElementById("kgDetailTitle").textContent = `${groupLabel} · ${node.label}`;
     let body = "연결된 하위 항목을 펼쳐서 구조를 확인해보세요.";
@@ -400,40 +371,10 @@ function loadGraph(body) {
   });
 }
 
-// 2026-09-18: [1층+2층 연계 보기] combined 엔드포인트는 body가 아니라 GET 쿼리라
-// loadGraph(POST 전용)를 그대로 재사용할 수 없어 별도 함수로 분리한다. 실패해도
-// (아직 이 학과들이 개체 추출 대상이 아닐 수 있음) 1층만이라도 보여준다 - 조용히
-// 폴백, 에러로 막지 않음.
-function loadCombinedGraph(university) {
-  const errEl = document.getElementById("kgError");
-  errEl.classList.add("hidden");
-  document.getElementById("kgDetailPanel").classList.add("hidden");
-  fetch(window.API_BASE_URL + "/kg-graph/combined?university=" + encodeURIComponent(university))
-    .then(r => r.json())
-    .then(graphData => {
-      if (!graphData.nodes || !graphData.nodes.length) {
-        errEl.textContent = "조건에 맞는 데이터를 찾을 수 없습니다.";
-        errEl.classList.remove("hidden");
-        return;
-      }
-      kgFullGraph = graphData;
-      applyDepthAndRender();
-    })
-    .catch(() => {
-      errEl.textContent = "지도를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.";
-      errEl.classList.remove("hidden");
-    });
-}
-
 function loadCurrentSelection() {
   const grades = getSavedGrades();
   if (kgActiveTab === "university") {
     const university = document.getElementById("kgUnivSelect").value;
-    const showEntityLayer = document.getElementById("kgShowEntityLayer").checked;
-    if (university && showEntityLayer) {
-      loadCombinedGraph(university);
-      return;
-    }
     loadGraph({ university: university || null, grades });
   } else if (kgActiveTab === "topic") {
     const topic = document.getElementById("kgTopicSelect").value;
@@ -546,7 +487,6 @@ fetch(window.API_BASE_URL + "/universities").then(r => r.json()).then(list => {
     select.value = "";
   }
   select.addEventListener("change", loadCurrentSelection);
-  document.getElementById("kgShowEntityLayer").addEventListener("change", loadCurrentSelection);
   if (names.length) loadCurrentSelection();
 
   // 학과로 찾기 - /universities가 이미 대학마다 departments 배열을 내려주므로
