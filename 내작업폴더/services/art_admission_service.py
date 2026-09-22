@@ -2926,6 +2926,7 @@ class ArtAdmissionService:
                 RETURN node.university AS university, node.chunk_index AS chunk_index, node.text AS text,
                        node.page_start AS page_start, node.page_end AS page_end,
                        node.admission_year AS admission_year, score AS vec_score
+                ORDER BY score DESC
                 LIMIT $candidate_pool
             """, pool=pool, candidate_pool=candidate_pool, vec=query_vec, universities=universities).data()
 
@@ -2935,26 +2936,36 @@ class ArtAdmissionService:
                 RETURN node.university AS university, node.chunk_index AS chunk_index, node.text AS text,
                        node.page_start AS page_start, node.page_end AS page_end,
                        node.admission_year AS admission_year, score AS kw_score
+                ORDER BY score DESC
                 LIMIT $pool
             """, q=query, pool=candidate_pool, universities=universities).data()
 
-        max_vec = max((r["vec_score"] for r in vec_rows), default=1.0) or 1.0
-        max_kw = max((r["kw_score"] for r in kw_rows), default=1.0) or 1.0
+        # 2026-09-22 [RRF 도입]: 실측(day47 A/B, 홍익대 9개 실질문 기준) 결과
+        # 기존 가중합(0.7벡터+0.3키워드)의 정답 평균 순위 3.00 -> RRF 2.67로 개선
+        # (HyDE는 같은 실측에서 오히려 2.89->4.67로 악화돼 기각). RRF는 정규화된
+        # 점수가 아니라 "각 목록에서 몇 등이었는지"만 쓰므로, 벡터/키워드 점수의
+        # 절대 스케일이 서로 달라도(정규화 왜곡 없이) 안정적으로 합쳐진다.
+        # k=60은 RRF 원 논문(Cormack et al. 2009)의 표준값.
+        _RRF_K = 60
+        vec_rank = {(r["university"], r["chunk_index"]): i for i, r in enumerate(vec_rows, 1)}
+        kw_rank = {(r["university"], r["chunk_index"]): i for i, r in enumerate(kw_rows, 1)}
 
         merged: Dict[tuple, Dict[str, Any]] = {}
         for r in vec_rows:
             key = (r["university"], r["chunk_index"])
-            merged[key] = {**r, "vec_score_norm": r["vec_score"] / max_vec, "kw_score_norm": 0.0}
+            merged[key] = {**r}
         for r in kw_rows:
             key = (r["university"], r["chunk_index"])
-            if key in merged:
-                merged[key]["kw_score_norm"] = r["kw_score"] / max_kw
-            else:
-                merged[key] = {**r, "vec_score_norm": 0.0, "kw_score_norm": r["kw_score"] / max_kw}
+            if key not in merged:
+                merged[key] = {**r}
 
         candidates = list(merged.values())
         for c in candidates:
-            c["fusion_score"] = 0.7 * c["vec_score_norm"] + 0.3 * c["kw_score_norm"]
+            key = (c["university"], c["chunk_index"])
+            c["fusion_score"] = (
+                1 / (_RRF_K + vec_rank.get(key, 10_000))
+                + 1 / (_RRF_K + kw_rank.get(key, 10_000))
+            )
         candidates.sort(key=lambda c: c["fusion_score"], reverse=True)
         candidates = candidates[:candidate_pool]
 
@@ -3017,6 +3028,7 @@ class ArtAdmissionService:
                 RETURN node.university AS university, node.source_file AS source_file,
                        node.parent_chunk_index AS parent_chunk_index, node.child_index AS child_index,
                        node.text AS text, score AS vec_score
+                ORDER BY score DESC
                 LIMIT $candidate_pool
             """, pool=pool, candidate_pool=candidate_pool, vec=query_vec, universities=universities).data()
 
@@ -3026,29 +3038,36 @@ class ArtAdmissionService:
                 RETURN node.university AS university, node.source_file AS source_file,
                        node.parent_chunk_index AS parent_chunk_index, node.child_index AS child_index,
                        node.text AS text, score AS kw_score
+                ORDER BY score DESC
                 LIMIT $pool
             """, q=query, pool=candidate_pool, universities=universities).data()
 
         if not vec_rows and not kw_rows:
             return []
 
-        max_vec = max((r["vec_score"] for r in vec_rows), default=1.0) or 1.0
-        max_kw = max((r["kw_score"] for r in kw_rows), default=1.0) or 1.0
+        # 2026-09-22 [RRF 도입] - hybrid_search()와 동일한 실측 근거(day47 A/B).
+        _RRF_K = 60
+
+        def _key(r):
+            return (r["university"], r["source_file"], r["parent_chunk_index"], r["child_index"])
+
+        vec_rank = {_key(r): i for i, r in enumerate(vec_rows, 1)}
+        kw_rank = {_key(r): i for i, r in enumerate(kw_rows, 1)}
 
         merged: Dict[tuple, Dict[str, Any]] = {}
         for r in vec_rows:
-            key = (r["university"], r["source_file"], r["parent_chunk_index"], r["child_index"])
-            merged[key] = {**r, "vec_score_norm": r["vec_score"] / max_vec, "kw_score_norm": 0.0}
+            merged[_key(r)] = {**r}
         for r in kw_rows:
-            key = (r["university"], r["source_file"], r["parent_chunk_index"], r["child_index"])
-            if key in merged:
-                merged[key]["kw_score_norm"] = r["kw_score"] / max_kw
-            else:
-                merged[key] = {**r, "vec_score_norm": 0.0, "kw_score_norm": r["kw_score"] / max_kw}
+            if _key(r) not in merged:
+                merged[_key(r)] = {**r}
 
         child_candidates = list(merged.values())
         for c in child_candidates:
-            c["fusion_score"] = 0.7 * c["vec_score_norm"] + 0.3 * c["kw_score_norm"]
+            key = _key(c)
+            c["fusion_score"] = (
+                1 / (_RRF_K + vec_rank.get(key, 10_000))
+                + 1 / (_RRF_K + kw_rank.get(key, 10_000))
+            )
         child_candidates.sort(key=lambda c: c["fusion_score"], reverse=True)
         child_candidates = child_candidates[:candidate_pool]
 
