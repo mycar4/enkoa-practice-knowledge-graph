@@ -482,11 +482,44 @@ _DOC_TYPE_TRIGGER_WORDS = ["자기소개서", "미술활동보고서", "포트�
 _FO_BASE_URL = os.getenv("FO_PUBLIC_BASE_URL", "https://appartreadykr.vercel.app")
 
 
-def _is_document_writing_help_query(query: str) -> bool:
+def _is_document_writing_help_query_keyword(query: str) -> bool:
+    """원래 방식(키워드 목록) - Jev 호출이 실패하면(키 없음/네트워크 오류/신생
+    서비스 장애 등) 이 폴백으로 자동 전환된다."""
     return (
         any(w in query for w in _DOC_TYPE_TRIGGER_WORDS)
         and any(s in query for s in _DOC_WRITING_HELP_SIGNALS)
     )
+
+
+# 2026-09-22 [day47 Jev 도입]: 위 키워드 방식은 "자기소개서 대필하면 걸리나요?",
+# "미술활동보고서에 인적사항 넣으면 감점되나요?"처럼 목록에 없는 표현을 계속
+# 놓쳤다(실측: 8문항 중 4문항 오탐/누락). TypeSafe AI의 Jev(Noul - 예/아니요
+# 확률 판단)로 교체해서 실측 8/8 정확도로 개선 확인. 다만 Jev는 출시 1주일 된
+# 신생 서비스라 가격/SLA가 아직 불명(2026-09-22 기준) - 실패해도 안전하게
+# 키워드 방식으로 자동 폴백한다(예외 삼키고 조용히 대체, 사용자에게 영향 없음).
+_JEV_TIMEOUT_SECONDS = 5.0
+
+
+def _is_document_writing_help_query(query: str) -> bool:
+    try:
+        from typesafe_sdk import Noul, TypeSafeClient
+        client = TypeSafeClient(timeout=_JEV_TIMEOUT_SECONDS)
+        model = os.getenv("TYPESAFE_MODEL", "jev-1.13.0")
+        resp = client.system_one(
+            model=model, state=query,
+            questions={
+                "is_writing_help": Noul(
+                    instructions=(
+                        "이 질문이 '서류(자기소개서/미술활동보고서/포트폴리오 등) 작성 "
+                        "방법이나 작성 규정(표절, 대필, 분량, 인적사항 노출, 실명 기재 등)'에 "
+                        "관한 것인가요? 단순 사실 조회(전형/일정/마감일/절차 등)는 아니오입니다."
+                    ),
+                ),
+            },
+        )
+        return resp.answers["is_writing_help"].noul >= 0.5
+    except Exception:
+        return _is_document_writing_help_query_keyword(query)
 
 
 def route_and_answer(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dict[str, Any]:
