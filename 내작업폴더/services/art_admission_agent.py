@@ -68,12 +68,48 @@ _COMPOUND_SIGNAL_WORDS = [
 ]
 
 
-def _is_compound_query(query: str, all_universities: List[str]) -> bool:
+def _is_compound_query_keyword(query: str, all_universities: List[str]) -> bool:
+    """원래 방식(신호어 목록) - Jev 실패 시 이 폴백으로 전환된다. 2026-09-14/18/21
+    세 차례에 걸쳐 "이 표현이 목록에 없어서 도구 없는 경로로 샜다"는 실사용
+    버그가 반복 발견됐다(성적추천/랭킹/유사학과/전체요약 각각 한 번씩) - 목록을
+    무한히 늘리는 대신(대증요법) Jev로 근본 교체한다."""
     if any(w in query for w in _COMPOUND_SIGNAL_WORDS):
         return True
     from services.art_admission_service import resolve_university_mentions_detailed
     detail = resolve_university_mentions_detailed(query, all_universities)
     return len(detail["universities"]) >= 2
+
+
+# 2026-09-22 day47 Jev 도입: 실측(6문항, 과거 버그 3건과 같은 카테고리의 새
+# 표현으로 재구성) 결과 키워드 방식 2/6 -> Jev 6/6로 개선. "여러 대학 이름이
+# 2개 이상 언급됨"은 판단이 아니라 명백한 사실이라 Jev를 거칠 필요가 없어
+# 그대로 유지하고, "도구가 필요한 질문 유형인가"라는 애매한 판단만 Jev로 대체한다.
+def _is_compound_query(query: str, all_universities: List[str]) -> bool:
+    from services.art_admission_service import resolve_university_mentions_detailed
+    detail = resolve_university_mentions_detailed(query, all_universities)
+    if len(detail["universities"]) >= 2:
+        return True
+    try:
+        from typesafe_sdk import Noul, TypeSafeClient
+        import os
+        client = TypeSafeClient(timeout=5.0)
+        model = os.getenv("TYPESAFE_MODEL", "jev-1.13.0")
+        resp = client.system_one(
+            model=model, state=query,
+            questions={
+                "needs_tool": Noul(
+                    instructions=(
+                        "이 질문에 답하려면 다음 중 하나 이상의 '계산/비교/추천/랭킹/요약 "
+                        "도구'가 필요한가요: 성적 기반 지원 추천, 여러 전형 비교나 일정 "
+                        "충돌 확인, 경쟁률/순위 집계, 비슷한 학과 찾기, 전체 절차 요약. "
+                        "특정 사실 하나만 묻는 단순 조회는 '아니오'입니다."
+                    ),
+                ),
+            },
+        )
+        return resp.answers["needs_tool"].noul >= 0.5
+    except Exception:
+        return _is_compound_query_keyword(query, all_universities)
 
 _SYSTEM_PROMPT = """당신은 "미술 실기 입시 도우미"의 에이전트입니다. 학생·학원장·학부모의
 질문 하나에 대해, 아래 도구들을 필요한 만큼 여러 번, 필요한 순서로 호출해서 답하십시오.
