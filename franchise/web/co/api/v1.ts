@@ -375,10 +375,20 @@ export default async function handler(req: any, res: any) {
         return res.status(resp.status).json({ policies: Array.isArray(data) ? data : [], data });
       }
       if (method === "POST") {
+        // 2026-09-24 코드 감사(Antigravity)로 발견: "policies"가 전역 인증
+        // 화이트리스트에 있어(GET 공개 조회 목적) POST(동의 기록)까지 게이트를
+        // 안 거쳤고, 요청 바디의 user_id를 검증 없이 그대로 저장했다 - 누구든
+        // 타인의 user_id로 허위 "정책 동의" 기록을 남길 수 있는 구조였다.
+        // GET은 여전히 공개로 두되, POST만 별도로 세션을 검증하고 user_id는
+        // 요청 바디를 신뢰하지 않고 검증된 세션값으로 강제 치환한다.
+        const authedUserId = await getAuthedUserId(req);
+        if (!authedUserId) {
+          return res.status(401).json({ error: "로그인이 필요합니다 - 정책 동의는 본인 계정으로만 기록할 수 있습니다." });
+        }
         const body = req.body || {};
         const resp = await supabaseFetch("policy_agreements", {
           method: "POST",
-          body: JSON.stringify(body)
+          body: JSON.stringify({ ...body, user_id: authedUserId })
         });
         const data = await resp.json();
         return res.status(resp.ok ? 201 : resp.status).json(data);
@@ -624,12 +634,24 @@ export default async function handler(req: any, res: any) {
     }
 
     if (routePath.startsWith("co/students/")) {
+      // 2026-09-24 코드 감사(Antigravity)로 발견: 이 쪽만 tenant_id 필터가 없어서
+      // user_id만 맞으면 다른 학원(테넌트) 소속 학생도 PATCH/DELETE할 수 있었다
+      // (co/students GET은 이미 tenant_id로 스코핑돼 있었는데 이 라우트만 빠짐 -
+      // CRITICAL IDOR). fo/grade-records의 PATCH-primary/DELETE와 동일한 패턴으로,
+      // tenant_id까지 필터에 넣어 남의 학원 학생 id를 넣으면 0건 매칭돼 아무 일도
+      // 안 일어나게 하고, 실제로 몇 건이 바뀌었는지(Prefer: return=representation)
+      // 확인해서 0건이면 무조건 "success"를 돌려주지 않고 404로 명확히 실패 처리한다.
       const studentId = routePath.replace("co/students/", "");
-      const resp = await supabaseFetch(`student_profiles?user_id=eq.${studentId}`, {
+      const tenantId = await getCurrentTenantId(req);
+      const resp = await supabaseFetch(`student_profiles?user_id=eq.${studentId}&tenant_id=eq.${tenantId}`, {
         method: method === "DELETE" ? "DELETE" : "PATCH",
         body: method === "DELETE" ? undefined : JSON.stringify(req.body || {})
       });
       const data = await resp.json();
+      if (!Array.isArray(data) || data.length === 0) {
+        return res.status(404).json({ error: "수정/삭제할 권한이 없거나 존재하지 않는 학생입니다." });
+      }
+      await logAudit(req, method === "DELETE" ? "STUDENT_DELETED" : "STUDENT_UPDATED", studentId, { tenantId });
       return res.status(resp.status).json(data);
     }
 
