@@ -3511,35 +3511,49 @@ class ArtAdmissionService:
                 "note": "자기소개서/활동보고서는 보통 항목(활동)마다 글자 수 제한이 다릅니다(예: 교과활동 600자, 비교과활동 100자 등 - 실제로 실측 확인됨). 지금 붙여넣은 전체 글 길이를 이 숫자들과 단순 비교하는 건 부정확하므로 통과/실패를 판정하지 않습니다. 항목별로 나눠서 직접 확인하거나 규정 원문을 참고하세요.",
             })
 
-        # 2) 블라인드 평가 위반 의심 - 이 학교 발췌에 실제로 "블라인드" 규정이
-        # 있을 때만 검사한다.
+        # 2) 개인식별정보 감지 - 2026-09-24 GPT QC 재검수 발견: 예전엔 "이 학교
+        # 발췌에 '블라인드'라는 단어가 실제로 있을 때만" 검사해서, university를
+        # 안 지정하거나(예: /review-chat) 그 학교 발췌에 우연히 그 단어가 없으면
+        # 검사 자체가 통째로 스킵돼 fact_checks.checks가 항상 빈 배열이었다.
+        # "이 학교가 공식적으로 블라인드 평가를 한다고 확정할 수 있는가"와 "이
+        # 글에 개인식별정보로 보이는 표현이 있는가"는 서로 다른 질문이다 - 후자는
+        # 학교 규정 확인 여부와 무관하게 항상 유의미한 신호(실제 입시 평가는
+        # 블라인드로 진행되는 경우가 많아, 어느 학교든 이런 정보는 빼는 게
+        # 안전함)이므로 university 지정 여부와 관계없이 항상 스캔한다. 다만
+        # "이 학교 규정 위반"이라고 확정하는 문구는 blind_rule_present가 실제로
+        # 있을 때만 쓰고, 없으면 "예방적 권고"로 톤을 낮춘다(§근거 없는 확정
+        # 금지 원칙은 유지).
         blind_rule_present = any("블라인드" in (r.get("text") or "") for r in doc_rules)
-        if blind_rule_present:
-            suspects = []
-            for label, pattern in (
-                ("전화번호로 추정되는 문자열", self._PHONE_PATTERN),
-                ("주민등록번호로 추정되는 문자열", self._RRN_PATTERN),
-                ("이메일 주소", self._EMAIL_PATTERN),
-                ("특정 학교명으로 추정되는 표현", self._SCHOOL_NAME_PATTERN),
-            ):
-                found = sorted(set(pattern.findall(text)))
-                if found:
-                    suspects.append({"label": label, "matches": found[:5]})
-            # 정규식이 못 잡는 산문형 식별정보(영문혼용/약칭 학교명, 지도교사 실명,
-            # 구체적 수상경력)를 Jev로 보완 검사 - 정규식 결과를 대체하지 않고
-            # 합집합으로만 추가한다(2026-09-22 A/B: 정규식 단독 5/9 -> 보완 9/9).
-            jev_flagged = self._jev_detects_identifying_info(text)
-            if jev_flagged and not suspects:
-                suspects.append({
-                    "label": "산문형 식별정보로 의심됨(Jev 판정 - 실명/학교명/지도교사/구체적 수상경력 등)",
-                    "matches": [],
-                })
+        suspects = []
+        for label, pattern in (
+            ("전화번호로 추정되는 문자열", self._PHONE_PATTERN),
+            ("주민등록번호로 추정되는 문자열", self._RRN_PATTERN),
+            ("이메일 주소", self._EMAIL_PATTERN),
+            ("특정 학교명으로 추정되는 표현", self._SCHOOL_NAME_PATTERN),
+        ):
+            found = sorted(set(pattern.findall(text)))
+            if found:
+                suspects.append({"label": label, "matches": found[:5]})
+        # 정규식이 못 잡는 산문형 식별정보(영문혼용/약칭 학교명, 지도교사 실명,
+        # 구체적 수상경력)를 Jev로 보완 검사 - 정규식 결과를 대체하지 않고
+        # 합집합으로만 추가한다(2026-09-22 A/B: 정규식 단독 5/9 -> 보완 9/9).
+        jev_flagged = self._jev_detects_identifying_info(text)
+        if jev_flagged and not suspects:
+            suspects.append({
+                "label": "산문형 식별정보로 의심됨(Jev 판정 - 실명/학교명/지도교사/구체적 수상경력 등)",
+                "matches": [],
+            })
+        if suspects or blind_rule_present:
             checks.append({
                 "type": "blind_review",
-                "label": "블라인드 평가 위반 의심 개인식별정보",
+                "label": "블라인드 평가 위반 의심 개인식별정보" if blind_rule_present else "개인식별정보 감지(예방적 권고)",
                 "passed": not suspects,
                 "suspects": suspects,
-                "note": "정규식 패턴 매칭 결과이며 확정 판정이 아닙니다. 실제로 개인을 식별할 수 있는 내용인지는 최종적으로 직접 확인하세요.",
+                "note": (
+                    "정규식 패턴 매칭 결과이며 확정 판정이 아닙니다. 실제로 개인을 식별할 수 있는 내용인지는 최종적으로 직접 확인하세요."
+                    if blind_rule_present else
+                    "이 학교의 블라인드 평가 규정 원문은 확인되지 않았지만, 실제 입시 평가가 블라인드로 진행되는 경우가 많으므로 제출 전 이런 표현은 빼는 것을 권장합니다."
+                ),
             })
 
         return {

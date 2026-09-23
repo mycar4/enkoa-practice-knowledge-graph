@@ -595,6 +595,33 @@ def test_run_agent_compat_search_does_not_raise_unboundlocalerror():
     )
 
 
+def test_pii_scan_runs_without_university_specified():
+    """[유료 - Jev 실호출, ci_quality_gate 비편입] university/doc_rules가 없어도
+    (예: /review-chat처럼 학교를 안 지정한 호출) 개인식별정보 스캔 자체는
+    수행돼야 한다.
+
+    회귀 대상(2026-09-24 GPT QC 재검수): run_document_fact_checks()가 "이 학교
+    발췌에 '블라인드'라는 단어가 실제로 있을 때만" PII를 검사해서, university를
+    안 지정한 호출(doc_rules=[])에서는 fact_checks.checks가 항상 빈 배열이었다
+    - 실명/학교명이 그대로 있어도 아무 경고 없이 통과됐다. university 지정
+    여부와 무관하게 PII 검사 자체는 항상 돌고, 학교 규정이 확인 안 됐을 때는
+    "예방적 권고" 톤으로만 낮추도록 수정했다.
+    """
+    svc = _svc()
+    text_with_pii = "저는 대원고등학교를 졸업한 지원자이고, 지도교사 이수진 선생님의 도움을 받았습니다."
+    result = svc.run_document_fact_checks(text_with_pii, doc_rules=[])
+    blind_checks = [c for c in result["checks"] if c.get("type") == "blind_review"]
+    assert blind_checks, "university 미지정 상태에서 PII 검사 자체가 스킵됐습니다(빈 checks)"
+    assert blind_checks[0]["passed"] is False, "실명/학교명이 있는데 통과(passed=True) 처리됐습니다"
+    assert blind_checks[0]["suspects"], "개인식별정보가 감지됐는데 suspects가 비어있습니다"
+
+    # 개인식별정보가 전혀 없는 정상 텍스트는 오탐하면 안 된다(과잉탐지 방지)
+    clean_text = "저는 미술 실기를 준비하며 소묘와 수채화를 꾸준히 연습해왔습니다."
+    clean_result = svc.run_document_fact_checks(clean_text, doc_rules=[])
+    clean_blind_checks = [c for c in clean_result["checks"] if c.get("type") == "blind_review"]
+    assert not clean_blind_checks, f"개인식별정보가 없는데 blind_review 경고가 붙었습니다(과잉탐지): {clean_blind_checks}"
+
+
 if __name__ == "__main__":
     for fn in (
         test_topic_narrowing_keeps_every_matched_track,
