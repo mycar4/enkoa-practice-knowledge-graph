@@ -994,27 +994,31 @@ def _classify_route(
         }
 
 
+# 2026-09-23 GPT/Antigravity 고객경험 QC 양쪽에서 독립적으로 발견: "고맙다 도움
+# 많이 됐어" 같은 순수 감사·마무리 인사가 SIMPLE_GRAPH로 흘러들어가는데, 질문
+# 자체에 실기유형/대학명 키워드가 없으니 qa_pipeline이 아무 관련 없는 기본
+# 컨텍스트(예: 경기대학교 트랙들)를 붙잡고 "출처:"로 인용해버리는 노이즈가
+# 있었다. 정보 요청이 전혀 없는 순수 인사는 도구/LLM을 거치지 않고 짧게 답한다 -
+# 실제 질문과 섞여 있을 수 있으니 아주 짧은 문장에서만 적용한다. 모듈 레벨로
+# 빼서(원래 route_and_answer 안의 지역 변수였음) DB/LLM 호출 없이 회귀 테스트
+# 가능하게 한다(내작업폴더/CLAUDE.md 1번 규칙 - 버그 수정은 회귀 테스트와 함께).
+_GRATITUDE_ONLY_PATTERN = re.compile(
+    r"^(아\s*)?(정말\s*|너무\s*|진짜\s*)?(고맙|감사|고마워|고마웠|thanks|thank you)"
+    r"[\w\s!.,~ㅋㅎㅠㅜ]{0,20}$", re.IGNORECASE,
+)
+
+
+def is_pure_gratitude_message(query: str) -> bool:
+    """정보 요청이 없는 순수 감사·마무리 인사인지 판정한다(도구/LLM 호출 없이 무료)."""
+    q = query.strip()
+    return len(q) <= 30 and bool(_GRATITUDE_ONLY_PATTERN.match(q))
+
+
 def route_and_answer(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dict[str, Any]:
     """day54 질의 라우팅 진입점, 2026-09-23 Jev Choice 라우터 통합. /agent-chat이 이
     함수를 호출한다 - 단순 질의는 기존 /qa 파이프라인으로, 복합 질의(비교·일정충돌·
     여러 학교 동시 언급)만 LangGraph 에이전트로, 서류작성법 질의는 review.html로 보낸다."""
-    svc = _get_service()
-    try:
-        all_universities = sorted({u["university"] for u in svc.list_universities()})
-    except Exception:
-        all_universities = []
-
-    # 2026-09-23 GPT/Antigravity 고객경험 QC 양쪽에서 독립적으로 발견: "고맙다 도움
-    # 많이 됐어" 같은 순수 감사·마무리 인사가 SIMPLE_GRAPH로 흘러들어가는데, 질문
-    # 자체에 실기유형/대학명 키워드가 없으니 qa_pipeline이 아무 관련 없는 기본
-    # 컨텍스트(예: 경기대학교 트랙들)를 붙잡고 "출처:"로 인용해버리는 노이즈가
-    # 있었다. 정보 요청이 전혀 없는 순수 인사는 도구/LLM을 거치지 않고 짧게
-    # 답한다 - 실제 질문과 섞여 있을 수 있으니 아주 짧은 문장에서만 적용한다.
-    _GRATITUDE_ONLY_PATTERN = re.compile(
-        r"^(아\s*)?(정말\s*|너무\s*|진짜\s*)?(고맙|감사|고마워|고마웠|thanks|thank you)"
-        r"[\w\s!.,~ㅋㅎㅠㅜ]{0,20}$", re.IGNORECASE,
-    )
-    if len(query.strip()) <= 30 and _GRATITUDE_ONLY_PATTERN.match(query.strip()):
+    if is_pure_gratitude_message(query):
         return {
             "answer": "도움이 되었다니 다행입니다! 더 궁금한 점이 있으면 언제든 다시 물어봐주세요.",
             "context_tracks": [], "context_compatible_tracks": [],
@@ -1028,6 +1032,12 @@ def route_and_answer(query: str, history: Optional[List[Dict[str, str]]] = None)
                 "result_preview": "순수 감사 인사 감지 - LLM/도구 호출 없이 즉시 답변",
             }],
         }
+
+    svc = _get_service()
+    try:
+        all_universities = sorted({u["university"] for u in svc.list_universities()})
+    except Exception:
+        all_universities = []
 
     # 2026-09-23 실사용 발견: "지금 색인된 대학이 총 몇 곳이야?" 같은 질문이 LLM/Jev
     # 경로(SIMPLE_GRAPH 또는 COMPLEX_TOOL, 라우팅 신뢰도가 0.5 안팎으로 갈릴 만큼
@@ -1117,6 +1127,96 @@ def route_and_answer(query: str, history: Optional[List[Dict[str, str]]] = None)
     return result
 
 
+def extract_grounding_from_tool_result(
+    parsed: Dict[str, Any], all_universities: Sequence[str],
+) -> Dict[str, Any]:
+    """도구 하나가 반환한 JSON 한 건에서 "이 답변이 실제로 어떤 대학/전형을 근거로
+    삼았는지"를 뽑아낸다. run_agent()의 ToolMessage 파싱 루프에서 분리했다
+    (내작업폴더/CLAUDE.md 1번 규칙 - LLM/DB 호출 없이 회귀 테스트 가능하게).
+
+    이 함수가 인식하는 모양을 하나라도 빠뜨리면, 그 도구를 쓴 정상 답변이 화면에
+    "근거를 못 찾았다"고 잘못 표시되거나(그라운딩 누락) 자기검증이 실제로 맞는
+    학교명까지 "환각 의심"으로 오탐한다(그라운딩 오탐) - 오늘 하루에만 get_calendar
+    (school 키), text2cypher_query(가변 키), get_university_info(tracks 키에
+    university 없음) 3개 도구에서 이 종류의 버그가 실측으로 발견됐다. (참고:
+    check_schedule_conflicts처럼 결과에 university 키가 아예 없는 도구는 이
+    함수가 아니라 run_agent()의 tool_calls 인자 스캔으로 별도 처리한다 - 도구를
+    "호출한 인자" 자체가 이미 그 학교를 조회했다는 증거이기 때문.) 도구를 새로
+    추가하거나 반환 모양을 바꿀 때는
+    tests/test_art_admission_context_preservation.py의
+    test_grounding_extraction_known_tool_shapes()에 그 모양을 추가한다.
+
+    반환: {"universities": set, "tracks": list, "compatible": list,
+           "text2cypher_evidence": dict|None}
+    """
+    universities: set = set()
+    tracks: List[Dict[str, Any]] = []
+    compatible: List[Dict[str, Any]] = []
+    text2cypher_evidence = None
+
+    # recommend_by_grades는 "combo", get_competition_rate_ranking은 "ranking" 키를
+    # 쓴다 - "results"/"tracks"만 보던 원래 코드는 이 두 도구가 반환한 학교를 전부
+    # 놓쳐서 정상 답변까지 "환각 의심"으로 오탐했다(2026-09-14 실측 제보).
+    # find_similar_departments는 "similar", find_compatible_exam_tracks는 "compatible",
+    # search_document_details는 "excerpts" 키를 쓴다.
+    for row in (parsed.get("results", []) or parsed.get("tracks", [])
+                or parsed.get("combo", []) or parsed.get("ranking", [])
+                or parsed.get("similar", []) or []):
+        if isinstance(row, dict) and row.get("university"):
+            universities.add(row["university"])
+            tracks.append(row)
+
+    for row in parsed.get("compatible", []) or []:
+        if isinstance(row, dict) and row.get("university"):
+            universities.add(row["university"])
+            tracks.append(row)
+            compatible.append(row)
+
+    for row in parsed.get("excerpts", []) or []:
+        if isinstance(row, dict) and row.get("university"):
+            universities.add(row["university"])
+
+    # get_calendar의 events는 university 키가 아니라 "school"(대학명+학과명을
+    # 합친 라벨)을 쓴다 - 실측 발견: 이 모양을 몰라서 캘린더 도구로 답한 경우
+    # grounded_tracks/grounded_universities가 전부 비었다.
+    for row in parsed.get("events", []) or []:
+        school = row.get("school") if isinstance(row, dict) else None
+        if school:
+            matched = next((name for name in all_universities if name in school), None)
+            if matched:
+                universities.add(matched)
+
+    if parsed.get("university"):
+        universities.add(parsed["university"])
+        # get_university_info는 {"university":..., "tracks":[...]} 모양을 쓰는데
+        # (각 track 행에는 university 키가 없음 - 상위에만 있음) "official_tracks"
+        # 키만 찾던 예전 코드는 이 도구가 가장 자주 쓰이는 도구인데도 grounded_tracks
+        # 패널이 항상 비어 "근거를 못 찾았다"는 오해를 줬다(Antigravity QC 실측 발견).
+        for row in parsed.get("official_tracks") or parsed.get("tracks") or []:
+            if isinstance(row, dict):
+                tracks.append({**row, "university": parsed["university"]})
+
+    if "generated_cypher" in parsed and "error" not in parsed:
+        # text2cypher_query 행은 매번 다른 RETURN 별칭을 쓰므로(university/u.name/
+        # school 등 무엇이든 가능) 고정 키로 못 찾는다. 행 전체를 평문으로 펼쳐서
+        # 실제 대학명 문자열이 등장하는지 대조한다(실측 제보: "7곳 어디지?" 되물음에
+        # text2cypher가 정확히 답했는데도 답변 속 7개 대학 중 5개가 환각 의심으로 뜸).
+        flat_text = json.dumps(parsed.get("rows", []), ensure_ascii=False)
+        for name in all_universities:
+            if name in flat_text:
+                universities.add(name)
+        text2cypher_evidence = {
+            "generated_cypher": parsed.get("generated_cypher"),
+            "rows": parsed.get("rows", [])[:20],
+            "count": parsed.get("count"),
+        }
+
+    return {
+        "universities": universities, "tracks": tracks,
+        "compatible": compatible, "text2cypher_evidence": text2cypher_evidence,
+    }
+
+
 def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dict[str, Any]:
     """질문 하나를 에이전트에게 넘겨, 필요한 도구를 스스로 호출하게 하고 최종 답변과
     "실제로 어떤 도구를 어떤 인자로 불렀는지" 트레이스를 함께 반환한다. 트레이스는
@@ -1199,61 +1299,15 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
                 # 누락돼서 정상 답변까지 "환각 의심"으로 오탐할 수 있다).
                 try:
                     parsed = json.loads(content)
-                    # recommend_by_grades는 "combo"(선택된 조합), get_competition_rate_ranking은
-                    # "ranking" 키를 쓴다 - "results"/"tracks"만 보던 원래 코드는 이 두 도구가
-                    # 반환한 학교를 전부 놓쳐서, 정상 답변까지 "환각 의심"으로 오탐했다
-                    # (2026-09-14 사용자 실측 제보로 발견 - 스크린샷에서 recommend_by_grades가
-                    # 호출됐고 답변의 학교들이 실제로 그 결과 안에 있었는데도 경고가 떴었음).
-                    # find_similar_departments는 "similar" 키, find_compatible_exam_tracks는
-                    # "compatible" 키, search_document_details는 "excerpts" 키를 쓴다 -
-                    # 이 키들을 안 넣으면 해당 도구를 쓴 정상 답변마다 오탐이 재발한다.
-                    for row in (parsed.get("results", []) or parsed.get("tracks", [])
-                                or parsed.get("combo", []) or parsed.get("ranking", [])
-                                or parsed.get("similar", []) or []):
-                        if isinstance(row, dict) and row.get("university"):
-                            grounded_universities.add(row["university"])
-                            _add_grounded_track(row)
-                    for row in parsed.get("compatible", []) or []:
-                        if isinstance(row, dict) and row.get("university"):
-                            grounded_universities.add(row["university"])
-                            _add_grounded_track(row)
-                            context_compatible_tracks.append(row)
-                    for row in parsed.get("excerpts", []) or []:
-                        if isinstance(row, dict) and row.get("university"):
-                            grounded_universities.add(row["university"])
-                    for row in parsed.get("events", []) or []:
-                        school = row.get("school") if isinstance(row, dict) else None
-                        if school:
-                            matched = next((name for name in all_universities if name in school), None)
-                            if matched:
-                                grounded_universities.add(matched)
-                    if parsed.get("university"):
-                        grounded_universities.add(parsed["university"])
-                        # 2026-09-23 실사용 발견(Antigravity QC): get_university_info는
-                        # {"university":..., "tracks":[...]} 모양을 쓰는데(각 track 행에는
-                        # university 키가 없음 - 상위에만 있음), 여기서는 "official_tracks"
-                        # 키만 찾아서 이 도구가 가장 자주 쓰이는 도구인데도 grounded_tracks
-                        # 패널이 항상 비어 "근거를 못 찾았다"는 오해를 줬다. 두 키 모두 처리.
-                        for row in parsed.get("official_tracks") or parsed.get("tracks") or []:
-                            if isinstance(row, dict):
-                                _add_grounded_track({**row, "university": parsed["university"]})
-                    if "generated_cypher" in parsed and "error" not in parsed:
-                        # 2026-09-23 실사용 발견: text2cypher_query 행은 매번 다른 RETURN
-                        # 별칭을 쓰므로(university/u.name/school 등 무엇이든 가능) 고정 키로
-                        # 못 찾는다. 대신 행 전체를 평문으로 펼쳐서 그 안에 실제 대학명
-                        # 문자열이 등장하는지 대조한다 - 자기검증(_self_check)이 이 도구가
-                        # 진짜로 찾아온 학교까지 "환각 의심"으로 오탐하는 걸 막는다(실측
-                        # 제보: "7곳 어디지?" 되물음에 text2cypher가 정확히 답했는데도
-                        # 답변에 나온 7개 대학 중 5개가 전부 환각 의심 경고로 뜸).
-                        flat_text = json.dumps(parsed.get("rows", []), ensure_ascii=False)
-                        for name in all_universities:
-                            if name in flat_text:
-                                grounded_universities.add(name)
-                        text2cypher_evidence.append({
-                            "generated_cypher": parsed.get("generated_cypher"),
-                            "rows": parsed.get("rows", [])[:20],
-                            "count": parsed.get("count"),
-                        })
+                    extracted = extract_grounding_from_tool_result(parsed, all_universities)
+                    grounded_universities |= extracted["universities"]
+                    for row in extracted["tracks"]:
+                        _add_grounded_track(row)
+                    for row in extracted["compatible"]:
+                        _add_grounded_track(row)
+                        context_compatible_tracks.append(row)
+                    if extracted["text2cypher_evidence"] is not None:
+                        text2cypher_evidence.append(extracted["text2cypher_evidence"])
                 except Exception:
                     pass
                 if tool_trace and "result_preview" not in tool_trace[-1]:

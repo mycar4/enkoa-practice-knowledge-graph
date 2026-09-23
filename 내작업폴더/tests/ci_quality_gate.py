@@ -21,6 +21,10 @@ from tests.test_art_admission_context_preservation import (  # noqa: E402
     test_school_specific_query_is_not_narrowed_away,
     test_practical_exam_date_rule_exists_in_prompts,
     test_aggregate_count_uses_full_registry_not_sample,
+    test_gratitude_short_circuit_matches_only_pure_thanks,
+    test_grounding_extraction_known_tool_shapes,
+    test_duplicate_track_name_disambiguation_rule_exists_in_prompts,
+    test_text2cypher_excludes_document_only_tracks_from_practical_ranking,
 )
 from tests.test_art_admission_school_record_calc import (  # noqa: E402
     test_priority_schools_exact_calc_matches_hand_computed,
@@ -86,4 +90,8 @@ if __name__ == "__main__":
     test_school_specific_query_is_not_narrowed_away()
     test_practical_exam_date_rule_exists_in_prompts()
     test_aggregate_count_uses_full_registry_not_sample()
-    print("🎉 CI QUALITY GATE PASSED (무료 회귀 테스트 28건)")
+    test_gratitude_short_circuit_matches_only_pure_thanks()
+    test_grounding_extraction_known_tool_shapes()
+    test_duplicate_track_name_disambiguation_rule_exists_in_prompts()
+    test_text2cypher_excludes_document_only_tracks_from_practical_ranking()
+    print("🎉 CI QUALITY GATE PASSED (무료 회귀 테스트 32건)")
