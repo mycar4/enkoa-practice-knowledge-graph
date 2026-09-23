@@ -3630,9 +3630,16 @@ class ArtAdmissionService:
         prior_year_by_track = self._get_prior_year_results_by_track()
 
         if topic_keywords or material_query:
+            # 2026-09-23 실측 발견(GPT QC): 이 필터 키에 track_name이 빠져 있어서,
+            # 같은 학과 안에 "실기 종목이 맞는 전형"과 "실기 없는 전형"이 함께 있으면
+            # (예: 목원대 미술교육과의 "실기교과전형"은 소묘가 맞지만 "교과전형"은
+            # 비실기 학생부 100%) 학과 단위로만 걸러져서 비실기 전형까지 같이
+            # 통과해버렸다 - "소묘 준비 중"인 학생에게 실기가 아예 없는 전형이
+            # 성적 추천/무충돌 조합에 그대로 섞여 나온 사고. 전형(트랙) 단위로
+            # 걸러야 그 전형 자체가 실제로 실기유형과 일치했는지가 보장된다.
             prep_matches = self.search_tracks_by_prep(topic_keywords=topic_keywords, material_query=material_query or "")
-            allowed_keys = {(r["university"], r.get("campus"), r["department"]) for r in prep_matches}
-            tracks = [t for t in tracks if (t["university"], t.get("campus"), t["department"]) in allowed_keys]
+            allowed_keys = {(r["university"], r.get("campus"), r["department"], r.get("track_name")) for r in prep_matches}
+            tracks = [t for t in tracks if (t["university"], t.get("campus"), t["department"], t.get("track_name")) in allowed_keys]
 
         results = []
         for t in tracks:

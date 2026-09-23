@@ -162,7 +162,13 @@ def similar_departments_batch(req: SimilarDepartmentsBatchRequest):
 def university_detail(university: str, campus: Optional[str] = None):
     svc = get_service()
     detail = svc.get_university_detail(university, campus=campus)
-    if not detail:
+    # 2026-09-23 GPT QC 재검수로 발견: get_university_detail()은 학교를 못 찾아도
+    # 항상 {"official_tracks": [], "estimates_by_track": [], "region":..., "college_type":...}
+    # 형태의 비어있지 않은 dict를 반환한다 - "if not detail"은 dict 자체가 키를 갖고
+    # 있어 항상 False라 이 404 분기가 한 번도 실행될 수 없었다(존재하지 않는
+    # 학교명을 조회해도 HTTP 200 + 빈 목록이 나감). 실제로 데이터가 있는지는
+    # official_tracks가 채워졌는지로 판정해야 한다.
+    if not detail.get("official_tracks"):
         raise HTTPException(status_code=404, detail="해당 학교 데이터를 찾을 수 없습니다.")
     return detail
 
@@ -590,6 +596,17 @@ def review_chat_endpoint(req: ReviewChatRequest):
     )
     if gate_note:
         result["gate_note"] = gate_note
+    # 2026-09-23 GPT QC 발견: /review-document는 fact_checks(PII 블라인드 검사 포함)를
+    # 돌리는데 /review-chat은 아예 빠져 있어서, 대화가 이어지며 사용자가 "다시 써줘"로
+    # 새 텍스트를 붙여도 이 엔드포인트에서는 검사 자체가 한 번도 안 됐다. 최초 첨삭과
+    # 동일한 검사를 여기서도 돌린다 - 이어지는 대화 중 가장 최근 사용자 메시지(재작성
+    # 요청에 새로 붙인 글일 가능성이 높음)와 원본 doc_text를 합쳐서 스캔한다.
+    latest_user_text = next(
+        (m.get("content", "") for m in reversed(req.history) if m.get("role") == "user"), ""
+    )
+    result["fact_checks"] = svc.run_document_fact_checks(
+        f"{req.doc_text}\n{latest_user_text}", doc_rules,
+    )
     return result
 
 

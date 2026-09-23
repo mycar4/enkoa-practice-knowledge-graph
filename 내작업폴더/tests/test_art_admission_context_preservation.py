@@ -433,6 +433,89 @@ def test_self_check_numeric_claims_flags_dates_and_quotas_not_in_context():
     )
 
 
+def test_recommend_universities_topic_filter_is_track_level_not_department_level():
+    """실기종목 필터는 '학과'가 아니라 '전형(트랙)' 단위로 걸려야 한다.
+
+    회귀 대상(2026-09-23 GPT QC 재검수, 어제 fix로 안 잡힌 재발): 목원대학교
+    미술교육과는 트랙이 두 개다 - "실기교과전형"(소묘 실제로 요구, exact match)과
+    "교과전형"(exam_type_name="비실기 (학생부 100%)", 실기 없음). recommend_universities()의
+    topic_keywords 필터가 (university, campus, department) 3개 키로만 걸러서,
+    같은 학과 안에 하나라도 일치하는 트랙이 있으면 그 학과의 다른(실기 없는) 트랙까지
+    같이 통과시켰다 - "소묘 준비 중"인 학생 추천에 실기가 아예 없는 전형이 섞여
+    나온 근본 원인. track_name까지 키에 넣어야 트랙 단위로 정확히 걸러진다.
+    """
+    svc = _svc()
+    grades = [{"subject_group": "국어", "grade": 4, "credit": 4}]
+    results = svc.recommend_universities(grades, topic_keywords=["소묘"])
+    mokwon_academic_record = [
+        r for r in results
+        if r["university"] == "목원대학교" and r["department"] == "미술교육과"
+        and (r.get("exam_type_name") or "").strip() == "비실기 (학생부 100%)"
+    ]
+    assert not mokwon_academic_record, (
+        f"실기 없는 목원대 교과전형이 '소묘' 필터를 통과했습니다: {mokwon_academic_record}"
+    )
+    # 같은 학과의 실제 실기전형(실기교과전형)까지 잘못 걸러지면 안 된다(과잉 필터링 회귀 방지)
+    mokwon_practical = [
+        r for r in results
+        if r["university"] == "목원대학교" and r["department"] == "미술교육과"
+        and "소묘" in (r.get("exam_type_name") or "")
+    ]
+    assert mokwon_practical, "목원대 미술교육과의 진짜 소묘 실기전형까지 걸러졌습니다(과잉 필터링)"
+
+
+def test_university_detail_returns_empty_official_tracks_for_unknown_university():
+    """존재하지 않는 대학을 조회하면 official_tracks가 비어 있어야 한다(API의 404
+    판정 근거).
+
+    회귀 대상(2026-09-23 GPT QC 재검수): api_art_admission.py의 university_detail()이
+    `if not detail`로 404를 판정했는데, get_university_detail()은 학교를 못 찾아도
+    official_tracks/estimates_by_track이 빈 리스트인 채로 다른 키(region, college_type)를
+    가진 non-empty dict를 반환하므로 "if not detail"이 항상 False가 되어 404 분기가
+    한 번도 실행되지 않았다(존재하지 않는 대학도 HTTP 200 + 빈 목록으로 응답).
+    API 레이어는 official_tracks 유무로 404를 판정하도록 고쳤다 - 이 테스트는 그
+    판정 근거가 되는 서비스 레벨 반환값 자체를 검증한다.
+    """
+    svc = _svc()
+    detail = svc.get_university_detail("존재안하는대학교12345")
+    assert detail.get("official_tracks") == [], (
+        f"존재하지 않는 대학인데 official_tracks가 비어있지 않습니다: {detail.get('official_tracks')}"
+    )
+    # 실존 대학은 official_tracks가 채워져야 한다(대조군 - 404 조건이 정상 대학까지
+    # 걸러버리는 과잉탐지 방지)
+    real = svc.get_university_detail("홍익대학교")
+    assert real.get("official_tracks"), "실존 대학인데 official_tracks가 비어있습니다"
+
+
+def test_self_check_practical_date_contradiction_catches_self_contradiction():
+    """'실기 날짜'와 '실기시험 없음'이 같은 답변에 함께 있으면 자기모순으로 잡아야 한다.
+
+    회귀 대상(2026-09-23 GPT QC 재검수): "홍익대학교 미술우수자전형 실기 날짜
+    알려줘" 질문에 "실기시험: 없음 (서류평가 및 면접)"이라고 정직하게 밝히면서도
+    섹션 제목은 여전히 "실기 날짜는 다음과 같습니다"였다. 프롬프트 규칙을 이미
+    명시했는데도 절반만 지키는 패턴이 반복돼 결정론적 검증을 추가했다.
+    """
+    from services.art_admission_llm import _self_check_practical_date_contradiction
+
+    contradictory = (
+        "홍익대학교 미술우수자전형의 실기 날짜는 다음과 같습니다:\n"
+        "- 미술대학: 2026-12-05~06\n"
+        "실기시험: 없음 (서류평가 및 면접)"
+    )
+    issues = _self_check_practical_date_contradiction(contradictory)
+    assert issues, "'실기 날짜'와 '실기시험 없음'이 공존하는 자기모순을 못 잡았습니다"
+
+    # 실기시험이 실제로 있는 전형에 "실기 날짜"를 쓰는 건 정상이므로 오탐하면 안 된다
+    normal = "중앙대학교 공간연출전공의 실기 날짜는 2026-10-11입니다."
+    assert _self_check_practical_date_contradiction(normal) == [], (
+        "정상적인 '실기 날짜' 답변을 잘못 자기모순으로 오탐했습니다"
+    )
+
+    # "실기 날짜"라는 표현 자체가 없으면 당연히 체크 대상이 아니다
+    unrelated = "이 전형은 면접일이 2026-11-07입니다."
+    assert _self_check_practical_date_contradiction(unrelated) == []
+
+
 def test_run_agent_compat_search_does_not_raise_unboundlocalerror():
     """[유료 - gpt-4o-mini 실호출, ci_quality_gate 비편입] find_compatible_exam_tracks
     경로를 실제로 태우는 질문이 예외 없이 끝까지 답해야 한다.
@@ -472,6 +555,9 @@ if __name__ == "__main__":
         test_dead_jev_compound_query_function_removed,
         test_route_classifier_falls_back_on_low_confidence_or_thin_margin,
         test_self_check_numeric_claims_flags_dates_and_quotas_not_in_context,
+        test_recommend_universities_topic_filter_is_track_level_not_department_level,
+        test_university_detail_returns_empty_official_tracks_for_unknown_university,
+        test_self_check_practical_date_contradiction_catches_self_contradiction,
     ):
         fn()
         print(f"PASS: {fn.__name__}")

@@ -578,6 +578,32 @@ def _self_check_compat_claim(answer: str, context_compatible_tracks: List[Dict[s
         return _self_check_compat_claim_keyword(answer, context_compatible_tracks)
 
 
+_NO_PRACTICAL_EXAM_PHRASES = ("실기시험: 없음", "실기시험 없음", "실기시험 자체가 없")
+
+
+def _self_check_practical_date_contradiction(answer: str) -> List[str]:
+    """'실기 날짜'라는 표현과 '실기시험 없음'류 표현이 같은 답변 안에 함께 있으면
+    자기모순이다 - 실기시험이 없다고 스스로 밝힌 전형을 그 항목 제목에서는 여전히
+    "실기 날짜"라고 부른 것이기 때문이다.
+
+    회귀 대상(2026-09-23 GPT QC 재검수): "홍익대학교 미술우수자전형 실기 날짜
+    알려줘" 질문에 답변이 "실기시험: 없음 (서류평가 및 면접)"이라고 정직하게
+    밝히면서도, 정작 그 섹션 제목은 "미술우수자전형의 실기 날짜는 다음과
+    같습니다"로 남겨 자기모순이었다. 프롬프트 규칙(3-1-1)을 이미 명시했는데도
+    gpt-4o-mini가 본문 disclaimer는 넣고 제목은 안 고치는 절반만 지키는 패턴을
+    반복해서, CLAUDE.md 2번 규칙(프롬프트로 안 되면 코드로 강제)에 따라
+    결정론적으로 재검증한다. 두 문구의 순수 공존 여부만 보므로 그라운딩 데이터가
+    없어도 무료로 동작한다."""
+    if "실기 날짜" not in answer and "실기일" not in answer:
+        return []
+    if any(p in answer for p in _NO_PRACTICAL_EXAM_PHRASES):
+        return [
+            "'실기 날짜'라는 표현과 '실기시험 없음'이 같은 답변에 함께 있습니다 - "
+            "실기시험이 없는 전형은 '실기 날짜'가 아니라 '면접 일정'/'서류·면접 일정'으로 불러야 합니다"
+        ]
+    return []
+
+
 # 2026-09-23 [항목② 개선4 - 팩트 왜곡 검증 범위 확대]: 위 _self_check_compat_claim은
 # "호환/유사" 주장 하나에만 자기검증이 좁게 걸려 있었다. 정원(quota)/실기고사 및
 # 원서접수 일정처럼 답변에 그대로 노출되는 다른 구체적 숫자도 같은 위험(근거에 없는
@@ -685,6 +711,7 @@ def answer_with_llm(context_tracks: List[Dict[str, Any]], context_estimates: Lis
         _self_check_grounding(answer, context_tracks, context_compatible_tracks, context_graph_related, all_universities, query)
         + _self_check_compat_claim(answer, context_compatible_tracks)
         + _self_check_numeric_claims(answer, context_tracks, context_raw_excerpts)
+        + _self_check_practical_date_contradiction(answer)
     )
     if self_check_warnings:
         retry_prompt = (
@@ -699,6 +726,7 @@ def answer_with_llm(context_tracks: List[Dict[str, Any]], context_estimates: Lis
                 _self_check_grounding(retried, context_tracks, context_compatible_tracks, context_graph_related, all_universities, query)
                 + _self_check_compat_claim(retried, context_compatible_tracks)
                 + _self_check_numeric_claims(retried, context_tracks, context_raw_excerpts)
+                + _self_check_practical_date_contradiction(retried)
             )
             answer = retried
             self_check_warnings = retry_issues
@@ -729,6 +757,12 @@ _REVIEW_SYSTEM_PROMPT = """당신은 대학 미술 실기 입시 수험생의 �
 3. 글쓰기 관점(논리 구성, 구체성, 진정성, 분량, 반복/상투적 표현 여부)에서만
    강점과 개선점을 제시하고, 개선점마다 구체적인 수정 방향을 제안하십시오.
 4. 한국어로, 존중하는 어조로 작성하십시오.
+4-1. 글 안에 지원자의 실명, 지도교사 실명, 특정 학교명(정식명·약칭 포함)처럼
+   개인을 특정할 수 있는 표현이 등장하더라도, 답변에서 그 이름으로 지원자를
+   부르지 마십시오("OOO님"처럼 실명 호칭 금지) - 실제 입시 평가는 블라인드로
+   진행되는 경우가 많고, 이 도구가 그 실명을 그대로 대화에 써버리면 블라인드
+   평가 관행과 어긋나는 습관을 학생에게 심어줄 수 있습니다(2026-09-23 GPT QC
+   발견). "지원자님"/"학생분" 같은 일반 호칭만 쓰십시오.
 5. "감지된 계열 정보"가 주어지면, 이 지원자가 어떤 실기/전형 계열(예: 회화 계열,
    디자인 계열, 서류/면접 중심 전형)에 해당하는지 참고해서 그 계열에 맞는 어조와
    강조점으로 피드백하십시오. 단, 이 정보만으로 특정 대학/학과에 대한 사실을

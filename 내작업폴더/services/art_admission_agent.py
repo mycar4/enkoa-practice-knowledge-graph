@@ -30,7 +30,8 @@ from langgraph.prebuilt import create_react_agent
 from neo4j import READ_ACCESS
 
 from services.art_admission_llm import (
-    _strip_banned_phrases, _self_check_grounding, _self_check_compat_claim, answer_with_llm,
+    _strip_banned_phrases, _self_check_grounding, _self_check_compat_claim,
+    _self_check_practical_date_contradiction, answer_with_llm,
 )
 
 AGENT_MODEL = "gpt-4o-mini"  # 공개 API 원칙과 동일하게 항상 이 모델만 쓴다.
@@ -1359,7 +1360,11 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
             f"'{name}'가 답변에 등장하지만 이번 도구 호출 결과에는 없었습니다(환각 의심)"
             for name in all_universities if name in answer and name not in grounded_universities
         ]
-        return grounding_issues + _self_check_compat_claim(answer, context_compatible_tracks)
+        return (
+            grounding_issues
+            + _self_check_compat_claim(answer, context_compatible_tracks)
+            + _self_check_practical_date_contradiction(answer)
+        )
 
     self_check_warnings = _self_check(final_answer)
     # qa_pipeline과 동일하게 문제 발견 시 딱 한 번만 재시도한다(무한루프 방지 - 비용은
