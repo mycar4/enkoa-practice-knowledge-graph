@@ -1277,6 +1277,14 @@ def run_agent(query: str, history: Optional[List[Dict[str, str]]] = None) -> Dic
         grounded_tracks/context_compatible_tracks(위 outer 변수들)를 누적한 뒤 최종
         답변 텍스트만 반환한다. 재시도 시에도 이전 호출의 근거가 사라지지 않도록
         outer 변수에 계속 append하는 구조다."""
+        # 2026-09-23 실장애 원인: grounded_universities를 |=(augmented assignment)로
+        # 갱신하면 파이썬이 이 함수 안에서 그 이름을 지역변수로 취급해버려서, 실제로
+        # 대입되기 전인 첫 참조(.add() 호출)에서 "local variable 'grounded_universities'
+        # referenced before assignment"가 났다(find_compatible_exam_tracks 등 도구가
+        # 하나라도 호출되면 항상 재현됨). nonlocal 선언 없이는 바깥 함수의 변수를
+        # 수정할 수 없다는 점을 놓쳤던 것 - 이 사고 이후 외부 set/list를 갱신하는
+        # 중첩 함수를 새로 추가할 때는 반드시 nonlocal 선언 여부를 확인한다.
+        nonlocal grounded_universities
         result = agent.invoke({"messages": messages})
         out_messages = result["messages"]
         for m in out_messages:

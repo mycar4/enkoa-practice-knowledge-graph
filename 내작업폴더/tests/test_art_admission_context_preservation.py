@@ -339,6 +339,28 @@ def test_document_track_category_recognizes_non_practical_marker():
     ) is None, "진짜 실기전형이 비실기로 잘못 분류됐습니다"
 
 
+def test_run_agent_compat_search_does_not_raise_unboundlocalerror():
+    """[유료 - gpt-4o-mini 실호출, ci_quality_gate 비편입] find_compatible_exam_tracks
+    경로를 실제로 태우는 질문이 예외 없이 끝까지 답해야 한다.
+
+    회귀 대상 사고(2026-09-23 실장애): run_agent()의 중첩 함수 _invoke()가
+    grounded_universities를 |=(augmented assignment)로 갱신하면서도 nonlocal
+    선언이 없어, 도구가 하나라도 호출되면 "local variable 'grounded_universities'
+    referenced before assignment"로 매번 터졌다. 공통 예외 처리기가 이를 삼켜
+    HTTP 200 + "AI 서비스 고도화 작업 중" 문구로 위장해서, qa.html에서는 실제
+    호환학교 검색 질문이 전부 조용히 실패하고 있었다(실기 호환학교 검색에서 재현).
+    """
+    from services.art_admission_agent import run_agent
+
+    result = run_agent("한국예술종합학교 무대미술과와 같은 실기로 지원 가능한 학교는?")
+    assert not result.get("error"), f"run_agent가 error를 반환했습니다: {result}"
+    assert result.get("answer"), "run_agent가 빈 답변을 반환했습니다"
+    tool_names = {t.get("tool") for t in result.get("tool_trace", [])}
+    assert "find_compatible_exam_tracks" in tool_names, (
+        f"find_compatible_exam_tracks가 호출되지 않았습니다(라우팅이 바뀌었을 수 있음): {tool_names}"
+    )
+
+
 if __name__ == "__main__":
     for fn in (
         test_topic_narrowing_keeps_every_matched_track,

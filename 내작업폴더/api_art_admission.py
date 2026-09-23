@@ -22,6 +22,7 @@
 
 import os
 import sys
+import traceback
 from pathlib import Path
 from typing import List, Optional
 
@@ -430,7 +431,12 @@ class QARequest(BaseModel):
 # 심지어 OpenAI 대시보드 URL까지 그대로 노출된다(실측 발견 - 사용자 화면에 결제
 # 한도 초과 메시지가 그대로 떴음). 원인이 뭐든 사용자에게는 서비스 운영 사정으로만
 # 안내하고, 실제 원인은 서버 로그에만 남긴다.
-_LLM_FRIENDLY_ERROR = "현재 AI 서비스 고도화 작업이 진행 중이라 일시적으로 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요."
+# 2026-09-23 실장애 후속: "AI 서비스 고도화 작업이 진행 중"이라는 문구가 실제로는
+# 순수 파이썬 버그(UnboundLocalError)였던 경우에도 그대로 나갔다 - "일부러 멈춘
+# 기능"처럼 읽혀 원인 파악을 오히려 늦췄다(로그에도 traceback 없이 str(e) 한 줄뿐).
+# 문구를 원인을 특정하지 않는 표현으로 바꾸고, 서버 로그에는 항상 전체 traceback과
+# 요청 쿼리를 남긴다.
+_LLM_FRIENDLY_ERROR = "일시적인 오류로 답변을 생성하지 못했습니다. 잠시 후 다시 시도해주세요."
 
 
 @app.post("/qa")
@@ -444,8 +450,12 @@ def qa(req: QARequest):
         result = run_qa_pipeline(svc, req.query, model_id=DEFAULT_MODEL)
         log_turn(req.query, "/qa", result, session_id=req.session_id)
         return result
-    except Exception as e:
-        print(f"[/qa] LLM 호출 실패: {e}")  # 원인은 서버 로그에만 남김
+    except Exception:
+        # 원인은 서버 로그에만 남긴다 - str(e) 한 줄이 아니라 전체 traceback +
+        # 요청 쿼리를 남겨야 다음 장애 때 원인을 바로 찾을 수 있다(2026-09-23 실장애:
+        # UnboundLocalError가 str(e)로는 "local variable... referenced before
+        # assignment"만 보이고 어느 줄인지 안 나와 원인 특정이 늦어졌다).
+        print(f"[/qa] 처리 실패 query={req.query!r}\n{traceback.format_exc()}")
         return {
             "answer": _LLM_FRIENDLY_ERROR,
             "model": DEFAULT_MODEL,
@@ -473,8 +483,9 @@ def agent_chat_endpoint(req: AgentChatRequest):
         result = route_and_answer(req.query, req.history)
         log_turn(req.query, "/agent-chat", result, session_id=req.session_id)
         return result
-    except Exception as e:
-        print(f"[/agent-chat] LLM 호출 실패: {e}")  # 원인은 서버 로그에만 남김
+    except Exception:
+        # 원인은 서버 로그에만 남긴다(위 /qa와 동일한 이유 - 전체 traceback + 쿼리).
+        print(f"[/agent-chat] 처리 실패 query={req.query!r}\n{traceback.format_exc()}")
         return {
             "answer": _LLM_FRIENDLY_ERROR,
             "model": "gpt-4o-mini",
