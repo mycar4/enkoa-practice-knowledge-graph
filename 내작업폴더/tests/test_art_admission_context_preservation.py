@@ -300,6 +300,45 @@ def test_text2cypher_excludes_document_only_tracks_from_practical_ranking():
     )
 
 
+def test_text2cypher_excludes_portfolio_and_non_practical_markers():
+    """'실기전형' 랭킹에서 포트폴리오·구술면접·비실기 전형도 제외해야 한다.
+
+    회귀 대상 사고(2026-09-23 GPT QC 재검수): "정원이 제일 적은 실기전형은?" 질문에
+    국민대 "미술·조형 특기자전형"(exam_type_name="포트폴리오 기반 구술면접" - 현장
+    실기시험 없이 서류+면접으로만 평가)이 실기전형으로 잘못 집계됐다. "학생부"로
+    시작하지 않아 기존 규칙(실기 없음/해당 없음/학생부 시작)만으로는 안 걸러졌다.
+    """
+    from services.art_admission_agent import _CYPHER_GEN_PROMPT
+
+    for marker in ("포트폴리오", "비실기"):
+        assert marker in _CYPHER_GEN_PROMPT, (
+            f"Cypher 생성 프롬프트에 '{marker}' 제외 규칙이 없습니다 - "
+            "현장 실기시험이 없는 전형이 '실기전형' 집계에 섞여 들어올 수 있습니다"
+        )
+
+
+def test_document_track_category_recognizes_non_practical_marker():
+    """exam_type_name이 '비실기 (학생부 100%)'인 트랙은 academic_record로 분류돼
+    성적 추천에서 실기종목 필터링 시 제외돼야 한다.
+
+    회귀 대상 사고(2026-09-23 GPT QC 재검수): 목원대 미술교육과 "교과전형"
+    (exam_type_name="비실기 (학생부 100%)")이 "소묘 준비 중" 학생의 성적 추천
+    목록에 그대로 섞여 나왔다. 이 exam_type_name에는 기존 분류 마커
+    ("학생부교과"/"학생부종합"/"포트폴리오"/"미술활동보고서"/"서류평가") 중
+    무엇도 없어 분류를 통과해버렸다(is_doc=False로 오판정).
+    """
+    from services.art_admission_service import ArtAdmissionService
+
+    assert ArtAdmissionService._document_track_category("비실기 (학생부 100%)") == "academic_record", (
+        "'비실기' 표기 전형이 실기 없는 전형으로 분류되지 않았습니다 - "
+        "실기종목 기반 추천/검색에서 걸러지지 않고 섞여 나올 수 있습니다"
+    )
+    # 진짜 실기전형까지 잘못 걸러지면 안 된다(과잉 필터링 회귀 방지)
+    assert ArtAdmissionService._document_track_category(
+        "소묘(정물,인체)/수채화(인물)/수묵담채화(정물)/모델인물두상/기초디자인 중 택1"
+    ) is None, "진짜 실기전형이 비실기로 잘못 분류됐습니다"
+
+
 if __name__ == "__main__":
     for fn in (
         test_topic_narrowing_keeps_every_matched_track,
@@ -312,6 +351,8 @@ if __name__ == "__main__":
         test_grounding_extraction_known_tool_shapes,
         test_duplicate_track_name_disambiguation_rule_exists_in_prompts,
         test_text2cypher_excludes_document_only_tracks_from_practical_ranking,
+        test_text2cypher_excludes_portfolio_and_non_practical_markers,
+        test_document_track_category_recognizes_non_practical_marker,
     ):
         fn()
         print(f"PASS: {fn.__name__}")

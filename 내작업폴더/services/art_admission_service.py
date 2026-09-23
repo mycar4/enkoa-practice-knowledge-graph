@@ -2436,7 +2436,10 @@ class ArtAdmissionService:
     # 아니라 학생부 성적을 100% 정량 반영하는 전형이라, "실기 없는 전형" 안에서도
     # 준비 방법이 또 다르다(사용자 지적으로 별도 카테고리로 분리). 실측 데이터에
     # 실제 등장하는 표현("학생부교과 100%")만 근거로 판정한다.
-    _ACADEMIC_RECORD_MARKERS = ("학생부교과",)
+    # 2026-09-23 실측 발견: 목원대·전남대 exam_type_name이 "비실기 (학생부 100%)"라
+    # "학생부교과"라는 표현이 없어 이 분류에서 빠졌다 - 성적 추천에서 "소묘 준비 중"
+    # 이라고 답한 학생에게 실기가 아예 없는 이 전형이 그대로 추천되는 사고로 이어짐.
+    _ACADEMIC_RECORD_MARKERS = ("학생부교과", "비실기")
 
     @staticmethod
     def _document_track_category(exam_type_name: Optional[str]) -> Optional[str]:

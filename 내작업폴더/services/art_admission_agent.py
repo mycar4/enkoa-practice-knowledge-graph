@@ -553,14 +553,19 @@ _CYPHER_GEN_PROMPT = f"""당신은 Neo4j Cypher 전문가입니다. 아래 그�
 7. 질문에 "실기전형"/"실기 전형"이라는 말이 있으면, 학생부교과·학생부종합처럼 실기
    자체가 없는 전형(서류·내신만으로 선발)을 결과에 절대 섞지 마십시오(실측 발견:
    "정원이 제일 적은 실기전형은?" 질문에 실기가 아예 없는 "학생부종합(농어촌학생)"
-   전형을 실기전형이라며 잘못 답한 사고가 있었습니다). Admission_Track을
-   REQUIRES_EXAM으로 Admission_ExamType과 반드시 JOIN하고, ExamType.name이
-   "실기 없음"이나 "해당 없음"을 포함하거나 "학생부"로 시작하는 행은 WHERE 절에서
-   제외하십시오. 예:
+   전형을 실기전형이라며 잘못 답한 사고가 있었습니다. 2026-09-23 재발견: 국민대
+   "포트폴리오 기반 구술면접"처럼 현장 실기시험 없이 서류·면접으로만 평가하는
+   전형도 같은 이유로 제외해야 하는데, 이 표현은 "학생부"로 시작하지 않아
+   위 규칙만으로는 안 걸러졌습니다). Admission_Track을 REQUIRES_EXAM으로
+   Admission_ExamType과 반드시 JOIN하고, ExamType.name이 "실기 없음", "해당 없음",
+   "포트폴리오", "미술활동보고서", "서류평가", "비실기"를 포함하거나 "학생부"로
+   시작하는 행은 WHERE 절에서 제외하십시오. 예:
    MATCH (u:Admission_University)-[:HAS_DEPARTMENT]->(d)-[:HAS_TRACK]->(t:Admission_Track)
          -[:REQUIRES_EXAM]->(e:Admission_ExamType)
    WHERE t.quota IS NOT NULL AND NOT e.name CONTAINS "실기 없음"
          AND NOT e.name CONTAINS "해당 없음" AND NOT e.name STARTS WITH "학생부"
+         AND NOT e.name CONTAINS "포트폴리오" AND NOT e.name CONTAINS "미술활동보고서"
+         AND NOT e.name CONTAINS "서류평가" AND NOT e.name CONTAINS "비실기"
          AND e.name <> "미지정" AND NOT e.name CONTAINS "미지정"
    RETURN u.name AS university, t.name AS track_name, t.quota AS quota, e.name AS exam_type_name
    ORDER BY quota ASC LIMIT 50
