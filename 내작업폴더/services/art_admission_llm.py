@@ -624,15 +624,24 @@ def _force_fix_practical_date_wording(answer: str, context_tracks: List[Dict[str
         return answer
     if not context_tracks:
         return answer
+    # 2026-09-23 실측 발견: context_tracks에는 질문과 무관한 같은 대학의 다른
+    # 전형까지 섞여 있을 수 있다(예: 홍익대학교는 실제 실기시험이 있는 전형도
+    # 많아, 그 학교 전체 트랙 중 "실기 있는 트랙이 하나라도 있는지"만 보면 항상
+    # True가 되어 정작 문제였던 미술우수자전형(비실기)에는 정정이 안 붙는다).
+    # 답변에 실제로 등장하는 track_name으로 먼저 좁혀서, 그 답변이 말하는 바로
+    # 그 전형의 실기 여부만 판정한다 - 일치하는 게 없으면(트랙명이 답변에 안
+    # 나온 경우) 어쩔 수 없이 전체로 판정한다.
+    mentioned_tracks = [t for t in context_tracks if t.get("track_name") and t["track_name"] in answer]
+    relevant_tracks = mentioned_tracks or context_tracks
     has_any_practical_track = any(
         any(term in (t.get("exam_type_name") or "") for term in _PRACTICAL_EXAM_TERMS)
-        for t in context_tracks
+        for t in relevant_tracks
     )
     if has_any_practical_track:
         return answer
     has_non_practical_signal = any(
         any(term in (t.get("exam_type_name") or "") for term in _NON_PRACTICAL_EXAM_TERMS)
-        for t in context_tracks
+        for t in relevant_tracks
     )
     if not has_non_practical_signal:
         return answer  # exam_type_name 정보가 아예 없으면 판정 근거 부족 - 손대지 않는다

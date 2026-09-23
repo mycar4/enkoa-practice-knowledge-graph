@@ -555,6 +555,23 @@ def test_force_fix_practical_date_wording_survives_llm_dodging_disclaimer():
     unknown_tracks = [{"university": "OO대학교", "department": "OO학과"}]
     assert _force_fix_practical_date_wording(normal_answer, unknown_tracks) == normal_answer
 
+    # 2026-09-23 프로덕션 재검증에서 실제로 재현된 케이스: context_tracks에 같은
+    # 대학의 무관한 다른(실기 있는) 전형이 섞여 있으면, "전체 중 하나라도 실기가
+    # 있으면 통과"로 판정해선 안 되고 답변이 실제로 언급한 그 전형(track_name)만
+    # 봐야 한다. track_name이 있는 fixture로 이 시나리오를 재현한다.
+    mixed_tracks = [
+        {"university": "홍익대학교", "department": "미술대학", "track_name": "미술우수자전형",
+         "exam_type_name": "미술활동보고서 서류평가 및 심층 면접평가"},
+        {"university": "홍익대학교", "department": "회화과", "track_name": "실기우수자전형",
+         "exam_type_name": "인물소묘"},  # 같은 대학의 무관한 다른 전형(진짜 실기 있음)
+    ]
+    mixed_answer = "홍익대학교 미술우수자전형의 실기 날짜는 다음과 같습니다: 2026-12-05~06"
+    fixed_mixed = _force_fix_practical_date_wording(mixed_answer, mixed_tracks)
+    assert "정정" in fixed_mixed, (
+        "같은 대학의 무관한 실기전형이 섞여 있다는 이유로 정정을 건너뛰었습니다 - "
+        f"답변이 실제로 언급한 전형(미술우수자전형) 기준으로 판정해야 합니다: {fixed_mixed!r}"
+    )
+
 
 def test_run_agent_compat_search_does_not_raise_unboundlocalerror():
     """[유료 - gpt-4o-mini 실호출, ci_quality_gate 비편입] find_compatible_exam_tracks
