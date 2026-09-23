@@ -516,6 +516,46 @@ def test_self_check_practical_date_contradiction_catches_self_contradiction():
     assert _self_check_practical_date_contradiction(unrelated) == []
 
 
+def test_force_fix_practical_date_wording_survives_llm_dodging_disclaimer():
+    """LLM 재시도가 'disclaimer만 지우고 헤더는 안 고치는' 식으로 자기검증을
+    회피해도, 그라운딩 근거를 직접 보고 코드가 정정 문구를 강제로 붙여야 한다.
+
+    회귀 대상(2026-09-23 GPT QC 재검수 후속): 자기모순 self-check가 재시도를
+    걸었더니, LLM이 "실기시험: 없음" disclaimer만 지우고 "실기 날짜"라는 잘못된
+    제목은 그대로 둔 채 재응답했다 - 재시도 전보다 더 위험해졌다(경고 없이
+    면접일을 실기 날짜로 단정). 텍스트 자기모순만 보는 self-check로는 이 회피를
+    못 막으므로, context_tracks의 exam_type_name을 직접 봐서 실기시험이 있는
+    전형이 하나도 없는데 '실기 날짜' 표현이 남아있으면 LLM 출력과 무관하게
+    코드가 정정 문구를 강제로 덧붙인다.
+    """
+    from services.art_admission_llm import _force_fix_practical_date_wording
+
+    dodged_answer = (
+        "홍익대학교 미술우수자전형의 실기 날짜는 다음과 같습니다:\n"
+        "- 미술대학: 2026-12-05~06\n"
+        "- 조형대학: 2026-11-28~29"
+    )
+    non_practical_tracks = [
+        {"university": "홍익대학교", "department": "미술대학", "exam_type_name": "미술활동보고서 서류평가 및 심층 면접평가"},
+        {"university": "홍익대학교", "department": "조형대학", "exam_type_name": "미술활동보고서 서류평가 및 심층 면접평가"},
+    ]
+    fixed = _force_fix_practical_date_wording(dodged_answer, non_practical_tracks)
+    assert "정정" in fixed and "면접" in fixed, (
+        f"실기시험이 없는데 '실기 날짜'만 남은 답변에 강제 정정 문구가 안 붙었습니다: {fixed!r}"
+    )
+
+    # 실제로 실기시험이 있는 전형이면 절대 정정 문구를 붙이면 안 된다(과잉탐지 방지)
+    practical_tracks = [{"university": "중앙대학교", "department": "공간연출전공", "exam_type_name": "소묘(공간구성과 묘사)"}]
+    normal_answer = "중앙대학교 공간연출전공의 실기 날짜는 2026-10-11입니다."
+    assert _force_fix_practical_date_wording(normal_answer, practical_tracks) == normal_answer, (
+        "실기시험이 실제로 있는데 정정 문구를 잘못 붙였습니다(과잉탐지)"
+    )
+
+    # exam_type_name 정보 자체가 없으면(판정 근거 부족) 손대지 않아야 한다
+    unknown_tracks = [{"university": "OO대학교", "department": "OO학과"}]
+    assert _force_fix_practical_date_wording(normal_answer, unknown_tracks) == normal_answer
+
+
 def test_run_agent_compat_search_does_not_raise_unboundlocalerror():
     """[유료 - gpt-4o-mini 실호출, ci_quality_gate 비편입] find_compatible_exam_tracks
     경로를 실제로 태우는 질문이 예외 없이 끝까지 답해야 한다.
@@ -558,6 +598,7 @@ if __name__ == "__main__":
         test_recommend_universities_topic_filter_is_track_level_not_department_level,
         test_university_detail_returns_empty_official_tracks_for_unknown_university,
         test_self_check_practical_date_contradiction_catches_self_contradiction,
+        test_force_fix_practical_date_wording_survives_llm_dodging_disclaimer,
     ):
         fn()
         print(f"PASS: {fn.__name__}")

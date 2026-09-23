@@ -604,6 +604,44 @@ def _self_check_practical_date_contradiction(answer: str) -> List[str]:
     return []
 
 
+_PRACTICAL_EXAM_TERMS = ("실기", "소묘", "수채화", "기초디자인", "조소", "판화", "조각", "발상")
+_NON_PRACTICAL_EXAM_TERMS = ("서류평가", "면접", "구술", "포트폴리오", "미술활동보고서")
+
+
+def _force_fix_practical_date_wording(answer: str, context_tracks: List[Dict[str, Any]]) -> str:
+    """LLM 재시도로도 못 고치면 코드가 강제로 정정 문구를 덧붙인다.
+
+    회귀 배경(2026-09-23 GPT QC 재검수): _self_check_practical_date_contradiction()이
+    자기모순('실기 날짜'+'실기시험 없음' 공존)을 잡아 재시도를 걸었더니, LLM이
+    제목("실기 날짜")은 그대로 두고 정직한 disclaimer("실기시험: 없음")만 지워서
+    "문제를 없앤" 것으로 회피했다 - 결과적으로 재시도 전보다 더 위험한 답(아무
+    경고 없이 면접일을 실기 날짜라고 단정)이 나왔다. 텍스트 자기모순 탐지만으로는
+    LLM이 이런 식으로 우회하는 것을 막을 수 없으므로, 그라운딩 근거
+    (context_tracks)를 직접 봐서 실기시험이 있는 전형이 단 하나도 없는데 답변이
+    '실기 날짜'라는 표현을 썼다면 LLM 출력과 무관하게 코드가 정정 문구를
+    강제로 붙인다."""
+    if "실기 날짜" not in answer and "실기일" not in answer:
+        return answer
+    if not context_tracks:
+        return answer
+    has_any_practical_track = any(
+        any(term in (t.get("exam_type_name") or "") for term in _PRACTICAL_EXAM_TERMS)
+        for t in context_tracks
+    )
+    if has_any_practical_track:
+        return answer
+    has_non_practical_signal = any(
+        any(term in (t.get("exam_type_name") or "") for term in _NON_PRACTICAL_EXAM_TERMS)
+        for t in context_tracks
+    )
+    if not has_non_practical_signal:
+        return answer  # exam_type_name 정보가 아예 없으면 판정 근거 부족 - 손대지 않는다
+    return answer + (
+        "\n\n⚠️ 정정: 위 날짜는 실기시험 날짜가 아니라 면접/서류평가 일정입니다. "
+        "이 전형은 현장 실기시험 자체가 없습니다(시스템 정정 - 원문 근거로 확인됨)."
+    )
+
+
 # 2026-09-23 [항목② 개선4 - 팩트 왜곡 검증 범위 확대]: 위 _self_check_compat_claim은
 # "호환/유사" 주장 하나에만 자기검증이 좁게 걸려 있었다. 정원(quota)/실기고사 및
 # 원서접수 일정처럼 답변에 그대로 노출되는 다른 구체적 숫자도 같은 위험(근거에 없는
@@ -733,6 +771,7 @@ def answer_with_llm(context_tracks: List[Dict[str, Any]], context_estimates: Lis
         except Exception:
             pass  # 재시도 실패하면 원래 답변 유지, 아래에서 경고만 표시
 
+    answer = _force_fix_practical_date_wording(answer, context_tracks)
     answer, banned_hit = _strip_banned_phrases(answer)
 
     grounded_on = [f"{t['university']} {t['department']}" for t in context_tracks]
