@@ -271,6 +271,72 @@ def department_tags():
     return svc.list_standard_department_tags()
 
 
+# 2026-09-24 [공통코드 관리 화면 1단계 - department_tag]: 배포 없이 태그를
+# 추가/변경할 수 있게 Neo4j(:CommonCode)로 옮기고 관리 화면(admin-common-codes.html)을
+# 붙인다. 학생 대상 공개 API가 전부인 이 서비스에 정식 로그인 체계가 없으므로,
+# review 모델 선택의 MODEL_PASSWORD와 동일한 패턴(간단한 공유 비밀번호)으로
+# 쓰기 3종(POST/PUT/DELETE)만 막는다 - 실수/장난으로 못 건드리게 하는 용도이지
+# 강한 보안 목적은 아니다.
+_COMMON_CODE_ADMIN_PASSWORD = "20260924"
+
+
+def _require_common_code_admin(password: Optional[str]):
+    if password != _COMMON_CODE_ADMIN_PASSWORD:
+        raise HTTPException(status_code=403, detail="관리자 비밀번호가 올바르지 않습니다.")
+
+
+@app.get("/common-codes")
+def list_common_codes_endpoint(category: str):
+    svc = get_service()
+    return svc.list_common_codes(category)
+
+
+class CommonCodeCreateRequest(BaseModel):
+    category: str
+    code: str
+    label: str
+    sort_order: Optional[int] = None
+    admin_password: str
+
+
+@app.post("/common-codes")
+def create_common_code_endpoint(req: CommonCodeCreateRequest):
+    _require_common_code_admin(req.admin_password)
+    svc = get_service()
+    try:
+        return svc.create_common_code(req.category, req.code, req.label, sort_order=req.sort_order)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+class CommonCodeUpdateRequest(BaseModel):
+    label: Optional[str] = None
+    sort_order: Optional[int] = None
+    active: Optional[bool] = None
+    admin_password: str
+
+
+@app.put("/common-codes/{category}/{code}")
+def update_common_code_endpoint(category: str, code: str, req: CommonCodeUpdateRequest):
+    _require_common_code_admin(req.admin_password)
+    svc = get_service()
+    try:
+        return svc.update_common_code(category, code, label=req.label, sort_order=req.sort_order, active=req.active)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.delete("/common-codes/{category}/{code}")
+def delete_common_code_endpoint(category: str, code: str, admin_password: str):
+    _require_common_code_admin(admin_password)
+    svc = get_service()
+    try:
+        svc.delete_common_code(category, code)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    return {"status": "success"}
+
+
 @app.get("/stats")
 def stats():
     """홈 화면 통계용 - 고유 대학 수와 전형(트랙) 수를 분리해서 반환한다.

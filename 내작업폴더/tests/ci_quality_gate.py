@@ -35,6 +35,11 @@ from tests.test_art_admission_context_preservation import (  # noqa: E402
     test_self_check_practical_date_contradiction_catches_self_contradiction,
     test_force_fix_practical_date_wording_survives_llm_dodging_disclaimer,
 )
+from tests.test_art_admission_common_codes import (  # noqa: E402
+    test_common_code_crud_roundtrip,
+    test_department_tag_delete_blocked_when_in_use,
+    test_list_standard_department_tags_matches_common_code_list,
+)
 from tests.test_art_admission_school_record_calc import (  # noqa: E402
     test_priority_schools_exact_calc_matches_hand_computed,
     test_hongik_sejong_choice_subject_picks_more_advantageous_on_tie,
@@ -112,4 +117,7 @@ if __name__ == "__main__":
     test_university_detail_returns_empty_official_tracks_for_unknown_university()
     test_self_check_practical_date_contradiction_catches_self_contradiction()
     test_force_fix_practical_date_wording_survives_llm_dodging_disclaimer()
-    print("🎉 CI QUALITY GATE PASSED (무료 회귀 테스트 41건)")
+    test_common_code_crud_roundtrip()
+    test_department_tag_delete_blocked_when_in_use()
+    test_list_standard_department_tags_matches_common_code_list()
+    print("🎉 CI QUALITY GATE PASSED (무료 회귀 테스트 44건)")

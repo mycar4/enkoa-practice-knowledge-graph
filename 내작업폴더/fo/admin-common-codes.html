@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>ART:READY | 공통코드 관리</title>
+<meta name="robots" content="noindex,nofollow"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+<style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"surface-container-lowest":"#ffffff","outline":"#747686","surface-variant":"#e5e2e1","surface-container-low":"#f6f3f2","primary-container":"#1647d8","on-background":"#1c1b1b","background":"#fcf9f8","on-primary":"#ffffff","primary":"#0031ab","on-surface":"#1c1b1b","error":"#ba1a1a","error-container":"#ffdad6","surface-container-highest":"#e5e2e1","surface-container":"#f0edec","on-surface-variant":"#434655","secondary":"#b72119","on-secondary":"#ffffff","surface-container-high":"#eae7e7","surface":"#fcf9f8"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"gutter-mobile":"1rem","unit-md":"1rem","margin-desktop":"3rem","unit-xl":"2rem","unit-3xl":"4rem","unit-lg":"1.5rem","unit-xs":"0.25rem","unit-sm":"0.5rem","gutter-desktop":"1.5rem","margin-mobile":"1.25rem","unit-2xl":"3rem","unit-2xs":"0.125rem"},"fontFamily":{"label-lg":["Space Grotesk"],"headline-md":["Noto Sans"],"body-lg":["Noto Sans"],"label-md":["Space Grotesk"],"headline-lg":["Noto Sans"],"body-md":["Noto Sans"],"headline-sm":["Noto Sans"],"body-sm":["Noto Sans"],"label-sm":["Space Grotesk"]},"fontSize":{"label-lg":["14px",{"lineHeight":"18px","letterSpacing":"0.05em","fontWeight":"700"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"700"}],"body-lg":["17px",{"lineHeight":"26px","letterSpacing":"-0.01em","fontWeight":"400"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.06em","fontWeight":"600"}],"headline-lg":["36px",{"lineHeight":"46px","letterSpacing":"-0.02em","fontWeight":"700"}],"body-md":["15px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"400"}],"headline-sm":["20px",{"lineHeight":"28px","letterSpacing":"0em","fontWeight":"600"}],"body-sm":["13px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"400"}],"label-sm":["10px",{"lineHeight":"14px","letterSpacing":"0.08em","fontWeight":"700"}]}}}}</script>
+<script src="config.js"></script>
+</head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen">
+
+<main class="flex flex-col relative w-full pt-unit-lg pb-24 bg-surface min-h-screen">
+<div class="flex flex-col w-full max-w-4xl mx-auto px-gutter-mobile lg:px-12 gap-unit-lg pb-unit-xl">
+
+<section class="flex flex-col gap-unit-xs">
+<div class="flex items-center gap-unit-xs"><span class="inline-block w-2.5 h-2.5 bg-primary-container"></span><span class="font-label-sm text-label-sm text-primary uppercase tracking-wider">ART:READY 내부관리</span></div>
+<h1 class="font-headline-md text-headline-md text-on-surface">공통코드 관리</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">배포 없이 시스템 공통코드 목록을 추가/수정/삭제합니다. 학생 화면(profile.html "계열로 찾기", kg.html 태그 필터)이 여기서 바꾼 값을 그대로 씁니다 - 신중하게 편집하세요.</p>
+</section>
+
+<!-- 비밀번호 게이트 -->
+<section id="gateSection" class="flex flex-col gap-unit-sm bg-surface-container p-unit-md rounded-xl shadow-sm max-w-sm">
+  <label class="flex flex-col gap-unit-2xs"><span class="font-label-sm text-label-sm text-on-surface-variant">관리자 비밀번호</span>
+    <input id="adminPassword" type="password" class="bg-surface-container-lowest rounded-lg px-unit-sm py-unit-xs font-body-md text-body-md text-on-surface focus:outline-none" /></label>
+  <p id="gateError" class="hidden font-body-sm text-body-sm text-error"></p>
+  <button id="gateSubmit" type="button" class="h-10 px-unit-md bg-primary text-on-primary font-label-md text-label-md rounded-lg shadow-sm self-start">확인</button>
+</section>
+
+<!-- 관리 화면 (비밀번호 통과 후 표시) -->
+<section id="mainSection" class="hidden flex-col gap-unit-md">
+
+  <div class="flex items-center gap-unit-sm">
+    <label class="font-label-sm text-label-sm text-on-surface-variant">카테고리</label>
+    <select id="categorySelect" class="bg-surface-container-lowest rounded-lg px-unit-sm py-unit-xs font-body-md text-body-md text-on-surface focus:outline-none">
+      <option value="department_tag">계열태그 (department_tag)</option>
+    </select>
+    <span class="font-body-sm text-body-sm text-on-surface-variant">다른 카테고리(서류종류/전형유형)는 이후 추가 예정</span>
+  </div>
+
+  <!-- 새 코드 추가 -->
+  <div class="flex flex-col gap-unit-sm bg-surface-container p-unit-md rounded-xl shadow-sm">
+    <p class="font-label-md text-label-md text-on-surface">새 코드 추가</p>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-unit-sm items-end">
+      <label class="flex flex-col gap-unit-2xs"><span class="font-label-sm text-label-sm text-on-surface-variant">code(값)</span>
+        <input id="newCode" type="text" placeholder="예: 미디어아트" class="bg-surface-container-lowest rounded-lg px-unit-sm py-unit-xs font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none" /></label>
+      <label class="flex flex-col gap-unit-2xs"><span class="font-label-sm text-label-sm text-on-surface-variant">label(화면 표시명)</span>
+        <input id="newLabel" type="text" placeholder="예: 미디어아트" class="bg-surface-container-lowest rounded-lg px-unit-sm py-unit-xs font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none" /></label>
+      <label class="flex flex-col gap-unit-2xs"><span class="font-label-sm text-label-sm text-on-surface-variant">순서(선택)</span>
+        <input id="newSortOrder" type="number" placeholder="비워두면 맨 뒤" class="bg-surface-container-lowest rounded-lg px-unit-sm py-unit-xs font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none" /></label>
+      <button id="addBtn" type="button" class="h-10 px-unit-md bg-primary text-on-primary font-label-md text-label-md rounded-lg shadow-sm">추가</button>
+    </div>
+    <p id="addError" class="hidden font-body-sm text-body-sm text-error"></p>
+  </div>
+
+  <!-- 목록 -->
+  <div class="flex flex-col gap-0 bg-surface-container-lowest rounded-xl shadow-sm divide-y divide-outline-variant/20 overflow-hidden">
+    <div class="grid grid-cols-[1fr_1fr_80px_80px_140px] gap-unit-sm px-unit-sm py-unit-xs bg-surface-container-low">
+      <span class="font-label-sm text-label-sm text-on-surface-variant">code</span>
+      <span class="font-label-sm text-label-sm text-on-surface-variant">label</span>
+      <span class="font-label-sm text-label-sm text-on-surface-variant">순서</span>
+      <span class="font-label-sm text-label-sm text-on-surface-variant">활성</span>
+      <span class="font-label-sm text-label-sm text-on-surface-variant">작업</span>
+    </div>
+    <div id="codeList"></div>
+    <div id="listLoading" class="font-body-sm text-body-sm text-on-surface-variant py-unit-md text-center">불러오는 중...</div>
+  </div>
+
+</section>
+</div>
+</main>
+
+<script>
+const API = window.API_BASE_URL;
+let ADMIN_PASSWORD = "";
+
+const gateSection = document.getElementById("gateSection");
+const mainSection = document.getElementById("mainSection");
+const gateError = document.getElementById("gateError");
+const categorySelect = document.getElementById("categorySelect");
+const codeListEl = document.getElementById("codeList");
+const listLoading = document.getElementById("listLoading");
+const addError = document.getElementById("addError");
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+// 2026-09-24: 실제 서버 검증 없이 여기서 로컬로만 "맞다"고 판단하면 무의미하므로,
+// 목록 조회는 공개 GET이라 항상 되지만, 최초 진입 시 아무 쓰기 API(빈 update 시도
+// 대신)로 검증하는 대신 - 첫 CRUD 액션에서 서버가 403을 주면 그때 안내한다.
+// 게이트는 단순히 "이 화면을 볼 수 있는 사람"을 거르는 첫 관문이고, 실제 강제는
+// 서버가 매 쓰기 요청마다 admin_password를 확인하는 쪽에서 한다.
+document.getElementById("gateSubmit").addEventListener("click", () => {
+  const pw = document.getElementById("adminPassword").value;
+  if (!pw) {
+    gateError.textContent = "비밀번호를 입력하세요.";
+    gateError.classList.remove("hidden");
+    return;
+  }
+  ADMIN_PASSWORD = pw;
+  gateSection.classList.add("hidden");
+  mainSection.classList.remove("hidden");
+  mainSection.classList.add("flex");
+  loadList();
+});
+
+function loadList() {
+  listLoading.classList.remove("hidden");
+  codeListEl.innerHTML = "";
+  fetch(`${API}/common-codes?category=${encodeURIComponent(categorySelect.value)}`)
+    .then(r => r.json())
+    .then(rows => {
+      listLoading.classList.add("hidden");
+      rows.forEach(row => codeListEl.appendChild(renderRow(row)));
+    })
+    .catch(() => { listLoading.textContent = "목록을 불러오지 못했습니다."; });
+}
+categorySelect.addEventListener("change", loadList);
+
+function renderRow(row) {
+  const div = document.createElement("div");
+  div.className = "grid grid-cols-[1fr_1fr_80px_80px_140px] gap-unit-sm px-unit-sm py-unit-xs items-center" + (row.active === false ? " opacity-50" : "");
+  div.innerHTML = `
+    <span class="font-body-sm text-body-sm text-on-surface">${escapeHtml(row.code)}</span>
+    <input class="labelInput bg-surface-container-lowest rounded-lg px-unit-xs py-1 font-body-sm text-body-sm text-on-surface focus:outline-none" value="${escapeHtml(row.label)}" />
+    <input type="number" class="sortInput bg-surface-container-lowest rounded-lg px-unit-xs py-1 font-body-sm text-body-sm text-on-surface focus:outline-none" value="${row.sort_order ?? 0}" />
+    <input type="checkbox" class="activeInput w-4 h-4" ${row.active === false ? "" : "checked"} />
+    <span class="flex gap-unit-2xs">
+      <button type="button" class="saveBtn h-8 px-unit-xs bg-primary-container/15 text-primary font-label-sm text-label-sm rounded-lg">저장</button>
+      <button type="button" class="deleteBtn h-8 px-unit-xs bg-error-container text-error font-label-sm text-label-sm rounded-lg">삭제</button>
+    </span>`;
+  div.querySelector(".saveBtn").addEventListener("click", () => {
+    fetch(`${API}/common-codes/${encodeURIComponent(categorySelect.value)}/${encodeURIComponent(row.code)}`, {
+      method: "PUT", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        label: div.querySelector(".labelInput").value,
+        sort_order: Number(div.querySelector(".sortInput").value) || 0,
+        active: div.querySelector(".activeInput").checked,
+        admin_password: ADMIN_PASSWORD,
+      }),
+    }).then(r => {
+      if (!r.ok) return r.json().then(e => { throw new Error(e.detail || "저장 실패"); });
+      return r.json();
+    }).then(() => loadList()).catch(err => alert(String(err.message || err)));
+  });
+  div.querySelector(".deleteBtn").addEventListener("click", () => {
+    if (!confirm(`'${row.code}'를 삭제할까요? (이미 사용 중이면 서버가 거부합니다)`)) return;
+    fetch(`${API}/common-codes/${encodeURIComponent(categorySelect.value)}/${encodeURIComponent(row.code)}?admin_password=${encodeURIComponent(ADMIN_PASSWORD)}`, {
+      method: "DELETE",
+    }).then(r => {
+      if (!r.ok) return r.json().then(e => { throw new Error(e.detail || "삭제 실패"); });
+      return r.json();
+    }).then(() => loadList()).catch(err => alert(String(err.message || err)));
+  });
+  return div;
+}
+
+document.getElementById("addBtn").addEventListener("click", () => {
+  addError.classList.add("hidden");
+  const code = document.getElementById("newCode").value.trim();
+  const label = document.getElementById("newLabel").value.trim();
+  const sortOrderRaw = document.getElementById("newSortOrder").value;
+  if (!code || !label) {
+    addError.textContent = "code와 label을 모두 입력하세요.";
+    addError.classList.remove("hidden");
+    return;
+  }
+  fetch(`${API}/common-codes`, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      category: categorySelect.value, code, label,
+      sort_order: sortOrderRaw === "" ? null : Number(sortOrderRaw),
+      admin_password: ADMIN_PASSWORD,
+    }),
+  }).then(r => {
+    if (!r.ok) return r.json().then(e => { throw new Error(e.detail || "추가 실패"); });
+    return r.json();
+  }).then(() => {
+    document.getElementById("newCode").value = "";
+    document.getElementById("newLabel").value = "";
+    document.getElementById("newSortOrder").value = "";
+    loadList();
+  }).catch(err => {
+    addError.textContent = String(err.message || err);
+    addError.classList.remove("hidden");
+  });
+});
+</script>
+</body></html>

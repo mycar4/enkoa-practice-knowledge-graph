@@ -1023,6 +1023,11 @@ class ArtAdmissionService:
     # "만화애니메이션텍전공") 유사 학과를 안정적으로 묶을 수 없다 - 15개교 파일럿으로
     # 시작하는 "표준 계열 태그 + 임베딩 후보 + 관리자 승인" 파이프라인의 확정 태그
     # 목록. 태그의 "정답의 언어" 역할을 이 목록이 하고, 임베딩은 후보만 제안한다.
+    # 2026-09-24 [공통코드 관리 화면 1단계]: 이 10개 값이 파이썬 튜플로 하드코딩돼
+    # 있어서, 태그를 하나 추가/변경하려면 배포가 필요했다(사용자 지시로 "재료
+    # 사전 하나가 아니라 시스템 전체 공통코드"로 범위 확대). Neo4j에 :CommonCode
+    # 노드로 옮겨서 배포 없이 관리 화면에서 CRUD 가능하게 한다 - 튜플은 최초
+    # 시드(seed_common_codes)에만 쓰고, 이후 조회/검증은 전부 DB를 본다.
     _STANDARD_DEPARTMENT_TAGS = (
         "시각·브랜딩", "산업·제품", "공간·전시", "패션·섬유", "공예·도예·금속",
         "회화·한국화", "조소·입체", "영상·애니", "웹툰·게임", "융합·AI디자인",
@@ -1031,7 +1036,13 @@ class ArtAdmissionService:
     def list_standard_department_tags(self) -> List[str]:
         """[표준 계열 태그] 관리자가 학과에 붙일 수 있는 확정 태그 후보 목록.
         임베딩 유사도가 아무리 좋아 보여도 이 목록 밖의 이름을 새로 만들지 않는다 -
-        태그 체계가 흔들리면 사용자에게 보여줄 분류명 자체가 불안정해지기 때문."""
+        태그 체계가 흔들리면 사용자에게 보여줄 분류명 자체가 불안정해지기 때문.
+        2026-09-24: DB(:CommonCode)가 비어있으면(시드 전) 기존 하드코딩 튜플로
+        폴백한다 - 배포 직후 시드 스크립트를 아직 안 돌렸어도 서비스가 죽지
+        않게 하기 위함."""
+        codes = self.list_common_codes("department_tag")
+        if codes:
+            return [c["code"] for c in codes if c.get("active") is not False]
         return list(self._STANDARD_DEPARTMENT_TAGS)
 
     def set_department_tag(self, university: str, department: str, tag: str, campus: Optional[str] = None) -> None:
@@ -1039,14 +1050,122 @@ class ArtAdmissionService:
         완전히 분리된 저장 함수다 - 메인 로더가 매번 학교 JSON을 통째로 재적재할 때
         이 태그까지 덮어써서 관리자가 승인한 태그가 날아가는 사고를 막기 위함이다.
         관리자 승인 UI/스크립트에서만 호출한다."""
-        if tag not in self._STANDARD_DEPARTMENT_TAGS:
-            raise ValueError(f"표준 태그 목록에 없는 값입니다: {tag!r} (목록: {self._STANDARD_DEPARTMENT_TAGS})")
+        valid_tags = self.list_standard_department_tags()
+        if tag not in valid_tags:
+            raise ValueError(f"표준 태그 목록에 없는 값입니다: {tag!r} (목록: {valid_tags})")
         with self.driver.session(default_access_mode=WRITE_ACCESS) as s:
             s.run("""
                 MATCH (u:Admission_University {name: $university})-[:HAS_DEPARTMENT]->(d:Admission_Department {name: $department})
                 WHERE $campus IS NULL OR u.campus = $campus
                 SET d.standard_tag = $tag
             """, university=university, department=department, tag=tag, campus=campus)
+
+    # ── 공통코드(CommonCode) 관리 - 2026-09-24 신규 ──
+    # category별로 완전히 독립된 코드 목록을 관리한다(department_tag가 1호 대상,
+    # 이후 서류종류/전형유형도 같은 패턴으로 확장 가능하도록 category 축을 처음부터
+    # 잡아뒀다). 각 코드는 (category, code) 쌍으로 유일하다.
+    def list_common_codes(self, category: str) -> List[Dict[str, Any]]:
+        """category에 속한 코드를 sort_order 순으로 반환한다. active=false인
+        코드도 관리 화면에서는 보여야 하므로(비활성화 취소 가능) 여기서는 거르지
+        않는다 - "실사용 목록"이 필요한 호출부(list_standard_department_tags 등)가
+        active만 걸러서 쓴다."""
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            return s.run("""
+                MATCH (c:CommonCode {category: $category})
+                RETURN c.code AS code, c.label AS label, c.sort_order AS sort_order,
+                       c.active AS active
+                ORDER BY coalesce(c.sort_order, 999999), c.code
+            """, category=category).data()
+
+    def create_common_code(self, category: str, code: str, label: str,
+                            sort_order: Optional[int] = None) -> Dict[str, Any]:
+        code = (code or "").strip()
+        label = (label or "").strip()
+        if not category or not code or not label:
+            raise ValueError("category/code/label은 비워둘 수 없습니다.")
+        with self.driver.session(default_access_mode=READ_ACCESS) as s:
+            exists = s.run(
+                "MATCH (c:CommonCode {category: $category, code: $code}) RETURN c LIMIT 1",
+                category=category, code=code,
+            ).single()
+        if exists:
+            raise ValueError(f"이미 존재하는 코드입니다: {category}/{code}")
+        if sort_order is None:
+            existing = self.list_common_codes(category)
+            sort_order = (max((c["sort_order"] or 0) for c in existing) + 1) if existing else 0
+        with self.driver.session(default_access_mode=WRITE_ACCESS) as s:
+            s.run("""
+                CREATE (c:CommonCode {category: $category, code: $code, label: $label,
+                                       sort_order: $sort_order, active: true,
+                                       created_at: datetime()})
+            """, category=category, code=code, label=label, sort_order=sort_order)
+        return {"category": category, "code": code, "label": label, "sort_order": sort_order, "active": True}
+
+    def update_common_code(self, category: str, code: str, label: Optional[str] = None,
+                            sort_order: Optional[int] = None, active: Optional[bool] = None) -> Dict[str, Any]:
+        """label/sort_order/active 중 넘어온 값만 갱신한다(부분 수정). code(식별자)
+        자체는 여기서 바꾸지 않는다 - 이미 학과에 붙어있는 태그 값과 어긋나면
+        기존 데이터가 고아가 되므로, 이름을 바꾸고 싶으면 새로 만들고 예전 걸
+        비활성화(active=false)하는 쪽을 권장한다."""
+        sets = []
+        params: Dict[str, Any] = {"category": category, "code": code}
+        if label is not None:
+            sets.append("c.label = $label")
+            params["label"] = label
+        if sort_order is not None:
+            sets.append("c.sort_order = $sort_order")
+            params["sort_order"] = sort_order
+        if active is not None:
+            sets.append("c.active = $active")
+            params["active"] = active
+        if not sets:
+            raise ValueError("label/sort_order/active 중 최소 하나는 수정해야 합니다.")
+        with self.driver.session(default_access_mode=WRITE_ACCESS) as s:
+            result = s.run(f"""
+                MATCH (c:CommonCode {{category: $category, code: $code}})
+                SET {", ".join(sets)}
+                RETURN c.code AS code, c.label AS label, c.sort_order AS sort_order, c.active AS active
+            """, **params).data()
+        if not result:
+            raise ValueError(f"존재하지 않는 코드입니다: {category}/{code}")
+        return result[0]
+
+    def delete_common_code(self, category: str, code: str) -> None:
+        """department_tag 카테고리는 실제로 학과에 붙어 사용 중이면 삭제를
+        거부한다(고아 참조 방지 - 태그가 사라지면 이미 그 태그가 붙은 학과들의
+        분류가 깨진다). 다른 카테고리를 나중에 추가할 때도 이 "사용 중이면
+        차단" 원칙은 각 카테고리의 실제 참조처를 확인해서 똑같이 적용해야 한다."""
+        if category == "department_tag":
+            with self.driver.session(default_access_mode=READ_ACCESS) as s:
+                usage = s.run(
+                    "MATCH (d:Admission_Department {standard_tag: $code}) RETURN count(d) AS cnt",
+                    code=code,
+                ).single()
+            if usage and usage["cnt"] > 0:
+                raise ValueError(
+                    f"'{code}' 태그가 이미 {usage['cnt']}개 학과에 사용 중이라 삭제할 수 없습니다 - "
+                    "먼저 해당 학과들의 태그를 바꾸거나, active=false로 비활성화만 하십시오."
+                )
+        with self.driver.session(default_access_mode=WRITE_ACCESS) as s:
+            result = s.run(
+                "MATCH (c:CommonCode {category: $category, code: $code}) DELETE c RETURN count(c) AS cnt",
+                category=category, code=code,
+            ).single()
+        if not result or result["cnt"] == 0:
+            raise ValueError(f"존재하지 않는 코드입니다: {category}/{code}")
+
+    def seed_common_codes_if_empty(self) -> Dict[str, int]:
+        """배포 직후 1회성 초기화용 - department_tag가 DB에 하나도 없으면 기존
+        하드코딩 튜플 10개를 그대로 시드한다(운영 중인 학과들의 standard_tag 값과
+        정확히 일치해야 하므로, 목록을 바꾸지 않고 그대로 옮긴다). 이미 시드돼
+        있으면 아무것도 안 하고 0을 반환한다(idempotent)."""
+        seeded = {"department_tag": 0}
+        if self.list_common_codes("department_tag"):
+            return seeded
+        for i, tag in enumerate(self._STANDARD_DEPARTMENT_TAGS):
+            self.create_common_code("department_tag", tag, tag, sort_order=i)
+            seeded["department_tag"] += 1
+        return seeded
 
     def set_department_curriculum(self, university: str, department: str, department_intro: str,
                                    curriculum_subjects: List[str], campus: Optional[str] = None,
