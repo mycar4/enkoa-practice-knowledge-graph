@@ -339,6 +339,100 @@ def test_document_track_category_recognizes_non_practical_marker():
     ) is None, "진짜 실기전형이 비실기로 잘못 분류됐습니다"
 
 
+def test_dead_jev_compound_query_function_removed():
+    """죽은 코드 정리 회귀: Noul 기반 _is_compound_query가 다시 생기지 않아야 한다.
+
+    회귀 배경(2026-09-23 리포트 검토): 외부 리포트가 이 함수(art_admission_agent.py
+    구버전 L95-120)를 "5대 핵심 관문 중 하나"로 보고했지만, 실제로는 day54 Jev
+    Choice 라우터(_classify_route) 도입 이후 이 함수를 호출하는 곳이 코드 어디에도
+    없었다(폴백 경로도 키워드 전용 _is_compound_query_keyword를 씀). 죽은 코드가
+    "살아있는 관문"으로 잘못 보고될 만큼 헷갈리는 상태였으므로 삭제했다 - 다시
+    추가된다면 같은 혼동이 재발한다는 뜻이므로 이 테스트가 잡는다.
+    """
+    import services.art_admission_agent as agent_module
+
+    assert not hasattr(agent_module, "_is_compound_query"), (
+        "_is_compound_query(Noul 버전, 미사용 죽은 코드)가 다시 추가됐습니다 - "
+        "실제로 호출하는 곳이 없으면 키워드 폴백(_is_compound_query_keyword)만 남기고 정리하십시오"
+    )
+
+
+def test_route_classifier_falls_back_on_low_confidence_or_thin_margin():
+    """Jev Choice 라우팅이 동전 던지기 수준으로 애매하면 키워드 폴백으로 넘어가야 한다.
+
+    회귀 대상(2026-09-23 리포트 검토에서 확인된 실제 갭): _classify_route가
+    confidence/probabilities를 반환값에 담기만 하고 실제로는 한 번도 검사하지
+    않았다. "COMPLEX_TOOL 0.51 vs SIMPLE_GRAPH 0.48"처럼 1·2위 확률차가 0.03밖에
+    안 나는 판정까지 그대로 채택돼, 같은 종류의 질문이 턴마다 다른 경로로 갈리는
+    사고로 이어졌다. Jev Choice를 실제로 부르지 않고 TypeSafeClient.system_one만
+    가짜 응답으로 교체해서(무료) 가드 로직만 검증한다.
+    """
+    from unittest.mock import patch, MagicMock
+    from services.art_admission_agent import _classify_route
+
+    def _fake_response(choice, confidence, probabilities):
+        answer = MagicMock(choice=choice, confidence=confidence, probabilities=probabilities)
+        resp = MagicMock()
+        resp.answers = {"route": answer}
+        return resp
+
+    # 1) 신뢰도 낮음(0.27) + 확률차 얇음(0.03) -> Jev 판정을 버리고 키워드 폴백으로
+    with patch(
+        "typesafe_sdk.TypeSafeClient.system_one",
+        return_value=_fake_response("COMPLEX_TOOL", 0.27, {"COMPLEX_TOOL": 0.51, "SIMPLE_GRAPH": 0.48, "DOCUMENT_WRITING_HELP": 0.01}),
+    ):
+        result = _classify_route("수채화로 지원 가능한 학교 알려줘", ["중앙대학교"])
+    assert result["method"] == "keyword_fallback_low_confidence", (
+        f"애매한 Jev 판정을 그대로 채택했습니다(가드 미작동): {result}"
+    )
+
+    # 2) 신뢰도 높음(0.94) + 확률차 큼 -> Jev 판정을 그대로 신뢰해야 한다(과잉 폴백 방지)
+    with patch(
+        "typesafe_sdk.TypeSafeClient.system_one",
+        return_value=_fake_response("SIMPLE_GRAPH", 0.94, {"SIMPLE_GRAPH": 0.95, "COMPLEX_TOOL": 0.04, "DOCUMENT_WRITING_HELP": 0.01}),
+    ):
+        result = _classify_route("중앙대학교 실기 준비물이 뭐야?", ["중앙대학교"])
+    assert result["method"] == "jev_choice", (
+        f"신뢰도 높은 판정까지 불필요하게 폴백시켰습니다(과잉 가드): {result}"
+    )
+    assert result["route"] == "SIMPLE_GRAPH"
+
+
+def test_self_check_numeric_claims_flags_dates_and_quotas_not_in_context():
+    """답변에 등장하는 날짜/정원이 조회 근거 어디에도 없으면 환각 의심으로 잡아야 한다.
+
+    회귀 배경(2026-09-23 리포트 검토 개선4 - 팩트 왜곡 검증 확대): 기존
+    _self_check_compat_claim은 '호환/유사' 주장에만 좁게 걸려 있었다. 정원/일정도
+    답변에 그대로 노출되는 구체적 사실이라 같은 위험(근거 없는 값을 단정)이
+    있는데 검증 대상이 아니었다.
+    """
+    from services.art_admission_llm import _self_check_numeric_claims
+
+    context_tracks = [{
+        "university": "중앙대학교", "quota": 5,
+        "exam_dates": ["2026-10-11"], "application_start": "2026-09-08",
+    }]
+
+    # 근거에 없는 날짜/정원을 답변이 확언하면 잡아야 한다
+    bad_answer = "중앙대학교 공간연출전공은 정원 12명이며 실기고사는 2026-11-30입니다."
+    issues = _self_check_numeric_claims(bad_answer, context_tracks, [])
+    assert any("2026-11-30" in i for i in issues), f"근거에 없는 날짜를 못 잡았습니다: {issues}"
+    assert any("12명" in i for i in issues), f"근거에 없는 정원을 못 잡았습니다: {issues}"
+
+    # 근거와 일치하는 값은 오탐하면 안 된다
+    good_answer = "중앙대학교 공간연출전공은 정원 5명이며 실기고사는 2026-10-11입니다."
+    assert _self_check_numeric_claims(good_answer, context_tracks, []) == [], (
+        "근거와 일치하는 값을 잘못 환각 의심으로 잡았습니다(과잉탐지)"
+    )
+
+    # 원문 발췌(context_raw_excerpts)에 등장하는 날짜는 정당한 근거이므로 오탐하면 안 된다
+    raw_only_answer = "관련 공지에 따르면 2026-12-01에 추가 안내가 있을 예정입니다."
+    excerpts = [{"text": "...2026-12-01 추가 공지 예정..."}]
+    assert _self_check_numeric_claims(raw_only_answer, context_tracks, excerpts) == [], (
+        "원문 발췌에만 있는 정당한 날짜를 환각 의심으로 오탐했습니다"
+    )
+
+
 def test_run_agent_compat_search_does_not_raise_unboundlocalerror():
     """[유료 - gpt-4o-mini 실호출, ci_quality_gate 비편입] find_compatible_exam_tracks
     경로를 실제로 태우는 질문이 예외 없이 끝까지 답해야 한다.
@@ -375,6 +469,9 @@ if __name__ == "__main__":
         test_text2cypher_excludes_document_only_tracks_from_practical_ranking,
         test_text2cypher_excludes_portfolio_and_non_practical_markers,
         test_document_track_category_recognizes_non_practical_marker,
+        test_dead_jev_compound_query_function_removed,
+        test_route_classifier_falls_back_on_low_confidence_or_thin_margin,
+        test_self_check_numeric_claims_flags_dates_and_quotas_not_in_context,
     ):
         fn()
         print(f"PASS: {fn.__name__}")

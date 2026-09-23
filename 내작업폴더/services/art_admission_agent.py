@@ -88,37 +88,6 @@ def _is_compound_query_keyword(query: str, all_universities: List[str]) -> bool:
     return len(detail["universities"]) >= 2
 
 
-# 2026-09-22 day47 Jev 도입: 실측(6문항, 과거 버그 3건과 같은 카테고리의 새
-# 표현으로 재구성) 결과 키워드 방식 2/6 -> Jev 6/6로 개선. "여러 대학 이름이
-# 2개 이상 언급됨"은 판단이 아니라 명백한 사실이라 Jev를 거칠 필요가 없어
-# 그대로 유지하고, "도구가 필요한 질문 유형인가"라는 애매한 판단만 Jev로 대체한다.
-def _is_compound_query(query: str, all_universities: List[str]) -> bool:
-    from services.art_admission_service import resolve_university_mentions_detailed
-    detail = resolve_university_mentions_detailed(query, all_universities)
-    if len(detail["universities"]) >= 2:
-        return True
-    try:
-        from typesafe_sdk import Noul, TypeSafeClient
-        import os
-        client = TypeSafeClient(timeout=5.0)
-        model = os.getenv("TYPESAFE_MODEL", "jev-1.13.0")
-        resp = client.system_one(
-            model=model, state=query,
-            questions={
-                "needs_tool": Noul(
-                    instructions=(
-                        "이 질문에 답하려면 다음 중 하나 이상의 '계산/비교/추천/랭킹/요약 "
-                        "도구'가 필요한가요: 성적 기반 지원 추천, 여러 전형 비교나 일정 "
-                        "충돌 확인, 경쟁률/순위 집계, 비슷한 학과 찾기, 전체 절차 요약. "
-                        "특정 사실 하나만 묻는 단순 조회는 '아니오'입니다."
-                    ),
-                ),
-            },
-        )
-        return resp.answers["needs_tool"].noul >= 0.5
-    except Exception:
-        return _is_compound_query_keyword(query, all_universities)
-
 _SYSTEM_PROMPT = """당신은 "미술 실기 입시 도우미"의 에이전트입니다. 학생·학원장·학부모의
 질문 하나에 대해, 아래 도구들을 필요한 만큼 여러 번, 필요한 순서로 호출해서 답하십시오.
 
@@ -883,6 +852,17 @@ def _is_document_writing_help_query_keyword(query: str) -> bool:
 # 키워드 방식으로 자동 폴백한다(예외 삼키고 조용히 대체, 사용자에게 영향 없음).
 _JEV_TIMEOUT_SECONDS = 5.0
 
+# 2026-09-23 [항목② 개선1 - 라우터 신뢰도 가드]: _classify_route가 Jev Choice의
+# confidence/probabilities를 반환값에 담아두기만 하고 실제로는 한 번도 검사하지
+# 않았다(코드 감사로 발견) - 1위 확률이 2위보다 0.03밖에 안 높은 동전 던지기
+# 수준(예: COMPLEX_TOOL 0.51 vs SIMPLE_GRAPH 0.48)까지 그대로 채택돼, 똑같은
+# 종류의 질문이 턴마다 다른 경로로 갈리는 사고로 이어졌다. 이 구간에서는 Jev의
+# 판단을 신뢰하지 않고 이미 검증된 키워드 폴백(_classify_route_keyword)으로
+# 넘긴다 - 새 판정 로직을 추가하는 게 아니라 "애매하면 기존 결정론적 규칙을
+# 쓴다"는 보수적 선택이다.
+_ROUTE_CONFIDENCE_THRESHOLD = 0.4
+_ROUTE_MARGIN_THRESHOLD = 0.15
+
 
 def _is_document_writing_help_query(query: str) -> bool:
     try:
@@ -988,9 +968,25 @@ def _classify_route(
             )},
         )
         answer = resp.answers["route"]
+        confidence = answer.confidence
+        probabilities = answer.probabilities
+        top_margin = None
+        if probabilities and len(probabilities) >= 2:
+            sorted_probs = sorted(probabilities.values(), reverse=True)
+            top_margin = sorted_probs[0] - sorted_probs[1]
+        is_ambiguous = (
+            (confidence is not None and confidence < _ROUTE_CONFIDENCE_THRESHOLD)
+            or (top_margin is not None and top_margin < _ROUTE_MARGIN_THRESHOLD)
+        )
+        if is_ambiguous:
+            return {
+                "route": _classify_route_keyword(query, all_universities),
+                "method": "keyword_fallback_low_confidence", "model": model,
+                "confidence": confidence, "probabilities": probabilities,
+            }
         return {
             "route": answer.choice, "method": "jev_choice", "model": model,
-            "confidence": answer.confidence, "probabilities": answer.probabilities,
+            "confidence": confidence, "probabilities": probabilities,
         }
     except Exception:
         return {

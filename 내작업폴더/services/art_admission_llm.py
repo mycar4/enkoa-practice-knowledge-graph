@@ -14,6 +14,7 @@
 """
 
 import os
+import re
 import json
 import time
 import urllib.request
@@ -577,6 +578,57 @@ def _self_check_compat_claim(answer: str, context_compatible_tracks: List[Dict[s
         return _self_check_compat_claim_keyword(answer, context_compatible_tracks)
 
 
+# 2026-09-23 [항목② 개선4 - 팩트 왜곡 검증 범위 확대]: 위 _self_check_compat_claim은
+# "호환/유사" 주장 하나에만 자기검증이 좁게 걸려 있었다. 정원(quota)/실기고사 및
+# 원서접수 일정처럼 답변에 그대로 노출되는 다른 구체적 숫자도 같은 위험(근거에 없는
+# 값을 단정적으로 확언)이 있는데 검증 대상이 아니었다. Jev(Noul)로 "이 숫자가
+# 단정적인가"를 매번 판단시키는 대신 - 날짜/정원은 사람이 아니라 코드가 정확히 대조할
+# 수 있는 값이라 결정론적 문자열 대조가 더 정확하고 무료다(§ Score 리랭커 검토에서도
+# 같은 원칙 확인 - 이미 결정적으로 풀리는 문제에 LLM 판단을 끼워넣지 않는다).
+_DATE_LIKE_PATTERN = re.compile(r"20\d{2}-\d{2}-\d{2}")
+_QUOTA_LIKE_PATTERN = re.compile(r"(\d+)\s*명")
+
+
+def _self_check_numeric_claims(
+    answer: str, context_tracks: List[Dict[str, Any]],
+    context_raw_excerpts: Optional[List[Dict[str, Any]]] = None,
+) -> List[str]:
+    """답변에 등장하는 날짜(YYYY-MM-DD)/정원("N명")이 이번 조회 근거 어디에도
+    없는 값이면 지어냈거나 다른 전형의 값을 착각했을 위험이 있다고 본다.
+
+    과잉탐지 방지: 원문 발췌(context_raw_excerpts)에도 정당하게 등장할 수 있는
+    날짜가 있으므로, 근거 집합에 context_tracks의 구조화 필드뿐 아니라 원문
+    발췌 텍스트도 함께 넣어 대조한다. 정원은 구조화 quota 필드에만 있으므로
+    context_tracks만 본다."""
+    if not context_tracks:
+        return []
+    known_dates = set()
+    known_quotas = set()
+    for t in context_tracks:
+        for d in (t.get("exam_dates") or []):
+            known_dates.add(d)
+        for key in ("application_start", "application_end", "result_date"):
+            if t.get(key):
+                known_dates.add(t[key])
+        if t.get("quota") is not None:
+            known_quotas.add(str(t["quota"]))
+    for row in (context_raw_excerpts or []):
+        text = row.get("text") if isinstance(row, dict) else None
+        if text:
+            known_dates |= set(_DATE_LIKE_PATTERN.findall(text))
+
+    issues = []
+    if known_dates:
+        for d in set(_DATE_LIKE_PATTERN.findall(answer)):
+            if d not in known_dates:
+                issues.append(f"답변에 등장하는 날짜 '{d}'가 이번 조회 근거 어디에도 없습니다(환각 의심)")
+    if known_quotas:
+        for n in set(_QUOTA_LIKE_PATTERN.findall(answer)):
+            if n not in known_quotas:
+                issues.append(f"답변에 등장하는 정원 '{n}명'이 이번 조회 근거의 실제 정원 값 어디에도 없습니다(환각 의심)")
+    return issues
+
+
 def answer_with_llm(context_tracks: List[Dict[str, Any]], context_estimates: List[Dict[str, Any]],
                      query: str, model_id: str = "gpt-4o-mini",
                      context_raw_excerpts: Optional[List[Dict[str, Any]]] = None,
@@ -632,6 +684,7 @@ def answer_with_llm(context_tracks: List[Dict[str, Any]], context_estimates: Lis
     self_check_warnings = (
         _self_check_grounding(answer, context_tracks, context_compatible_tracks, context_graph_related, all_universities, query)
         + _self_check_compat_claim(answer, context_compatible_tracks)
+        + _self_check_numeric_claims(answer, context_tracks, context_raw_excerpts)
     )
     if self_check_warnings:
         retry_prompt = (
@@ -645,6 +698,7 @@ def answer_with_llm(context_tracks: List[Dict[str, Any]], context_estimates: Lis
             retry_issues = (
                 _self_check_grounding(retried, context_tracks, context_compatible_tracks, context_graph_related, all_universities, query)
                 + _self_check_compat_claim(retried, context_compatible_tracks)
+                + _self_check_numeric_claims(retried, context_tracks, context_raw_excerpts)
             )
             answer = retried
             self_check_warnings = retry_issues
