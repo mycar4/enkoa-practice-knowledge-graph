@@ -14,6 +14,14 @@ from tests.test_art_admission_rag_eval import (  # noqa: E402
     test_qa_search_and_agent_search_agree,
     test_self_check_grounding_does_not_flag_names_from_query_context,
 )
+from tests.test_art_admission_context_preservation import (  # noqa: E402
+    test_topic_narrowing_keeps_every_matched_track,
+    test_narrowing_never_invents_tracks,
+    test_narrowing_actually_reduces_payload,
+    test_school_specific_query_is_not_narrowed_away,
+    test_practical_exam_date_rule_exists_in_prompts,
+    test_aggregate_count_uses_full_registry_not_sample,
+)
 from tests.test_art_admission_school_record_calc import (  # noqa: E402
     test_priority_schools_exact_calc_matches_hand_computed,
     test_hongik_sejong_choice_subject_picks_more_advantageous_on_tie,
@@ -71,4 +79,11 @@ if __name__ == "__main__":
     test_prior_year_result_batch2_image_based_schools()
     test_non_priority_school_returns_unavailable_not_fake_number()
     test_recommend_universities_ranks_exact_before_approximate()
-    print("🎉 CI QUALITY GATE PASSED (무료 회귀 테스트 22건)")
+    # day48(리랭킹·컨텍스트 압축) 학습 적용: 좁히기가 근거를 버리지 않는지 검증
+    test_topic_narrowing_keeps_every_matched_track()
+    test_narrowing_never_invents_tracks()
+    test_narrowing_actually_reduces_payload()
+    test_school_specific_query_is_not_narrowed_away()
+    test_practical_exam_date_rule_exists_in_prompts()
+    test_aggregate_count_uses_full_registry_not_sample()
+    print("🎉 CI QUALITY GATE PASSED (무료 회귀 테스트 28건)")

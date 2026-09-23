@@ -21,7 +21,7 @@ from __future__ import annotations
 import json
 import os
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Sequence
 
 from langchain_core.messages import AIMessage, ToolMessage
 from langchain_core.tools import tool
@@ -656,6 +656,57 @@ def summarize_admission_flow(university: str, topic: str = "") -> str:
 TOOLS = [get_university_info, find_similar_departments, find_compatible_exam_tracks, search_document_details, search_tracks, compare_tracks, check_schedule_conflicts, get_calendar, recommend_by_grades, get_competition_rate_ranking, text2cypher_query, summarize_admission_flow]
 
 
+def narrow_context(
+    query: str,
+    context_tracks: List[Dict[str, Any]],
+    context_estimates: List[Dict[str, Any]],
+    *,
+    mentioned: Optional[Sequence[str]] = None,
+    context_raw: Optional[List[Dict[str, Any]]] = None,
+    canonical_topics: Optional[Sequence[str]] = None,
+    history: Optional[List[Dict[str, str]]] = None,
+) -> tuple:
+    """LLM에 넣기 전 컨텍스트를 좁힌다(= day48 '컨텍스트 압축'의 우리 서비스 구현).
+
+    2026-09-23 day48 학습 교훈으로 run_qa_pipeline()에서 분리했다. 좁히기는 비용
+    최적화가 아니라 **동작 조건**이면서(299건을 통째로 넣으면 LLM 호출 자체가 실패)
+    동시에 **오답 유발 지점**이다(근거를 잘라내면 LLM이 "그 사실은 없다"고 잘못
+    추론한다 - day48 실측: 압축 후 "3절 켄트지 지급"이 "지급 안 됨"으로 뒤집힘).
+    LLM 호출 없이 단위 테스트할 수 있도록 순수 함수로 떼어내, 좁히기가 근거를
+    버리지 않는지를 배포 전 게이트에서 검증한다.
+
+    반환: (좁혀진 context_tracks, 좁혀진 context_estimates)
+    """
+    mentioned = mentioned or []
+    context_raw = context_raw or []
+    canonical_topics = canonical_topics or []
+
+    def _has_topic_kw(text: str) -> bool:
+        return any(kw in text for kw in canonical_topics)
+
+    has_topic_kw = _has_topic_kw(query) or any(
+        _has_topic_kw(str(m.get("content", "")))
+        for m in (history or []) if m.get("role") == "user"
+    )
+
+    if not mentioned and has_topic_kw:
+        # 원문검색 재좁히기 대신, 이미 정확한 exam_type_keyword_match 플래그로 직접
+        # 좁힌다 - "건너뛰기"만 하면 299건 전체가 그대로 LLM에 실려 페이로드가
+        # 커지면서 실제로 타임아웃/호출 실패가 나는 걸 실측으로 확인했다(수정 직후
+        # 프로덕션 재검증에서 "소묘로 시험 보는 학교 알려줘"가 반복적으로 LLM 호출
+        # 실패 처리됨). 일치하는 항목만 추리면 정확도와 페이로드 크기를 동시에
+        # 잡을 수 있다.
+        matched = [t for t in context_tracks if t.get("exam_type_keyword_match")]
+        if matched:
+            context_tracks = matched
+    elif not mentioned and context_raw:
+        raw_universities = sorted({r["university"] for r in context_raw if r.get("university")})
+        if raw_universities:
+            context_tracks = [t for t in context_tracks if t["university"] in raw_universities]
+            context_estimates = [e for e in context_estimates if e.get("university") in raw_universities]
+    return context_tracks, context_estimates
+
+
 def run_qa_pipeline(
     svc, query: str, model_id: str = AGENT_MODEL,
     history: Optional[List[Dict[str, str]]] = None,
@@ -714,29 +765,11 @@ def run_qa_pipeline(
     except Exception:
         canonical_topics = []
 
-    def _has_topic_kw(text: str) -> bool:
-        return any(kw in text for kw in canonical_topics)
-
-    has_topic_kw = _has_topic_kw(query) or any(
-        _has_topic_kw(str(m.get("content", "")))
-        for m in (history or []) if m.get("role") == "user"
+    context_tracks, context_estimates = narrow_context(
+        query, context_tracks, context_estimates,
+        mentioned=mentioned, context_raw=context_raw,
+        canonical_topics=canonical_topics, history=history,
     )
-
-    if not mentioned and has_topic_kw:
-        # 원문검색 재좁히기 대신, 이미 정확한 exam_type_keyword_match 플래그로 직접
-        # 좁힌다 - "건너뛰기"만 하면 299건 전체가 그대로 LLM에 실려 페이로드가
-        # 커지면서 실제로 타임아웃/호출 실패가 나는 걸 실측으로 확인했다(수정 직후
-        # 프로덕션 재검증에서 "소묘로 시험 보는 학교 알려줘"가 반복적으로 LLM 호출
-        # 실패 처리됨). 일치하는 항목만 추리면 정확도와 페이로드 크기를 동시에
-        # 잡을 수 있다.
-        matched = [t for t in context_tracks if t.get("exam_type_keyword_match")]
-        if matched:
-            context_tracks = matched
-    elif not mentioned and context_raw:
-        raw_universities = sorted({r["university"] for r in context_raw if r.get("university")})
-        if raw_universities:
-            context_tracks = [t for t in context_tracks if t["university"] in raw_universities]
-            context_estimates = [e for e in context_estimates if e.get("university") in raw_universities]
     # 2026-09-21 사용자 지시로 끔: get_graph_related_context()가 만드는 "관련 학교"
     # 힌트는 원문 인용/출처 없이 동시출현 커뮤니티만으로 만드는데, 2026-09-17 감사에서
     # 라벨 붙은 24개 커뮤니티 중 20개가 내부 동시출현의 65~100%가 "1회성"(우연한
